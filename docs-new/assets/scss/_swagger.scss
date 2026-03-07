@@ -1,0 +1,259 @@
+// Our variables
+$base-font-family: Helvetica, Arial, sans-serif;
+$base-font-size: 0.9rem;
+$small-font-size: $base-font-size * 0.875;
+$base-line-height: 1.5;
+
+$spacing-unit: 30px;
+
+$text-color: #111;
+$background-color: #fdfdfd;
+$brand-color: #2a7ae2;
+
+$grey-color: #1D2C33;
+$grey-color-light: lighten($grey-color, 40%);
+$grey-color-dark: darken($grey-color, 25%);
+// Width of the content area
+$content-width: 800px;
+
+$on-palm: 600px;
+$on-laptop: 800px;
+
+h5 {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+@mixin swagger-method($color) {
+  .swagger-method-title > .swagger-method-link > .swagger-method-name {
+    background: $color;
+  }
+}
+
+@mixin swagger-response($color) {
+  .swagger-response-title > .swagger-response-code {
+    background: $color;
+  }
+}
+
+.swagger-path {
+  font-weight: bold;
+  font-size: $base-font-size * 1.3;
+  margin: 3rem 0 1rem 0;
+  padding-left:.5rem;
+  border-left: 2px solid #444;
+  font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif,
+    apple color emoji, segoe ui emoji, segoe ui symbol;
+  overflow-wrap: break-word;
+  h2 {
+    border-left: none;
+  }
+}
+
+.swagger-method {
+  align-self: center;
+  border-radius: 5px;
+}
+
+.swagger-method-title {
+  padding: 0 5px;
+  font-size: $base-font-size;
+  margin: 16px 0 0 !important;
+  cursor: pointer;
+  border-radius: 10px;
+  min-height: 45px;
+  display: flex;
+}
+
+.swagger-method-description {
+  padding-bottom: 10px;
+  font-size: $base-font-size * 1.2;
+}
+
+.swagger-method-link {
+  display: flex;
+  align-items: center;
+  &:hover {
+    color: white !important;
+    text-decoration: none;
+  }
+}
+
+.swagger-method-name {
+  display: flex;
+  width: 50;
+  height: 50%;
+  border-radius: .25rem;
+  align-items: center;
+  padding: 5px;
+  text-align: center;
+  color: white;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.swagger-method-summary {
+  color: var(--color-secondary-dark);
+  // border-left: 1px solid white;
+  height: 100%;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.swagger-method-get {
+  @include swagger-method(#3F9ABC);
+}
+
+.swagger-method-post {
+  @include swagger-method(#3AAE97);
+}
+
+.swagger-method-put {
+  @include swagger-method(#1eaaaf);
+}
+
+.swagger-method-patch {
+  @include swagger-method(#36bea1);
+}
+
+.swagger-method-delete {
+  @include swagger-method(#DD4A54);
+}
+
+.swagger-response-200 {
+  @include swagger-response(#3AAE97);
+}
+
+.swagger-response-403, .swagger-response-404, .swagger-response-500 {
+  @include swagger-response(#DD4A54);
+}
+
+.swagger-method-details {
+  padding: .5rem .5rem .5rem 2rem;
+  display: none;
+  font-size: $base-font-size * 1.1;
+  font-weight: 400;
+  &.open {
+    display: block;
+  }
+  p {
+    margin-left: 2rem;
+    font-size: $base-font-size * 1.1;
+  }
+  h5 {
+    color: #666666;
+    font-size: 1.1rem;
+  }
+}
+
+.swagger-response {
+  font-size: $small-font-size;
+  display: block;
+
+  h5 {
+    margin: 10px 0;
+    font-size: 1.1rem;
+    color: #666666;
+  }
+}
+
+.swagger-response-title {
+  width: fit-content;
+  padding: 3px 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-left: 2rem;
+
+}
+
+.swagger-response-code {
+  margin: 2px 0 2px 0;
+  font-size: 1.1rem;
+  padding: 5px;
+  border-radius: .5rem;
+}
+
+.swagger-response-seperator {
+  margin: 0 5px;
+}
+
+.mdblock p {
+  margin: 0;
+}
+
+.swagger-response-description {
+  background-color: none;
+  a {
+    color: #212529;
+    :hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.swagger-parameters {
+  margin-bottom: 20px;
+  margin-left: 2rem;
+  > h5 {
+    margin-left: -2rem;
+  }
+}
+
+.swagger-parameters-table {
+  border-spacing: 0px;
+  border-collapse: collapse;
+  padding-left: 4rem;
+  width: 100%;
+  display: table-header-group;
+  font-size: 1rem;
+  th,
+  td {
+    padding: 8px 15px;
+    text-align: center;
+  }
+
+  th {
+    background-color: $grey-color;
+    color: #eee;
+    font-weight: 500;
+  }
+  
+  thead tr {
+    :first-child {
+      // border-radius: 15px 0 0;
+    }
+    :last-child {
+      // border-radius: 0 15px 0 0;
+    }
+  }
+
+  td.line {
+    padding-top: 0;
+    hr {
+      margin: 0;
+    }
+  }
+  tr:nth-child(odd) {
+    background: lighten($grey-color-light, 6%);
+  }
+}
+
+.swagger-parameter-required {
+  &:after {
+    content: " *";
+    color: red;
+  }
+}
+
+.deprecated-label {
+  background-color: #f44336;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+}

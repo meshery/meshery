@@ -40,8 +40,22 @@ jobs:
         with:
           version: v2.7
           args: --config=.github/.golangci.yml --timeout=10m
-  unit-tests:
-    name: Unit tests
+  unit-tests-server:
+    name: server Unit tests
+    runs-on: ubuntu-24.04
+    needs: golangci
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.25"
+      - name: Run coverage
+        run: go test --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic
+  unit-tests-cli:
+    name: mesheryctl Unit tests
     runs-on: ubuntu-24.04
     needs: golangci
     steps:
@@ -54,8 +68,6 @@ jobs:
         uses: actions/setup-go@v6
         with:
           go-version: "1.25"
-      - name: Run server coverage
-        run: go test --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic
       - name: Run mesheryctl coverage
         run: go test --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic
   build-mesheryctl:

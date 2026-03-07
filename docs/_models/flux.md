@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Flux
 subtitle: Collaborative and visual infrastructure as design for Flux
-image: /assets/img/integrations/flux/icons/color/flux-color.svg
-permalink: extensibility/integrations/flux
+image: /extensions/models/flux/icons/color/flux-color.svg
+aliases: /extensibility/integrations/flux
 docURL: https://docs.meshery.io/extensibility/integrations/flux
 description: 
 integrations-category: App Definition and Development
@@ -44,8 +43,5 @@ featureList: [
 ]
 howItWorks: "Integrates Flux configurations"
 howItWorksDetails: "Streamlined GitOps continuous delivery in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -4372,7 +4372,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/c40f528080a158b3af9b6b58ec0eea4cd90f8c2d"
 },
 {
-"path": "docs/assets/img/docker.svg",
+"path": "docs/assets/img/extensions/docker.svg",
 "mode": "100644",
 "type": "blob",
 "sha": "726009242bb792ee3a4da8c34ba788584b65f2d7",
@@ -4906,14 +4906,6 @@
 "sha": "7db70ceacbd2e4c8c57aa84193a9c4d518cb057d",
 "size": 349221,
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/7db70ceacbd2e4c8c57aa84193a9c4d518cb057d"
-},
-{
-"path": "docs/assets/img/service-meshes/octarine.svg",
-"mode": "100644",
-"type": "blob",
-"sha": "79819fecb163172cc3775b44778df758724f00b8",
-"size": 7244,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/79819fecb163172cc3775b44778df758724f00b8"
 },
 {
 "path": "docs/assets/img/service-meshes/osm.svg",
@@ -12920,14 +12912,6 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/37f5d696b2298474b9e1b3b60fe06bcff9a0a863"
 },
 {
-"path": "ui/public/static/img/dashboard-screenshot.png",
-"mode": "100644",
-"type": "blob",
-"sha": "7da89040e28a1d7209d6eb8a02c92e18229f606e",
-"size": 420324,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/7da89040e28a1d7209d6eb8a02c92e18229f606e"
-},
-{
 "path": "ui/public/static/img/drawer-icons",
 "mode": "040000",
 "type": "tree",
@@ -13278,14 +13262,6 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/9cd8b2b9bfa0869e86a58e404e1e890527379f2c"
 },
 {
-"path": "ui/public/static/img/octarine.svg",
-"mode": "100644",
-"type": "blob",
-"sha": "79819fecb163172cc3775b44778df758724f00b8",
-"size": 7244,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/79819fecb163172cc3775b44778df758724f00b8"
-},
-{
 "path": "ui/public/static/img/open_service_mesh-light.svg",
 "mode": "100644",
 "type": "blob",
@@ -13303,14 +13279,6 @@
 },
 {
 "path": "ui/public/static/img/open_service_mesh.svg",
-"mode": "100644",
-"type": "blob",
-"sha": "75e38ee12bb0357dfd1c74e26823b7966ada74b2",
-"size": 2875,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/75e38ee12bb0357dfd1c74e26823b7966ada74b2"
-},
-{
-"path": "ui/public/static/img/openservicemesh.svg",
 "mode": "100644",
 "type": "blob",
 "sha": "75e38ee12bb0357dfd1c74e26823b7966ada74b2",

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -16,13 +15,14 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/mod/semver"
+	"gopkg.in/yaml.v3"
 )
 
 var initModelCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Generates scaffolding for convenient model creation",
 	Long: `Generates a folder structure and guides user on model creation
-Documentation for models init can be found at https://docs.meshery.io/reference/mesheryctl/model/init`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/init`,
 	Example: `
 // generates a folder structure
 mesheryctl model init [model-name]
@@ -216,11 +216,11 @@ func initModelGetValidOutputFormat() []string {
 }
 
 const (
-	initModelDirPerm                   = 0o755
-	initModelModelSchema               = "schemas/constructs/v1beta1/model/model.json"
-	initModelTemplatePathModel         = "schemas/constructs/v1beta1/model/model_template"
-	initModelTemplatePathComponent     = "schemas/constructs/v1beta1/component/component_template"
-	initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship_template"
+	initModelDirPerm                  = 0o755
+	initModelModelSchema              = "schemas/constructs/v1beta1/model/model.yaml"
+	initModelTemplatePathModel        = "schemas/constructs/v1beta1/model/templates/model_template"
+	initModelTemplatePathComponent    = "schemas/constructs/v1beta1/component/templates/component_template"
+	initModelTemplatePathRelationship = "schemas/constructs/v1alpha3/relationship/templates/relationship_template"
 )
 
 // TODO: Connection templates are temporarily disabled.
@@ -231,7 +231,7 @@ const (
 // if csv output is not directory based
 // should it have different text for csv output format?
 const initModelNextStepsText = `Next steps:
-1. cd {modelFolder}
+1. cd {modelVersionFolder}
 2. Edit model.{outputFormat} to customize your model configuration
 3. Add your components in the components/ directory
 4. Define relationships in relationships/ directory
@@ -279,7 +279,7 @@ var initModelData = []struct {
 		folderPath: "relationships",
 		// map file name to template key
 		files: map[string]string{
-			"relationship": initModelTemplatePathRelathionship,
+			"relationship": initModelTemplatePathRelationship,
 		},
 		beforeHook: func() {
 			utils.Log.Info("Creating sample relationships...")
@@ -378,11 +378,11 @@ func initModelValidateDataOverSchema(schema []byte, data map[string]interface{})
 }
 
 func initModelGetPatternFromSchema(schema []byte, property string) (string, error) {
-	// Generic structure to decode JSON
+	// Generic structure to decode Yaml
 	var schemaMap map[string]interface{}
 
-	// Unmarshal JSON schema into a map
-	if err := json.Unmarshal(schema, &schemaMap); err != nil {
+	// Unmarshal Yaml schema into a map
+	if err := yaml.Unmarshal(schema, &schemaMap); err != nil {
 		return "", err
 	}
 

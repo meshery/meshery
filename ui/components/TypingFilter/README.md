@@ -92,18 +92,15 @@ const MyComponent = () => {
 ## How to Use
 
 1. **Basic Filtering**:
-
    - Start typing to see available filter options
    - Select a filter category from the dropdown
 
 2. **Using Filter Categories**:
-
    - After selecting a category, type a colon (`:`) to see available values
    - For categories with predefined values, select from the dropdown
    - For free-text categories, type your value and press Enter
 
 3. **Managing Filters**:
-
    - Selected filters appear as chips
    - Click the 'x' on a chip to remove that filter group
    - Click the clear icon to remove all filters

@@ -2,7 +2,7 @@
   "id": "aaeda8bd-2133-4e52-bc3f-5014babb23a1",
   "name": "LoxiLB Multi-Cloud VPN \u0026 Connectivity",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.697",
+  "version": "0.0.699",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -76,7 +76,9 @@
         "version": "core.meshery.io/v1alpha1",
         "kind": "Lock",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "1f35b40a-05ff-4715-a733-4dd03b775ce1",
@@ -147,7 +149,9 @@
         "version": "core.meshery.io/v1alpha1",
         "kind": "Lock",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "0e2d22f6-4a46-41ef-9e84-cde48b16732b",
@@ -165,7 +169,7 @@
           "kind": "github"
         },
         "model": {
-          "version": "v1.1.1"
+          "version": "v1.2.1"
         }
       },
       "styles": {
@@ -224,7 +228,9 @@
         "version": "apigatewayv2.services.k8s.aws/v1alpha1",
         "kind": "API",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "c7406967-281a-4ea8-81c6-9e4ceaa5d062",
@@ -242,7 +248,7 @@
           "kind": "github"
         },
         "model": {
-          "version": "v1.1.1"
+          "version": "v1.2.2"
         }
       },
       "styles": {
@@ -330,7 +336,9 @@
         "version": "s3.services.k8s.aws/v1alpha1",
         "kind": "Bucket",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "4e59e6f2-3f2e-43be-94a2-e479c9024f44",
@@ -348,7 +356,7 @@
           "kind": "github"
         },
         "model": {
-          "version": "v1.32.0-alpha.3"
+          "version": "v1.35.0-rc.1"
         }
       },
       "styles": {
@@ -399,7 +407,9 @@
         "version": "v1",
         "kind": "ConfigMap",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "038ed3b9-b2f1-4e94-9999-07a7d298095d",
@@ -470,7 +480,9 @@
         "version": "networking.istio.io/v1alpha3",
         "kind": "Gateway",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "38ab526d-eb19-4aa8-ac7e-b3b8e457c193",
@@ -488,7 +500,7 @@
           "kind": "github"
         },
         "model": {
-          "version": "v1.7.0"
+          "version": "v1.9.2"
         }
       },
       "styles": {
@@ -550,7 +562,9 @@
         "version": "ec2.services.k8s.aws/v1alpha1",
         "kind": "Instance",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
@@ -568,7 +582,7 @@
           "kind": "github"
         },
         "model": {
-          "version": "v1.32.0-alpha.3"
+          "version": "v1.35.0-rc.1"
         }
       },
       "styles": {
@@ -604,7 +618,9 @@
         "version": "v1",
         "kind": "Namespace",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "9737bbef-fe02-463a-9c2d-4ee7dd983127",
@@ -622,7 +638,7 @@
           "kind": "github"
         },
         "model": {
-          "version": "v1.32.0-alpha.3"
+          "version": "v1.35.0-rc.1"
         }
       },
       "styles": {
@@ -674,7 +690,9 @@
         "version": "v1",
         "kind": "Namespace",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "685e574d-8c25-4f8b-a10a-3bcbd0d711dd",
@@ -692,7 +710,7 @@
           "kind": "github"
         },
         "model": {
-          "version": "v1.32.0-alpha.3"
+          "version": "v1.35.0-rc.1"
         }
       },
       "styles": {
@@ -744,7 +762,9 @@
         "version": "v1",
         "kind": "Namespace",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "af1abed9-0d41-4323-8452-ff1b098db5b3",
@@ -762,7 +782,7 @@
           "kind": "github"
         },
         "model": {
-          "version": "v1.32.0-alpha.3"
+          "version": "v1.35.0-rc.1"
         }
       },
       "styles": {
@@ -816,7 +836,9 @@
         "version": "v1",
         "kind": "Pod",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "cc8bc187-0bc7-4564-a3db-0ea73b482497",
@@ -834,7 +856,7 @@
           "kind": "github"
         },
         "model": {
-          "version": "v1.32.0-alpha.3"
+          "version": "v1.35.0-rc.1"
         }
       },
       "styles": {
@@ -886,7 +908,9 @@
         "version": "v1",
         "kind": "Pod",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "9ec88b65-e6c2-4c98-8db6-344550dfece3",
@@ -904,7 +928,7 @@
           "kind": "github"
         },
         "model": {
-          "version": "v1.32.0-alpha.3"
+          "version": "v1.35.0-rc.1"
         }
       },
       "styles": {
@@ -955,7 +979,9 @@
         "version": "v1",
         "kind": "Pod",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
@@ -973,7 +999,7 @@
           "kind": "github"
         },
         "model": {
-          "version": "v1.32.0-alpha.3"
+          "version": "v1.35.0-rc.1"
         }
       },
       "styles": {
@@ -1025,7 +1051,9 @@
         "version": "v1",
         "kind": "Service",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
@@ -1043,7 +1071,7 @@
           "kind": "github"
         },
         "model": {
-          "version": "v1.32.0-alpha.3"
+          "version": "v1.35.0-rc.1"
         }
       },
       "styles": {
@@ -1095,7 +1123,9 @@
         "version": "v1",
         "kind": "Service",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "29b3cdd2-b369-401a-95c3-3b85c63de697",
@@ -1179,7 +1209,9 @@
         "version": "storage.azure.com/v1api20210401",
         "kind": "StorageAccount",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     }
   ],
   "preferences": {
@@ -1199,22 +1231,6 @@
   },
   "relationships": [
     {
-      "id": "0c9e2c0a-899c-47e1-a7c8-68d753c51ab9",
-      "evaluationQuery": null,
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "meshery-shapes",
@@ -1227,6 +1243,23 @@
           "version": "0.7.2"
         }
       },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "0c9e2c0a-899c-47e1-a7c8-68d753c51ab9",
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        }
+      },
       "schemaVersion": "",
       "selectors": [
         {
@@ -1236,7 +1269,7 @@
                 "id": "1c2e7892-dce2-4651-a6aa-01acdd4b492c",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -1248,8 +1281,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -1257,7 +1289,7 @@
                 "id": "685e574d-8c25-4f8b-a10a-3bcbd0d711dd",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -1269,35 +1301,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "0df0a1a1-bd51-4b4b-8692-dba033b36b03",
-      "evaluationQuery": null,
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "meshery-shapes",
@@ -1310,6 +1326,23 @@
           "version": "0.7.2"
         }
       },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "0df0a1a1-bd51-4b4b-8692-dba033b36b03",
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        }
+      },
       "schemaVersion": "",
       "selectors": [
         {
@@ -1319,7 +1352,7 @@
                 "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -1331,8 +1364,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -1340,7 +1372,7 @@
                 "id": "4e59e6f2-3f2e-43be-94a2-e479c9024f44",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -1352,31 +1384,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "3d5f57df-a333-4fe9-aa49-4e4cbe0058f6",
-      "evaluationQuery": null,
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "Namespace to namespaced components",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "kubernetes",
@@ -1387,6 +1407,19 @@
         },
         "model": {
           "version": "v1.32.0-alpha.3"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "3d5f57df-a333-4fe9-aa49-4e4cbe0058f6",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
         }
       },
       "schemaVersion": "",
@@ -1398,7 +1431,16 @@
                 "id": "cc8bc187-0bc7-4564-a3db-0ea73b482497",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "*",
@@ -1410,16 +1452,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
                 }
               }
             ],
@@ -1428,7 +1460,14 @@
                 "id": "685e574d-8c25-4f8b-a10a-3bcbd0d711dd",
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -1440,14 +1479,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
                 }
               }
             ]
@@ -1458,7 +1489,7 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -1470,8 +1501,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -1479,7 +1509,7 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -1491,24 +1521,38 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "inventory",
       "status": "approved",
+      "subType": "inventory",
       "type": "parent",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
+      "model": {
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "registrant": {
+          "kind": ""
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
       "id": "4106becc-b013-4a50-b6ef-31e33450a580",
-      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
         "styles": {
           "line-color": "#00B39F",
           "line-style": "solid",
@@ -1517,9 +1561,62 @@
           "svgWhite": "",
           "target-arrow-color": "#00B39F",
           "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
+        }
       },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "af1abed9-0d41-4323-8452-ff1b098db5b3",
+                "kind": "*",
+                "match": {},
+                "patch": null,
+                "model": {
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
+                "kind": "*",
+                "match": {},
+                "patch": null,
+                "model": {
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "status": "pending",
+      "subType": "annotation",
+      "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "version": ""
+    },
+    {
       "model": {
         "version": "v1.0.0",
         "name": "meshery-shapes",
@@ -1532,66 +1629,13 @@
           "version": "0.7.2"
         }
       },
-      "schemaVersion": "",
-      "selectors": [
-        {
-          "allow": {
-            "from": [
-              {
-                "id": "af1abed9-0d41-4323-8452-ff1b098db5b3",
-                "kind": "*",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
-                },
-                "patch": null
-              }
-            ],
-            "to": [
-              {
-                "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
-                "kind": "*",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
-                },
-                "patch": null
-              }
-            ]
-          }
-        }
-      ],
-      "subType": "annotation",
-      "status": "pending",
-      "type": "non-binding",
-      "version": ""
-    },
-    {
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
       "id": "491238f0-4b9d-4aa3-9456-c9ce8e2f8871",
-      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
         "styles": {
           "line-color": "#00B39F",
           "line-style": "solid",
@@ -1600,19 +1644,6 @@
           "svgWhite": "",
           "target-arrow-color": "#00B39F",
           "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
         }
       },
       "schemaVersion": "",
@@ -1624,7 +1655,7 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -1636,8 +1667,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -1645,7 +1675,7 @@
                 "id": "af1abed9-0d41-4323-8452-ff1b098db5b3",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -1657,35 +1687,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "4b61c4b9-219e-494f-96c0-1eb68c539d86",
-      "evaluationQuery": null,
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "meshery-shapes",
@@ -1696,6 +1710,23 @@
         },
         "model": {
           "version": "0.7.2"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "4b61c4b9-219e-494f-96c0-1eb68c539d86",
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
         }
       },
       "schemaVersion": "",
@@ -1707,7 +1738,7 @@
                 "id": "9ec88b65-e6c2-4c98-8db6-344550dfece3",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -1719,8 +1750,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -1728,7 +1758,7 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -1740,31 +1770,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "4bf6dd0b-89a6-4eb1-ab0d-5faa5c5aa7f1",
-      "evaluationQuery": null,
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "Namespace to namespaced components",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "kubernetes",
@@ -1775,6 +1793,19 @@
         },
         "model": {
           "version": "v1.32.0-alpha.3"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "4bf6dd0b-89a6-4eb1-ab0d-5faa5c5aa7f1",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
         }
       },
       "schemaVersion": "",
@@ -1786,7 +1817,16 @@
                 "id": "c7406967-281a-4ea8-81c6-9e4ceaa5d062",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "*",
@@ -1798,16 +1838,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
                 }
               }
             ],
@@ -1816,7 +1846,14 @@
                 "id": "9737bbef-fe02-463a-9c2d-4ee7dd983127",
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -1828,14 +1865,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
                 }
               }
             ]
@@ -1846,7 +1875,7 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -1858,8 +1887,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -1867,7 +1895,7 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -1879,35 +1907,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "inventory",
       "status": "approved",
+      "subType": "inventory",
       "type": "parent",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "60d6a89d-ca1d-47b1-9ae3-d2f67f4d5821",
-      "evaluationQuery": null,
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "meshery-shapes",
@@ -1920,6 +1932,23 @@
           "version": "0.7.2"
         }
       },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "60d6a89d-ca1d-47b1-9ae3-d2f67f4d5821",
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        }
+      },
       "schemaVersion": "",
       "selectors": [
         {
@@ -1929,7 +1958,7 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -1941,8 +1970,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -1950,7 +1978,7 @@
                 "id": "1c2e7892-dce2-4651-a6aa-01acdd4b492c",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -1962,31 +1990,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "70c23129-8fb5-442e-9caa-fa5da6cff592",
-      "evaluationQuery": null,
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "Namespace to namespaced components",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "kubernetes",
@@ -1997,6 +2013,19 @@
         },
         "model": {
           "version": "v1.32.0-alpha.3"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "70c23129-8fb5-442e-9caa-fa5da6cff592",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
         }
       },
       "schemaVersion": "",
@@ -2008,7 +2037,16 @@
                 "id": "038ed3b9-b2f1-4e94-9999-07a7d298095d",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2020,16 +2058,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
                 }
               }
             ],
@@ -2038,7 +2066,14 @@
                 "id": "685e574d-8c25-4f8b-a10a-3bcbd0d711dd",
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -2050,14 +2085,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
                 }
               }
             ]
@@ -2068,7 +2095,7 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -2080,8 +2107,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -2089,7 +2115,7 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -2101,35 +2127,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "inventory",
       "status": "approved",
+      "subType": "inventory",
       "type": "parent",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "7cc4ce0d-2e4e-4c3d-aef8-c688b37fa638",
-      "evaluationQuery": null,
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "meshery-shapes",
@@ -2142,6 +2152,23 @@
           "version": "0.7.2"
         }
       },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "7cc4ce0d-2e4e-4c3d-aef8-c688b37fa638",
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        }
+      },
       "schemaVersion": "",
       "selectors": [
         {
@@ -2151,7 +2178,7 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2163,8 +2190,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -2172,7 +2198,7 @@
                 "id": "9ec88b65-e6c2-4c98-8db6-344550dfece3",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2184,35 +2210,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "7f5ae72a-31d5-4096-921e-d04b13b9c717",
-      "evaluationQuery": null,
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "meshery-shapes",
@@ -2225,6 +2235,23 @@
           "version": "0.7.2"
         }
       },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "7f5ae72a-31d5-4096-921e-d04b13b9c717",
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        }
+      },
       "schemaVersion": "",
       "selectors": [
         {
@@ -2234,7 +2261,7 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2246,8 +2273,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -2255,7 +2281,7 @@
                 "id": "1f35b40a-05ff-4715-a733-4dd03b775ce1",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2267,35 +2293,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "8696cc53-1ad3-40c2-8ab1-536692405918",
-      "evaluationQuery": null,
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "meshery-shapes",
@@ -2308,6 +2318,23 @@
           "version": "0.7.2"
         }
       },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "8696cc53-1ad3-40c2-8ab1-536692405918",
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        }
+      },
       "schemaVersion": "",
       "selectors": [
         {
@@ -2317,7 +2344,7 @@
                 "id": "685e574d-8c25-4f8b-a10a-3bcbd0d711dd",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2329,8 +2356,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -2338,7 +2364,7 @@
                 "id": "1c2e7892-dce2-4651-a6aa-01acdd4b492c",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2350,35 +2376,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "a0298926-9a4e-45d7-843c-21124749421e",
-      "evaluationQuery": null,
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "meshery-shapes",
@@ -2391,6 +2401,23 @@
           "version": "0.7.2"
         }
       },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "a0298926-9a4e-45d7-843c-21124749421e",
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        }
+      },
       "schemaVersion": "",
       "selectors": [
         {
@@ -2400,7 +2427,7 @@
                 "id": "1c2e7892-dce2-4651-a6aa-01acdd4b492c",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2412,8 +2439,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -2421,7 +2447,7 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2433,31 +2459,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "a02b3f63-8726-43c5-9d7b-69e83f7e9332",
-      "evaluationQuery": null,
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "Namespace to namespaced components",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "kubernetes",
@@ -2468,6 +2482,19 @@
         },
         "model": {
           "version": "v1.32.0-alpha.3"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "a02b3f63-8726-43c5-9d7b-69e83f7e9332",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
         }
       },
       "schemaVersion": "",
@@ -2479,7 +2506,16 @@
                 "id": "29b3cdd2-b369-401a-95c3-3b85c63de697",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2491,16 +2527,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
                 }
               }
             ],
@@ -2509,7 +2535,14 @@
                 "id": "685e574d-8c25-4f8b-a10a-3bcbd0d711dd",
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -2521,14 +2554,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
                 }
               }
             ]
@@ -2539,7 +2564,7 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -2551,8 +2576,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -2560,7 +2584,7 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -2572,31 +2596,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "inventory",
       "status": "approved",
+      "subType": "inventory",
       "type": "parent",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "b96d17a6-5be2-4cb0-a221-5e75d47e1706",
-      "evaluationQuery": null,
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "Namespace to namespaced components",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "kubernetes",
@@ -2609,6 +2621,19 @@
           "version": "v1.32.0-alpha.3"
         }
       },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "b96d17a6-5be2-4cb0-a221-5e75d47e1706",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
       "schemaVersion": "",
       "selectors": [
         {
@@ -2618,7 +2643,16 @@
                 "id": "0e2d22f6-4a46-41ef-9e84-cde48b16732b",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2630,16 +2664,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
                 }
               }
             ],
@@ -2648,7 +2672,14 @@
                 "id": "9737bbef-fe02-463a-9c2d-4ee7dd983127",
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -2660,14 +2691,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
                 }
               }
             ]
@@ -2678,7 +2701,7 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -2690,8 +2713,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -2699,7 +2721,7 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -2711,35 +2733,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "inventory",
       "status": "approved",
+      "subType": "inventory",
       "type": "parent",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "bca7bf82-ece4-4145-94b2-c92a91c4e067",
-      "evaluationQuery": null,
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "meshery-shapes",
@@ -2752,6 +2758,23 @@
           "version": "0.7.2"
         }
       },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "bca7bf82-ece4-4145-94b2-c92a91c4e067",
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        }
+      },
       "schemaVersion": "",
       "selectors": [
         {
@@ -2761,7 +2784,7 @@
                 "id": "4e59e6f2-3f2e-43be-94a2-e479c9024f44",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2773,8 +2796,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -2782,7 +2804,7 @@
                 "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2794,24 +2816,38 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
+      "model": {
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "registrant": {
+          "kind": ""
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
       "id": "d2bbe33d-0a0e-4c68-bc13-7cbaaaf379a1",
-      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
         "styles": {
           "line-color": "#00B39F",
           "line-style": "solid",
@@ -2820,19 +2856,6 @@
           "svgWhite": "",
           "target-arrow-color": "#00B39F",
           "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
         }
       },
       "schemaVersion": "",
@@ -2844,7 +2867,7 @@
                 "id": "1f35b40a-05ff-4715-a733-4dd03b775ce1",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2856,8 +2879,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -2865,7 +2887,7 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2877,24 +2899,38 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
+      "model": {
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
       "id": "d32d6ed4-1825-468c-9f85-e1bb1555dc46",
-      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
         "styles": {
           "line-color": "#00B39F",
           "line-style": "solid",
@@ -2903,19 +2939,6 @@
           "svgWhite": "",
           "target-arrow-color": "#00B39F",
           "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "meshery"
-        },
-        "model": {
-          "version": "0.7.2"
         }
       },
       "schemaVersion": "",
@@ -2927,7 +2950,7 @@
                 "id": "9737bbef-fe02-463a-9c2d-4ee7dd983127",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2939,8 +2962,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -2948,7 +2970,7 @@
                 "id": "1f35b40a-05ff-4715-a733-4dd03b775ce1",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -2960,24 +2982,38 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
+      "model": {
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "registrant": {
+          "kind": ""
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
       "id": "d6f811f1-0146-4133-9208-e01835490ada",
-      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
         "styles": {
           "line-color": "#00B39F",
           "line-style": "solid",
@@ -2986,19 +3022,6 @@
           "svgWhite": "",
           "target-arrow-color": "#00B39F",
           "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
         }
       },
       "schemaVersion": "",
@@ -3010,7 +3033,7 @@
                 "id": "4e59e6f2-3f2e-43be-94a2-e479c9024f44",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -3022,8 +3045,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -3031,7 +3053,7 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -3043,35 +3065,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "e05ba27d-9eef-4d01-a854-6f1a8536d13a",
-      "evaluationQuery": null,
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "meshery-shapes",
@@ -3084,6 +3090,23 @@
           "version": "0.7.2"
         }
       },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "e05ba27d-9eef-4d01-a854-6f1a8536d13a",
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        }
+      },
       "schemaVersion": "",
       "selectors": [
         {
@@ -3093,7 +3116,7 @@
                 "id": "1f35b40a-05ff-4715-a733-4dd03b775ce1",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -3105,8 +3128,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -3114,7 +3136,7 @@
                 "id": "9737bbef-fe02-463a-9c2d-4ee7dd983127",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -3126,35 +3148,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "e25fbb84-e36f-43f7-bcc8-5476934ee7a1",
-      "evaluationQuery": null,
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "meshery-shapes",
@@ -3167,6 +3173,23 @@
           "version": "0.7.2"
         }
       },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": null,
+      "id": "e25fbb84-e36f-43f7-bcc8-5476934ee7a1",
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        }
+      },
       "schemaVersion": "",
       "selectors": [
         {
@@ -3176,7 +3199,7 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -3188,8 +3211,7 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ],
             "to": [
@@ -3197,7 +3219,7 @@
                 "id": "4e59e6f2-3f2e-43be-94a2-e479c9024f44",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": null,
                 "model": {
                   "version": "",
                   "name": "*",
@@ -3209,31 +3231,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": null
+                }
               }
             ]
           }
         }
       ],
-      "subType": "annotation",
       "status": "pending",
+      "subType": "annotation",
       "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "id": "052c6590-1710-419d-b0a7-1d92831c287b",
-      "evaluationQuery": "",
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "Namespace to namespaced components",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "kubernetes",
@@ -3244,6 +3254,19 @@
         },
         "model": {
           "version": "v1.32.0-alpha.3"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": "",
+      "id": "052c6590-1710-419d-b0a7-1d92831c287b",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
         }
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
@@ -3255,7 +3278,16 @@
                 "id": "9ec88b65-e6c2-4c98-8db6-344550dfece3",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "*",
@@ -3267,16 +3299,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
                 }
               }
             ],
@@ -3285,7 +3307,14 @@
                 "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -3297,38 +3326,415 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
                 }
               }
             ]
           }
         }
       ],
-      "subType": "inventory",
       "status": "approved",
+      "subType": "inventory",
       "type": "parent",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "id": "73c0c0ca-1ba9-465a-814d-24d8f9ece445",
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-rc.1"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
       "evaluationQuery": "",
-      "kind": "hierarchical",
+      "id": "21e304ba-464e-4039-a10f-f95146ab0b07",
+      "kind": "edge",
       "metadata": {
-        "description": "Namespace to namespaced components",
+        "description": "",
+        "isAnnotation": false,
         "styles": {
           "primaryColor": "",
           "svgColor": "",
           "svgWhite": ""
-        },
-        "isAnnotation": false
+        }
       },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
+                "kind": "Service",
+                "match": {},
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "selector"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "targetPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "af1abed9-0d41-4323-8452-ff1b098db5b3",
+                "kind": "Pod",
+                "match": {},
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "metadata",
+                      "labels"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "containerPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "status": "approved",
+      "subType": "network",
+      "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "version": "v1.0.0"
+    },
+    {
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-rc.1"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": "",
+      "id": "2659e27b-9ff2-4a7b-853b-b78f7e37eded",
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
+                "kind": "Service",
+                "match": {},
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "selector"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "targetPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "cc8bc187-0bc7-4564-a3db-0ea73b482497",
+                "kind": "Pod",
+                "match": {},
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "metadata",
+                      "labels"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "containerPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "status": "approved",
+      "subType": "network",
+      "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "version": "v1.0.0"
+    },
+    {
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-rc.1"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": "",
+      "id": "34eb6098-b916-434b-bbd4-47a2ba8de719",
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
+                "kind": "Service",
+                "match": {},
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "selector"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "targetPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "af1abed9-0d41-4323-8452-ff1b098db5b3",
+                "kind": "Pod",
+                "match": {},
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "metadata",
+                      "labels"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "containerPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "status": "approved",
+      "subType": "network",
+      "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "version": "v1.0.0"
+    },
+    {
       "model": {
         "version": "v1.0.0",
         "name": "kubernetes",
@@ -3339,6 +3745,19 @@
         },
         "model": {
           "version": "v1.32.0-alpha.3"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": "",
+      "id": "73c0c0ca-1ba9-465a-814d-24d8f9ece445",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
         }
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
@@ -3350,7 +3769,16 @@
                 "id": "af1abed9-0d41-4323-8452-ff1b098db5b3",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "*",
@@ -3362,16 +3790,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
                 }
               }
             ],
@@ -3380,7 +3798,14 @@
                 "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -3392,38 +3817,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
                 }
               }
             ]
           }
         }
       ],
-      "subType": "inventory",
       "status": "approved",
+      "subType": "inventory",
       "type": "parent",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "id": "777686ee-b6cf-4d64-aa78-750d9cb5aaec",
-      "evaluationQuery": "",
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "Namespace to namespaced components",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "kubernetes",
@@ -3434,6 +3840,19 @@
         },
         "model": {
           "version": "v1.32.0-alpha.3"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": "",
+      "id": "777686ee-b6cf-4d64-aa78-750d9cb5aaec",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
         }
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
@@ -3445,7 +3864,16 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "*",
@@ -3457,16 +3885,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
                 }
               }
             ],
@@ -3475,7 +3893,14 @@
                 "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -3487,38 +3912,415 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
                 }
               }
             ]
           }
         }
       ],
-      "subType": "inventory",
       "status": "approved",
+      "subType": "inventory",
       "type": "parent",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "id": "ba41331a-2bf2-4dd1-ae05-65d6a7ec6962",
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-rc.1"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
       "evaluationQuery": "",
-      "kind": "hierarchical",
+      "id": "8793b0e2-4a61-4924-8401-410394c742e2",
+      "kind": "edge",
       "metadata": {
-        "description": "Namespace to namespaced components",
+        "description": "",
+        "isAnnotation": false,
         "styles": {
           "primaryColor": "",
           "svgColor": "",
           "svgWhite": ""
-        },
-        "isAnnotation": false
+        }
       },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
+                "kind": "Service",
+                "match": {},
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "selector"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "targetPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "9ec88b65-e6c2-4c98-8db6-344550dfece3",
+                "kind": "Pod",
+                "match": {},
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "metadata",
+                      "labels"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "containerPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "status": "approved",
+      "subType": "network",
+      "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "version": "v1.0.0"
+    },
+    {
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-rc.1"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": "",
+      "id": "90bb0d03-be0a-449a-82cd-fe997ac7acd4",
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
+                "kind": "Service",
+                "match": {},
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "selector"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "targetPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "cc8bc187-0bc7-4564-a3db-0ea73b482497",
+                "kind": "Pod",
+                "match": {},
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "metadata",
+                      "labels"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "containerPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "status": "approved",
+      "subType": "network",
+      "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "version": "v1.0.0"
+    },
+    {
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-rc.1"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": "",
+      "id": "95689d2b-957a-4631-80f8-e1eb9befb504",
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
+                "kind": "Service",
+                "match": {},
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "selector"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "targetPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "9ec88b65-e6c2-4c98-8db6-344550dfece3",
+                "kind": "Pod",
+                "match": {},
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "metadata",
+                      "labels"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "containerPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "status": "approved",
+      "subType": "network",
+      "type": "non-binding",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "version": "v1.0.0"
+    },
+    {
       "model": {
         "version": "v1.0.0",
         "name": "kubernetes",
@@ -3529,6 +4331,19 @@
         },
         "model": {
           "version": "v1.32.0-alpha.3"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": "",
+      "id": "ba41331a-2bf2-4dd1-ae05-65d6a7ec6962",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
         }
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
@@ -3540,7 +4355,16 @@
                 "id": "38ab526d-eb19-4aa8-ac7e-b3b8e457c193",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "*",
@@ -3552,16 +4376,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
                 }
               }
             ],
@@ -3570,7 +4384,14 @@
                 "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -3582,38 +4403,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
                 }
               }
             ]
           }
         }
       ],
-      "subType": "inventory",
       "status": "approved",
+      "subType": "inventory",
       "type": "parent",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "id": "ecec8596-499b-46b2-8c5b-7fc0780d3277",
-      "evaluationQuery": "",
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "Namespace to namespaced components",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "kubernetes",
@@ -3624,6 +4426,19 @@
         },
         "model": {
           "version": "v1.32.0-alpha.3"
+        }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": "",
+      "id": "ecec8596-499b-46b2-8c5b-7fc0780d3277",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
         }
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
@@ -3635,7 +4450,16 @@
                 "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "*",
@@ -3647,16 +4471,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
                 }
               }
             ],
@@ -3665,7 +4479,14 @@
                 "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -3677,38 +4498,19 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
                 }
               }
             ]
           }
         }
       ],
-      "subType": "inventory",
       "status": "approved",
+      "subType": "inventory",
       "type": "parent",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "id": "fb1e484c-6523-4a6e-a788-aac366952e71",
-      "evaluationQuery": "",
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "Namespace to namespaced components",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
       "model": {
         "version": "v1.0.0",
         "name": "kubernetes",
@@ -3721,6 +4523,19 @@
           "version": "v1.32.0-alpha.3"
         }
       },
+      "created_at": "0001-01-01T00:00:00Z",
+      "evaluationQuery": "",
+      "id": "fb1e484c-6523-4a6e-a788-aac366952e71",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
         {
@@ -3730,7 +4545,16 @@
                 "id": "4e59e6f2-3f2e-43be-94a2-e479c9024f44",
                 "kind": "*",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "*",
@@ -3742,16 +4566,6 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
                 }
               }
             ],
@@ -3760,7 +4574,14 @@
                 "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
                 "kind": "Namespace",
                 "match": {},
-                "match_strategy_matrix": null,
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                },
                 "model": {
                   "version": "",
                   "name": "kubernetes",
@@ -3772,23 +4593,16 @@
                   "model": {
                     "version": ""
                   }
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
                 }
               }
             ]
           }
         }
       ],
-      "subType": "inventory",
       "status": "approved",
+      "subType": "inventory",
       "type": "parent",
+      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     }
   ]

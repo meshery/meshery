@@ -42,7 +42,7 @@ mesheryctl filter import https://example.com/myfilter.wasm
 </div>
 </pre> 
 
-Add WASM configuration 
+Add WASM configuration
 If the string is a valid file in the filesystem, the file is read and passed as a string. Otherwise, the string is passed as is.
 Use quotes if the string contains spaces
 <pre class='codeblock-pre'>

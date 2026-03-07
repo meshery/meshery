@@ -80,6 +80,9 @@ default.profraw
 wasm/policies/temp-bundle-extract-dir/**
 .nvim.lua
 
+allure-results/
+playwright-report/
+
 install/docker-extension/vm/vm
 .env
 ui/.env

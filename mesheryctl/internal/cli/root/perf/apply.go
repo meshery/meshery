@@ -108,7 +108,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		userResponse := false
 
 		// setting up for error formatting
-		cmdUsed = "apply"
+		cmdUsed = cmd.Name()
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

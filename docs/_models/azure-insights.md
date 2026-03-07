@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Insights
 subtitle: Collaborative and visual infrastructure as design for Azure Insights
-image: /assets/img/integrations/azure-insights/icons/color/azure-insights-color.svg
-permalink: extensibility/integrations/azure-insights
+image: /extensions/models/azure-insights/icons/color/azure-insights-color.svg
+aliases: /extensibility/integrations/azure-insights
 docURL: https://docs.meshery.io/extensibility/integrations/azure-insights
 description: 
 integrations-category: Observability and Analysis
@@ -69,8 +68,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

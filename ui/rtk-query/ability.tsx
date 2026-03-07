@@ -1,0 +1,122 @@
+import { ability } from '../utils/can';
+import { useGetUserKeysQuery } from './userKeys';
+import _ from 'lodash';
+import CustomErrorMessage from '@/components/ErrorPage';
+import DefaultError from '@/components/General/error-404';
+import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import {
+  useGetSelectedOrganization,
+  // useGetUserPrefQuery,
+  useUpdateSelectedOrganizationMutation,
+  // useUpdateUserPrefMutation,
+} from './user';
+
+import { useEffect, useRef } from 'react';
+
+export const useGetUserAbilities = (org, skip) => {
+  const { data, ...res } = useGetUserKeysQuery(
+    {
+      orgId: org?.id,
+    },
+    {
+      skip,
+    },
+  );
+
+  const abilities =
+    data?.keys?.map((key) => ({
+      action: key.id,
+      subject: _.lowerCase(key.function),
+    })) || [];
+
+  return {
+    ...res,
+    abilities,
+  };
+};
+
+export const useGetCurrentAbilities = (org) => {
+  const shouldSkip = !org || !org.id;
+  const res = useGetUserAbilities(org, shouldSkip);
+
+  if (res?.abilities) {
+    ability.update(res.abilities);
+  }
+
+  return res;
+};
+
+const SelectedOrganizationProvider = ({ children }) => {
+  const {
+    selectedOrganization,
+    didFallback,
+    isLoading: isFetchingSelectedOrg,
+    error: errorFetchingSelectedOrg,
+  } = useGetSelectedOrganization();
+
+  const selectedOrganizationId = selectedOrganization?.id;
+
+  const [updatePrefs] = useUpdateSelectedOrganizationMutation();
+
+  const { isLoading: isLoadingAbilities, error: errorLoadingAbilities } = useGetCurrentAbilities({
+    id: selectedOrganizationId,
+  });
+
+  const prefUpdatedToFallback = useRef(false);
+
+  useEffect(() => {
+    console.log('[loadSession] selectedOrganization', selectedOrganization);
+
+    if (prefUpdatedToFallback.current) {
+      return;
+    }
+    if (
+      didFallback &&
+      selectedOrganizationId &&
+      !errorFetchingSelectedOrg &&
+      !isFetchingSelectedOrg
+    ) {
+      console.log('[loadSession] setting default org');
+      const res = updatePrefs(selectedOrganizationId);
+      prefUpdatedToFallback.current = true;
+      console.log('updatePrefs', res);
+    }
+  }, [didFallback, selectedOrganizationId, errorFetchingSelectedOrg, isFetchingSelectedOrg]);
+
+  if (
+    errorFetchingSelectedOrg ||
+    (!isFetchingSelectedOrg && !selectedOrganization && !didFallback)
+  ) {
+    return (
+      <>
+        <DefaultError />
+        <CustomErrorMessage
+          message={'Error occurred while fetching your current organization'}
+          showImage={false}
+        />
+      </>
+    );
+  }
+
+  if (errorLoadingAbilities) {
+    return (
+      <>
+        <DefaultError />
+        <CustomErrorMessage
+          message={
+            errorLoadingAbilities.message ||
+            'An error occurred while fetching your organization permissions'
+          }
+          showImage={false}
+        />
+      </>
+    );
+  }
+
+  const isLoading = isFetchingSelectedOrg || isLoadingAbilities;
+  return <DynamicFullScreenLoader isLoading={isLoading}>{children}</DynamicFullScreenLoader>;
+};
+
+export const LoadSessionGuard = ({ children }) => {
+  return <SelectedOrganizationProvider>{children}</SelectedOrganizationProvider>;
+};

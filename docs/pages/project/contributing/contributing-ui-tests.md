@@ -95,13 +95,13 @@ For Playwrights, always try to use a native OS whenever possible. The Docker-bas
 Setup playwright:
 
 ```bash
-make test-setup-ui
+make ui-test-setup
 ```
 
 Run the all project and test cases:
 
 ```bash
-make test-ui
+make ui-test
 ```
 
 ### Playwright server on docker based image

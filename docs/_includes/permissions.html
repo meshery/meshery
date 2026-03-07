@@ -68,11 +68,6 @@
         if (categoryIdx === -1 || functionIdx === -1 || featureIdx === -1 || keyIdIdx === -1) {
             console.error("One or more required columns ('Category', 'Function', 'Feature', 'Key ID') not found in the permissions data. Please check the 'keys.csv' file format.");
             return;
-        }
-
-        if (categoryIdx === -1 || functionIdx === -1 || featureIdx === -1 || keyIdIdx === -1) {
-          console.error('One or more required columns are missing in the CSV file.');
-          return;
         };
 
         // Remove the first two rows

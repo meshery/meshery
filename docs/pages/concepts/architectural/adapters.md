@@ -11,16 +11,16 @@ list: include
 
 ## What are Meshery Adapters?
 
-Part of Meshery's extensibility as a platform, Meshery Adapters are purpopse-built to address an area in need of management that is either considered optional to the platform and/or is considered an area in which additional depth of control is needed. Adapters extend Meshery's management capabilities in any number of ways, including lifecycle, configuration, performance, governance, identity and so on. Meshery Adapters come in different form factors, and depending on their purpose, deliver different sets or capabilities. Each Adapter registers its capabilities with Meshery Server. Meshery Server, in-turn, exposes those capabilities for you to control.
+Part of Meshery's extensibility as a platform, Meshery Adapters are purpose-built to address an area in need of management that is either considered optional to the platform and/or is considered an area in which additional depth of control is needed. Adapters extend Meshery's management capabilities in any number of ways, including lifecycle, configuration, performance, governance, identity, and so on. Meshery Adapters come in different form factors, and depending on their purpose, deliver different sets of capabilities. Each Adapter registers its capabilities with Meshery Server. Meshery Server, in turn, exposes those capabilities for you to control.
 
 ## Meshery Adapters for Lifecycle Management
 
-Adapters that extend Meshery's lifecycle management capabilities for infrastructure do so, by offering an infrastructure-specific interface to increase the depth of control that Meshery has over a particular technology. Meshery uses adapters to offer choice of load generator (for performance management) and for managing different layers of your infrastructure. Lifecycle adapters allow Meshery to interface with the different cloud native infrastructure, exposing their differentiated value to users.
+Adapters that extend Meshery's lifecycle management capabilities for infrastructure do so by offering an infrastructure-specific interface to increase the depth of control that Meshery has over a particular technology. Meshery uses adapters to offer a choice of load generator (for performance management) and for managing different layers of your infrastructure. Lifecycle adapters allow Meshery to interface with different cloud native infrastructure, exposing their differentiated value to users.
 
 Meshery has lifecycle adapters for managing the following cloud native infrastructure.
 {% assign sorted = site.adapters | sort: "project_status" | reverse %}
 
-| Adapter Status | Adapter | Port | Earliest Version supported |
+| Adapter Status | Adapter | Port | Earliest Version Supported |
 | :------------: | :----------: | :--: | :------------------------: |
 {% for adapter in sorted -%}
 {% if adapter.project_status -%}
@@ -30,15 +30,15 @@ Meshery has lifecycle adapters for managing the following cloud native infrastru
 
 ## Meshery Adapters for Performance Management
 
-_v0.8.0 Roadmap:_ The `meshery-nighthawk` adapter externalizes Nighthawk as an Meshery component.
+_v0.8.0 Roadmap:_ The `meshery-nighthawk` adapter externalizes Nighthawk as a Meshery component.
 
-Meshery Server allows users to generate traffic load tests using Nighthawk, fortio, and wrk2. Using the `meshery-nigthhawk` adapter, you can schedule, control, and execute performance tests.
+Meshery Server allows users to generate traffic load tests using Nighthawk, fortio, and wrk2. Using the `meshery-nighthawk` adapter, you can schedule, control, and execute performance tests.
 
-Run the `meshery-nighthawk` adapter as an externalized load generator when you: 
+Run the `meshery-nighthawk` adapter as an externalized load generator when you:
 
-1. Need a smaller sized container image for Meshery. Nighthawk binaries are dynamically linked (C++) and they need other dependencies to work. This causes bloat in Meshery Server’s image which doesn’t need them.
-1. Need *adaptive load control* of your performance tests, controlling the variability by which the system under test receives load. Use Meshery Server to run adaptive load tests.
-1. Need *distributed load testing* and the ability to horizontally scale Nighthawk, using Nighthawk’s execution forwarding service and results sink.
+1. Need a smaller sized container image for Meshery. Nighthawk binaries are dynamically linked (C++) and need other dependencies to work. This causes bloat in Meshery Server’s image, which doesn’t need them.
+2. Need *adaptive load control* of your performance tests, controlling the variability by which the system under test receives load.
+3. Need *distributed load testing* and the ability to horizontally scale Nighthawk, using Nighthawk’s execution forwarding service and results sink.
 
 ## Adapter Deployment and Registration
 
@@ -56,7 +56,7 @@ Yes, see the [extensibility]({{site.baseurl}}/extensibility) documentation for d
 
 #### Do adapters have to be written in Golang?
 
-No. Adapters much interface with Meshery Server via gRPC. What language is used in that adapter is the prerogative of a given adapter's maintainers.
+No. Adapters must interface with Meshery Server via gRPC. Which language is used in that adapter is the prerogative of a given adapter's maintainers.
 
 #### Can I run more than one instance of the same Meshery adapter?
 

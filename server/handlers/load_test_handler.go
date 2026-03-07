@@ -417,11 +417,14 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 		resultInst *periodic.RunnerResults
 		err        error
 	)
-	if loadTestOptions.LoadGenerator == models.Wrk2LG {
+	switch loadTestOptions.LoadGenerator {
+	case models.Wrk2LG:
 		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions, h.log)
-	} else if loadTestOptions.LoadGenerator == models.NighthawkLG {
+
+	case models.NighthawkLG:
 		resultsMap, resultInst, err = helpers.NighthawkLoadTest(loadTestOptions, h.log)
-	} else {
+
+	default:
 		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions, h.log)
 	}
 	if err != nil {

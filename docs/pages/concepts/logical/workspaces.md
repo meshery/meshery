@@ -29,7 +29,7 @@ You may create Workspaces to organize project-based work or to create domains of
 - Access to Workspaces may be granted to one or more teams.
 - As a point of collaboration to facilitate work, Workspaces may have zero or more Environments associated.
 
-After creating a Workspace, of your next steps is to resource that Workspace. Like a shared drive (or or shared collection of files). Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
+After creating a workspace, one of the next steps is to add resources to it. Similar to a shared drive or collection of files, Workspaces function like your Google Drive, while Meshery Designs are comparable to Google Docs.
 
 ## Key Components
 
@@ -44,17 +44,17 @@ See "[Environments](/concepts/logical/environments)" section for more informatio
 ### Designs
 
 - Infrastructure Designs are essential for creating reusable deployment templates. Users belonging to teams with access to a workspace can utilize these designs to deploy resources in the Kubernetes clusters associated with that workspace.
-- Like a shared drive (or or shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
-- One ore more designs can be assigned to a workspace.
+- Similar to a shared drive or collection of files, Workspaces function like your Google Drive, while Meshery Designs are comparable to Google Docs.
+- One or more designs can be assigned to a workspace.
 - Same design can be assigned to multiple workspaces.
 
 See "[Meshery Designs](/concepts/logical/designs)" section for more information.
 
 ### Organizations
 
-- Organizationa are the unit of tenancy in Meshery. Organizations group users together.
+- Organizations are the unit of tenancy in Meshery. Organizations group users together.
 - Organizations own all resources created by users, like Workspaces, Designs, Environments, and so on.
-- Remote Providers can extend Meshery to include additional identity and user management features like heirarchical organizations, or teams (as user groups), and so on.
+- Remote Providers can extend Meshery to include additional identity and user management features like hierarchical organizations, or teams (as user groups), and so on.
 - Remote Providers can extend Meshery to offer fine-grained permissions and access control to resources like Workspaces, Designs, Environments, and so on.
 
 Learn more about [extensible authorization](/extensibility/authorization).
@@ -63,7 +63,7 @@ Learn more about [extensible authorization](/extensibility/authorization).
 <!-- ### Teams
 
 - A Workspace is closely associated with Teams in Meshery. Teams are groups of users with varying permissions, and they are at the center of resource access and management within a Workspace.
-- One ore more teams can be assigned to a workspace.
+- One or more teams can be assigned to a workspace.
 - Same team can be assigned to multiple workspaces.
 
 See "[Teams](/extensions/team-management)" section for more information. -->
@@ -80,7 +80,7 @@ See "[Connections](/concepts/logical/connections)" section for more information.
 
 To make the most of Meshery Workspaces, here are some best practices:
 
-- Clearly define permissions in the form of team assignement to ensure proper access control.
+- Clearly define permissions in the form of team assignment to ensure proper access control.
 - Use Infrastructure Designs to standardize resource deployments.
 - Regularly review and update your Workspace's resources and configurations.
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/schemas/models/v1beta1/organization"
 )
 
 // MesheryApplicationPersister is the persister for persisting
@@ -23,7 +24,7 @@ func (op *OrganizationPersister) GetOrganizations(search, order string, page, pa
 	}
 
 	count := int64(0)
-	organizations := []*Organization{}
+	organizations := []*organization.Organization{}
 
 	query := op.DB.Where("updated_at > ?", updatedAfter).Order(order)
 
@@ -46,40 +47,40 @@ func (op *OrganizationPersister) GetOrganizations(search, order string, page, pa
 	return marshalOrganizationsPage(organizationsPage), nil
 }
 
-func (op *OrganizationPersister) SaveOrganization(organization *Organization) ([]byte, error) {
-	if organization.ID == nil {
+func (op *OrganizationPersister) SaveOrganization(org *organization.Organization) ([]byte, error) {
+	if org.Id == uuid.Nil {
 		id, err := uuid.NewV4()
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
 		}
 
-		organization.ID = &id
+		org.Id = id
 	}
 
-	return marshalOrganizations([]Organization{*organization}), op.DB.Save(organization).Error
+	return marshalOrganizations([]organization.Organization{*org}), op.DB.Save(org).Error
 }
 
 func (op *OrganizationPersister) GetOrganzation(id uuid.UUID) ([]byte, error) {
-	var organization Organization
+	var organization organization.Organization
 	err := op.DB.First(&organization, id).Error
 	return marshalOrganization(&organization), err
 }
 
 func (op *OrganizationPersister) GetOrganizationsCount() (int64, error) {
 	var count int64
-	if err := op.DB.Model(&Organization{}).Count(&count).Error; err != nil {
+	if err := op.DB.Model(&organization.Organization{}).Count(&count).Error; err != nil {
 		return 0, err
 	}
 	return count, nil
 }
 
-func marshalOrganization(org *Organization) []byte {
+func marshalOrganization(org *organization.Organization) []byte {
 	res, _ := json.Marshal(org)
 
 	return res
 }
 
-func marshalOrganizations(orgs []Organization) []byte {
+func marshalOrganizations(orgs []organization.Organization) []byte {
 	res, _ := json.Marshal(orgs)
 
 	return res

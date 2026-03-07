@@ -45,7 +45,7 @@ var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the registry with latest data.",
 	Long: `Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/registry/update`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/update`,
 	Example: `
 // Update models from Meshery Integration Spreadsheet
 mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred "$CRED" -i [path to the directory containing models].

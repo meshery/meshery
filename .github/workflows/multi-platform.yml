@@ -56,7 +56,7 @@ jobs:
     steps:
       - 
         name: Checkout repo
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v6
       - 
         name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"

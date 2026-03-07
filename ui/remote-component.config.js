@@ -82,7 +82,7 @@ module.exports = {
     'react-redux': require('react-redux'),
     uuid: require('uuid'),
     moment: require('moment'),
-    'react-json-view': require('react-json-view'),
+    '@microlink/react-json-view': require('@microlink/react-json-view'),
     'graphql-ws': require('graphql-ws'),
     'react-dom': require('react-dom'),
     '@xstate/react': require('@xstate/react'),

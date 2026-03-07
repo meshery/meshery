@@ -1,0 +1,24 @@
+version: 0.0.3
+name: ms-modules-rest
+displayName: ms-modules-rest
+createdAt: "2025-10-08T08:16:20Z"
+description: Meshery design for helm ms-modules-rest
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/b597c1a5-a834-4f18-9351-4d78a8d4bfa2/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1.You must replace the placeholder ID at the top of the file with a unique one.\n2.The user must edit the ms-modules-rest-vaultsecret component and provide a real token.\n3.The design uses version 0.0.11 and image policy is if not present \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 25304b14-6c70-42cd-b6cc-a86b829f90e9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/b597c1a5-a834-4f18-9351-4d78a8d4bfa2-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/b597c1a5-a834-4f18-9351-4d78a8d4bfa2-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

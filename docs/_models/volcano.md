@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Volcano
 subtitle: Collaborative and visual infrastructure as design for Volcano
-image: /assets/img/integrations/volcano/icons/color/volcano-color.svg
-permalink: extensibility/integrations/volcano
+image: /extensions/models/volcano/icons/color/volcano-color.svg
+aliases: /extensibility/integrations/volcano
 docURL: https://docs.meshery.io/extensibility/integrations/volcano
 description: 
 integrations-category: Orchestration & Management
@@ -38,7 +37,15 @@ components:
   colorIcon: assets/img/integrations/volcano/components/cron-job/icons/color/cron-job-color.svg
   whiteIcon: assets/img/integrations/volcano/components/cron-job/icons/white/cron-job-white.svg
   description: 
-components-count: 7
+- name: colocation-configuration
+  colorIcon: assets/img/integrations/volcano/components/colocation-configuration/icons/color/colocation-configuration-color.svg
+  whiteIcon: assets/img/integrations/volcano/components/colocation-configuration/icons/white/colocation-configuration-white.svg
+  description: 
+- name: node-shard
+  colorIcon: assets/img/integrations/volcano/components/node-shard/icons/color/node-shard-color.svg
+  whiteIcon: assets/img/integrations/volcano/components/node-shard/icons/white/node-shard-white.svg
+  description: 
+components-count: 9
 relationships: 
 relationship-count: 0
 featureList: [
@@ -48,8 +55,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
