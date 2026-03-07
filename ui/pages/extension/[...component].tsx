@@ -20,6 +20,22 @@ import {
   updateTitle,
 } from '@/store/slices/mesheryUi';
 import { useDispatch, useSelector } from 'react-redux';
+import { GetStaticPaths, GetStaticProps } from 'next';
+
+/**
+ * Define static paths for the extension routes.
+ * Required for static export with dynamic catch-all routes.
+ */
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [{ params: { component: ['meshmap'] } }],
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  return { props: { component: params?.component || [] } };
+};
 
 /**
  * getPath returns the current pathname
