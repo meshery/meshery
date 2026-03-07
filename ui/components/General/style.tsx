@@ -415,15 +415,15 @@ export const HelpButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
 })(({ isCollapsed }) => ({
   ...(isCollapsed && {
-    height: '32px',
-    width: '32px',
+    height: '35px',
+    width: '35px',
     padding: '4px',
     marginTop: '-4px',
     transform: 'translateX(0px)',
   }),
   ...(!isCollapsed && {
-    height: '32px',
-    width: '32px',
+    height: '35px',
+    width: '35px',
     padding: '4px',
     transform: 'translateX(0.5px)',
   }),
