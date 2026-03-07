@@ -1039,7 +1039,7 @@ const Navigator_ = () => {
           <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
             <HelpButton isCollapsed={isDrawerCollapsed} onClick={toggleSpacing}>
               <HelpIcon
-                style={{
+                sx={{
                   fontSize: '1.45rem',
                   ...iconSmall,
                   color: '#fff',
