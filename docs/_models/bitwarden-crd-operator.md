@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Bitwarden by Lerentis
 subtitle: Collaborative and visual infrastructure as design for Bitwarden by Lerentis
-image: /assets/img/integrations/bitwarden-crd-operator/icons/color/bitwarden-crd-operator-color.svg
-permalink: extensibility/integrations/bitwarden-crd-operator
+image: /extensions/models/bitwarden-crd-operator/icons/color/bitwarden-crd-operator-color.svg
+aliases: /extensibility/integrations/bitwarden-crd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/bitwarden-crd-operator
 description: 
 integrations-category: Security & Compliance
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Streamlined Bitwarden secrets management in Kubernetes"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

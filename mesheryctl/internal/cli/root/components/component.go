@@ -27,7 +27,7 @@ import (
 )
 
 type componentFlags struct {
-	Count bool
+	Count bool `json:"count" validate:"boolean"`
 }
 
 var (
@@ -54,18 +54,10 @@ mesheryctl component list
 mesheryctl component search [component-name]
 
 // View a specific component
-mesheryctl component view [component-name]
+mesheryctl component view [component-name | component-id]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(componentFlagsProvided)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, componentFlagsProvided)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		argsIsEmpty := len(args) == 0 || (len(args) == 1 && args[0] == "")
@@ -109,6 +101,7 @@ func init() {
 func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponentsAPIResponse) ([][]string, int64) {
 	rows := [][]string{}
 	for _, component := range componentsResponse.Components {
+		componentID := component.Id.String()
 		componentName := component.DisplayName
 		if componentName == "" {
 			componentName = "N/A"
@@ -121,7 +114,8 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 		if componentVersion == "" {
 			componentVersion = "N/A"
 		}
-		rows = append(rows, []string{componentName, modelName, componentVersion})
+		rows = append(rows, []string{componentID, componentName, modelName, componentVersion})
+
 	}
 
 	return rows, int64(componentsResponse.Count)

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubedl
 subtitle: Collaborative and visual infrastructure as design for Kubedl
-image: /assets/img/integrations/kubedl/icons/color/kubedl-color.svg
-permalink: extensibility/integrations/kubedl
+image: /extensions/models/kubedl/icons/color/kubedl-color.svg
+aliases: /extensibility/integrations/kubedl
 docURL: https://docs.meshery.io/extensibility/integrations/kubedl
 description: 
 integrations-category: Provisioning
@@ -76,8 +75,5 @@ featureList: [
 ]
 howItWorks: "Orchestrates Kubedl jobs"
 howItWorksDetails: "Streamlined deep learning job management and scaling on Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

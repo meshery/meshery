@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubeform Provider AWS
 subtitle: Collaborative and visual infrastructure as design for Kubeform Provider AWS
-image: /assets/img/integrations/kubeform-provider-aws/icons/color/kubeform-provider-aws-color.svg
-permalink: extensibility/integrations/kubeform-provider-aws
+image: /extensions/models/kubeform-provider-aws/icons/color/kubeform-provider-aws-color.svg
+aliases: /extensibility/integrations/kubeform-provider-aws
 docURL: https://docs.meshery.io/extensibility/integrations/kubeform-provider-aws
 description: 
 integrations-category: Provisioning
@@ -198,8 +197,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

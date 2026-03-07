@@ -134,17 +134,6 @@ const MeshModelComponent_ = ({
 
   const fetchData = useCallback(async () => {
     try {
-      if (!searchText && modelFilters.page === 0) {
-        const countParams = { params: { page: 0, pagesize: 1, search: '' } };
-        getMeshModelsData(
-          { params: { ...countParams.params, components: false, relationships: false } },
-          true,
-        );
-        getComponentsData({ params: { ...countParams.params, trim: true } }, true);
-        getRelationshipsData(countParams, true);
-        getRegistrantsData(countParams, true);
-      }
-
       let response;
       switch (view) {
         case MODELS:
@@ -342,7 +331,7 @@ const MeshModelComponent_ = ({
   }, []);
   useEffect(() => {
     fetchData();
-  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
+  }, [fetchData]);
 
   // Update view when external view changes (for modal usage)
   useEffect(() => {

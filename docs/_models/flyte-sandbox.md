@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Flyte Sandbox
 subtitle: Collaborative and visual infrastructure as design for Flyte Sandbox
-image: /assets/img/integrations/flyte-sandbox/icons/color/flyte-sandbox-color.svg
-permalink: extensibility/integrations/flyte-sandbox
+image: /extensions/models/flyte-sandbox/icons/color/flyte-sandbox-color.svg
+aliases: /extensibility/integrations/flyte-sandbox
 docURL: https://docs.meshery.io/extensibility/integrations/flyte-sandbox
 description: 
 integrations-category: Provisioning
@@ -28,8 +27,5 @@ featureList: [
 ]
 howItWorks: "Integrates with Flyte Sandbox"
 howItWorksDetails: "Facilitates learning and experimentation with Flyte"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
