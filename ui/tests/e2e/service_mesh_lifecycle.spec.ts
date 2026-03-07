@@ -3,7 +3,15 @@ import { ENV } from './env';
 import { DashboardPage } from './pages/DashboardPage';
 
 test.describe.skip('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
-  const mesheryAdapters = [{ adapterName: 'Istio', adapterPort: '10000', deploy: false }];
+  type MesheryAdapterConfig = {
+    adapterName: string;
+    adapterPort: string;
+    deploy: boolean;
+  };
+
+  const mesheryAdapters: MesheryAdapterConfig[] = [
+    { adapterName: 'Istio', adapterPort: '10000', deploy: false },
+  ];
 
   mesheryAdapters.forEach(({ adapterName, adapterPort }) => {
     const ADAPTER_LOCATION = `localhost:${adapterPort}`;
