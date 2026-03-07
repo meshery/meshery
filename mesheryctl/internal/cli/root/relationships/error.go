@@ -1,9 +1,24 @@
 package relationships
 
-import "fmt"
+import (
+	"github.com/meshery/meshkit/errors"
+)
 
 var (
-	viewUsageMsg           = "\n\nUsage: mesheryctl exp relationship view [model-name]\nRun 'mesheryctl exp relationship view --help' to see detailed help message"
-	errNoModelNameProvided = fmt.Errorf("[model-name] isn't specified%s", viewUsageMsg)
-	errTooManyArgs         = fmt.Errorf("too many arguments, only [model-name] is expected%s", viewUsageMsg)
+	ErrEmptySheetDataCode = "mesheryctl-1203"
 )
+
+const (
+	errInvalidArg = "only one argument must be provided and needs to be enclosed by double quotes if it contains spaces (eg. \"model name\", modelName)"
+)
+
+func ErrEmptySheetData(err error) error {
+	return errors.New(
+		ErrEmptySheetDataCode,
+		errors.Alert,
+		[]string{"Invalid spreadsheet"},
+		[]string{err.Error()},
+		[]string{"Ensure the spreadsheet contains valid relationship entries before importing"},
+		[]string{"Spreadsheet must contain two headers and values for it's headers"},
+	)
+}
