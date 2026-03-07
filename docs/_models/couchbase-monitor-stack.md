@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Couchbase Monitor Stack
 subtitle: Collaborative and visual infrastructure as design for Couchbase Monitor Stack
-image: /assets/img/integrations/couchbase-monitor-stack/icons/color/couchbase-monitor-stack-color.svg
-permalink: extensibility/integrations/couchbase-monitor-stack
+image: /extensions/models/couchbase-monitor-stack/icons/color/couchbase-monitor-stack-color.svg
+aliases: /extensibility/integrations/couchbase-monitor-stack
 docURL: https://docs.meshery.io/extensibility/integrations/couchbase-monitor-stack
 description: 
 integrations-category: App Definition and Development
@@ -52,8 +51,5 @@ featureList: [
 ]
 howItWorks: "Integrates monitoring stack"
 howItWorksDetails: "Enhanced observability of Couchbase clusters in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

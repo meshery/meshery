@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Solr Operator
 subtitle: Collaborative and visual infrastructure as design for Solr Operator
-image: /assets/img/integrations/solr-operator/icons/color/solr-operator-color.svg
-permalink: extensibility/integrations/solr-operator
+image: /extensions/models/solr-operator/icons/color/solr-operator-color.svg
+aliases: /extensibility/integrations/solr-operator
 docURL: https://docs.meshery.io/extensibility/integrations/solr-operator
 description: 
 integrations-category: Analytics
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

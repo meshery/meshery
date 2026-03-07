@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Posthog
 subtitle: Collaborative and visual infrastructure as design for Posthog
-image: /assets/img/integrations/posthog/icons/color/posthog-color.svg
-permalink: extensibility/integrations/posthog
+image: /extensions/models/posthog/icons/color/posthog-color.svg
+aliases: /extensibility/integrations/posthog
 docURL: https://docs.meshery.io/extensibility/integrations/posthog
 description: 
 integrations-category: App Definition and Development
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Integrates PostHog analytics"
 howItWorksDetails: "Data-driven insights for improving Kubernetes applications and services"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

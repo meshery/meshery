@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Gerrit Operator
 subtitle: Collaborative and visual infrastructure as design for Gerrit Operator
-image: /assets/img/integrations/gerrit-operator/icons/color/gerrit-operator-color.svg
-permalink: extensibility/integrations/gerrit-operator
+image: /extensions/models/gerrit-operator/icons/color/gerrit-operator-color.svg
+aliases: /extensibility/integrations/gerrit-operator
 docURL: https://docs.meshery.io/extensibility/integrations/gerrit-operator
 description: 
 integrations-category: App Definition and Development
@@ -48,8 +47,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Gerrit"
 howItWorksDetails: "Streamlined code review management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

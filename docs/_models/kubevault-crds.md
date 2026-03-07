@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubevault Crds
 subtitle: Collaborative and visual infrastructure as design for Kubevault Crds
-image: /assets/img/integrations/kubevault-crds/icons/color/kubevault-crds-color.svg
-permalink: extensibility/integrations/kubevault-crds
+image: /extensions/models/kubevault-crds/icons/color/kubevault-crds-color.svg
+aliases: /extensibility/integrations/kubevault-crds
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-crds
 description: 
 integrations-category: Security & Compliance
@@ -128,8 +127,5 @@ featureList: [
 ]
 howItWorks: "Integrates with KubeVault CRDs"
 howItWorksDetails: "Simplified and Kubernetes-native Vault management"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

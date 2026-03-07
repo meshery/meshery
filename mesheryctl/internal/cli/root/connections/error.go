@@ -19,6 +19,13 @@ var (
 	ErrConnectionNotFoundCode     = "mesheryctl-1197"
 )
 
+var (
+	deleteUsageMsg = "Usage: mesheryctl connection delete --help' to see detailed help message"
+	viewUsageMsg   = "Usage: mesheryctl connection view --help' to see detailed help message"
+	errNoArgMsg    = "connection name or ID isn't specified"
+	errMultiArgMsg = "too many arguments specified"
+)
+
 func errInvalidConnectionType(connectionType string) error {
 	return errors.New(ErrConnectionTypeCode, errors.Alert, []string{fmt.Sprintf("Invalid connection type %s provided", connectionType)}, []string{fmt.Sprintf("the provided connection type is not yet supported. Supported type(s) are: %s", strings.Join(supportedConnectionTypes, ", "))}, []string{}, []string{fmt.Sprintf("Please provide a valid connection type: %s", strings.Join(supportedConnectionTypes, ", "))})
 }

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: EDP Argocd Operator
 subtitle: Collaborative and visual infrastructure as design for EDP Argocd Operator
-image: /assets/img/integrations/edp-argocd-operator/icons/color/edp-argocd-operator-color.svg
-permalink: extensibility/integrations/edp-argocd-operator
+image: /extensions/models/edp-argocd-operator/icons/color/edp-argocd-operator-color.svg
+aliases: /extensibility/integrations/edp-argocd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/edp-argocd-operator
 description: 
 integrations-category: Provisioning
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Manages ArgoCD in EDP"
 howItWorksDetails: "Streamlined ArgoCD setup and integration with EDP"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

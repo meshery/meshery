@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS MQ
 subtitle: Collaborative and visual infrastructure as design for AWS MQ
-image: /assets/img/integrations/aws-mq-controller/icons/color/aws-mq-controller-color.svg
-permalink: extensibility/integrations/aws-mq-controller
+image: /extensions/models/aws-mq-controller/icons/color/aws-mq-controller-color.svg
+aliases: /extensibility/integrations/aws-mq-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-mq-controller
 description: 
 integrations-category: App Definition and Development
@@ -45,8 +44,5 @@ featureList: [
 ]
 howItWorks: "Integrates with AWS MQ"
 howItWorksDetails: "Simplified message brokering for Kubernetes applications on AWS"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

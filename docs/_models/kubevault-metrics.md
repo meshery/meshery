@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubevault Metrics
 subtitle: Collaborative and visual infrastructure as design for Kubevault Metrics
-image: /assets/img/integrations/kubevault-metrics/icons/color/kubevault-metrics-color.svg
-permalink: extensibility/integrations/kubevault-metrics
+image: /extensions/models/kubevault-metrics/icons/color/kubevault-metrics-color.svg
+aliases: /extensibility/integrations/kubevault-metrics
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-metrics
 description: 
 integrations-category: Security & Compliance
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Integrates KubeVault metrics"
 howItWorksDetails: "Enhanced monitoring and observability of Vault in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

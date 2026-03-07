@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Cache
 subtitle: Collaborative and visual infrastructure as design for Azure Cache
-image: /assets/img/integrations/azure-cache/icons/color/azure-cache-color.svg
-permalink: extensibility/integrations/azure-cache
+image: /extensions/models/azure-cache/icons/color/azure-cache-color.svg
+aliases: /extensibility/integrations/azure-cache
 docURL: https://docs.meshery.io/extensibility/integrations/azure-cache
 description: 
 integrations-category: Cloud Native Storage
@@ -56,8 +55,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

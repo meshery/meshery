@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: KEDA
 subtitle: Collaborative and visual infrastructure as design for KEDA
-image: /assets/img/integrations/keda/icons/color/keda-color.svg
-permalink: extensibility/integrations/keda
+image: /extensions/models/keda/icons/color/keda-color.svg
+aliases: /extensibility/integrations/keda
 docURL: https://docs.meshery.io/extensibility/integrations/keda
 description: 
 integrations-category: Orchestration & Management
@@ -48,8 +47,5 @@ featureList: [
 ]
 howItWorks: "Integrates with KEDA scalers"
 howItWorksDetails: "Event-driven autoscaling of Kubernetes applications"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
