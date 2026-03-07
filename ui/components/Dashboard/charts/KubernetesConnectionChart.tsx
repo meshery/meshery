@@ -95,7 +95,7 @@ export default function KubernetesConnectionStatsChart() {
             </Typography>
           </div>
           <div onClick={(e) => e.stopPropagation()}>
-            <CustomTextTooltip title="This chart shows the status of your connections to Kubernetes clusters.">
+            <CustomTextTooltip title="This chart shows the status of connections to your Kubernetes clusters.">
               <div>
                 <InfoOutlined
                   color={theme.palette.icon.default}
