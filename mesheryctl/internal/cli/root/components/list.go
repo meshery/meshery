@@ -17,14 +17,13 @@ package components
 import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
 type componentListFlag struct {
-	Count    bool
-	Page     int
-	PageSize int
+	Count    bool `json:"count" validate:"boolean"`
+	Page     int  `json:"page" validate:"omitempty,gte=1"`
+	PageSize int  `json:"page-size" validate:"omitempty,gte=1"`
 }
 
 var cmdComponentListFlag componentListFlag
@@ -49,15 +48,7 @@ mesheryctl component list --page [page-number] --pagesize [page-size]
 mesheryctl component list --count
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(cmdComponentListFlag)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentListFlag)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		componentData := display.DisplayDataAsync{
