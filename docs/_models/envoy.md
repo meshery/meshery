@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Envoy
 subtitle: Collaborative and visual infrastructure as design for Envoy
-image: /assets/img/integrations/envoy/icons/color/envoy-color.svg
-permalink: extensibility/integrations/envoy
+image: /extensions/models/envoy/icons/color/envoy-color.svg
+aliases: /extensibility/integrations/envoy
 docURL: https://docs.meshery.io/extensibility/integrations/envoy
 description: 
 integrations-category: Orchestration & Management
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Integrates Envoy configurations"
 howItWorksDetails: "Enhanced traffic management and observability in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

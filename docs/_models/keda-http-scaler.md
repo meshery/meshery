@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: KEDA HTTP Scaler
 subtitle: Collaborative and visual infrastructure as design for KEDA HTTP Scaler
-image: /assets/img/integrations/keda-http-scaler/icons/color/keda-http-scaler-color.svg
-permalink: extensibility/integrations/keda-http-scaler
+image: /extensions/models/keda-http-scaler/icons/color/keda-http-scaler-color.svg
+aliases: /extensibility/integrations/keda-http-scaler
 docURL: https://docs.meshery.io/extensibility/integrations/keda-http-scaler
 description: 
 integrations-category: Orchestration & Management
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Scales deployments with KEDA HTTP Scaler"
 howItWorksDetails: "Automated scaling of Kubernetes applications based on HTTP traffic"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
