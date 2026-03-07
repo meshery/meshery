@@ -20,9 +20,8 @@ project:
     detailed-guide: https://docs.meshery.io/guides
     code-of-conduct: https://github.com/meshery/meshery/blob/master/CODE_OF_CONDUCT.md
     release-process: https://docs.meshery.io/project/contributing/build-and-release#release-channels
-    support-policy: https://docs.meshery.io/project/contributing/build-and-release#release-channels
-    signature-verification: 
-    design: 
+    support-policy: https://docs.meshery.io/project/contributing/build-and-release#release-support
+    design: https://docs.meshery.io/concepts/architecture
   repositories:
     - name: Meshery
       url: https://github.com/meshery/meshery
@@ -91,9 +90,7 @@ repository:
           Self assessment has not yet been completed.
   documentation:
     contributing-guide: https://docs.meshery.io/project/contributing
-    dependency-management-policy: 
     governance: https://github.com/meshery/meshery/blob/master/GOVERNANCE.md
-    review-policy: 
     security-policy: https://github.com/meshery/meshery/blob/master/SECURITY.md
   release:
     automated-pipeline: true
