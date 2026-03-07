@@ -30,8 +30,8 @@ func TestGenerateErrorOutput(t *testing.T) {
 		Fixture          string
 		ExpectedResponse string
 		ExpectError      bool
-		IsOutputGolden   bool  `default:"true"`
-		ExpectedError    error `default:"nil"`
+		IsOutputGolden   bool
+		ExpectedError    error
 	}{
 
 		{
@@ -101,8 +101,8 @@ func TestGenerateDataOutput(t *testing.T) {
 		Fixture          string
 		ExpectedResponse string
 		ExpectError      bool
-		IsOutputGolden   bool  `default:"true"`
-		ExpectedError    error `default:"nil"`
+		IsOutputGolden   bool
+		ExpectedError    error
 	}{
 		{
 			Name:             "Generate registered relationships",

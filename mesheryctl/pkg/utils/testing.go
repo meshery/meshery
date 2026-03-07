@@ -56,8 +56,8 @@ type CmdTestInput struct {
 	ExpectedResponseYaml string
 	ExpectError          bool
 	ErrorStringContains  []string
-	ExpectedError        error `default:"nil"`
-	IsOutputGolden       bool  `default:"true"`
+	ExpectedError        error
+	IsOutputGolden       bool
 }
 
 type GoldenFile struct {
@@ -352,8 +352,8 @@ type MesheryListCommandTest struct {
 	Fixture          string
 	ExpectedResponse string
 	ExpectError      bool
-	ExpectedError    error `default:"nil"`
-	IsOutputGolden   bool  `default:"true"`
+	ExpectedError    error
+	IsOutputGolden   bool
 }
 
 func GetToken(t *testing.T) string {
@@ -462,8 +462,8 @@ type MesheryCommandTest struct {
 	Fixture          string
 	ExpectedResponse string
 	ExpectError      bool
-	IsOutputGolden   bool  `default:"true"`
-	ExpectedError    error `default:"nil"`
+	IsOutputGolden   bool
+	ExpectedError    error
 }
 
 func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommandTest, commandDir string, commandName string) {
@@ -559,8 +559,8 @@ type MesheryMultiURLCommamdTest struct {
 	ExpectedResponse string
 	Token            string
 	ExpectError      bool
-	IsOutputGolden   bool  `default:"true"`
-	ExpectedError    error `default:"nil"`
+	IsOutputGolden   bool
+	ExpectedError    error
 }
 
 func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryMultiURLCommamdTest, commandDir string, commandName string, resetVariables func()) {
