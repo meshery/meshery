@@ -1,0 +1,20 @@
+{{ define "main" }}
+{{- $searchIdx := resources.Get "json/offline-search-index.json" | resources.ExecuteAsTemplate "offline-search-index.json" . -}}
+{{- if hugo.IsProduction -}}{{- $searchIdx = $searchIdx | fingerprint "md5" -}}{{- end -}}
+<div class="td-content">
+    <div class="container-fluid">
+        <h1 id="search-title" style="margin-bottom: 2rem;">Search Results</h1>
+
+        <div id="search-results"
+             data-search-index="{{ $searchIdx.RelPermalink }}">
+        </div>
+
+        <div id="search-loading" style="text-align: center; margin-top: 2rem;">
+            <p><i class="fas fa-spinner fa-spin"></i> Loading search index...</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/lunr/lunr.js"></script>
+<script src="{{ "js/search-page.js" | relURL }}"></script>
+{{ end }}
