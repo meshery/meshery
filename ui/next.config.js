@@ -12,7 +12,7 @@ const nextConfig = {
   },
 
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
 
   // Transpile packages that have CSS imports or ESM issues
