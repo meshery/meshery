@@ -25,6 +25,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
 	pkgconstants "github.com/meshery/meshery/mesheryctl/pkg/constants"
@@ -86,17 +87,17 @@ mesheryctl system start --provider Meshery
 		}
 		cfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 			return nil
 		}
 		ctx, err := cfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
+			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 			return nil
 		}
 		return nil

@@ -22,6 +22,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
@@ -59,7 +60,7 @@ mesheryctl system status --verbose
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			utils.Log.Error(ErrHealthCheckFailed(err))
+			mesheryctllogger.Log.Error(ErrHealthCheckFailed(err))
 			return nil
 		}
 		// execute healthchecks
@@ -77,7 +78,7 @@ mesheryctl system status --verbose
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 			return nil
 		}
 		// get the platform, channel and the version of the current context
@@ -85,14 +86,14 @@ mesheryctl system status --verbose
 		if tempContext != "" {
 			err = mctlCfg.SetCurrentContext(tempContext)
 			if err != nil {
-				utils.Log.Error(ErrSetCurrentContext(errors.Wrap(err, "failed to set temporary context")))
+				mesheryctllogger.Log.Error(ErrSetCurrentContext(errors.Wrap(err, "failed to set temporary context")))
 				return nil
 			}
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
+			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
 
@@ -100,11 +101,11 @@ mesheryctl system status --verbose
 
 		ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 			return nil
 		}
 		if !ok {
-			utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
+			mesheryctllogger.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
 			return nil
 		}
 
@@ -133,7 +134,7 @@ mesheryctl system status --verbose
 			}
 			hc, err := NewHealthChecker(hcOptions)
 			if err != nil {
-				utils.Log.Error(ErrHealthCheckFailed(err))
+				mesheryctllogger.Log.Error(ErrHealthCheckFailed(err))
 				return nil
 			}
 			// If k8s is available print the status of pods in the MesheryNamespace

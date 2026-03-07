@@ -235,5 +235,5 @@ func setupLogger() {
 		logLevel = logrus.DebugLevel
 	}
 
-	utils.Log = *mesheryctllogger.GetLogger(logLevel)
+	utils.Log = mesheryctllogger.GetMeshkitLogger(logLevel)
 }

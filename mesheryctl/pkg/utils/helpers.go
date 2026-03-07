@@ -23,6 +23,7 @@ import (
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/models"
@@ -259,7 +260,7 @@ var (
 	// TokenFlag sets token location passed by user with --token
 	TokenFlag = "Not Set"
 	// global logger variable
-	Log logger.Handler
+	Log *mesheryctllogger.MesheryctlLogger
 	// Color for the whiteboard printer
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 	// global logger error variable

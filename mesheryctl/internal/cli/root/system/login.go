@@ -17,6 +17,7 @@ package system
 import (
 	"os"
 
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -58,12 +59,12 @@ mesheryctl system login -p Meshery
 
 		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 			return nil
 		}
 
 		if !isRunning {
-			utils.Log.Error(utils.ErrMesheryServerNotRunning(currCtx.GetPlatform()))
+			mesheryctllogger.Log.Error(utils.ErrMesheryServerNotRunning(currCtx.GetPlatform()))
 			return nil
 		}
 

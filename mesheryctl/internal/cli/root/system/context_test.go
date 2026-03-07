@@ -422,7 +422,6 @@ func TestSwitchContextCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-
 			SystemCmd.SetOut(b)
 			SystemCmd.SetErr(b)
 			SystemCmd.SetArgs(tt.Args)

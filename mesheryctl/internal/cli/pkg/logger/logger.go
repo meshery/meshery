@@ -1,6 +1,7 @@
 package mesheryctllogger
 
 import (
+	"io"
 	"os"
 	"sync"
 
@@ -10,9 +11,13 @@ import (
 
 var lock = &sync.Mutex{}
 
-var Log logger.Handler
+type MesheryctlLogger struct {
+	Log logger.Handler
+}
 
-func GetLogger(level logrus.Level) *logger.Handler {
+var Log *MesheryctlLogger
+
+func GetMeshkitLogger(level logrus.Level) *MesheryctlLogger {
 	if Log == nil {
 		lock.Lock()
 		defer lock.Unlock()
@@ -31,11 +36,70 @@ func GetLogger(level logrus.Level) *logger.Handler {
 				os.Exit(1)
 			}
 
-			Log = log
+			Log = &MesheryctlLogger{Log: log}
 		} else {
 			Log.SetLevel(level)
 		}
 	}
+	return Log
+}
 
-	return &Log
+func (ml *MesheryctlLogger) SetLevel(level logrus.Level) {
+	ml.Log.SetLevel(level)
+}
+
+func (ml *MesheryctlLogger) GetLevel() logrus.Level {
+	return logrus.Level(ml.Log.GetLevel())
+}
+
+func (ml *MesheryctlLogger) Fatal(err error) {
+	ml.Log.Fatal(err)
+}
+
+func (ml *MesheryctlLogger) Fatalf(format string, args ...interface{}) {
+	ml.Log.Fatalf(format, args...)
+}
+
+func (ml *MesheryctlLogger) Error(err error) {
+	ml.Log.Error(err)
+}
+
+func (ml *MesheryctlLogger) Errorf(format string, args ...interface{}) {
+	ml.Log.Errorf(format, args...)
+}
+
+func (ml *MesheryctlLogger) Info(description ...interface{}) {
+	ml.Log.Info(description...)
+}
+
+func (ml *MesheryctlLogger) Infof(format string, args ...interface{}) {
+	ml.Log.Infof(format, args...)
+}
+
+func (ml *MesheryctlLogger) Debug(description ...interface{}) {
+	ml.Log.Debug(description...)
+}
+
+func (ml *MesheryctlLogger) Debugf(format string, args ...interface{}) {
+	ml.Log.Debugf(format, args...)
+}
+
+func (ml *MesheryctlLogger) Warn(err error) {
+	ml.Log.Warn(err)
+}
+
+func (ml *MesheryctlLogger) Warnf(format string, args ...interface{}) {
+	ml.Log.Warnf(format, args...)
+}
+
+func (ml *MesheryctlLogger) UpdateLogOutput(w io.Writer) {
+	ml.Log.UpdateLogOutput(w)
+}
+
+func (ml *MesheryctlLogger) ControllerLogger() logger.Handler {
+	return ml.Log
+}
+
+func (ml *MesheryctlLogger) DatabaseLogger() logger.Handler {
+	return ml.Log
 }

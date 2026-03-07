@@ -19,10 +19,10 @@ import (
 	"os"
 	"sort"
 
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -53,7 +53,7 @@ mesheryctl system provider view
 		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 			return nil
 		}
 		focusedContext := tempContext
@@ -63,26 +63,24 @@ mesheryctl system provider view
 
 		if showProviderForAllContext {
 			for k, v := range mctlCfg.Contexts {
-				log.Println(PrintProviderToStdout(v, k))
-				log.Println()
+				mesheryctllogger.Log.Infof("%s\n", PrintProviderToStdout(v, k))
 			}
-			log.Printf("Current Context: %v", focusedContext)
+			mesheryctllogger.Log.Infof("Current Context: %v", focusedContext)
 			return nil
 		}
 
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
-			utils.Log.Error(ErrSetCurrentContext(err))
+			mesheryctllogger.Log.Error(ErrSetCurrentContext(err))
 			return nil
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
+			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
-		log.Print(PrintProviderToStdout(*currCtx, focusedContext))
-		log.Println()
+		mesheryctllogger.Log.Infof("%s\n", PrintProviderToStdout(*currCtx, focusedContext))
 		return nil
 	},
 }
@@ -104,7 +102,7 @@ mesheryctl system provider list
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 			return nil
 		}
 
@@ -115,24 +113,24 @@ mesheryctl system provider list
 
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
-			utils.Log.Error(ErrSetCurrentContext(err))
+			mesheryctllogger.Log.Error(ErrSetCurrentContext(err))
 			return nil
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
+			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
 
-		log.Printf("Current provider: %s\n", currCtx.Provider)
+		mesheryctllogger.Log.Infof("Current provider: %s", currCtx.Provider)
 
 		providers, err := utils.GetProviderInfo(mctlCfg)
 		if err != nil {
-			log.Fatalln("could not fetch providers as Meshery server was unreachable\nStart Meshery to list available providers")
+			mesheryctllogger.Log.Fatalf("could not fetch providers as Meshery server was unreachable\nStart Meshery to list available providers")
 		}
 
-		log.Print("Available providers:\n")
+		mesheryctllogger.Log.Info("Available providers:\n")
 
 		//sorting the contexts to get a consistent order on each subsequent run
 		keys := make([]string, 0, len(providers))
@@ -142,17 +140,16 @@ mesheryctl system provider list
 		sort.Strings(keys)
 
 		for _, k := range keys {
-			log.Printf("- %s", k)
+			mesheryctllogger.Log.Infof("- %s\n", k)
 		}
 
 		if currCtx.Provider == "" {
 			if tempContext == "" {
-				log.Print("\nRun `mesheryctl system provider set [provider]` to set the provider")
+				mesheryctllogger.Log.Info("\nRun `mesheryctl system provider set [provider]` to set the provider\n")
 			} else {
-				log.Printf("\nRun `mesheryctl system provider set [provider] --context %s` to set the provider", tempContext)
+				mesheryctllogger.Log.Infof("\nRun `mesheryctl system provider set [provider] --context %s` to set the provider\n", tempContext)
 			}
 		}
-		log.Println()
 		return nil
 	},
 }
@@ -178,7 +175,7 @@ mesheryctl system provider set [provider]
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 		}
 
 		focusedContext := tempContext
@@ -188,13 +185,13 @@ mesheryctl system provider set [provider]
 
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
-			utils.Log.Error(ErrSetCurrentContext(err))
+			mesheryctllogger.Log.Error(ErrSetCurrentContext(err))
 			return nil
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
+			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
 
@@ -204,7 +201,7 @@ mesheryctl system provider set [provider]
 			// Verify provider
 			availableProviders, err := utils.GetProviderInfo(mctlCfg)
 			if err != nil {
-				utils.Log.Error(ErrProviderInfo(err))
+				mesheryctllogger.Log.Error(ErrProviderInfo(err))
 			}
 
 			keys := make([]string, 0, len(availableProviders))
@@ -218,13 +215,13 @@ mesheryctl system provider set [provider]
 			}
 
 			if !isValidProvider {
-				utils.Log.Error(ErrValidProvider())
+				mesheryctllogger.Log.Error(ErrValidProvider())
 
-				log.Print("Available providers:\n")
+				mesheryctllogger.Log.Info("Available providers:\n")
 				//sorting the contexts to get a consistent order on each subsequent run
 				sort.Strings(keys)
 				for _, k := range keys {
-					log.Printf("- %s", k)
+					mesheryctllogger.Log.Infof("- %s", k)
 				}
 				os.Exit(1)
 			}
@@ -236,11 +233,11 @@ mesheryctl system provider set [provider]
 		viper.Set("contexts", mctlCfg.Contexts)
 		err = viper.WriteConfig()
 		if err != nil {
-			utils.Log.Error(ErrWriteConfig(err))
+			mesheryctllogger.Log.Error(ErrWriteConfig(err))
 			return nil
 		}
 
-		log.Infof("Provider set to %s", currCtx.Provider)
+		mesheryctllogger.Log.Infof("Provider set to %s", currCtx.Provider)
 		return nil
 	},
 }
@@ -271,7 +268,7 @@ mesheryctl system provider switch [provider]
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 			return nil
 		}
 		return hc.RunPreflightHealthChecks()
@@ -281,7 +278,7 @@ mesheryctl system provider switch [provider]
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 		}
 
 		focusedContext := tempContext
@@ -330,7 +327,7 @@ mesheryctl system provider reset
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 		}
 
 		focusedContext := tempContext
@@ -340,13 +337,13 @@ mesheryctl system provider reset
 
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
-			utils.Log.Error(ErrSetCurrentContext(err))
+			mesheryctllogger.Log.Error(ErrSetCurrentContext(err))
 			return nil
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
+			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
 
@@ -356,11 +353,11 @@ mesheryctl system provider reset
 		viper.Set("contexts", mctlCfg.Contexts)
 		err = viper.WriteConfig()
 		if err != nil {
-			utils.Log.Error(ErrWriteConfig(err))
+			mesheryctllogger.Log.Error(ErrWriteConfig(err))
 			return nil
 		}
 
-		log.Info("Provider has been reset. You will be prompted to select a provider on next Meshery start. If not, log out or clear existing browser sessions.")
+		mesheryctllogger.Log.Info("Provider has been reset. You will be prompted to select a provider on next Meshery start. If not, log out or clear existing browser sessions.")
 		return nil
 	},
 }
@@ -391,7 +388,7 @@ mesheryctl system provider reset
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 		}
 		err = viewProviderCmd.RunE(cmd, args)
 		if err != nil {

@@ -24,11 +24,11 @@ import (
 
 	"github.com/pkg/errors"
 
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
-	log "github.com/sirupsen/logrus"
 	apiCorev1 "k8s.io/api/core/v1"
 
 	"github.com/spf13/cobra"
@@ -49,7 +49,7 @@ func printLogs(logs string, podName string) {
 	for _, logMsg := range strings.Split(logs, "\n") {
 		logStr := fmt.Sprintf("%s\t|\t%s", podName, logMsg)
 
-		log.Print(logStr)
+		mesheryctllogger.Log.Info(logStr)
 	}
 }
 
@@ -84,7 +84,7 @@ mesheryctl system logs meshery-istio
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
@@ -99,7 +99,7 @@ mesheryctl system logs meshery-istio
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			mesheryctllogger.Log.Error(err)
 			return nil
 		}
 		// get the platform, channel and the version of the current context
@@ -107,14 +107,14 @@ mesheryctl system logs meshery-istio
 		if tempContext != "" {
 			err = mctlCfg.SetCurrentContext(tempContext)
 			if err != nil {
-				utils.Log.Error(ErrSetCurrentContext(err))
+				mesheryctllogger.Log.Error(ErrSetCurrentContext(err))
 				return nil
 			}
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
+			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
 
@@ -125,18 +125,18 @@ mesheryctl system logs meshery-istio
 		case platformDocker:
 			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
-				utils.Log.Error(err)
+				mesheryctllogger.Log.Error(err)
 				return nil
 			}
 			if !ok {
-				utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
+				mesheryctllogger.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
 				return nil
 			}
-			log.Info("Starting Meshery logging...")
+			mesheryctllogger.Log.Info("Starting Meshery logging...")
 
 			if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
-				log.Errorf("%s does not exists", utils.DockerComposeFile)
-				log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
+				mesheryctllogger.Log.Errorf("%s does not exists", utils.DockerComposeFile)
+				mesheryctllogger.Log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
 				return nil
 			}
 
@@ -155,11 +155,11 @@ mesheryctl system logs meshery-istio
 
 			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
-				utils.Log.Error(err)
+				mesheryctllogger.Log.Error(err)
 				return nil
 			}
 			if !ok {
-				utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
+				mesheryctllogger.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
 				return nil
 			}
 
@@ -173,9 +173,9 @@ mesheryctl system logs meshery-istio
 			// Get and display current context
 			currentContext, err := utils.GetCurrentK8sContext(client)
 			if err != nil {
-				log.Warn("Unable to determine current Kubernetes context: ", err)
+				mesheryctllogger.Log.Warn(err)
 			} else {
-				log.Info("Using Kubernetes context: ", currentContext)
+				mesheryctllogger.Log.Info("Using Kubernetes context: ", currentContext)
 			}
 
 			// List the pods in the MesheryNamespace
@@ -198,7 +198,7 @@ mesheryctl system logs meshery-istio
 				}
 			}
 
-			log.Info("Starting Meshery logging...")
+			mesheryctllogger.Log.Info("Starting Meshery logging...")
 			wg := &sync.WaitGroup{}
 
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
@@ -253,7 +253,7 @@ mesheryctl system logs meshery-istio
 									break
 								}
 								if err != nil {
-									log.Println("error occurred while processing logs", err)
+									mesheryctllogger.Log.Errorf("error occurred while processing logs%s", err)
 									break
 								}
 								logBuf = buf[0:numBytes]

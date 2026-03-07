@@ -26,6 +26,7 @@ import (
 	"github.com/pkg/errors"
 
 	dockerclient "github.com/docker/docker/client"
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
 	c "github.com/meshery/meshery/mesheryctl/pkg/constants"
@@ -34,7 +35,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 	meshkitutils "github.com/meshery/meshkit/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
-	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -88,7 +88,7 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 	}
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		utils.Log.Error(err)
+		mesheryctllogger.Log.Error(err)
 		return nil, nil
 	}
 	err = mctlCfg.SetCurrentContext(tempContext)
@@ -152,7 +152,7 @@ mesheryctl system check --operator
 		}
 		hc, err := NewHealthChecker(hco)
 		if err != nil {
-			utils.Log.Error(ErrHealthCheckFailed(err))
+			mesheryctllogger.Log.Error(ErrHealthCheckFailed(err))
 			return nil
 		}
 
@@ -165,9 +165,9 @@ mesheryctl system check --operator
 			}
 			// Print End
 			if failure == 0 {
-				log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
+				mesheryctllogger.Log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
 			} else {
-				log.Info("\n--------------\n--------------\n!! Meshery prerequisites not met")
+				mesheryctllogger.Log.Info("\n--------------\n--------------\n!! Meshery prerequisites not met")
 			}
 			return nil
 		} else if componentsFlag { // if --components has been passed we run checks related to components
@@ -182,7 +182,7 @@ mesheryctl system check --operator
 
 		currContext, err := hc.mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
+			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
 		currPlatform := currContext.GetPlatform()
@@ -259,7 +259,7 @@ func (hc *HealthChecker) RunPreflightHealthChecks() error {
 // Run healthchecks to verify if docker is running and active
 func (hc *HealthChecker) runDockerHealthChecks() error {
 	if hc.Options.PrintLogs {
-		log.Info("\nDocker \n--------------")
+		mesheryctllogger.Log.Info("\nDocker \n--------------")
 	}
 	endpointParts := strings.Split(hc.context.GetEndpoint(), ":")
 
@@ -270,7 +270,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 			return errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint())
 		}
 		if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
-			log.Warn("!! Docker is not running")
+			mesheryctllogger.Log.Warn(fmt.Errorf("!! Docker is not running"))
 			//If preRunExecution and the current platform is docker then we trigger docker installation
 			//No auto installation of docker for windows
 			if runtime.GOOS == "windows" {
@@ -281,7 +281,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 				return errors.Wrapf(err, "failed to start Docker ")
 			}
 		} else if hc.Options.PrintLogs { // warn incase of printing logs
-			log.Warn("!! Docker is not running")
+			mesheryctllogger.Log.Warn(fmt.Errorf("!! Docker is not running"))
 		} else { // else we're supposed to grab errors
 			return err
 		}
@@ -296,7 +296,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 				return errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint())
 			}
 			if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
-				log.Warn("!! Docker is not running")
+				mesheryctllogger.Log.Warn(fmt.Errorf("!! Docker is not running"))
 				if runtime.GOOS == "windows" {
 					return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started ", hc.Options.Subcommand)
 				}
@@ -305,7 +305,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 					return errors.Wrapf(err, "failed to start Docker ")
 				}
 			} else if hc.Options.PrintLogs { // warn incase of printing logs
-				log.Warn("!! Docker is not running")
+				mesheryctllogger.Log.Warn(fmt.Errorf("!! Docker is not running"))
 			} else { // else we're supposed to grab errors
 				return err
 			}
@@ -315,7 +315,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		} else { // if not error we check if we are supposed to print logs
 			// logging if we're supposed to
 			if hc.Options.PrintLogs {
-				log.Info("✓ Docker is running")
+				mesheryctllogger.Log.Info("✓ Docker is running")
 			}
 		}
 	}
@@ -323,7 +323,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	// Since we now use docker compose library, we don't need to check for docker-compose binary
 	// The compose functionality is provided by the library itself
 	if hc.Options.PrintLogs {
-		log.Info("✓ docker-compose is available (via library)")
+		mesheryctllogger.Log.Info("✓ docker-compose is available (via library)")
 	}
 
 	return nil
@@ -332,7 +332,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 // Run healthchecks to verify if kubernetes client can be initialized and can be queried
 func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 	if hc.Options.PrintLogs {
-		log.Info("\nKubernetes API \n--------------")
+		mesheryctllogger.Log.Info("\nKubernetes API \n--------------")
 	}
 	//Check whether k8s client can be initialized
 	client, err := meshkitkube.New([]byte(""))
@@ -341,8 +341,8 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 			failure++
 		}
 		if hc.Options.PrintLogs { // print logs if we're supposed to
-			log.Warn("!! cannot initialize Kubernetes client")
-			log.Warn("!! cannot query the Kubernetes API")
+			mesheryctllogger.Log.Warn(fmt.Errorf("!! cannot initialize Kubernetes client"))
+			mesheryctllogger.Log.Warn(fmt.Errorf("!! cannot query the Kubernetes API"))
 			return nil
 		}
 		// else we're supposed to grab the error
@@ -352,7 +352,7 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 	}
 
 	if hc.Options.PrintLogs { // print logs if we're supposed to
-		log.Info("✓ can initialize Kubernetes client")
+		mesheryctllogger.Log.Info("✓ can initialize Kubernetes client")
 	}
 
 	//Check whether kubernetes can be queried
@@ -363,14 +363,14 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 			failure++
 		}
 		if hc.Options.PrintLogs { // log incase we're supposed to
-			log.Warn("!! cannot query the Kubernetes API")
+			mesheryctllogger.Log.Warn(fmt.Errorf("!! cannot query the Kubernetes API"))
 			return nil
 		}
 		return ErrK8SQuery(err)
 	}
 
 	if hc.Options.PrintLogs { // log incase we're supposed to
-		log.Info("✓ can query the Kubernetes API")
+		mesheryctllogger.Log.Info("✓ can query the Kubernetes API")
 	}
 
 	return nil
@@ -380,7 +380,7 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 // minimum compatible versions
 func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 	if hc.Options.PrintLogs {
-		log.Info("\nKubernetes Version \n--------------")
+		mesheryctllogger.Log.Info("\nKubernetes Version \n--------------")
 	}
 	//Check whether system has minimum supported versions of kubernetes and kubectl
 	var kubeVersion *k8sVersion.Info
@@ -391,7 +391,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 		}
 		// probably kubernetes isn't running
 		if hc.Options.PrintLogs { // log if we're supposed to
-			log.Warn("!! cannot check Kubernetes version")
+			mesheryctllogger.Log.Warn(fmt.Errorf("!! cannot check Kubernetes version"))
 		} else { // else we're supposed to catch the error
 			return err
 		}
@@ -403,13 +403,13 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 				failure++
 			}
 			if hc.Options.PrintLogs { // log if we're supposed to
-				log.Warnf("!! %s", err)
+				mesheryctllogger.Log.Warnf("!! %s", err)
 			} else { // else we gotta catch the error
 				return err
 			}
 		} else { // if not error we check if we are supposed to print logs
 			if hc.Options.PrintLogs { // log if we're supposed to
-				log.Info("✓ running the minimum Kubernetes version")
+				mesheryctllogger.Log.Info("✓ running the minimum Kubernetes version")
 			}
 		}
 	}
@@ -420,13 +420,13 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 			failure++
 		}
 		if hc.Options.PrintLogs { // log if we're supposed to
-			log.Warnf("!! %s", err)
+			mesheryctllogger.Log.Warnf("!! %s", err)
 		} else { // else we gotta catch the error
 			return err
 		}
 	} else { // if not error we check if we are supposed to print logs
 		if hc.Options.PrintLogs { // log if we're supposed to
-			log.Info("✓ running the minimum kubectl version")
+			mesheryctllogger.Log.Info("✓ running the minimum kubectl version")
 		}
 	}
 
@@ -449,7 +449,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	skipServerLogs := false
 
 	if hc.Options.PrintLogs {
-		log.Info("\nMeshery Version \n--------------")
+		mesheryctllogger.Log.Info("\nMeshery Version \n--------------")
 	}
 
 	url := hc.mctlCfg.GetBaseMesheryURL()
@@ -464,7 +464,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	// failed to fetch response for server version
 	if err != nil || resp.StatusCode != 200 {
 		if hc.Options.PrintLogs { // log if we're supposed to
-			log.Info("!! failed to check Meshery Server version. try starting Meshery with `mesheryctl system start`")
+			mesheryctllogger.Log.Info("!! failed to check Meshery Server version. try starting Meshery with `mesheryctl system start`")
 			skipServerLogs = true
 		} else {
 			return err
@@ -491,9 +491,9 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		}
 		if hc.Options.PrintLogs { // log if we're supposed to
 			if !*isOutdated {
-				log.Infof("✓ Meshery Server is up-to-date (stable-%s)", serverVersion.GetBuild())
+				mesheryctllogger.Log.Infof("✓ Meshery Server is up-to-date (stable-%s)", serverVersion.GetBuild())
 			} else {
-				log.Info("!! Meshery Server is not up-to-date")
+				mesheryctllogger.Log.Info("!! Meshery Server is not up-to-date")
 			}
 		} else { // else we grab the error
 			if !*isOutdated {
@@ -505,7 +505,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	latestVersions, err := meshkitutils.GetLatestReleaseTagsSorted(c.GetMesheryGitHubOrg(), c.GetMesheryGitHubRepo())
 	if err != nil {
 		if hc.Options.PrintLogs { // log if we're supposed to
-			log.Info("!! failed to fetch latest release tag of mesheryctl")
+			mesheryctllogger.Log.Info("!! failed to fetch latest release tag of mesheryctl")
 			// skip further for client as we failed to check latest tag on github
 			return nil
 		}
@@ -518,9 +518,9 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	version := constants.GetMesheryctlVersion()
 	if hc.Options.PrintLogs { // log if we're supposed to
 		if latest == version {
-			log.Infof("✓ CLI is up-to-date (stable-%s)", version)
+			mesheryctllogger.Log.Infof("✓ CLI is up-to-date (stable-%s)", version)
 		} else {
-			log.Infof("!! CLI is not up-to-date (stable-%s)", version)
+			mesheryctllogger.Log.Infof("!! CLI is not up-to-date (stable-%s)", version)
 		}
 	} else { // else we grab the error
 		if latest != version {
@@ -534,7 +534,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 // runComponentsHealthChecks runs health checks for Adapters, Operator, and all deployments in meshery ecosystem
 func (hc *HealthChecker) runComponentsHealthChecks() error {
 	if hc.Options.PrintLogs {
-		log.Info("\nMeshery Components \n--------------")
+		mesheryctllogger.Log.Info("\nMeshery Components \n--------------")
 	}
 	return hc.runAdapterHealthChecks("")
 }
@@ -542,7 +542,7 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 // runOperatorHealthChecks executes health-checks for Operators
 func (hc *HealthChecker) runOperatorHealthChecks() error {
 	if hc.Options.PrintLogs {
-		log.Info("\nMeshery Operators \n--------------")
+		mesheryctllogger.Log.Info("\nMeshery Operators \n--------------")
 	}
 	clientMesh, err := meshkitkube.New([]byte(""))
 	if err != nil {
@@ -580,19 +580,19 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 	if !operatorCheck {
 		return errors.New("!! Meshery Operator is not running")
 	} else {
-		log.Info("✓ Meshery Operator is running")
+		mesheryctllogger.Log.Info("✓ Meshery Operator is running")
 	}
 
 	if !meshsyncCheck {
-		log.Info("!! Meshsync is not running")
+		mesheryctllogger.Log.Info("!! Meshsync is not running")
 	} else {
-		log.Info("✓ Meshsync is running")
+		mesheryctllogger.Log.Info("✓ Meshsync is running")
 	}
 
 	if !brokerCheck {
-		log.Info("!! Meshery Broker is not running")
+		mesheryctllogger.Log.Info("!! Meshery Broker is not running")
 	} else {
-		log.Info("✓ Meshery Broker is running")
+		mesheryctllogger.Log.Info("✓ Meshery Broker is running")
 
 		// Check if broker CR contains Status.Endpoint object with External and Internal parts
 		const (
@@ -609,26 +609,26 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 
 		brokerCR, err := clientMesh.DynamicKubeClient.Resource(brokerGVR).Namespace(utils.MesheryNamespace).Get(context.Background(), brokerName, v1.GetOptions{})
 		if err != nil {
-			log.Info("!! Could not retrieve Meshery Broker CR")
+			mesheryctllogger.Log.Info("!! Could not retrieve Meshery Broker CR")
 		} else {
 			// Check if status.endpoint exists with external and internal parts
 			status, found, err := unstructured.NestedMap(brokerCR.Object, "status")
 			if err != nil {
-				log.Infof("!! Error parsing Meshery Broker CR status: %v", err)
+				mesheryctllogger.Log.Infof("!! Error parsing Meshery Broker CR status: %v", err)
 			} else if !found {
-				log.Info("!! Meshery Broker CR does not contain Status section")
+				mesheryctllogger.Log.Info("!! Meshery Broker CR does not contain Status section")
 			} else {
 				endpoint, endpointFound, err := unstructured.NestedMap(status, "endpoint")
 				if err != nil {
-					log.Infof("!! Error parsing Meshery Broker CR status.endpoint: %v", err)
+					mesheryctllogger.Log.Infof("!! Error parsing Meshery Broker CR status.endpoint: %v", err)
 				} else if !endpointFound {
-					log.Info("!! Meshery Broker CR does not contain Status.Endpoint")
+					mesheryctllogger.Log.Info("!! Meshery Broker CR does not contain Status.Endpoint")
 				} else {
 					external, externalFound, _ := unstructured.NestedString(endpoint, "external")
 					internal, internalFound, _ := unstructured.NestedString(endpoint, "internal")
 
 					if externalFound && internalFound && external != "" && internal != "" {
-						log.Infof("✓ Meshery Broker CR contains Status.Endpoint (External: %s, Internal: %s)", external, internal)
+						mesheryctllogger.Log.Infof("✓ Meshery Broker CR contains Status.Endpoint (External: %s, Internal: %s)", external, internal)
 					} else {
 						missingParts := []string{}
 						if !externalFound || external == "" {
@@ -637,7 +637,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 						if !internalFound || internal == "" {
 							missingParts = append(missingParts, "Internal")
 						}
-						log.Infof("!! Meshery Broker CR Status.Endpoint missing: %s", strings.Join(missingParts, ", "))
+						mesheryctllogger.Log.Infof("!! Meshery Broker CR Status.Endpoint missing: %s", strings.Join(missingParts, ", "))
 					}
 				}
 			}
@@ -669,7 +669,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		}
 	}
 	if len(adapters) == 0 {
-		log.Info("- No components configured in current context")
+		mesheryctllogger.Log.Info("- No components configured in current context")
 		return nil
 	}
 	for _, adapter := range adapters {
@@ -682,7 +682,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		resp, err := client.Do(req)
 		if err != nil {
 			if hc.Options.PrintLogs { // incase we're printing logs
-				log.Infof("!! failed to connect to Meshery Adapter for %s ", name)
+				mesheryctllogger.Log.Infof("!! failed to connect to Meshery Adapter for %s ", name)
 				skipAdapter = true
 			} else { // or we're supposed to grab the errors
 				return fmt.Errorf("!! failed to connect to Meshery Adapter for%s adapter: %s", name, err)
@@ -694,13 +694,13 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 			defer func() { _ = resp.Body.Close() }()
 			if resp.StatusCode != 200 {
 				if hc.Options.PrintLogs { // incase we're printing logs
-					log.Infof("!! Meshery Adapter for %s is running but not reachable", name)
+					mesheryctllogger.Log.Infof("!! Meshery Adapter for %s is running but not reachable", name)
 				} else { // or we're supposed to grab the errors
 					return fmt.Errorf("!! Meshery Adapter for %s is running, but not reachable", name)
 				}
 			} else { // if status == 200 we check if we are supposed to print logs
 				if hc.Options.PrintLogs { // incase we're printing logs
-					log.Infof("✓ %s adapter is running and reachable", name)
+					mesheryctllogger.Log.Infof("✓ %s adapter is running and reachable", name)
 				}
 			}
 		}

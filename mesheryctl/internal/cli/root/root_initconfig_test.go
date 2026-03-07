@@ -1,12 +1,13 @@
 package root
 
 import (
-	"io"
 	"os"
 	"path/filepath"
 	"testing"
 
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -94,7 +95,7 @@ func TestInitConfigUseCases(t *testing.T) {
 				utils.Log = origLog
 			})
 
-			utils.Log = utils.SetupMeshkitLogger("mesheryctl", false, io.Discard)
+			utils.Log = mesheryctllogger.GetMeshkitLogger(logrus.InfoLevel)
 
 			tt.setup(t)
 
