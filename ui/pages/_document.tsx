@@ -1,6 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Document, { Head, Main, NextScript, Html } from 'next/document';
+import Script from 'next/script';
 import { createStyleRegistry } from 'styled-jsx';
 import { PureHtmlLoadingScreen } from '@/components/LoadingComponents/LoadingComponentServer';
 
@@ -81,7 +81,7 @@ class MesheryDocument extends Document {
           />
           {/* End Google Tag Manager (noscript) */}
           {/* Pre-React script */}
-          <script src="/loadingMessages.js"></script>
+          <Script src="/loadingMessages.js" strategy="beforeInteractive" />
 
           <PureHtmlLoadingScreen id={'PRE_REACT_LOADER'} message="" />
           <Main />
@@ -111,60 +111,13 @@ class MesheryDocument extends Document {
   }
 }
 
-MesheryDocument.getInitialProps = (ctx) => {
-  // resolution order
-  //
-  // on the server:
-  // 1. app.getInitialProps
-  // 2. page.getInitialProps
-  // 3. document.getInitialProps
-  // 4. app.render
-  // 5. page.render
-  // 6. document.render
-  //
-  // on the server with error:
-  // 1. document.getInitialProps
-  // 2. app.render
-  // 3. page.render
-  // 4. document.render
-  //
-  // on the client
-  // 1. app.getInitialProps
-  // 2. page.getInitialProps
-  // 3. app.render
-  // 4. page.render
-
-  // render app and page and get the context of the page with collected side effects.
-  let pageContext;
-  const page = ctx.renderPage((Component) => {
-    const WrappedComponent = (props) => {
-      pageContext = props.pageContext;
-      return <Component {...props} />;
-    };
-
-    WrappedComponent.propTypes = {
-      pageContext: PropTypes.object.isRequired,
-    };
-
-    return WrappedComponent;
-  });
-
-  let css;
-  // it might be undefined, e.g. after an error.
-  if (pageContext) {
-    css = pageContext.sheetsRegistry.toString();
-  }
+MesheryDocument.getInitialProps = async (ctx) => {
+  const initialProps = await Document.getInitialProps(ctx);
   return {
-    ...page,
-    pageContext,
-    // styles fragment is rendered after the app and page rendering finish.
+    ...initialProps,
     styles: (
       <React.Fragment>
-        <style
-          id="jss-server-side"
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: css }}
-        />
+        {initialProps.styles}
         {flush || null}
       </React.Fragment>
     ),
