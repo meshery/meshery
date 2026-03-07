@@ -2,24 +2,21 @@ package workspaces
 
 import (
 	"fmt"
-	"os"
+	"net/url"
 	"path/filepath"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
-	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	meshkiterrors "github.com/meshery/meshkit/errors"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 type workspaceViewFlags struct {
-	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
-	Save         bool   `json:"save" validate:"boolean"`
-	OrgID        string `json:"orgId"`
+	OutputFormat string
+	Save         bool
+	OrgID        string
 }
 
 var workspaceViewFlagsProvided workspaceViewFlags
@@ -43,17 +40,9 @@ mesheryctl exp workspace view [workspace-id] --output-format json
 mesheryctl exp workspace view [workspace-id] --output-format json --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(workspaceViewFlagsProvided)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return display.ValidateOutputFormat(workspaceViewFlagsProvided.OutputFormat)
 	},
-	Args: func(cmd *cobra.Command, args []string) error {
+	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp workspace view [workspace-name|workspace-id]\nRun 'mesheryctl exp workspace view --help' to see detailed help message"
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("please provide exactly one workspace name or ID\n\n%v", errMsg))
@@ -68,9 +57,6 @@ mesheryctl exp workspace view [workspace-id] --output-format json --save
 
 		if utils.IsUUID(workspaceNameOrID) {
 			urlPath := fmt.Sprintf("%s/%s", workspacesApiPath, workspaceNameOrID)
-			if orgID != "" {
-				urlPath = fmt.Sprintf("%s/%s?orgID=%s", workspacesApiPath, workspaceNameOrID, orgID)
-			}
 			fetchedWorkspace, err := api.Fetch[models.Workspace](urlPath)
 			if err != nil {
 				return err
@@ -80,36 +66,37 @@ mesheryctl exp workspace view [workspace-id] --output-format json --save
 			if orgID == "" {
 				return utils.ErrInvalidArgument(fmt.Errorf("--orgId is required when searching by name\n\nUsage: mesheryctl exp workspace view [workspace-name] --orgId [orgId]"))
 			}
-			selected := new(models.Workspace)
-			err := display.PromptAsyncPagination(
-				display.DisplayDataAsync{
-					UrlPath:    fmt.Sprintf("%s?orgID=%s", workspacesApiPath, orgID),
-					SearchTerm: workspaceNameOrID,
-				},
-				func(workspaces []models.Workspace) []string {
-					labels := []string{}
-					for _, w := range workspaces {
-						labels = append(labels, fmt.Sprintf("ID: %s, Name: %s, OrgID: %s", w.ID.String(), w.Name, w.OrganizationID.String()))
-					}
-					return labels
-				},
-				func(data *models.WorkspacePage) ([]models.Workspace, int64) {
-					return data.Workspaces, int64(data.TotalCount)
-				},
-				selected,
-			)
+
+			viewUrlValue := url.Values{}
+			viewUrlValue.Add("search", workspaceNameOrID)
+			viewUrlValue.Add("orgID", orgID)
+			viewUrlValue.Add("pagesize", "all")
+
+			urlPath := fmt.Sprintf("%s?%s", workspacesApiPath, viewUrlValue.Encode())
+
+			workspacesResponse, err := api.Fetch[models.WorkspacePage](urlPath)
 			if err != nil {
-				if meshkiterrors.GetCode(err) == utils.ErrNotFoundCode {
-					return utils.ErrNotFound(fmt.Errorf("no results found for %s", workspaceNameOrID))
-				}
 				return err
 			}
-			selectedWorkspace = selected
-		}
 
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
+			if workspacesResponse.TotalCount == 0 {
+				fmt.Println("No workspace(s) found with the name:", workspaceNameOrID)
+				return nil
+			}
+
+			if workspacesResponse.TotalCount == 1 {
+				selectedWorkspace = &workspacesResponse.Workspaces[0]
+			} else {
+				workspaceNames := make([]string, len(workspacesResponse.Workspaces))
+				for i, w := range workspacesResponse.Workspaces {
+					workspaceNames[i] = fmt.Sprintf("ID: %s, Name: %s, OrgID: %s", w.ID.String(), w.Name, w.OrganizationID.String())
+				}
+				i, err := utils.RunSelectPrompt("Select workspace", workspaceNames)
+				if err != nil {
+					return err
+				}
+				selectedWorkspace = &workspacesResponse.Workspaces[i]
+			}
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[models.Workspace]{}
@@ -128,14 +115,13 @@ mesheryctl exp workspace view [workspace-id] --output-format json --save
 			if workspaceString == "" {
 				workspaceString = selectedWorkspace.ID.String()
 			}
-			fileName := fmt.Sprintf("workspace_%s.%s", workspaceString, strings.ToLower(workspaceViewFlagsProvided.OutputFormat))
-			file := filepath.Join(homeDir, ".meshery", fileName)
+			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("workspace_%s.%s", workspaceString, workspaceViewFlagsProvided.OutputFormat))
 			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[models.Workspace]{}
 			outputFormatterSaver, err := outputFormatterSaverFactory.New(workspaceViewFlagsProvided.OutputFormat, outputFormatter)
 			if err != nil {
 				return err
 			}
-			outputFormatterSaver = outputFormatterSaver.WithFilePath(file)
+			outputFormatterSaver = outputFormatterSaver.WithFilePath(fileName)
 			err = outputFormatterSaver.Save()
 			if err != nil {
 				return err
