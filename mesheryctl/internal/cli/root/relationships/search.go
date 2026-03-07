@@ -53,7 +53,7 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 			return utils.ErrFlagsInvalid(err)
 		}
 		const usage = "mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]"
-		errMsg := fmt.Errorf("[--kind, --subtype or --type or --model] and [query-text] are required\n\nUsage: %s\nRun 'mesheryctl exp relationship search --help'", usage)
+		errMsg := fmt.Errorf("at least one of [--kind, --subtype, --type, --model] is required\n\nUsage: %s\nRun 'mesheryctl exp relationship search --help'", usage)
 		if searchFlags.SearchKind == "" && searchFlags.SearchSubType == "" && searchFlags.SearchType == "" && searchFlags.SearchModelName == "" {
 			return utils.ErrInvalidArgument(errMsg)
 		}
@@ -79,7 +79,7 @@ func init() {
 	searchCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
-searchCmd.Flags().StringVarP(&searchFlags.SearchKind, "kind", "k", "", "Search for a specific kind of relationship")
+	searchCmd.Flags().StringVarP(&searchFlags.SearchKind, "kind", "k", "", "Search for a specific kind of relationship")
 	searchCmd.Flags().StringVarP(&searchFlags.SearchType, "type", "t", "", "Search for a specific type of relationship")
 	searchCmd.Flags().StringVarP(&searchFlags.SearchSubType, "subtype", "s", "", "Search for a specific subtype of relationship")
 	searchCmd.Flags().StringVarP(&searchFlags.SearchModelName, "model", "m", "", "Search for a specific model of relationship")
