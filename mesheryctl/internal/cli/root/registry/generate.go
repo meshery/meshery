@@ -188,8 +188,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 
 			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
 			if err != nil || resp.HTTPStatusCode != 200 {
-				utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
-				return err
+				return ErrUpdateRegistry(err, outputLocation)
 			}
 			fmt.Println("✅ Connected to spreadsheet successfully")
 

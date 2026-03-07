@@ -83,22 +83,18 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		// check if meshery is running or not
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
 		running, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		if !running {
-			utils.Log.Error(utils.ErrMesheryServerNotRunning(currCtx.GetPlatform()))
-			return nil
+			return utils.ErrMesheryServerNotRunning(currCtx.GetPlatform())
 		}
 
 		return nil
@@ -106,13 +102,11 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
 		log.Debug("Fetching Meshery-UI endpoint")
 		switch currCtx.GetPlatform() {
@@ -145,8 +139,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 					false,
 				)
 				if err != nil {
-					utils.Log.Error(ErrInitPortForward(err))
-					return nil
+					return ErrInitPortForward(err)
 
 				}
 
@@ -194,8 +187,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 			endpoint, err = meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
 			if err != nil {
-				utils.Log.Error(err) //the func return a meshkit error
-				return nil
+				return err
 			}
 
 			mesheryEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.Internal.Address, endpoint.Internal.Port)
@@ -223,8 +215,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			if err == nil {
 				err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 			}
 

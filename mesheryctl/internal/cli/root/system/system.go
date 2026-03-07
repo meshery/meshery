@@ -16,6 +16,7 @@ package system
 
 import (
 	"fmt"
+
 	config "github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -45,8 +46,7 @@ var SystemCmd = &cobra.Command{
 		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		mctlCfg.GetBaseMesheryURL()
 		return nil

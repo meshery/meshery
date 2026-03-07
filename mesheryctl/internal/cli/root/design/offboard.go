@@ -69,7 +69,6 @@ mesheryctl design offboard -f [filepath]
 		if isID {
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
-				// utils.Log.Error(err)
 				return ErrDeleteDesign(err, args[0])
 			}
 			utils.Log.Info("pattern ", args[0], " deleted")

@@ -58,13 +58,11 @@ mesheryctl system login -p Meshery
 
 		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		if !isRunning {
-			utils.Log.Error(utils.ErrMesheryServerNotRunning(currCtx.GetPlatform()))
-			return nil
+			return utils.ErrMesheryServerNotRunning(currCtx.GetPlatform())
 		}
 
 		var tokenData []byte

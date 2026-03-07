@@ -84,7 +84,7 @@ mesheryctl system logs meshery-istio
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			utils.Log.Error(err)
+			return err
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
@@ -99,23 +99,20 @@ mesheryctl system logs meshery-istio
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		// get the platform, channel and the version of the current context
 		// if a temp context is set using the -c flag, use it as the current context
 		if tempContext != "" {
 			err = mctlCfg.SetCurrentContext(tempContext)
 			if err != nil {
-				utils.Log.Error(ErrSetCurrentContext(err))
-				return nil
+				return ErrSetCurrentContext(err)
 			}
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
 
 		currPlatform := currCtx.GetPlatform()
@@ -125,12 +122,10 @@ mesheryctl system logs meshery-istio
 		case "docker":
 			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			if !ok {
-				utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
-				return nil
+				return utils.ErrMesheryServerNotRunning(currPlatform)
 			}
 			log.Info("Starting Meshery logging...")
 
@@ -155,12 +150,10 @@ mesheryctl system logs meshery-istio
 
 			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			if !ok {
-				utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
-				return nil
+				return utils.ErrMesheryServerNotRunning(currPlatform)
 			}
 
 			// create an kubernetes client
