@@ -159,8 +159,10 @@ const CsvStepper = React.memo(({ handleClose }: CsvStepperProps) => {
                     required
                     id="model-csv-file"
                     type="file"
-                    inputProps={{
-                      accept: '.csv',
+                    slotProps={{
+                      input: {
+                        accept: '.csv',
+                      },
                     }}
                     onChange={handleModelCsvFileChange}
                     sx={{
@@ -216,8 +218,10 @@ const CsvStepper = React.memo(({ handleClose }: CsvStepperProps) => {
                     required
                     id="component-csv-file"
                     type="file"
-                    inputProps={{
-                      accept: '.csv',
+                    slotProps={{
+                      input: {
+                        accept: '.csv',
+                      },
                     }}
                     onChange={handleComponentCsvFileChange}
                     sx={{
@@ -278,8 +282,10 @@ const CsvStepper = React.memo(({ handleClose }: CsvStepperProps) => {
                     required
                     id="relationship-csv-file"
                     type="file"
-                    inputProps={{
-                      accept: '.csv',
+                    slotProps={{
+                      input: {
+                        accept: '.csv',
+                      },
                     }}
                     onChange={handleRelationshipCsvFileChange}
                     sx={{

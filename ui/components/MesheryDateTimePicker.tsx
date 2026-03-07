@@ -55,7 +55,7 @@ const MesheryDateTimePicker: React.FC<MesheryDateTimePickerProps> = ({
           value={dateVal}
           onChange={handleNativeChange}
           fullWidth
-          InputLabelProps={{ shrink: true }}
+          slotProps={{ inputLabel: { shrink: true } }}
         />
       </div>
     );

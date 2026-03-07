@@ -109,7 +109,7 @@ export default function DesignConfigurator() {
                   },
                   displayEmpty: true,
                 }}
-                InputProps={{ disableUnderline: true }}
+                slotProps={{ input: { disableUnderline: true } }}
                 labelId="category-selector"
                 id="category-selector"
                 data-testid="category-selector"
@@ -149,7 +149,7 @@ export default function DesignConfigurator() {
                     },
                     displayEmpty: true,
                   }}
-                  InputProps={{ disableUnderline: true }}
+                  slotProps={{ input: { disableUnderline: true } }}
                   labelId="model-selector"
                   id="model-selector"
                   data-testid="model-selector"

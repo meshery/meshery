@@ -352,8 +352,10 @@ function K8sContextMenu({
                         backgroundColor: 'rgba(102, 102, 102, 0.12)',
                         margin: '1px 0px',
                       }}
-                      InputProps={{
-                        endAdornment: <Search style={iconMedium} width={24} />,
+                      slotProps={{
+                        input: {
+                          endAdornment: <Search style={iconMedium} width={24} />,
+                        },
                       }}
                     />
                   </div>

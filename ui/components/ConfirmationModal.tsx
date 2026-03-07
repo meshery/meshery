@@ -356,8 +356,10 @@ function ConfirmationMsg(props) {
                         backgroundColor: 'rgba(102, 102, 102, 0.12)',
                         margin: '1px 1px 8px ',
                       }}
-                      InputProps={{
-                        endAdornment: <Search style={iconMedium} />,
+                      slotProps={{
+                        input: {
+                          endAdornment: <Search style={iconMedium} />,
+                        },
                       }}
                       // margin="none"
                     />
@@ -514,8 +516,10 @@ export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => 
           backgroundColor: 'rgba(102, 102, 102, 0.12)',
           margin: '1px 1px 8px ',
         }}
-        InputProps={{
-          endAdornment: <Search style={iconMedium} />,
+        slotProps={{
+          input: {
+            endAdornment: <Search style={iconMedium} />,
+          },
         }}
         // margin="none"
       />

@@ -152,13 +152,15 @@ const MesherySettingsEnvButtons = () => {
                 }}
                 data-testid={testIDs('uploadKubeConfig')}
                 margin="normal"
-                InputProps={{
-                  readOnly: true,
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <CloudUploadIcon />
-                    </InputAdornment>
-                  ),
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <CloudUploadIcon />
+                      </InputAdornment>
+                    ),
+                  },
                 }}
               />
             </FormGroup>

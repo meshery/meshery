@@ -140,11 +140,13 @@ const MesherySettingsPerformanceComponent = () => {
                 type="number"
                 fullWidth
                 value={c}
-                inputProps={{ min: '0', step: '1' }}
                 margin="normal"
                 variant="outlined"
                 onChange={handleChange('c')}
-                InputLabelProps={{ shrink: true }}
+                slotProps={{
+                  htmlInput: { min: '0', step: '1' },
+                  inputLabel: { shrink: true },
+                }}
               />
             </Grid2>
             <Grid2 size={{ xs: 12, lg: 4 }}>
@@ -156,11 +158,13 @@ const MesherySettingsPerformanceComponent = () => {
                 type="number"
                 fullWidth
                 value={qps}
-                inputProps={{ min: '0', step: '1' }}
                 margin="normal"
                 variant="outlined"
                 onChange={handleChange('qps')}
-                InputLabelProps={{ shrink: true }}
+                slotProps={{
+                  htmlInput: { min: '0', step: '1' },
+                  inputLabel: { shrink: true },
+                }}
               />
             </Grid2>
             <Grid2 size={{ xs: 12, lg: 4 }}>
