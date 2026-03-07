@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Capsule Proxy
 subtitle: Collaborative and visual infrastructure as design for Capsule Proxy
-image: /assets/img/integrations/capsule-proxy/icons/color/capsule-proxy-color.svg
-permalink: extensibility/integrations/capsule-proxy
+image: /extensions/models/capsule-proxy/icons/color/capsule-proxy-color.svg
+aliases: /extensibility/integrations/capsule-proxy
 docURL: https://docs.meshery.io/extensibility/integrations/capsule-proxy
 description: 
 integrations-category: Provisioning
@@ -28,8 +27,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

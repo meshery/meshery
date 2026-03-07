@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: OpenMetrics
 subtitle: Collaborative and visual infrastructure as design for OpenMetrics
-image: /assets/img/integrations/openmetrics/icons/color/openmetrics-color.svg
-permalink: extensibility/integrations/openmetrics
+image: /extensions/models/openmetrics/icons/color/openmetrics-color.svg
+aliases: /extensibility/integrations/openmetrics
 docURL: https://docs.meshery.io/extensibility/integrations/openmetrics
 description: 
 integrations-category: Observability and Analysis
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Integrates OpenMetrics"
 howItWorksDetails: "Standardized metrics collection and monitoring in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

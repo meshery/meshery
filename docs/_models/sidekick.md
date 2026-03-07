@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Sidekick
 subtitle: Collaborative and visual infrastructure as design for Sidekick
-image: /assets/img/integrations/sidekick/icons/color/sidekick-color.svg
-permalink: extensibility/integrations/sidekick
+image: /extensions/models/sidekick/icons/color/sidekick-color.svg
+aliases: /extensibility/integrations/sidekick
 docURL: https://docs.meshery.io/extensibility/integrations/sidekick
 description: 
 integrations-category: Observability and Analysis
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Manages Sidekick configurations"
 howItWorksDetails: "Simplified sidecar container management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

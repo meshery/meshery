@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Simple Queuing Service
 subtitle: Collaborative and visual infrastructure as design for AWS Simple Queuing Service
-image: /assets/img/integrations/aws-sqs-controller/icons/color/aws-sqs-controller-color.svg
-permalink: extensibility/integrations/aws-sqs-controller
+image: /extensions/models/aws-sqs-controller/icons/color/aws-sqs-controller-color.svg
+aliases: /extensibility/integrations/aws-sqs-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sqs-controller
 description: 
 integrations-category: App Definition and Development
@@ -51,8 +50,5 @@ featureList: [
 ]
 howItWorks: "Integrates with AWS SQS"
 howItWorksDetails: "Simplified message queuing and decoupling of microservices on AWS"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

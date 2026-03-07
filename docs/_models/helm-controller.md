@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Helm Controller
 subtitle: Collaborative and visual infrastructure as design for Helm Controller
-image: /assets/img/integrations/helm-controller/icons/color/helm-controller-color.svg
-permalink: extensibility/integrations/helm-controller
+image: /extensions/models/helm-controller/icons/color/helm-controller-color.svg
+aliases: /extensibility/integrations/helm-controller
 docURL: https://docs.meshery.io/installation/kubernetes/helm
 description: 
 integrations-category: App Definition and Development
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Manages Helm releases"
 howItWorksDetails: "Streamlined Helm chart management and automation in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

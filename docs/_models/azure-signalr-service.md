@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure SignalR Service
 subtitle: Collaborative and visual infrastructure as design for Azure SignalR Service
-image: /assets/img/integrations/azure-signalr-service/icons/color/azure-signalr-service-color.svg
-permalink: extensibility/integrations/azure-signalr-service
+image: /extensions/models/azure-signalr-service/icons/color/azure-signalr-service-color.svg
+aliases: /extensibility/integrations/azure-signalr-service
 docURL: https://docs.meshery.io/extensibility/integrations/azure-signalr-service
 description: 
 integrations-category: Observability and Analysis
@@ -48,8 +47,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

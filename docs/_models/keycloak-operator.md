@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Keycloak Operator
 subtitle: Collaborative and visual infrastructure as design for Keycloak Operator
-image: /assets/img/integrations/keycloak-operator/icons/color/keycloak-operator-color.svg
-permalink: extensibility/integrations/keycloak-operator
+image: /extensions/models/keycloak-operator/icons/color/keycloak-operator-color.svg
+aliases: /extensibility/integrations/keycloak-operator
 docURL: https://docs.meshery.io/extensibility/integrations/keycloak-operator
 description: 
 integrations-category: Security & Compliance
@@ -84,8 +83,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Keycloak"
 howItWorksDetails: "Streamlined Keycloak management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -66,6 +66,7 @@ var (
 	ErrReadInputCode               = "mesheryctl-1193"
 	ErrUploadFileWithParamsCode    = "mesheryctl-1185"
 	ErrCommandContextMissingCode   = "mesheryctl-1201"
+	ErrPromptCancelledCode         = "mesheryctl-1202"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -850,5 +851,16 @@ func ErrCommandContextMissing(contextName string) error {
 		[]string{"A required context for command is missing or not specified"},
 		[]string{"The command may require a specific context to be set in order to function properly"},
 		[]string{"Ensure that the necessary contextis defined in the root command file and try again"},
+	)
+}
+
+func ErrPromptCancelled() error {
+	return errors.New(
+		ErrPromptCancelledCode,
+		errors.Alert,
+		[]string{"Selection cancelled"},
+		[]string{"Selection prompt has been cancelled"},
+		[]string{"The selection prompt was interrupted"},
+		[]string{"Run the command again and complete the selection"},
 	)
 }

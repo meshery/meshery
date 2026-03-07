@@ -72,7 +72,7 @@ Meshery helps users weigh the value of their cloud native deployments against th
 | :----------- | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "stable" -%}
-| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ adapter.url }}) | {{ adapter.project_status }} |
 {% endif -%}
 {% endfor %}
 
@@ -82,7 +82,7 @@ Meshery helps users weigh the value of their cloud native deployments against th
 | :----------- | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "beta" -%}
-| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ adapter.url }}) | {{ adapter.project_status }} |
 {% endif -%}
 {% endfor %}
 
@@ -92,7 +92,7 @@ Meshery helps users weigh the value of their cloud native deployments against th
 | :----------- | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "alpha" -%}
-| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ adapter.url }}) | {{ adapter.project_status }} |
 {% endif -%}
 {% endfor %}
  -->
@@ -104,7 +104,7 @@ Meshery helps users weigh the value of their cloud native deployments against th
 <ul>
     {% for item in sorted_pages %}
     {% if item.type=="project" and item.language=="en" and item.list != "exclude" %}
-      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      <li><a href="{{ item.url }}">{{ item.title }}</a>
       {% if item.description != " " %}
         -  {{ item.description }}
       {% endif %}
