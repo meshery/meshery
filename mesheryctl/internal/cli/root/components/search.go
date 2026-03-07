@@ -24,16 +24,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-<<<<<<< HEAD
-var usageErrorMessage = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl component search --help' to see detailed help message"
-=======
 type componentSearchFlag struct {
 	Page     int `json:"page" validate:"omitempty,gte=1"`
 	PageSize int `json:"page-size" validate:"omitempty,gte=1"`
 }
 
 var cmdComponentSearchFlag componentSearchFlag
->>>>>>> ac983b60c5c (added page flag)
 
 // represents the mesheryctl component search [query-text] subcommand.
 var searchComponentsCmd = &cobra.Command{
@@ -52,15 +48,7 @@ mesheryctl component search "Component name"
 mesheryctl component search [query-text] [--page 1]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(cmdComponentSearchFlag)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentSearchFlag)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 1 {
@@ -72,45 +60,10 @@ mesheryctl component search [query-text] [--page 1]
 		searchValue := url.Values{}
 		searchValue.Add("search", args[0])
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-		componentsResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()))
-		if err != nil {
-			return err
-		}
-
-		header := []string{"ID", "Name", "Model", "Version"}
-
-		rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
-
-		dataToDisplay := display.DisplayedData{
-			DataType:         "components",
-			Header:           header,
-			Rows:             rows,
-			Count:            componentsCount,
-			DisplayCountOnly: false,
-			IsPage:           false,
-=======
 		modelData := display.DisplayDataAsync{
 			UrlPath:  fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()),
 			DataType: "component",
 			Header:   []string{"ID", "Name", "Model", "Version"},
-			Page:     cmdComponentSearchFlag.Page,
-			PageSize: cmdComponentSearchFlag.PageSize,
-			IsPage:   cmd.Flags().Changed("page"),
->>>>>>> fab0f34435c (resolved conflits)
-		}
-
-		err = display.List(dataToDisplay)
-		if err != nil {
-			return err
-		}
-
-=======
-		modelData := display.DisplayDataAsync{
-			UrlPath:  fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()),
-			DataType: "component",
-			Header:   []string{"Name", "Model", "Version"},
 			Page:     cmdComponentSearchFlag.Page,
 			PageSize: cmdComponentSearchFlag.PageSize,
 			IsPage:   cmd.Flags().Changed("page"),
@@ -120,7 +73,6 @@ mesheryctl component search [query-text] [--page 1]
 		if err != nil {
 			return err
 		}
->>>>>>> ac983b60c5c (added page flag)
 		return nil
 	},
 }

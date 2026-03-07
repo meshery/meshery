@@ -1,26 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-Total number of components: 1
-<<<<<<< HEAD
-[H[J
-
-=======
 [H[2JTotal number of components: 1
 Page: 2
->>>>>>> fab0f34435c (resolved conflits)
 ID                                    NAME  MODEL             VERSION                             
 fda1c4e7-14ae-4435-8236-adfb9cea0395  Test  component-test-0  memorydb.aws.kubeform.com/v1alpha1  
-=======
-Page: 1
-<<<<<<< HEAD
-NAME  MODEL             CATEGORY                            VERSION  
-Test  component-test-0  memorydb.aws.kubeform.com/v1alpha1           
->>>>>>> ac983b60c5c (added page flag)
-=======
-=======
-[H[2J[3JTotal number of components: 1
-Page: 2
->>>>>>> 66f36217cea (changed page int)
-NAME  MODEL             VERSION                             
-Test  component-test-0  memorydb.aws.kubeform.com/v1alpha1  
->>>>>>> 7957c369a89 (made tests pass)
