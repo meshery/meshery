@@ -1,11 +1,9 @@
 // @ts-nocheck
 import { useEffect, useRef, useState } from 'react';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { DeleteIcon, ChevronLeftIcon, ChevronRightIcon } from '@sistent/sistent';
 import { Pagination, PaginationItem } from '@sistent/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
-import { Delete } from '@mui/icons-material';
 import { NoSsr } from '@sistent/sistent';
 import { CreateButtonWrapper, BulkActionWrapper } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
@@ -30,6 +28,7 @@ import {
   Grid2,
   Typography,
   SearchBar,
+  useTheme,
   PROMPT_VARIANTS,
 } from '@sistent/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
@@ -441,7 +440,7 @@ const Environments = () => {
       );
     }
   };
-
+  const theme = useTheme();
   return (
     <NoSsr>
       {CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject) ? (
@@ -490,8 +489,9 @@ const Environments = () => {
                   : `${selectedEnvironments.length} environment selected`}
               </Typography>
               <Button>
-                <Delete
-                  sx={{ color: 'red', margin: '0 2px' }}
+                <DeleteIcon
+                  fill={theme.palette.icon.default}
+                  style={{ margin: '0 2px' }}
                   onClick={handleBulkDeleteEnvironmentConfirm}
                   disabled={
                     selectedEnvironments.length > 0
