@@ -8,15 +8,16 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
 type workspaceViewFlags struct {
-	OutputFormat string
-	Save         bool
-	OrgID        string
+	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
+	Save         bool   `json:"save" validate:"boolean"`
+	OrgID        string `json:"orgId"`
 }
 
 var workspaceViewFlagsProvided workspaceViewFlags
@@ -40,7 +41,15 @@ mesheryctl exp workspace view [workspace-id] --output-format json
 mesheryctl exp workspace view [workspace-id] --output-format json --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return display.ValidateOutputFormat(workspaceViewFlagsProvided.OutputFormat)
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
+			return utils.ErrCommandContextMissing("flags-validator")
+		}
+		err := flagValidator.Validate(workspaceViewFlagsProvided)
+		if err != nil {
+			return utils.ErrFlagsInvalid(err)
+		}
+		return nil
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp workspace view [workspace-name|workspace-id]\nRun 'mesheryctl exp workspace view --help' to see detailed help message"
