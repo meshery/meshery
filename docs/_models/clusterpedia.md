@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Clusterpedia
 subtitle: Collaborative and visual infrastructure as design for Clusterpedia
-image: /assets/img/integrations/clusterpedia/icons/color/clusterpedia-color.svg
-permalink: extensibility/integrations/clusterpedia
+image: /extensions/models/clusterpedia/icons/color/clusterpedia-color.svg
+aliases: /extensibility/integrations/clusterpedia
 docURL: https://docs.meshery.io/extensibility/integrations/clusterpedia
 description: 
 integrations-category: Orchestration & Management
@@ -36,8 +35,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

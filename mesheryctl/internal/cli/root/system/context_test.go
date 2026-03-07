@@ -38,7 +38,7 @@ func TestViewContextCmd(t *testing.T) {
 			IsOutputGolden:   false,
 			ExpectedResponse: "",
 			ExpectError:      true,
-			ExpectedError:    ErrContextNotExists(fmt.Errorf("context `local3` does not exist \n")),
+			ExpectedError:    ErrContextNotExists(fmt.Errorf("context `local3` does not exist")),
 		},
 		{
 			Name:             "view with specified context as argument",

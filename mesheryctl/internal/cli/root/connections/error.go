@@ -16,9 +16,14 @@ var (
 	ErrGcpGKEGetCredentialsCode   = "mesheryctl-1175"
 	ErrReadKubeConfigCode         = "mesheryctl-1187"
 	ErrWriteKubeConfigCode        = "mesheryctl-1188"
-	ErrConnectionNotFoundCode     = "mesheryctl-1196"
+	ErrConnectionNotFoundCode     = "mesheryctl-1197"
+)
 
-	invalidOutputFormatMsg = "output-format choice is invalid, use [json|yaml]"
+var (
+	deleteUsageMsg = "Usage: mesheryctl connection delete --help' to see detailed help message"
+	viewUsageMsg   = "Usage: mesheryctl connection view --help' to see detailed help message"
+	errNoArgMsg    = "connection name or ID isn't specified"
+	errMultiArgMsg = "too many arguments specified"
 )
 
 func errInvalidConnectionType(connectionType string) error {

@@ -21,7 +21,7 @@ func Test_importPattern_DisplayErrorsMissingFlags(t *testing.T) {
 		{
 			name:    "Import invalid source type",
 			args:    args{"invalid source type", "file.yaml", "", false},
-			want:    ErrInValidSource("invalid source type", []string{"Helm Chart", "Kubernetes Manifest", "Docker Compose", "Meshery Design"}),
+			want:    ErrInValidSource("invalid source type", validDesignSourceTypes),
 			wantErr: true,
 		},
 		{

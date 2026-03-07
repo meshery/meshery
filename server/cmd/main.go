@@ -130,7 +130,7 @@ func main() {
 	tracingProvider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
 
 	if err != nil {
-		log.Error(fmt.Errorf("Failed to initialize OpenTelemetry tracing: %v", err))
+		log.Error(fmt.Errorf("failed to initialize OpenTelemetry tracing: %v", err))
 	} else {
 		log.Info("OpenTelemetry tracing initialized with config:" + otelConfigString)
 	}
@@ -138,7 +138,7 @@ func main() {
 	defer func() {
 		if tracingProvider != nil {
 			if err := tracingProvider.Shutdown(context.Background()); err != nil {
-				log.Error(fmt.Errorf("Failed to shutdown OpenTelemetry tracer provider: %v", err))
+				log.Error(fmt.Errorf("failed to shutdown OpenTelemetry tracer provider: %v", err))
 			}
 		}
 	}()

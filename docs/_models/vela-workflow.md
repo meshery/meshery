@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Vela Workflow
 subtitle: Collaborative and visual infrastructure as design for Vela Workflow
-image: /assets/img/integrations/vela-workflow/icons/color/vela-workflow-color.svg
-permalink: extensibility/integrations/vela-workflow
+image: /extensions/models/vela-workflow/icons/color/vela-workflow-color.svg
+aliases: /extensibility/integrations/vela-workflow
 docURL: https://docs.meshery.io/extensibility/integrations/vela-workflow
 description: 
 integrations-category: App Definition and Development
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Integrates with Vela workflows"
 howItWorksDetails: "Flexible and customizable CI/CD workflows in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -19,7 +19,7 @@ Create an OCI-compliant package from the model files
 Create an OCI-compliant package from the model files.
 Model files are taken from [path]/[model-name]/[model-version] folder.
 Expects input to be in the format scaffolded by the model init command.
-Documentation for model build can be found at https://docs.meshery.io/reference/mesheryctl/model/build
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model build [flags]

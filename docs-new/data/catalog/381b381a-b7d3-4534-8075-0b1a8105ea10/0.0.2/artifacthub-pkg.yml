@@ -1,0 +1,24 @@
+version: 0.0.2
+name: ms-base-0.0.22.tgz
+displayName: ms-base-0.0.22.tgz
+createdAt: "2025-10-07T12:57:55Z"
+description: ms-base is a reusable Helm chart for containerized microservices on Kubernetes. It provisions a Deployment and Service and optionally ConfigMaps/Secrets, HPA, and Ingress. Common knobs are exposed via values.yaml (image repo/tag, replicas, resources, env, service.type, ingress.*). Suitable as a starting point for REST/GRPC services; follows 12-factor conventions and ships with health probes and configurable Pod labels/annotations.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/381b381a-b7d3-4534-8075-0b1a8105ea10/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Kubernetes ≥1.22 recommended. If ingress.enabled=true, an ingress controller must be present. If hpa.enabled=true, metrics-server must be installed. Default Service type is ClusterIP; set NodePort/LoadBalancer as needed. Some fields are immutable across upgrades (e.g., Service type, probe ports); changing them may require a rollout or resource recreate. Resource requests/limits in defaults are conservative—tune for prod. Do not commit secrets in values.yaml; prefer Kubernetes Secrets or an external secrets manager. If persistence is enabled, a default StorageClass must exist. RBAC/ServiceAccount can be created; cluster roles are not required by default. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4f8d9973-3f42-4e5a-98be-4fbb69d3ed48
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/381b381a-b7d3-4534-8075-0b1a8105ea10-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/381b381a-b7d3-4534-8075-0b1a8105ea10-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

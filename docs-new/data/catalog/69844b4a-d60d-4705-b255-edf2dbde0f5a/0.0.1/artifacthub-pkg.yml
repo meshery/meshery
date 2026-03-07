@@ -1,0 +1,20 @@
+version: 0.0.1
+name: the-new-stack
+displayName: the-new-stack
+createdAt: "2023-09-25T23:47:04Z"
+description: 'The New Stack (TNS) is a simple three-tier demo application, fully instrumented with the 3 pillars of observability: metrics, logs, and traces. It offers an insight on what a modern observability stack looks like and experience what it''s like to pivot among different types of observability data. The TNS app is an example three-tier web app built by Weaveworks. It consists of a data layer, application logic layer, and load-balancing layer. To learn more about it, see How To Detect, Map and Monitor Docker Containers with Weave Scope from Weaveworks. The instrumentation for the TNS app is as follows: Metrics: Each tier of the TNS app exposes metrics on /metrics endpoints, which are scraped by the Grafana Agent. Additionally, these metrics are tagged with exemplar information. The Grafana Agent then writes these metrics to Mimir for storage.Logs: Each tier of the TNS app writes logs to standard output or standard error. It is captured by Kubernetes, which are then collected by the Grafana Agent. Finally, the Agent forwards them to Loki for storage. Traces: Each tier of the TNS app sends traces in Jaeger format to the Grafana Agent, which then converts them to OTel format and forwards them to Tempo for storage. Visualization: A Grafana instance configured to talk to the Mimir, Loki, and Tempo instances makes it possible to query and visualize the metrics, logs, and traces data.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/69844b4a-d60d-4705-b255-edf2dbde0f5a/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure enough resources are available on the k8s cluster \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a550f4d6-d3bd-44f1-9b4c-167114452062
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

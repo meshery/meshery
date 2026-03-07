@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kusk Gateway
 subtitle: Collaborative and visual infrastructure as design for Kusk Gateway
-image: /assets/img/integrations/kusk-gateway/icons/color/kusk-gateway-color.svg
-permalink: extensibility/integrations/kusk-gateway
+image: /extensions/models/kusk-gateway/icons/color/kusk-gateway-color.svg
+aliases: /extensibility/integrations/kusk-gateway
 docURL: https://docs.meshery.io/extensibility/integrations/kusk-gateway
 description: 
 integrations-category: Orchestration & Management
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Manages Kusk Gateway configurations"
 howItWorksDetails: "Simplified API gateway management and enhanced customization in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

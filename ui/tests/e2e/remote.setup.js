@@ -10,18 +10,22 @@ const PROVIDERS = {
 };
 
 setup('authenticate with Remote Provider', async ({ page }) => {
-  //set test timeout to 2 minutes
-  setup.setTimeout(2 * 60 * 1000);
-  // Perform authentication steps. Replace these actions with your own.
-  const providerSelectionPage = new ProviderSelectionPage(page);
-  await providerSelectionPage.navigateToProviderSelection();
-  await providerSelectionPage.selectProvider(PROVIDERS.MESHERY);
-
-  console.log('Selected Remote Provider');
-
+  const baseURL = ENV.MESHERY_SERVER_URL;
+  const token = ENV.PROVIDER_TOKEN;
+  const email = ENV.REMOTE_PROVIDER_USER.email;
+  const password = ENV.REMOTE_PROVIDER_USER.password;
   const loginPage = new LoginPage(page);
 
-  await loginPage.login(ENV.REMOTE_PROVIDER_USER.email, ENV.REMOTE_PROVIDER_USER.password);
+  if (token) {
+    console.log('Using token-based authentication');
+    await loginPage.loginWithToken(token, baseURL);
+  } else {
+    console.log('Using form-based authentication');
+    const providerSelectionPage = new ProviderSelectionPage(page);
+    await providerSelectionPage.navigateToProviderSelection();
+    await providerSelectionPage.selectProvider(PROVIDERS.MESHERY);
+    await loginPage.loginWithEmail(email, password);
+  }
 
   await loginPage.waitForRedirection();
 

@@ -1,0 +1,27 @@
+version: 0.0.1
+name: keda-httprequestsscaler
+displayName: KEDA HTTPRequestsScaler
+createdAt: "2024-06-10T06:58:38Z"
+description: |-
+    This design makes use of the external add-on, KEDA HTTP, for event-based autoscaling of HTTP workloads on Kubernetes. See https://artifacthub.io/packages/keda-scaler/keda-official-external-scalers/keda-add-ons-http for details on this specific scaler.
+
+    The KEDA HTTP Add-on allows Kubernetes users to automatically scale their HTTP servers up and down (including to/from zero) based on incoming HTTP traffic. In order to do so, KEDA HTTP add-on, deploys a proxy service and requires all traffic to be routed via this proxy service. The proxy service is deployed automatically by the KEDA add-on operator, the name for the deployed service follows the following scheme "keda-add-ons-http-interceptor-proxy".
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/b82e1abb-318b-4462-badc-494a21612381/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. The dependent design \"KEDA Setup\", needs to be deployed first for the overall design to function properly.\n\n2. After deploying the design, initiate the performance test on the exposed endpoint for the service named \"keda-add-ons-http-interceptor-proxy\", ensuring to include \"httpbin.com\" as the host header if utilizing a different host. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: b6467d0a-f11e-4614-9eb2-ab80c4f1c58d
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/b82e1abb-318b-4462-badc-494a21612381-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/b82e1abb-318b-4462-badc-494a21612381-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

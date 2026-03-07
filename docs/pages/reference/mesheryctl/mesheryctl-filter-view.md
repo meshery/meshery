@@ -43,6 +43,22 @@ mesheryctl filter view --all
 </div>
 </pre> 
 
+View all filter files in json
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl filter view --all --output-format json
+
+</div>
+</pre> 
+
+View all filter files in json and save it to a file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl filter view --all --output-format json -s
+
+</div>
+</pre> 
+
 //View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -65,6 +81,7 @@ mesheryctl filter view "filter name"
   -a, --all                    (optional) view all filters available
   -h, --help                   help for view
   -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
+  -s, --save                   (optional) save output as a JSON/YAML file
 
 </div>
 </pre>

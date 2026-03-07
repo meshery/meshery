@@ -1,0 +1,130 @@
+name: Hello WASM
+version: 0.0.8
+services:
+  appconfig:
+    annotations: {}
+    apiVersion: dapr.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: daprlkbkj
+    name: appconfig
+    namespace: default
+    settings:
+      spec:
+        access Control:
+          policies: []
+        api:
+          allowed: []
+          denied: []
+        app Http Pipeline:
+          handlers: []
+        components:
+          deny: []
+        features: []
+        http Pipeline:
+          handlers:
+          - name: wasm
+            selector:
+              fields: []
+            type: middleware.http.wasm
+        mTLS:
+          enabled: true
+          token Validators: []
+        metric:
+          enabled: true
+          rules: []
+        metrics:
+          enabled: true
+          rules: []
+        secrets:
+          scopes: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 6c4536e7-c7ed-453a-a648-cf9f37bbafbd
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/examples/incubating.md#dapr-logos
+          model: dapr
+          modelDisplayName: Dapr
+          primaryColor: '#0d2192'
+          secondaryColor: '#5266D7'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            border-width: 0px
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/dapr/color/component-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/dapr/white/component-white.svg
+        position:
+          posX: 90
+          posY: 130
+        whiteboardData:
+          style: {}
+    type: Configuration
+    version: ""
+  wasm:
+    annotations: {}
+    apiVersion: dapr.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: dapr
+    name: wasm
+    namespace: default
+    settings:
+      auth:
+        secret Store: secretstores.kubernetes
+      scopes: []
+      spec:
+        metadata:
+        - name: url
+          value: file://wasm/main.wasm
+        type: middleware.http.wasm
+        version: v1
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 09124d6c-6d0c-4ac2-b15e-278bc382035e
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/examples/incubating.md#dapr-logos
+          model: dapr
+          modelDisplayName: Dapr
+          primaryColor: '#0d2192'
+          secondaryColor: '#5266D7'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 3
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/dapr/color/component-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/dapr/white/component-white.svg
+        position:
+          posX: 150
+          posY: 130
+        whiteboardData:
+          style: {}
+    type: Component
+    version: ""

@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 )
@@ -65,6 +66,7 @@ func TestComponent(t *testing.T) {
 		},
 	}
 
+	mesheryctlflags.InitValidators(ComponentCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, ComponentCmd, tests, currentDirectory, "component")
 
 }
