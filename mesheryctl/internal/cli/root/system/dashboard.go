@@ -185,14 +185,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			}
 
 			var mesheryEndpoint string
-			var endpoint *meshkitutils.Endpoint
-			clientset := client.KubeClient
-			var opts meshkitkube.ServiceOptions
-			opts.Name = "meshery"
-			opts.Namespace = utils.MesheryNamespace
-			opts.APIServerURL = client.RestConfig.Host
-
-			endpoint, err = meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
+			endpoint, err := utils.GetMesheryEndpoint(context.TODO(), client)
 			if err != nil {
 				utils.Log.Error(err) //the func return a meshkit error
 				return nil
@@ -209,7 +202,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 					Address: endpoint.External.Address,
 					Port:    endpoint.External.Port,
 				}, nil) {
-					u, _ := url.Parse(opts.APIServerURL)
+					u, _ := url.Parse(client.RestConfig.Host)
 					if meshkitutils.TcpCheck(&meshkitutils.HostPort{
 						Address: u.Hostname(),
 						Port:    endpoint.External.Port,
@@ -231,7 +224,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		}
 
 		if !skipBrowserFlag {
-			log.Info("Opening Meshery UI in browser at " + currCtx.GetEndpoint() + ".")
+			log.Info("Opening Meshery UI in browser at " + currCtx.GetEndpoint())
 			err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 			if err != nil {
 				log.Warn("Failed to open Meshery UI in your browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery UI.\n\nOr run `mesheryctl system dashboard --port-forward` to access Meshery UI via port-forwarding.")
