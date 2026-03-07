@@ -1,0 +1,199 @@
+{{ define "main" }}
+{{ .Content }}
+{{ $data := .Params.data }}
+{{ $swagger := index site.Data $data }}
+{{ if not $swagger }}
+  {{ $swagger = .Params }}
+{{ end }}
+
+<details>
+<summary>
+    Here is a concise list of all REST API endpoints.
+</summary>
+<ul>
+{{ range $path, $methods := $swagger.paths }}
+<li>{{ $path }}</li>
+{{ end }}
+</ul>
+</details>
+
+{{ range $path, $route := $swagger.paths }}
+<div class="swagger-path">
+    <h2 class="swagger-path">{{ $path }}</h2>
+{{ if (strings.Contains $path "/api/oam") }}
+    <span class="deprecated-label">Deprecated</span>
+{{ end }}
+    {{ range $method, $methodData := $route }}
+    <div class="swagger-method swagger-method-{{ $method }}">
+        <h3 class="swagger-method-title">
+            <a href="#" class="swagger-method-link">
+                <span class="swagger-method-name">{{ upper $method }}</span>
+                <span class="swagger-method-summary">{{ $methodData.summary }}</span>
+            </a>
+        </h3>
+        <div class="swagger-method-details">
+            <h5>Description</h5>
+            <md-block>
+              <span class="swagger-method-description">{{ $methodData.description }}</span>
+            </md-block>
+            {{ if $methodData.parameters }}
+            <div class="swagger-parameters">
+                <h5>Parameters</h5>
+                <table class="swagger-parameters-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Located in</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{ range $methodData.parameters }}
+                        <tr>
+                            <td>
+                                {{ if .required }}
+                                <span class="swagger-parameter-required">
+                                {{ end }}
+                                {{ .name }}
+                                {{ if .required }}
+                                </span>
+                                {{ end }}
+                            </td>
+                            <td>{{ .in }}</td>
+                            <td>{{ .description }}</td>
+                            <td>
+                                {{ if .type }}
+                                {{ title .type }}
+                                {{ if .items }}
+                                of {{ title .items.type }}
+                                {{ end }}
+                                {{ else }}
+                                Unknown
+                                {{ end }}
+                            </td>
+                        </tr>
+                        {{ end }}
+                    </tbody>
+                </table>
+            </div>
+            {{ end }}
+            {{ if $methodData.responses }}
+            <div class="swagger-response">
+                <h5>Responses</h5>
+                {{ range $respCode, $respData := $methodData.responses }}
+                <div class="swagger-response-{{ $respCode }}">
+                    <p class="swagger-response-title">
+                        <span class="swagger-response-code">{{ $respCode }}</span>
+                        {{ if ne $respData.description "" }}<span class="swagger-response-seperator">-</span>{{ end }}
+                        <md-block class="mdblock">
+                            <span class="swagger-response-description">{{ $respData.description }}</span>
+                        </md-block>
+                    </p>
+                </div>
+                {{ if $respData.schema.properties }}
+                 <table class="swagger-parameters-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Format</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{ range $paramName, $paramData := $respData.schema.properties }}
+                        <tr>
+                            <td>{{ $paramName }}</td>
+                            <td>
+                                {{ if $paramData.format }}
+                                {{ $paramData.format }}
+                                {{ else }}
+                                Object
+                                {{ end }}
+                            </td>
+                            <td>{{ $paramData.type }}</td>
+                        </tr>
+                        {{ end }}
+                    </tbody>
+                </table>
+                {{ end }}
+                {{ range $swagger.produces }}
+                    {{ $contentType := . }}
+                    {{ if index $respData.examples $contentType }}
+                        {{ $example := index $respData.examples $contentType }}
+                        {{ if (strings.Contains $contentType "json") }}
+                            <pre><code class="language-json">{{ $example }}</code></pre>
+                        {{ else if (strings.Contains $contentType "xml") }}
+                            <pre><code class="language-xml">{{ $example }}</code></pre>
+                        {{ else }}
+                            <pre><code class="language-http">{{ $example }}</code></pre>
+                        {{ end }}
+                    {{ end }}
+                {{ end }}
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+    </div>
+    {{ end }}
+</div>
+{{ end }}
+
+<script type="text/javascript">
+// Helpers
+
+var slice = Array.prototype.slice;
+
+function $(expr, parent) {
+    return typeof expr === "string" ? (parent || document).querySelector(expr) : expr || null;
+}
+
+function $$(expr, parent) {
+    return slice.call((parent || document).querySelectorAll(expr));
+}
+
+bind = function(element, o) {
+    if (element) {
+        for (var event in o) {
+            var callback = o[event];
+
+            event.split(/\s+/).forEach(function (event) {
+                element.addEventListener(event, callback);
+            });
+        }
+    }
+};
+
+toggleDetails = function(element) {
+    if (element.classList.contains('open')) {
+        element.classList.remove('open');
+    }
+    else {
+        element.classList.add('open');
+    }
+}
+
+// Initialization
+
+function init() {
+    $$('.swagger-method-title').forEach(function (title) {
+        bind(title, {
+            'click': function (e) {
+                var details = $('.swagger-method-details', title.parentNode)
+                toggleDetails(details[0]);
+                e.preventDefault();
+            }
+        });
+    });
+}
+
+// DOM already loaded?
+if (document.readyState !== "loading") {
+    init();
+}
+else {
+    // Wait for it
+    document.addEventListener("DOMContentLoaded", init);
+}
+</script>
+{{ end }}

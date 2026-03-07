@@ -17,7 +17,7 @@ Update the registry with latest data.
 ## Synopsis
 
 Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/registry/update
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry update [flags]

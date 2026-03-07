@@ -1,0 +1,47 @@
+name: Deploy Docs Preview
+on:
+  workflow_run:
+    workflows:
+      - Build and Preview Docs
+    types:
+      - completed
+
+jobs:
+  deploy-docs-new-preview:
+    if: github.repository == 'meshery/meshery' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+
+      - name: Download Site directory
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          github_token: ${{ secrets.GH_ACCESS_TOKEN }}
+          workflow: build-and-preview-docs-new.yml
+          run_id: ${{ github.event.workflow_run.id }}
+          name: docs-new-site
+
+      - name: Unzip Site
+        run: |
+          mkdir -p docs-new-preview
+          unzip docs-new-site.zip -d docs-new-preview
+          rm -f docs-new-site.zip
+
+      - name: Deploy to Netlify
+        id: netlify
+        uses: nwtgck/actions-netlify@v3
+        with:
+          publish-dir: 'docs-new-preview'
+          production-deploy: false
+          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          enable-commit-comment: false
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Comment Deploy URL
+        uses: ./.github/actions/comment-preview-on-pr
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          deploy_url: "${{ steps.netlify.outputs.deploy-url }}"

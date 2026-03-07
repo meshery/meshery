@@ -7,6 +7,17 @@ import (
 	"github.com/meshery/meshkit/errors"
 )
 
+// isClientDisconnect checks if an error is caused by the client disconnecting
+// (broken pipe or connection reset). These are expected during normal operation
+// when clients close connections before the server finishes writing.
+func isClientDisconnect(err error) bool {
+	if err == nil {
+		return false
+	}
+	errStr := err.Error()
+	return strings.Contains(errStr, "broken pipe") || strings.Contains(errStr, "connection reset by peer")
+}
+
 // Please reference the following before contributing an error code:
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
@@ -150,6 +161,7 @@ const (
 	ErrExportPatternInFormatCode           = "meshery-server-1364"
 	ErrFileTypeCode                        = "meshery-server-1366"
 	ErrCreatingOPAInstanceCode             = "meshery-server-1367"
+	ErrEncodeResponseCode                  = "meshery-server-1374"
 )
 
 var (
@@ -649,6 +661,9 @@ func ErrGetCapabilities(err error, userId string) error {
 
 func ErrExportPatternInFormat(err error, format, designName string) error {
 	return errors.New(ErrExportPatternInFormatCode, errors.Alert, []string{fmt.Sprintf("Failed to export design file \"%s\" as \"%s\"", designName, format)}, []string{err.Error()}, []string{fmt.Sprintf("Current version of Meshery does not support exporting in \"%s\" format", format)}, []string{"Export design in one of the supported format."})
+}
+func ErrEncodeResponse(err error) error {
+	return errors.New(ErrEncodeResponseCode, errors.Alert, []string{"failed to encode and write response"}, []string{err.Error()}, []string{"Client may have disconnected before the response was fully written", "Response data could not be serialized to JSON"}, []string{"If the issue persists, check server logs for details"})
 }
 func ErrCreatingOPAInstance(err error) error {
 	return errors.New(ErrCreatingOPAInstanceCode, errors.Alert, []string{"Error creating OPA Instance."}, []string{err.Error()}, []string{"Unable to create OPA instance, policies will not be evaluated."}, []string{"Ensure relationships are registered"})

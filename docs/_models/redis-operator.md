@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Redis Operator
 subtitle: Collaborative and visual infrastructure as design for Redis Operator
-image: /assets/img/integrations/redis-operator/icons/color/redis-operator-color.svg
-permalink: extensibility/integrations/redis-operator
+image: /extensions/models/redis-operator/icons/color/redis-operator-color.svg
+aliases: /extensibility/integrations/redis-operator
 docURL: https://docs.meshery.io/extensibility/integrations/redis-operator
 description: 
 integrations-category: Database
@@ -48,8 +47,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Redis clusters"
 howItWorksDetails: "Simplified Redis cluster management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

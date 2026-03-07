@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Strimzi Registry Operator
 subtitle: Collaborative and visual infrastructure as design for Strimzi Registry Operator
-image: /assets/img/integrations/strimzi-registry-operator/icons/color/strimzi-registry-operator-color.svg
-permalink: extensibility/integrations/strimzi-registry-operator
+image: /extensions/models/strimzi-registry-operator/icons/color/strimzi-registry-operator-color.svg
+aliases: /extensibility/integrations/strimzi-registry-operator
 docURL: https://docs.meshery.io/extensibility/integrations/strimzi-registry-operator
 description: 
 integrations-category: App Definition and Development
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

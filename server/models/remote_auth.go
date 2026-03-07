@@ -89,7 +89,7 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 		return "", err
 	}
 	if r.StatusCode == http.StatusInternalServerError {
-		return "", ErrTokenRefresh(fmt.Errorf("failed to refresh token. Status code 500."))
+		return "", ErrTokenRefresh(fmt.Errorf("failed to refresh token. Status code 500"))
 	}
 
 	defer SafeClose(r.Body, l.Log)
@@ -257,7 +257,7 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	_, ok := jtk["exp"]
 	if ok {
 		exp := int64(jtk["exp"].(float64))
-		if time.Now().Unix()  > exp {
+		if time.Now().Unix() > exp {
 			return nil, ErrTokenExpired
 		}
 	}

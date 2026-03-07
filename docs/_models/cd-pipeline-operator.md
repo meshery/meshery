@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: KubeRocketCI Pipeline Operator
 subtitle: Collaborative and visual infrastructure as design for KubeRocketCI Pipeline Operator
-image: /assets/img/integrations/cd-pipeline-operator/icons/color/cd-pipeline-operator-color.svg
-permalink: extensibility/integrations/cd-pipeline-operator
+image: /extensions/models/cd-pipeline-operator/icons/color/cd-pipeline-operator-color.svg
+aliases: /extensibility/integrations/cd-pipeline-operator
 docURL: https://docs.meshery.io/extensibility/integrations/cd-pipeline-operator
 description: 
 integrations-category: App Definition and Development
@@ -28,8 +27,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

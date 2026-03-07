@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Authorization
 subtitle: Collaborative and visual infrastructure as design for Azure Authorization
-image: /assets/img/integrations/azure-authorization/icons/color/azure-authorization-color.svg
-permalink: extensibility/integrations/azure-authorization
+image: /extensions/models/azure-authorization/icons/color/azure-authorization-color.svg
+aliases: /extensibility/integrations/azure-authorization
 docURL: https://docs.meshery.io/extensibility/integrations/azure-authorization
 description: 
 integrations-category: Security & Compliance
@@ -34,8 +33,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

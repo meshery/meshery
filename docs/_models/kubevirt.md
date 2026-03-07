@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubevirt
 subtitle: Collaborative and visual infrastructure as design for Kubevirt
-image: /assets/img/integrations/kubevirt/icons/color/kubevirt-color.svg
-permalink: extensibility/integrations/kubevirt
+image: /extensions/models/kubevirt/icons/color/kubevirt-color.svg
+aliases: /extensibility/integrations/kubevirt
 docURL: https://docs.meshery.io/extensibility/integrations/kubevirt
 description: 
 integrations-category: App Definition and Development
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Manages KubeVirt virtual machines"
 howItWorksDetails: "Unified management of VMs and containers in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

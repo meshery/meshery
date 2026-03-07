@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Rook
 subtitle: Collaborative and visual infrastructure as design for Rook
-image: /assets/img/integrations/rook/icons/color/rook-color.svg
-permalink: extensibility/integrations/rook
+image: /extensions/models/rook/icons/color/rook-color.svg
+aliases: /extensibility/integrations/rook
 docURL: https://docs.meshery.io/extensibility/integrations/rook
 description: 
 integrations-category: Runtime
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

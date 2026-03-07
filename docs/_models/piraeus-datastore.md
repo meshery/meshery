@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Piraeus Datastore
 subtitle: Collaborative and visual infrastructure as design for Piraeus Datastore
-image: /assets/img/integrations/piraeus-datastore/icons/color/piraeus-datastore-color.svg
-permalink: extensibility/integrations/piraeus-datastore
+image: /extensions/models/piraeus-datastore/icons/color/piraeus-datastore-color.svg
+aliases: /extensibility/integrations/piraeus-datastore
 docURL: https://docs.meshery.io/extensibility/integrations/piraeus datastore
 description: 
 integrations-category: Cloud Native Storage
@@ -68,8 +67,5 @@ featureList: [
 ]
 howItWorks: "Piraeus can run on all kinds of storage medium: RAID, SAN, NAS or EBS"
 howItWorksDetails: "It deploys and scales out automatically within Kubernetes nodes. With Piraeus, Kubernetes workloads can now consume high performance local storage using the same volume APIs that app developers have become accustomed to."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

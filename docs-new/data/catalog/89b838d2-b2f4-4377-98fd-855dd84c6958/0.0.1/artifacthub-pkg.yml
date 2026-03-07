@@ -1,0 +1,20 @@
+version: 0.0.1
+name: bookinfopatternistio.yaml
+displayName: bookInfoPatternIstio.yaml
+createdAt: "2023-07-27T18:13:00Z"
+description: A deployment of book info application through kubernetes, this design uses k8s components like deployment and services to deploy application
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/89b838d2-b2f4-4377-98fd-855dd84c6958/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Make sure you are running latest version of k8s \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c0228da7-2415-4626-9ea5-19f97147767b
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Open Policy Agent Gatekeeper
 subtitle: Collaborative and visual infrastructure as design for Open Policy Agent Gatekeeper
-image: /assets/img/integrations/gatekeeper/icons/color/gatekeeper-color.svg
-permalink: extensibility/integrations/gatekeeper
+image: /extensions/models/gatekeeper/icons/color/gatekeeper-color.svg
+aliases: /extensibility/integrations/gatekeeper
 docURL: https://docs.meshery.io/extensibility/integrations/gatekeeper
 description: 
 integrations-category: Security & Compliance
@@ -92,8 +91,5 @@ featureList: [
 ]
 howItWorks: "Unifies policy enforcement across the stack"
 howItWorksDetails: "Supports various policy languages"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

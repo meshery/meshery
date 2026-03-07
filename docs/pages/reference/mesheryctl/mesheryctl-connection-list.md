@@ -17,7 +17,7 @@ List all the connections
 ## Synopsis
 
 List all available connections.
-Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection/list
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection list [flags]

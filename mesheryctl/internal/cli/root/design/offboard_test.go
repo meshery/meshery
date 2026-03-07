@@ -69,7 +69,7 @@ func TestOffboardCmd(t *testing.T) {
 			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrDesignNotFound(),
+			ExpectedError:  ErrDesignNotFound(filepath.Join(fixturesDir, "sampleDesign.golden")),
 		},
 	}
 

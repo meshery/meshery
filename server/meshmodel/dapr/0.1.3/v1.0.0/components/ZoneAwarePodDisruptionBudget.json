@@ -1,0 +1,93 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Zone Aware Pod Disruption Budget",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "dapr",
+    "displayName": "Dapr",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Serverless"
+    },
+    "subCategory": "Framework",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#0d2192",
+      "secondaryColor": "#5266D7",
+      "shape": "circle",
+      "source_uri": "https://caspergn.github.io/dapr-agents-dev/dapr-agents-0.1.3.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 480 255.60879\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#0d2192;}.cls-2{fill:#fff;isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"\u003e\u003c/rect\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 480 255.60879\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"\u003e\u003c/rect\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "0.1.3"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
+  },
+  "styles": {
+    "primaryColor": "#0d2192",
+    "secondaryColor": "#5266D7",
+    "shape": "circle",
+    "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 255.60879\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#0d2192;}.cls-2{fill:#fff;isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"/\u003e\u003crect id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"/\u003e\u003crect id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"/\u003e\u003crect id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"/\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 255.60879\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"/\u003e\u003crect id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"/\u003e\u003crect id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"/\u003e\u003crect id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"/\u003e\u003c/svg\u003e"
+  },
+  "capabilities": null,
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://caspergn.github.io/dapr-agents-dev/dapr-agents-0.1.3.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "rollout-operator.grafana.com/v1",
+    "kind": "ZoneAwarePodDisruptionBudget",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"maxUnavailable\": {\n     \"description\": \"The number of pods that can be unavailable within a zone or partition.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"maxUnavailablePercentage\": {\n     \"description\": \"Calculate the maxUnavailable value as a percentage of the StatefulSet's spec.Replica count. This option is not supported when using podNamePartitionRegex.\",\n     \"maximum\": 100,\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"podNamePartitionRegex\": {\n     \"description\": \"A regular expression for returning a partition name given a pod name. This field is optional and should only be used when the ZoneAwarePodDisruptionBudget is to be scoped to a partition, such as a multi-zone ingester deployment with ingest_storage_enabled. Enabling this changes the ZPDB functionality such that minAvailability is applied across ALL zones for a given partition. When not enabled, the minAvailability is applied to pods within the eviction zone assuming there are no disruptions in the other zones.\",\n     \"type\": \"string\"\n    },\n    \"podNameRegexGroup\": {\n     \"description\": \"The regular expression group number that contains the partition name. This field is only required when the podNamePartitionRegex field is set and has more then one subexpression grouping. The default value is 1.\",\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"selector\": {\n     \"description\": \"A selector for finding pods and statefulsets that this ZoneAwarePodDisruptionBudget applies to.\",\n     \"properties\": {\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"matchLabels\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"selector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Zone Aware Pod Disruption Budget\",\n \"type\": \"object\"\n}"
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
+}
