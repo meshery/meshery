@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -53,8 +54,9 @@ func TestViewContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t, false)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetOut(b)
+			SystemCmd.SetErr(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 
@@ -107,8 +109,9 @@ func TestListContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t, false)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetOut(b)
+			SystemCmd.SetErr(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
@@ -150,8 +153,9 @@ func TestDeleteContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t, false)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetOut(b)
+			SystemCmd.SetErr(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
@@ -205,7 +209,6 @@ func TestDeleteContextCmd(t *testing.T) {
 	}
 }
 func TestAddContextCmd(t *testing.T) {
-	resetVariables()
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 
@@ -242,9 +245,11 @@ func TestAddContextCmd(t *testing.T) {
 			IsOutputGolden: false,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			b := utils.SetupMeshkitLoggerTesting(t, false)
+			utils.Log.SetLevel(logrus.InfoLevel)
 
 			SystemCmd.SetOut(b)
 			SystemCmd.SetErr(b)
@@ -299,6 +304,7 @@ func TestAddContextCmd(t *testing.T) {
 		})
 		t.Log("CreateContextCmd test Passed")
 	}
+
 }
 
 func TestSwitchContextCmd(t *testing.T) {
@@ -320,8 +326,10 @@ func TestSwitchContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t, false)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+
 			SystemCmd.SetOut(b)
+			SystemCmd.SetErr(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
