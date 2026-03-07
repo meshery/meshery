@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "",
+    "description": "A hierarchical inventory relationship in which ManagedClustersAgentPool (child) belongs to a ManagedCluster (parent).",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "MaintenanceConfiguration",
+            "kind": "ManagedClustersAgentPool",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
