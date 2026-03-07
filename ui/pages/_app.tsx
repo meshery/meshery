@@ -426,7 +426,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
   const loadAbility = useCallback(
     async (orgID, reFetchKeys) => {
       const storedKeys = sessionStorage.getItem('keys');
-      if (storedKeys !== null && !reFetchKeys && storedKeys !== 'undefined') {
+      if (storedKeys !== null && storedKeys !== '' && !reFetchKeys && storedKeys !== 'undefined') {
         setState((prevState) => ({ ...prevState, keys: JSON.parse(storedKeys) }));
         updateAbility();
       } else {
