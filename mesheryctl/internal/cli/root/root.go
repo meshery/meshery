@@ -228,4 +228,5 @@ func setVerbose() {
 
 func setupLogger() {
 	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
+	config.Log = utils.Log
 }
