@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -53,8 +54,9 @@ func TestViewContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t, false)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetOut(b)
+			SystemCmd.SetErr(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 
@@ -68,9 +70,7 @@ func TestViewContextCmd(t *testing.T) {
 			}
 
 			if tt.ExpectError {
-				if err == nil {
-					t.Fatalf("expected error, got nil")
-				}
+				t.Fatalf("expected error, got nil")
 			}
 
 			testdataDir := filepath.Join(currDir, "testdata/context")
@@ -109,8 +109,9 @@ func TestListContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t, false)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetOut(b)
+			SystemCmd.SetErr(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
@@ -152,8 +153,9 @@ func TestDeleteContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t, false)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetOut(b)
+			SystemCmd.SetErr(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
@@ -207,7 +209,6 @@ func TestDeleteContextCmd(t *testing.T) {
 	}
 }
 func TestAddContextCmd(t *testing.T) {
-	resetVariables()
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 
@@ -218,20 +219,54 @@ func TestAddContextCmd(t *testing.T) {
 	utils.SetupCustomContextEnv(t, currDir+"/testdata/context/ExpectedAdd.yaml")
 	tests := []utils.CmdTestInput{
 		{
-			Name:             "add given context",
-			Args:             []string{"context", "create", "local3"},
-			ExpectedResponse: "createContext.golden",
+			Name:                 "given a valid context name provided when running mesheryctl system context create [valid-name] then a context gets created",
+			Args:                 []string{"context", "create", "local3"},
+			ExpectedResponse:     "createContext.golden",
+			ExpectedResponseYaml: "addExpected.golden",
+		},
+		{
+			Name:                 "given a valid context name which contains uppercase letters provided when running mesheryctl system context create [valid-name] then a context gets created",
+			Args:                 []string{"context", "create", "Local4"},
+			ExpectedResponse:     "createContext.uppercase.golden",
+			ExpectedResponseYaml: "addExpected.uppercase.golden",
+		},
+		{
+			Name:           "given no valid context name provided when running mesheryctl system context create [valid-name] then an error message displayed",
+			Args:           []string{"context", "create"},
+			ExpectError:    true,
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
+			IsOutputGolden: false,
+		},
+		{
+			Name:           "given multiple context name provided when running mesheryctl system context create then an error message displayed",
+			Args:           []string{"context", "create", "local1", "local2"},
+			ExpectError:    true,
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
+			IsOutputGolden: false,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			utils.SetupMeshkitLoggerTesting(t, false)
-			b := utils.SetupLogrusGrabTesting(t, false)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+			utils.Log.SetLevel(logrus.InfoLevel)
+
 			SystemCmd.SetOut(b)
+			SystemCmd.SetErr(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
+
 			if err != nil {
-				t.Error(err)
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
+				}
+				t.Fatal(err)
+			}
+
+			if tt.ExpectError {
+				t.Fatalf("expected error, got nil")
 			}
 
 			actualResponse := b.String()
@@ -255,7 +290,7 @@ func TestAddContextCmd(t *testing.T) {
 				t.Error(err)
 			}
 			actualResponse = string(content)
-			golden = utils.NewGoldenFile(t, "addExpected.golden", testdataDir)
+			golden = utils.NewGoldenFile(t, tt.ExpectedResponseYaml, testdataDir)
 			if *update {
 				golden.Write(actualResponse)
 			}
@@ -269,6 +304,7 @@ func TestAddContextCmd(t *testing.T) {
 		})
 		t.Log("CreateContextCmd test Passed")
 	}
+
 }
 
 func TestSwitchContextCmd(t *testing.T) {
@@ -290,8 +326,10 @@ func TestSwitchContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t, false)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+
 			SystemCmd.SetOut(b)
+			SystemCmd.SetErr(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
