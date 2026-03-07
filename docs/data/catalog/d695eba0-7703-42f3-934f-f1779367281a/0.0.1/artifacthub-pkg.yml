@@ -1,0 +1,24 @@
+version: 0.0.1
+name: jenkins-operator
+displayName: Jenkins operator
+createdAt: "2024-04-14T20:15:07Z"
+description: This YAML configuration defines a Kubernetes Deployment for the Jenkins Operator, ensuring the deployment of a single instance within the cluster. It specifies metadata including labels and annotations for identification and description purposes. The deployment is set to run one replica of the Jenkins Operator container, configured with security settings to run as a non-root user and disallow privilege escalation. Environment variables are provided for dynamic configuration within the container, such as the namespace and Pod name. Resource requests and limits are also defined to manage CPU and memory allocation effectively. Overall, this Deployment aims to ensure the smooth and secure operation of the Jenkins Operator within the Kubernetes environment.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/d695eba0-7703-42f3-934f-f1779367281a/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Resource Allocation: The CPU and memory requests and limits defined in the configuration should be carefully adjusted based on the workload and available resources in the Kubernetes cluster to avoid resource contention and potential performance issues.\n\n2. Image Repository Access: Ensure that the container image specified in the configuration (myregistry/jenkins-operator:latest) is accessible from the Kubernetes cluster. Proper image pull policies and authentication mechanisms should be configured to allow the Kubernetes nodes to pull the image from the specified registry.\n\n3. Security Context: The security settings configured in the security context of the container (runAsNonRoot, allowPrivilegeEscalation) are essential for maintaining the security posture of the Kubernetes cluster. Ensure that these settings align with your organization's security policies and best practices.\n\n4. Environment Variables: The environment variables defined in the configuration, such as WATCH_NAMESPACE, POD_NAME, OPERATOR_NAME, and PLATFORM_TYPE, are used to dynamically configure the Jenkins Operator container. Ensure that these variables are correctly set to provide the necessary context and functionality to the operator. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d695eba0-7703-42f3-934f-f1779367281a-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d695eba0-7703-42f3-934f-f1779367281a-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

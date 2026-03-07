@@ -1,0 +1,24 @@
+version: 0.0.6
+name: robot-shop
+displayName: robot-shop
+createdAt: "2025-09-28T21:41:09Z"
+description: "robot-shop is a sample microservices application designed as a sandbox for learning containerized application orchestration and monitoring techniques.\n\nMain features & components:\n\n- Multiple microservices built using a variety of languages / frameworks: Node.js (Express), Java (Spring Boot), Python (Flask), Go, PHP (Apache) \n\n- Uses multiple data stores & middleware: MongoDB, Redis, MySQL, RabbitMQ \n\n- Frontend (web) service using AngularJS  \n\n- Nginx for web serving / reverse proxy \n\n\n- Observability / monitoring / tracing support: services expose Prometheus metrics (e.g. cart/payment), Instana agent for tracing & metrics. \n\n\n- Includes load generation utility (load-gen) (using Locust) for simulating traffic / testing performance. \n\n\n- Supports being run via Docker Compose locally, or deployed to Kubernetes (using Helm Chart) \n"
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/ac4014f9-d320-4a39-9364-46a1b3627b33/0.0.6/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "- Error handling is patchy and there is not any security built into the application.\n- Load generation is not automatic; it needs to be triggered manually or via provided load generator utilities.\n- This sample microservice application has been built using these technologies: NodeJS (Express), Java (Spring Boot), Python (Flask), Golang, PHP (Apache), MongoDB, Redis, MySQL (Maxmind data), RabbitMQ, Nginx, AngularJS (1.x)\n- AngularJS (1.x) is an older frontend framework; some libraries / dependencies may be deprecated.\n\n\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: bf6a3e39-503c-4f58-b244-e5243cfb7cd5
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ac4014f9-d320-4a39-9364-46a1b3627b33-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ac4014f9-d320-4a39-9364-46a1b3627b33-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

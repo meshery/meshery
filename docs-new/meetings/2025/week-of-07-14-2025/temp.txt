@@ -1,4 +1,0 @@
-week-of-07-14-2025
-name : Jay Prakash 
-techStack: html , css , js , express , node, bun , mongodb , etc 
-i am undergradte guy from india . and new to open source 

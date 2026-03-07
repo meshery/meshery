@@ -1,0 +1,24 @@
+version: 0.0.524
+name: loxilb-5g-load-balancer-&-lbo-architecture
+displayName: LoxiLB 5G Load Balancer & LBO architecture
+createdAt: "2025-10-14T21:28:27Z"
+description: 5G Access Network Simulation
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/cc4fcaaa-5b7e-492c-9920-f2408bdcefed/0.0.524/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "-Conceptual model requiring external LoxiLB and Kubernetes installation. \n-Actual deployment involves configuring specific SCTP/N2 interfaces and underlying IP network routing. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 79c5452f-2f36-412e-a5c5-e09794b15055
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/cc4fcaaa-5b7e-492c-9920-f2408bdcefed-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/cc4fcaaa-5b7e-492c-9920-f2408bdcefed-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
