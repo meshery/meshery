@@ -594,7 +594,9 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		return nil
 	}
 	defer func() {
-		_ = resp.Body.Close()
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Warn(fmt.Errorf("error closing response body: %w", err))
+		}
 	}()
 	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("metrics published to remote provider")
