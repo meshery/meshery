@@ -5,10 +5,13 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestList(t *testing.T) {
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {

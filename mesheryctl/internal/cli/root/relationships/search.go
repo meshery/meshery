@@ -19,19 +19,21 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
 
-var (
-	searchModelName string
-	searchType      string
-	searchSubType   string
-	searchKind      string
-)
+type relationshipSearchFlags struct {
+	SearchKind      string
+	SearchSubType   string
+	SearchType      string
+	SearchModelName string
+}
+
+var searchFlags relationshipSearchFlags
 
 // represents the mesheryctl exp relationship search [query-text] subcommand.
 var searchCmd = &cobra.Command{
@@ -41,45 +43,35 @@ var searchCmd = &cobra.Command{
 	Example: `
 // Search for relationship using a query
 mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]`,
-	Args: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
+			return utils.ErrCommandContextMissing("flags-validator")
+		}
+		err := flagValidator.Validate(searchFlags)
+		if err != nil {
+			return utils.ErrFlagsInvalid(err)
+		}
 		const usage = "mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]"
 		errMsg := fmt.Errorf("[--kind, --subtype or --type or --model] and [query-text] are required\n\nUsage: %s\nRun 'mesheryctl exp relationship search --help'", usage)
-
-		if searchKind == "" && searchSubType == "" && searchType == "" && searchModelName == "" {
-			err := utils.ErrInvalidArgument(errMsg)
-			return err
+		if searchFlags.SearchKind == "" && searchFlags.SearchSubType == "" && searchFlags.SearchType == "" && searchFlags.SearchModelName == "" {
+			return utils.ErrInvalidArgument(errMsg)
 		}
-
 		return nil
+
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](buildSearchUrl())
-
-		if err != nil {
-			return err
-		}
-		rows := [][]string{}
-
-		for _, relationship := range relationshipResponse.Relationships {
-			if len(relationship.Type()) > 0 {
-				evaluationQuery := ""
-				if relationship.EvaluationQuery != nil {
-					evaluationQuery = *relationship.EvaluationQuery
-				}
-				rows = append(rows, []string{string(relationship.Kind), relationship.SchemaVersion, relationship.Model.DisplayName, relationship.SubType, evaluationQuery})
-			}
-		}
-
-		dataToDisplay := display.DisplayedData{
+		dataToDisplay := display.DisplayDataAsync{
+			UrlPath:          buildSearchUrl(),
 			DataType:         "relationship",
 			Header:           []string{"kind", "apiVersion", "model-name", "subType", "regoQuery"},
-			Rows:             rows,
-			Count:            relationshipResponse.Count,
+			Page:             1,
+			PageSize:         10,
 			DisplayCountOnly: false,
 			IsPage:           cmd.Flags().Changed("page"),
 		}
+		return display.ListAsyncPagination(dataToDisplay, generateRelationshipDataToDisplay)
 
-		return display.List(dataToDisplay)
 	},
 }
 
@@ -87,34 +79,35 @@ func init() {
 	searchCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
-	searchCmd.Flags().StringVarP(&searchKind, "kind", "k", "", "search particular kind of relationships")
-	searchCmd.Flags().StringVarP(&searchSubType, "subtype", "s", "", "search particular subtype of relationships")
-	searchCmd.Flags().StringVarP(&searchModelName, "model", "m", "", "search relationships of particular model name")
-	searchCmd.Flags().StringVarP(&searchType, "type", "t", "", "search particular type of relationships")
+	searchCmd.Flags().StringVarP(&searchFlags.SearchKind, "kind", "", "", "Search for a specific kind of relationship")
+	searchCmd.Flags().StringVarP(&searchFlags.SearchType, "type", "", "", "Search for a specific type of relationship")
+	searchCmd.Flags().StringVarP(&searchFlags.SearchSubType, "subtype", "", "", "Search for a specific subtype of relationship")
+	searchCmd.Flags().StringVarP(&searchFlags.SearchModelName, "model", "", "", "Search for a specific model of relationship")
+
 }
 
 func buildSearchUrl() string {
 	var searchUrl strings.Builder
 
-	if searchModelName == "" {
+	if searchFlags.SearchModelName == "" {
 		searchUrl.WriteString("api/meshmodels/relationships?")
 	} else {
-		escapeModelName := url.QueryEscape(searchModelName)
+		escapeModelName := url.QueryEscape(searchFlags.SearchModelName)
 		searchUrl.WriteString(fmt.Sprintf("api/meshmodels/models/%s/relationships?", escapeModelName))
 	}
 
-	if searchType != "" {
-		escapedType := url.QueryEscape(searchType)
+	if searchFlags.SearchType != "" {
+		escapedType := url.QueryEscape(searchFlags.SearchType)
 		searchUrl.WriteString(fmt.Sprintf("type=%s&", escapedType))
 	}
 
-	if searchKind != "" {
-		escapeKind := url.QueryEscape(searchKind)
+	if searchFlags.SearchKind != "" {
+		escapeKind := url.QueryEscape(searchFlags.SearchKind)
 		searchUrl.WriteString(fmt.Sprintf("kind=%s&", escapeKind))
 	}
 
-	if searchSubType != "" {
-		escapeSubType := url.QueryEscape(searchSubType)
+	if searchFlags.SearchSubType != "" {
+		escapeSubType := url.QueryEscape(searchFlags.SearchSubType)
 		searchUrl.WriteString(fmt.Sprintf("subType=%s&", escapeSubType))
 	}
 

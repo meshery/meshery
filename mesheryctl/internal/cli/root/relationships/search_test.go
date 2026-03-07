@@ -7,10 +7,13 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestSearch_WithoutFlags(t *testing.T) {
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -54,6 +57,7 @@ func TestSearch_WithoutFlags(t *testing.T) {
 			}()
 
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
+			mesheryctlflags.InitValidators(RelationshipCmd)
 			RelationshipCmd.SetArgs(tt.Args)
 			RelationshipCmd.SetOut(originalStdout)
 			err := RelationshipCmd.Execute()
@@ -96,6 +100,8 @@ func TestSearch_WithoutFlags(t *testing.T) {
 }
 
 func TestSearch_WithFlags(t *testing.T) {
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {

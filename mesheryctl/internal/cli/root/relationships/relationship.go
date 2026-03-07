@@ -29,6 +29,7 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd}
+	relationshipApiPath  = "api/meshmodels/relationships"
 )
 
 type MeshmodelRelationshipsAPIResponse struct {
@@ -71,7 +72,7 @@ mesheryctl exp relationship view [model-name]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
 		if countFlag {
-			models, err := api.Fetch[MeshmodelRelationshipsAPIResponse]("api/meshmodels/relationships")
+			models, err := api.Fetch[MeshmodelRelationshipsAPIResponse](relationshipApiPath)
 
 			if err != nil {
 				return err
@@ -101,4 +102,18 @@ mesheryctl exp relationship view [model-name]
 func init() {
 	RelationshipCmd.AddCommand(availableSubcommands...)
 	RelationshipCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of relationship(s) in total")
+}
+
+func generateRelationshipDataToDisplay(relationshipResponse *MeshmodelRelationshipsAPIResponse) ([][]string, int64) {
+	rows := [][]string{}
+	for _, rel := range relationshipResponse.Relationships {
+		evaluationQuery := ""
+		if rel.EvaluationQuery != nil {
+			evaluationQuery = *rel.EvaluationQuery
+		}
+		if len(rel.GetEntityDetail()) > 0 {
+			rows = append(rows, []string{string(rel.Kind), rel.Version, rel.Model.Name, rel.SubType, evaluationQuery})
+		}
+	}
+	return rows, int64(relationshipResponse.Count)
 }
