@@ -1,6 +1,6 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { SEVERITY, STATUS } from '../../components/NotificationCenter/constants';
-import { BellIcon } from '@sistent/sistent';
+// import { BellIcon } from '@sistent/sistent';
 
 const initialState = {
   current_view: {
@@ -24,7 +24,7 @@ const initialState = {
     history_mode: false, // used to determine if the notification center is in history mode . so we render in a different way
     title: 'Notifications', // title of the operation center
     empty_message: 'No notifications found', // message to show when there are no notifications
-    icon: BellIcon,
+    icon: 'BellIcon', // icon name string (not component) to maintain Redux state serialization
   },
   isNotificationCenterOpen: false,
 };
@@ -131,6 +131,13 @@ export const eventsSlice = createSlice({
       }
 
       if (action.payload.ui) {
+        if (action.payload.ui.icon && typeof action.payload.ui.icon !== 'string') {
+          console.warn(
+            '[Redux Sanitization] Non-string icon payload detected in openNotificationCenter. Falling back to default string.',
+          );
+          action.payload.ui.icon = 'BellIcon';
+        }
+
         state.ui = {
           ...state.ui,
           ...action.payload.ui,
