@@ -234,14 +234,14 @@ func TestAddContextCmd(t *testing.T) {
 			Name:           "given no valid context name provided when running mesheryctl system context create [valid-name] then an error message displayed",
 			Args:           []string{"context", "create"},
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, errContextUsageMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
 			IsOutputGolden: false,
 		},
 		{
 			Name:           "given multiple context name provided when running mesheryctl system context create then an error message displayed",
 			Args:           []string{"context", "create", "local1", "local2"},
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, errContextUsageMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
 			IsOutputGolden: false,
 		},
 	}

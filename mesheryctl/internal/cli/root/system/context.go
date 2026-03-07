@@ -74,7 +74,7 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 	Annotations: linkDocContextCreate,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, errContextUsageMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg))
 		}
 
 		return nil
@@ -129,10 +129,8 @@ mesheryctl system context delete [context name]
 	`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			const errMsg = `Please provide a context name to delete:
-mesheryctl system context delete [context name]`
-			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "delete"))
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextDeleteUsageMsg))
 		}
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
@@ -144,7 +142,7 @@ mesheryctl system context delete [context name]`
 
 		_, exists := configuration.Contexts[contextName]
 		if !exists {
-			return fmt.Errorf("no context name found : %s", contextName)
+			return ErrContextNotExists(fmt.Errorf("no context name found : %s", contextName))
 		}
 
 		if viper.GetString("current-context") == contextName {
@@ -326,7 +324,7 @@ mesheryctl system context view --all
 
 		}
 		if currContext == "" {
-			return errors.New("current context not set")
+			return ErrContextNotExists(fmt.Errorf("current context not set"))
 		}
 
 		contextData, ok := configuration.Contexts[currContext]
@@ -377,7 +375,7 @@ Example: mesheryctl system context switch k8s-sample
 Description: Configures mesheryctl to actively use one one context vs. the another context`
 
 		if len(args) != 1 {
-			return fmt.Errorf("please provide exactly one context name\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n", errArgMsg))
 		}
 		return nil
 	},
@@ -399,7 +397,7 @@ mesheryctl system context create `
 			return ErrContextNotExists(fmt.Errorf("requested context does not exist \n\n%v%s", errMsg, contextName))
 		}
 		if viper.GetString("current-context") == contextName {
-			return errors.New("already using context '" + contextName + "'")
+			return ErrSetCurrentContext(fmt.Errorf("already using context '%s'", contextName))
 		}
 		//check if meshery is running
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
