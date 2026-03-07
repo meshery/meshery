@@ -1,9 +1,12 @@
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+import { CacheProvider } from '@emotion/react';
+import type { EmotionCache } from '@emotion/cache';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import 'billboard.js/dist/theme/dark.min.css';
 import _ from 'lodash';
+import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useMemo, useCallback, useState } from 'react';
@@ -77,6 +80,17 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
 import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import createEmotionCache from '../lib/createEmotionCache';
+
+type MesheryAppWrapperProps = AppProps & {
+  emotionCache?: EmotionCache;
+};
+
+type MesheryAppProps = MesheryAppWrapperProps & {
+  relayEnvironment?: unknown;
+};
+
+const clientSideEmotionCache = createEmotionCache();
 
 async function fetchContexts(number = 10, search = '') {
   return await promisifiedDataFetch(
@@ -188,8 +202,8 @@ const KubernetesSubscription = ({ setAppState }) => {
   return null;
 };
 
-const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
-  const pageContext = useMemo(() => getPageContext(), []);
+const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }: MesheryAppProps) => {
+  const pageContext = useMemo(() => getPageContext(emotionCache), [emotionCache]);
   const { k8sConfig } = useSelector((state) => state.ui);
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const { isDrawerCollapsed } = useSelector((state) => state.ui);
@@ -705,16 +719,21 @@ const MesheryThemeProvider = ({ children }) => {
   return <SistentThemeProvider initialMode={mode}>{children}</SistentThemeProvider>;
 };
 
-const MesheryAppWrapper = (props) => {
+const MesheryAppWrapper = ({
+  emotionCache = clientSideEmotionCache,
+  ...props
+}: MesheryAppWrapperProps) => {
   return (
     <ProviderStoreWrapper>
       <Head>
         <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
         <title>Meshery</title>
       </Head>
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <MesheryApp {...props} />
-      </LocalizationProvider>
+      <CacheProvider value={emotionCache}>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          <MesheryApp {...props} emotionCache={emotionCache} />
+        </LocalizationProvider>
+      </CacheProvider>
     </ProviderStoreWrapper>
   );
 };

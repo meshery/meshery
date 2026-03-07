@@ -2,7 +2,6 @@
 
 const removeImports = require('next-remove-imports')();
 const nextConfig = removeImports({
-  output: 'export',
   reactStrictMode: true,
   eslint: {
     ignoreDuringBuilds: true,

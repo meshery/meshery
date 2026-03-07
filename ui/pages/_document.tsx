@@ -1,17 +1,18 @@
 import React from 'react';
+import createEmotionServer from '@emotion/server/create-instance';
+import type { AppType } from 'next/app';
 import Document, { Head, Main, NextScript, Html } from 'next/document';
 import Script from 'next/script';
-import { createStyleRegistry } from 'styled-jsx';
 import { PureHtmlLoadingScreen } from '@/components/LoadingComponents/LoadingComponentServer';
+import createEmotionCache from '../lib/createEmotionCache';
 
-const registry = createStyleRegistry();
-const flush = registry.flush();
 class MesheryDocument extends Document {
   render() {
     return (
       <Html lang="en" dir="ltr">
         <Head>
           <meta charSet="utf-8" />
+          <meta name="emotion-insertion-point" content="" />
           {/**
            * content="no-referrer" included to avoid 403 errors on Google avatars
            */}
@@ -112,15 +113,35 @@ class MesheryDocument extends Document {
 }
 
 MesheryDocument.getInitialProps = async (ctx) => {
+  const originalRenderPage = ctx.renderPage;
+  const cache = createEmotionCache();
+  const { extractCriticalToChunks } = createEmotionServer(cache);
+
+  ctx.renderPage = () =>
+    originalRenderPage({
+      enhanceApp: (App: AppType) => {
+        return function EnhanceApp(props) {
+          return React.createElement(App as React.ComponentType<any>, {
+            ...props,
+            emotionCache: cache,
+          });
+        };
+      },
+    });
+
   const initialProps = await Document.getInitialProps(ctx);
+  const emotionStyles = extractCriticalToChunks(initialProps.html);
+  const emotionStyleTags = emotionStyles.styles.map((style) => (
+    <style
+      data-emotion={`${style.key} ${style.ids.join(' ')}`}
+      key={style.key}
+      dangerouslySetInnerHTML={{ __html: style.css }}
+    />
+  ));
+
   return {
     ...initialProps,
-    styles: (
-      <React.Fragment>
-        {initialProps.styles}
-        {flush || null}
-      </React.Fragment>
-    ),
+    styles: [...React.Children.toArray(initialProps.styles), ...emotionStyleTags],
   };
 };
 
