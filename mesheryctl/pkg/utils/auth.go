@@ -93,6 +93,15 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		return nil, ErrNotFound(errors.New(string(bodyBytes)))
 	}
 
+	if resp.StatusCode == http.StatusInternalServerError {
+		bodyBytes, err := io.ReadAll(resp.Body)
+		defer func() { _ = resp.Body.Close() }()
+		if err != nil {
+			return nil, ErrReadResponseBody(err)
+		}
+		return nil, ErrInternalServerError(errors.New(string(bodyBytes)))
+	}
+
 	// failsafe for bad api call
 	isNotSuccess := resp.StatusCode != http.StatusOK &&
 		resp.StatusCode != http.StatusCreated &&

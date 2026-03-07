@@ -67,6 +67,7 @@ var (
 	ErrUploadFileWithParamsCode    = "mesheryctl-1185"
 	ErrCommandContextMissingCode   = "mesheryctl-1201"
 	ErrPromptCancelledCode         = "mesheryctl-1202"
+	ErrInternalServerErrorCode     = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -862,5 +863,16 @@ func ErrPromptCancelled() error {
 		[]string{"Selection prompt has been cancelled"},
 		[]string{"The selection prompt was interrupted"},
 		[]string{"Run the command again and complete the selection"},
+	)
+}
+
+func ErrInternalServerError(err error) error {
+	return errors.New(
+		ErrInternalServerErrorCode,
+		errors.Alert,
+		[]string{"Internal Server Error"},
+		[]string{err.Error()},
+		[]string{"An unexpected error occurred on the server side"},
+		[]string{"Check the server logs for more details and try again later"},
 	)
 }
