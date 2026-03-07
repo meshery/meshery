@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Saferwall
 subtitle: Collaborative and visual infrastructure as design for Saferwall
-image: /assets/img/integrations/saferwall/icons/color/saferwall-color.svg
-permalink: extensibility/integrations/saferwall
+image: /extensions/models/saferwall/icons/color/saferwall-color.svg
+aliases: /extensibility/integrations/saferwall
 docURL: https://docs.meshery.io/extensibility/integrations/saferwall
 description: 
 integrations-category: Security & Compliance
@@ -84,8 +83,5 @@ featureList: [
 ]
 howItWorks: "Integrates Saferwall scans"
 howItWorksDetails: "Enhanced security of container images within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

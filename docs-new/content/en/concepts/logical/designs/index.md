@@ -68,6 +68,13 @@ Designs are the blueprints for your deployments, while Meshery Models are the in
 
 See the following tutorials on how to use Meshery Designs for collaboratively managing infrastructure.
 
-<details><summary>🧑‍🔬 Tutorials</summary></details>
+<details>
+  <summary>
+      <a href="/guides/tutorials/" class="text-black">🧑‍🔬 Tutorials</a>
+  </summary>
+  <ul class="section-title">
+    {{< section-pages section="guides/tutorials" >}}
+  </ul>
+</details>
 
 Try the [Meshery Playground](/installation/playground) for a hands-on experience with Meshery Designs.

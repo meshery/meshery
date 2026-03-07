@@ -23,7 +23,7 @@ func TestSearchModel(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
-			Name:             "Search model without query",
+			Name:             "given no argument provided when running mesheryctl model search then an error message is displayed",
 			Args:             []string{"search"},
 			URL:              "",
 			Fixture:          "empty.golden",
@@ -33,9 +33,9 @@ func TestSearchModel(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(goerrors.New(errSearchModelName)),
 		},
 		{
-			Name:             "Search model with query",
-			Args:             []string{"search", querySearch},
-			URL:              fmt.Sprintf("/%s?search=%s&pagesize=all", modelsApiPath, url.QueryEscape(querySearch)),
+			Name:             "given a valid argument provided when running mesheryctl model search valid-name then the output is displayed",
+			Args:             []string{"search", "model-test", "--page", "1", "--pagesize", "10"},
+			URL:              fmt.Sprintf("/%s?search=%s&page=0&pagesize=10", modelsApiPath, url.QueryEscape(querySearch)),
 			Fixture:          "search.model.api.response.golden",
 			ExpectedResponse: "search.model.output.golden",
 			ExpectError:      false,

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubegems Edge
 subtitle: Collaborative and visual infrastructure as design for Kubegems Edge
-image: /assets/img/integrations/kubegems-edge/icons/color/kubegems-edge-color.svg
-permalink: extensibility/integrations/kubegems-edge
+image: /extensions/models/kubegems-edge/icons/color/kubegems-edge-color.svg
+aliases: /extensibility/integrations/kubegems-edge
 docURL: https://docs.meshery.io/extensibility/integrations/kubegems-edge
 description: 
 integrations-category: Provisioning
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

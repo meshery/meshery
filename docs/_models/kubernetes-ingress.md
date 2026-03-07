@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: HAProxy Kubernetes Ingress
 subtitle: Collaborative and visual infrastructure as design for HAProxy Kubernetes Ingress
-image: /assets/img/integrations/kubernetes-ingress/icons/color/kubernetes-ingress-color.svg
-permalink: extensibility/integrations/kubernetes-ingress
+image: /extensions/models/kubernetes-ingress/icons/color/kubernetes-ingress-color.svg
+aliases: /extensibility/integrations/kubernetes-ingress
 docURL: https://docs.meshery.io/extensibility/integrations/kubernetes-ingress
 description: 
 integrations-category: Cloud Native Network
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Configures HAProxy Ingress"
 howItWorksDetails: "Scalable and reliable ingress management with HAProxy in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

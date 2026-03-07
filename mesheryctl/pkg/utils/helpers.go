@@ -22,6 +22,7 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
+	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/models"
@@ -758,6 +759,20 @@ func AskForInput(prompt string, allowed []string) string {
 		}
 		log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
 	}
+}
+
+// RunSelectPrompt displays a selection prompt with the given label and items.
+// Returns the selected index or ErrPromptCancelled if the user cancels (Ctrl+C/Ctrl+D).
+func RunSelectPrompt(label string, items []string) (int, error) {
+	prompt := promptui.Select{
+		Label: label,
+		Items: items,
+	}
+	i, _, err := prompt.Run()
+	if err != nil {
+		return 0, ErrPromptCancelled()
+	}
+	return i, nil
 }
 
 // ParseURLGithub checks URL and returns raw repo, path, error

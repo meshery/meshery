@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Backstage
 subtitle: Collaborative and visual infrastructure as design for Backstage
-image: /assets/img/integrations/backstage/icons/color/backstage-color.svg
-permalink: extensibility/integrations/backstage
+image: /extensions/models/backstage/icons/color/backstage-color.svg
+aliases: /extensibility/integrations/backstage
 docURL: https://docs.meshery.io/extensibility/integrations/backstage
 description: 
 integrations-category: App Definition and Development
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

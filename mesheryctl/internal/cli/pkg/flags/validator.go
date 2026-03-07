@@ -30,11 +30,10 @@ var vSemverRegex = regexp.MustCompile(`^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*
 func (fv *FlagValidator) Validate(s interface{}) error {
 	err := fv.validator.Struct(s)
 	if err != nil {
-		switch err.(type) {
+		switch vErr := err.(type) {
 		case *validator.InvalidValidationError:
 			return utils.ErrFlagsInvalid(err)
 		case validator.ValidationErrors:
-			vErr := err.(validator.ValidationErrors)
 			return utils.ErrFlagsInvalid(ReadValidationErrorMessages(vErr))
 		default:
 			return utils.ErrFlagsInvalid(err)
@@ -51,8 +50,8 @@ func validateSemver(fl validator.FieldLevel) bool {
 // This is necessary because the default validator does not have a built-in validation behaving as expected for boolean fields,
 // especially when using flags in cobra
 func validateBoolean(fl validator.FieldLevel) bool {
-	if val, ok := fl.Field().Interface().(bool); ok {
-		return val == true || val == false
+	if _, ok := fl.Field().Interface().(bool); ok {
+		return true
 	}
 	return false
 }
@@ -60,7 +59,6 @@ func validateBoolean(fl validator.FieldLevel) bool {
 // ReadValidationErrorMessages reads the validation error and returns a slice of error messages for each validation error encountered
 // This is a centralized function to read validation error messages for all the commands in mesheryctl and return user friendly error messages based on the type of validation error encountered
 func ReadValidationErrorMessages(err validator.ValidationErrors) error {
-
 	if len(err) == 0 {
 		return nil
 	}
@@ -113,4 +111,13 @@ func InitValidators(cmd *cobra.Command) {
 	validate := NewFlagValidator()
 	ctx := context.WithValue(context.Background(), FlagValidatorKey, validate)
 	cmd.SetContext(ctx)
+}
+
+func ValidateCmdFlags[T any](cmd *cobra.Command, cmdFlags *T) error {
+	flagValidator, ok := cmd.Context().Value(FlagValidatorKey).(*FlagValidator)
+	if !ok || flagValidator == nil {
+		return utils.ErrCommandContextMissing(string(FlagValidatorKey))
+	}
+
+	return flagValidator.Validate(cmdFlags)
 }

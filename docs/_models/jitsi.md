@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Jitsi
 subtitle: Collaborative and visual infrastructure as design for Jitsi
-image: /assets/img/integrations/jitsi/icons/color/jitsi-color.svg
-permalink: extensibility/integrations/jitsi
+image: /extensions/models/jitsi/icons/color/jitsi-color.svg
+aliases: /extensibility/integrations/jitsi
 docURL: https://docs.meshery.io/extensibility/integrations/jitsi
 description: 
 integrations-category: Tools
@@ -100,8 +99,5 @@ featureList: [
 ]
 howItWorks: "Integrates Jitsi"
 howItWorksDetails: "Secure and scalable video conferencing in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -21,7 +21,7 @@ Manage your AKS clusters with Meshery. Deploy Meshery in AKS [in-cluster](#in-cl
 </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubernetes)
+Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
 
 ## Available Deployment Methods
 

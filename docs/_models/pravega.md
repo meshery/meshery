@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Pravega
 subtitle: Collaborative and visual infrastructure as design for Pravega
-image: /assets/img/integrations/pravega/icons/color/pravega-color.svg
-permalink: extensibility/integrations/pravega
+image: /extensions/models/pravega/icons/color/pravega-color.svg
+aliases: /extensibility/integrations/pravega
 docURL: https://docs.meshery.io/extensibility/integrations/pravega
 description: 
 integrations-category: Cloud Native Storage
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

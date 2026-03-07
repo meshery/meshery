@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: RabbitMQ Operator
 subtitle: Collaborative and visual infrastructure as design for RabbitMQ Operator
-image: /assets/img/integrations/rabbitmq-operator/icons/color/rabbitmq-operator-color.svg
-permalink: extensibility/integrations/rabbitmq-operator
+image: /extensions/models/rabbitmq-operator/icons/color/rabbitmq-operator-color.svg
+aliases: /extensibility/integrations/rabbitmq-operator
 docURL: https://docs.meshery.io/extensibility/integrations/rabbitmq-operator
 description: 
 integrations-category: App Definition and Development
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Simplifies RabbitMQ operations"
 howItWorksDetails: "Streamlined RabbitMQ management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

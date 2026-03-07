@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Google Cloud Platform
 subtitle: Google Cloud Platform, offered by Google, is a suite of cloud computing services that provides a series of modular cloud services including computing, data storage, data analytics and machine learning, alongside a set of management tools.
-image: /assets/img/integrations/gcp/icons/color/gcp-color.svg
-permalink: extensibility/integrations/gcp
+image: /extensions/models/gcp/icons/color/gcp-color.svg
+aliases: /extensibility/integrations/gcp
 docURL: https://docs.meshery.io/extensibility/integrations/gcp
 description: 
 integrations-category: Provisioning
@@ -884,8 +883,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
