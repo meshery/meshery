@@ -79,10 +79,10 @@ func init() {
 	searchCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
-	searchCmd.Flags().StringVarP(&searchFlags.SearchKind, "kind", "", "", "Search for a specific kind of relationship")
-	searchCmd.Flags().StringVarP(&searchFlags.SearchType, "type", "", "", "Search for a specific type of relationship")
-	searchCmd.Flags().StringVarP(&searchFlags.SearchSubType, "subtype", "", "", "Search for a specific subtype of relationship")
-	searchCmd.Flags().StringVarP(&searchFlags.SearchModelName, "model", "", "", "Search for a specific model of relationship")
+searchCmd.Flags().StringVarP(&searchFlags.SearchKind, "kind", "k", "", "Search for a specific kind of relationship")
+	searchCmd.Flags().StringVarP(&searchFlags.SearchType, "type", "t", "", "Search for a specific type of relationship")
+	searchCmd.Flags().StringVarP(&searchFlags.SearchSubType, "subtype", "s", "", "Search for a specific subtype of relationship")
+	searchCmd.Flags().StringVarP(&searchFlags.SearchModelName, "model", "m", "", "Search for a specific model of relationship")
 
 }
 
