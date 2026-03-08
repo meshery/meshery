@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubevault Operator
 subtitle: Collaborative and visual infrastructure as design for Kubevault Operator
-image: /assets/img/integrations/kubevault-operator/icons/color/kubevault-operator-color.svg
-permalink: extensibility/integrations/kubevault-operator
+image: /extensions/models/kubevault-operator/icons/color/kubevault-operator-color.svg
+aliases: /extensibility/integrations/kubevault-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-operator
 description: 
 integrations-category: Security & Compliance
@@ -28,8 +27,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages KubeVault Operator"
 howItWorksDetails: "Streamlined Vault operation and management in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

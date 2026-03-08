@@ -2,11 +2,10 @@ package model
 
 import (
 	"fmt"
+	"net/url"
 	"slices"
 	"strings"
 
-	"github.com/manifoldco/promptui"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -19,11 +18,14 @@ var modelViewOutputFormat string
 var viewModelCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View model",
-	Long: `View a model queried by its name
+	Long: `View a model queried by its name or ID
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/view`,
 	Example: `
-// View a specific model from current provider
+// View a specific model from current provider by using [model-name] or [model-id] in default format yaml
 mesheryctl model view [model-name]
+
+// View a specific model from current provider in JSON format
+mesheryctl model view [model-name] --output-format json
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if !slices.Contains(getValidOutputFormat(), strings.ToLower(modelViewOutputFormat)) {
@@ -40,33 +42,33 @@ mesheryctl model view [model-name]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		modelDefinition := args[0]
+		modelNameorId := args[0]
+		urlPath := getModelViewUrlPath(modelNameorId)
 
-		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s/%s?pagesize=all", modelsApiPath, modelDefinition))
+		selectedModel := new(model.ModelDefinition)
 
+		err := display.PromptAsyncPagination(
+			display.DisplayDataAsync{
+				UrlPath:        urlPath,
+				ErrNotFoundMsg: fmt.Sprintf("No model(s) found for the given name or ID %s", modelNameorId),
+			},
+			formatLabel,
+			func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
+				return data.Models, data.Count
+			},
+			selectedModel,
+		)
 		if err != nil {
 			return err
-		}
-
-		var selectedModel model.ModelDefinition
-
-		switch modelsResponse.Count {
-		case 0:
-			fmt.Println("No model(s) found for the given name ", modelDefinition)
-			return nil
-		case 1:
-			selectedModel = modelsResponse.Models[0]
-		default:
-			selectedModel = selectModelPrompt(modelsResponse.Models)
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[model.ModelDefinition]{}
-		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewOutputFormat), selectedModel)
+		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewOutputFormat), *selectedModel)
 		if err != nil {
 			return err
 		}
 
-		err = outputFormatter.Display()
+		err = outputFormatter.WithOutput(cmd.OutOrStdout()).Display()
 		if err != nil {
 			return err
 		}
@@ -79,30 +81,16 @@ func getValidOutputFormat() []string {
 	return []string{"yaml", "json"}
 }
 
-func selectModelPrompt(models []model.ModelDefinition) model.ModelDefinition {
-	modelArray := []model.ModelDefinition{}
-	modelNames := []string{}
+func getModelViewUrlPath(modelNameOrId string) string {
+	queryParams := url.Values{}
 
-	modelArray = append(modelArray, models...)
-
-	for _, model := range modelArray {
-		modelName := fmt.Sprintf("%s, version: %s", model.DisplayName, model.Version)
-		modelNames = append(modelNames, modelName)
+	if !utils.IsUUID(modelNameOrId) {
+		queryParams.Add("search", modelNameOrId)
+	} else {
+		queryParams.Add("id", modelNameOrId)
 	}
 
-	prompt := promptui.Select{
-		Label: "Select a model",
-		Items: modelNames,
-	}
-
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return modelArray[i]
-	}
+	return fmt.Sprintf("%s?%s", modelsApiPath, queryParams.Encode())
 }
 
 func init() {

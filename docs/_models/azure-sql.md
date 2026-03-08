@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure SQL
 subtitle: Collaborative and visual infrastructure as design for Azure SQL
-image: /assets/img/integrations/azure-sql/icons/color/azure-sql-color.svg
-permalink: extensibility/integrations/azure-sql
+image: /extensions/models/azure-sql/icons/color/azure-sql-color.svg
+aliases: /extensibility/integrations/azure-sql
 docURL: https://docs.meshery.io/extensibility/integrations/azure-sql
 description: 
 integrations-category: Database
@@ -184,8 +183,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

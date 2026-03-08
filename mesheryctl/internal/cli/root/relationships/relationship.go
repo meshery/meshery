@@ -56,7 +56,7 @@ mesheryctl exp relationship generate [flags]
 mesheryctl exp relationship list [flags]
 
 // Search for a specific relationship
-mesheryctl exp relationship search [flags] [query-text]
+mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
 
 // View a specific relationship
 mesheryctl exp relationship view [model-name]
@@ -111,9 +111,7 @@ func generateRelationshipDataToDisplay(relationshipResponse *MeshmodelRelationsh
 		if rel.EvaluationQuery != nil {
 			evaluationQuery = *rel.EvaluationQuery
 		}
-		if len(rel.GetEntityDetail()) > 0 {
-			rows = append(rows, []string{string(rel.Kind), rel.Version, rel.Model.Name, rel.SubType, evaluationQuery})
-		}
+		rows = append(rows, []string{string(rel.Kind), rel.Version, rel.Model.Name, rel.SubType, evaluationQuery, rel.RelationshipType})
 	}
 	return rows, int64(relationshipResponse.Count)
 }

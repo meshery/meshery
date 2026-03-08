@@ -68,7 +68,7 @@ Meshery Server and Meshery Adapters are tested daily for their compatibility wit
           </table>
         </div>
       </div>
-        <!-- <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="mac" role="tabpanel" aria-labelledby="mac-tab">Compatibility matrix not yet available<br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/">Install Instruction</a></div>
+        <!-- <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="mac" role="tabpanel" aria-labelledby="mac-tab">Compatibility matrix not yet available<br> <a style="font-size:20px" href="/installation/">Install Instruction</a></div>
         <div style="text-align:center;" class="tab-pane fade" id="windows" role="tabpanel" aria-labelledby="windows-tab">
           <h3 style="text-align:left;">The following minimum Windows build versions are required:</h3>
           <table class="table table-striped table-bordered">
@@ -93,7 +93,7 @@ Meshery Server and Meshery Adapters are tested daily for their compatibility wit
               <td>Build 19013</td>
             </tr>
           </table>
-        <br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/windows">Install Instruction</a></div> -->
+        <br> <a style="font-size:20px" href="/installation/windows">Install Instruction</a></div> -->
 
 <div style="z-index:0">
   {{% alert color="info" title="<span style='margin:0;'>Overview of the Integration Tests</span>" %}}

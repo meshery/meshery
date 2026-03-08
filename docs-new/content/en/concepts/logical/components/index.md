@@ -47,8 +47,8 @@ Once registered with Meshery Server (in the [Registry](./registry)), components 
 
 Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
 
-<!-- [![Meshery Components]({{ site.baseurl }}/assets/img/architecture/meshery-components.svg
-)]({{ site.baseurl }}/assets/img/architecture/meshery-components.svg) -->
+<!-- [![Meshery Components](/assets/img/architecture/meshery-components.svg
+)](/assets/img/architecture/meshery-components.svg) -->
 <!-- 
  @leecalcote - This is mumbo jumbo to users and needs to be re-written.
 

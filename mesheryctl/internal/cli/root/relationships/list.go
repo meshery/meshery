@@ -59,7 +59,7 @@ mesheryctl relationship list --count
 		dataToDisplay := display.DisplayDataAsync{
 			UrlPath:          relationshipApiPath,
 			DataType:         "relationship",
-			Header:           []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"},
+			Header:           []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy", "Type"},
 			Page:             relationshipListFlags.Page,
 			PageSize:         relationshipListFlags.PageSize,
 			DisplayCountOnly: relationshipListFlags.Count,
@@ -73,6 +73,6 @@ mesheryctl relationship list --count
 func init() {
 	// Add the new exp relationship commands to the listRelationshipsCmd
 	listCmd.Flags().IntVarP(&relationshipListFlags.Page, "page", "p", 1, "(optional) List next set of relationships with --page (default = 1)")
-listCmd.Flags().IntVar(&relationshipListFlags.PageSize, "pagesize", 10, "(optional) List next set of relationships with --pagesize (default = 10)")
+	listCmd.Flags().IntVar(&relationshipListFlags.PageSize, "pagesize", 10, "(optional) List next set of relationships with --pagesize (default = 10)")
 	listCmd.Flags().BoolVarP(&relationshipListFlags.Count, "count", "c", false, "(optional) Display count only")
 }

@@ -131,5 +131,6 @@ func TestSearch_WithFlags(t *testing.T) {
 		},
 	}
 
+	mesheryctlflags.InitValidators(RelationshipCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, RelationshipCmd, tests, currDir, "relationships")
 }

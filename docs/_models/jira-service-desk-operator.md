@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Jira Service Desk Operator
 subtitle: Collaborative and visual infrastructure as design for Jira Service Desk Operator
-image: /assets/img/integrations/jira-service-desk-operator/icons/color/jira-service-desk-operator-color.svg
-permalink: extensibility/integrations/jira-service-desk-operator
+image: /extensions/models/jira-service-desk-operator/icons/color/jira-service-desk-operator-color.svg
+aliases: /extensibility/integrations/jira-service-desk-operator
 docURL: https://docs.meshery.io/extensibility/integrations/jira-service-desk-operator
 description: 
 integrations-category: Tools
@@ -28,8 +27,5 @@ featureList: [
 ]
 howItWorks: "Configure and customize Jira Projects and Issues"
 howItWorksDetails: "Automate the process of setting up the Jira Service Desk (JSD) operator configuration of alertmanager in a Kubernetes native way. "
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

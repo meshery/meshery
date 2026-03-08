@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Ambassador
 subtitle: Collaborative and visual infrastructure as design for Ambassador
-image: /assets/img/integrations/ambassador/icons/color/ambassador-color.svg
-permalink: extensibility/integrations/ambassador
+image: /extensions/models/ambassador/icons/color/ambassador-color.svg
+aliases: /extensibility/integrations/ambassador
 docURL: https://docs.meshery.io/extensibility/integrations/ambassador
 description: 
 integrations-category: Cloud Native Network
@@ -96,8 +95,5 @@ featureList: [
 ]
 howItWorks: "Manages Ambassador configurations"
 howItWorksDetails: "Simplified API gateway management and enhanced traffic routing in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

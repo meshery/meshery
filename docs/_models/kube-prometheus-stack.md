@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kube Prometheus Stack
 subtitle: Collaborative and visual infrastructure as design for Kube Prometheus Stack
-image: /assets/img/integrations/kube-prometheus-stack/icons/color/kube-prometheus-stack-color.svg
-permalink: extensibility/integrations/kube-prometheus-stack
+image: /extensions/models/kube-prometheus-stack/icons/color/kube-prometheus-stack-color.svg
+aliases: /extensibility/integrations/kube-prometheus-stack
 docURL: https://docs.meshery.io/extensibility/integrations/kube-prometheus-stack
 description: 
 integrations-category: Observability and Analysis
@@ -132,8 +131,5 @@ featureList: [
 ]
 howItWorks: "Deploys Kube Prometheus Stack with Helm"
 howItWorksDetails: "Comprehensive monitoring and observability for Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
