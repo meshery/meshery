@@ -208,9 +208,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
       - name: Check if handlers were modified
         uses: dorny/paths-filter@v3
         id: changes
@@ -240,7 +237,6 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
       - name: Check if schema was modified
         uses: dorny/paths-filter@v3
         id: filter
