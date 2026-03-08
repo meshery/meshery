@@ -80,18 +80,16 @@ mesheryctl design undeploy -f [filepath]
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
 
-		if govalidator.IsURL(file) {
+		if !govalidator.IsURL(file) {
+			content, err := os.ReadFile(file)
+			if err != nil {
+				return utils.ErrFileRead(err)
+			}
+			designFile = string(content)
+		} else {
 			utils.Log.Info("URLs are not currently supported")
 		}
 
-		content, err := os.ReadFile(file)
-		if err != nil {
-			return utils.ErrFileRead(err)
-		}
-
-		designFile = string(content)
-
-		// Convert design File into Design File
 		jsonValues, _ := json.Marshal(map[string]interface{}{
 			"K8sManifest": designFile,
 		})
