@@ -2,7 +2,6 @@ package workspaces
 
 import (
 	"fmt"
-	"net/url"
 	"path/filepath"
 	"strings"
 
@@ -17,7 +16,7 @@ import (
 type workspaceViewFlags struct {
 	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
 	Save         bool   `json:"save" validate:"boolean"`
-	OrgID        string `json:"orgId"`
+	OrgID        string `json:"orgId" validate:"omitempty,uuid"`
 }
 
 var workspaceViewFlagsProvided workspaceViewFlags
@@ -41,15 +40,7 @@ mesheryctl exp workspace view [workspace-id] --output-format json
 mesheryctl exp workspace view [workspace-id] --output-format json --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(workspaceViewFlagsProvided)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceViewFlagsProvided)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp workspace view [workspace-name|workspace-id]\nRun 'mesheryctl exp workspace view --help' to see detailed help message"
@@ -76,35 +67,26 @@ mesheryctl exp workspace view [workspace-id] --output-format json --save
 				return utils.ErrInvalidArgument(fmt.Errorf("--orgId is required when searching by name\n\nUsage: mesheryctl exp workspace view [workspace-name] --orgId [orgId]"))
 			}
 
-			viewUrlValue := url.Values{}
-			viewUrlValue.Add("search", workspaceNameOrID)
-			viewUrlValue.Add("orgID", orgID)
-			viewUrlValue.Add("pagesize", "all")
-
-			urlPath := fmt.Sprintf("%s?%s", workspacesApiPath, viewUrlValue.Encode())
-
-			workspacesResponse, err := api.Fetch[models.WorkspacePage](urlPath)
+			selectedWorkspace = new(models.Workspace)
+			err := display.PromptAsyncPagination(
+				display.DisplayDataAsync{
+					UrlPath:    fmt.Sprintf("%s?orgID=%s", workspacesApiPath, orgID),
+					SearchTerm: workspaceNameOrID,
+				},
+				func(rows []models.Workspace) []string {
+					labels := []string{}
+					for _, w := range rows {
+						labels = append(labels, fmt.Sprintf("%s (ID: %s)", w.Name, w.ID.String()))
+					}
+					return labels
+				},
+				func(data *models.WorkspacePage) ([]models.Workspace, int64) {
+					return data.Workspaces, int64(data.TotalCount)
+				},
+				selectedWorkspace,
+			)
 			if err != nil {
 				return err
-			}
-
-			if workspacesResponse.TotalCount == 0 {
-				fmt.Println("No workspace(s) found with the name:", workspaceNameOrID)
-				return nil
-			}
-
-			if workspacesResponse.TotalCount == 1 {
-				selectedWorkspace = &workspacesResponse.Workspaces[0]
-			} else {
-				workspaceNames := make([]string, len(workspacesResponse.Workspaces))
-				for i, w := range workspacesResponse.Workspaces {
-					workspaceNames[i] = fmt.Sprintf("ID: %s, Name: %s, OrgID: %s", w.ID.String(), w.Name, w.OrganizationID.String())
-				}
-				i, err := utils.RunSelectPrompt("Select workspace", workspaceNames)
-				if err != nil {
-					return err
-				}
-				selectedWorkspace = &workspacesResponse.Workspaces[i]
 			}
 		}
 
