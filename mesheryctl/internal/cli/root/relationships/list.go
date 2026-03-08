@@ -50,7 +50,7 @@ mesheryctl relationship list --count
 		dataToDisplay := display.DisplayDataAsync{
 			UrlPath:          relationshipApiPath,
 			DataType:         "relationship",
-			Header:           []string{"kind", "API Version", "Model name", "Sub Type", "Type"},
+			Header:           []string{"ID", "kind", "API Version", "Model name", "Sub Type", "Type"},
 			Page:             relationshipListFlags.Page,
 			PageSize:         relationshipListFlags.PageSize,
 			DisplayCountOnly: relationshipListFlags.Count,

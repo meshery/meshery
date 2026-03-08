@@ -66,7 +66,7 @@ mesheryctl exp relationship search [--page <int>]`,
 		dataToDisplay := display.DisplayDataAsync{
 			UrlPath:          buildSearchUrl(cmd),
 			DataType:         "relationship",
-			Header:           []string{"kind", "API Version", "Model name", "Sub Type", "Type"},
+			Header:           []string{"ID", "kind", "API Version", "Model name", "Sub Type", "Type"},
 			Page:             1,
 			PageSize:         10,
 			DisplayCountOnly: false,
