@@ -2,6 +2,7 @@ import React from 'react';
 import BaseInput from './CustomBaseInput';
 import { useRef } from 'react';
 import { Colors } from '@/themes/app';
+import { safeDisplayValue } from '../helper';
 
 const CustomFileWidget = (props) => {
   const inputType = 'file';
@@ -43,7 +44,7 @@ const CustomFileWidget = (props) => {
             backgroundColor: Colors.keppelGreen,
           }}
         >
-          {props.options.default}
+          {safeDisplayValue(props.options.default)}
         </label>
       </div>
     );

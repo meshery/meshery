@@ -27,7 +27,7 @@ import (
 )
 
 type componentFlags struct {
-	Count bool
+	Count bool `json:"count" validate:"boolean"`
 }
 
 var (
@@ -57,15 +57,7 @@ mesheryctl component search [component-name]
 mesheryctl component view [component-name | component-id]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(componentFlagsProvided)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, componentFlagsProvided)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		argsIsEmpty := len(args) == 0 || (len(args) == 1 && args[0] == "")

@@ -7,6 +7,7 @@ on:
       - "server/**"
       - "Makefile"
       - ".github/workflows/server-integration-tests.yml"
+      - "install/kubernetes/helm/meshery-operator/**"
   pull_request:
     branches:
       - master
@@ -14,6 +15,7 @@ on:
       - "server/**"
       - "Makefile"
       - ".github/workflows/server-integration-tests.yml"
+      - "install/kubernetes/helm/meshery-operator/**"
 
 jobs:
   server-integration-test-with-meshsync:

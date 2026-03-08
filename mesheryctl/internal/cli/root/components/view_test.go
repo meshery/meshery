@@ -6,9 +6,15 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
+
+// expectedViewFlagError generates the expected error for an invalid view flag
+func expectedViewFlagError(outputFormat string) error {
+	fv := mesheryctlflags.NewFlagValidator()
+	return fv.Validate(&componentViewFlags{OutputFormat: outputFormat})
+}
 
 func TestComponentView(t *testing.T) {
 	_, filename, _, ok := runtime.Caller(0)
@@ -63,7 +69,7 @@ func TestComponentView(t *testing.T) {
 			Fixture:        "components.api.response.golden",
 			IsOutputGolden: false,
 			ExpectError:    true,
-			ExpectedError:  display.ErrInvalidOutputFormat("invalid"),
+			ExpectedError:  expectedViewFlagError("invalid"),
 		},
 		{
 			Name:             "given a valid argument is provided for --output-format flag when running mesheryctl component view valid-component --output-format valid-format then a detailed output is displayed in specified format",

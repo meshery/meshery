@@ -85,12 +85,21 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 
 	// failsafe for data not found on the server
 	if resp.StatusCode == http.StatusNotFound {
-		bodyBytes, err := io.ReadAll(resp.Body)
 		defer func() { _ = resp.Body.Close() }()
+		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
 		}
 		return nil, ErrNotFound(errors.New(string(bodyBytes)))
+	}
+
+	if resp.StatusCode == http.StatusInternalServerError {
+		defer func() { _ = resp.Body.Close() }()
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, ErrReadResponseBody(err)
+		}
+		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
 	}
 
 	// failsafe for bad api call
@@ -98,8 +107,8 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		resp.StatusCode != http.StatusCreated &&
 		resp.StatusCode != http.StatusNoContent
 	if isNotSuccess {
-		bodyBytes, err := io.ReadAll(resp.Body)
 		defer func() { _ = resp.Body.Close() }()
+		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
 		}

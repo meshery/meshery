@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 4th 2026, 1:09:59 am
+- Testing started at: March 8th 2026, 4:05:29 pm
 
 **📦 Test Result Summary**
 
-- ✅ 67 passed
+- ✅ 65 passed
 - ❌ 2 failed
 - ⚠️ 0 flaked
-- ⏩ 3 skipped
+- ⏩ 5 skipped
 
-⌛ _Duration: 5 minutes and 11 seconds_
+⌛ _Duration: 5 minutes and 9 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -67,9 +67,9 @@
 | 44 | None | chromium-local-provider | Create a Model |  | ✅ |
 | 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 46 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ❌ |
-| 48 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
-| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
+| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 48 | None | chromium-local-provider | Import a Model via File Import |  | ❌ |
+| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 51 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 52 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
@@ -124,7 +124,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Import a Model via CSV Import (None - chromium-local-provider)</summary>
+<summary>❌ Import a Model via File Import (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
