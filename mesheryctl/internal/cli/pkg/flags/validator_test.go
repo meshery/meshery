@@ -9,7 +9,7 @@ import (
 )
 
 func TestValidateSemver(t *testing.T) {
-	flagValidator := NewFlagValidator()
+	flagValidator := GetFlagValidator()
 
 	tests := []struct {
 		name    string
@@ -80,7 +80,7 @@ func TestValidateSemver(t *testing.T) {
 }
 
 func TestValidateBoolean(t *testing.T) {
-	flagValidator := NewFlagValidator()
+	flagValidator := GetFlagValidator()
 
 	tests := []struct {
 		name    string
@@ -116,7 +116,7 @@ func TestValidateBoolean(t *testing.T) {
 }
 
 func TestNewValidator(t *testing.T) {
-	flagValidator := NewFlagValidator()
+	flagValidator := GetFlagValidator()
 	assert.NotNil(t, flagValidator)
 
 	// Test that custom validations are registered
@@ -140,7 +140,7 @@ func TestNewValidator(t *testing.T) {
 }
 
 func TestReadValidationErrorMessages(t *testing.T) {
-	flagValidator := NewFlagValidator()
+	flagValidator := GetFlagValidator()
 
 	tests := []struct {
 		name            string
@@ -214,9 +214,8 @@ func TestReadValidationErrorMessages(t *testing.T) {
 }
 
 func TestReadValidationErrorMessages_Direct(t *testing.T) {
-	t.Parallel()
 
-	fv := NewFlagValidator()
+	fv := GetFlagValidator()
 
 	getValidationErrors := func(t *testing.T, v interface{}) validator.ValidationErrors {
 		t.Helper()
@@ -229,7 +228,6 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 	}
 
 	t.Run("given no custom error exists then falls back to default message", func(t *testing.T) {
-		t.Parallel()
 
 		verrs := getValidationErrors(t, struct {
 			RequiredField string `json:"required-field" validate:"required"`
@@ -241,7 +239,6 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 	})
 
 	t.Run("given empty validation errors then returns nil", func(t *testing.T) {
-		t.Parallel()
 
 		var empty validator.ValidationErrors
 		err := fv.ReadValidationErrorMessages(empty)
@@ -249,7 +246,6 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 	})
 
 	t.Run("given semver validation error then formats semver error", func(t *testing.T) {
-		t.Parallel()
 
 		verrs := getValidationErrors(t, struct {
 			Version string `json:"version" validate:"semver"`
@@ -261,7 +257,6 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 	})
 
 	t.Run("given oneof validation error then formats oneof error", func(t *testing.T) {
-		t.Parallel()
 
 		verrs := getValidationErrors(t, struct {
 			Format string `json:"format" validate:"oneof=json yaml"`
@@ -273,7 +268,6 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 	})
 
 	t.Run("given dir validation error then formats dir error", func(t *testing.T) {
-		t.Parallel()
 
 		verrs := getValidationErrors(t, struct {
 			OutputDir string `json:"output-dir" validate:"dir"`
@@ -285,7 +279,6 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 	})
 
 	t.Run("given custom error exists then uses custom error", func(t *testing.T) {
-		t.Parallel()
 
 		fv.CustomErrors["required"] = fmt.Errorf("required-field must be provided")
 
@@ -299,7 +292,6 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 	})
 
 	t.Run("given multiple validation errors then joins messages with comma", func(t *testing.T) {
-		t.Parallel()
 
 		verrs := getValidationErrors(t, struct {
 			Version string `json:"version" validate:"semver"`

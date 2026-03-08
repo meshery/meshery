@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg"
@@ -27,6 +28,9 @@ type FlagValidator struct {
 	// It allows us to return more user friendly error messages for specific validation errors instead of the default error messages returned by the validator package.
 	CustomErrors map[string]error
 }
+
+var flagValidator *FlagValidator
+var once sync.Once
 
 // Based on https://github.com/go-playground/validator/blob/dede3413a22993dd5a091707c6764b6e9724df17/regexes.go#L75 adding `v` prefix
 var vSemverRegex = regexp.MustCompile(`^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
@@ -88,36 +92,40 @@ func (fv *FlagValidator) ReadValidationErrorMessages(err validator.ValidationErr
 	return errors.New(strings.Join(errorMessages, ", "))
 }
 
-func NewFlagValidator() *FlagValidator {
-	validate := validator.New()
+func GetFlagValidator() *FlagValidator {
 
-	// Register the custom validation function with a tag name "semver"
-	err := validate.RegisterValidation("semver", validateSemver)
-	if err != nil {
-		log.Fatalf("Error registering validation: %v", err)
-	}
+	once.Do(func() {
+		validate := validator.New()
 
-	// Register a custom validation function for boolean values that accepts "true", "false"
-	err = validate.RegisterValidation("boolean", validateBoolean)
-	if err != nil {
-		log.Fatalf("Error registering validation: %v", err)
-	}
-
-	// Register a custom function to use the json tags as field names in errors
-	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
-		if name == "-" {
-			return ""
+		// Register the custom validation function with a tag name "semver"
+		err := validate.RegisterValidation("semver", validateSemver)
+		if err != nil {
+			log.Fatalf("Error registering validation: %v", err)
 		}
-		return name
+
+		// Register a custom validation function for boolean values that accepts "true", "false"
+		err = validate.RegisterValidation("boolean", validateBoolean)
+		if err != nil {
+			log.Fatalf("Error registering validation: %v", err)
+		}
+
+		// Register a custom function to use the json tags as field names in errors
+		validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+			name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+			if name == "-" {
+				return ""
+			}
+			return name
+		})
+		flagValidator = &FlagValidator{Validator: validate, CustomErrors: make(map[string]error)}
 	})
 
-	return &FlagValidator{Validator: validate, CustomErrors: make(map[string]error)}
+	return flagValidator
 }
 
 func InitValidators(cmd *cobra.Command) {
-	validate := NewFlagValidator()
-	ctx := context.WithValue(context.Background(), FlagValidatorKey, validate)
+	flagValidator := GetFlagValidator()
+	ctx := context.WithValue(context.Background(), FlagValidatorKey, flagValidator)
 	cmd.SetContext(ctx)
 }
 
