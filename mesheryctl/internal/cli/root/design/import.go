@@ -32,6 +32,7 @@ import (
 )
 
 var name string
+var sourceType string
 
 var importCmd = &cobra.Command{
 	Use:   "import",
