@@ -34,6 +34,14 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 </div>
 </pre> 
 
+Search a relationship for specified page
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp relationship search [--page <int>]
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
@@ -41,6 +49,7 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
   -h, --help             help for search
   -k, --kind string      search particular kind of relationships
   -m, --model string     search relationships of particular model name
+  -p, --page int         search particular page of relationships (default 1) (default 1)
   -s, --subtype string   search particular subtype of relationships
   -t, --type string      search particular type of relationships
 

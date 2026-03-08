@@ -35,11 +35,11 @@ const MesheryTreeViewModel = ({
       defaultCollapseIcon={<MinusSquare />}
       defaultExpandIcon={<PlusSquare />}
       defaultEndIcon={<DotSquare />}
-      onNodeToggle={handleToggle}
-      onNodeSelect={handleSelect}
+      onExpandedItemsChange={handleToggle}
+      onSelectedItemsChange={handleSelect}
       multiSelect
-      expanded={expanded}
-      selected={selected}
+      expandedItems={expanded}
+      selectedItems={selected}
     >
       {data.map((modelDef, index) => (
         <MesheryTreeViewItem
