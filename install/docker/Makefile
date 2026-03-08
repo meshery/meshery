@@ -2,7 +2,7 @@
 
 build-meshery-server:
 	go clean -modcache
-	cd server/cmd && GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$(TOKEN) -X main.version=$(GIT_VERSION) -X main.commitsha=$(GIT_COMMITSHA) -X main.releasechannel=$(RELEASE_CHANNEL)" -tags draft -a -o /meshery .
+	GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$(TOKEN) -X main.version=$(GIT_VERSION) -X main.commitsha=$(GIT_COMMITSHA) -X main.releasechannel=$(RELEASE_CHANNEL)" -tags draft -a -o /meshery ./server/cmd
 
 ui-deps:
 	npm ci --omit=dev --legacy-peer-deps --ignore-scripts

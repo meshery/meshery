@@ -4,7 +4,7 @@ download-go-modules:
 	go mod download
 
 build-meshery-server:
-	cd server/cmd && GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$(GIT_VERSION)" -tags draft -a -o /meshery .
+	GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$(GIT_VERSION)" -tags draft -a -o /meshery ./server/cmd
 
 ui-deps:
 	npm ci --omit=dev --legacy-peer-deps --ignore-scripts
@@ -29,7 +29,7 @@ configure-wrk2-git:
 
 clone-and-build-wrk2:
 	git clone --depth=1 https://github.com/layer5io/wrk2
-	cd wrk2 && make
+	$(MAKE) -C wrk2
 
 install-seed-content-deps:
 	apt-get update
