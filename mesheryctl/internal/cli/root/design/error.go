@@ -44,9 +44,9 @@ const (
 	errPatternMsg = `Usage: mesheryctl design import -f [file/url] -s [source-type]
 Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`
 
-	errUndeployMsg = `Usage: mesheryctl design undeploy -f [filepath] -s [source type]
-Example: mesheryctl design undeploy -f ./pattern.yml -s "Kubernetes Manifest"
-Description: Undeploy pattern`
+	errUndeployMsg = `Usage: mesheryctl design undeploy -f [filepath]
+Example: mesheryctl design undeploy -f ./pattern.yml
+Description: Undeploy design`
 	errInvalidPathMsg = "file path %s is invalid. Enter a valid path"
 )
 
