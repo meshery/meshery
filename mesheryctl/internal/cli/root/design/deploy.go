@@ -64,14 +64,14 @@ mesheryctl design deploy -f [filepath] -s [source type]
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
 		flagValidator := mesheryctlflags.NewFlagValidator()
-		designOnboardValidSourceTypes, err := getDesignSourceTypes()
+		designDeployValidSourceTypes, err := getDesignSourceTypes()
 		if err != nil {
 			return err
 		}
 
 		err = flagValidator.Validator.RegisterValidation("design-source-type", func(fl validator.FieldLevel) bool {
 			if sourceType, ok := fl.Field().Interface().(string); ok {
-				for _, validType := range designOnboardValidSourceTypes {
+				for _, validType := range designDeployValidSourceTypes {
 					if strings.EqualFold(sourceType, validType) {
 						return true
 					}
@@ -83,7 +83,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 			return err
 		}
 
-		flagValidator.CustomErrors["design-source-type"] = fmt.Errorf("Invalid value for --source-type '%v': valid values are %s", designDeployFlags.SourceType, strings.Join(designOnboardValidSourceTypes, ", "))
+		flagValidator.CustomErrors["design-source-type"] = fmt.Errorf("invalid value for --source-type '%v': valid values are %s", designDeployFlags.SourceType, strings.Join(designDeployValidSourceTypes, ", "))
 
 		return flagValidator.Validate(&designDeployFlags)
 	},
@@ -119,7 +119,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				return ErrDesignNotFound(patternName)
+				utils.Log.Infof("No matching design found with name: %s", patternName)
 			} else if len(response.Patterns) == 1 {
 				patternFile, _ = patterns.GetPatternFormat(response.Patterns[0].PatternFile)
 			} else {

@@ -24,7 +24,7 @@ func TestDeployCmd(t *testing.T) {
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:             "Deploy Design",
+			Name:             "given valid file and source type when design deploy then design is deployed",
 			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest"},
 			ExpectedResponse: "deploy.output.golden",
 			URLs: []utils.MockURL{
@@ -57,7 +57,7 @@ func TestDeployCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Deploy design with --skip-save",
+			Name:             "given valid file and --skip-save when design deploy then design is deployed without being saved",
 			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
 			ExpectedResponse: "deploy.output.golden",
 			URLs: []utils.MockURL{
@@ -84,7 +84,7 @@ func TestDeployCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Deploy design with invalid source type",
+			Name:             "given invalid source type when design deploy then throw error",
 			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "invalid-source"},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
@@ -104,7 +104,7 @@ func TestDeployCmd(t *testing.T) {
 			}(),
 		},
 		{
-			Name:             "Deploy non-existent design by name",
+			Name:             "given non-existent design name when design deploy then throw error",
 			Args:             []string{"deploy", "nonexistent-design"},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
