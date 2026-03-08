@@ -36,8 +36,8 @@ import (
 )
 
 var (
-	skipSave    bool // skip saving a design
-	patternFile string
+	skipSave   bool // skip saving a design
+	designFile string
 )
 
 var linkDocPatternApply = map[string]string{
@@ -102,11 +102,11 @@ mesheryctl design apply [design-name]
 				utils.Log.Error(ErrDesignNotFound(patternName))
 				return nil
 			} else if len(response.Patterns) == 1 {
-				patternFile = response.Patterns[0].PatternFile
+				designFile = response.Patterns[0].PatternFile
 			} else {
 				// Multiple patterns with same name
 				index = multiplePatternsConfirmation(response.Patterns)
-				patternFile = response.Patterns[index].PatternFile
+				designFile = response.Patterns[index].PatternFile
 			}
 		} else {
 			// Method to check if the entered file is a URL or not
@@ -153,7 +153,7 @@ mesheryctl design apply [design-name]
 				}
 
 				// setup pattern file
-				patternFile = string(content)
+				designFile = string(content)
 			} else {
 				var jsonValues []byte
 				url, path, err := utils.ParseURLGithub(file)
@@ -215,13 +215,13 @@ mesheryctl design apply [design-name]
 				}
 
 				// setup pattern file here
-				patternFile = response[0].PatternFile
+				designFile = response[0].PatternFile
 			}
 
 		}
 
 		payload := models.MesheryPatternFileDeployPayload{
-			PatternFile: patternFile,
+			PatternFile: designFile,
 		}
 
 		payloadBytes, err := json.Marshal(payload)
@@ -234,7 +234,7 @@ mesheryctl design apply [design-name]
 			return err
 		}
 
-		pf, err := core.NewPatternFile([]byte(patternFile))
+		pf, err := core.NewPatternFile([]byte(designFile))
 		if err != nil {
 			return ErrParseDesignFile(err)
 		}

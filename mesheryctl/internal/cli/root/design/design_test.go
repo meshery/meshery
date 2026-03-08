@@ -144,6 +144,6 @@ func TestDesignCmd(t *testing.T) {
 // reset other flags if needed
 func resetVariables() {
 	skipSave = false
-	patternFile = ""
+	designFile = ""
 	file = ""
 }

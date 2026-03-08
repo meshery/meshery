@@ -9,7 +9,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-func TestOnboardCmd(t *testing.T) {
+func TestDeployCmd(t *testing.T) {
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
@@ -24,9 +24,9 @@ func TestOnboardCmd(t *testing.T) {
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:             "Onboard Design",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest"},
-			ExpectedResponse: "onboard.output.golden",
+			Name:             "Deploy Design",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest"},
+			ExpectedResponse: "deploy.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -37,7 +37,7 @@ func TestOnboardCmd(t *testing.T) {
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/Kubernetes%20Manifest",
-					Response:     "onboard.applicationSave.response.golden",
+					Response:     "deploy.applicationSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -49,7 +49,7 @@ func TestOnboardCmd(t *testing.T) {
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "onboard.designdeploy.response.golden",
+					Response:     "deploy.designdeploy.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -57,9 +57,9 @@ func TestOnboardCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Onboard design with --skip-save",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
-			ExpectedResponse: "onboard.output.golden",
+			Name:             "Deploy design with --skip-save",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
+			ExpectedResponse: "deploy.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -76,7 +76,7 @@ func TestOnboardCmd(t *testing.T) {
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/design/deploy",
-					Response:     "onboard.designdeploy.response.golden",
+					Response:     "deploy.designdeploy.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -84,8 +84,8 @@ func TestOnboardCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Onboard design with invalid source type",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "invalid-source"},
+			Name:             "Deploy design with invalid source type",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "invalid-source"},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
 				{
@@ -105,8 +105,8 @@ func TestOnboardCmd(t *testing.T) {
 			}(),
 		},
 		{
-			Name:             "Onboard non-existent design by name",
-			Args:             []string{"onboard", "nonexistent-design"},
+			Name:             "Deploy non-existent design by name",
+			Args:             []string{"deploy", "nonexistent-design"},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
 				{
