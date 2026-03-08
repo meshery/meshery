@@ -5,11 +5,13 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v3"
 )
 
 func TestViewContextCmd(t *testing.T) {
@@ -219,26 +221,26 @@ func TestAddContextCmd(t *testing.T) {
 	utils.SetupCustomContextEnv(t, currDir+"/testdata/context/ExpectedAdd.yaml")
 	tests := []utils.CmdTestInput{
 		{
-			Name:                 "given a valid context name provided when running mesheryctl system context create [valid-name] then a context gets created",
+			Name:                 "given context name provided when system context create [valid-name] then context is created",
 			Args:                 []string{"context", "create", "local3"},
 			ExpectedResponse:     "createContext.golden",
 			ExpectedResponseYaml: "addExpected.golden",
 		},
 		{
-			Name:                 "given a valid context name which contains uppercase letters provided when running mesheryctl system context create [valid-name] then a context gets created",
+			Name:                 "given context name which contains uppercase provided when system context create then context is created in lowercase",
 			Args:                 []string{"context", "create", "Local4"},
 			ExpectedResponse:     "createContext.uppercase.golden",
 			ExpectedResponseYaml: "addExpected.uppercase.golden",
 		},
 		{
-			Name:           "given no valid context name provided when running mesheryctl system context create [valid-name] then an error message displayed",
+			Name:           "given no context provided when system context create  then thorw error",
 			Args:           []string{"context", "create"},
 			ExpectError:    true,
 			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
 			IsOutputGolden: false,
 		},
 		{
-			Name:           "given multiple context name provided when running mesheryctl system context create then an error message displayed",
+			Name:           "given multiple context name provided when system context create then throw error",
 			Args:           []string{"context", "create", "local1", "local2"},
 			ExpectError:    true,
 			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
@@ -296,6 +298,27 @@ func TestAddContextCmd(t *testing.T) {
 			}
 			addExpected := golden.Load()
 			assert.Equal(t, addExpected, actualResponse)
+
+			// To check context is lowercase
+			contentFile, err := os.ReadFile(filepath)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			var data map[string]interface{}
+			err = yaml.Unmarshal(contentFile, &data)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			contexts := data["contexts"].(map[string]interface{})
+
+			if (len(tt.Args) > 2) && (tt.Args[2] != strings.ToLower(tt.Args[2])) {
+				_, existsUpper := contexts[tt.Args[2]]
+				if existsUpper {
+					t.Fatalf("uppercase context should not exist")
+				}
+			}
 
 			//Repopulating Expected yaml
 			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
