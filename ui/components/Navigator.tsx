@@ -1037,7 +1037,11 @@ const Navigator_ = () => {
         })}
         <ListItem style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
           <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
-            <HelpButton isCollapsed={isDrawerCollapsed} onClick={toggleSpacing}>
+            <HelpButton
+              style={{ height: '35px', width: '35px' }}
+              isCollapsed={isDrawerCollapsed}
+              onClick={toggleSpacing}
+            >
               <HelpIcon
                 style={{
                   fontSize: '1.45rem',
