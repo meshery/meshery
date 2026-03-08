@@ -105,7 +105,6 @@ func init() {
 	}
 
 	cobra.OnInitialize(setupLogger)
-	cobra.OnInitialize(setVerbose)
 	cobra.OnInitialize(initConfig)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
@@ -220,17 +219,11 @@ func initConfig() {
 	}
 }
 
-// setVerbose sets the log level to debug if the -v flag is set
-func setVerbose() {
-	utils.Log.SetLevel(logrus.InfoLevel)
-
-	if verbose {
-		utils.Log.SetLevel(logrus.DebugLevel)
-	}
-}
-
 func setupLogger() {
+	// default log level is info
 	logLevel := logrus.InfoLevel
+
+	// log level to debug if the -v flag is set
 	if verbose {
 		logLevel = logrus.DebugLevel
 	}

@@ -5,9 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -95,7 +93,7 @@ func TestInitConfigUseCases(t *testing.T) {
 				utils.Log = origLog
 			})
 
-			utils.Log = mesheryctllogger.GetMeshkitLogger(logrus.InfoLevel)
+			utils.SetupMeshkitLoggerTesting(t, false)
 
 			tt.setup(t)
 

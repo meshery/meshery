@@ -9,38 +9,35 @@ import (
 	logrus "github.com/sirupsen/logrus"
 )
 
-var lock = &sync.Mutex{}
-
+// MesheryctlLogger is a wrapper around the meshkit logger.Handler to provide a consistent logging interface into mesheryctl.
 type MesheryctlLogger struct {
 	Log logger.Handler
 }
 
-var Log *MesheryctlLogger
+var (
+	Log  *MesheryctlLogger
+	once sync.Once
+)
 
 func GetMeshkitLogger(level logrus.Level) *MesheryctlLogger {
-	if Log == nil {
-		lock.Lock()
-		defer lock.Unlock()
-		if Log == nil {
 
-			options := logger.Options{
-				Format:      logger.TerminalLogFormat,
-				LogLevel:    int(level),
-				Output:      os.Stdout,
-				ErrorOutput: os.Stderr,
-			}
-
-			log, err := logger.New("mesheryctl", options)
-			if err != nil {
-				logrus.Errorf("Failed to initialize logger: %v", err)
-				os.Exit(1)
-			}
-
-			Log = &MesheryctlLogger{Log: log}
-		} else {
-			Log.SetLevel(level)
+	once.Do(func() {
+		options := logger.Options{
+			Format:      logger.TerminalLogFormat,
+			LogLevel:    int(level),
+			Output:      os.Stdout,
+			ErrorOutput: os.Stderr,
 		}
-	}
+
+		log, err := logger.New("mesheryctl", options)
+		if err != nil {
+			logrus.Errorf("Failed to initialize logger: %v", err)
+			os.Exit(1)
+		}
+
+		Log = &MesheryctlLogger{Log: log}
+	})
+
 	return Log
 }
 
