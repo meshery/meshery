@@ -101,6 +101,8 @@ const DefaultArrayItem = (props) => {
 
 const DefaultFixedArrayFieldTemplate = (props) => {
   const { classes } = props;
+  const safeId = props.idSchema?.$id ?? 'array-field';
+
   return (
     <fieldset className={props.className}>
       {props.canAdd && (
@@ -114,7 +116,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
       )}
 
       <ArrayFieldTitle
-        key={`array-field-title-${props.idSchema?.$id ?? 'array-field'}`}
+        key={`array-field-title-${safeId}`}
         TitleField={props.TitleField}
         idSchema={props.idSchema}
         title={getTitle(props)}
@@ -123,18 +125,12 @@ const DefaultFixedArrayFieldTemplate = (props) => {
       />
 
       {(props.uiSchema['ui:description'] ?? props.schema?.description) != null && (
-        <div
-          className="field-description"
-          key={`field-description-${props.idSchema?.$id ?? 'array-field'}`}
-        >
+        <div className="field-description" key={`field-description-${safeId}`}>
           {safeDisplayValue(props.uiSchema['ui:description'] ?? props.schema?.description)}
         </div>
       )}
 
-      <div
-        className="row array-item-list"
-        key={`array-item-list-${props.idSchema?.$id ?? 'array-field'}`}
-      >
+      <div className="row array-item-list" key={`array-item-list-${safeId}`}>
         {props.items &&
           props.items.map((item, idx) => {
             return (
@@ -153,6 +149,8 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 const DefaultNormalArrayFieldTemplate = (props) => {
   const theme = useTheme();
   const { classes } = props;
+  const safeId = props.idSchema?.$id ?? 'array-field';
+
   return (
     <Paper elevation={0}>
       <Box p={1}>
@@ -164,7 +162,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
         >
           <Grid2 size={{ xs: 4 }}>
             <ArrayFieldTitle
-              key={`array-field-title-${props.idSchema?.$id ?? 'array-field'}`}
+              key={`array-field-title-${safeId}`}
               TitleField={props.TitleField}
               idSchema={props.idSchema}
               title={getTitle(props)}
@@ -233,11 +231,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
           </Grid2>
         </Grid2>
 
-        <Grid2
-          container={true}
-          key={`array-item-list-${props.idSchema?.$id ?? 'array-field'}`}
-          size={'grow'}
-        >
+        <Grid2 container={true} key={`array-item-list-${safeId}`} size={'grow'}>
           {props.items &&
             props.items.map((item, idx) => {
               return (
