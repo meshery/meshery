@@ -15,8 +15,11 @@
 package relationships
 
 import (
+	"fmt"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -45,6 +48,13 @@ mesheryctl relationship list --count
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &relationshipListFlags)
+	},
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			errMsg := "Usage: mesheryctl exp relationship list\nRun 'mesheryctl exp relationship list --help' to see detailed help message"
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errMsg))
+		}
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dataToDisplay := display.DisplayDataAsync{

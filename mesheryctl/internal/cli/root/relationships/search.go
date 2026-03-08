@@ -67,7 +67,7 @@ mesheryctl exp relationship search [--page <int>]`,
 			UrlPath:          buildSearchUrl(cmd),
 			DataType:         "relationship",
 			Header:           []string{"ID", "kind", "API Version", "Model name", "Sub Type", "Type"},
-			Page:             1,
+			Page:             searchRelationshipFlagsProvided.Page,
 			PageSize:         10,
 			DisplayCountOnly: false,
 			IsPage:           cmd.Flags().Changed("page"),
@@ -112,8 +112,6 @@ func buildSearchUrl(cmd *cobra.Command) string {
 		escapeSubType := url.QueryEscape(searchRelationshipFlagsProvided.SubType)
 		searchUrl.WriteString(fmt.Sprintf("subType=%s&", escapeSubType))
 	}
-
-	searchUrl.WriteString(utils.GetPageQueryParameter(cmd, searchRelationshipFlagsProvided.Page))
 
 	return searchUrl.String()
 }
