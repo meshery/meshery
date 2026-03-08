@@ -21,14 +21,14 @@ const (
 )
 
 type FlagValidator struct {
-	validator *validator.Validate
+	Validator *validator.Validate
 }
 
 // Based on https://github.com/go-playground/validator/blob/dede3413a22993dd5a091707c6764b6e9724df17/regexes.go#L75 adding `v` prefix
 var vSemverRegex = regexp.MustCompile(`^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
 
 func (fv *FlagValidator) Validate(s interface{}) error {
-	err := fv.validator.Struct(s)
+	err := fv.Validator.Struct(s)
 	if err != nil {
 		switch vErr := err.(type) {
 		case *validator.InvalidValidationError:
@@ -104,7 +104,7 @@ func NewFlagValidator() *FlagValidator {
 		return name
 	})
 
-	return &FlagValidator{validator: validate}
+	return &FlagValidator{Validator: validate}
 }
 
 func InitValidators(cmd *cobra.Command) {
