@@ -105,13 +105,22 @@ func init() {
 }
 
 func generateRelationshipDataToDisplay(relationshipResponse *MeshmodelRelationshipsAPIResponse) ([][]string, int64) {
-	rows := [][]string{}
-	for _, rel := range relationshipResponse.Relationships {
-		evaluationQuery := ""
-		if rel.EvaluationQuery != nil {
-			evaluationQuery = *rel.EvaluationQuery
+	defaultIfEmpty := func(value string) string {
+		if value == "" {
+			return "N/A"
 		}
-		rows = append(rows, []string{string(rel.Kind), rel.Version, rel.Model.Name, rel.SubType, evaluationQuery, rel.RelationshipType})
+		return value
 	}
-	return rows, int64(relationshipResponse.Count)
+
+	rows := make([][]string, 0, len(relationshipResponse.Relationships))
+	for _, rel := range relationshipResponse.Relationships {
+		rows = append(rows, []string{
+			string(rel.Kind),
+			rel.Version,
+			defaultIfEmpty(rel.Model.Name),
+			rel.SubType,
+			rel.RelationshipType,
+		})
+	}
+	return rows, relationshipResponse.Count
 }

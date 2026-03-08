@@ -1,4 +1,4 @@
 Total number of relationships: 1
 Page: 1
-KIND  APIVERSION  MODEL-NAME  SUBTYPE  REGOQUERY  TYPE     
-edge  v1.0.0                  Mount               network  
+KIND  API VERSION  MODEL NAME  SUB TYPE  TYPE     
+edge  v1.0.0       N/A         Mount     network  

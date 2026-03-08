@@ -51,13 +51,9 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 // Search a relationship for specified page
 mesheryctl exp relationship search [--page <int>]`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(searchRelationshipFlagsProvided)
+		err := mesheryctlflags.ValidateCmdFlags(cmd, &searchRelationshipFlagsProvided)
 		if err != nil {
-			return utils.ErrFlagsInvalid(err)
+			return err
 		}
 
 		if searchRelationshipFlagsProvided.Kind == "" && searchRelationshipFlagsProvided.SubType == "" && searchRelationshipFlagsProvided.Type == "" && searchRelationshipFlagsProvided.Model == "" {
@@ -70,7 +66,7 @@ mesheryctl exp relationship search [--page <int>]`,
 		dataToDisplay := display.DisplayDataAsync{
 			UrlPath:          buildSearchUrl(cmd),
 			DataType:         "relationship",
-			Header:           []string{"kind", "apiVersion", "model-name", "subType", "regoQuery", "type"},
+			Header:           []string{"kind", "API Version", "Model name", "Sub Type", "Type"},
 			Page:             1,
 			PageSize:         10,
 			DisplayCountOnly: false,

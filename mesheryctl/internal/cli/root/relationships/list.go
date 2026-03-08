@@ -17,17 +17,16 @@ package relationships
 import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
-type relationshipListFlag struct {
-	Count    bool
-	Page     int
-	PageSize int
+type cmdRelationshipListFlags struct {
+	Count    bool `json:"count" validate:"boolean"`
+	Page     int  `json:"page" validate:"omitempty,gte=1"`
+	PageSize int  `json:"pagesize" validate:"omitempty,gte=1"`
 }
 
-var relationshipListFlags relationshipListFlag
+var relationshipListFlags cmdRelationshipListFlags
 
 // represents the mesheryctl exp relationships list command
 var listCmd = &cobra.Command{
@@ -45,21 +44,13 @@ mesheryctl relationship list --page [page-number]
 mesheryctl relationship list --count
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(relationshipListFlags)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &relationshipListFlags)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dataToDisplay := display.DisplayDataAsync{
 			UrlPath:          relationshipApiPath,
 			DataType:         "relationship",
-			Header:           []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy", "Type"},
+			Header:           []string{"kind", "API Version", "Model name", "Sub Type", "Type"},
 			Page:             relationshipListFlags.Page,
 			PageSize:         relationshipListFlags.PageSize,
 			DisplayCountOnly: relationshipListFlags.Count,
