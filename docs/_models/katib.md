@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubeflow Katib
 subtitle: Collaborative and visual infrastructure as design for Kubeflow Katib
-image: /assets/img/integrations/katib/icons/color/katib-color.svg
-permalink: extensibility/integrations/katib
+image: /extensions/models/katib/icons/color/katib-color.svg
+aliases: /extensibility/integrations/katib
 docURL: https://docs.meshery.io/extensibility/integrations/katib
 description: 
 integrations-category: Machine Learning
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Integrates Katib experiments"
 howItWorksDetails: "Efficient hyperparameter optimization for machine learning in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

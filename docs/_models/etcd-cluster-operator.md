@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Etcd Cluster Operator
 subtitle: Collaborative and visual infrastructure as design for Etcd Cluster Operator
-image: /assets/img/integrations/etcd-cluster-operator/icons/color/etcd-cluster-operator-color.svg
-permalink: extensibility/integrations/etcd-cluster-operator
+image: /extensions/models/etcd-cluster-operator/icons/color/etcd-cluster-operator-color.svg
+aliases: /extensibility/integrations/etcd-cluster-operator
 docURL: https://docs.meshery.io/extensibility/integrations/etcd-cluster-operator
 description: 
 integrations-category: Orchestration & Management
@@ -40,8 +39,5 @@ featureList: [
 ]
 howItWorks: "Manages etcd clusters"
 howItWorksDetails: "Simplified etcd cluster management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Athenz
 subtitle: Collaborative and visual infrastructure as design for Athenz
-image: /assets/img/integrations/athenz/icons/color/athenz-color.svg
-permalink: extensibility/integrations/athenz
+image: /extensions/models/athenz/icons/color/athenz-color.svg
+aliases: /extensibility/integrations/athenz
 docURL: https://docs.meshery.io/extensibility/integrations/athenz
 description: 
 integrations-category: Provisioning
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

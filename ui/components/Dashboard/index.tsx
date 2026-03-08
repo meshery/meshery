@@ -107,9 +107,6 @@ const Dashboard = () => {
   const { selectedK8sContexts } = useSelector((state: RootState) => state.ui);
   const { k8sConfig } = useSelector((state: RootState) => state.ui);
   const [isEditMode, setIsEditMode] = useState(false);
-  const availableHandles = ['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne'];
-
-  const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 
   const iconsProps = {
     fill: theme.palette.icon.default,
@@ -118,6 +115,11 @@ const Dashboard = () => {
     width: '40',
   };
   const WIDGETS = getWidgets({ iconsProps, isEditMode });
+
+  const WIDGETS = getWidgets({ iconsProps, isEditMode });
+  const availableHandles = ['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne'];
+
+  const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 
   const isWidgetAlreadyAdded = (key, layout, breakpoint) => {
     return Boolean(layout[breakpoint].find((item) => item.i == key));

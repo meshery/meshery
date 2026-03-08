@@ -12,18 +12,16 @@ import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import pluralize from 'pluralize';
+import { safeDisplayValue, safeStringTitle } from '../helper';
 
 function getTitleForItem(props) {
   const title = getTitle(props);
-
-  return pluralize.singular(title);
+  return pluralize.singular(typeof title === 'string' ? title : String(title ?? ''));
 }
 
 function getTitle(props) {
-  if (!props) {
-    return 'Unknown';
-  }
-  return props.uiSchema['ui:title'] || props.title;
+  if (!props) return 'Unknown';
+  return safeStringTitle(props.uiSchema['ui:title'] ?? props.title) || 'Unknown';
 }
 
 const ArrayFieldTemplate = (props) => {
@@ -37,16 +35,15 @@ const ArrayFieldTemplate = (props) => {
 };
 
 const ArrayFieldTitle = ({ title, classes }) => {
-  if (!title) {
-    return null;
-  }
+  const safeTitle = safeStringTitle(title);
+  if (!safeTitle) return null;
 
   return (
     <Typography
       variant="body1"
       style={{ fontWeight: 'bold', display: 'inline', fontSize: '0.8rem' }}
     >
-      {title.charAt(0).toUpperCase() + title.slice(1)}
+      {safeTitle.charAt(0).toUpperCase() + safeTitle.slice(1)}
     </Typography>
   );
 };
@@ -122,9 +119,9 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         classes={classes}
       />
 
-      {(props.uiSchema['ui:description'] || props.schema.description) && (
+      {(props.uiSchema['ui:description'] ?? props.schema?.description) != null && (
         <div className="field-description" key={`field-description-${props.idSchema.$id}`}>
-          {props.uiSchema['ui:description'] || props.schema.description}
+          {safeDisplayValue(props.uiSchema['ui:description'] ?? props.schema?.description)}
         </div>
       )}
 
@@ -163,9 +160,13 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               classes={classes}
             />
 
-            {(props.uiSchema['ui:description'] || props.schema.description) && (
-              <CustomTextTooltip title={props.schema.description}>
-                <IconButton disableTouchRipple={true} disableRipple={true}>
+            {(props.uiSchema['ui:description'] ?? props.schema?.description) != null && (
+              <CustomTextTooltip
+                title={safeStringTitle(
+                  props.uiSchema['ui:description'] ?? props.schema?.description,
+                )}
+              >
+                <IconButton disableTouchRipple="true" disableRipple="true">
                   <HelpOutlineIcon
                     width="14px"
                     height="14px"
@@ -179,7 +180,9 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               <CustomTextTooltip
                 bgColor={ERROR_COLOR}
                 interactive={true}
-                title={props.rawErrors?.join('  ')}
+                title={safeStringTitle(
+                  Array.isArray(props.rawErrors) ? props.rawErrors.join('  ') : props.rawErrors,
+                )}
               >
                 <IconButton
                   component="span"

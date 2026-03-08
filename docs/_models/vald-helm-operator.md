@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Vald Helm Operator
 subtitle: Collaborative and visual infrastructure as design for Vald Helm Operator
-image: /assets/img/integrations/vald-helm-operator/icons/color/vald-helm-operator-color.svg
-permalink: extensibility/integrations/vald-helm-operator
+image: /extensions/models/vald-helm-operator/icons/color/vald-helm-operator-color.svg
+aliases: /extensibility/integrations/vald-helm-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vald-helm-operator
 description: 
 integrations-category: Provisioning
@@ -28,8 +27,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Vald"
 howItWorksDetails: "Simplified Vald management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

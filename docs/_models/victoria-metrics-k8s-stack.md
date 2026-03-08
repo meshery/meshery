@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Victoria Metrics K8S Stack
 subtitle: Collaborative and visual infrastructure as design for Victoria Metrics K8S Stack
-image: /assets/img/integrations/victoria-metrics-k8s-stack/icons/color/victoria-metrics-k8s-stack-color.svg
-permalink: extensibility/integrations/victoria-metrics-k8s-stack
+image: /extensions/models/victoria-metrics-k8s-stack/icons/color/victoria-metrics-k8s-stack-color.svg
+aliases: /extensibility/integrations/victoria-metrics-k8s-stack
 docURL: https://docs.meshery.io/extensibility/integrations/victoria-metrics-k8s-stack
 description: 
 integrations-category: Observability and Analysis
@@ -116,8 +115,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

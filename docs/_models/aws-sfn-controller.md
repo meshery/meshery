@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Step Functions
 subtitle: Collaborative and visual infrastructure as design for AWS Step Functions
-image: /assets/img/integrations/aws-sfn-controller/icons/color/aws-sfn-controller-color.svg
-permalink: extensibility/integrations/aws-sfn-controller
+image: /extensions/models/aws-sfn-controller/icons/color/aws-sfn-controller-color.svg
+aliases: /extensibility/integrations/aws-sfn-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sfn-controller
 description: 
 integrations-category: Serverless
@@ -49,8 +48,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

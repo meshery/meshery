@@ -152,9 +152,13 @@ export const NavigatorListItem = styled(ListItemButton, {
   paddingLeft: isDrawerCollapsed ? theme.spacing(2) : '',
   paddingRight: isDrawerCollapsed ? '16px' : '',
   color: isActive
-    ? theme.palette.background.brand?.default || theme.palette.primary.main
-    : theme.palette.background.constant?.disabled || theme.palette.text.disabled,
-  fill: isActive ? theme.palette.background.brand?.default || theme.palette.primary.main : '#fff',
+    ? theme.palette.background.brand.default
+    : theme.palette.background.constant.disabled,
+  fill: isActive ? theme.palette.background.brand.default : '#fff',
+  '& a': {
+    color: 'inherit',
+    textDecoration: 'none',
+  },
   '&:hover': {
     backgroundColor: 'rgba(0, 187, 166, 0.5)',
     '& $expandMoreIcon': {
@@ -222,9 +226,13 @@ export const SideBarListItem = styled(ListItemButton, {
   shouldForwardProp: (prop) => prop !== 'link' && prop !== 'isActive' && prop !== 'isShow',
 })(({ link, isActive, isShow, theme }: any) => ({
   color: isActive
-    ? theme.palette.background.brand?.default || theme.palette.primary.main
-    : theme.palette.background.constant?.disabled || theme.palette.text.disabled,
-  fill: isActive ? theme.palette.background.brand?.default || theme.palette.primary.main : '#fff',
+    ? theme.palette.background.brand.default
+    : theme.palette.background.constant.disabled,
+  fill: isActive ? theme.palette.background.brand.default : '#fff',
+  '& a': {
+    color: 'inherit',
+    textDecoration: 'none',
+  },
   '&:hover': {
     ...(link && {
       backgroundColor: 'rgba(0, 187, 166, 0.5)',

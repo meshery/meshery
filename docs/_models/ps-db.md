@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Percona Server for MySQL
 subtitle: Collaborative and visual infrastructure as design for Percona Server for MySQL
-image: /assets/img/integrations/ps-db/icons/color/ps-db-color.svg
-permalink: extensibility/integrations/ps-db
+image: /extensions/models/ps-db/icons/color/ps-db-color.svg
+aliases: /extensibility/integrations/ps-db
 docURL: https://docs.meshery.io/extensibility/integrations/ps-db
 description: 
 integrations-category: Database
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Percona Operators eliminate the complexities of Day 1 and Day 2 database operations and seamlessly integrate with Meshery and Kanvas."
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

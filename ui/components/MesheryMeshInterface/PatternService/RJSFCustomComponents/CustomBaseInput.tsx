@@ -12,10 +12,9 @@ import { CustomTextTooltip } from '../CustomTextTooltip';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
+import { safeDisplayValue } from '../helper';
 
-const CustomTextField = styled(TextField, {
-  shouldForwardProp: (prop) => prop !== 'overrideFlag',
-})(({ theme, overrideFlag }: any) => {
+const CustomTextField = styled(TextField)<{ overrideFlag?: boolean }>(({ theme, overrideFlag }) => {
   return {
     '& div': {
       backgroundColor: overrideFlag ? (theme.palette.mode === 'dark' ? '#303030' : '#fff') : '',
@@ -41,7 +40,8 @@ const BaseInput = (props) => {
   const getInputLabelStyle = () => {
     if (prettifiedName === 'name' || prettifiedName === 'namespace') {
       return {
-        color: theme.palette.text.secondary,
+        color:
+          (theme.palette.secondary as { text?: string })?.text ?? theme.palette.text?.secondary,
         backgroundColor: theme.palette.mode === 'dark' ? '#303030' : 'white',
         padding: '0.2rem',
         height: '1rem',
@@ -50,6 +50,12 @@ const BaseInput = (props) => {
     }
     return {};
   };
+
+  const overrideFlag = props?.formContext?.overrideFlag;
+  const errorTitle = safeDisplayValue(
+    Array.isArray(props.rawErrors) ? props.rawErrors.join('  ') : props.rawErrors,
+  );
+  const descriptionTitle = safeDisplayValue(props.schema?.description);
 
   return (
     <>
@@ -63,7 +69,7 @@ const BaseInput = (props) => {
           variant={additional ? 'standard' : 'outlined'}
           size="small"
           focused={focused}
-          {...({ overrideFlag: props.formContext.overrideFlag } as any)}
+          overrideFlag={overrideFlag}
           type={props.options?.inputType}
           key={props.id}
           disabled={props?.disabled || props?.readonly}
@@ -105,7 +111,8 @@ const BaseInput = (props) => {
                 {props.rawErrors?.length > 0 && (
                   <CustomTextTooltip
                     bgColor={ERROR_COLOR}
-                    title={props.rawErrors?.join('  ')}
+                    flag={overrideFlag}
+                    title={errorTitle}
                     interactive={true}
                   >
                     <IconButton component="span" size="small" tabIndex={-1}>
@@ -118,8 +125,12 @@ const BaseInput = (props) => {
                     </IconButton>
                   </CustomTextTooltip>
                 )}
-                {props.schema?.description && (
-                  <CustomTextTooltip title={props.schema?.description} interactive={true}>
+                {descriptionTitle && (
+                  <CustomTextTooltip
+                    flag={overrideFlag}
+                    title={descriptionTitle}
+                    interactive={true}
+                  >
                     <IconButton component="span" size="small" tabIndex={-1}>
                       <HelpOutlineIcon
                         width="14px"

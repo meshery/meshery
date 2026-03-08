@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Intel Device Plugins Operator
 subtitle: Collaborative and visual infrastructure as design for Intel Device Plugins Operator
-image: /assets/img/integrations/intel-device-plugins-operator/icons/color/intel-device-plugins-operator-color.svg
-permalink: extensibility/integrations/intel-device-plugins-operator
+image: /extensions/models/intel-device-plugins-operator/icons/color/intel-device-plugins-operator-color.svg
+aliases: /extensibility/integrations/intel-device-plugins-operator
 docURL: https://docs.meshery.io/extensibility/integrations/intel-device-plugins-operator
 description: 
 integrations-category: Runtime
@@ -60,8 +59,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

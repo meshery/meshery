@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Data Factory
 subtitle: Collaborative and visual infrastructure as design for Azure Data Factory
-image: /assets/img/integrations/azure-data-factory/icons/color/azure-data-factory-color.svg
-permalink: extensibility/integrations/azure-data-factory
+image: /extensions/models/azure-data-factory/icons/color/azure-data-factory-color.svg
+aliases: /extensibility/integrations/azure-data-factory
 docURL: https://docs.meshery.io/extensibility/integrations/azure-data-factory
 description: 
 integrations-category: Provisioning
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

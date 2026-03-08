@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Longhorn
 subtitle: Collaborative and visual infrastructure as design for Longhorn
-image: /assets/img/integrations/longhorn/icons/color/longhorn-color.svg
-permalink: extensibility/integrations/longhorn
+image: /extensions/models/longhorn/icons/color/longhorn-color.svg
+aliases: /extensibility/integrations/longhorn
 docURL: https://docs.meshery.io/extensibility/integrations/longhorn
 description: 
 integrations-category: Cloud Native Storage
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Integrates Longhorn storage"
 howItWorksDetails: "Reliable and scalable storage solution for Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

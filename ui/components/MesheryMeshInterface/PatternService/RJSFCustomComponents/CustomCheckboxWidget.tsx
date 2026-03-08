@@ -4,7 +4,7 @@ import React from 'react';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { iconSmall } from '../../../../css/icons.styles';
-
+import { safeDisplayValue } from '../helper';
 import { Checkbox } from '@sistent/sistent';
 
 export const CustomCheckboxWidget = (props) => {
@@ -25,6 +25,11 @@ export const CustomCheckboxWidget = (props) => {
 
   const _onChange = ({ target: { checked } }) => onChange(checked);
 
+  // @ts-expect-error -- @rjsf/utils labelValue overloads expect literal ''|false for 3rd param
+  const labelContent = labelValue(label, hideLabel, required);
+  const safeLabel = safeDisplayValue(labelContent);
+  const descriptionStr = safeDisplayValue(schema?.description);
+
   return (
     <>
       <FormControlLabel
@@ -41,9 +46,13 @@ export const CustomCheckboxWidget = (props) => {
         }
         label={
           <>
-            {labelValue(label, hideLabel, false)}
-            {schema.description && (
-              <CustomTextTooltip title={schema?.description} interactive={true}>
+            {safeLabel}
+            {descriptionStr && (
+              <CustomTextTooltip
+                flag={props?.formContext?.overrideFlag}
+                title={descriptionStr}
+                interactive={true}
+              >
                 <IconButton component="span" size="small">
                   <HelpOutlineIcon
                     width="14px"

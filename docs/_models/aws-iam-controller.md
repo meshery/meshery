@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Identity and Access Management
 subtitle: Collaborative and visual infrastructure as design for AWS Identity and Access Management
-image: /assets/img/integrations/aws-iam-controller/icons/color/aws-iam-controller-color.svg
-permalink: extensibility/integrations/aws-iam-controller
+image: /extensions/models/aws-iam-controller/icons/color/aws-iam-controller-color.svg
+aliases: /extensibility/integrations/aws-iam-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-iam-controller
 description: 
 integrations-category: Security & Compliance
@@ -87,8 +86,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

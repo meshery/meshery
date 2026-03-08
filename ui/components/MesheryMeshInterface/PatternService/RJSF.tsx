@@ -19,7 +19,7 @@ import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
-// @ts-expect-error
+import CustomRadioWidget from './RJSFCustomComponents/CustomRadioWidget';
 import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
@@ -129,6 +129,7 @@ function RJSFForm_({
             TextareaWidget: CustomTextAreaWidget,
             FileWidget: CustomFileWidget,
             URLWidget: CustomURLWidget,
+            RadioWidget: CustomRadioWidget,
             ...widgets,
           }}
           fields={customFields}

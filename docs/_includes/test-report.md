@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 3rd 2026, 5:54:13 pm
+- Testing started at: March 8th 2026, 4:05:29 pm
 
 **📦 Test Result Summary**
 
-- ✅ 66 passed
+- ✅ 65 passed
 - ❌ 2 failed
 - ⚠️ 0 flaked
-- ⏩ 4 skipped
+- ⏩ 5 skipped
 
-⌛ _Duration: 4 minutes and 59 seconds_
+⌛ _Duration: 5 minutes and 9 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -28,7 +28,7 @@
 | 5 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 6 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
-| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
 | 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
 | 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
@@ -67,9 +67,9 @@
 | 44 | None | chromium-local-provider | Create a Model |  | ✅ |
 | 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 46 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ❌ |
-| 48 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
-| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
+| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 48 | None | chromium-local-provider | Import a Model via File Import |  | ❌ |
+| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 51 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 52 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
@@ -124,7 +124,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Import a Model via CSV Import (None - chromium-local-provider)</summary>
+<summary>❌ Import a Model via File Import (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
