@@ -75,8 +75,14 @@ func TestDeployCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/design/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
 					Response:     "deploy.designdeploy.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "apply.designSave.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -98,10 +104,7 @@ func TestDeployCmd(t *testing.T) {
 			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError: func() error {
-				// TODO: This error message is currently tightly coupled with the implementation of the flag validation in the deploy command. We can consider decoupling it in future by defining the error message in the command file and referring to it in the test file
-				return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --source-type 'invalid-source': valid values are helm chart, docker compose, kubernetes manifest"))
-			}(),
+			ExpectedError:  utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --source-type 'invalid-source': valid values are helm chart, docker compose, kubernetes manifest")),
 		},
 		{
 			Name:             "given non-existent design name when design deploy then throw error",

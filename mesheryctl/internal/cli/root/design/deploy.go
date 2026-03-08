@@ -119,7 +119,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				utils.Log.Infof("No matching design found with name: %s", patternName)
+				return ErrDesignNotFound(patternName)
 			} else if len(response.Patterns) == 1 {
 				patternFile, _ = patterns.GetPatternFormat(response.Patterns[0].PatternFile)
 			} else {
