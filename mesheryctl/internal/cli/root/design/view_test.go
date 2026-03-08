@@ -39,7 +39,6 @@ func TestDesignView(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       "",
 			ExpectError: false,
 		},
 		{
@@ -60,7 +59,6 @@ func TestDesignView(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       "",
 			ExpectError: false,
 		},
 		{
@@ -68,7 +66,6 @@ func TestDesignView(t *testing.T) {
 			Args:             []string{"view"},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
-			Token:            "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    ErrDesignNameOrIDNotSpecified(),
@@ -91,7 +88,6 @@ func TestDesignView(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          "",
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound("nonexistent-design"),

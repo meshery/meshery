@@ -41,7 +41,6 @@ func TestUndeployCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
@@ -49,7 +48,6 @@ func TestUndeployCmd(t *testing.T) {
 			Args:             []string{"undeploy", "-f", invalidFilePath},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
-			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFileRead(fmt.Errorf("open %s: no such file or directory", invalidFilePath)),
@@ -78,7 +76,6 @@ func TestUndeployCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound(filepath.Join(fixturesDir, "sampleDesign.golden")),

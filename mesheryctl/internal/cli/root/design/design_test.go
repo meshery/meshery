@@ -47,7 +47,6 @@ func TestDesignCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
@@ -62,7 +61,6 @@ func TestDesignCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
@@ -83,7 +81,6 @@ func TestDesignCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
@@ -110,7 +107,6 @@ func TestDesignCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
@@ -131,7 +127,6 @@ func TestDesignCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			IsOutputGolden: false,
 			ExpectError:    true,
 			ExpectedError:  ErrDesignNotFound("test-view"),

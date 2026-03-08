@@ -83,7 +83,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 			return err
 		}
 
-		flagValidator.CustomErrors["design-source-type"] = fmt.Errorf("invalid value for --source-type '%v': valid values are %s", designDeployFlags.SourceType, strings.Join(designDeployValidSourceTypes, ", "))
+		flagValidator.CustomErrors["design-source-type"] = fmt.Sprintf("Invalid value for --source-type '%v': valid values are %s", designDeployFlags.SourceType, strings.Join(designDeployValidSourceTypes, ", "))
 
 		return flagValidator.Validate(&designDeployFlags)
 	},

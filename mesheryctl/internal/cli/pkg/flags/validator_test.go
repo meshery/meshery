@@ -1,7 +1,6 @@
 package mesheryctlflags
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/go-playground/validator/v10"
@@ -280,7 +279,7 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 
 	t.Run("given custom error exists then uses custom error", func(t *testing.T) {
 
-		fv.CustomErrors["required"] = fmt.Errorf("required-field must be provided")
+		fv.CustomErrors["required"] = "required-field must be provided"
 
 		verrs := getValidationErrors(t, struct {
 			RequiredField string `json:"required-field" validate:"required"`
@@ -311,5 +310,5 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 	})
 
 	// Reset custom errors after tests to avoid side effects
-	fv.CustomErrors = make(map[string]error)
+	fv.CustomErrors = make(map[string]string)
 }

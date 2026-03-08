@@ -9,6 +9,8 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
+var invalidDesignSourceType = "invalid-source"
+
 func TestDeployCmd(t *testing.T) {
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
@@ -53,7 +55,6 @@ func TestDeployCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
@@ -86,12 +87,11 @@ func TestDeployCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
 			Name:             "given invalid source type when design deploy then throw error",
-			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "invalid-source"},
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", invalidDesignSourceType},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
 				{
@@ -101,10 +101,9 @@ func TestDeployCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --source-type 'invalid-source': valid values are helm chart, docker compose, kubernetes manifest")),
+			ExpectedError:  utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --source-type '%s': valid values are helm chart, docker compose, kubernetes manifest", invalidDesignSourceType)),
 		},
 		{
 			Name:             "given non-existent design name when design deploy then throw error",
@@ -124,7 +123,6 @@ func TestDeployCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound("nonexistent-design"),

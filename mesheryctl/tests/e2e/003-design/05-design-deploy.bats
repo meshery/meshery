@@ -22,7 +22,7 @@ setup() {
   run $MESHERYCTL_BIN design deploy -f "$TESTDATA_DIR/nonexistent.yaml" -s "Kubernetes Manifest"
 
   assert_failure
-  assert_output --partial "invalid value for --file '$TESTDATA_DIR/nonexistent.yaml'"
+  assert_output --partial "Invalid value for --file '$TESTDATA_DIR/nonexistent.yaml'"
 }
 
 @test "given an invalid source type when mesheryctl design deploy --file file-path --source invalid-source-type then an error message is displayed" {

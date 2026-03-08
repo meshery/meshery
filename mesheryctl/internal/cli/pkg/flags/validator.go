@@ -26,7 +26,7 @@ type FlagValidator struct {
 	// CustomErrors is a map of custom error messages for specific validation tags.
 	// The key is the validation tag and the value is the error message to be returned when that validation fails
 	// It allows us to return more user friendly error messages for specific validation errors instead of the default error messages returned by the validator package.
-	CustomErrors map[string]error
+	CustomErrors map[string]string
 }
 
 var flagValidator *FlagValidator
@@ -82,7 +82,7 @@ func (fv *FlagValidator) ReadValidationErrorMessages(err validator.ValidationErr
 			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': directory does not exist", strings.ToLower(e.Field()), e.Value()))
 		default:
 			if customErr, exists := fv.CustomErrors[e.Tag()]; exists {
-				errorMessages = append(errorMessages, customErr.Error())
+				errorMessages = append(errorMessages, customErr)
 			} else {
 				errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v'", strings.ToLower(e.Field()), e.Value()))
 			}
@@ -117,7 +117,7 @@ func GetFlagValidator() *FlagValidator {
 			}
 			return name
 		})
-		flagValidator = &FlagValidator{Validator: validate, CustomErrors: make(map[string]error)}
+		flagValidator = &FlagValidator{Validator: validate, CustomErrors: make(map[string]string)}
 	})
 
 	return flagValidator
