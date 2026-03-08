@@ -253,7 +253,7 @@ mesheryctl system logs meshery-istio
 									break
 								}
 								if err != nil {
-									mesheryctllogger.Log.Errorf("error occurred while processing logs%s", err)
+									mesheryctllogger.Log.Errorf("error occurred while processing logs %v", err)
 									break
 								}
 								logBuf = buf[0:numBytes]

@@ -140,7 +140,7 @@ mesheryctl system provider list
 		sort.Strings(keys)
 
 		for _, k := range keys {
-			mesheryctllogger.Log.Infof("- %s\n", k)
+			mesheryctllogger.Log.Infof("- %s", k)
 		}
 
 		if currCtx.Provider == "" {

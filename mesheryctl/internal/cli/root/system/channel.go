@@ -56,8 +56,7 @@ mesheryctl system channel view
 		}
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			mesheryctllogger.Log.Error(err)
-			return nil
+			return err
 		}
 		focusedContext := tempContext
 		if focusedContext == "" {
@@ -66,7 +65,7 @@ mesheryctl system channel view
 
 		if showForAllContext {
 			for k, v := range mctlCfg.Contexts {
-				mesheryctllogger.Log.Infof(PrintChannelAndVersionToStdout(v, k), "\n")
+				mesheryctllogger.Log.Infof("%s\n", PrintChannelAndVersionToStdout(v, k))
 			}
 			mesheryctllogger.Log.Infof("Current Context: %v", focusedContext)
 			return nil
@@ -74,8 +73,7 @@ mesheryctl system channel view
 
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
-			mesheryctllogger.Log.Error(ErrSetCurrentContext(err))
-			return nil
+			return ErrSetCurrentContext(err)
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
@@ -83,8 +81,7 @@ mesheryctl system channel view
 			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
-		mesheryctllogger.Log.Infof(PrintChannelAndVersionToStdout(*currCtx, focusedContext))
-		mesheryctllogger.Log.Info()
+		mesheryctllogger.Log.Info("%s\n", PrintChannelAndVersionToStdout(*currCtx, focusedContext))
 		return nil
 	},
 }
@@ -110,8 +107,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			mesheryctllogger.Log.Error(err)
-			return nil
+			return err
 		}
 
 		focusedContext := mctlCfg.CurrentContext

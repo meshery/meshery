@@ -101,7 +101,7 @@ func NewJSONOutputFormatter[T any](data T) OutputFormatter[T] {
 }
 
 func (j *JSONOutputFormatterSaver[T]) WithFilePath(filePath string) OutputFormatterSaver[T] {
-	mesheryctllogger.Log.Debugf("Setting file path for JSON output formatter saver: ", filePath)
+	mesheryctllogger.Log.Debugf("Setting file path for JSON output formatter saver: %s", filePath)
 	j.FilePath = filePath
 	return j
 }
