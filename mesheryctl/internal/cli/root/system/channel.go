@@ -81,7 +81,7 @@ mesheryctl system channel view
 			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
-		mesheryctllogger.Log.Info("%s\n", PrintChannelAndVersionToStdout(*currCtx, focusedContext))
+		mesheryctllogger.Log.Infof("%s\n", PrintChannelAndVersionToStdout(*currCtx, focusedContext))
 		return nil
 	},
 }
