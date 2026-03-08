@@ -83,6 +83,8 @@ mesheryctl design deploy -f [filepath] -s [source type]
 			return err
 		}
 
+		flagValidator.CustomErrors["design-source-type"] = fmt.Errorf("Invalid value for --source-type '%v': valid values are %s", designDeployFlags.SourceType, strings.Join(designOnboardValidSourceTypes, ", "))
+
 		return flagValidator.Validate(&designDeployFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {

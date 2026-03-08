@@ -22,6 +22,10 @@ const (
 
 type FlagValidator struct {
 	Validator *validator.Validate
+	// CustomErrors is a map of custom error messages for specific validation tags.
+	// The key is the validation tag and the value is the error message to be returned when that validation fails
+	// It allows us to return more user friendly error messages for specific validation errors instead of the default error messages returned by the validator package.
+	CustomErrors map[string]error
 }
 
 // Based on https://github.com/go-playground/validator/blob/dede3413a22993dd5a091707c6764b6e9724df17/regexes.go#L75 adding `v` prefix
@@ -34,7 +38,7 @@ func (fv *FlagValidator) Validate(s interface{}) error {
 		case *validator.InvalidValidationError:
 			return utils.ErrFlagsInvalid(err)
 		case validator.ValidationErrors:
-			return utils.ErrFlagsInvalid(ReadValidationErrorMessages(vErr))
+			return utils.ErrFlagsInvalid(fv.ReadValidationErrorMessages(vErr))
 		default:
 			return utils.ErrFlagsInvalid(err)
 		}
@@ -58,7 +62,7 @@ func validateBoolean(fl validator.FieldLevel) bool {
 
 // ReadValidationErrorMessages reads the validation error and returns a slice of error messages for each validation error encountered
 // This is a centralized function to read validation error messages for all the commands in mesheryctl and return user friendly error messages based on the type of validation error encountered
-func ReadValidationErrorMessages(err validator.ValidationErrors) error {
+func (fv *FlagValidator) ReadValidationErrorMessages(err validator.ValidationErrors) error {
 	if len(err) == 0 {
 		return nil
 	}
@@ -73,7 +77,11 @@ func ReadValidationErrorMessages(err validator.ValidationErrors) error {
 		case "dir", "dirpath":
 			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': directory does not exist", strings.ToLower(e.Field()), e.Value()))
 		default:
-			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v'", strings.ToLower(e.Field()), e.Value()))
+			if customErr, exists := fv.CustomErrors[e.Tag()]; exists {
+				errorMessages = append(errorMessages, customErr.Error())
+			} else {
+				errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v'", strings.ToLower(e.Field()), e.Value()))
+			}
 		}
 	}
 
@@ -104,7 +112,7 @@ func NewFlagValidator() *FlagValidator {
 		return name
 	})
 
-	return &FlagValidator{Validator: validate}
+	return &FlagValidator{Validator: validate, CustomErrors: make(map[string]error)}
 }
 
 func InitValidators(cmd *cobra.Command) {

@@ -99,9 +99,8 @@ func TestDeployCmd(t *testing.T) {
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError: func() error {
-				// validSourceTypes will be populated from the mock response
-				// These should match the values in view.designTypes.response.golden
-				return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --source-type 'invalid-source'"))
+				// TODO: This error message is currently tightly coupled with the implementation of the flag validation in the deploy command. We can consider decoupling it in future by defining the error message in the command file and referring to it in the test file
+				return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --source-type 'invalid-source': valid values are helm chart, docker compose, kubernetes manifest"))
 			}(),
 		},
 		{
