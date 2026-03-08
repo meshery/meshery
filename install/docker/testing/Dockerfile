@@ -7,7 +7,7 @@ COPY go.sum go.mod ./
 COPY server/ server/
 COPY mesheryctl/ mesheryctl/
 RUN go mod download
-RUN cd server && cd cmd && CGO_ENABLED=0 GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
+RUN cd server/cmd && CGO_ENABLED=0 GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
 
 # This image will be reuse for both UI & UI Provider
 FROM node:20-alpine AS base-node
@@ -99,7 +99,7 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 FROM base-alpine
-RUN apk --no-cache add libstdc++ curl ca-certificates gcompat libc6-compat
+RUN apk --no-cache add libstdc++ curl ca-certificates
 RUN update-ca-certificates
 
 COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env
