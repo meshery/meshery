@@ -7,7 +7,7 @@ ARG RELEASE_CHANNEL
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/meshery/meshery
 ADD . .
-RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
+RUN go clean -modcache; cd server; cd cmd; CGO_ENABLED=0 GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
 FROM node:20-alpine AS base-node
 
@@ -88,17 +88,7 @@ RUN if [ -d /meshery-context/.meshery ]; then \
     fi
 
 FROM alpine:3.23.2
-ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
-ENV GLIBC_VERSION=2.35-r1
-RUN set -ex && \
-    apk --update add libstdc++ curl ca-certificates && \
-    apk add --no-cache --virtual .build-deps curl binutils zstd gcompat && \
-    for pkg in glibc-${GLIBC_VERSION} glibc-bin-${GLIBC_VERSION}; \
-    do curl -sSL ${GLIBC_REPO}/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
-    apk del gcompat && \
-    apk add --force-overwrite --no-cache --allow-untrusted /tmp/*.apk && \
-    rm -v /tmp/*.apk && \
-    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
+RUN apk --no-cache add libstdc++ curl ca-certificates gcompat libc6-compat
 
 RUN update-ca-certificates
 
