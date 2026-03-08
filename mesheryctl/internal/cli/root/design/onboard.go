@@ -152,7 +152,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 
 		res, err := api.Add(deployURLPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
-			if errors.GetCode(err) == utils.ErrInternalServerErrorCode {
+			if errors.GetCode(err) == utils.ErrMesheryServerInternalErrorCode {
 				return ErrOnboardDesign()
 			}
 			return err

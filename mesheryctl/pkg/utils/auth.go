@@ -99,7 +99,7 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
 		}
-		return nil, ErrInternalServerError(errors.New(string(bodyBytes)))
+		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
 	}
 
 	// failsafe for bad api call
