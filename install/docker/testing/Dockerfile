@@ -1,28 +1,28 @@
 FROM golang:1.25.5 AS meshery-server
 ARG GIT_VERSION
 
-RUN adduser --disabled-login appuser
 WORKDIR /github.com/meshery/meshery
 COPY go.sum go.mod ./
 COPY server/ server/
 COPY mesheryctl/ mesheryctl/
-RUN go mod download
-RUN cd server && cd cmd && GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
+COPY install/docker/testing/Makefile /github.com/meshery/meshery/install/docker/testing/Makefile
+RUN make -f install/docker/testing/Makefile download-go-modules
+RUN make -f install/docker/testing/Makefile build-meshery-server GIT_VERSION="$GIT_VERSION"
 
 # This image will be reuse for both UI & UI Provider
-FROM node:20-alpine AS base-node
+FROM node:20 AS base-node
 
 FROM base-node AS ui-deps
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
-
 COPY ui/package.json ui/package-lock.json ./
+COPY install/docker/testing/Makefile /app/Makefile
 ENV HUSKY=0
-RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts
+RUN make -f /app/Makefile ui-deps
 
 FROM base-node AS ui-builder
 WORKDIR /app
 COPY --from=ui-deps /app/node_modules ./node_modules
+COPY install/docker/testing/Makefile /app/Makefile
 COPY ui .
 
 # Next.js collects completely anonymous telemetry data about general usage.
@@ -30,18 +30,19 @@ COPY ui .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN npm run build
+RUN make -f /app/Makefile ui-build
 
 FROM base-node AS ui-provider-deps
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
 # Install dependencies based on the preferred package manager
 COPY provider-ui/package.json provider-ui/package-lock.json ./
-RUN npm ci --omit=dev --legacy-peer-deps
+COPY install/docker/testing/Makefile /app/Makefile
+RUN make -f /app/Makefile provider-ui-deps
 
 FROM base-node AS ui-provider-builder
 WORKDIR /app
 COPY --from=ui-provider-deps /app/node_modules ./node_modules
+COPY install/docker/testing/Makefile /app/Makefile
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -49,46 +50,26 @@ COPY --from=ui-provider-deps /app/node_modules ./node_modules
 ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY provider-ui .
-RUN npm run build
+RUN make -f /app/Makefile provider-ui-build
 
-# This image will be reuse for wrk2, seed content and the last built
-FROM alpine:3.23.2 AS base-alpine
+FROM golang:1.25.5 AS wrk2
+COPY install/docker/testing/Makefile /Makefile
+RUN make -f /Makefile install-wrk2-build-deps
+RUN make -f /Makefile configure-wrk2-git
+RUN make -f /Makefile clone-and-build-wrk2
 
-FROM base-alpine AS wrk2
-RUN apk update \
-    && apk --no-cache --update add alpine-sdk zlib-dev openssl-dev wget git
-RUN git config --global user.email "meshery@meshery.io"
-RUN git config --global user.name "meshery"
-RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
-
-FROM base-alpine AS seed_content
-RUN apk add --no-cache curl
+FROM debian:bookworm-slim AS seed_content
+COPY --from=base-node /usr/bin/make /usr/bin/make
+COPY install/docker/testing/Makefile /Makefile
 WORKDIR /
-RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
-    && mkdir -p seed_content/filters/binaries \
-    && cd seed_content/filters/binaries  \
-    for line in $lines \
-    do \
-    curl -LO $line \
-    done
+RUN make -f /Makefile install-seed-content-deps
+RUN make -f /Makefile seed-filters
 
 # bundling patterns
-RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
-    && mkdir service-mesh-patterns \
-    && mkdir -p /seed_content/patterns \
-    && tar xzf service-mesh-patterns.tgz --directory=service-mesh-patterns \
-    && mv service-mesh-patterns/*/samples/* /seed_content/patterns/
+RUN make -f /Makefile seed-patterns
 
 # bundling applications
-RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
-    && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/platform/kube/bookinfo.yaml \
-    && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/httpbin/httpbin.yaml \
-    && curl -L https://raw.githubusercontent.com/layer5io/image-hub/master/deployment.yaml -o imagehub.yaml \
-    && mkdir /emojivoto && (cd /emojivoto && curl --remote-name-all -L https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/emoji.yml \
-    https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/vote-bot.yml \
-    https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/voting.yml \
-    https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/web.yml) \
-    && awk 'FNR==1 && NR>1 { printf("\n%s\n\n","---") } 1' /emojivoto/*.yml > /seed_content/applications/emojivoto.yml
+RUN make -f /Makefile seed-applications
 
 #FROM ubuntu as nighthawk
 #RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
@@ -98,18 +79,11 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN git clone https://github.com/layer5io/nighthawk-go
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
-FROM base-alpine
-ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
-ENV GLIBC_VERSION=2.35-r1
-# To solve: ./meshery: /usr/glibc-compat/lib/libc.so.6: version `GLIBC_2.34' not found (required by ./meshery)
-RUN set -ex && \
-    apk --update add libstdc++ curl ca-certificates && \
-    for pkg in glibc-${GLIBC_VERSION} glibc-bin-${GLIBC_VERSION}; \
-    do curl -sSL ${GLIBC_REPO}/releases/download/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
-    apk add --allow-untrusted /tmp/*.apk && \
-    rm -v /tmp/*.apk && \
-    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
-RUN update-ca-certificates
+FROM debian:bookworm-slim
+ENV DEBIAN_FRONTEND=noninteractive
+COPY --from=base-node /usr/bin/make /usr/bin/make
+COPY install/docker/testing/Makefile /Makefile
+RUN make -f /Makefile install-runtime-deps
 
 # FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
 #RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
@@ -121,7 +95,6 @@ COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env
 COPY ./server/meshmodel /app/server/meshmodel
 COPY ./server/permissions /app/server/permissions/
 COPY --from=meshery-server /meshery /app/server/cmd/
-COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
 COPY --from=ui-builder /app/out /app/ui/out
 COPY --from=ui-builder /app/public /app/ui/public
@@ -132,9 +105,8 @@ COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_service /app/server/cmd/
 COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_output_transform /app/server/cmd/
 
-RUN addgroup docker
-RUN mkdir -p /var/run; chown -R appuser:docker /var/run/
-RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/; chown -R appuser /app/ui/public
+RUN make -f /Makefile create-runtime-user
+RUN make -f /Makefile prepare-runtime-dirs
 USER appuser
 WORKDIR /app/server/cmd
 CMD ["./meshery"]
