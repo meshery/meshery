@@ -21,7 +21,7 @@ func TestSearchComponent(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
-			Name:             "given no valid-component is provided when running mesheryctl component search no-valid-component then an error message is displays",
+			Name:             "given no arguments provided when component search  then throw error",
 			Args:             []string{"search"},
 			URL:              "",
 			Fixture:          "components.api.response.golden",
@@ -31,7 +31,7 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%v\n%v", errInvalidArg, searchUsageMsg)),
 		},
 		{
-			Name:             "given a multiple argument is provided when running mesheryctl component search arg1 arg2 then an error message is displayed",
+			Name:             "given multiple argument provided when component search then throw error",
 			Args:             []string{"search", "args1", "args2"},
 			URL:              "",
 			Fixture:          "components.api.response.golden",
@@ -41,7 +41,7 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%v\n%v", errInvalidArg, searchUsageMsg)),
 		},
 		{
-			Name:             "given a valid component is provided when running mesheryctl component search valid-name then it displays every matching results in output",
+			Name:             "given valid name provided when component search then display matching results",
 			Args:             []string{"search", "Test"},
 			URL:              fmt.Sprintf("/%s?search=Test&page=0&pagesize=10", componentApiPath),
 			Fixture:          "components.api.response.golden",
@@ -49,7 +49,7 @@ func TestSearchComponent(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name:             "given a valid component is provided when running mesheryctl component search valid-name --page int then it displays every matching results in output",
+			Name:             "given valid name provided with page flag when component search then display matching results",
 			Args:             []string{"search", "Test", "--page", "2"},
 			URL:              fmt.Sprintf("/%s?search=Test&page=1&pagesize=10", componentApiPath),
 			Fixture:          "components.api.response.golden",

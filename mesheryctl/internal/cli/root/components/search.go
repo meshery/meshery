@@ -24,12 +24,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type componentSearchFlag struct {
+type cmdComponentSearchFlag struct {
 	Page     int `json:"page" validate:"omitempty,gte=1"`
 	PageSize int `json:"page-size" validate:"omitempty,gte=1"`
 }
 
-var cmdComponentSearchFlag componentSearchFlag
+var componentSearchFlag cmdComponentSearchFlag
 
 // represents the mesheryctl component search [query-text] subcommand.
 var searchComponentsCmd = &cobra.Command{
@@ -48,7 +48,7 @@ mesheryctl component search "Component name"
 mesheryctl component search [query-text] [--page 1]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentSearchFlag)
+		return mesheryctlflags.ValidateCmdFlags(cmd, &componentSearchFlag)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 1 {
@@ -64,8 +64,8 @@ mesheryctl component search [query-text] [--page 1]
 			UrlPath:  fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()),
 			DataType: "component",
 			Header:   []string{"ID", "Name", "Model", "Version"},
-			Page:     cmdComponentSearchFlag.Page,
-			PageSize: cmdComponentSearchFlag.PageSize,
+			Page:     componentSearchFlag.Page,
+			PageSize: componentSearchFlag.PageSize,
 			IsPage:   cmd.Flags().Changed("page"),
 		}
 
@@ -78,6 +78,6 @@ mesheryctl component search [query-text] [--page 1]
 }
 
 func init() {
-	searchComponentsCmd.Flags().IntVarP(&cmdComponentSearchFlag.Page, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
-	searchComponentsCmd.Flags().IntVarP(&cmdComponentSearchFlag.PageSize, "pagesize", "s", 10, "(optional) List next set of components with --pagesize (default = 10)")
+	searchComponentsCmd.Flags().IntVarP(&componentSearchFlag.Page, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
+	searchComponentsCmd.Flags().IntVarP(&componentSearchFlag.PageSize, "pagesize", "s", 10, "(optional) List next set of components with --pagesize (default = 10)")
 }
