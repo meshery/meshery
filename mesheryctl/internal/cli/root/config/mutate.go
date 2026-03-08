@@ -2,14 +2,14 @@ package config
 
 import (
 	"os"
-
-	log "github.com/sirupsen/logrus"
 )
 
 func MutateConfigIfNeeded(
 	configPath string,
 	mesheryFolder string,
-	createConfigFile func(string) error,
+	token Token,
+	ctx Context,
+	createConfigFile func() error,
 ) error {
 
 	stat, err := os.Stat(configPath)
@@ -34,23 +34,17 @@ func MutateConfigIfNeeded(
 		return err
 	}
 
-	if err := createConfigFile(configPath); err != nil {
+	if err := createConfigFile(); err != nil {
 		return err
 	}
 
-	if err := AddTokenToConfig(TemplateToken, configPath); err != nil {
-		if err.Error() != "error adding token: a token with same name already exists" {
-			return err
-		}
+	if err := AddTokenToConfig(token, configPath); err != nil {
+		return err
 	}
 
-	if err := AddContextToConfig("local", TemplateContext, configPath, true, false); err != nil {
-		if err.Error() != "error adding context: a context with same name already exists" {
-			return err
-		}
+	if err := AddContextToConfig("local", ctx, configPath, true, false); err != nil {
+		return err
 	}
-
-	log.Debugf("Default config file created at %s", configPath)
 
 	return nil
 }

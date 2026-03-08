@@ -177,9 +177,9 @@ func initConfig() {
 		err := config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			func(path string) error {
-				return utils.CreateConfigFile()
-			},
+			config.TemplateToken,
+			config.TemplateContext,
+			utils.CreateConfigFile,
 		)
 
 		if err != nil {

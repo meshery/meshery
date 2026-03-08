@@ -50,12 +50,18 @@ func TestMutateConfigIfNeeded(t *testing.T) {
 
 			tt.given(configPath)
 
-			createConfig := func(path string) error {
-				return os.WriteFile(path, []byte(minimalMeshConfig), 0o644)
+			createConfig := func() error {
+				return os.WriteFile(configPath, []byte(minimalMeshConfig), 0o644)
 			}
 
 			// WHEN
-			err := config.MutateConfigIfNeeded(configPath, mesheryFolder, createConfig)
+			err := config.MutateConfigIfNeeded(
+				configPath,
+				mesheryFolder,
+				config.TemplateToken,
+				config.TemplateContext,
+				createConfig,
+			)
 
 			// THEN
 			if err != nil {
