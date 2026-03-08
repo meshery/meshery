@@ -596,7 +596,7 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 			testdataDir := filepath.Join(commandDir, "testdata")
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			buf := SetupMeshkitLoggerTesting(t, true)
+			buf := SetupMeshkitLoggerTesting(t, false)
 
 			cmd.SetArgs(tt.Args)
 			cmd.SetOut(buf)
