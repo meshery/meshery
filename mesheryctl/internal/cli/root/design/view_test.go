@@ -22,7 +22,7 @@ func TestDesignView(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:             "given name provider when view command is executed then design view is displayed",
+			Name:             "given name provided when design view then design is displayed",
 			Args:             []string{"view", "desgin"},
 			ExpectedResponse: "view.design.output.golden",
 			URLs: []utils.MockURL{
@@ -42,7 +42,7 @@ func TestDesignView(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "given id provider when view command is executed then design view is displayed",
+			Name:             "given id provided when design view then design is displayed",
 			Args:             []string{"view", "3817ec9a-1d83-4f6f-9154-0fd4408ba9f0"},
 			ExpectedResponse: "view.design.output.golden",
 			URLs: []utils.MockURL{
@@ -62,7 +62,7 @@ func TestDesignView(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "given no name or ID specified when view command is executed then error is thrown",
+			Name:             "given no name or ID specified when design view then error is thrown",
 			Args:             []string{"view"},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
@@ -71,7 +71,7 @@ func TestDesignView(t *testing.T) {
 			ExpectedError:    ErrDesignNameOrIDNotSpecified(),
 		},
 		{
-			Name:             "given nonexistent design when view command is executed then error is thrown",
+			Name:             "given nonexistent design provided when design view then error is thrown",
 			Args:             []string{"view", "nonexistent-design"},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{

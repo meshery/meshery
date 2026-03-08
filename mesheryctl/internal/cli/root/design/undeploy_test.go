@@ -24,7 +24,7 @@ func TestUndeployCmd(t *testing.T) {
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:             "Undeploy Application",
+			Name:             "given valid file when design undeploy then design is undeployed",
 			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "undeploy.output.golden",
 			URLs: []utils.MockURL{
@@ -44,7 +44,7 @@ func TestUndeployCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Undeploy design with invalid file path",
+			Name:             "given invalid file path when design undeploy then error is thrown",
 			Args:             []string{"undeploy", "-f", invalidFilePath},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
@@ -53,7 +53,7 @@ func TestUndeployCmd(t *testing.T) {
 			ExpectedError:    utils.ErrFileRead(fmt.Errorf("open %s: no such file or directory", invalidFilePath)),
 		},
 		{
-			Name:             "Undeploy design not found",
+			Name:             "given nonexistent design provided when design undeploy then error is thrown",
 			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{

@@ -26,7 +26,7 @@ func TestApplyCmd(t *testing.T) {
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:             "Apply Designs",
+			Name:             "given valid file when design apply then design is applied",
 			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "apply.output.golden",
 			URLs: []utils.MockURL{
@@ -47,7 +47,7 @@ func TestApplyCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Apply Designs with --skip-save",
+			Name:             "given valid file when design apply with --skip-save then design is applied without saving",
 			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save"},
 			ExpectedResponse: "apply.output.golden",
 			URLs: []utils.MockURL{
@@ -62,7 +62,7 @@ func TestApplyCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Apply design with invalid filepath",
+			Name:             "given invalid file path when design apply then error is thrown",
 			Args:             []string{"apply", "-f", invalidFilePath},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
@@ -72,7 +72,7 @@ func TestApplyCmd(t *testing.T) {
 			ExpectedError:    utils.ErrFileRead(errors.Errorf(errInvalidPathMsg, invalidFilePath)),
 		},
 		{
-			Name:             "Apply design with invalid server response",
+			Name:             "given invalid server response when design apply then error is thrown",
 			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
