@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	config "github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/spf13/viper"
 )
 
 const minimalMeshConfig = "contexts: {}\ncurrent-context: \"\"\ntokens: []\n"
@@ -42,6 +43,8 @@ func TestMutateConfigIfNeeded(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			viper.Reset()
+			t.Cleanup(viper.Reset)
 
 			// GIVEN
 			tmpDir := t.TempDir()
