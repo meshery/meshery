@@ -24,11 +24,13 @@ function getTitle(props) {
 
 const ArrayFieldTemplate = (props) => {
   const { schema, registry = getDefaultFormState(), classes } = props;
+  const safeId = props.idSchema?.$id ?? 'array-field';
+  const safeProps = { ...props, idSchema: props.idSchema ?? { $id: safeId } };
   // TODO: update types so we don't have to cast registry as any
   if (isMultiSelect(schema, registry.rootSchema)) {
-    return <DefaultFixedArrayFieldTemplate {...props} />;
+    return <DefaultFixedArrayFieldTemplate {...safeProps} />;
   } else {
-    return <DefaultNormalArrayFieldTemplate {...props} />;
+    return <DefaultNormalArrayFieldTemplate {...safeProps} />;
   }
 };
 
@@ -104,7 +106,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
       {props.canAdd && (
         <Button
           className="array-item-add"
-          onClick={props.onAddClick}
+          onClick={typeof props.onAddClick === 'function' ? props.onAddClick : undefined}
           disabled={props.disabled || props.readonly}
         >
           Add
@@ -112,7 +114,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
       )}
 
       <ArrayFieldTitle
-        key={`array-field-title-${props.idSchema.$id}`}
+        key={`array-field-title-${props.idSchema?.$id ?? 'array-field'}`}
         TitleField={props.TitleField}
         idSchema={props.idSchema}
         title={getTitle(props)}
@@ -121,12 +123,18 @@ const DefaultFixedArrayFieldTemplate = (props) => {
       />
 
       {(props.uiSchema['ui:description'] ?? props.schema?.description) != null && (
-        <div className="field-description" key={`field-description-${props.idSchema.$id}`}>
+        <div
+          className="field-description"
+          key={`field-description-${props.idSchema?.$id ?? 'array-field'}`}
+        >
           {safeDisplayValue(props.uiSchema['ui:description'] ?? props.schema?.description)}
         </div>
       )}
 
-      <div className="row array-item-list" key={`array-item-list-${props.idSchema.$id}`}>
+      <div
+        className="row array-item-list"
+        key={`array-item-list-${props.idSchema?.$id ?? 'array-field'}`}
+      >
         {props.items &&
           props.items.map((item, idx) => {
             return (
@@ -156,7 +164,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
         >
           <Grid2 size={{ xs: 4 }}>
             <ArrayFieldTitle
-              key={`array-field-title-${props.idSchema.$id}`}
+              key={`array-field-title-${props.idSchema?.$id ?? 'array-field'}`}
               TitleField={props.TitleField}
               idSchema={props.idSchema}
               title={getTitle(props)}
@@ -211,7 +219,9 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                   <Box mt={2}>
                     <IconButton
                       className="array-item-add"
-                      onClick={props.onAddClick}
+                      onClick={
+                        typeof props.onAddClick === 'function' ? props.onAddClick : undefined
+                      }
                       disabled={props.disabled || props.readonly}
                     >
                       <AddIcon width="18px" height="18px" fill="gray" />
@@ -223,7 +233,11 @@ const DefaultNormalArrayFieldTemplate = (props) => {
           </Grid2>
         </Grid2>
 
-        <Grid2 container={true} key={`array-item-list-${props.idSchema.$id}`} size={'grow'}>
+        <Grid2
+          container={true}
+          key={`array-item-list-${props.idSchema?.$id ?? 'array-field'}`}
+          size={'grow'}
+        >
           {props.items &&
             props.items.map((item, idx) => {
               return (
