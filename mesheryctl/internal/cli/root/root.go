@@ -62,7 +62,8 @@ mesheryctl
 // Display help about command/subcommand:
 mesheryctl --help
 mesheryctl system start --help
-mesheryctl -v
+// For viewing verbose output:
+mesheryctl -v [or] --verbose
 `,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		// Initialize a validator and add it to the command context
@@ -76,16 +77,15 @@ mesheryctl -v
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RootError(fmt.Sprintf(
-				"'%s' is an invalid command. Use 'mesheryctl --help' to display usage guide.\n",
-				args[0],
-			)))
+			return errors.New(utils.RootError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl --help' to display usage guide.\n", args[0])))
 		}
 
 		return nil
 	},
 }
 
+// Execute adds all child commands to the root command and sets flags appropriately.
+// This is called by main.main(). It only needs to happen once to the RootCmd.
 // Execute adds all child commands
 func Execute() error {
 	//log formatter for improved UX
@@ -105,20 +105,13 @@ func init() {
 	cobra.OnInitialize(setVerbose)
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().StringVar(
-		&cfgFile,
-		"config",
-		utils.DefaultConfigPath,
-		"path to config file",
-	)
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
 
-	RootCmd.PersistentFlags().BoolVarP(
-		&verbose,
-		"verbose",
-		"v",
-		false,
-		"verbose output",
-	)
+	// Preparing for an "edge" channel
+	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
+
+	// global verbose flag for verbose logs
+	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 
 	availableSubcommands = []*cobra.Command{
 		completionCmd,
@@ -162,7 +155,7 @@ func TreePath() *cobra.Command {
 	return RootCmd
 }
 
-// initConfig reads in config file and ENV variables
+// initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	utils.CfgFile = cfgFile
 
@@ -189,7 +182,7 @@ func initConfig() {
 
 	viper.SetConfigFile(cfgFile)
 
-	viper.AutomaticEnv()
+	viper.AutomaticEnv() // read in environment variables that match
 
 	if err := viper.ReadInConfig(); err != nil {
 		utils.Log.Debugf("unable to read config file: %v", err)
