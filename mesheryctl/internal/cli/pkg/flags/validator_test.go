@@ -309,4 +309,7 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 			err.Error(),
 		)
 	})
+
+	// Reset custom errors after tests to avoid side effects
+	fv.CustomErrors = make(map[string]error)
 }
