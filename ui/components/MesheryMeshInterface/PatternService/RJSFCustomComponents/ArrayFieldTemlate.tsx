@@ -166,7 +166,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                   props.uiSchema['ui:description'] ?? props.schema?.description,
                 )}
               >
-                <IconButton disableTouchRipple="true" disableRipple="true">
+                <IconButton disableTouchRipple disableRipple>
                   <HelpOutlineIcon
                     width="14px"
                     height="14px"

@@ -114,7 +114,6 @@ const Dashboard = () => {
     secondaryFill: theme.palette.icon.secondary,
     width: '40',
   };
-  const WIDGETS = getWidgets({ iconsProps, isEditMode });
 
   const WIDGETS = getWidgets({ iconsProps, isEditMode });
   const availableHandles = ['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne'];

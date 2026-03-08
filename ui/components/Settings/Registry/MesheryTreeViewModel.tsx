@@ -32,9 +32,11 @@ const MesheryTreeViewModel = ({
   return (
     <TreeView
       aria-label="controlled"
-      defaultCollapseIcon={<MinusSquare />}
-      defaultExpandIcon={<PlusSquare />}
-      defaultEndIcon={<DotSquare />}
+      slots={{
+        collapseIcon: MinusSquare,
+        expandIcon: PlusSquare,
+        endIcon: DotSquare,
+      }}
       onExpandedItemsChange={handleToggle}
       onSelectedItemsChange={handleSelect}
       multiSelect

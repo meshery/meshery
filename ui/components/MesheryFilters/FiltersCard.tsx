@@ -254,7 +254,7 @@ function FiltersCard_({
         {/* BACK PART */}
         <>
           <CardBackGrid container spacing={1} alignContent="space-between" alignItems="center">
-            <YamlDialogTitleGrid item xs={12}>
+            <YamlDialogTitleGrid size={{ xs: 12 }}>
               <Typography variant="h6">{name}</Typography>
               <CardHeaderRight>
                 <Link href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`} target="_blank">

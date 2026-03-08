@@ -7,6 +7,7 @@ const drawerWidth = 256;
 
 type StyledAppContentProps = {
   canShowNav?: boolean;
+  isDrawerCollapsed?: boolean;
 };
 
 type StyledDrawerProps = {
@@ -53,7 +54,7 @@ export const StyledMainContent = styled('main')(({ theme }) => ({
 
 export const StyledAppContent = styled('div', {
   shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed' && prop !== 'canShowNav',
-})(({ theme, canShowNav, isDrawerCollapsed }) => ({
+})<StyledAppContentProps>(({ theme, canShowNav, isDrawerCollapsed }) => ({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',

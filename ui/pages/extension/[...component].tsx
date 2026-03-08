@@ -20,7 +20,8 @@ import {
   updateTitle,
 } from '@/store/slices/mesheryUi';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import type { RootState } from '../../store';
+import type { GetStaticPaths, GetStaticProps } from 'next';
 
 /**
  * Define static paths for the extension routes.

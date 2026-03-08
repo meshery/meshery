@@ -110,7 +110,7 @@ export default function CustomSelectWidget({
               )}
               {typeof schema?.description === 'string' && schema.description && (
                 <CustomTextTooltip
-                  flag={formContext?.overrideFlag}
+                  flag={_formContext?.overrideFlag}
                   title={schema.description}
                   interactive={true}
                 >

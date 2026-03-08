@@ -20,6 +20,7 @@ import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
 import CustomRadioWidget from './RJSFCustomComponents/CustomRadioWidget';
+// @ts-expect-error - ErrorBoundary exists at runtime but types may not be exported
 import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';

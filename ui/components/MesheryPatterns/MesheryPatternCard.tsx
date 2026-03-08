@@ -333,7 +333,7 @@ function MesheryPatternCard_({
             alignItems="center"
             data-testid="pattern-card-back"
           >
-            <YamlDialogTitleGrid item xs={12}>
+            <YamlDialogTitleGrid size={{ xs: 12 }}>
               <Typography variant="h6" data-testid="pattern-card-back-title">
                 {name}
               </Typography>
