@@ -26,7 +26,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 
-	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -52,7 +51,7 @@ mesheryctl design import -f [file/URL] -s [source-type] -n [name]
 
 mesheryctl design import -f design.tar
 mesheryctl design import -f design.yml -n design-name
-mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
+mesheryctl design import -f design.yml -s "k8s-manifest" -n design-name
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl design import -f [file/URL] -s [source-type] -n [name]\n"
@@ -74,25 +73,13 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 		// If pattern file is passed via flags
 		if sourceType != "" {
-			validSourceTypes, err := getDesignSourceTypes()
-			if err != nil {
-				return err
-			}
+			validSourceTypes := getDesignSourceTypes()
+			var err error
 			if sourceType, err = retrieveProvidedSourceType(sourceType, validSourceTypes); err != nil {
 				return err
 			}
 		}
 
-		switch sourceType {
-		case "Helm Chart":
-			sourceType = string(coreV1.HelmChart)
-		case "Kubernetes Manifest":
-			sourceType = string(coreV1.K8sManifest)
-		case "Meshery Design":
-			sourceType = string(coreV1.MesheryDesign)
-		case "Docker Compose":
-			sourceType = string(coreV1.DockerCompose)
-		}
 
 		pattern, err := importPattern(sourceType, file, patternURL, true)
 		if err != nil {
@@ -201,6 +188,6 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 
 func init() {
 	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to design file")
-	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / design)")
+	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. helm-chart / k8s-manifest / docker-compose / meshery-design)")
 	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the design file")
 }

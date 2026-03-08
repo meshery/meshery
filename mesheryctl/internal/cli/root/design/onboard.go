@@ -59,18 +59,15 @@ var onboardCmd = &cobra.Command{
 	Example: `
 // Onboard design by providing file path
 mesheryctl design onboard -f [filepath] -s [source type]
-mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
+mesheryctl design onboard -f ./pattern.yml -s "k8s-manifest"
 	`,
 	Annotations: linkDocpatternOnboard,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
 		flagValidator := mesheryctlflags.NewFlagValidator()
-		designOnboardValidSourceTypes, err := getDesignSourceTypes()
-		if err != nil {
-			return err
-		}
+		designOnboardValidSourceTypes := getDesignSourceTypes()
 
-		err = flagValidator.Validator.RegisterValidation("design-source-type", func(fl validator.FieldLevel) bool {
+		err := flagValidator.Validator.RegisterValidation("design-source-type", func(fl validator.FieldLevel) bool {
 			if sourceType, ok := fl.Field().Interface().(string); ok {
 				for _, validType := range designOnboardValidSourceTypes {
 					if strings.EqualFold(sourceType, validType) {
@@ -210,5 +207,5 @@ func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 func init() {
 	onboardCmd.Flags().StringVarP(&designOnboardFlags.File, "file", "f", "", "Path to design file")
 	onboardCmd.Flags().BoolVarP(&designOnboardFlags.SkipSave, "skip-save", "", false, "Skip saving a design")
-	onboardCmd.Flags().StringVarP(&designOnboardFlags.SourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
+	onboardCmd.Flags().StringVarP(&designOnboardFlags.SourceType, "source-type", "s", "", "Type of source file (ex. helm-chart / k8s-manifest / docker-compose / meshery-design)")
 }
