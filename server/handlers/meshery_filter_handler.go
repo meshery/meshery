@@ -109,9 +109,14 @@ func (h *Handler) handleFilterPOST(
 		invalidReqBody := ErrRequestBody(err)
 		h.log.Error(invalidReqBody)
 
+		filterName := "provided payload"
+		if parsedBody != nil && parsedBody.FilterData != nil && parsedBody.FilterData.Name != "" {
+			filterName = parsedBody.FilterData.Name
+		}
+
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": invalidReqBody,
-		}).WithDescription("Filter request body is corrupted or malformed.").Build()
+		}).WithDescription(fmt.Sprintf("Filter %s is corrupted.", filterName)).Build()
 
 		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
