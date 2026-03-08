@@ -88,7 +88,7 @@ RUN if [ -d /meshery-context/.meshery ]; then \
     fi
 
 FROM alpine:3.23.2
-RUN apk --no-cache add libstdc++ curl ca-certificates gcompat libc6-compat
+RUN apk --no-cache add libstdc++ curl ca-certificates gcompat
 
 RUN update-ca-certificates
 
