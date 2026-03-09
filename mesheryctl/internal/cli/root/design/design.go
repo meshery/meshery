@@ -18,9 +18,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
+	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/spf13/cobra"
 )
 
@@ -75,18 +74,14 @@ func init() {
 	DesignCmd.AddCommand(availableSubcommands...)
 }
 
-func getDesignSourceTypes() ([]string, error) {
-	apiResponse, err := api.Fetch[[]models.PatternSourceTypesAPIResponse]("api/pattern/types")
-	if err != nil {
-		return nil, err
+func getDesignSourceTypes() []string {
+	return []string{
+		string(coreV1.HelmChart),
+		string(coreV1.K8sManifest),
+		string(coreV1.DockerCompose),
+		string(coreV1.MesheryDesign),
+		string(coreV1.K8sKustomize),
 	}
-
-	sourceTypes := make([]string, 0, len(*apiResponse))
-	for _, sourceTypeResponse := range *apiResponse {
-		sourceTypes = append(sourceTypes, strings.ToLower(sourceTypeResponse.DesignType))
-	}
-
-	return sourceTypes, nil
 }
 
 func retrieveProvidedSourceType(sType string, validDesignSourceTypes []string) (string, error) {
