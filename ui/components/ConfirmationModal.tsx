@@ -22,7 +22,7 @@ import { Search } from '@mui/icons-material';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { RoundedTriangleShape } from './shapes/RoundedTriangle';
 import { notificationColors } from '../themes/app';
@@ -126,6 +126,14 @@ export const OctagonText = styled('div')({
   fontSize: '0.8rem',
 });
 
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
+
 function ConfirmationMsg(props) {
   const {
     open,
@@ -149,12 +157,16 @@ function ConfirmationMsg(props) {
   let isDisabled =
     typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
   const dispatch = useDispatch();
-  // We intentionally omit tab and k8scontext from the dependency array because we only want to initialize local state when the modal opens, preventing background Redux updates from resetting the UI while active.
+  const prevOpen = usePrevious(open);
+
   useEffect(() => {
-    setTabVal(tab);
-    setContexts(k8scontext);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+    // When the modal transitions from closed to open, initialize the local state.
+    // This strictly adheres to exhaustive-deps while preventing background Redux overwrites.
+    if (!prevOpen && open) {
+      setTabVal(tab);
+      setContexts(k8scontext);
+    }
+  }, [open, prevOpen, tab, k8scontext]);
 
   useEffect(() => {
     setDisabled(isDisabled);
