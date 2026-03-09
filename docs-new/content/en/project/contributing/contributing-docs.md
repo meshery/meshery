@@ -85,7 +85,7 @@ In case of any installation issues, use the [discussion forum](https://meshery.i
 
 ### Using Docker
 
-If you've Docker and `make` installed on your system, then you can serve the site locally. This doesn't require the need to install _Hugo_, _Node.js_, or _Go_ on your system.
+If you have Docker and `make` installed on your system, then you can serve the site locally. This doesn't require the need to install _Hugo_, _Node.js_, or _Go_ on your system.
 
 {{% alert color="info" %}}
 This may not work in Windows.
@@ -93,7 +93,7 @@ This may not work in Windows.
 
 Run the following command from the _docs-new_ folder.
 
-```
+```bash
 make docker
 ```
 
@@ -125,17 +125,17 @@ Gitpod will automatically clone and open the repository for you in a browser-bas
 
 You should be able to access the site on port `1313`. If you want to access it in your localhost read the [docs for port-forwarding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
 
-### Using Github Codespaces
+### Using GitHub Codespaces
 
 - Ensure you have an account on <a href="https://www.github.com/" class="meshery-light">GitHub</a>
 - Open your forked Meshery repository on GitHub.
-- Click on the "**Code**" button of your forked repository it will give you the option to open the project in Github Codespaces.
+- Click on the "**Code**" button of your forked repository it will give you the option to open the project in GitHub Codespaces.
 
-{{% alert color="dark" title="About Github Codespaces" %}}
-Github Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quite helpful to spin up the development environment for [Meshery](https://github.com/meshery/meshery).
+{{% alert color="dark" title="About GitHub Codespaces" %}}
+GitHub Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quite helpful to spin up the development environment for [Meshery](https://github.com/meshery/meshery).
 {{% /alert %}}
 
-- After opening the project on Github Codespaces, change to the docs-new directory.
+- After opening the project on GitHub Codespaces, change to the docs-new directory.
 
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">cd docs-new
@@ -150,7 +150,7 @@ Github Codespaces will automatically clone and open the repository for you in a 
   </code>
   </div></pre>
 
-You should be able to access the site on port `1313`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your Github Codespace this will launch a Github Codespace instance in your local machine and connects with the remote Github Codespace environment after that run `cd docs-new` then `make setup && make site` and it will start the development server on port `1313`.
+You should be able to access the site on port `1313`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your GitHub Codespace this will launch a GitHub Codespace instance in your local machine and connects with the remote GitHub Codespace environment after that run `cd docs-new` then `make setup && make site` and it will start the development server on port `1313`.
 
 ### Make Necessary Changes
 - Make changes as required based on the issue you are solving.
@@ -177,7 +177,7 @@ If the issue requires making new doc page that replaces the old page, please don
   </code>
   </div></pre>
 
-- Then on Github, navigate to the [Meshery repository](https://github.com/meshery/meshery) and create a pull request from your recently pushed changes!
+- Then on GitHub, navigate to the [Meshery repository](https://github.com/meshery/meshery) and create a pull request from your recently pushed changes!
 
 ---
 
@@ -208,7 +208,7 @@ If the code snippet has special characters then use backtick delimiters:
 {{</* code code=`code_snippet_here` */>}}
 ```
 
-Don't use `code` component when the snippet is in between an ordered list, this breaks the order and next item in the list will start numbering from 1. Instead, use `<pre class="codeblock-pre">...</pre>` method described above.
+Don't use `code` shortcode when the snippet is in between an ordered list, this breaks the order and next item in the list will start numbering from 1. Instead, use `<pre class="codeblock-pre">...</pre>` method described above.
 
 **A full block:**
 ```
@@ -414,7 +414,7 @@ You can include block quotes to emphasize text.
 
 Integration pages ([example](https://docs.meshery.io/extensibility/integrations/aws)) are automatically generated, however, integration specific documentation is often needed.
 
-[modelscustominfo](https://github.com/meshery/meshery/tree/master/docs-new) collection holds custom markdown files. Follow these steps:
+[modelscustominfo](https://github.com/meshery/meshery/tree/master/docs-new/content/en/modelscustominfo) collection holds custom markdown files. Follow these steps:
 
 1. Create a file inside the `modelscustominfo` collection.
 2. Ensure the file includes frontmatter with the `title` key, set to the title of the integration.
@@ -423,7 +423,7 @@ The content that follows the frontmatter in this file will be automatically pars
 
 Example:
 
-file: `_modelscustominfo/aad.md`
+file: `modelscustominfo/aad.md`
 
 ```
 ---
