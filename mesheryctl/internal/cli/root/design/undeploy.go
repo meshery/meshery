@@ -17,33 +17,34 @@ package design
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
-var offboardCmd = &cobra.Command{
-	Use:   "offboard",
-	Short: "Offboard design",
-	Long:  `Offboard design will trigger undeploy of design`,
+var designUndeployCmd = &cobra.Command{
+	Use:   "undeploy",
+	Short: "Undeploy design",
+	Long:  `Undeploy design will trigger undeploy of design`,
 	Example: `
-// Offboard design by providing file path
-mesheryctl design offboard -f [filepath]
+// Undeploy design by providing file path
+mesheryctl design undeploy -f [filepath]
 	`,
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		if cmd.Flags().Changed("file") && file == "" {
-			errMsg := `Usage: mesheryctl design offboard -f [filepath]`
-			return ErrOffboardDesign(errors.New(errMsg))
+			errMsg := `Usage: mesheryctl design undeploy -f [filepath]`
+			return ErrUndeployDesign(fmt.Errorf("%s", errMsg))
 		}
 		return nil
 	},
@@ -56,52 +57,44 @@ mesheryctl design offboard -f [filepath]
 			return err
 		}
 
-		pattern := ""
+		design := ""
 		isID := false
 		if len(args) > 0 {
-			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
+			design, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
 				return err
 			}
 		}
 
-		// Delete the pattern using the id
+		// Delete the design using the id
 		if isID {
-			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
+			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), design, "pattern")
 			if err != nil {
-				// utils.Log.Error(err)
 				return ErrDeleteDesign(err, args[0])
 			}
-			utils.Log.Info("pattern ", args[0], " deleted")
+			utils.Log.Infof("design %s deleted", args[0])
 			return nil
 		}
 
-		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
-		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
+		designURLPath := "api/pattern"
 
-		// Read file
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
+
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
 				return utils.ErrFileRead(err)
 			}
-
-			patternFile = string(content)
+			designFile = string(content)
 		} else {
 			utils.Log.Info("URLs are not currently supported")
 		}
 
-		// Convert pattern File into Pattern File
 		jsonValues, _ := json.Marshal(map[string]interface{}{
-			"K8sManifest": patternFile,
+			"K8sManifest": designFile,
 		})
 
-		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
-		if err != nil {
-			return err
-		}
-
-		resp, err := utils.MakeRequest(req)
+		resp, err := api.Add(designURLPath, bytes.NewBuffer(jsonValues), nil)
 		if err != nil {
 			return err
 		}
@@ -148,7 +141,7 @@ mesheryctl design offboard -f [filepath]
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("design offboarded")
+			utils.Log.Info("design undeployed")
 		}
 		utils.Log.Info(string(body))
 
@@ -157,5 +150,5 @@ mesheryctl design offboard -f [filepath]
 }
 
 func init() {
-	offboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
+	designUndeployCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
 }

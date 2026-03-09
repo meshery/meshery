@@ -1,51 +1,51 @@
 ---
 layout: default
-title: mesheryctl-exp-relationship-view
-permalink: reference/mesheryctl/exp/relationship/view
-redirect_from: reference/mesheryctl/exp/relationship/view/
+title: mesheryctl-relationship-list
+permalink: reference/mesheryctl/relationship/list
+redirect_from: reference/mesheryctl/relationship/list/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: relationship
+command: relationship
+subcommand: list
 ---
 
-# mesheryctl exp relationship view
+# mesheryctl relationship list
 
-view relationships of a model by its name
+List registered relationships
 
 ## Synopsis
 
-view a relationship queried by the model name
+List all relationships registered in Meshery Server
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [flags]
+mesheryctl relationship list [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-View relationships of a model in default format yaml
+List of relationships
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [model-name]
+mesheryctl relationship list
 
 </div>
 </pre> 
 
-View relationships of a model in JSON format
+List of relationships for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [model-name] --output-format json
+mesheryctl relationship list --page [page-number]
 
 </div>
 </pre> 
 
-View relationships of a model in json format and save it to a file
+Display number of available relationships in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [model-name] --output-format json --save
+mesheryctl relationship list --count
 
 </div>
 </pre> 
@@ -54,9 +54,9 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help                   help for view
-  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
-  -s, --save                   (optional) save output as a JSON/YAML file
+  -c, --count      (optional) Get the number of relationship(s) in total
+  -h, --help       help for list
+  -p, --page int   (optional) List next set of relationships with --page (default = 1) (default 1)
 
 </div>
 </pre>
