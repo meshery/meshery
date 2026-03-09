@@ -100,8 +100,9 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 
 	resp, err := provider.SaveEnvironment(req, &environment, "", false)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		wrappedErr := ErrFailToSave(err, "environment")
+		h.log.Error(wrappedErr)
+		http.Error(w, wrappedErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -109,8 +110,8 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 
 	h.log.Info(description)
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
 	w.WriteHeader(http.StatusCreated)
+	fmt.Fprint(w, string(resp))
 }
 
 // swagger:route DELETE /api/environments/{id} EnvironmentAPI idDeleteEnvironmentHandler
@@ -123,8 +124,9 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 	environmentID := mux.Vars(r)["id"]
 	resp, err := provider.DeleteEnvironment(r, environmentID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		wrappedErr := ErrFailToDelete(err, "environment")
+		h.log.Error(wrappedErr)
+		http.Error(w, wrappedErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -160,8 +162,9 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 
 	resp, err := provider.UpdateEnvironment(req, &environment, environmentID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		wrappedErr := ErrFailToSave(err, "environment")
+		h.log.Error(wrappedErr)
+		http.Error(w, wrappedErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -196,8 +199,9 @@ func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *ht
 	connectionID := mux.Vars(r)["connectionID"]
 	resp, err := provider.AddConnectionToEnvironment(r, environmentID, connectionID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		wrappedErr := ErrFailToSave(err, "connection mapping")
+		h.log.Error(wrappedErr)
+		http.Error(w, wrappedErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -217,8 +221,9 @@ func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, 
 	connectionID := mux.Vars(r)["connectionID"]
 	resp, err := provider.RemoveConnectionFromEnvironment(r, environmentID, connectionID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		wrappedErr := ErrFailToDelete(err, "connection mapping")
+		h.log.Error(wrappedErr)
+		http.Error(w, wrappedErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
