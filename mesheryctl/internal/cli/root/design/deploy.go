@@ -39,40 +39,39 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type cmdDesignOnboardFlags struct {
+type cmdDesignDeployFlags struct {
 	File       string `json:"file" validate:"omitempty,file"`
 	SourceType string `json:"source-type" validate:"omitempty,design-source-type"`
 	SkipSave   bool   `json:"skip-save" validate:"boolean"`
 }
 
-var designOnboardFlags cmdDesignOnboardFlags
+var designDeployFlags cmdDesignDeployFlags
 
-var linkDocpatternOnboard = map[string]string{
+var linkDocDesignDeploy = map[string]string{
 	"link":    "![pattern-onboard-usage](/assets/img/mesheryctl/pattern-onboard.png)",
-	"caption": "Usage of mesheryctl design onboard",
+	"caption": "Usage of mesheryctl design deploy",
 }
 
-var onboardCmd = &cobra.Command{
-	Use:   "onboard",
-	Short: "Onboard design",
+var deployDesignCmd = &cobra.Command{
+	Use:   "deploy",
+	Short: "Deploy design",
 	Long:  `Command will trigger deploy of design`,
 	Example: `
-// Onboard design by providing file path
-mesheryctl design onboard -f [filepath] -s [source type]
-mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
+// Deploy design by providing file path
+mesheryctl design deploy -f [filepath] -s [source type]
 	`,
-	Annotations: linkDocpatternOnboard,
+	Annotations: linkDocDesignDeploy,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
-		flagValidator := mesheryctlflags.NewFlagValidator()
-		designOnboardValidSourceTypes, err := getDesignSourceTypes()
+		flagValidator := mesheryctlflags.GetFlagValidator()
+		designDeployValidSourceTypes, err := getDesignSourceTypes()
 		if err != nil {
 			return err
 		}
 
 		err = flagValidator.Validator.RegisterValidation("design-source-type", func(fl validator.FieldLevel) bool {
 			if sourceType, ok := fl.Field().Interface().(string); ok {
-				for _, validType := range designOnboardValidSourceTypes {
+				for _, validType := range designDeployValidSourceTypes {
 					if strings.EqualFold(sourceType, validType) {
 						return true
 					}
@@ -84,11 +83,13 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 			return err
 		}
 
-		return flagValidator.Validate(&designOnboardFlags)
+		flagValidator.CustomErrors["design-source-type"] = fmt.Sprintf("Invalid value for --source-type '%v': valid values are %s", designDeployFlags.SourceType, strings.Join(designDeployValidSourceTypes, ", "))
+
+		return flagValidator.Validate(&designDeployFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		if designOnboardFlags.File == "" && len(args) == 0 {
-			return ErrOnboardDesign()
+		if designDeployFlags.File == "" && len(args) == 0 {
+			return ErrDeployDesign()
 		}
 		return nil
 	},
@@ -109,7 +110,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 			queryParams.Set("search", url.QueryEscape(patternName))
 			urlPath := fmt.Sprintf("%s?%s", patternURLPath, queryParams.Encode())
 			// search and fetch patterns with pattern-name
-			utils.Log.Debug("Fetching patterns")
+			utils.Log.Debug("Fetching designs")
 
 			response, err := api.Fetch[models.PatternsAPIResponse](urlPath)
 			if err != nil {
@@ -132,7 +133,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 				return err
 			}
 			patternImportURL := fmt.Sprintf("%s/%s/import", mctlCfg.GetBaseMesheryURL(), patternURLPath)
-			pattern, err := importPattern(designOnboardFlags.SourceType, designOnboardFlags.File, patternImportURL, !designOnboardFlags.SkipSave)
+			pattern, err := importPattern(designDeployFlags.SourceType, designDeployFlags.File, patternImportURL, !designDeployFlags.SkipSave)
 			if err != nil {
 				return err
 			}
@@ -153,7 +154,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 		res, err := api.Add(deployURLPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
 			if errors.GetCode(err) == utils.ErrMesheryServerInternalErrorCode {
-				return ErrOnboardDesign()
+				return ErrDeployDesign()
 			}
 			return err
 		}
@@ -166,7 +167,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("design onboarded")
+			utils.Log.Info("design deployed")
 		}
 		utils.Log.Info(string(body))
 		return nil
@@ -177,7 +178,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 	reader := bufio.NewReader(os.Stdin)
 
-	patternFileByt, _ := yaml.Marshal(patternFile)
+	patternFileByt, _ := yaml.Marshal(designFile)
 
 	for index, a := range profiles {
 		fmt.Printf("Index: %v\n", index)
@@ -208,7 +209,7 @@ func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 }
 
 func init() {
-	onboardCmd.Flags().StringVarP(&designOnboardFlags.File, "file", "f", "", "Path to design file")
-	onboardCmd.Flags().BoolVarP(&designOnboardFlags.SkipSave, "skip-save", "", false, "Skip saving a design")
-	onboardCmd.Flags().StringVarP(&designOnboardFlags.SourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
+	deployDesignCmd.Flags().StringVarP(&designDeployFlags.File, "file", "f", "", "Path to design file")
+	deployDesignCmd.Flags().BoolVarP(&designDeployFlags.SkipSave, "skip-save", "", false, "Skip saving a design")
+	deployDesignCmd.Flags().StringVarP(&designDeployFlags.SourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
 }

@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strings"
 
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
 	"github.com/manifoldco/promptui"
@@ -72,12 +72,14 @@ mesheryctl system context create [context-name]
 mesheryctl system context create context-name --components meshery-nsm --platform docker --url http://localhost:9081 --set --yes
 	`,
 	Annotations: linkDocContextCreate,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			const errMsg = `Please provide a context name.
-Usage: mesheryctl system context create [context-name]`
-			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "create"))
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg))
 		}
+
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 
 		tempCntxt := utils.TemplateContext
 
@@ -89,7 +91,7 @@ Usage: mesheryctl system context create [context-name]`
 			tempCntxt.Endpoint = serverURL
 		}
 
-		log.Debug("serverURL: `" + tempCntxt.Endpoint + "`")
+		utils.Log.Debug("serverURL: `" + tempCntxt.Endpoint + "`")
 
 		if platform != "" {
 			tempCntxt.Platform = platform
@@ -103,12 +105,15 @@ Usage: mesheryctl system context create [context-name]`
 			tempCntxt.Components = components
 		}
 
-		err := config.AddContextToConfig(args[0], tempCntxt, viper.ConfigFileUsed(), set, false)
+		contextName := strings.ToLower(args[0])
+
+		err := config.AddContextToConfig(contextName, tempCntxt, viper.ConfigFileUsed(), set, false)
 		if err != nil {
 			return err
 		}
 
-		log.Printf("Added `%s` context", args[0])
+		utils.Log.Infof("Added `%s` context", contextName)
+
 		return nil
 	},
 }
@@ -124,22 +129,23 @@ mesheryctl system context delete [context name]
 	`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			const errMsg = `Please provide a context name to delete:
-mesheryctl system context delete [context name]`
-			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "delete"))
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextDeleteUsageMsg))
 		}
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
 			utils.Log.Error(ErrUnmarshallConfig(err))
 			return nil
 		}
-		_, exists := configuration.Contexts[args[0]]
+
+		contextName := strings.ToLower(args[0])
+
+		_, exists := configuration.Contexts[contextName]
 		if !exists {
-			return fmt.Errorf("no context name found : %s", args[0])
+			return ErrContextNotExists(fmt.Errorf("no context name found : %s", contextName))
 		}
 
-		if viper.GetString("current-context") == args[0] {
+		if viper.GetString("current-context") == contextName {
 			var res bool
 			if utils.SilentFlag {
 				res = true
@@ -148,7 +154,7 @@ mesheryctl system context delete [context name]`
 			}
 
 			if !res {
-				log.Printf("Delete aborted")
+				utils.Log.Infof("Delete aborted")
 				return nil
 			}
 
@@ -157,18 +163,18 @@ mesheryctl system context delete [context name]`
 			if newContext != "" {
 				_, exists := configuration.Contexts[newContext]
 				if !exists {
-					return errors.New("new context wrongly set")
+					return ErrSetCurrentContext(fmt.Errorf("new context wrongly set"))
 				}
 
-				if newContext == args[0] {
-					return errors.New("choose a new context other than the context being deleted")
+				if newContext == contextName {
+					return ErrSetCurrentContext(fmt.Errorf("choose a new context other than the context being deleted"))
 				}
 
 				result = newContext
 			} else {
 				var listContexts []string
 				for context := range configuration.Contexts {
-					if context != args[0] {
+					if context != contextName {
 						listContexts = append(listContexts, context)
 					}
 				}
@@ -189,9 +195,9 @@ mesheryctl system context delete [context name]`
 			fmt.Printf("The current context is now %q\n", result)
 			viper.Set("current-context", result)
 		}
-		delete(configuration.Contexts, args[0])
+		delete(configuration.Contexts, contextName)
 		viper.Set("contexts", configuration.Contexts)
-		log.Printf("deleted context %s", args[0])
+		utils.Log.Infof("deleted context %s", contextName)
 		err = viper.WriteConfig()
 		return err
 	},
@@ -217,7 +223,7 @@ mesheryctl system context list
 		}
 		var contexts = configuration.Contexts
 		if contexts == nil {
-			log.Print("No contexts available. Use `mesheryctl system context create <name>` to create a new Meshery deployment context.\n")
+			utils.Log.Info("No contexts available. Use `mesheryctl system context create <name>` to create a new Meshery deployment context.\n")
 			return nil
 		}
 
@@ -225,11 +231,11 @@ mesheryctl system context list
 			currContext = viper.GetString("current-context")
 		}
 		if currContext == "" {
-			log.Print("Current context not set\n")
+			utils.Log.Infof("Current context not set\n")
 		} else {
-			log.Printf("Current context: %s", currContext)
+			utils.Log.Infof("Current context: %s", currContext)
 		}
-		log.Print("Available contexts:\n")
+		utils.Log.Info("Available contexts:\n")
 
 		//sorting the contexts to get a consistent order on each subsequent run
 		keys := make([]string, 0, len(contexts))
@@ -239,11 +245,11 @@ mesheryctl system context list
 		sort.Strings(keys)
 
 		for _, k := range keys {
-			log.Printf("- %s", k)
+			utils.Log.Infof("- %s", k)
 		}
 
 		if currContext == "" {
-			log.Print("\nRun `mesheryctl system context switch <context name>` to set the current context.")
+			utils.Log.Info("\nRun `mesheryctl system context switch <context name>` to set the current context.")
 		}
 		return nil
 	},
@@ -293,32 +299,32 @@ mesheryctl system context view --all
 			//Populating auxiliary struct with token-locations
 			for k, v := range configuration.Contexts {
 				if v.Token == "" {
-					log.Warnf("[Warning]: Token not specified/empty for context \"%s\"", k)
+					utils.Log.Warnf("[Warning]: Token not specified/empty for context \"%s\"", k)
 					temp, _ := getContextWithTokenLocation(&v)
 					tempcontexts[k] = *temp
 				} else {
 					temp, ok := getContextWithTokenLocation(&v)
 					tempcontexts[k] = *temp
 					if !ok {
-						log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", tempcontexts[k].Token, k)
+						utils.Log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", tempcontexts[k].Token, k)
 					}
 				}
 
 			}
 
-			log.Print(getYAML(tempcontexts))
+			utils.Log.Info(getYAML(tempcontexts))
 
 			return nil
 		}
 		if len(args) != 0 {
-			currContext = args[0]
+			currContext = strings.ToLower(args[0])
 		}
 		if currContext == "" {
 			currContext = viper.GetString("current-context")
 
 		}
 		if currContext == "" {
-			return errors.New("current context not set")
+			return ErrContextNotExists(fmt.Errorf("current context not set"))
 		}
 
 		contextData, ok := configuration.Contexts[currContext]
@@ -332,16 +338,16 @@ mesheryctl system context view --all
 		}
 
 		if contextData.Token == "" {
-			log.Warnf("[Warning]: Token not specified/empty for context \"%s\"", currContext)
-			log.Printf("\nCurrent Context: %s\n", currContext)
-			log.Print(getYAML(contextData))
+			utils.Log.Warnf("[Warning]: Token not specified/empty for context \"%s\"", currContext)
+			utils.Log.Infof("\nCurrent Context: %s\n", currContext)
+			utils.Log.Info(getYAML(contextData))
 		} else {
 			temp, ok := getContextWithTokenLocation(&contextData)
-			log.Printf("\nCurrent Context: %s\n", currContext)
+			utils.Log.Infof("\nCurrent Context: %s\n", currContext)
 			if !ok {
-				log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", temp.Token, currContext)
+				utils.Log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", temp.Token, currContext)
 			}
-			log.Print(getYAML(temp))
+			utils.Log.Info(getYAML(temp))
 		}
 
 		return nil
@@ -364,12 +370,8 @@ mesheryctl system context switch sample
 	`,
 	Annotations: linkDocContextSwitch,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Usage: mesheryctl system context switch [context name]
-Example: mesheryctl system context switch k8s-sample
-Description: Configures mesheryctl to actively use one one context vs. the another context`
-
 		if len(args) != 1 {
-			return fmt.Errorf("please provide exactly one context name\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf("%s", errArgMsg))
 		}
 		return nil
 	},
@@ -380,15 +382,18 @@ Description: Configures mesheryctl to actively use one one context vs. the anoth
 			utils.Log.Error(ErrUnmarshallConfig(err))
 			return nil
 		}
-		_, exists := configuration.Contexts[args[0]]
+
+		contextName := strings.ToLower(args[0])
+
+		_, exists := configuration.Contexts[contextName]
 		if !exists {
 			const errMsg = `Try running the following to create the context:
 mesheryctl system context create `
 
-			return fmt.Errorf("requested context does not exist \n\n%v%s", errMsg, args[0])
+			return ErrContextNotExists(fmt.Errorf("requested context does not exist \n\n%v%s", errMsg, contextName))
 		}
-		if viper.GetString("current-context") == args[0] {
-			return errors.New("already using context '" + args[0] + "'")
+		if viper.GetString("current-context") == contextName {
+			return ErrSetCurrentContext(fmt.Errorf("already using context '%s'", contextName))
 		}
 		//check if meshery is running
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -407,9 +412,9 @@ mesheryctl system context create `
 			utils.Log.Info("Meshery is running... switching context without stopping Meshery deployments.")
 		}
 
-		configuration.CurrentContext = args[0]
+		configuration.CurrentContext = contextName
 		viper.Set("current-context", configuration.CurrentContext)
-		log.Printf("switched to context '%s'", args[0])
+		utils.Log.Infof("switched to context '%s'", contextName)
 		err = viper.WriteConfig()
 
 		return err

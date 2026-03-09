@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 9th 2026, 7:39:54 am
+- Testing started at: March 9th 2026, 8:23:49 pm
 
 **📦 Test Result Summary**
 
-- ✅ 68 passed
-- ❌ 1 failed
+- ✅ 67 passed
+- ❌ 2 failed
 - ⚠️ 0 flaked
 - ⏩ 3 skipped
 
-⌛ _Duration: 4 minutes and 47 seconds_
+⌛ _Duration: 5 minutes and 1 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -44,7 +44,7 @@
 | 21 | Meshery | chromium-meshery-provider | should identify relationships for meshery-design | relationship | ✅ |
 | 22 | Meshery | chromium-meshery-provider | should identify relationships for pv-pvc-edge-non-binding-reference-relationship | relationship | ✅ |
 | 23 | Meshery | chromium-meshery-provider | should identify relationships for Service-To-Deployment-Network | relationship | ✅ |
-| 24 | Meshery | chromium-meshery-provider | should verify Design Configurator page elements |  | ✅ |
+| 24 | Meshery | chromium-meshery-provider | should verify Design Configurator page elements |  | ❌ |
 | 25 | Meshery | chromium-meshery-provider | Test if Left Navigation Panel is displayed |  | ✅ |
 | 26 | Meshery | chromium-meshery-provider | Test if Notification button is displayed |  | ✅ |
 | 27 | Meshery | chromium-meshery-provider | Test if Profile button is displayed |  | ✅ |
@@ -108,6 +108,29 @@
 
 The following tests failed. Click on each to see the failure reason:
 
+
+<details>
+<summary>❌ should verify Design Configurator page elements (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
+ [90m  6 |[39m
+[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
+ [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
+ [90m 10 |[39m     })[33m;[39m[0m
+```
+
+</details>
 
 <details>
 <summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
