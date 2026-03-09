@@ -52,7 +52,7 @@ var generateCmd = &cobra.Command{
 	Long:  "Generate relationships documents from the google spreadsheets",
 	Example: `
 // Generate relationships documentss
-mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
+mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check if flag is set
