@@ -9,7 +9,9 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-func TestOnboardCmd(t *testing.T) {
+var invalidDesignSourceType = "invalid-source"
+
+func TestDeployCmd(t *testing.T) {
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
@@ -24,9 +26,9 @@ func TestOnboardCmd(t *testing.T) {
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:             "Onboard Design",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest"},
-			ExpectedResponse: "onboard.output.golden",
+			Name:             "given valid file and source type when design deploy then design is deployed",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest"},
+			ExpectedResponse: "deploy.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -37,7 +39,7 @@ func TestOnboardCmd(t *testing.T) {
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/Kubernetes%20Manifest",
-					Response:     "onboard.applicationSave.response.golden",
+					Response:     "deploy.applicationSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -49,17 +51,16 @@ func TestOnboardCmd(t *testing.T) {
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "onboard.designdeploy.response.golden",
+					Response:     "deploy.designdeploy.response.golden",
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
-			Name:             "Onboard design with --skip-save",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
-			ExpectedResponse: "onboard.output.golden",
+			Name:             "given valid file and --skip-save when design deploy then design is deployed without being saved",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
+			ExpectedResponse: "deploy.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -75,17 +76,22 @@ func TestOnboardCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/design/deploy",
-					Response:     "onboard.designdeploy.response.golden",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "deploy.designdeploy.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "apply.designSave.response.golden",
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
-			Name:             "Onboard design with invalid source type",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "invalid-source"},
+			Name:             "given invalid source type when design deploy then throw error",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", invalidDesignSourceType},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
 				{
@@ -95,18 +101,13 @@ func TestOnboardCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError: func() error {
-				// validSourceTypes will be populated from the mock response
-				// These should match the values in view.designTypes.response.golden
-				return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --source-type 'invalid-source'"))
-			}(),
+			ExpectedError:  utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --source-type '%s': valid values are helm chart, docker compose, kubernetes manifest", invalidDesignSourceType)),
 		},
 		{
-			Name:             "Onboard non-existent design by name",
-			Args:             []string{"onboard", "nonexistent-design"},
+			Name:             "given non-existent design name when design deploy then throw error",
+			Args:             []string{"deploy", "nonexistent-design"},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
 				{
@@ -122,7 +123,6 @@ func TestOnboardCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound("nonexistent-design"),
