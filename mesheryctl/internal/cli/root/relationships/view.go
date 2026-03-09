@@ -15,6 +15,7 @@
 package relationships
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -47,10 +48,8 @@ mesheryctl exp relationship view [model-name] --output-format json
 mesheryctl exp relationship view [model-name] --output-format json --save
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return utils.ErrInvalidArgument(errNoModelNameProvided)
-		} else if len(args) > 1 {
-			return utils.ErrInvalidArgument(errTooManyArgs)
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(errors.New(errInvalidArg))
 		}
 
 		return display.ValidateOutputFormat(relationshipViewFlagsProvided.outputFormat)
