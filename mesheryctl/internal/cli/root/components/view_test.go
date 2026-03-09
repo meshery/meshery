@@ -12,7 +12,7 @@ import (
 
 // expectedViewFlagError generates the expected error for an invalid view flag
 func expectedViewFlagError(outputFormat string) error {
-	fv := mesheryctlflags.NewFlagValidator()
+	fv := mesheryctlflags.GetFlagValidator()
 	return fv.Validate(&componentViewFlags{OutputFormat: outputFormat})
 }
 
