@@ -16,39 +16,64 @@ package relationships
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 type cmdRelationshipListFlags struct {
-	Count    bool `json:"count" validate:"boolean"`
-	Page     int  `json:"page" validate:"omitempty,gte=1"`
+	Count    bool `json:"count"    validate:"boolean"`
+	Page     int  `json:"page"     validate:"omitempty,gte=1"`
 	PageSize int  `json:"pagesize" validate:"omitempty,gte=1"`
 }
 
 var relationshipListFlags cmdRelationshipListFlags
 
-// represents the mesheryctl exp relationships list command
+// represents the mesheryctl exp relationships list command.
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered relationships",
 	Long:  "List all relationships registered in Meshery Server",
 	Example: `
-// List of relationships
+// List all relationships
 mesheryctl exp relationship list
 
-// List of relationships for a specified page
-mesheryctl relationship list --page [page-number]
+// List relationships for a specified page
+mesheryctl exp relationship list --page [page-number]
 
-// Display number of available relationships in Meshery
-mesheryctl relationship list --count
+// List relationships with a custom page size
+mesheryctl exp relationship list --pagesize [page-size]
+
+// Display the total number of available relationships in Meshery
+mesheryctl exp relationship list --count
 `,
+
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return mesheryctlflags.ValidateCmdFlags(cmd, &relationshipListFlags)
+		if err := mesheryctlflags.ValidateCmdFlags(cmd, &relationshipListFlags); err != nil {
+			return err
+		}
+
+		if relationshipListFlags.Count && cmd.Flags().Changed("page") {
+			return utils.ErrFlagsInvalid(fmt.Errorf(
+				"--count and --page are mutually exclusive: use --count to display the total number of relationships, " +
+					"or --page to paginate through them, but not both at the same time",
+			))
+		}
+
+		if relationshipListFlags.Count && cmd.Flags().Changed("pagesize") {
+			return utils.ErrFlagsInvalid(fmt.Errorf(
+				"--count and --pagesize are mutually exclusive: use --count to display the total number of relationships, " +
+					"or --pagesize to control pagination, but not both at the same time",
+			))
+		}
+
+		return nil
 	},
+
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
 			errMsg := "Usage: mesheryctl exp relationship list\nRun 'mesheryctl exp relationship list --help' to see detailed help message"
@@ -56,24 +81,28 @@ mesheryctl relationship list --count
 		}
 		return nil
 	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dataToDisplay := display.DisplayDataAsync{
 			UrlPath:          relationshipApiPath,
 			DataType:         "relationship",
-			Header:           []string{"ID", "kind", "API Version", "Model name", "Sub Type", "Type"},
+			Header:           []string{"ID", "Kind", "API Version", "Model Name", "Sub Type", "Type"},
 			Page:             relationshipListFlags.Page,
 			PageSize:         relationshipListFlags.PageSize,
 			DisplayCountOnly: relationshipListFlags.Count,
 			IsPage:           cmd.Flags().Changed("page"),
 		}
 		return display.ListAsyncPagination(dataToDisplay, generateRelationshipDataToDisplay)
-
 	},
 }
 
 func init() {
-	// Add the new exp relationship commands to the listRelationshipsCmd
+	listCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
+		return pflag.NormalizedName(strings.ToLower(name))
+	})
+
 	listCmd.Flags().IntVarP(&relationshipListFlags.Page, "page", "p", 1, "(optional) List next set of relationships with --page (default = 1)")
-	listCmd.Flags().IntVar(&relationshipListFlags.PageSize, "pagesize", 10, "(optional) List next set of relationships with --pagesize (default = 10)")
-	listCmd.Flags().BoolVarP(&relationshipListFlags.Count, "count", "c", false, "(optional) Display count only")
+	listCmd.Flags().IntVar(&relationshipListFlags.PageSize, "pagesize", 10, "(optional) Number of results per page (default = 10)")
+	listCmd.Flags().BoolVarP(&relationshipListFlags.Count, "count", "c", false, "(optional) Display the total count of relationships only")
 }
+

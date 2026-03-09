@@ -1676,6 +1676,15 @@
         "short_description": "Internal Server Error",
         "probable_cause": "An unexpected error occurred on the server side",
         "suggested_remediation": "Check the server logs using 'mesheryctl system logs' for more details and try again later"
+      },
+      "1204": {
+        "name": "ErrEmptySheetDataCode",
+        "code": "1204",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid or empty spreadsheet provided",
+        "probable_cause": "The spreadsheet must contain valid relationship entries with the required headers.",
+        "suggested_remediation": "Ensure the spreadsheet contains at least two headers and corresponding values for it's headers. Refer to the Meshery relationship csv for the expected spreadsheet format \\\"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\\"
       }
     }
   }

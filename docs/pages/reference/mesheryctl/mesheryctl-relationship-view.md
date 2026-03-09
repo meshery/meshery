@@ -1,51 +1,51 @@
 ---
 layout: default
-title: mesheryctl-exp-relationship-list
-permalink: reference/mesheryctl/exp/relationship/list
-redirect_from: reference/mesheryctl/exp/relationship/list/
+title: mesheryctl-relationship-view
+permalink: reference/mesheryctl/relationship/view
+redirect_from: reference/mesheryctl/relationship/view/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: relationship
+command: relationship
+subcommand: view
 ---
 
-# mesheryctl exp relationship list
+# mesheryctl relationship view
 
-List registered relationships
+view relationships of a model by its name
 
 ## Synopsis
 
-List all relationships registered in Meshery Server
+view a relationship queried by the model name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship list [flags]
+mesheryctl relationship view [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-List of relationships
+View relationships of a model in default format yaml
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship list
+mesheryctl relationship view [model-name]
 
 </div>
 </pre> 
 
-List of relationships for a specified page
+View relationships of a model in JSON format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship list --page [page-number]
+mesheryctl relationship view [model-name] --output-format json
 
 </div>
 </pre> 
 
-Display number of available relationships in Meshery
+View relationships of a model in json format and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship list --count
+mesheryctl relationship view [model-name] --output-format json --save
 
 </div>
 </pre> 
@@ -54,9 +54,9 @@ mesheryctl relationship list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --count      (optional) Get the number of relationship(s) in total
-  -h, --help       help for list
-  -p, --page int   (optional) List next set of relationships with --page (default = 1) (default 1)
+  -h, --help                   help for view
+  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
+  -s, --save                   (optional) save output as a JSON/YAML file
 
 </div>
 </pre>
