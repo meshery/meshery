@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -227,12 +226,6 @@ func TestAddContextCmd(t *testing.T) {
 			ExpectedResponseYaml: "addExpected.golden",
 		},
 		{
-			Name:                 "given context name which contains uppercase provided when system context create then context is created in lowercase",
-			Args:                 []string{"context", "create", "Local4"},
-			ExpectedResponse:     "createContext.uppercase.golden",
-			ExpectedResponseYaml: "addExpected.uppercase.golden",
-		},
-		{
 			Name:           "given no context provided when system context create  then thorw error",
 			Args:           []string{"context", "create"},
 			ExpectError:    true,
@@ -245,6 +238,85 @@ func TestAddContextCmd(t *testing.T) {
 			ExpectError:    true,
 			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
 			IsOutputGolden: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+			utils.Log.SetLevel(logrus.InfoLevel)
+
+			SystemCmd.SetOut(b)
+			SystemCmd.SetErr(b)
+			SystemCmd.SetArgs(tt.Args)
+			err := SystemCmd.Execute()
+
+			if err != nil {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
+				}
+				t.Fatal(err)
+			}
+
+			if tt.ExpectError {
+				t.Fatalf("expected error, got nil")
+			}
+
+			actualResponse := b.String()
+			// Expected response
+			testdataDir := filepath.Join(currDir, "testdata/context")
+			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			if *update {
+				golden.Write(actualResponse)
+			}
+			expectedResponse := golden.Load()
+
+			assert.Equal(t, expectedResponse, actualResponse)
+			path, err := os.Getwd()
+			if err != nil {
+				t.Error("unable to locate meshery directory")
+			}
+			filepath := path + "/testdata/context/ExpectedAdd.yaml"
+
+			content, err := os.ReadFile(filepath)
+			if err != nil {
+				t.Error(err)
+			}
+			actualResponse = string(content)
+			golden = utils.NewGoldenFile(t, tt.ExpectedResponseYaml, testdataDir)
+			if *update {
+				golden.Write(actualResponse)
+			}
+			addExpected := golden.Load()
+			assert.Equal(t, addExpected, actualResponse)
+
+			//Repopulating Expected yaml
+			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
+				t.Error(err, "Could not complete test. Unable to configure delete test file")
+			}
+		})
+		t.Log("CreateContextCmd test Passed")
+	}
+
+}
+
+func TestAddUppercaseContextCmd(t *testing.T) {
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	utils.SetupCustomContextEnv(t, currDir+"/testdata/context/ExpectedAdd.yaml")
+	tests := []utils.CmdTestInput{
+		{
+			Name:                 "given context name which contains uppercase provided when system context create then context is created in lowercase",
+			Args:                 []string{"context", "create", "Local4"},
+			ExpectedResponse:     "createContext.uppercase.golden",
+			ExpectedResponseYaml: "addExpected.uppercase.golden",
 		},
 	}
 
@@ -313,7 +385,7 @@ func TestAddContextCmd(t *testing.T) {
 
 			contexts := data["contexts"].(map[string]interface{})
 
-			if (len(tt.Args) > 2) && (tt.Args[2] != strings.ToLower(tt.Args[2])) {
+			if len(tt.Args) > 2 {
 				_, existsUpper := contexts[tt.Args[2]]
 				if existsUpper {
 					t.Fatalf("uppercase context should not exist")
@@ -325,7 +397,7 @@ func TestAddContextCmd(t *testing.T) {
 				t.Error(err, "Could not complete test. Unable to configure delete test file")
 			}
 		})
-		t.Log("CreateContextCmd test Passed")
+		t.Log("CreateUppercaseContextCmd test Passed")
 	}
 
 }
