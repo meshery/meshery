@@ -102,6 +102,33 @@ const nextConfig = {
       },
     });
 
+    // Exclude Docker Desktop MUI theme packages (ESM) from source-map-loader.
+    // Their original sources use top-level `import`/`export` and get re-parsed
+    // with `sourceType: 'script'`, causing:
+    // "Module parse failed: 'import' and 'export' may appear only with 'sourceType: module'".
+    if (Array.isArray(config.module.rules)) {
+      config.module.rules.forEach((rule) => {
+        const uses = rule && rule.use ? (Array.isArray(rule.use) ? rule.use : [rule.use]) : [];
+        const hasSourceMapLoader = uses.some(
+          (u) => u && typeof u.loader === 'string' && u.loader.includes('source-map-loader'),
+        );
+        if (hasSourceMapLoader) {
+          const existingExclude = rule.exclude;
+          const dockerMuiRegex = /node_modules[\\/]@docker[\\/].*mui.*\.js$/;
+          if (!existingExclude) {
+            // eslint-disable-next-line no-param-reassign
+            rule.exclude = [dockerMuiRegex];
+          } else if (Array.isArray(existingExclude)) {
+            // eslint-disable-next-line no-param-reassign
+            rule.exclude = [...existingExclude, dockerMuiRegex];
+          } else {
+            // eslint-disable-next-line no-param-reassign
+            rule.exclude = [existingExclude, dockerMuiRegex];
+          }
+        }
+      });
+    }
+
     return config;
   },
 };

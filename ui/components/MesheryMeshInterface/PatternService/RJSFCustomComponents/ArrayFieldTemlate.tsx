@@ -101,8 +101,6 @@ const DefaultArrayItem = (props) => {
 
 const DefaultFixedArrayFieldTemplate = (props) => {
   const { classes } = props;
-  const safeId = props.idSchema?.$id ?? 'array-field';
-
   return (
     <fieldset className={props.className}>
       {props.canAdd && (
@@ -116,7 +114,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
       )}
 
       <ArrayFieldTitle
-        key={`array-field-title-${safeId}`}
+        key={`array-field-title-${props.idSchema?.$id ?? 'array-field'}`}
         TitleField={props.TitleField}
         idSchema={props.idSchema}
         title={getTitle(props)}
@@ -125,12 +123,18 @@ const DefaultFixedArrayFieldTemplate = (props) => {
       />
 
       {(props.uiSchema['ui:description'] ?? props.schema?.description) != null && (
-        <div className="field-description" key={`field-description-${safeId}`}>
+        <div
+          className="field-description"
+          key={`field-description-${props.idSchema?.$id ?? 'array-field'}`}
+        >
           {safeDisplayValue(props.uiSchema['ui:description'] ?? props.schema?.description)}
         </div>
       )}
 
-      <div className="row array-item-list" key={`array-item-list-${safeId}`}>
+      <div
+        className="row array-item-list"
+        key={`array-item-list-${props.idSchema?.$id ?? 'array-field'}`}
+      >
         {props.items &&
           props.items.map((item, idx) => {
             return (
@@ -231,7 +235,11 @@ const DefaultNormalArrayFieldTemplate = (props) => {
           </Grid2>
         </Grid2>
 
-        <Grid2 container={true} key={`array-item-list-${safeId}`} size={'grow'}>
+        <Grid2
+          container={true}
+          key={`array-item-list-${props.idSchema?.$id ?? 'array-field'}`}
+          size={'grow'}
+        >
           {props.items &&
             props.items.map((item, idx) => {
               return (
