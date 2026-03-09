@@ -304,7 +304,19 @@ func (h *Handler) DesignFileImportHandler(
 
 	var savedDesignByt []byte
 	if importDesignPayload.Save != nil && !*importDesignPayload.Save {
-		id, _ := uuid.NewV4()
+		id, err := uuid.NewV4()
+		if err != nil {
+			h.log.Error(ErrSavePattern(err))
+			http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
+
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrSavePattern(err),
+			}).WithDescription(ErrSavePattern(err).Error()).Build()
+
+			_ = provider.PersistEvent(*event, nil)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			return
+		}
 		designRecord.ID = &id
 		savedDesignByt, err = json.Marshal([]models.MesheryPattern{designRecord})
 		if err != nil {
@@ -319,6 +331,11 @@ func (h *Handler) DesignFileImportHandler(
 			go h.config.EventBroadcaster.Publish(userID, event)
 			return
 		}
+		
+		event := eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Imported design '%s' of type '%s'", design.Name, sourceFileType)).Build()
+		_ = provider.PersistEvent(*event, nil)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		
 	} else {
 		savedDesignByt, err = provider.SaveMesheryPattern(token, &designRecord)
 		if err != nil {

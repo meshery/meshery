@@ -164,11 +164,14 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 	} else {
 		var jsonValues []byte
 
-		jsonValues, _ = json.Marshal(map[string]interface{}{
+		jsonValues, err := json.Marshal(map[string]interface{}{
 			"url":  file,
 			"name": patternName,
 			"save": save,
 		})
+		if err != nil {
+			return nil, utils.ErrMarshal(err)
+		}
 
 		req, err := utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 		if err != nil {
