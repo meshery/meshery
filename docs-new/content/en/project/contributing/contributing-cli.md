@@ -82,7 +82,7 @@ Though the command page is generated automatically by the Cobra CLI library, the
 	
 `mesheryctl` uses Cobra CLI library and GitHub Actions to automate the generation of command documentation pages. On occasion, additional documentation beyond that included in the `mesheryctl` Golang files is ideal to capture and include in the CLI reference pages. Contributors are encouraged to add more usage examples, screenshots to any of the CLI reference pages. To protect any manually added content and ensure it remains intact after regeneration, create a separate Hugo `shortcode` file. Follow file naming scheme outlined below:
 
-If your mesheryctl docs end like this, add the include tag at the end of the file. An example is given below
+If your mesheryctl docs end like this, add a shortcode at the end of the file. An example is given below
 
 {{< code code=`Example:
 // apply a pattern file
