@@ -42,11 +42,7 @@ mesheryctl model init [model-name] --path [path-to-location] (default is current
 mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(modelInitFlags)
+		err := mesheryctlflags.ValidateCmdFlags(cmd, &modelInitFlags)
 		if err != nil {
 			return utils.ErrFlagsInvalid(err)
 		}
