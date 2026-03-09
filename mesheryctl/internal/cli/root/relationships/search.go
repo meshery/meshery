@@ -31,7 +31,7 @@ type searchRelationshipFlags struct {
 	SubType  string `json:"subtype"  validate:"omitempty"`
 	Model    string `json:"model"    validate:"omitempty"`
 	Type     string `json:"type"     validate:"omitempty"`
-	Page     int    `json:"page"     validate:"omitempty"`
+	Page     int    `json:"page"     validate:"omitempty,gte=1"`
 	PageSize int    `json:"pagesize" validate:"omitempty,gte=1"`
 }
 
