@@ -27,12 +27,11 @@ import (
 )
 
 type searchRelationshipFlags struct {
-	Kind     string `json:"kind"     validate:"omitempty"`
-	SubType  string `json:"subtype"  validate:"omitempty"`
-	Model    string `json:"model"    validate:"omitempty"`
-	Type     string `json:"type"     validate:"omitempty"`
-	Page     int    `json:"page"     validate:"omitempty,gte=1"`
-	PageSize int    `json:"pagesize" validate:"omitempty,gte=1"`
+	Kind    string `json:"kind"     validate:"omitempty"`
+	SubType string `json:"subtype"  validate:"omitempty"`
+	Model   string `json:"model"    validate:"omitempty"`
+	Type    string `json:"type"     validate:"omitempty"`
+	Page    int    `json:"page"     validate:"omitempty,gte=1"`
 }
 
 var (
@@ -46,14 +45,10 @@ var searchCmd = &cobra.Command{
 	Long:  "Search registered relationship(s) used by different models",
 	Example: `
 // Search for a specific relationship
-mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
+mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
 
 // Search a relationship for a specified page
-mesheryctl exp relationship search [--kind <kind>] [--page <int>]
-
-// Search with custom page size
-mesheryctl exp relationship search [--kind <kind>] [--pagesize <int>]`,
-
+mesheryctl relationship search [--kind <kind>] [--page <int>]`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		err := mesheryctlflags.ValidateCmdFlags(cmd, &searchRelationshipFlagsProvided)
 		if err != nil {
@@ -88,7 +83,7 @@ mesheryctl exp relationship search [--kind <kind>] [--pagesize <int>]`,
 			DataType:         "relationship",
 			Header:           []string{"ID", "Kind", "API Version", "Model Name", "Sub Type", "Type"},
 			Page:             searchRelationshipFlagsProvided.Page,
-			PageSize:         searchRelationshipFlagsProvided.PageSize,
+			PageSize:         10,
 			DisplayCountOnly: false,
 			IsPage:           cmd.Flags().Changed("page"),
 		}
@@ -107,8 +102,6 @@ func init() {
 	searchCmd.Flags().StringVarP(&searchRelationshipFlagsProvided.Type, "type", "t", "", "(optional) Search relationships of a particular type")
 	searchCmd.Flags().IntVarP(&searchRelationshipFlagsProvided.Page, "page", "p", 1, "(optional) Page number of results to fetch (default = 1)")
 
-	// Fix #3: add --pagesize flag, consistent with listCmd.
-	searchCmd.Flags().IntVar(&searchRelationshipFlagsProvided.PageSize, "pagesize", 10, "(optional) Number of results per page (default = 10)")
 }
 
 // buildSearchUrl constructs the API URL for the relationship search endpoint.

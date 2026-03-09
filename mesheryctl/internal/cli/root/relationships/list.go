@@ -46,32 +46,14 @@ mesheryctl relationship list
 mesheryctl relationship list --page [page-number]
 
 // List relationships with a custom page size
-mesheryctl exp relationship list --pagesize [page-size]
+mesheryctl relationship list --pagesize [page-size]
 
 // Display the total number of available relationships in Meshery
-mesheryctl exp relationship list --count
+mesheryctl relationship list --count
 `,
 
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if err := mesheryctlflags.ValidateCmdFlags(cmd, &relationshipListFlags); err != nil {
-			return err
-		}
-
-		if relationshipListFlags.Count && cmd.Flags().Changed("page") {
-			return utils.ErrFlagsInvalid(fmt.Errorf(
-				"--count and --page are mutually exclusive: use --count to display the total number of relationships, " +
-					"or --page to paginate through them, but not both at the same time",
-			))
-		}
-
-		if relationshipListFlags.Count && cmd.Flags().Changed("pagesize") {
-			return utils.ErrFlagsInvalid(fmt.Errorf(
-				"--count and --pagesize are mutually exclusive: use --count to display the total number of relationships, " +
-					"or --pagesize to control pagination, but not both at the same time",
-			))
-		}
-
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &relationshipListFlags)
 	},
 
 	Args: func(_ *cobra.Command, args []string) error {
@@ -105,4 +87,3 @@ func init() {
 	listCmd.Flags().IntVar(&relationshipListFlags.PageSize, "pagesize", 10, "(optional) Number of results per page (default = 10)")
 	listCmd.Flags().BoolVarP(&relationshipListFlags.Count, "count", "c", false, "(optional) Display the total count of relationships only")
 }
-
