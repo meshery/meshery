@@ -121,8 +121,8 @@ func TestModelBuild(t *testing.T) {
 		ExpectedResponse string
 		ExpectedFiles    []string
 		CleanupHooks     []func()
-		IsOutputGolden   bool  `default:"true"`
-		ExpectedError    error `default:"nil"`
+		IsOutputGolden   bool
+		ExpectedError    error
 	}{
 		{
 			Name:             "model build from model name and version",
