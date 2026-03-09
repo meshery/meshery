@@ -39,17 +39,17 @@ var (
 	searchRelationshipFlagsProvided searchRelationshipFlags
 )
 
-// represents the mesheryctl exp relationship search subcommand.
+// represents the mesheryctl relationship search subcommand.
 var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search registered relationship(s)",
 	Long:  "Search registered relationship(s) used by different models",
 	Example: `
 // Search for a specific relationship
-mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
+mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
 
 // Search a relationship for specified page
-mesheryctl exp relationship search [--page <int>]`,
+mesheryctl relationship search [--page <int>]`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
 		if !ok || flagValidator == nil {
@@ -61,7 +61,7 @@ mesheryctl exp relationship search [--page <int>]`,
 		}
 
 		if searchRelationshipFlagsProvided.Kind == "" && searchRelationshipFlagsProvided.SubType == "" && searchRelationshipFlagsProvided.Type == "" && searchRelationshipFlagsProvided.Model == "" {
-			return utils.ErrFlagsInvalid(fmt.Errorf("at least one of [--kind, --subtype, --type, --model] is required\n\nUsage: mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]\nRun 'mesheryctl exp relationship search --help'"))
+			return utils.ErrFlagsInvalid(fmt.Errorf("at least one of [--kind, --subtype, --type, --model] is required\n\nUsage: mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]\nRun 'mesheryctl relationship search --help'"))
 		}
 
 		return nil
