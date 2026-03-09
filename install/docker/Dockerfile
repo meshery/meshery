@@ -103,6 +103,7 @@ RUN if [ -d /meshery-context/.meshery ]; then \
 FROM debian:bookworm-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
+RUN apt-get update && apt-get install -y ca-certificates && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN update-ca-certificates
 
 COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env
