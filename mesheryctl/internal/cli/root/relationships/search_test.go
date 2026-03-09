@@ -1,8 +1,7 @@
 package relationships
 
 import (
-	"io"
-	"os"
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -11,85 +10,53 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
+func expectedSearchMissingFlagsError() error {
+	return utils.ErrFlagsInvalid(fmt.Errorf(
+		"at least one of [--kind, --subtype, --type, --model] is required\n\n" +
+			"Usage: mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]\n" +
+			"Run 'mesheryctl exp relationship search --help'",
+	))
+}
+
 func TestSearch_WithoutFlags(t *testing.T) {
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
 	// setup current context
 	utils.SetupContextEnv(t)
 
-	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
-
 	// test scenarios for fetching data
 	tests := []struct {
-		Name             string
-		Args             []string
-		ExpectedResponse string
-		ExpectError      bool
+		Name          string
+		Args          []string
+		ExpectError   bool
+		ExpectedError error
 	}{
 		{
-			Name:             "Search with missing arguments",
-			Args:             []string{"search"},
-			ExpectedResponse: "search.missing.args.output.golden",
-			ExpectError:      true,
+			Name:          "Search with missing arguments",
+			Args:          []string{"search"},
+			ExpectError:   true,
+			ExpectedError: expectedSearchMissingFlagsError(),
 		},
 	}
 
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
-			// Grab console prints with proper cleanup
-			originalStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-
-			// Ensure stdout is always restored
-			defer func() {
-				os.Stdout = originalStdout
-			}()
-
-			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			mesheryctlflags.InitValidators(RelationshipCmd)
 			RelationshipCmd.SetArgs(tt.Args)
-			RelationshipCmd.SetOut(originalStdout)
 			err := RelationshipCmd.Execute()
 
-			// Close write end before reading
-			_ = w.Close()
-
 			if err != nil {
-				// if we're supposed to get an error
 				if tt.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
-
-					utils.Equals(t, expectedResponse, err.Error())
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 					return
 				}
 				t.Fatal(err)
 			}
 
-			out, _ := io.ReadAll(r)
-			actualResponse := string(out)
-
-			if *update {
-				golden.Write(actualResponse)
+			if tt.ExpectError {
+				t.Fatalf("expected an error but command succeeded")
 			}
-			expectedResponse := golden.Load()
-
-			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
-			cleanedExceptedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
-
-			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
 		})
 		t.Log("Search experimental relationship test passed")
 	}
@@ -98,6 +65,8 @@ func TestSearch_WithoutFlags(t *testing.T) {
 }
 
 func TestSearch_WithFlags(t *testing.T) {
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {

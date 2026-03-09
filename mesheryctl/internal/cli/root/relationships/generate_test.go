@@ -2,6 +2,7 @@ package relationships
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -15,8 +16,11 @@ import (
 )
 
 func expectedViewFlagError(spreadsheetId string, spreadsheetCred string) error {
-	fv := mesheryctlflags.NewFlagValidator()
-	return fv.Validate(&cmdRelationshipGenerateFlag{SpreadsheetID: spreadsheetId, SpreadsheetCred: spreadsheetCred})
+	if spreadsheetCred == "" {
+		return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --spreadsheet-cred ''"))
+	}
+
+	return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --spreadsheet-id ''"))
 }
 
 func TestGenerateErrorOutput(t *testing.T) {
