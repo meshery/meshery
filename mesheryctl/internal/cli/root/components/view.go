@@ -29,7 +29,7 @@ import (
 )
 
 type componentViewFlags struct {
-	OutputFormat string `json:"output-type" validate:"required,oneof=json yaml"`
+	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
 	Save         bool   `json:"save" validate:"boolean"`
 }
 
