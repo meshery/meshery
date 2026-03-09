@@ -414,18 +414,15 @@ export const HelpListItem = styled(ListItem)(({ theme }) => ({
 export const HelpButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
 })(({ isCollapsed }) => ({
+  height: '32px',
+  width: '32px',
+  padding: '4px',
   ...(isCollapsed && {
-    height: '32px',
-    width: '32px',
-    padding: '4px',
     marginTop: '-4px',
     transform: 'translateX(0px)',
   }),
   ...(!isCollapsed && {
     transform: 'translateX(0.5px)',
-    height: '32px',
-    width: '32px',
-    padding: '4px',
   }),
 }));
 
