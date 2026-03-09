@@ -120,7 +120,7 @@ mesheryctl design offboard -f [filepath]
 		}
 
 		if len(response) == 0 {
-			return ErrDesignNotFound()
+			return ErrDesignNotFound(file)
 		}
 
 		utils.Log.Debug("design file converted to design")

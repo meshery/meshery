@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: OpenGitOps
 subtitle: Collaborative and visual infrastructure as design for OpenGitOps
-image: /assets/img/integrations/opengitops/icons/color/opengitops-color.svg
-permalink: extensibility/integrations/opengitops
+image: /extensions/models/opengitops/icons/color/opengitops-color.svg
+aliases: /extensibility/integrations/opengitops
 docURL: https://docs.meshery.io/extensibility/integrations/opengitops
 description: 
 integrations-category: App Definition and Development
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Integrates OpenGitOps workflows"
 howItWorksDetails: "Streamlined and auditable infrastructure management in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

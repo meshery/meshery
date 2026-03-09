@@ -17,7 +17,7 @@ Managge workspaces under an organization
 ## Synopsis
 
 Create, list of workspaces under an organization
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace [flags]

@@ -1,0 +1,27 @@
+version: 0.0.34
+name: exam-portal-with-real-time-leaderboard-(aws)
+displayName: Exam Portal with Real-Time Leaderboard (AWS)
+createdAt: "2026-01-20T10:42:37Z"
+description: |
+    This design presents a conceptual AWS-based architecture for an online exam portal with real-time leaderboard updates. The system separates authentication and exam execution into independent services, uses Redis for caching user-specific questions and session data, and processes leaderboard updates asynchronously via a queue. A dedicated WebSocket server pushes real-time score updates to connected clients.
+
+    The focus of this design is on visualizing service boundaries, data flow, and asynchronous communication patterns rather than deployment-ready configuration.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3cf2d3a4-460f-44a0-8efc-bfc5b5ae661c/0.0.34/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a reference architecture intended for learning and design visualization. Components are not fully configured for direct deployment, and infrastructure details such as networking, security policies, and scaling strategies are intentionally abstracted. The design emphasizes logical service interaction and event-driven flow rather than production readiness.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: f7f16f53-fdd7-44bd-b27b-52c7b972d198
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3cf2d3a4-460f-44a0-8efc-bfc5b5ae661c-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3cf2d3a4-460f-44a0-8efc-bfc5b5ae661c-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

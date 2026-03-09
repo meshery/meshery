@@ -17,7 +17,6 @@ List designs
 ## Synopsis
 
 Display list of all available designs.
-Documentation for design can be found at https://docs.meshery.io/reference/mesheryctl/design/list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>

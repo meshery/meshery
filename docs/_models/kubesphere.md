@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubesphere
 subtitle: Collaborative and visual infrastructure as design for Kubesphere
-image: /assets/img/integrations/kubesphere/icons/color/kubesphere-color.svg
-permalink: extensibility/integrations/kubesphere
+image: /extensions/models/kubesphere/icons/color/kubesphere-color.svg
+aliases: /extensibility/integrations/kubesphere
 docURL: https://docs.meshery.io/installation/kubernetes/kubesphere
 description: 
 integrations-category: Platform
@@ -156,8 +155,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

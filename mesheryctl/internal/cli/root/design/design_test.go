@@ -10,8 +10,9 @@ import (
 )
 
 var (
-	update          = flag.Bool("update", false, "update golden files")
-	invalidFilePath = "/invalid/path/design.yaml"
+	update                 = flag.Bool("update", false, "update golden files")
+	invalidFilePath        = "/invalid/path/design.yaml"
+	validDesignSourceTypes = []string{"Helm Chart", "Kubernetes Manifest", "Docker Compose", "Meshery Design"}
 )
 
 func TestDesignCmd(t *testing.T) {
@@ -133,7 +134,7 @@ func TestDesignCmd(t *testing.T) {
 			Token:          filepath.Join(fixturesDir, "token.golden"),
 			IsOutputGolden: false,
 			ExpectError:    true,
-			ExpectedError:  ErrDesignNotFound(),
+			ExpectedError:  ErrDesignNotFound("test-view"),
 		},
 	}
 

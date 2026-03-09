@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Devfile
 subtitle: Collaborative and visual infrastructure as design for Devfile
-image: /assets/img/integrations/devfile/icons/color/devfile-color.svg
-permalink: extensibility/integrations/devfile
+image: /extensions/models/devfile/icons/color/devfile-color.svg
+aliases: /extensibility/integrations/devfile
 docURL: https://docs.meshery.io/extensibility/integrations/devfile
 description: 
 integrations-category: App Definition and Development
@@ -28,8 +27,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

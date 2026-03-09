@@ -1,0 +1,25 @@
+version: 0.0.1
+name: mongodb-sample-app
+displayName: mongoDB-Sample-app
+createdAt: "2024-06-24T12:36:37Z"
+description: |
+    This design  contains a very simple application that you can use to test your MongoDB Deployment. This application requires a MongoDB resource deployed with one of the MongoDB Operators.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/45d7d037-52a2-457b-a670-06526c4f814b/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "make sure to use mongodb operator deployed with this sample app and make sure to use own custom secrets to connect mongodb  \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/45d7d037-52a2-457b-a670-06526c4f814b-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/45d7d037-52a2-457b-a670-06526c4f814b-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

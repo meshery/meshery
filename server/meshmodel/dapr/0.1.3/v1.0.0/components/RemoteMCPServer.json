@@ -1,0 +1,93 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Remote MCP Server",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "dapr",
+    "displayName": "Dapr",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Serverless"
+    },
+    "subCategory": "Framework",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#0d2192",
+      "secondaryColor": "#5266D7",
+      "shape": "circle",
+      "source_uri": "https://caspergn.github.io/dapr-agents-dev/dapr-agents-0.1.3.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 480 255.60879\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#0d2192;}.cls-2{fill:#fff;isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"\u003e\u003c/rect\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 480 255.60879\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"\u003e\u003c/rect\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "0.1.3"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
+  },
+  "styles": {
+    "primaryColor": "#0d2192",
+    "secondaryColor": "#5266D7",
+    "shape": "circle",
+    "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 255.60879\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#0d2192;}.cls-2{fill:#fff;isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"/\u003e\u003crect id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"/\u003e\u003crect id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"/\u003e\u003crect id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"/\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 255.60879\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"/\u003e\u003crect id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"/\u003e\u003crect id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"/\u003e\u003crect id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"/\u003e\u003c/svg\u003e"
+  },
+  "capabilities": null,
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://caspergn.github.io/dapr-agents-dev/dapr-agents-0.1.3.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "kagent.dev/v1alpha2",
+    "kind": "RemoteMCPServer",
+    "schema": "{\n \"description\": \"RemoteMCPServer is the Schema for the RemoteMCPServers API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RemoteMCPServerSpec defines the desired state of RemoteMCPServer.\",\n   \"properties\": {\n    \"allowedNamespaces\": {\n     \"description\": \"AllowedNamespaces defines which namespaces are allowed to reference this RemoteMCPServer.\\nThis follows the Gateway API pattern for cross-namespace route attachments.\\nIf not specified, only Agents in the same namespace can reference this RemoteMCPServer.\\nSee: https://gateway-api.sigs.k8s.io/guides/multiple-ns/#cross-namespace-routing\",\n     \"properties\": {\n      \"from\": {\n       \"default\": \"Same\",\n       \"description\": \"From indicates where references to this resource can originate.\\nPossible values are:\\n* All: References from all namespaces are allowed.\\n* Same: Only references from the same namespace are allowed (default).\\n* Selector: References from namespaces matching the selector are allowed.\",\n       \"enum\": [\n        \"All\",\n        \"Same\",\n        \"Selector\"\n       ],\n       \"type\": \"string\"\n      },\n      \"selector\": {\n       \"description\": \"Selector is a label selector for namespaces that are allowed to reference this resource.\\nOnly used when From is set to \\\"Selector\\\".\",\n       \"properties\": {\n        \"matchExpressions\": {\n         \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n         \"items\": {\n          \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n          \"properties\": {\n           \"key\": {\n            \"description\": \"key is the label key that the selector applies to.\",\n            \"type\": \"string\"\n           },\n           \"operator\": {\n            \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n            \"type\": \"string\"\n           },\n           \"values\": {\n            \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\",\n            \"x-kubernetes-list-type\": \"atomic\"\n           }\n          },\n          \"required\": [\n           \"key\",\n           \"operator\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\",\n         \"x-kubernetes-list-type\": \"atomic\"\n        },\n        \"matchLabels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"selector must be specified when from is Selector\",\n       \"rule\": \"!(self.from == 'Selector' \\u0026\\u0026 !has(self.selector))\"\n      }\n     ]\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"headersFrom\": {\n     \"items\": {\n      \"description\": \"ValueRef represents a configuration value\",\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       },\n       \"valueFrom\": {\n        \"description\": \"ValueSource defines a source for configuration values from a Secret or ConfigMap\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"The key of the ConfigMap or Secret.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"The name of the ConfigMap or Secret.\",\n          \"type\": \"string\"\n         },\n         \"type\": {\n          \"enum\": [\n           \"ConfigMap\",\n           \"Secret\"\n          ],\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"name\",\n         \"type\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\",\n      \"x-kubernetes-validations\": [\n       {\n        \"message\": \"Exactly one of value or valueFrom must be specified\",\n        \"rule\": \"(has(self.value) \\u0026\\u0026 !has(self.valueFrom)) || (!has(self.value) \\u0026\\u0026 has(self.valueFrom))\"\n       }\n      ]\n     },\n     \"type\": \"array\"\n    },\n    \"protocol\": {\n     \"default\": \"STREAMABLE_HTTP\",\n     \"enum\": [\n      \"SSE\",\n      \"STREAMABLE_HTTP\"\n     ],\n     \"type\": \"string\"\n    },\n    \"sseReadTimeout\": {\n     \"type\": \"string\"\n    },\n    \"terminateOnClose\": {\n     \"default\": true,\n     \"type\": \"boolean\"\n    },\n    \"timeout\": {\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"minLength\": 1,\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"description\",\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Remote MCP Server\",\n \"type\": \"object\"\n}"
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
+}

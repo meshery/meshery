@@ -53,6 +53,7 @@ const (
 	ErrValidProviderCode                 = "mesheryctl-1087"
 	ErrUnmarshallConfigCode              = "mesheryctl-1088"
 	ErrUploadFileParamsCode              = "mesheryctl-1089"
+	ErrContextNotExistsCode              = "mesheryctl-1196"
 )
 
 var (
@@ -235,6 +236,16 @@ func ErrContextContent() error {
 		[]string{"Unable to detect current-context"},
 		[]string{"Error while trying to fetch current-context in YML file"},
 		[]string{"Ensure a valid context name is provided"})
+}
+
+func ErrContextNotExists(err error) error {
+	return errors.New(
+		ErrContextNotExistsCode,
+		errors.Fatal,
+		[]string{"Unable to get context details"},
+		[]string{err.Error()},
+		[]string{"Non exists context name is provided"},
+		[]string{"Run `mesheryctl system context list` to see available context name"})
 }
 
 func ErrWriteConfig(err error) error {

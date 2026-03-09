@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubedb Ops Manager
 subtitle: Collaborative and visual infrastructure as design for Kubedb Ops Manager
-image: /assets/img/integrations/kubedb-ops-manager/icons/color/kubedb-ops-manager-color.svg
-permalink: extensibility/integrations/kubedb-ops-manager
+image: /extensions/models/kubedb-ops-manager/icons/color/kubedb-ops-manager-color.svg
+aliases: /extensibility/integrations/kubedb-ops-manager
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-ops-manager
 description: 
 integrations-category: App Definition and Development
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

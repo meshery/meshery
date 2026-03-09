@@ -83,7 +83,10 @@ const SelectedOrganizationProvider = ({ children }) => {
     }
   }, [didFallback, selectedOrganizationId, errorFetchingSelectedOrg, isFetchingSelectedOrg]);
 
-  if (errorFetchingSelectedOrg || (!isFetchingSelectedOrg && !selectedOrganization)) {
+  if (
+    errorFetchingSelectedOrg ||
+    (!isFetchingSelectedOrg && !selectedOrganization && !didFallback)
+  ) {
     return (
       <>
         <DefaultError />

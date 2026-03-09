@@ -17,7 +17,7 @@ List registered workspaces
 ## Synopsis
 
 List name of all registered workspaces
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace/list
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace list [flags]

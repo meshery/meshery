@@ -1,6 +1,7 @@
 package system
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -34,7 +35,10 @@ func TestViewContextCmd(t *testing.T) {
 		{
 			Name:             "Error for viewing a non-existing context",
 			Args:             []string{"context", "view", "local3"},
-			ExpectedResponse: "view.notexist.golden",
+			IsOutputGolden:   false,
+			ExpectedResponse: "",
+			ExpectError:      true,
+			ExpectedError:    ErrContextNotExists(fmt.Errorf("context `local3` does not exist")),
 		},
 		{
 			Name:             "view with specified context as argument",
@@ -53,24 +57,38 @@ func TestViewContextCmd(t *testing.T) {
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
+
 			if err != nil {
-				t.Error(err)
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
+				}
+				t.Fatal(err)
 			}
 
-			actualResponse := b.String()
-			// Expected response
+			if tt.ExpectError {
+				if err == nil {
+					t.Fatalf("expected error, got nil")
+				}
+			}
+
 			testdataDir := filepath.Join(currDir, "testdata/context")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			actualResponse := b.String()
+
 			if *update {
 				golden.Write(actualResponse)
 			}
+
 			expectedResponse := golden.Load()
-			if expectedResponse != actualResponse {
-				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
-			} else {
-				t.Log("ViewContextCmd test passed")
-			}
+			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
+			cleanedExceptedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
+
+			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
+
 		})
+		t.Logf("List %s test", "context")
 	}
 }
 func TestListContextCmd(t *testing.T) {

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -156,7 +158,7 @@ func (j *JSONOutputFormatterSaver[T]) Save() error {
 		return utils.ErrCreateFile(j.FilePath, errors.Wrap(err, "failed to save output as JSON file"))
 	}
 
-	utils.Log.Info("Connection saved to file: ", j.FilePath)
+	utils.Log.Info("Data saved to file: ", j.FilePath)
 	return nil
 }
 
@@ -197,7 +199,7 @@ func (y *YAMLOutputFormatterSaver[T]) Save() error {
 		return utils.ErrCreateFile(y.FilePath, errors.Wrap(err, "failed to save output as yaml file"))
 	}
 
-	utils.Log.Info("Connection saved to file: ", y.FilePath)
+	utils.Log.Info("Data saved to file: ", y.FilePath)
 	return nil
 }
 
@@ -227,5 +229,14 @@ func (y *YAMLOutputFormatter[T]) Display() error {
 		return ErrEncodingData(err, "yaml")
 	}
 
+	return nil
+}
+
+var validOutputFormat = []string{"json", "yaml"}
+
+func ValidateOutputFormat(outputFormat string) error {
+	if !slices.Contains(validOutputFormat, strings.ToLower(outputFormat)) {
+		return ErrInvalidOutputFormat(outputFormat)
+	}
 	return nil
 }

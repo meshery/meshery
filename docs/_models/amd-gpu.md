@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AMD GPU
 subtitle: Collaborative and visual infrastructure as design for AMD GPU
-image: /assets/img/integrations/amd-gpu/icons/color/amd-gpu-color.svg
-permalink: extensibility/integrations/amd-gpu
+image: /extensions/models/amd-gpu/icons/color/amd-gpu-color.svg
+aliases: /extensibility/integrations/amd-gpu
 docURL: https://docs.meshery.io/extensibility/integrations/amd-gpu
 description: 
 integrations-category: Provisioning
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Manages AMD GPU resources"
 howItWorksDetails: "Improved performance for GPU-accelerated workloads in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

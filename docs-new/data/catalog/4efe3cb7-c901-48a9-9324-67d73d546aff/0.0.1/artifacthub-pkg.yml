@@ -1,0 +1,24 @@
+version: 0.0.1
+name: argocd-application-controller
+displayName: ArgoCD application controller
+createdAt: "2024-05-19T13:51:45Z"
+description: This YAML configuration describes a Kubernetes Deployment for the ArgoCD Application Controller. It includes metadata defining labels for identification purposes. The spec section outlines the deployment's details, including the desired number of replicas and a pod template. Within the pod template, there's a single container named argocd-application-controller, which runs the ArgoCD Application Controller binary. This container is configured with various environment variables sourced from ConfigMaps, defining parameters such as reconciliation timeouts, repository server details, logging settings, and affinity rules. Port 8082 is specified for readiness probes, and volumes are mounted for storing TLS certificates and temporary data. Additionally, the deployment specifies a service account and defines pod affinity rules for scheduling. These settings collectively ensure the reliable operation of the ArgoCD Application Controller within Kubernetes clusters, facilitating efficient management of applications within an ArgoCD instance.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/4efe3cb7-c901-48a9-9324-67d73d546aff/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Environment Configuration: Ensure that the environment variables configured for the application controller align with your deployment requirements. Review and adjust settings such as reconciliation timeouts, logging levels, and repository server details as needed.\n\n2. Resource Requirements: Depending on your deployment environment and workload, adjust resource requests and limits for the container to ensure optimal performance and resource utilization.\n\n3. Security: Pay close attention to security considerations, especially when handling sensitive data such as TLS certificates. Ensure that proper encryption and access controls are in place for any secrets used in the deployment.\n\n4. High Availability: Consider strategies for achieving high availability and fault tolerance for the ArgoCD Application Controller. This may involve running multiple replicas of the controller across different nodes or availability zones.\n\n5. Monitoring and Alerting: Implement robust monitoring and alerting mechanisms to detect and respond to any issues or failures within the ArgoCD Application Controller deployment. Utilize tools such as Prometheus and Grafana to monitor key metrics and set up alerts for critical events. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/4efe3cb7-c901-48a9-9324-67d73d546aff-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/4efe3cb7-c901-48a9-9324-67d73d546aff-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Load Balancer
 subtitle: Collaborative and visual infrastructure as design for AWS Load Balancer
-image: /assets/img/integrations/aws-load-balancer-controller/icons/color/aws-load-balancer-controller-color.svg
-permalink: extensibility/integrations/aws-load-balancer-controller
+image: /extensions/models/aws-load-balancer-controller/icons/color/aws-load-balancer-controller-color.svg
+aliases: /extensibility/integrations/aws-load-balancer-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-load-balancer-controller
 description: 
 integrations-category: Cloud Native Network
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs)."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -5,7 +5,6 @@ run:
 linters:
   disable:
     - errcheck
-    - staticcheck
   exclusions:
     paths:
       - server/handlers/doc.go

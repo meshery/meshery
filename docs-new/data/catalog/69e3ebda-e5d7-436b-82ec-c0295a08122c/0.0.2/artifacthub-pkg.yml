@@ -1,0 +1,27 @@
+version: 0.0.2
+name: azure-istio-cicd-mesh-architecture-copy
+displayName: Azure Istio CICD Mesh Architecture-copy
+createdAt: "2025-10-10T16:14:00Z"
+description: |-
+    This design pattern outlines a comprehensive, production-grade architecture for deploying and managing microservices on Microsoft Azure. It leverages Azure Kubernetes Service (AKS) as the container orchestrator and integrates Istio as a service mesh to provide advanced traffic management, mTLS security, and deep observability.
+
+    The architecture includes a complete CI/CD pipeline using Jenkins for automated builds and deployments, with Azure Container Registry (ACR) for immutable image storage. A full observability stack is provisioned with Prometheus for metrics collection and Grafana for visualization. For stateful workloads, the design utilizes Azure Database for MySQL for persistence and Redis for high-performance caching.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/69e3ebda-e5d7-436b-82ec-c0295a08122c/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "- **Cost:** This architecture utilizes several managed Azure services (AKS, ACR, Azure DB for MySQL) which will incur costs. Review the pricing for each service and configure tiers appropriate for your workload.\n- **Configuration:** Component configurations (e.g., Jenkins pipelines, Istio traffic policies, Prometheus scrape targets) are placeholders and must be tailored to your specific application's needs.\n- **Secrets Management:** Secrets (database credentials, registry keys, etc.) should be managed securely using a solution like Azure Key Vault integrated with AKS, rather than being hardcoded.\n- **Resource Requirements:** Running the full Istio control plane, Jenkins, and a Prometheus/Grafana stack requires a moderately sized Kubernetes cluster. Ensure your AKS node pools have sufficient CPU and memory resources. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 8f8636e1-2702-4cad-935e-c3874a1dc55b
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/69e3ebda-e5d7-436b-82ec-c0295a08122c-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/69e3ebda-e5d7-436b-82ec-c0295a08122c-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

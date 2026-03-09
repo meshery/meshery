@@ -39,7 +39,7 @@ var createEnvironmentCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new environment",
 	Long: `Create a new environment by providing the name and description of the environment
-Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/create`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/create`,
 	Example: `
 // Create a new environment
 mesheryctl environment create --orgID [orgID] --name [name] --description [description]

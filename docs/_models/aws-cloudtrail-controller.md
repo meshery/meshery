@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS CloudTrail
 subtitle: Collaborative and visual infrastructure as design for AWS CloudTrail
-image: /assets/img/integrations/aws-cloudtrail-controller/icons/color/aws-cloudtrail-controller-color.svg
-permalink: extensibility/integrations/aws-cloudtrail-controller
+image: /extensions/models/aws-cloudtrail-controller/icons/color/aws-cloudtrail-controller-color.svg
+aliases: /extensibility/integrations/aws-cloudtrail-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudtrail-controller
 description: 
 integrations-category: Observability and Analysis
@@ -58,8 +57,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

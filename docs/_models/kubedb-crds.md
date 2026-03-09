@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubedb CRDs
 subtitle: Collaborative and visual infrastructure as design for Kubedb CRDs
-image: /assets/img/integrations/kubedb-crds/icons/color/kubedb-crds-color.svg
-permalink: extensibility/integrations/kubedb-crds
+image: /extensions/models/kubedb-crds/icons/color/kubedb-crds-color.svg
+aliases: /extensibility/integrations/kubedb-crds
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-crds
 description: 
 integrations-category: App Definition and Development
@@ -552,8 +551,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
