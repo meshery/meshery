@@ -101,10 +101,6 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 	},
 }
 
-func getValidOutputFormat() []string {
-	return []string{"yaml", "json"}
-}
-
 func getModelViewUrlPath(modelNameOrId string) string {
 	queryParams := url.Values{}
 
