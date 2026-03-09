@@ -1,35 +1,35 @@
 ---
 layout: default
-title: mesheryctl-design-offboard
-permalink: reference/mesheryctl/design/offboard
-redirect_from: reference/mesheryctl/design/offboard/
+title: mesheryctl-design-undeploy
+permalink: reference/mesheryctl/design/undeploy
+redirect_from: reference/mesheryctl/design/undeploy/
 type: reference
 display-title: "false"
 language: en
 command: design
-subcommand: offboard
+subcommand: undeploy
 ---
 
-# mesheryctl design offboard
+# mesheryctl design undeploy
 
-Offboard design
+Undeploy design
 
 ## Synopsis
 
-Offboard design will trigger undeploy of design
+Undeploy design will trigger undeploy of design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design offboard [flags]
+mesheryctl design undeploy [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Offboard design by providing file path
+Undeploy design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design offboard -f [filepath]
+mesheryctl design undeploy -f [filepath]
 
 </div>
 </pre> 
@@ -39,7 +39,7 @@ mesheryctl design offboard -f [filepath]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -f, --file string   Path to design file
-  -h, --help          help for offboard
+  -h, --help          help for undeploy
 
 </div>
 </pre>
