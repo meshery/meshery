@@ -38,15 +38,7 @@ mesheryctl model view [model-name] --output-format [json|yaml]
 mesheryctl model view [model-name] --output-format [json|yaml] --save
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(modelViewFlags)
-		if err != nil {
-			return err
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelViewFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 1 {
@@ -77,12 +69,12 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 		}
 
 		if selectedModel == nil {
-			utils.Log.Infof("No model(s) found with the name: %s", modelDefinition)
+			utils.Log.Infof("No model(s) found with the name or ID: %s", modelNameorId)
 			return nil
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[model.ModelDefinition]{}
-		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewOutputFormat), *selectedModel)
+		outputFormatterFactory := display.OutputFormatterFactory[*model.ModelDefinition]{}
+		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewFlags.OutputFormat), selectedModel)
 		if err != nil {
 			return err
 		}
