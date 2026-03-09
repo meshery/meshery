@@ -1,16 +1,16 @@
 ---
 layout: default
-title: mesheryctl-exp-relationship-search
-permalink: reference/mesheryctl/exp/relationship/search
-redirect_from: reference/mesheryctl/exp/relationship/search/
+title: mesheryctl-relationship-search
+permalink: reference/mesheryctl/relationship/search
+redirect_from: reference/mesheryctl/relationship/search/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: relationship
+command: relationship
+subcommand: search
 ---
 
-# mesheryctl exp relationship search
+# mesheryctl relationship search
 
 Search registered relationship(s)
 
@@ -19,7 +19,7 @@ Search registered relationship(s)
 Search registered relationship(s) used by different models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship search [flags]
+mesheryctl relationship search [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl exp relationship search [flags]
 Search for a specific relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
+mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
 
 </div>
 </pre> 
@@ -37,7 +37,7 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 Search a relationship for specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship search [--page <int>]
+mesheryctl relationship search [--page <int>]
 
 </div>
 </pre> 

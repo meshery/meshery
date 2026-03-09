@@ -39,11 +39,11 @@ const RelationshipTree = ({
       defaultCollapseIcon={<MinusSquare />}
       defaultExpandIcon={<PlusSquare />}
       defaultEndIcon={<DotSquare />}
-      onNodeToggle={handleToggle}
-      onNodeSelect={handleSelect}
+      onExpandedItemsChange={handleToggle}
+      onSelectedItemsChange={handleSelect}
       multiSelect
-      expanded={expanded}
-      selected={selected}
+      expandedItems={expanded}
+      selectedItems={selected}
     >
       {data.map((relationshipByKind, index) => {
         const idForKind =
@@ -53,7 +53,7 @@ const RelationshipTree = ({
         return (
           <StyledTreeItem
             key={index}
-            nodeId={idForKind}
+            itemId={idForKind}
             data-id={idForKind}
             labelText={`${relationshipByKind.kind} (${relationshipByKind.relationships.length})`}
             onClick={() => {
@@ -68,7 +68,7 @@ const RelationshipTree = ({
             {relationshipByKind.relationships.map((relationship) => (
               <StyledTreeItem
                 key={index}
-                nodeId={`${idForKind}.${relationship.id}`}
+                itemId={`${idForKind}.${relationship.id}`}
                 data-id={`${idForKind}.${relationship.id}`}
                 labelText={`${relationship.subType} (${relationship.model.name})`}
                 onClick={() => {

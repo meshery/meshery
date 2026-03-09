@@ -94,10 +94,11 @@ func ErrDesignFileNotProvided() error {
 
 func ErrOnboardDesign() error {
 	return errors.New(ErrOnboardDesignCode, errors.Alert,
-		[]string{"Error Onboarding design"},
-		[]string{"Unable to onboard design due to empty path"},
-		[]string{"File path or design name not provided."},
-		[]string{"Provide a file path/design name. \n\n%v", errOnboardMsg})
+		[]string{"Onboarding design failed"},
+		[]string{"Unable to onboard design due to error during the processing"},
+		[]string{"File path or design name not provided. ", "Meshery server failed to interact with the Kubernetes cluster. ",
+			"There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s))..This connection might not be assigned to the selected environment."},
+		[]string{"Provide a valid file path/design name. ", "Ensure the Meshery server can interact with the Kubernetes cluster. ", "Check if the selected target platform is assigned to the current environment.\n"})
 }
 
 func ErrDesignSourceType() error {

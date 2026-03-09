@@ -1,6 +1,7 @@
 package relationships
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"runtime"
@@ -27,7 +28,7 @@ func TestView(t *testing.T) {
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
 			ExpectError:      true,
-			ExpectedError:    utils.ErrInvalidArgument(errNoModelNameProvided),
+			ExpectedError:    utils.ErrInvalidArgument(errors.New(errInvalidArg)),
 		},
 		{
 			Name:             "given model name provided when running relationship view then display registered relationship",
