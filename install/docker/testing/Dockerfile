@@ -7,7 +7,7 @@ COPY go.sum go.mod ./
 COPY server/ server/
 COPY mesheryctl/ mesheryctl/
 RUN go mod download
-RUN cd server/cmd && CGO_ENABLED=0 GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
+RUN cd server && cd cmd && GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
 
 # This image will be reuse for both UI & UI Provider
 FROM node:20-alpine AS base-node
@@ -99,8 +99,23 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 FROM base-alpine
-RUN apk --no-cache add libstdc++ curl ca-certificates
+ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
+ENV GLIBC_VERSION=2.35-r1
+# To solve: ./meshery: /usr/glibc-compat/lib/libc.so.6: version `GLIBC_2.34' not found (required by ./meshery)
+RUN set -ex && \
+    apk --update add libstdc++ curl ca-certificates && \
+    for pkg in glibc-${GLIBC_VERSION} glibc-bin-${GLIBC_VERSION}; \
+    do curl -sSL ${GLIBC_REPO}/releases/download/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
+    apk add --allow-untrusted /tmp/*.apk && \
+    rm -v /tmp/*.apk && \
+    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
 RUN update-ca-certificates
+
+# FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
+#RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
+# RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
+# RUN apk upgrade --no-cache && \
+#     apk add --no-cache libstdc++
 
 COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env
 COPY ./server/meshmodel /app/server/meshmodel
