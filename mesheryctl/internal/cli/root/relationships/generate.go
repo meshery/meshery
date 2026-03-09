@@ -1,20 +1,32 @@
 package relationships
 
 import (
-	"encoding/json"
-	"errors"
-	"os"
+	"fmt"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkit "github.com/meshery/meshkit/utils"
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
 )
 
-var (
-	spreadsheeetID   string
-	spreadsheeetCred string
-)
+type cmdRelationshipGenerateFlag struct {
+	SpreadsheetID   string `json:"spreadsheet-id" validate:"required"`
+	SpreadsheetCred string `json:"spreadsheet-cred" validate:"required"`
+}
+
+var relationshipGenerateFlag cmdRelationshipGenerateFlag
+
+var fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
+	srv, err := meshkit.NewSheetSRV(cred)
+	if err != nil {
+		return nil, err
+	}
+	return srv.Spreadsheets.Values.Get(id, "Relationships").Do()
+}
+
+var relationshipsOutputPath = "../docs/_data/RelationshipsData.json"
 
 type CustomValueRange struct {
 	Model                string `json:"Model"`
@@ -28,7 +40,7 @@ type CustomValueRange struct {
 	EvalPolicy           string `json:"evalPolicy"`
 	SelectorsDenyFrom    string `json:"selectorsDenyFrom"`
 	SelectorsDenyTo      string `json:"selectorsDenyTo"`
-	SelectorsAllowFrom   string `json:"selectorsAllwowFrom"`
+	SelectorsAllowFrom   string `json:"selectorsAllowFrom"`
 	SelectorsAllowTo     string `json:"selectorsAllowTo"`
 	CompleteDefinition   string `json:"CompleteDefinition"`
 	VisualizationExample string `json:"VisualizationExample"`
@@ -42,45 +54,41 @@ var generateCmd = &cobra.Command{
 // Generate relationships documentss
 mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 `,
-	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "[ Spreadsheet ID | Spreadsheet Credentials ] aren't specified\n\nUsage: mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
-
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check if flag is set
-		if spreadsheeetID == "" || spreadsheeetCred == "" {
-			return errors.New(utils.RelationshipsError(errMsg, "generate"))
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
+			return utils.ErrCommandContextMissing("flags-validator")
 		}
-
+		err := flagValidator.Validate(relationshipGenerateFlag)
+		if err != nil {
+			return err
+		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		srv, err := meshkit.NewSheetSRV(spreadsheeetCred)
+		resp, err := fetchSheetValues(relationshipGenerateFlag.SpreadsheetID, relationshipGenerateFlag.SpreadsheetCred)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
-		resp, err := srv.Spreadsheets.Values.Get(spreadsheeetID, "Relationships").Do()
-		if err != nil || resp.HTTPStatusCode != 200 {
-			utils.Log.Error(err)
-			return nil
-		}
-		if len(resp.Values) == 0 {
-			utils.Log.Info("No data(relationships) found in the sheet")
+
+		// Since first two rows are headers
+		if len(resp.Values) <= 2 {
+			return ErrEmptySheetData(fmt.Errorf("no relationship data found in sheet"))
 		}
 
 		// If no error, fetch the data from the sheet
-		err = createJsonFile(resp, "../docs/_data/RelationshipsData.json")
+		err = createJsonFile(resp, relationshipsOutputPath)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
-		utils.Log.Info("Relationships data generated in docs/_data/RelationshipsData.json")
 		return nil
 	},
 }
 
 func init() {
-	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
-	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&relationshipGenerateFlag.SpreadsheetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&relationshipGenerateFlag.SpreadsheetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 }
 
 func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
@@ -109,22 +117,11 @@ func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
 		}
 	}
 
-	jsonData, err := json.MarshalIndent(customResp, "", "    ")
-	if err != nil {
-		utils.Log.Error(err)
-		return nil
-	}
+	jsonFormatter := display.NewJSONOutputFormatter(customResp).(*display.JSONOutputFormatter[[]CustomValueRange])
 
-	jsonFile, err := os.Create(jsonFilePath)
-	if err != nil {
-		utils.Log.Error(err)
-		return nil
-	}
-	defer func() { _ = jsonFile.Close() }()
-	_, err = jsonFile.Write(jsonData)
-	if err != nil {
-		utils.Log.Error(err)
-		return nil
-	}
-	return nil
+	saver := display.NewJSONOutputFormatterSaver(*jsonFormatter)
+
+	return saver.
+		WithFilePath(jsonFilePath).
+		Save()
 }
