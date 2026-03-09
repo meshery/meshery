@@ -131,6 +131,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 			"name":      patternName,
 			"file":      content,
 			"file_name": fileName,
+			"save":      save,
 		})
 		if err != nil {
 			return nil, utils.ErrMarshal(err)
@@ -166,6 +167,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		jsonValues, _ = json.Marshal(map[string]interface{}{
 			"url":  file,
 			"name": patternName,
+			"save": save,
 		})
 
 		req, err := utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
