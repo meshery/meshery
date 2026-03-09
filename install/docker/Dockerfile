@@ -32,7 +32,7 @@ COPY --from=meshery-ui-deps /app/node_modules ./node_modules
 COPY ui .
 # Disable NextJS Telemetry data collect
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build && npm run export
+RUN npm run build
 
 FROM base-node AS meshery-ui-provider-builder
 WORKDIR /app
@@ -87,19 +87,23 @@ RUN if [ -d /meshery-context/.meshery ]; then \
         mkdir -p /build-ext/.meshery; \
     fi
 
-FROM alpine:3.23.2
-ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
-ENV GLIBC_VERSION=2.35-r1
-RUN set -ex && \
-    apk --update add libstdc++ curl ca-certificates && \
-    apk add --no-cache --virtual .build-deps curl binutils zstd gcompat && \
-    for pkg in glibc-${GLIBC_VERSION} glibc-bin-${GLIBC_VERSION}; \
-    do curl -sSL ${GLIBC_REPO}/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
-    apk del gcompat && \
-    apk add --force-overwrite --no-cache --allow-untrusted /tmp/*.apk && \
-    rm -v /tmp/*.apk && \
-    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
+# FROM alpine:3.23.2
+# ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
+# ENV GLIBC_VERSION=2.35-r1
+# RUN set -ex && \
+#     apk --update add libstdc++ curl ca-certificates && \
+#     apk add --no-cache --virtual .build-deps curl binutils zstd gcompat && \
+#     for pkg in glibc-${GLIBC_VERSION} glibc-bin-${GLIBC_VERSION}; \
+#     do curl -sSL ${GLIBC_REPO}/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
+#     apk del gcompat && \
+#     apk add --force-overwrite --no-cache --allow-untrusted /tmp/*.apk && \
+#     rm -v /tmp/*.apk && \
+#     /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
 
+FROM debian:bookworm-slim
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y ca-certificates && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN update-ca-certificates
 
 COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env

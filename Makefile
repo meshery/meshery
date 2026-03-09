@@ -369,12 +369,12 @@ ui-provider-test:
 
 ## Buils all Meshery UIs  on your local machine.
 ui-build: ui-setup
-	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build && npm run export; cd ..
+	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build; cd ..
 	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
 ui-meshery-build:
-	cd ui; npm run build && npm run export; cd ..
+	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
 ui-provider-build:
