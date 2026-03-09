@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 9th 2026, 8:23:49 pm
+- Testing started at: March 9th 2026, 10:34:20 pm
 
 **📦 Test Result Summary**
 
-- ✅ 67 passed
-- ❌ 2 failed
+- ✅ 61 passed
+- ❌ 4 failed
 - ⚠️ 0 flaked
-- ⏩ 3 skipped
+- ⏩ 7 skipped
 
-⌛ _Duration: 5 minutes and 1 seconds_
+⌛ _Duration: 5 minutes and 5 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -30,13 +30,13 @@
 | 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
 | 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
-| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
-| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
+| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
+| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
+| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
-| 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ✅ |
+| 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ❌ |
 | 17 | Meshery | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 18 | Meshery | chromium-meshery-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 19 | Meshery | chromium-meshery-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
@@ -44,7 +44,7 @@
 | 21 | Meshery | chromium-meshery-provider | should identify relationships for meshery-design | relationship | ✅ |
 | 22 | Meshery | chromium-meshery-provider | should identify relationships for pv-pvc-edge-non-binding-reference-relationship | relationship | ✅ |
 | 23 | Meshery | chromium-meshery-provider | should identify relationships for Service-To-Deployment-Network | relationship | ✅ |
-| 24 | Meshery | chromium-meshery-provider | should verify Design Configurator page elements |  | ❌ |
+| 24 | Meshery | chromium-meshery-provider | should verify Design Configurator page elements |  | ✅ |
 | 25 | Meshery | chromium-meshery-provider | Test if Left Navigation Panel is displayed |  | ✅ |
 | 26 | Meshery | chromium-meshery-provider | Test if Notification button is displayed |  | ✅ |
 | 27 | Meshery | chromium-meshery-provider | Test if Profile button is displayed |  | ✅ |
@@ -67,9 +67,9 @@
 | 44 | None | chromium-local-provider | Create a Model |  | ✅ |
 | 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 46 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
-| 48 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
-| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
+| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 48 | None | chromium-local-provider | Import a Model via File Import |  | ❌ |
+| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 51 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 52 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
@@ -110,7 +110,7 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
-<summary>❌ should verify Design Configurator page elements (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
 
@@ -134,6 +134,34 @@ The following tests failed. Click on each to see the failure reason:
 
 <details>
 <summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ Import a Model via File Import (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ Import a Model via File Import (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
