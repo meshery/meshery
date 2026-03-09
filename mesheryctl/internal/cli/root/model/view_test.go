@@ -25,7 +25,6 @@ func TestViewModel(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	modelsApiPath = "api/meshmodels/models"
 
-	// test scenarios for fetching data
 	tests := []utils.MesheryCommandTest{
 		{
 			Name:           "given no argument provided when running mesheryctl model view then an error message is displayed",
@@ -97,5 +96,5 @@ func TestViewModel(t *testing.T) {
 	}
 
 	mesheryctlflags.InitValidators(ModelCmd)
-	utils.InvokeMesheryctlTestListCommand(t, update, ModelCmd, tests, currDir, "model")
+	utils.InvokeMesheryctlTestCommand(t, update, ModelCmd, tests, currDir, "model")
 }
