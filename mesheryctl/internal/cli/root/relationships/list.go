@@ -40,7 +40,7 @@ var listCmd = &cobra.Command{
 	Long:  "List all relationships registered in Meshery Server",
 	Example: `
 // List all relationships
-mesheryctl exp relationship list
+mesheryctl relationship list
 
 // List relationships for a specified page
 mesheryctl exp relationship list --page [page-number]
