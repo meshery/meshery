@@ -82,8 +82,8 @@ func TestModelInit(t *testing.T) {
 		ExpectedDirs       []string
 		ExpectedFiles      []string
 		AfterTestRemoveDir string
-		ExpectedError      error `default:"nil"`
-		IsOutputGolden     bool  `default:"true"`
+		ExpectedError      error
+		IsOutputGolden     bool
 	}{
 		// NOTE:
 		// we need this test with full params on the first place,
