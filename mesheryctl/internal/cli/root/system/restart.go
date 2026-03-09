@@ -74,7 +74,7 @@ func restart() error {
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return err
+		return utils.ErrLoadConfig(err)
 	}
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context

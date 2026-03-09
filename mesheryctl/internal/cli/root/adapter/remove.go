@@ -41,7 +41,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 			utils.Log.Info("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				return err
+				return utils.ErrLoadConfig(err)
 			}
 
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
@@ -53,7 +53,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Removing %s", meshName), fmt.Sprintf("\n%s infrastructure removed", meshName))
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				return err
+				return utils.ErrLoadConfig(err)
 			}
 
 			s.Start()

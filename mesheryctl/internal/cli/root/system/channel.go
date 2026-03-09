@@ -56,7 +56,7 @@ mesheryctl system channel view
 		}
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		focusedContext := tempContext
 		if focusedContext == "" {
@@ -108,7 +108,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		focusedContext := mctlCfg.CurrentContext
@@ -202,7 +202,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		focusedContext := tempContext
 		if focusedContext == "" {
@@ -257,7 +257,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		// If no subcommands are provided, show usage

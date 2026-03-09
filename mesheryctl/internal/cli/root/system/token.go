@@ -158,7 +158,7 @@ mesheryctl system token list
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		log.Print("Available tokens: ")
 		for _, t := range *mctlCfg.GetTokens() {
@@ -188,7 +188,7 @@ mesheryctl system token view (show token of current context)
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		if viewAllTokens {
 			log.Info("Listing all available tokens...\n")

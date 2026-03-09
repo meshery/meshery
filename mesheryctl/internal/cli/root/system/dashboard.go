@@ -83,7 +83,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		// check if meshery is running or not
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
@@ -102,7 +102,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {

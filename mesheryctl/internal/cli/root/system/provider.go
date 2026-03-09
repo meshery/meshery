@@ -16,7 +16,6 @@ package system
 
 import (
 	"fmt"
-	"os"
 	"sort"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -53,7 +52,7 @@ mesheryctl system provider view
 		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		focusedContext := tempContext
 		if focusedContext == "" {
@@ -101,7 +100,7 @@ mesheryctl system provider list
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		focusedContext := tempContext
@@ -172,7 +171,7 @@ mesheryctl system provider set [provider]
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		focusedContext := tempContext
@@ -210,15 +209,14 @@ mesheryctl system provider set [provider]
 			}
 
 			if !isValidProvider {
-				utils.Log.Error(ErrValidProvider())
-
 				log.Print("Available providers:\n")
 				//sorting the contexts to get a consistent order on each subsequent run
 				sort.Strings(keys)
 				for _, k := range keys {
 					log.Printf("- %s", k)
 				}
-				os.Exit(1)
+
+				return ErrValidProvider()
 			}
 		}
 
@@ -271,7 +269,7 @@ mesheryctl system provider switch [provider]
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		focusedContext := tempContext
@@ -320,7 +318,7 @@ mesheryctl system provider reset
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		focusedContext := tempContext
@@ -378,7 +376,7 @@ mesheryctl system provider reset
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		err = viewProviderCmd.RunE(cmd, args)
 		if err != nil {

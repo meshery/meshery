@@ -59,7 +59,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		prefs, err := utils.GetSessionData(mctlCfg)
@@ -86,7 +86,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		s := utils.CreateDefaultSpinner(fmt.Sprintf("Validating %s", meshName), fmt.Sprintf("\n%s validation successful", meshName))
 		s.Start()

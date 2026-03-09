@@ -237,17 +237,17 @@ func websiteSystem() error {
 		case "mdx":
 			err := utils.GenerateMDXStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates mdx file
 			if err != nil {
-				utils.Log.Fatalf("Error generating remote provider docs for model %s: %v", model.Model, err.Error())
+				return err
 			}
 		case "md":
 			err := utils.GenerateMDStyleDocs(model, comps, relnships, modelsOutputPath, imgsOutputPath) // creates md file
 			if err != nil {
-				utils.Log.Fatalf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
+				return err
 			}
 		case "js":
 			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, comps, relnships, modelsOutputPath, imgsOutputPath) // json file
 			if err != nil {
-				utils.Log.Fatalf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
+				return err
 			}
 		}
 

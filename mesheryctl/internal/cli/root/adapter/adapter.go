@@ -54,7 +54,7 @@ var (
 			// get the meshery config
 			mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				return err
+				return utils.ErrLoadConfig(err)
 			}
 
 			if len(args) > 0 {

@@ -45,7 +45,7 @@ mesheryctl design delete [file | URL]
 		var req *http.Request
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		pattern := ""

@@ -85,7 +85,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 	RunE: func(cmd *cobra.Command, args []string) error {
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return ErrModelInit(err)
+			return utils.ErrLoadConfig(err)
 		}
 
 		// validation done above that args contains exactly one argument

@@ -53,7 +53,7 @@ mesheryctl design offboard -f [filepath]
 		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		pattern := ""

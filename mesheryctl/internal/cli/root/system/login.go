@@ -48,7 +48,7 @@ mesheryctl system login -p Meshery
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			return utils.ErrLoadConfig(err)
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()

@@ -57,7 +57,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		var searchString string
 		if len(args) > 0 {

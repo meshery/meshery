@@ -104,7 +104,7 @@ mesheryctl model build [model-name]/[model-version]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return ErrModelBuild(err)
+			return utils.ErrLoadConfig(err)
 		}
 
 		// validation (if any) is done in PreRunE (so args certainly has one element)

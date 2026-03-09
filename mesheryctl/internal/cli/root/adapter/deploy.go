@@ -64,7 +64,7 @@ mesheryctl adapter deploy linkerd --watch
 		RunE: func(cmd *cobra.Command, args []string) error {
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				return err
+				return utils.ErrLoadConfig(err)
 			}
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Deploying %s", meshName), fmt.Sprintf("\n%s infrastructure deployed", meshName))
 			s.Start()

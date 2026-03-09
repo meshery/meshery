@@ -58,7 +58,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"

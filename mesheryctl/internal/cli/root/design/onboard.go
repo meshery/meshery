@@ -129,7 +129,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 		} else {
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				return err
+				return utils.ErrLoadConfig(err)
 			}
 			patternImportURL := fmt.Sprintf("%s/%s/import", mctlCfg.GetBaseMesheryURL(), patternURLPath)
 			pattern, err := importPattern(designOnboardFlags.SourceType, designOnboardFlags.File, patternImportURL, !designOnboardFlags.SkipSave)

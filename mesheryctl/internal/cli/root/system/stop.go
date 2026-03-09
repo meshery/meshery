@@ -89,7 +89,7 @@ func stop() error {
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return errors.Wrap(err, "error processing config")
+		return utils.ErrLoadConfig(err)
 	}
 
 	// if a temp context is set using the -c flag, use it as the current context

@@ -169,7 +169,7 @@ func hasCSVs(path string) bool {
 func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return err
+		return utils.ErrLoadConfig(err)
 	}
 
 	baseURL := mctlCfg.GetBaseMesheryURL()

@@ -240,7 +240,7 @@ func getContexts(configFile string) ([]string, error) {
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return nil, err
+		return nil, utils.ErrLoadConfig(err)
 	}
 
 	// getContextsURL endpoint points to the URL returning the available contexts
@@ -299,7 +299,7 @@ func setContext(configFile, cname string) error {
 	}
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return err
+		return utils.ErrLoadConfig(err)
 	}
 
 	// setContextURL endpoint points to set context

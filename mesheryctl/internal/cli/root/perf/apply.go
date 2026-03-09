@@ -112,7 +112,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		// Importing SMP Configuration from the file

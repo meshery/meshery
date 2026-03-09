@@ -390,7 +390,7 @@ mesheryctl system context create `
 		//check if meshery is running
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
