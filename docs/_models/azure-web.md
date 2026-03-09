@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Web
 subtitle: Collaborative and visual infrastructure as design for Azure Web
-image: /assets/img/integrations/azure-web/icons/color/azure-web-color.svg
-permalink: extensibility/integrations/azure-web
+image: /extensions/models/azure-web/icons/color/azure-web-color.svg
+aliases: /extensibility/integrations/azure-web
 docURL: https://docs.meshery.io/extensibility/integrations/azure-web
 description: 
 integrations-category: Serverless
@@ -35,8 +34,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

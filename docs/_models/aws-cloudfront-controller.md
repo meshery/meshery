@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS CloudFront
 subtitle: Collaborative and visual infrastructure as design for AWS CloudFront
-image: /assets/img/integrations/aws-cloudfront-controller/icons/color/aws-cloudfront-controller-color.svg
-permalink: extensibility/integrations/aws-cloudfront-controller
+image: /extensions/models/aws-cloudfront-controller/icons/color/aws-cloudfront-controller-color.svg
+aliases: /extensibility/integrations/aws-cloudfront-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudfront-controller
 description: 
 integrations-category: Cloud Native Network
@@ -97,8 +96,5 @@ featureList: [
 ]
 howItWorks: "Integrates with CloudFront"
 howItWorksDetails: "Improved content delivery and security for Kubernetes applications"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -55,7 +55,7 @@ mesheryctl exp relationship list [flags]
 Search for a specific relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship search [flags] [query-text]
+mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
 
 </div>
 </pre> 

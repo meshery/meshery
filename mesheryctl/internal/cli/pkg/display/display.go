@@ -32,7 +32,8 @@ type DisplayDataAsync struct {
 	DisplayCountOnly bool
 	IsPage           bool
 	// Prompt-only field
-	SearchTerm string
+	SearchTerm     string
+	ErrNotFoundMsg string
 }
 
 type (
@@ -108,7 +109,7 @@ func SelectFromPagedResults[T any](rows []T, formatLabel promptLabelBuilder[T], 
 		if err != nil {
 			// Handle ctrl+c
 			if err == promptui.ErrInterrupt {
-				return zero, false, fmt.Errorf("selection cancelled")
+				return zero, false, utils.ErrPromptCancelled()
 			}
 			retries++
 			if retries >= maxRetries {

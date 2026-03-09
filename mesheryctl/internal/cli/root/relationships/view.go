@@ -15,11 +15,11 @@
 package relationships
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
@@ -48,10 +48,8 @@ mesheryctl exp relationship view [model-name] --output-format json
 mesheryctl exp relationship view [model-name] --output-format json --save
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return utils.ErrInvalidArgument(errNoModelNameProvided)
-		} else if len(args) > 1 {
-			return utils.ErrInvalidArgument(errTooManyArgs)
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(errors.New(errInvalidArg))
 		}
 
 		return display.ValidateOutputFormat(relationshipViewFlagsProvided.outputFormat)
@@ -60,24 +58,22 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 	RunE: func(cmd *cobra.Command, args []string) error {
 		model := args[0]
 
-		relationshipsResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](fmt.Sprintf("api/meshmodels/models/%s/relationships?pagesize=all", model))
+		relationshipAPIPath := fmt.Sprintf("api/meshmodels/models/%s/relationships", model)
+
+		selectedModel := new(relationship.RelationshipDefinition)
+
+		// Fetch paginated data with selection prompt
+		err := display.PromptAsyncPagination(
+			display.DisplayDataAsync{
+				UrlPath:        relationshipAPIPath,
+				ErrNotFoundMsg: fmt.Sprintf("No relationship(s) found for the model with name: %s", model),
+			},
+			formatLabel,
+			func(data *MeshmodelRelationshipsAPIResponse) ([]relationship.RelationshipDefinition, int64) {
+				return data.Relationships, data.Count
+			}, selectedModel)
 		if err != nil {
 			return err
-		}
-
-		var selectedModel *relationship.RelationshipDefinition
-
-		switch relationshipsResponse.Count {
-		case 0:
-			fmt.Println("No relationship(s) found for the model with name:", model)
-			return nil
-		case 1:
-			selectedModel = &relationshipsResponse.Relationships[0]
-		default:
-			selectedModel, err = selectRelationshipPrompt(relationshipsResponse.Relationships)
-			if err != nil {
-				return err
-			}
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[relationship.RelationshipDefinition]{}
@@ -117,24 +113,19 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 	},
 }
 
-// selectRelationshipPrompt lets user to select a relation if relations are more than one
-func selectRelationshipPrompt(relationships []relationship.RelationshipDefinition) (*relationship.RelationshipDefinition, error) {
-	relationshipNames := make([]string, len(relationships))
+func formatLabel(rows []relationship.RelationshipDefinition) []string {
+	relationshipNames := []string{}
 
-	for i, _rel := range relationships {
+	for _, _rel := range rows {
 		evaluationQuery := "N/A"
 		if _rel.EvaluationQuery != nil {
 			evaluationQuery = *_rel.EvaluationQuery
 		}
-		relationshipNames[i] = fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, evaluationQuery, _rel.SubType)
+		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, evaluationQuery, _rel.SubType)
+		relationshipNames = append(relationshipNames, relationshipName)
 	}
 
-	i, err := utils.RunSelectPrompt("Select a relationship:", relationshipNames)
-	if err != nil {
-		return nil, err
-	}
-
-	return &relationships[i], nil
+	return relationshipNames
 }
 
 func init() {

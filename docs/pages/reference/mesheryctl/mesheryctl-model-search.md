@@ -35,11 +35,29 @@ mesheryctl model search [query-text]
 </div>
 </pre> 
 
+Search list of models for a specified page
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model search [query-text] --page [page-number]
+
+</div>
+</pre> 
+
+Search list of models for a specified pagesize
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model search [query-text] --pagesize [pagesize-number]
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for search
+  -h, --help           help for search
+  -p, --page int       (optional) List next set of models with --page (default = 1) (default 1)
+  -s, --pagesize int   (optional) List next set of models with --pagesize (default = 10) (default 10)
 
 </div>
 </pre>

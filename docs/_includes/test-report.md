@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: February 28th 2026, 5:00:29 pm
+- Testing started at: March 9th 2026, 4:10:53 am
 
 **📦 Test Result Summary**
 
-- ✅ 68 passed
-- ❌ 2 failed
+- ✅ 62 passed
+- ❌ 3 failed
 - ⚠️ 0 flaked
-- ⏩ 2 skipped
+- ⏩ 7 skipped
 
-⌛ _Duration: 3 minutes and 46 seconds_
+⌛ _Duration: 4 minutes and 58 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -30,9 +30,9 @@
 | 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
 | 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
-| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
-| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
+| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
+| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
+| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
@@ -65,11 +65,11 @@
 | 42 | None | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 43 | None | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 44 | None | chromium-local-provider | Create a Model |  | ✅ |
-| 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ❌ |
+| 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 46 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
-| 48 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
-| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
+| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 48 | None | chromium-local-provider | Import a Model via File Import |  | ❌ |
+| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 51 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 52 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
@@ -124,25 +124,30 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Delete Kubernetes cluster connections (None - chromium-local-provider)</summary>
+<summary>❌ Import a Model via File Import (Meshery - chromium-meshery-provider)</summary>
 
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/connections.spec.js`
+**File Location:** `Not Found`
 
 **Error Message:**
 ```
-Error: No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.
+[31mTest timeout of 60000ms exceeded.[39m
 ```
 
-**Code Snippet:**
+
+
+</details>
+
+<details>
+<summary>❌ Import a Model via File Import (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
 ```
-[0m [90m 186 |[39m     [90m// Fail the test if the connection is not found[39m
- [90m 187 |[39m     [36mif[39m (([36mawait[39m row[33m.[39mcount()) [33m===[39m [35m0[39m) {
-[31m[1m>[22m[39m[90m 188 |[39m       [36mthrow[39m [36mnew[39m [33mError[39m(
- [90m     |[39m             [31m[1m^[22m[39m
- [90m 189 |[39m         [32m'No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.'[39m[33m,[39m
- [90m 190 |[39m       )[33m;[39m
- [90m 191 |[39m     }[0m
+[31mTest timeout of 60000ms exceeded.[39m
 ```
+
+
 
 </details>
 

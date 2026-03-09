@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Managed Identity
 subtitle: Collaborative and visual infrastructure as design for Azure Managed Identity
-image: /assets/img/integrations/azure-managed-identity/icons/color/azure-managed-identity-color.svg
-permalink: extensibility/integrations/azure-managed-identity
+image: /extensions/models/azure-managed-identity/icons/color/azure-managed-identity-color.svg
+aliases: /extensibility/integrations/azure-managed-identity
 docURL: https://docs.meshery.io/extensibility/integrations/azure-managed-identity
 description: 
 integrations-category: Security & Compliance
@@ -31,8 +30,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

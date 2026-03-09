@@ -31,7 +31,7 @@ const MesheryTreeViewItem = ({
   return (
     <StyledTreeItem
       key={modelDef.id}
-      nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}`}
+      itemId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}`}
       data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}`}
       top
       labelText={
@@ -53,7 +53,7 @@ const MesheryTreeViewItem = ({
         modelDef.versionBasedData.map((versionedModelDef) => (
           <StyledTreeItem
             key={versionedModelDef.id}
-            nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+            itemId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
               versionedModelDef.id
             }`}
             data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${

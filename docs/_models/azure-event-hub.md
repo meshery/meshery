@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Event Hub
 subtitle: Collaborative and visual infrastructure as design for Azure Event Hub
-image: /assets/img/integrations/azure-event-hub/icons/color/azure-event-hub-color.svg
-permalink: extensibility/integrations/azure-event-hub
+image: /extensions/models/azure-event-hub/icons/color/azure-event-hub-color.svg
+aliases: /extensibility/integrations/azure-event-hub
 docURL: https://docs.meshery.io/extensibility/integrations/azure-event-hub
 description: 
 integrations-category: Observability and Analysis
@@ -52,8 +51,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

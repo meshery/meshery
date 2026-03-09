@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Meshery Core
 subtitle: Collaborative and visual infrastructure as design for Meshery Core
-image: /assets/img/integrations/meshery-core/icons/color/meshery-core-color.svg
-permalink: extensibility/integrations/meshery-core
+image: /extensions/models/meshery-core/icons/color/meshery-core-color.svg
+aliases: /extensibility/integrations/meshery-core
 docURL: https://docs.meshery.io/extensibility/integrations/meshery-core
 description: 
 integrations-category: Orchestration & Management
@@ -84,8 +83,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

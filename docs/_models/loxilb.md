@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: LoxiLB
 subtitle: Collaborative and visual infrastructure as design for LoxiLB
-image: /assets/img/integrations/loxilb/icons/color/loxilb-color.svg
-permalink: extensibility/integrations/loxilb
+image: /extensions/models/loxilb/icons/color/loxilb-color.svg
+aliases: /extensibility/integrations/loxilb
 docURL: https://docs.meshery.io/extensibility/integrations/loxilb
 description: 
 integrations-category: Cloud Native Network
@@ -48,8 +47,5 @@ featureList: [
 ]
 howItWorks: "Provides a distributed architecture, highly available and scalable load balancer in bare metal servers. Reduce fail over time with fast sync-up mechanism."
 howItWorksDetails: "Service load-balancer for Kubernetes to power Edge, 5G, IoT, XaaS Apps ​"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

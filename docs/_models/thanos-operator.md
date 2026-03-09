@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Thanos Operator
 subtitle: Collaborative and visual infrastructure as design for Thanos Operator
-image: /assets/img/integrations/thanos-operator/icons/color/thanos-operator-color.svg
-permalink: extensibility/integrations/thanos-operator
+image: /extensions/models/thanos-operator/icons/color/thanos-operator-color.svg
+aliases: /extensibility/integrations/thanos-operator
 docURL: https://docs.meshery.io/extensibility/integrations/thanos-operator
 description: 
 integrations-category: Observability and Analysis
@@ -44,8 +43,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

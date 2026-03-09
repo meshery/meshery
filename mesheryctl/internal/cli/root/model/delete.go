@@ -21,7 +21,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -64,8 +63,9 @@ mesheryctl model delete [model-name]
 		selectedModel := new(model.ModelDefinition)
 		err := display.PromptAsyncPagination(
 			display.DisplayDataAsync{
-				UrlPath:    modelsApiPath,
-				SearchTerm: modelArg,
+				UrlPath:        modelsApiPath,
+				SearchTerm:     modelArg,
+				ErrNotFoundMsg: fmt.Sprintf("No model with name '%s' found", modelArg),
 			},
 			formatLabel,
 			func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
@@ -74,9 +74,6 @@ mesheryctl model delete [model-name]
 			selectedModel,
 		)
 		if err != nil {
-			if meshkiterrors.GetCode(err) == utils.ErrNotFoundCode {
-				return utils.ErrNotFound(fmt.Errorf("no results found for %s", modelArg))
-			}
 			return err
 		}
 
