@@ -314,9 +314,9 @@ func TestAddUppercaseContextCmd(t *testing.T) {
 	tests := []utils.CmdTestInput{
 		{
 			Name:                 "given context name which contains uppercase provided when system context create then context is created in lowercase",
-			Args:                 []string{"context", "create", "Local4"},
-			ExpectedResponse:     "createContext.uppercase.golden",
-			ExpectedResponseYaml: "addExpected.uppercase.golden",
+			Args:                 []string{"context", "create", "Local3"},
+			ExpectedResponse:     "createContext.golden",
+			ExpectedResponseYaml: "addExpected.golden",
 		},
 	}
 
