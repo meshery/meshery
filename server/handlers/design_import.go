@@ -331,11 +331,6 @@ func (h *Handler) DesignFileImportHandler(
 			go h.config.EventBroadcaster.Publish(userID, event)
 			return
 		}
-		
-		event := eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Imported design '%s' of type '%s'", design.Name, sourceFileType)).Build()
-		_ = provider.PersistEvent(*event, nil)
-		go h.config.EventBroadcaster.Publish(userID, event)
-		
 	} else {
 		savedDesignByt, err = provider.SaveMesheryPattern(token, &designRecord)
 		if err != nil {
