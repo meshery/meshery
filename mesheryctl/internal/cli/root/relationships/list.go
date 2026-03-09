@@ -43,7 +43,7 @@ var listCmd = &cobra.Command{
 mesheryctl relationship list
 
 // List relationships for a specified page
-mesheryctl exp relationship list --page [page-number]
+mesheryctl relationship list --page [page-number]
 
 // List relationships with a custom page size
 mesheryctl exp relationship list --pagesize [page-size]
