@@ -67,7 +67,7 @@ export const StyledAppContent = styled('div', {
   },
 
   [theme.breakpoints.up('sm')]: {
-    marginLeft: isDrawerCollapsed ? 68 : 0,
+    marginLeft: isDrawerCollapsed && canShowNav ? 68 : 0,
   },
 }));
 

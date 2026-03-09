@@ -101,6 +101,7 @@ export function isExtensionOpen() {
 
 const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }) => {
   const theme = useTheme();
+  const isPlaygroundBuild = process.env.NEXT_PUBLIC_PLAYGROUND_BUILD === 'true';
 
   const { extensionType: extension } = useSelector((state) => state.ui);
 
@@ -122,7 +123,7 @@ const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }) => {
         }}
       >
         <StyledFooterText onClick={handleMesheryCommunityClick}>
-          {capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? (
+          {capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted || isPlaygroundBuild ? (
             'ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.'
           ) : (
             <>

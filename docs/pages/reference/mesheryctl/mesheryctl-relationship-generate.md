@@ -1,16 +1,16 @@
 ---
 layout: default
-title: mesheryctl-exp-relationship-generate
-permalink: reference/mesheryctl/exp/relationship/generate
-redirect_from: reference/mesheryctl/exp/relationship/generate/
+title: mesheryctl-relationship-generate
+permalink: reference/mesheryctl/relationship/generate
+redirect_from: reference/mesheryctl/relationship/generate/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: relationship
+command: relationship
+subcommand: generate
 ---
 
-# mesheryctl exp relationship generate
+# mesheryctl relationship generate
 
 Generate relationships documents
 
@@ -19,7 +19,7 @@ Generate relationships documents
 Generate relationships documents from the google spreadsheets
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship generate [flags]
+mesheryctl relationship generate [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl exp relationship generate [flags]
 Generate relationships documentss
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
+mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 
 </div>
 </pre> 
