@@ -1,30 +1,31 @@
 services:
     meshery:
-        environment:
-            - PROVIDER_BASE_URLS=https://cloud.layer5.io
-            - EVENT=mesheryLocal
-            - KUBECONFIG_FOLDER=/home/appuser/.kube
-            - PORT=9081
-        image: meshery/meshery:stable-latest
+        image: meshery/meshery:edge-latest
         labels:
             - com.centurylinklabs.watchtower.enable=true
-        ports:
-            - 9081:9081
+        environment:
+            - PROVIDER_BASE_URLS=https://cloud.layer5.io
+            - ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012
+            - EVENT=mesheryLocal
+            - PORT=9081
+            - MESHERY_SERVER_CALLBACK_URL=
+            - PROVIDER=
         volumes:
             - $HOME/.kube:/home/appuser/.kube:ro
             - $HOME/.minikube:$HOME/.minikube:ro
-            - /var/run/docker.sock:/var/run/docker.sock
+        ports:
+            - 9081:9081
     meshery-istio:
-        image: meshery/meshery-istio:stable-latest
+        image: meshery/meshery-istio:edge-latest
         labels:
             - com.centurylinklabs.watchtower.enable=true
         ports:
             - 10000:10000
     watchtower:
-        command: --label-enable
         image: containrrr/watchtower
         labels:
             - com.centurylinklabs.watchtower.enable=true
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-version: "3"
+        command:
+            - --label-enable

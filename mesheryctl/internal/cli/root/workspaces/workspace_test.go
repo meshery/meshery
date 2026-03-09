@@ -14,6 +14,11 @@ var update = flag.Bool("update", false, "update golden files")
 var testOrgId = "2d2c0b60-076a-4f0a-8a63-de538570a553"
 
 func TestWorkspaces(t *testing.T) {
+	// skipping integration test with --short flag
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
+
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {

@@ -9,6 +9,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,6 +22,9 @@ func TestPreflightCmdIntegration(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	SetupContextEnv(t)
+	// Ensure viper config is fully loaded for command execution
+	viper.SetConfigFile(utils.DefaultConfigPath)
+	_ = viper.ReadInConfig()
 	tests := []utils.CmdTestInput{
 		{
 			Name:             "Run preflight check",

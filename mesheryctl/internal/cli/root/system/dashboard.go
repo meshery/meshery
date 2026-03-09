@@ -64,6 +64,16 @@ var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Open Meshery UI in browser.",
 	Args:  cobra.NoArgs,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		utils.SetKubeConfig()
+		return config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			config.TemplateToken,
+			config.TemplateContext,
+		)
+	},
+
 	Example: `
 // Open Meshery UI in browser
 mesheryctl system dashboard
@@ -86,7 +96,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			utils.Log.Error(err)
 			return nil
 		}
-		currCtx, err := mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
@@ -109,7 +119,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			utils.Log.Error(err)
 			return nil
 		}
-		currCtx, err := mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
@@ -228,6 +238,10 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				}
 			}
 
+		}
+
+		if utils.IsNonInteractiveSession() {
+			skipBrowserFlag = true
 		}
 
 		if !skipBrowserFlag {

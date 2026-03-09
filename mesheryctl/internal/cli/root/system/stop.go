@@ -91,14 +91,27 @@ func stop() error {
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
 	}
+	utils.SetKubeConfig()
 
-	// if a temp context is set using the -c flag, use it as the current context
-	err = mctlCfg.SetCurrentContext(tempContext)
-	if err != nil {
-		return errors.Wrap(err, "failed to retrieve current-context")
+	if err := config.MutateConfigIfNeeded(
+		utils.DefaultConfigPath,
+		utils.MesheryFolder,
+		config.TemplateToken,
+		config.TemplateContext,
+	); err != nil {
+		return err
 	}
 
-	currCtx, err := mctlCfg.GetCurrentContext()
+	// if a temp context is set using the -c flag, use it as the current context
+	if tempContext != "" {
+		err = mctlCfg.SetCurrentContext(tempContext)
+		if err != nil {
+			return errors.Wrap(err, "failed to retrieve current-context")
+		}
+	}
+
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
+
 	if err != nil {
 		return err
 	}

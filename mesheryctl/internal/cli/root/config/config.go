@@ -106,28 +106,18 @@ func (mc *MesheryCtlConfig) CheckIfGivenContextIsValid(name string) (*Context, e
 	return &Context{}, errors.New("context " + name + " does not exist")
 }
 
-// GetBaseMesheryURL returns the base meshery server URL
+// GetBaseMesheryURL returns the Meshery server endpoint safely.
+// Returns empty string if context or endpoint is missing.
 func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
-	currentContext, err := mc.CheckIfCurrentContextIsValid()
-	if err != nil {
-		log.Fatal(err)
+	ctx := mc.GetCurrentContextSafe()
+	if ctx == nil {
+		return ""
 	}
-
-	return currentContext.Endpoint
+	return ctx.Endpoint
 }
 
 func (mc *MesheryCtlConfig) GetCurrentContextName() string {
 	return mc.CurrentContext
-}
-
-// GetCurrentContext returns contents of the current context
-func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
-	currentContext, err := mc.CheckIfCurrentContextIsValid()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return currentContext, err
 }
 
 // Get any context
@@ -142,16 +132,14 @@ func (mc *MesheryCtlConfig) GetContext(name string) (*Context, error) {
 
 // SetCurrentContext sets current context and returns contents of the current context
 func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) error {
-	if contextName != "" {
-		mc.CurrentContext = contextName
+	if contextName == "" {
+		return errors.New("context name cannot be empty")
 	}
-	_, err := mc.CheckIfCurrentContextIsValid()
-	if err != nil {
-		log.Errorf("Error: %v", err.Error())
-
+	if _, ok := mc.Contexts[contextName]; !ok {
+		return errors.New("current context " + contextName + " does not exist")
 	}
-
-	return err
+	mc.CurrentContext = contextName
+	return nil
 }
 
 // GetTokenForContext takes in the contextName and returns the token name and path corresponding
@@ -498,4 +486,20 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 	}
 
 	return nil
+}
+
+// GetCurrentContextSafe returns current context without validation.
+// Returns nil if context is missing or invalid.
+// Safe for read-only commands like `version`.
+func (mc *MesheryCtlConfig) GetCurrentContextSafe() *Context {
+	if mc.CurrentContext == "" {
+		return nil
+	}
+
+	ctx, ok := mc.Contexts[mc.CurrentContext]
+	if !ok {
+		return nil
+	}
+
+	return &ctx
 }

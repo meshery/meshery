@@ -344,6 +344,16 @@ var configCmd = &cobra.Command{
 	Short:      "Configure Meshery",
 	Long:       `Configure the Kubernetes cluster used by Meshery.`,
 	Deprecated: "Please use 'mesheryctl connection create --type <k8s-type>' instead.",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		utils.SetKubeConfig()
+		return config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		)
+	},
+
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl system config [aks|eks|gke|minikube]
 Example: mesheryctl system config eks

@@ -85,6 +85,7 @@ mesheryctl system logs meshery-istio
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
 			utils.Log.Error(err)
+			return err
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
@@ -112,7 +113,7 @@ mesheryctl system logs meshery-istio
 			}
 		}
 
-		currCtx, err := mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil

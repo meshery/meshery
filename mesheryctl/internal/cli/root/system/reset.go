@@ -52,6 +52,16 @@ mesheryctl system reset
 
 // resets meshery config, skips conirmation if skipConfirmation is true
 func resetMesheryConfig() error {
+	utils.SetKubeConfig()
+
+	if err := config.MutateConfigIfNeeded(
+		utils.DefaultConfigPath,
+		utils.MesheryFolder,
+		config.TemplateToken,
+		config.TemplateContext,
+	); err != nil {
+		return err
+	}
 	userResponse := false
 	if utils.SilentFlag {
 		userResponse = true
@@ -79,7 +89,7 @@ func resetMesheryConfig() error {
 		}
 	}
 
-	currCtx, err := mctlCfg.GetCurrentContext()
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 	if err != nil {
 		return ErrRetrievingCurrentContext(err)
 	}
@@ -103,7 +113,7 @@ func resetMesheryConfig() error {
 
 // Fetches manifests for meshery components based on the current context
 func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
-	currCtx, err := mctlCfg.GetCurrentContext()
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 	if err != nil {
 		return ErrRetrievingCurrentContext(err)
 	}

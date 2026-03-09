@@ -10,6 +10,11 @@ import (
 )
 
 func TestListWorkspaces(t *testing.T) {
+	// skipping integration test with --short flag
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
+
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {

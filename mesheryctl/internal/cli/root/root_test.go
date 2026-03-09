@@ -7,7 +7,9 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -39,15 +41,31 @@ func TestRootCmdIntegration(t *testing.T) {
 	utils.MesheryFolder = filepath.Join(fixturesDirPath, ".meshery")
 	utils.DefaultConfigPath = filepath.Join(utils.MesheryFolder, "config.yaml")
 	testConfigPath := filepath.Join(fixturesDirPath, "testConfig.yaml")
+	// Explicitly create config for integration tests
+	token := config.Token{
+		Name:     utils.TemplateToken.Name,
+		Location: utils.TemplateToken.Location,
+	}
+
+	ctx := config.Context{
+		Endpoint:   utils.TemplateContext.Endpoint,
+		Platform:   utils.TemplateContext.Platform,
+		Channel:    utils.TemplateContext.Channel,
+		Version:    utils.TemplateContext.Version,
+		Components: utils.TemplateContext.Components,
+		Provider:   utils.TemplateContext.Provider,
+	}
+
+	_ = config.MutateConfigIfNeeded(utils.DefaultConfigPath, utils.MesheryFolder, token, ctx)
 
 	tests := []RootCmdTestInput{
 		{
 			Name: "Gets version",
-			Args: []string{"version"},
+			Args: []string{"version", "--config", utils.DefaultConfigPath},
 		},
 		{
 			Name:             "view the channel to test if meshconfig is correctly created & loaded",
-			Args:             []string{"system", "channel", "view"},
+			Args:             []string{"system", "channel", "view", "--config", utils.DefaultConfigPath},
 			ExpectedResponse: "Context: local\nChannel: stable\nVersion: latest\n\n",
 		},
 		{
@@ -74,10 +92,14 @@ func TestRootCmdIntegration(t *testing.T) {
 			viper.Reset()
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
+			log.SetOutput(b) // Also capture logrus output for verbose mode
+			utils.SetupLogrusFormatter()
 			RootCmd.SetOut(b)
 			RootCmd.SetArgs(tt.Args)
 
 			err := RootCmd.Execute()
+			RootCmd.InitDefaultHelpCmd()
+			RootCmd.InitDefaultHelpFlag()
 			if err != nil {
 				t.Error(err)
 			}

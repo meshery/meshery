@@ -43,6 +43,8 @@ func SetupFunc() {
 }
 
 func BreakupFunc() {
+	// Reset tempContext between tests
+	tempContext = ""
 	viewCmd.Flags().VisitAll(setFlagValueAsUndefined)
 }
 

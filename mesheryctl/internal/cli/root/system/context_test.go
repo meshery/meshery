@@ -65,12 +65,9 @@ func TestViewContextCmd(t *testing.T) {
 					return
 				}
 				t.Fatal(err)
-			}
-
-			if tt.ExpectError {
-				if err == nil {
-					t.Fatalf("expected error, got nil")
-				}
+			} else if tt.ExpectError {
+				// if we expected an error but didn't get one
+				t.Fatalf("expected error, got nil")
 			}
 
 			testdataDir := filepath.Join(currDir, "testdata/context")

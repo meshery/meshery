@@ -434,6 +434,20 @@ func NavigateToBrowser(endpoint string) error {
 	return err
 }
 
+// IsNonInteractiveSession reports whether mesheryctl is running in CI or without an attached terminal.
+func IsNonInteractiveSession() bool {
+	if os.Getenv("CI") != "" || os.Getenv("GITHUB_ACTIONS") != "" {
+		return true
+	}
+
+	stat, err := os.Stdin.Stat()
+	if err != nil {
+		return true
+	}
+
+	return (stat.Mode() & os.ModeCharDevice) == 0
+}
+
 // UploadFileWithParams returns a request configured to upload files with other values
 func UploadFileWithParams(uri string, params map[string]string, paramName, path string) (*http.Request, error) {
 	file, err := os.Open(path)

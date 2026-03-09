@@ -38,60 +38,65 @@ var linkDocStatus = map[string]string{
 	"caption": "Usage of mesheryctl system status",
 }
 
-// statusCmd represents the status command
 var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Check Meshery status",
 	Long:  `Check status of Meshery and Meshery components.`,
 	Example: `
-// Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 mesheryctl system status
-
-// (optional) Extra data in status table
 mesheryctl system status --verbose
-	`,
+`,
 	Annotations: linkDocStatus,
+
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Check prerequisite
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
 			PrintLogs:  false,
 			Subcommand: cmd.Use,
 		}
+
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
 			utils.Log.Error(ErrHealthCheckFailed(err))
 			return nil
 		}
-		// execute healthchecks
-		err = hc.RunPreflightHealthChecks()
-		if err != nil {
+
+		if err := hc.RunPreflightHealthChecks(); err != nil {
 			cmd.SilenceUsage = true
+			return err
 		}
 
-		return err
+		return nil
 	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "status"))
+			return errors.New(
+				utils.SystemLifeCycleError(
+					fmt.Sprintf(
+						"this command takes no arguments. See '%s --help' for more information.",
+						cmd.CommandPath(),
+					),
+					"status",
+				),
+			)
 		}
-		// Get viper instance used for context
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
 		}
-		// get the platform, channel and the version of the current context
-		// if a temp context is set using the -c flag, use it as the current context
+
 		if tempContext != "" {
-			err = mctlCfg.SetCurrentContext(tempContext)
-			if err != nil {
-				utils.Log.Error(ErrSetCurrentContext(errors.Wrap(err, "failed to set temporary context")))
+			if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+				utils.Log.Error(ErrSetCurrentContext(err))
 				return nil
 			}
 		}
 
-		currCtx, err := mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
+
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
@@ -110,20 +115,20 @@ mesheryctl system status --verbose
 		}
 
 		switch currPlatform {
+
 		case "docker":
-			// List the running Meshery containers using compose library
 			composeClient, err := utils.NewComposeClient()
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to create compose client"))
 			}
 
-			outputString, err := composeClient.GetPsOutput(context.Background(), utils.DockerComposeFile)
+			output, err := composeClient.GetPsOutput(context.Background(), utils.DockerComposeFile)
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to get Meshery status"))
 			}
 
-			if strings.Contains(outputString, "meshery") {
-				log.Info(outputString)
+			if strings.Contains(output, "meshery") {
+				log.Info(output)
 			}
 
 			hcOptions := &HealthCheckOptions{
@@ -132,82 +137,62 @@ mesheryctl system status --verbose
 				Subcommand:          "status",
 				RunKubernetesChecks: true,
 			}
+
 			hc, err := NewHealthChecker(hcOptions)
-			if err != nil {
-				utils.Log.Error(ErrHealthCheckFailed(err))
-				return nil
-			}
-			// If k8s is available print the status of pods in the MesheryNamespace
-			if err = hc.Run(); err != nil {
-				return nil
+			if err == nil {
+				_ = hc.Run()
 			}
 
 			fallthrough
-		case "kubernetes":
-			// if the platform is kubernetes, use kubernetes go-client to
-			// display pod status in the MesheryNamespace
 
-			// create an kubernetes client
+		case "kubernetes":
 			client, err := meshkitkube.New([]byte(""))
 			if err != nil {
 				return err
 			}
 
-			// List the pods in the MesheryNamespace
 			podList, err := utils.GetPodList(client, utils.MesheryNamespace)
 			if err != nil {
 				return err
 			}
 
 			var data [][]string
-			columnNames := []string{"Name", "Ready", "Status", "Restarts", "Age"}
-			// List all the pods similar to kubectl get pods -n MesheryNamespace
+			columns := []string{"Name", "Ready", "Status", "Restarts", "Age"}
+
 			for _, pod := range podList.Items {
-				// Calculate the age of the pod
-				podCreationTime := pod.GetCreationTimestamp()
-				age := time.Since(podCreationTime.Time).Round(time.Second)
+				age := time.Since(pod.CreationTimestamp.Time).Round(time.Second)
 
-				// Get the status of each of the pods
-				podStatus := pod.Status
-				var containerRestarts int32
-				var containerReady int
-				var totalContainers int
-
-				if len(pod.Spec.Containers) > 0 && len(podStatus.ContainerStatuses) > 0 {
-					// If a pod has multiple containers, get the status from all
-					for container := range pod.Spec.Containers {
-						containerRestarts += podStatus.ContainerStatuses[container].RestartCount
-						if podStatus.ContainerStatuses[container].Ready {
-							containerReady++
-						}
-						totalContainers++
+				var ready, restarts int
+				for _, cs := range pod.Status.ContainerStatuses {
+					restarts += int(cs.RestartCount)
+					if cs.Ready {
+						ready++
 					}
 				}
 
-				// Get the values from the pod status
-				name := utils.GetCleanPodName(pod.GetName())
-				ready := fmt.Sprintf("%v/%v", containerReady, containerReady)
-				status := fmt.Sprintf("%v", podStatus.Phase)
-				restarts := fmt.Sprintf("%v", containerRestarts)
-				ageS := age.String()
-				row := []string{name, ready, status, restarts, ageS}
-
-				// Append this to data to be printed in a table
-				if verboseStatus {
-					row = append(row, pod.Name)
-					row = append(row, podStatus.PodIP)
+				row := []string{
+					utils.GetCleanPodName(pod.Name),
+					fmt.Sprintf("%d/%d", ready, len(pod.Spec.Containers)),
+					string(pod.Status.Phase),
+					fmt.Sprintf("%d", restarts),
+					age.String(),
 				}
+
+				if verboseStatus {
+					row = append(row, pod.Name, pod.Status.PodIP)
+				}
+
 				data = append(data, row)
 			}
-			if verboseStatus {
-				columnNames = append(columnNames, "Pod-Names")
-				columnNames = append(columnNames, "Pod-IP")
-			}
-			// Print the data to a table for readability
-			utils.PrintToTable(columnNames, data, nil)
 
+			if verboseStatus {
+				columns = append(columns, "Pod-Name", "Pod-IP")
+			}
+
+			utils.PrintToTable(columns, data, nil)
 			log.Info("\nMeshery endpoint is " + currCtx.GetEndpoint())
 		}
+
 		return nil
 	},
 }
