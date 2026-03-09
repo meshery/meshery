@@ -9,7 +9,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-func TestOffboardCmd(t *testing.T) {
+func TestUndeployCmd(t *testing.T) {
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
@@ -24,49 +24,58 @@ func TestOffboardCmd(t *testing.T) {
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:             "Offboard Application",
-			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
-			ExpectedResponse: "offboard.output.golden",
+			Name:             "given valid file when design undeploy then design is undeployed",
+			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "undeploy.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern",
+					URL:          "/api/pattern",
 					Response:     "apply.designSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "DELETE",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "offboard.response.golden",
+					URL:          "/api/pattern/deploy",
+					Response:     "undeploy.response.golden",
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
-			Name:             "Offboard design with invalid file path",
-			Args:             []string{"offboard", "-f", invalidFilePath},
+			Name:             "given invalid file path when design undeploy then error is thrown",
+			Args:             []string{"undeploy", "-f", invalidFilePath},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
-			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFileRead(fmt.Errorf("open %s: no such file or directory", invalidFilePath)),
 		},
 		{
-			Name:             "Offboard design not found",
-			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			Name:             "given nonexistent design provided when design undeploy then error is thrown",
+			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern",
-					Response:     "offboard.empty.response.golden",
+					URL:          "/api/pattern",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          "/api/pattern/deploy",
+					Response:     "undeploy.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          fmt.Sprintf("%s/api/pattern", testContext.BaseURL),
+					Response:     "undeploy.empty.response.golden",
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound(filepath.Join(fixturesDir, "sampleDesign.golden")),
