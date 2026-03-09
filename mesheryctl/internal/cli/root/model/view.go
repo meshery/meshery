@@ -63,14 +63,10 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 			},
 			selectedModel,
 		)
+
 		if err != nil {
 
 			return err
-		}
-
-		if selectedModel == nil {
-			utils.Log.Infof("No model(s) found with the name or ID: %s", modelNameorId)
-			return nil
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[*model.ModelDefinition]{}
