@@ -17,7 +17,7 @@ jobs:
     - name: Run ESLint Meshery-UI
       run: cd ui && npm run lint
     - name: Run ESLint Provider-UI
-      run: cd provider-ui && npx --yes eslint@9.39.1 .
+      run: cd provider-ui && npm run lint
 
     # Replace the steps above with the following make targets and autocommit when ready.
     # - name: Run eslint Meshery UI
