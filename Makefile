@@ -361,7 +361,7 @@ ui-lint:
 
 ## Lint check Meshery Provider UI on your local machine.
 ui-provider-lint:
-	cd provider-ui && npm i eslint && npx eslint .
+	cd provider-ui && npm i eslint@8 && npx eslint .
 
 ## Test Meshery Provider UI on your local machine.
 ui-provider-test:
