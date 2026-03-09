@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 9th 2026, 1:15:51 am
+- Testing started at: March 9th 2026, 3:22:45 am
 
 **📦 Test Result Summary**
 
-- ✅ 64 passed
-- ❌ 2 failed
+- ✅ 62 passed
+- ❌ 3 failed
 - ⚠️ 0 flaked
-- ⏩ 6 skipped
+- ⏩ 7 skipped
 
-⌛ _Duration: 4 minutes and 59 seconds_
+⌛ _Duration: 5 minutes and 1 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -28,11 +28,11 @@
 | 5 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 6 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
-| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
-| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
-| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
+| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
+| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
+| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
@@ -111,6 +111,20 @@ The following tests failed. Click on each to see the failure reason:
 
 <details>
 <summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ Import a Model via File Import (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
