@@ -66,7 +66,7 @@ function MeshModelContructs() {
         },
       },
     }),
-    [data],
+    [data, router],
   );
 
   return (
@@ -152,7 +152,7 @@ function MeshModelCategories() {
         show: false,
       },
     }),
-    [cleanedData],
+    [cleanedData, router],
   );
 
   return (

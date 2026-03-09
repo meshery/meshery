@@ -149,9 +149,11 @@ function ConfirmationMsg(props) {
   let isDisabled =
     typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
   const dispatch = useDispatch();
+  // We intentionally omit tab and k8scontext from the dependency array because we only want to initialize local state when the modal opens, preventing background Redux updates from resetting the UI while active.
   useEffect(() => {
     setTabVal(tab);
     setContexts(k8scontext);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   useEffect(() => {
