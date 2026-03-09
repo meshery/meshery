@@ -1,16 +1,16 @@
 ---
 layout: default
-title: mesheryctl-exp-relationship
-permalink: reference/mesheryctl/exp/relationship
-redirect_from: reference/mesheryctl/exp/relationship/
+title: mesheryctl-relationship
+permalink: reference/mesheryctl/relationship
+redirect_from: reference/mesheryctl/relationship/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: relationship
+command: relationship
+subcommand: nil
 ---
 
-# mesheryctl exp relationship
+# mesheryctl relationship
 
 Manage relationships
 
@@ -21,7 +21,7 @@ Meshery uses relationships to define how interconnected components interact.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship [flags]
+mesheryctl relationship [flags]
 
 </div>
 </pre> 
@@ -39,7 +39,7 @@ mesheryctl relationship --count
 Generate a relationship documentation 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship generate [flags]
+mesheryctl relationship generate [flags]
 
 </div>
 </pre> 
@@ -47,7 +47,7 @@ mesheryctl exp relationship generate [flags]
 List available relationship(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship list [flags]
+mesheryctl relationship list [flags]
 
 </div>
 </pre> 
@@ -55,7 +55,7 @@ mesheryctl exp relationship list [flags]
 Search for a specific relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
+mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
 
 </div>
 </pre> 
@@ -63,7 +63,7 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 View a specific relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [model-name]
+mesheryctl relationship view [model-name]
 
 </div>
 </pre> 
@@ -90,9 +90,9 @@ mesheryctl exp relationship view [model-name]
 
 ## See Also
 
-* [mesheryctl exp relationship generate](/reference/mesheryctl/exp/relationship/generate)
-* [mesheryctl exp relationship list](/reference/mesheryctl/exp/relationship/list)
-* [mesheryctl exp relationship search](/reference/mesheryctl/exp/relationship/search)
-* [mesheryctl exp relationship view](/reference/mesheryctl/exp/relationship/view)
+* [mesheryctl relationship generate](/reference/mesheryctl/relationship/generate)
+* [mesheryctl relationship list](/reference/mesheryctl/relationship/list)
+* [mesheryctl relationship search](/reference/mesheryctl/relationship/search)
+* [mesheryctl relationship view](/reference/mesheryctl/relationship/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

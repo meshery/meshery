@@ -1175,56 +1175,57 @@ organization:
           name: --count
           description: (optional) Get the total of registered organizations
 
+relationship:
+  name: relationship
+  description: View list of relationships and details of relationship
+  usage: mesheryctl relationship [command] [flags]
+  flags:
+  subcommands:
+    generate:
+      name: generate
+      description: generate relationships docs from the google spreadsheets
+      usage: mesheryctl relationship generate [flags]
+      flags:
+        sheet:
+          name: -s, --sheetId
+          description: google sheet id
+    list:
+      name: list
+      description: list all relationships registered in Meshery Server
+      usage: mesheryctl relationship list [flags]
+      flags:
+        page:
+          name: -p, --page
+          description: "(optional) List next set of relationship list with --page (default = 1) (default 1)."
+          usage: mesheryctl relationship list --page [page number]
+          example: mesheryctl relationship list --page 2
+    view:
+      name: view
+      description: view a relationship queried by the model name
+      usage: mesheryctl relationship view [flags]
+      flags:
+        output-format:
+          name: -o, --output-format
+          description: (optional) format to display in [json|yaml] (default "yaml")
+    search:
+      name: search
+      description: search for relationship using a query
+      usage: mesheryctl relationship search [flags] [query-text]
+      flags:
+        kind:
+          name: -k --kind
+          description: kind of relationships
+        model:
+          name: -m, --model
+          description: model name
+        subtype:
+          name: -s, --subtype
+          description: subtype of relationships
+        type:
+          name: -t, --type
+          description: type of relationships
+
 exp:
-  relationship:
-    name: relationship
-    description: View list of relationships and details of relationship
-    usage: mesheryctl exp relationship [command] [flags]
-    flags:
-    subcommands:
-      generate:
-        name: generate
-        description: generate relationships docs from the google spreadsheets
-        usage: mesheryctl exp relationship generate [flags]
-        flags:
-          sheet:
-            name: -s, --sheetId
-            description: google sheet id
-      list:
-        name: list
-        description: list all relationships registered in Meshery Server
-        usage: mesheryctl exp relationship list [flags]
-        flags:
-          page:
-            name: -p, --page
-            description: "(optional) List next set of exp relationship list with --page (default = 1) (default 1)."
-            usage: mesheryctl exp relationship list --page [page number]
-            example: mesheryctl exp relationship list --page 2
-      view:
-        name: view
-        description: view a relationship queried by the model name
-        usage: mesheryctl exp relationship view [flags]
-        flags:
-          output-format:
-            name: -o, --output-format
-            description: (optional) format to display in [json|yaml] (default "yaml")
-      search:
-        name: search
-        description: search for relationship using a query
-        usage: mesheryctl exp relationship search [flags] [query-text]
-        flags:
-          kind:
-            name: -k --kind
-            description: kind of relationships
-          model:
-            name: -m, --model
-            description: model name
-          subtype:
-            name: -s, --subtype
-            description: subtype of relationships
-          type:
-            name: -t, --type
-            description: type of relationships 
   workspace:
     name: workspace
     description: View list of workspaces and detail of workspaces
