@@ -7,7 +7,7 @@ COPY go.sum go.mod ./
 COPY server/ server/
 COPY mesheryctl/ mesheryctl/
 RUN go mod download
-RUN cd server/cmd && CGO_ENABLED=0 GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
+RUN cd server/cmd && GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
 
 # This image will be reuse for both UI & UI Provider
 FROM node:20-alpine AS base-node
