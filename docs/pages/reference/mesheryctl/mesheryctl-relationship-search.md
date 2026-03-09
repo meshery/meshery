@@ -34,10 +34,10 @@ mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subty
 </div>
 </pre> 
 
-Search a relationship for specified page
+Search a relationship for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship search [--page <int>]
+mesheryctl relationship search [--kind <kind>] [--page <int>]
 
 </div>
 </pre> 
@@ -47,11 +47,11 @@ mesheryctl relationship search [--page <int>]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help             help for search
-  -k, --kind string      search particular kind of relationships
-  -m, --model string     search relationships of particular model name
-  -p, --page int         search particular page of relationships (default 1) (default 1)
-  -s, --subtype string   search particular subtype of relationships
-  -t, --type string      search particular type of relationships
+  -k, --kind string      (optional) Search relationships of a particular kind
+  -m, --model string     (optional) Search relationships of a particular model name
+  -p, --page int         (optional) Page number of results to fetch (default = 1) (default 1)
+  -s, --subtype string   (optional) Search relationships of a particular subtype
+  -t, --type string      (optional) Search relationships of a particular type
 
 </div>
 </pre>
