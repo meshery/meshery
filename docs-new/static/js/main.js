@@ -35,25 +35,6 @@
         });
     });
 }(jQuery));
-(function($) {
-    'use strict';
-    var Search = {
-        init: function() {
-            $(document).ready(function() {
-                $(document).on('keypress', '.sidebar__search-input', function(e) {
-                    if (e.keyCode !== 13) {
-                        return
-                    }
-                    var query = $(this).val();
-                    var searchPage = "/search/?q=" + query;
-                    document.location = searchPage;
-                    return false;
-                });
-            });
-        },
-    };
-    Search.init();
-}(jQuery));
 
 
 /*popup-hidden-div*/
@@ -137,26 +118,3 @@ document.addEventListener("click", (event) => {
         }
     }
 })
-
-// Bring focus to search bar when "/" is pressed
-const searchInput = document.getElementById("sidebar-search-input");
-
-if (searchInput) {
-  document.addEventListener("keydown", function (event) {
-    const activeEl = document.activeElement;
-    const isEditable =
-      activeEl.isContentEditable ||
-      ["INPUT", "TEXTAREA"].includes(activeEl.tagName);
-
-    if (
-      event.key === "/" &&
-      !event.ctrlKey &&
-      !event.metaKey &&
-      !event.altKey &&
-      !isEditable
-    ) {
-      event.preventDefault();
-      searchInput.focus();
-    }
-  });
-}
