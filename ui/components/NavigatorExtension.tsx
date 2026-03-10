@@ -12,7 +12,7 @@ import ConfigurationSubscription from '../components/graphql/subscriptions/Confi
 import _PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import { useNotification } from '../utils/hooks/useNotification';
-import Modal from './General/Modals/Modal';
+import Modal, { RJSFModalWrapper } from './General/Modals/Modal';
 import ExportModal from './ExportModal';
 import { FormatStructuredData } from './DataFormatter';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
@@ -103,6 +103,8 @@ function NavigatorExtension({ url }) {
           ViewInfoModal,
           ExportModal,
           GenericRJSFModal: Modal,
+          RJSFModal: Modal,
+          RJSFModalWrapper,
           _PromptComponent,
           capabilitiesRegistry,
           CapabilitiesRegistryClass: CapabilitiesRegistry,
@@ -119,6 +121,7 @@ function NavigatorExtension({ url }) {
           mesheryEventBus: mesheryEventBus,
           ThemeTogglerCore,
           RJSForm: RJSFForm,
+          RJSFForm,
           hooks: {
             CAN: CAN,
             useFilterK8sContexts,
