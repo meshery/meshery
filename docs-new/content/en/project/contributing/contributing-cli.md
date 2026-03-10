@@ -53,10 +53,10 @@ Annotations: linkScreenshot,
 
   The variables present in above sample will be used in creating the doc pages for the specific command
 
-Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/assets` folder in **PNG** format. The screenshot field is given for reference below
+Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/content/en/reference/images` folder in **PNG** format. The screenshot field is given for reference below
 
 {{< code code=`var linkDocPatternApply = map[string]string{
-	"link":    "![pattern-apply-usage](/project/contributing/images/patternApply.png)",
+	"link":    "![pattern-apply-usage](/reference/images/patternApply.png)",
 	"caption": "Usage of mesheryctl design apply",
 }
 ...
@@ -73,16 +73,16 @@ Annotations: linkDocPatternApply,
 
 ### Adding New/Removing Existing commands in the reference index
 
-Though the command page is generated automatically by the Cobra CLI library, there are chances where the command does not appear in the [reference index page](https://docs.meshery.io/reference/mesheryctl). In such cases, the command details must be manually added to the reference index YAML file. This is generally done by editing the below two files:
+Though the command page is generated automatically by the Cobra CLI library, there are chances where the command does not appear in the [reference index page](/reference/mesheryctl). In such cases, the command details must be manually added to the reference index YAML file. This is generally done by editing the below two files:
 
-- [cmds.yml](https://github.com/meshery/meshery/blob/master/docs/_data/mesheryctlcommands/cmds.yml) - The YAML file containing the data about the commands
-- [mesheryctl-commands.md](https://github.com/meshery/meshery/blob/master/docs/pages/reference/mesheryctl-commands.md) - The markdown page of the command reference documentation
+- [cmds.yml](https://github.com/meshery/meshery/blob/master/docs/data/mesheryctlcommands/cmds.yml) - The YAML file containing the data about the commands
+- [_index.md](https://github.com/meshery/meshery/blob/master/docs/content/en/reference/mesheryctl/_index.md) - The markdown page of the command reference documentation
 
 ### Preserving Manually Added Documentation
 	
-`mesheryctl` uses Cobra CLI library and GitHub Actions to automate the generation of command documentation pages. On occasion, additional documentation beyond that included in the `mesheryctl` Golang files is ideal to capture and include in the CLI reference pages. Contributors are encouraged to add more usage examples, screenshots to any of the CLI reference pages. To protect any manually added content and ensure it remains intact after regeneration, create a separate Jekyll `include` file. Follow file naming scheme outlined below:
+`mesheryctl` uses Cobra CLI library and GitHub Actions to automate the generation of command documentation pages. On occasion, additional documentation beyond that included in the `mesheryctl` Golang files is ideal to capture and include in the CLI reference pages. Contributors are encouraged to add more usage examples, screenshots to any of the CLI reference pages. To protect any manually added content and ensure it remains intact after regeneration, create a separate Hugo `shortcode` file. Follow file naming scheme outlined below:
 
-If your mesheryctl docs end like this, add the include tag at the end of the file. An example is given below
+If your mesheryctl docs end like this, add a shortcode at the end of the file. An example is given below
 
 {{< code code=`Example:
 // apply a pattern file
@@ -100,7 +100,7 @@ Annotations: linkDocPatternApply,
 
 </div>
 </pre>
-{% raw %}{% include permalink-of-file %}{% endraw %}` >}}
+{{< permalink-of-file >}}` >}}
 
 ## Quality
 
