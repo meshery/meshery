@@ -93,7 +93,7 @@ func TestModelInit(t *testing.T) {
 		//
 		// TODO: think about how to fix this.
 		{
-			Name:             "model init with all default params",
+			Name:             "given all default parameters when model init model is initialized",
 			Args:             []string{"init", initTestEC2Controller, "--version", initTestVersion, "--path", ".", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.aws-ec2-controller.output.golden",
@@ -113,7 +113,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: initTestEC2Controller,
 		},
 		{
-			Name:             "model init with default params",
+			Name:             "given default parameters when model init model is initialized",
 			Args:             []string{"init", initTestEC2Controller},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.aws-ec2-controller.output.golden",
@@ -133,7 +133,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: initTestEC2Controller,
 		},
 		{
-			Name:             "model init with yaml output format",
+			Name:             "given output format yaml when model init model is initialized in yaml format",
 			Args:             []string{"init", initTestDynamoController, "--output-format", "yaml"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.aws-dynamodb-controller-in-yaml.output.golden",
@@ -157,7 +157,7 @@ func TestModelInit(t *testing.T) {
 		// which is only the behaviour inside the test.
 		// TODO think about how to reset the flags between the test cases.
 		{
-			Name:             "model init with custom path and version",
+			Name:             "given custom path and version when model init model is initialized with custom path and version specified",
 			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
@@ -177,7 +177,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "test_case_some_custom_dir",
 		},
 		{
-			Name:             "model init with custom relative to current directory path",
+			Name:             "given custom relative to current directory path when model init then model is initialized in custom relative path",
 			Args:             []string{"init", initTestEC2Controller, "--path", "./test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
@@ -189,7 +189,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "./test_case_some_custom_dir",
 		},
 		{
-			Name:             "model init with custom relative to parent directory path",
+			Name:             "given custom relative to parent directory path when model init then model is initialized in custom relative to parent directory path",
 			Args:             []string{"init", initTestEC2Controller, "--path", "../test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-relative-parent-dir.aws-ec2-controller.output.golden",
@@ -201,8 +201,8 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "../test_case_some_custom_dir",
 		},
 		{
-			Name:             "model init with trailing folder separator in the path",
-			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_other_custom_dir/with/trailing/separator////"},
+			Name:             "given trailing folder separator in the path when model init then model is initialized in the path without trailing separator",
+			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_other_custom_dir/with/trailing/separator////", "--version", "v1.2.3"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir-2.aws-ec2-controller.output.golden",
 			// do not need to check all dirs and files here, as we tested it in previous test case,
@@ -268,6 +268,7 @@ func TestModelInit(t *testing.T) {
 			ExpectedError:    ErrModelInit(fmt.Errorf("invalid model name: name must match pattern ^[a-z0-9-]+$")),
 		},
 	}
+
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
 			// Clean up any lingering test artifacts before this subtest starts
@@ -290,6 +291,7 @@ func TestModelInit(t *testing.T) {
 			// Create fresh commands using helper function
 			cmd := createFreshCommands()
 			defer utils.ResetCommandFlags(cmd, t)
+			defer utils.ResetCommandFlags(initModelCmd, t)
 
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
