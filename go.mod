@@ -47,12 +47,12 @@ require (
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/nighthawk-go v1.0.8
 	github.com/layer5io/service-mesh-performance v0.6.1
-	github.com/lib/pq v1.10.9
+	github.com/lib/pq v1.11.1
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
 	github.com/meshery/meshkit v0.8.68
 	github.com/meshery/meshsync v0.8.26
-	github.com/meshery/schemas v0.8.116
+	github.com/meshery/schemas v0.8.125
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.1.2
 	github.com/olekukonko/tablewriter v1.1.0
