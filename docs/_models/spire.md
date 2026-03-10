@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: SPIRE
 subtitle: Collaborative and visual infrastructure as design for SPIRE
-image: /assets/img/integrations/spire/icons/color/spire-color.svg
-permalink: extensibility/integrations/spire
+image: /extensions/models/spire/icons/color/spire-color.svg
+aliases: /extensibility/integrations/spire
 docURL: https://docs.meshery.io/extensibility/integrations/spire
 description: 
 integrations-category: Security & Compliance
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Configure your signing framework"
 howItWorksDetails: "Simplify access from identified services to secret stores, databases, services meshes and cloud provider services."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

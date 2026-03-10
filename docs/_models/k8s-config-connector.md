@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Google Cloud Platform
 subtitle: Collaborative and visual infrastructure as design for Google Cloud Platform
-image: /assets/img/integrations/k8s-config-connector/icons/color/k8s-config-connector-color.svg
-permalink: extensibility/integrations/k8s-config-connector
+image: /extensions/models/k8s-config-connector/icons/color/k8s-config-connector-color.svg
+aliases: /extensibility/integrations/k8s-config-connector
 docURL: https://docs.meshery.io/extensibility/integrations/k8s-config-connector
 description: 
 integrations-category: Orchestration & Management
@@ -1804,8 +1803,5 @@ featureList: [
 ]
 howItWorks: "Integrates GCP services"
 howItWorksDetails: "Seamless integration of Kubernetes with GCP services"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

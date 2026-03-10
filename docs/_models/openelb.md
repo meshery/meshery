@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: OpenELB
 subtitle: Collaborative and visual infrastructure as design for OpenELB
-image: /assets/img/integrations/openelb/icons/color/openelb-color.svg
-permalink: extensibility/integrations/openelb
+image: /extensions/models/openelb/icons/color/openelb-color.svg
+aliases: /extensibility/integrations/openelb
 docURL: https://docs.meshery.io/extensibility/integrations/openelb
 description: 
 integrations-category: Cloud Native Network
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Integrates with OpenELB configurations"
 howItWorksDetails: "Simplified load balancing configuration and management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

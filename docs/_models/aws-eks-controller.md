@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Elastic Kubernetes Service
 subtitle: Collaborative and visual infrastructure as design for AWS Elastic Kubernetes Service
-image: /assets/img/integrations/aws-eks-controller/icons/color/aws-eks-controller-color.svg
-permalink: extensibility/integrations/aws-eks-controller
+image: /extensions/models/aws-eks-controller/icons/color/aws-eks-controller-color.svg
+aliases: /extensibility/integrations/aws-eks-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-eks-controller
 description: 
 integrations-category: Orchestration & Management
@@ -77,8 +76,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages EKS clusters"
 howItWorksDetails: "Easy and scalable Kubernetes management on AWS"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

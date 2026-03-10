@@ -15,16 +15,18 @@
 package design
 
 import (
+	"slices"
 	"strings"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
-	validSourceTypes     []string
 )
 
 // DesignCmd represents the root command for design commands
@@ -69,6 +71,28 @@ mesheryctl design list
 func init() {
 	DesignCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, exportCmd, offboardCmd}
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, deployDesignCmd, exportCmd, designUndeployCmd}
 	DesignCmd.AddCommand(availableSubcommands...)
+}
+
+func getDesignSourceTypes() ([]string, error) {
+	apiResponse, err := api.Fetch[[]models.PatternSourceTypesAPIResponse]("api/pattern/types")
+	if err != nil {
+		return nil, err
+	}
+
+	sourceTypes := make([]string, 0, len(*apiResponse))
+	for _, sourceTypeResponse := range *apiResponse {
+		sourceTypes = append(sourceTypes, strings.ToLower(sourceTypeResponse.DesignType))
+	}
+
+	return sourceTypes, nil
+}
+
+func retrieveProvidedSourceType(sType string, validDesignSourceTypes []string) (string, error) {
+	sType = strings.ToLower(sType)
+	if slices.Contains(validDesignSourceTypes, sType) {
+		return sType, nil
+	}
+	return "", ErrInValidSource(sType, validDesignSourceTypes)
 }

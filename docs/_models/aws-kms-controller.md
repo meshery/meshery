@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS KMS
 subtitle: Collaborative and visual infrastructure as design for AWS KMS
-image: /assets/img/integrations/aws-kms-controller/icons/color/aws-kms-controller-color.svg
-permalink: extensibility/integrations/aws-kms-controller
+image: /extensions/models/aws-kms-controller/icons/color/aws-kms-controller-color.svg
+aliases: /extensibility/integrations/aws-kms-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-kms-controller
 description: 
 integrations-category: Security & Compliance
@@ -44,8 +43,5 @@ featureList: [
 ]
 howItWorks: "Integrates with KMS"
 howItWorksDetails: "Enhanced security for Kubernetes applications and data on AWS"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

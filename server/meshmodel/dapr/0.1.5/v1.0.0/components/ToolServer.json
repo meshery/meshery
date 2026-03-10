@@ -1,0 +1,93 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Tool Server",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "dapr",
+    "displayName": "Dapr",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Serverless"
+    },
+    "subCategory": "Framework",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#0d2192",
+      "secondaryColor": "#5266D7",
+      "shape": "circle",
+      "source_uri": "https://caspergn.github.io/dapr-agents-dev/dapr-agents-0.1.5.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 480 255.60879\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#0d2192;}.cls-2{fill:#fff;isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"\u003e\u003c/rect\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 480 255.60879\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"\u003e\u003c/rect\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "0.1.5"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
+  },
+  "styles": {
+    "primaryColor": "#0d2192",
+    "secondaryColor": "#5266D7",
+    "shape": "circle",
+    "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 255.60879\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#0d2192;}.cls-2{fill:#fff;isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"/\u003e\u003crect id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"/\u003e\u003crect id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"/\u003e\u003crect id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"/\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 255.60879\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"/\u003e\u003crect id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"/\u003e\u003crect id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"/\u003e\u003crect id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"/\u003e\u003c/svg\u003e"
+  },
+  "capabilities": null,
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://caspergn.github.io/dapr-agents-dev/dapr-agents-0.1.5.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "kagent.dev/v1alpha1",
+    "kind": "ToolServer",
+    "schema": "{\n \"description\": \"ToolServer is the Schema for the toolservers API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ToolServerSpec defines the desired state of ToolServer.\",\n   \"properties\": {\n    \"config\": {\n     \"description\": \"Only one of stdio, sse, or streamableHttp can be specified.\",\n     \"properties\": {\n      \"sse\": {\n       \"properties\": {\n        \"headers\": {\n         \"format\": \"textarea\",\n         \"type\": \"string\"\n        },\n        \"headersFrom\": {\n         \"items\": {\n          \"description\": \"ValueRef represents a configuration value\",\n          \"properties\": {\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"type\": \"string\"\n           },\n           \"valueFrom\": {\n            \"description\": \"ValueSource defines a source for configuration values from a Secret or ConfigMap\",\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"type\": {\n              \"enum\": [\n               \"ConfigMap\",\n               \"Secret\"\n              ],\n              \"type\": \"string\"\n             },\n             \"valueRef\": {\n              \"description\": \"The reference to the ConfigMap or Secret. Can either be a reference to a resource in the same namespace,\\nor a reference to a resource in a different namespace in the form \\\"namespace/name\\\".\\nIf namespace is not provided, the default namespace is used.\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"key\",\n             \"type\"\n            ],\n            \"type\": \"object\"\n           }\n          },\n          \"required\": [\n           \"name\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-validations\": [\n           {\n            \"message\": \"Exactly one of value or valueFrom must be specified\",\n            \"rule\": \"(has(self.value) \\u0026\\u0026 !has(self.valueFrom)) || (!has(self.value) \\u0026\\u0026 has(self.valueFrom))\"\n           }\n          ]\n         },\n         \"type\": \"array\"\n        },\n        \"sseReadTimeout\": {\n         \"type\": \"string\"\n        },\n        \"timeout\": {\n         \"type\": \"string\"\n        },\n        \"url\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"url\"\n       ],\n       \"type\": \"object\"\n      },\n      \"stdio\": {\n       \"properties\": {\n        \"args\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"command\": {\n         \"type\": \"string\"\n        },\n        \"env\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        },\n        \"envFrom\": {\n         \"items\": {\n          \"description\": \"ValueRef represents a configuration value\",\n          \"properties\": {\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"type\": \"string\"\n           },\n           \"valueFrom\": {\n            \"description\": \"ValueSource defines a source for configuration values from a Secret or ConfigMap\",\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"type\": {\n              \"enum\": [\n               \"ConfigMap\",\n               \"Secret\"\n              ],\n              \"type\": \"string\"\n             },\n             \"valueRef\": {\n              \"description\": \"The reference to the ConfigMap or Secret. Can either be a reference to a resource in the same namespace,\\nor a reference to a resource in a different namespace in the form \\\"namespace/name\\\".\\nIf namespace is not provided, the default namespace is used.\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"key\",\n             \"type\"\n            ],\n            \"type\": \"object\"\n           }\n          },\n          \"required\": [\n           \"name\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-validations\": [\n           {\n            \"message\": \"Exactly one of value or valueFrom must be specified\",\n            \"rule\": \"(has(self.value) \\u0026\\u0026 !has(self.valueFrom)) || (!has(self.value) \\u0026\\u0026 has(self.valueFrom))\"\n           }\n          ]\n         },\n         \"type\": \"array\"\n        },\n        \"readTimeoutSeconds\": {\n         \"default\": 10,\n         \"description\": \"Default value is 10 seconds\",\n         \"type\": \"integer\"\n        }\n       },\n       \"required\": [\n        \"command\"\n       ],\n       \"type\": \"object\"\n      },\n      \"streamableHttp\": {\n       \"properties\": {\n        \"headers\": {\n         \"format\": \"textarea\",\n         \"type\": \"string\"\n        },\n        \"headersFrom\": {\n         \"items\": {\n          \"description\": \"ValueRef represents a configuration value\",\n          \"properties\": {\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"type\": \"string\"\n           },\n           \"valueFrom\": {\n            \"description\": \"ValueSource defines a source for configuration values from a Secret or ConfigMap\",\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"type\": {\n              \"enum\": [\n               \"ConfigMap\",\n               \"Secret\"\n              ],\n              \"type\": \"string\"\n             },\n             \"valueRef\": {\n              \"description\": \"The reference to the ConfigMap or Secret. Can either be a reference to a resource in the same namespace,\\nor a reference to a resource in a different namespace in the form \\\"namespace/name\\\".\\nIf namespace is not provided, the default namespace is used.\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"key\",\n             \"type\"\n            ],\n            \"type\": \"object\"\n           }\n          },\n          \"required\": [\n           \"name\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-validations\": [\n           {\n            \"message\": \"Exactly one of value or valueFrom must be specified\",\n            \"rule\": \"(has(self.value) \\u0026\\u0026 !has(self.valueFrom)) || (!has(self.value) \\u0026\\u0026 has(self.valueFrom))\"\n           }\n          ]\n         },\n         \"type\": \"array\"\n        },\n        \"sseReadTimeout\": {\n         \"type\": \"string\"\n        },\n        \"terminateOnClose\": {\n         \"type\": \"boolean\"\n        },\n        \"timeout\": {\n         \"type\": \"string\"\n        },\n        \"url\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"url\"\n       ],\n       \"type\": \"object\"\n      },\n      \"type\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Exactly one of stdio, sse, or streamableHttp must be specified\",\n       \"rule\": \"(has(self.stdio) \\u0026\\u0026 !has(self.sse) \\u0026\\u0026 !has(self.streamableHttp)) || (!has(self.stdio) \\u0026\\u0026 has(self.sse) \\u0026\\u0026 !has(self.streamableHttp)) || (!has(self.stdio) \\u0026\\u0026 !has(self.sse) \\u0026\\u0026 has(self.streamableHttp))\"\n      }\n     ]\n    },\n    \"description\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"config\",\n    \"description\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tool Server\",\n \"type\": \"object\"\n}"
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
+}

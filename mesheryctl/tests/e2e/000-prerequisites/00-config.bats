@@ -22,7 +22,7 @@ setup() {
     assert_exists "$MESHERY_AUTH_FILE"
 }
 
-@test "meshery auth.json file meshery provider is Meshery" {
+@test "meshery auth.json file meshery provider is Layer5" {
     run jq '."meshery-provider"' "$MESHERY_AUTH_FILE"
     assert_success
 

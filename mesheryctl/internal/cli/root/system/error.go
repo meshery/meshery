@@ -53,12 +53,16 @@ const (
 	ErrValidProviderCode                 = "mesheryctl-1087"
 	ErrUnmarshallConfigCode              = "mesheryctl-1088"
 	ErrUploadFileParamsCode              = "mesheryctl-1089"
+	ErrContextNotExistsCode              = "mesheryctl-1196"
 )
 
 var (
-	cmdType     string
-	contextdocs string = "See https://docs.meshery.io/reference/mesheryctl/system/context for usage details."
-	contextDir  string = "see that you have a correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
+	cmdType               string
+	errArgMsg             = "only one argument must be provided"
+	contextCreateUsageMsg = `Usage: mesheryctl system context create [context-name]`
+	contextDeleteUsageMsg = `Usage: mesheryctl system context delete [context name]`
+	contextdocs           = "See https://docs.meshery.io/reference/mesheryctl/system/context for usage details."
+	contextDir            = "See that you have a correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
 )
 
 // A Format reference that returns Mesheryctl's URL docs for system command and sub commands
@@ -237,6 +241,16 @@ func ErrContextContent() error {
 		[]string{"Ensure a valid context name is provided"})
 }
 
+func ErrContextNotExists(err error) error {
+	return errors.New(
+		ErrContextNotExistsCode,
+		errors.Fatal,
+		[]string{"Unable to get context details"},
+		[]string{err.Error()},
+		[]string{"Non exists context name is provided"},
+		[]string{"Run `mesheryctl system context list` to see available context name"})
+}
+
 func ErrWriteConfig(err error) error {
 	return errors.New(
 		ErrWriteConfigCode,
@@ -325,5 +339,4 @@ func ErrUploadFileParams(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to upload parameters from config file with provided context"},
 		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
-
 }

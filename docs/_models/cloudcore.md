@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Cloudcore
 subtitle: Collaborative and visual infrastructure as design for Cloudcore
-image: /assets/img/integrations/cloudcore/icons/color/cloudcore-color.svg
-permalink: extensibility/integrations/cloudcore
+image: /extensions/models/cloudcore/icons/color/cloudcore-color.svg
+aliases: /extensibility/integrations/cloudcore
 docURL: https://docs.meshery.io/extensibility/integrations/cloudcore
 description: 
 integrations-category: Cloud Native Network
@@ -52,8 +51,5 @@ featureList: [
 ]
 howItWorks: "Integrates CloudCore"
 howItWorksDetails: "Accelerated cloud-native application development"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

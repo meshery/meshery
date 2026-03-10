@@ -2,10 +2,7 @@ package eval
 
 import rego.v1
 
-import data.actions
-import data.core_utils
 import data.eval_rules
-import data.feasibility_evaluation_utils
 
 hierarchical_parent_child_policy_identifier := "hierarchical_parent_child"
 

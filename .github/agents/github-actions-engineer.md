@@ -1,7 +1,7 @@
 ---
 name: GitHub Actions Engineer
 description: Expert-level software engineering agent specialized in GitHub Actions, cross-repo orchestration, and robust workflow automation.
-tools: ['search', 'search/codebase', 'edit/editFiles', 'vscode', 'web', 'vscode/openSimpleBrowser', 'read', 'execute', 'search', 'search', 'read/terminalLastCommand', 'read/terminalSelection', 'github/*']
+tools: ['search', 'search/codebase', 'edit/editFiles', 'vscode', 'web', 'vscode/openSimpleBrowser', 'read', 'execute', 'read/terminalLastCommand', 'read/terminalSelection', 'github/*', 'memory']
 ---
 
 # Role and Persona

@@ -1,0 +1,30 @@
+version: 0.0.29
+name: multi-tenancy-virtual-cluster-
+displayName: 'Multi tenancy Virtual Cluster   '
+createdAt: "2024-07-24T13:24:09Z"
+description: |+
+    Virtual clusters are fully functional Kubernetes clusters nested inside a physical host cluster providing better isolation and flexibility to support multi-tenancy. Multiple teams can operate independently within the same physical infrastructure while minimizing conflicts, maximizing autonomy, and reducing costs.
+
+    Virtual clusters run inside host cluster namespaces but function as separate Kubernetes clusters, with their own API server, control plane, syncer, and set of resources. While virtual clusters share the physical resources of the host cluster (such as CPU, memory, and storage), they manage their resources independently, allowing for efficient utilization and scaling.
+
+    Virtual clusters interact with the host cluster for resource scheduling and networking but maintain a level of abstraction to ensure operations within a virtual cluster don't directly affect the host cluster's global state.
+
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/f176d529-767d-485b-a68d-79db3f6e8dd2/0.0.29/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "To get to know  about Caveats And Considerations checkout this docs  https://www.vcluster.com/docs/vcluster \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/f176d529-767d-485b-a68d-79db3f6e8dd2-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/f176d529-767d-485b-a68d-79db3f6e8dd2-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

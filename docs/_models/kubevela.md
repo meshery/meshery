@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubevela
 subtitle: Collaborative and visual infrastructure as design for Kubevela
-image: /assets/img/integrations/kubevela/icons/color/kubevela-color.svg
-permalink: extensibility/integrations/kubevela
+image: /extensions/models/kubevela/icons/color/kubevela-color.svg
+aliases: /extensibility/integrations/kubevela
 docURL: https://docs.meshery.io/extensibility/integrations/kubevela
 description: 
 integrations-category: App Definition and Development
@@ -68,8 +67,5 @@ featureList: [
 ]
 howItWorks: "Integrates Kubevela applications"
 howItWorksDetails: "Streamlined application delivery and management in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

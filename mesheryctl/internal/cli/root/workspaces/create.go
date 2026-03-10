@@ -35,7 +35,7 @@ var createWorkspaceCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new workspace under an organization",
 	Long: `Create a new workspace by providing the name, description, and organization ID
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace/create`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/exp/workspace/create`,
 	Example: `
 // Create a new workspace in an organization
 mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
@@ -67,10 +67,8 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 
 		_, err = api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
-			if meshkitErr, ok := err.(*mErrors.Error); ok {
-				if meshkitErr.Code == utils.ErrFailReqStatusCode {
-					return returnFailedCreateWorkspaceError(workspacePayload.Name, workspacePayload.OrganizationID)
-				}
+			if mErrors.GetCode(err) == utils.ErrNotFoundCode {
+				return returnFailedCreateWorkspaceError(workspacePayload.Name, workspacePayload.OrganizationID)
 			}
 			return err
 		}

@@ -17,7 +17,7 @@ Manage models in the registery
 ## Synopsis
 
 Export, generate, import, list, search and view model(s) and detailed informations
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/model
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model [flags]
@@ -63,6 +63,14 @@ List available model(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list
+
+</div>
+</pre> 
+
+Delete avaialbe model(s)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model delete [model-id]
 
 </div>
 </pre> 
@@ -129,6 +137,7 @@ mesheryctl model build [model-name]/[model-version]
 ## See Also
 
 * [mesheryctl model build](/reference/mesheryctl/model/build)
+* [mesheryctl model delete](/reference/mesheryctl/model/delete)
 * [mesheryctl model export](/reference/mesheryctl/model/export)
 * [mesheryctl model generate](/reference/mesheryctl/model/generate)
 * [mesheryctl model import](/reference/mesheryctl/model/import)

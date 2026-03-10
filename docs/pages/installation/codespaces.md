@@ -15,7 +15,7 @@ abstract: Build and contribute to Meshery using GitHub Codespaces
 
 <h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
 
-Use Minikube in GitHub Codespace to setup your development environment for Meshery.
+Use Minikube in GitHub Codespaces to setup your development environment for Meshery.
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
   <ol>
@@ -44,19 +44,19 @@ Read through the following considerations prior to deploying Meshery on Minikube
 ### Preflight: Cluster Connectivity
 
 
-You can develop and run Meshery in a GitHub Codespace using your choice of tool:
+You can develop and run Meshery in GitHub Codespaces using your choice of tool:
 
 - A command shell, via an SSH connection initiated using GitHub CLI.
 - One of the JetBrains IDEs, via the JetBrains Gateway.
 - The Visual Studio Code desktop application.
 - A browser-based version of Visual Studio Code.
 
-{% include alert.html type="dark" title="Choice of Codespace Tool" content="For the best experience, run Codespace in your locally <a href='https://docs.github.com/en/codespaces/developing-in-codespaces/developing-in-a-codespace'>installed IDE</a>. Alternatively, you can <br /><a href='https://github.com/codespaces/new?hide_repo_select=true&ref=master&repo=157554479&machine=premiumLinux'><img alt='Open in GitHub Codespaces' src='https://github.com/codespaces/badge.svg' /></a>" %}
+{% include alert.html type="dark" title="Choice of Codespaces Tool" content="For the best experience, run Codespaces in your locally <a href='https://docs.github.com/en/codespaces/developing-in-codespaces/developing-in-a-codespace'>installed IDE</a>. Alternatively, you can <br /><a href='https://github.com/codespaces/new?hide_repo_select=true&ref=master&repo=157554479&machine=premiumLinux'><img alt='Open in GitHub Codespaces' src='https://github.com/codespaces/badge.svg' /></a>" %}
 
-Start the minikube, if not started using the following command:
+Start Minikube, if it is not already running, using the following command:
 {% capture code_content %}minikube start --cpus 4 --memory 4096{% endcapture %}
 {% include code.html code=code_content %}
-Please allocate cpus based on the machine you selected in the Github codespaces and to check up on your minikube cluster :
+Please allocate CPUs based on the machine you selected in GitHub Codespaces. To check the status of your Minikube cluster:
 {% capture code_content %}minikube status{% endcapture %}
 {% include code.html code=code_content %}
 Verify your kubeconfig's current context.
@@ -121,12 +121,12 @@ Meshery should now be connected with your managed Kubernetes instance. Take a lo
 
 # Post-Installation Steps
 
-Otionally, you can verify the health of your Meshery deployment, using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
 {% include_cached installation/accessing-meshery-ui.md %}
 
-For further information to access meshery-ui/port-forwarding in Github Codespace, read the [docs](https://docs.github.com/en/codespaces/developing-in-a-codespace/forwarding-ports-in-your-codespace?tool=vscode)
+For further information to access Meshery UI or port forwarding in GitHub Codespaces, read the [docs](https://docs.github.com/en/codespaces/developing-in-a-codespace/forwarding-ports-in-your-codespace?tool=vscode)
 
 {% include related-discussions.html tag="meshery" %}

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Telepresence
 subtitle: Collaborative and visual infrastructure as design for Telepresence
-image: /assets/img/integrations/telepresence/icons/color/telepresence-color.svg
-permalink: extensibility/integrations/telepresence
+image: /extensions/models/telepresence/icons/color/telepresence-color.svg
+aliases: /extensibility/integrations/telepresence
 docURL: https://docs.meshery.io/extensibility/integrations/telepresence
 description: 
 integrations-category: App Definition and Development
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

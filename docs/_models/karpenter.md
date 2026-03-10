@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Karpenter
 subtitle: Collaborative and visual infrastructure as design for Karpenter
-image: /assets/img/integrations/karpenter/icons/color/karpenter-color.svg
-permalink: extensibility/integrations/karpenter
+image: /extensions/models/karpenter/icons/color/karpenter-color.svg
+aliases: /extensibility/integrations/karpenter
 docURL: https://docs.meshery.io/extensibility/integrations/karpenter
 description: 
 integrations-category: Provisioning
@@ -30,8 +29,5 @@ howItWorks: "Using Meshery and Karpenter, once your Kubernetes cluster and the K
 howItWorksDetails: "Set up provisioners: By applying a provisioner to Karpenter, you can configure constraints on node provisioning and set timeout values for node expiry or Kubelet configuration values. 
 
 Deploy workloads: When deploying workloads, you can request that scheduling constraints be met to direct which nodes Karpenter provisions for those workloads. "
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

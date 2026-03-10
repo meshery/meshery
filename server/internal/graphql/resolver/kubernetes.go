@@ -200,7 +200,7 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 
 func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.K8sContextsPage, error) {
 	tokenString, ok := ctx.Value(models.TokenCtxKey).(string)
-	if !ok || tokenString == "" {
+	if (!ok || tokenString == "") && provider.GetProviderType() != models.LocalProviderType {
 		return nil, ErrInvalidRequest
 	}
 	search := ""

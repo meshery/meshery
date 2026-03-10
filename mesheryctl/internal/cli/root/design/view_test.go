@@ -18,37 +18,60 @@ func TestDesignView(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
 
-	// test scenrios for fetching data
+	// test scenarios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:             "Fetch Design View",
-			Args:             []string{"view", "design"},
+			Name:             "given name provided when design view then design is displayed",
+			Args:             []string{"view", "desgin"},
 			ExpectedResponse: "view.design.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
+					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=desgin",
 					Response:     "view.design.api.response.golden",
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
-			Name:             "View name or ID not specified",
+			Name:             "given id provided when design view then design is displayed",
+			Args:             []string{"view", "3817ec9a-1d83-4f6f-9154-0fd4408ba9f0"},
+			ExpectedResponse: "view.design.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
+					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern/3817ec9a-1d83-4f6f-9154-0fd4408ba9f0",
+					Response:     "view.design.by.id.api.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
+			Name:             "given no name or ID specified when design view then error is thrown",
 			Args:             []string{"view"},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
-			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    ErrDesignNameOrIDNotSpecified(),
 		},
 		{
-			Name:             "Design not found",
+			Name:             "given nonexistent design provided when design view then error is thrown",
 			Args:             []string{"view", "nonexistent-design"},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
@@ -65,10 +88,9 @@ func TestDesignView(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrDesignNotFound(),
+			ExpectedError:  ErrDesignNotFound("nonexistent-design"),
 		},
 	}
 

@@ -369,12 +369,12 @@ ui-provider-test:
 
 ## Buils all Meshery UIs  on your local machine.
 ui-build: ui-setup
-	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build && npm run export; cd ..
+	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build; cd ..
 	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
 ui-meshery-build:
-	cd ui; npm run build && npm run export; cd ..
+	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
 ui-provider-build:
@@ -487,11 +487,18 @@ test-e2e-ci:
 #-----------------------------------------------------------------------------
 # Rego Policies
 #-----------------------------------------------------------------------------
-.PHONY: rego-eval policy-test
+.PHONY: rego-eval policy-test policy-lint
 
 rego-eval:
 	opa eval -i policies/test/design_all_relationships.yaml -d relationships:policies/test/all_relationships.json -d server/meshmodel/meshery-core/0.7.2/v1.0.0/policies/ \
 	'data.relationship_evaluation_policy.evaluate' --format=pretty
+
+## Format and lint Rego policy files
+policy-lint:
+	@echo "Formatting Rego files..."
+	@opa fmt --write .
+	@echo "Linting Rego files..."
+	@regal lint --config-file ./policies/wasm/policies/.regal/config.yaml ./server/meshmodel
 
 ## Run Rego policy unit tests using OPA and Go test runner
 policy-test:

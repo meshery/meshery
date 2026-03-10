@@ -475,7 +475,6 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 		// if unable to fetch latest release tag, meshkit helm functions handle
 		// this automatically fetch the latest one
 		if err != nil {
-			// mch.log.Error(fmt.Errorf("Couldn't check release tag: %s. Will use latest version", err))
 			mesheryReleaseVersion = ""
 		} else {
 			mesheryReleaseVersion = latestRelease

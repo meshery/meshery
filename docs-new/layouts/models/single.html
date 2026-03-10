@@ -1,0 +1,142 @@
+{{ define "main" }}
+<article>
+    <p>{{ .Params.subtitle }}</p>
+    {{ .Content }}
+    <!-- components -->
+    <div>
+        <section class="Compheading">
+            {{ if and .Params.components (gt (len .Params.components) 0) }}
+            <h3>
+                Components ({{ len .Params.components }})
+            </h3>
+            <p>The Meshery model for {{ .Title }} supports the following components.</p>
+            {{ end }}
+        </section>
+
+        <section class="componentsSection">
+            {{ range .Params.components }}
+            {{ if .name }}
+            <div class="maincontainer">
+                <div class="componentimg">
+                    <img id="logo-dark-light"
+                        src="/{{ .colorIcon }}"
+                        alt="{{ .name }}"
+                        onerror="handleImageError(this)"
+                        data-logo-for-dark="/{{ .whiteIcon }}"
+                        data-logo-for-light="/{{ .colorIcon }}" />
+                </div>
+                <p class="Compitems">{{ .name }}</p>
+            </div>
+            {{ end }}
+            {{ end }}
+        </section>
+    </div>
+    <!-- components end -->
+
+    <!-- model custom data -->
+    {{ $modelKey := lower (replace .Title " " "-") }}
+    {{ with index site.Data.modelscustominfo $modelKey }}
+    <div>
+        {{ .content | safeHTML }}
+    </div>
+    {{ end }}
+
+    {{ partialCached "integration/models-components.html" . }}
+    {{ partialCached "integration/meshery-registry.html" . }}
+
+    <section>
+        <h3 id="related-designs-header">Designs containing {{ .Title }}</h3>
+        {{ $tech := path.Base (strings.TrimSuffix "/" .Params.docURL) }}
+        {{ $catalog := .Site.GetPage "section" "catalog" }}
+        {{ with $catalog }}
+        <ul>
+        {{ range .RegularPages }}
+            {{ if in .Params.compatibility $tech }}
+            <li class="design-link">
+                <a href="https://meshery.io/catalog/{{ path.Base .File.Dir }}/{{ replace .Params.name "." "-" | urlize }}-{{ .Params.patternId }}" target="_blank">
+                    {{ .Params.name }}
+                </a>
+            </li>
+            {{ end }}
+        {{ end }}
+    </ul>
+    {{ end }}
+    </section>
+
+    <!-- Related Tutorials -->
+    <section>
+        <h3 id="related-tutorials-header">
+            Related Tutorials for {{ .Title }}
+        </h3>
+
+        {{ $tutorialSection := site.GetPage "section" "guides/tutorials" }}
+        {{ if $tutorialSection }}
+            <ul>
+            {{ $pageTitleLower := lower .Title }}
+            {{ range $tutorialSection.RegularPages }}
+                {{ $tutorialPage := . }}
+                {{ with $tutorialPage.Params.model }}
+                    {{ $tutorialModelLower := lower . }}
+                    {{ if in $pageTitleLower $tutorialModelLower }}
+                        <li class="tutorial-link">
+                            <a href="{{ $tutorialPage.RelPermalink }}">
+                                {{ $tutorialPage.Title }}
+                            </a>
+                        </li>
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+            </ul>
+        {{ end }}
+    </section>
+
+    <!-- Suggested Reading -->
+    {{ if ne .Params.suggested_reading false }}
+
+        {{ $modelsSection := site.GetPage "section" "extensions/models" }}
+
+        {{ if $modelsSection }}
+
+            {{ $related_models := slice }}
+            {{ $currentCategory := index .Params "integrations-category" }}
+            {{ range $modelsSection.RegularPages }}
+                {{ if eq (index .Params "integrations-category") $currentCategory }}
+                    {{ $related_models = $related_models | append . }}
+                {{ end }}
+            {{ end }}
+
+            {{ partialCached "suggested-reading.html" (dict
+                "reading" $related_models
+                "h2_text" "Related Models"
+                "type" .FirstSection.Section
+                "category" (index .Params "integrations-category")
+                "url" .RelPermalink
+                "language" .Lang
+                "section_title" true
+                "display_suggested_reading" true
+            ) }}
+
+        {{ end }}
+
+    {{ end }}
+
+
+    
+</article>
+
+<script>
+    function handleImageError(image) {
+        image.onerror = null;
+        image.src = '{{ .Params.image }}';
+    }
+    const designLinks = document.querySelectorAll('.design-link');
+    if (designLinks.length === 0) {
+        document.getElementById('related-designs-header').style.display = 'none';
+    }
+
+    const relatedTutorials = document.querySelectorAll(".tutorial-link");
+    if (relatedTutorials.length === 0) {
+        document.getElementById("related-tutorials-header").style.display = "none";
+    }
+</script>
+{{ end }}

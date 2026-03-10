@@ -11,60 +11,63 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 var (
-	ErrFailRequestCode             = "mesheryctl-1090"
-	ErrInvalidTokenCode            = "mesheryctl-1091"
-	ErrFailReqStatusCode           = "mesheryctl-1092"
-	ErrAttachAuthTokenCode         = "mesheryctl-1093"
-	ErrUnmarshalCode               = "mesheryctl-1094"
-	ErrFileReadCode                = "mesheryctl-1095"
-	ErrCreatingRequestCode         = "mesheryctl-1096"
-	ErrMarshalCode                 = "mesheryctl-1097"
-	ErrReadResponseBodyCode        = "mesheryctl-1098"
-	ErrParsingUrlCode              = "mesheryctl-1099"
-	ErrNotFoundCode                = "mesheryctl-1100"
-	ErrUnauthenticatedCode         = "mesheryctl-1101"
-	ErrInvalidFileCode             = "mesheryctl-1102"
-	ErrInvalidNameOrIDCode         = "mesheryctl-1103"
-	ErrInvalidAPIResponseCode      = "mesheryctl-1104"
-	ErrReadConfigFileCode          = "mesheryctl-1105"
-	ErrMarshalIndentCode           = "mesheryctl-1106"
-	ErrLoadConfigCode              = "mesheryctl-1107"
-	ErrResponseStatusBodyCode      = "mesheryctl-1108"
-	ErrResponseStatusCode          = "mesheryctl-1109"
-	ErrJSONToYAMLCode              = "mesheryctl-1110"
-	ErrOutFormatFlagCode           = "mesheryctl-1111"
-	ErrParseGithubFileCode         = "mesheryctl-1112"
-	ErrReadTokenCode               = "mesheryctl-1113"
-	ErrRequestResponseCode         = "mesheryctl-1114"
-	ErrBadRequestCode              = "mesheryctl-1117"
-	ErrInvalidArgumentCode         = "mesheryctl-1118"
-	ErrGeneratingIconsCode         = "mesheryctl-1119"
-	ErrClearLineCode               = "mesheryctl-1120"
-	ErrGeneratesModelCode          = "mesheryctl-1132"
-	ErrUpdateComponentsCode        = "mesheryctl-1134"
-	ErrMissingCommandsCode         = "mesheryctl-1137"
-	ErrKubernetesConnectivityCode  = "mesheryctl-1138"
-	ErrKubernetesQueryCode         = "mesheryctl-1139"
-	ErrCreateManifestsFolderCode   = "mesheryctl-1141"
-	ErrDownloadFileCode            = "mesheryctl-1142"
-	ErrNoManifestFilesFoundCode    = "mesheryctl-1143"
-	ErrWalkManifestsCode           = "mesheryctl-1144"
-	ErrGetChannelVersionCode       = "mesheryctl-1145"
-	ErrInvalidModelCode            = "mesheryctl-1150"
-	ErrInvalidUUIDCode             = "mesheryctl-1152"
-	ErrFetchEnvironmentsCode       = "mesheryctl-1153"
-	ErrTableRenderCode             = "mesheryctl-1154"
-	ErrFlagsInvalidCode            = "mesheryctl-1155"
-	ErrMesheryServerNotRunningCode = "mesheryctl-1156"
-	ErrHandlePaginationCode        = "mesheryctl-1172"
-	ErrCreateFileCode              = "mesheryctl-1123"
-	ErrRetrieveHomeDirCode         = "mesheryctl-1124"
-	ErrReadFromBodyCode            = "mesheryctl-1125"
-	ErrMarkFlagRequireCode         = "mesheryctl-1126"
-	ErrGetKubernetesContextsCode   = "mesheryctl-1165"
-	ErrSetKubernetesContextCode    = "mesheryctl-1166"
-	ErrReadInputCode               = "mesheryctl-1193"
-	ErrUploadFileWithParamsCode    = "mesheryctl-1185"
+	ErrFailRequestCode                = "mesheryctl-1090"
+	ErrInvalidTokenCode               = "mesheryctl-1091"
+	ErrFailReqStatusCode              = "mesheryctl-1092"
+	ErrAttachAuthTokenCode            = "mesheryctl-1093"
+	ErrUnmarshalCode                  = "mesheryctl-1094"
+	ErrFileReadCode                   = "mesheryctl-1095"
+	ErrCreatingRequestCode            = "mesheryctl-1096"
+	ErrMarshalCode                    = "mesheryctl-1097"
+	ErrReadResponseBodyCode           = "mesheryctl-1098"
+	ErrParsingUrlCode                 = "mesheryctl-1099"
+	ErrNotFoundCode                   = "mesheryctl-1100"
+	ErrUnauthenticatedCode            = "mesheryctl-1101"
+	ErrInvalidFileCode                = "mesheryctl-1102"
+	ErrInvalidNameOrIDCode            = "mesheryctl-1103"
+	ErrInvalidAPIResponseCode         = "mesheryctl-1104"
+	ErrReadConfigFileCode             = "mesheryctl-1105"
+	ErrMarshalIndentCode              = "mesheryctl-1106"
+	ErrLoadConfigCode                 = "mesheryctl-1107"
+	ErrResponseStatusBodyCode         = "mesheryctl-1108"
+	ErrResponseStatusCode             = "mesheryctl-1109"
+	ErrJSONToYAMLCode                 = "mesheryctl-1110"
+	ErrOutFormatFlagCode              = "mesheryctl-1111"
+	ErrParseGithubFileCode            = "mesheryctl-1112"
+	ErrReadTokenCode                  = "mesheryctl-1113"
+	ErrRequestResponseCode            = "mesheryctl-1114"
+	ErrBadRequestCode                 = "mesheryctl-1117"
+	ErrInvalidArgumentCode            = "mesheryctl-1118"
+	ErrGeneratingIconsCode            = "mesheryctl-1119"
+	ErrClearLineCode                  = "mesheryctl-1120"
+	ErrGeneratesModelCode             = "mesheryctl-1132"
+	ErrUpdateComponentsCode           = "mesheryctl-1134"
+	ErrMissingCommandsCode            = "mesheryctl-1137"
+	ErrKubernetesConnectivityCode     = "mesheryctl-1138"
+	ErrKubernetesQueryCode            = "mesheryctl-1139"
+	ErrCreateManifestsFolderCode      = "mesheryctl-1141"
+	ErrDownloadFileCode               = "mesheryctl-1142"
+	ErrNoManifestFilesFoundCode       = "mesheryctl-1143"
+	ErrWalkManifestsCode              = "mesheryctl-1144"
+	ErrGetChannelVersionCode          = "mesheryctl-1145"
+	ErrInvalidModelCode               = "mesheryctl-1150"
+	ErrInvalidUUIDCode                = "mesheryctl-1152"
+	ErrFetchEnvironmentsCode          = "mesheryctl-1153"
+	ErrTableRenderCode                = "mesheryctl-1154"
+	ErrFlagsInvalidCode               = "mesheryctl-1155"
+	ErrMesheryServerNotRunningCode    = "mesheryctl-1156"
+	ErrHandlePaginationCode           = "mesheryctl-1172"
+	ErrCreateFileCode                 = "mesheryctl-1123"
+	ErrRetrieveHomeDirCode            = "mesheryctl-1124"
+	ErrReadFromBodyCode               = "mesheryctl-1125"
+	ErrMarkFlagRequireCode            = "mesheryctl-1126"
+	ErrGetKubernetesContextsCode      = "mesheryctl-1165"
+	ErrSetKubernetesContextCode       = "mesheryctl-1166"
+	ErrReadInputCode                  = "mesheryctl-1193"
+	ErrUploadFileWithParamsCode       = "mesheryctl-1185"
+	ErrCommandContextMissingCode      = "mesheryctl-1201"
+	ErrPromptCancelledCode            = "mesheryctl-1202"
+	ErrMesheryServerInternalErrorCode = "mesheryctl-1203"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -494,7 +497,7 @@ func ErrParsingUrl(err error) error {
 }
 
 func ErrNotFound(err error) error {
-	return errors.New(ErrNotFoundCode, errors.Fatal,
+	return errors.New(ErrNotFoundCode, errors.Alert,
 		[]string{"Item Not Found"},
 		[]string{err.Error()},
 		[]string{"The item you are searching for is not present."},
@@ -741,12 +744,12 @@ func ErrTableRender(err error) error {
 		[]string{"Ensure the data being rendered is valid and properly structured."})
 }
 
-func ErrFlagsInvalid(msg string) error {
+func ErrFlagsInvalid(err error) error {
 	return errors.New(ErrFlagsInvalidCode, errors.Alert,
-		[]string{"Invalid flag provided"},
-		[]string{msg},
-		[]string{"The flag provided is invalid."},
-		[]string{"Provide a valid flag"})
+		[]string{"Invalid flag(s) provided"},
+		[]string{err.Error()},
+		[]string{"The value for one or more flags provided is invalid."},
+		[]string{"Provide valid flag value and try again."})
 }
 
 func ErrMesheryServerNotRunning(platform string) error {
@@ -772,8 +775,8 @@ func ErrCreateFile(filepath string, err error) error {
 	return errors.New(ErrCreateFileCode, errors.Alert,
 		[]string{"Error creating file"},
 		[]string{fmt.Sprintf("Failed to create the file at path: %s", filepath), err.Error()},
-		[]string{"Insufficient disk page, filepath could be invalid."},
-		[]string{"Verify that the file path is valid, and ensure there is sufficient disk space available."})
+		[]string{"Insufficient disk space", " Filepath could be invalid", " Lack of permissions to create file at the specified path"},
+		[]string{"Verify that the file path is valid", " Ensure there is sufficient disk space available", " Check your permissions for the specified path"})
 }
 
 func ErrRetrieveHomeDir(err error) error {
@@ -838,5 +841,38 @@ func ErrUploadFileWithParams(err error, fileName string) error {
 		[]string{err.Error()},
 		[]string{"File upload failed due to network issues or server errors"},
 		[]string{"Check your network connection and ensure the server is reachable."},
+	)
+}
+
+func ErrCommandContextMissing(contextName string) error {
+	return errors.New(
+		ErrCommandContextMissingCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Missing context with value %s as not been set", contextName)},
+		[]string{"A required context for command is missing or not specified"},
+		[]string{"The command may require a specific context to be set in order to function properly"},
+		[]string{"Ensure that the necessary contextis defined in the root command file and try again"},
+	)
+}
+
+func ErrPromptCancelled() error {
+	return errors.New(
+		ErrPromptCancelledCode,
+		errors.Alert,
+		[]string{"Selection cancelled"},
+		[]string{"Selection prompt has been cancelled"},
+		[]string{"The selection prompt was interrupted"},
+		[]string{"Run the command again and complete the selection"},
+	)
+}
+
+func ErrMesheryServerInternalError(err error) error {
+	return errors.New(
+		ErrMesheryServerInternalErrorCode,
+		errors.Alert,
+		[]string{"Internal Server Error"},
+		[]string{err.Error()},
+		[]string{"An unexpected error occurred on the server side"},
+		[]string{"Check the server logs using 'mesheryctl system logs' for more details and try again later"},
 	)
 }

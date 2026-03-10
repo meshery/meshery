@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"slices"
 	"strconv"
 	"strings"
 
@@ -58,10 +57,7 @@ mesheryctl perf profile test --view
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check for valid output Format
 		if outputFormatFlag != "" {
-			outputFormatFlag = strings.ToLower(outputFormatFlag)
-			if !slices.Contains(validOutputFormats, outputFormatFlag) {
-				return utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, outputFormatFlag))
-			}
+			return display.ValidateOutputFormat(outputFormatFlag)
 		}
 		return nil
 	},
@@ -100,7 +96,7 @@ mesheryctl perf profile test --view
 		// print in json/yaml format
 		if outputFormatFlag != "" {
 			outputFormatterFactory := display.OutputFormatterFactory[[]models.PerformanceProfile]{}
-			outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, profiles)
+			outputFormatter, err := outputFormatterFactory.New(strings.ToLower(outputFormatFlag), profiles)
 			if err != nil {
 				return err
 			}

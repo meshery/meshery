@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Identity Manager
 subtitle: Collaborative and visual infrastructure as design for Identity Manager
-image: /assets/img/integrations/identity-manager/icons/color/identity-manager-color.svg
-permalink: extensibility/integrations/identity-manager
+image: /extensions/models/identity-manager/icons/color/identity-manager-color.svg
+aliases: /extensibility/integrations/identity-manager
 docURL: https://docs.meshery.io/extensibility/integrations/identity-manager
 description: 
 integrations-category: Provisioning
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Integrates with Identity Manager"
 howItWorksDetails: "Centralized identity and access management for Kubernetes clusters"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

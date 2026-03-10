@@ -17,7 +17,7 @@ Create a new workspace under an organization
 ## Synopsis
 
 Create a new workspace by providing the name, description, and organization ID
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace/create
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace create [flags]

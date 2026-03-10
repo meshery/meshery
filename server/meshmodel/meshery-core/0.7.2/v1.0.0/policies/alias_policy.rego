@@ -2,10 +2,6 @@ package eval
 
 import rego.v1
 
-import data.core_utils
-import data.feasibility_evaluation_utils
-
-import data.core_utils.component_alias
 import data.core_utils.component_declaration_by_id
 import data.core_utils.from_component_id
 import data.core_utils.get_array_aware_configuration_for_component_at_path
@@ -14,12 +10,9 @@ import data.core_utils.new_uuid
 import data.core_utils.object_get_nested
 import data.core_utils.pop_first
 import data.core_utils.to_component_id
-import data.core_utils.truncate_set
-import data.feasibility_evaluation_utils.is_relationship_feasible_from
 import data.feasibility_evaluation_utils.is_relationship_feasible_to
 
 import data.actions
-import data.eval_rules
 
 # Module: Alias Relationship Evaluator
 #
@@ -60,8 +53,6 @@ import data.eval_rules
 #    Deleted Relationships:
 #    - Remove alias component from design file
 #    - Clean up aliased configuration in parent component
-
-MAX_ALIASES := 20
 
 # It is unlikely, that Meshery has a use case for supporting relationship.type == "child" aliases in the future.
 is_alias_relationship(relationship) if {

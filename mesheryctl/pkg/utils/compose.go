@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -28,6 +29,8 @@ import (
 	cliflags "github.com/docker/cli/cli/flags"
 	"github.com/docker/compose/v2/pkg/api"
 	"github.com/docker/compose/v2/pkg/compose"
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/filters"
 )
 
 // ComposeClient is a wrapper around the docker compose library
@@ -251,8 +254,25 @@ func (c *ComposeClient) GetPsOutput(ctx context.Context, composefile string) (st
 		return "", err
 	}
 
+	// If this is true then meshery is not spun up using:
+	// `mesheryctl system start -p docker`. So check for meshery extension in
+	// docker desktop.
 	if len(containers) == 0 {
-		return "", nil
+		dockerClient := c.cli.Client()
+		listOptionFilters := map[string]string{
+			"name":  "meshery",
+			"label": "com.docker.compose.project",
+		}
+		containersSummary, err := dockerClient.ContainerList(context.Background(), container.ListOptions{All: true, Filters: setContainerListOptionsFilter(listOptionFilters)})
+		if err != nil {
+			return "", err
+		}
+		containers = convertToComposeSummaries(containersSummary)
+
+		// If this is true then meshery extension is not installed or running.
+		if len(containers) == 0 {
+			return "", nil
+		}
 	}
 
 	output := "NAME\tIMAGE\tCOMMAND\tSERVICE\tCREATED\tSTATUS\tPORTS\n"
@@ -288,4 +308,66 @@ func ContainsMesheryContainer(containers []api.ContainerSummary) bool {
 		}
 	}
 	return false
+}
+
+// convertToComposeSummaries takes []container.Sumamry type and returns
+// a []api.ContainerSummary.
+func convertToComposeSummaries(containersSummary []container.Summary) []api.ContainerSummary {
+	containerSummaries := make([]api.ContainerSummary, 0, len(containersSummary))
+
+	for _, containerSummary := range containersSummary {
+		ports := append([]container.Port(nil), containerSummary.Ports...)
+		sort.Slice(ports, func(i, j int) bool { return ports[i].PrivatePort < ports[j].PrivatePort })
+
+		publishers := make(api.PortPublishers, 0, len(ports))
+		for _, port := range ports {
+			publishers = append(publishers, api.PortPublisher{
+				URL:           port.IP,
+				TargetPort:    int(port.PrivatePort),
+				PublishedPort: int(port.PublicPort),
+				Protocol:      port.Type,
+			})
+		}
+
+		containerSummaries = append(containerSummaries, api.ContainerSummary{
+			Name:       canonicalContainerName(containerSummary),
+			Image:      containerSummary.Image,
+			Command:    containerSummary.Command,
+			Service:    containerSummary.Labels[api.ServiceLabel],
+			Created:    containerSummary.Created,
+			State:      string(containerSummary.State),
+			Publishers: publishers,
+		})
+	}
+
+	return containerSummaries
+}
+
+// canonicalContainerName resolves a human-readable identifier for a container.
+// It prioritizes a "canonical" name (a single-level name starting with a slash),
+// then falls back to the first available name with the prefix trimmed.
+// If no names are present, it returns a 12-character short ID or the full ID
+// if the ID is shorter than 12 characters.
+func canonicalContainerName(containerSummary container.Summary) string {
+	if len(containerSummary.Names) == 0 {
+		if len(containerSummary.ID) > 12 {
+			return containerSummary.ID[:12]
+		}
+		return containerSummary.ID
+	}
+	for _, name := range containerSummary.Names {
+		if strings.LastIndex(name, "/") == 0 {
+			return name[1:]
+		}
+	}
+	return strings.TrimPrefix(containerSummary.Names[0], "/")
+}
+
+// setContainerListOptionsFilter sets filters used in container.ListOptions{}
+func setContainerListOptionsFilter(filterMap map[string]string) filters.Args {
+	filterArgs := filters.NewArgs()
+	for key, value := range filterMap {
+		filterArgs.Add(key, value)
+	}
+	return filterArgs
 }

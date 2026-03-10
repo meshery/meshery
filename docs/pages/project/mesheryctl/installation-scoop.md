@@ -1,5 +1,3 @@
-
-
 ## Prerequisites
 
 You need to have `scoop` installed on your Windows system to perform these actions.
@@ -13,7 +11,7 @@ To install `mesheryctl` using Scoop, execute the following commands.
 scoop install mesheryctl</div></div>
 </pre>
 
-You're ready to run Meshery. To do so, execute the following command.
+You're ready to run Meshery. To do so, execute the following command:
 
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">mesheryctl system start</div></div>
