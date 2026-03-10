@@ -1,0 +1,1 @@
+Hi, this is Abby, a second year CS and Philosophy student at Oxford. My prior experiences are mostly with building ML pipelines and I have recently finished a module in concurrent programming. I am new to open source and am excited to learn and contribute!

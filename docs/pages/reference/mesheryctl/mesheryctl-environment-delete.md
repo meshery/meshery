@@ -17,7 +17,7 @@ Delete an environment
 ## Synopsis
 
 Delete an environment by providing the environment ID
-Documentation for environment can be found at Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/delete
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment delete [flags]

@@ -4,7 +4,7 @@
 
 #### Accessing Meshery UI
 
-After successfully deploying Meshery, you can access Meshery's web-based user interface. Your default browser will be automatically opened and directed to Meshery UI (default location is [http://localhost:9081](http://localhost:9081)).
+After successfully deploying Meshery, you can access Meshery's web-based user interface. Your default browser will automatically open and navigate to Meshery UI (default location is [http://localhost:9081](http://localhost:9081)).
 
 You can use the following command to open Meshery UI in your default browser:
 
@@ -16,7 +16,7 @@ If you have installed Meshery on Kubernetes or a remote host, you can access Mes
 {% capture code_content %}$ mesheryctl system dashboard --port-forward {% endcapture %}
 {% include code.html code=code_content %}
 
-Depending upon how you have networking configured in Kubernetes, alternatively, you can use kubectl to port forward to Meshery UI.
+Depending on how you have networking configured in Kubernetes, you can use kubectl to port forward to the Meshery UI.
 
 {% capture code_content %}$ kubectl port-forward svc/meshery 9081:9081 --namespace meshery{% endcapture %}
 {% include code.html code=code_content %}
@@ -42,7 +42,7 @@ After installing Meshery, regardless of the installation type, it is important t
 </p>
 
 <p>
-  <b>Note</b>: For production deployments, it is important to preselect the choice of <code>Remote Provider</code> in order to control which identity providers authorized. Learn more about this in the <a href="/extensibility/providers">Extensibility: Providers</a> guide.
+  <b>Note</b>: For production deployments, it is important to select the <code>Remote Provider</code> in order to control which identity providers are authorized. Learn more about this in the <a href="/extensibility/providers">Extensibility: Providers</a> guide.
 </p>
 
 <p>

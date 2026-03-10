@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Skooner
 subtitle: Collaborative and visual infrastructure as design for Skooner
-image: /assets/img/integrations/skooner/icons/color/skooner-color.svg
-permalink: extensibility/integrations/skooner
+image: /extensions/models/skooner/icons/color/skooner-color.svg
+aliases: /extensibility/integrations/skooner
 docURL: https://docs.meshery.io/extensibility/integrations/skooner
 description: 
 integrations-category: Observability and Analysis
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

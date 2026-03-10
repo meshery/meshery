@@ -1,0 +1,25 @@
+version: 0.0.1
+name: gitlab-runner-deployment
+displayName: gitlab runner deployment
+createdAt: "2024-04-02T20:19:08Z"
+description: |
+    This configuration ensures that a single instance of the GitLab Runner is deployed within the gitlab-runner namespace. The GitLab Runner is configured with a specific ServiceAccount, CPU resource requests and limits, and is provided with a ConfigMap containing the configuration file config.toml. The deployment is designed to continuously restart the pod (restartPolicy: Always) to ensure the GitLab Runner remains available for executing jobs.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/129c524b-ead9-4170-b236-a1c9dd274ece/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Resource Allocation: Ensure that the CPU resource requests and limits specified in the configuration are appropriate for the workload of the GitLab Runner. Monitor resource usage and adjust these values as necessary to prevent resource contention and ensure optimal performance.\n\n2. Image Pull Policy: The configuration specifies imagePullPolicy: Always, which causes Kubernetes to pull the Docker image (gitlab/gitlab-runner:latest) every time the pod is started. While this ensures that the latest image is always used, it may increase deployment time and consume additional network bandwidth. Consider whether this policy aligns with your deployment requirements and constraints.\n\n3. Security: Review the permissions granted to the gitlab-admin ServiceAccount to ensure that it has appropriate access rights within the Kubernetes cluster. Limit the permissions to the minimum required for the GitLab Runner to perform its tasks to reduce the risk of unauthorized access or privilege escalation.\n\n4. ConfigMap Management: Ensure that the gitlab-runner-config ConfigMap referenced in the configuration contains the correct configuration settings for the GitLab Runner. Monitor and manage changes to the ConfigMap to ensure that the GitLab Runner's configuration remains up-to-date and consistent across deployments. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/129c524b-ead9-4170-b236-a1c9dd274ece-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/129c524b-ead9-4170-b236-a1c9dd274ece-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Fluentbit Operator
 subtitle: Collaborative and visual infrastructure as design for Fluentbit Operator
-image: /assets/img/integrations/fluentbit-operator/icons/color/fluentbit-operator-color.svg
-permalink: extensibility/integrations/fluentbit-operator
+image: /extensions/models/fluentbit-operator/icons/color/fluentbit-operator-color.svg
+aliases: /extensibility/integrations/fluentbit-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluentbit-operator
 description: 
 integrations-category: Observability and Analysis
@@ -51,8 +50,5 @@ Fluent Bit only mode: If you just need to collect logs and send logs to the fina
 Fluent Bit + Fluentd mode: If you also need to perform some advanced processing on the logs collected or send to more sinks, then you also need Fluentd.
 Fluentd only mode: If you need to receive logs through networks like HTTP or Syslog and then process and send the log to the final sinks, you only need Fluentd.
 Fluent Operator includes CRDs and controllers for both Fluent Bit and Fluentd which allows you to config your log processing pipelines in the 3 modes mentioned above as you wish."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

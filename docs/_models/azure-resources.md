@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Resources
 subtitle: Collaborative and visual infrastructure as design for Azure Resources
-image: /assets/img/integrations/azure-resources/icons/color/azure-resources-color.svg
-permalink: extensibility/integrations/azure-resources
+image: /extensions/models/azure-resources/icons/color/azure-resources-color.svg
+aliases: /extensibility/integrations/azure-resources
 docURL: https://docs.meshery.io/extensibility/integrations/azure-resources
 description: 
 integrations-category: Provisioning
@@ -27,8 +26,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

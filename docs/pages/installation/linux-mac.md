@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Install Meshery CLI on Linux or Mac
+title: Install Meshery CLI on Linux or macOS
 permalink: installation/linux-mac
 type: installation
 category: mesheryctl
@@ -9,13 +9,13 @@ redirect_from:
 display-title: "false"
 language: en
 list: include
-image: /assets/img/platforms/linux_mac.png 
-abstract: Install Meshery CLI on Linux or Mac
+image: /assets/img/platforms/linux_mac.png
+abstract: Install Meshery CLI on Linux or macOS
 ---
 
 # Overview
 
-To set up and run Meshery on Linux or macOS, you will need to install `mesheryctl`. `mesheryctl` is the command line interface (CLI) for Meshery. It is used to install, manage, and operate one or more Meshery deployments. `mesheryctl` can be installed via `bash` is also available [directly](https://github.com/meshery/meshery/releases/latest) or through [Homebrew]({{site.baseurl}}/installation/linux-mac/brew) or [Scoop]({{site.baseurl}}/installation/windows/scoop).
+To set up and run Meshery on Linux or macOS, you will need to install `mesheryctl`. `mesheryctl` is the command-line interface (CLI) for Meshery. It is used to install, manage, and operate one or more Meshery deployments. `mesheryctl` can be installed via `bash`, is also available [directly](https://github.com/meshery/meshery/releases/latest), or through [Homebrew]({{site.baseurl}}/installation/linux-mac/brew) or [Scoop]({{site.baseurl}}/installation/windows/scoop).
 
 # Brew
 

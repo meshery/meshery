@@ -1,0 +1,28 @@
+version: 0.0.1
+name: azure-monitor-containers
+displayName: Azure-monitor-containers
+createdAt: "2024-06-03T13:33:21Z"
+description: |-
+    Azure Monitor managed service for Prometheus and Container insights work together for complete monitoring of your Kubernetes environment. This article describes both features and the data they collect.
+
+    Azure Monitor managed service for Prometheus is a fully managed service based on the Prometheus project from the Cloud Native Computing Foundation. It allows you to collect and analyze metrics from your Kubernetes cluster at scale and analyze them using prebuilt dashboards in Grafana.
+    Container insights is a feature of Azure Monitor that collects and analyzes container logs from Azure Kubernetes clusters or Azure Arc-enabled Kubernetes clusters and their components. You can analyze the collected data for the different components in your cluster with a collection of views and prebuilt workbooks.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/88794a57-f0f7-4ff6-9192-54ab7241ded8/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Container insights collects metric data from your cluster in addition to logs. This functionality has been replaced by Azure Monitor managed service for Prometheus. You can analyze that data using built-in dashboards in Managed Grafana and alert on them using prebuilt Prometheus alert rules.\n\nYou can continue to have Container insights collect metric data so you can use the Container insights monitoring experience. Or you can save cost by disabling this collection and using Grafana for metric analysis. See Configure data collection in Container insights using data collection rule for configuration options.\n\nFor more information checkout this doc\n https://learn.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-overview \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/88794a57-f0f7-4ff6-9192-54ab7241ded8-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/88794a57-f0f7-4ff6-9192-54ab7241ded8-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

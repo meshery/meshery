@@ -1,7 +1,6 @@
 package root
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -9,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -75,9 +73,7 @@ func TestRootCmdIntegration(t *testing.T) {
 			resetFlags()
 			viper.Reset()
 
-			b := bytes.NewBufferString("")
-			logrus.SetOutput(b)
-			utils.SetupLogrusFormatter()
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 			RootCmd.SetOut(b)
 			RootCmd.SetArgs(tt.Args)
 

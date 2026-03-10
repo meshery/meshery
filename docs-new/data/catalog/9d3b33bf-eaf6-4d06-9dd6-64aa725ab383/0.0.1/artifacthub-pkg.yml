@@ -1,0 +1,27 @@
+version: 0.0.1
+name: serve-an-llm-with-multiple-gpus-in-gke-
+displayName: 'Serve an LLM with multiple GPUs in GKE '
+createdAt: "2024-03-07T05:49:58Z"
+description: |-
+    Serve a large language model (LLM) with GPUs in Google Kubernetes Engine (GKE) mode. Create a GKE Standard cluster that uses multiple L4 GPUs and prepares the GKE infrastructure to serve any of the following models:
+    1. Falcon 40b.
+    2. Llama 2 70b
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/9d3b33bf-eaf6-4d06-9dd6-64aa725ab383/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Depending on the data format of the model, the number of GPUs varies. In this design, each model uses two L4 GPUs. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 62b081a5-1273-4c58-807f-b6be539275d0
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/9d3b33bf-eaf6-4d06-9dd6-64aa725ab383-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/9d3b33bf-eaf6-4d06-9dd6-64aa725ab383-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,0 +1,61 @@
+---
+title: AWS EventBridge
+subtitle: Collaborative and visual infrastructure as design for AWS EventBridge
+image: /extensions/models/aws-eventbridge-controller/icons/color/aws-eventbridge-controller-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/aws-eventbridge-controller
+description: 
+integrations-category: App Definition and Development
+integrations-subcategory: Streaming & Messaging
+registrant: GitHub
+components: 
+- name: archive
+  colorIcon: /extensions/models/aws-eventbridge-controller/components/archive/icons/color/archive-color.svg
+  whiteIcon: /extensions/models/aws-eventbridge-controller/components/archive/icons/white/archive-white.svg
+  description: 
+- name: endpoint
+  colorIcon: /extensions/models/aws-eventbridge-controller/components/endpoint/icons/color/endpoint-color.svg
+  whiteIcon: /extensions/models/aws-eventbridge-controller/components/endpoint/icons/white/endpoint-white.svg
+  description: 
+- name: event-bus
+  colorIcon: /extensions/models/aws-eventbridge-controller/components/event-bus/icons/color/event-bus-color.svg
+  whiteIcon: /extensions/models/aws-eventbridge-controller/components/event-bus/icons/white/event-bus-white.svg
+  description: 
+- name: field-export
+  colorIcon: /extensions/models/aws-eventbridge-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: /extensions/models/aws-eventbridge-controller/components/field-export/icons/white/field-export-white.svg
+  description: 
+- name: rule
+  colorIcon: /extensions/models/aws-eventbridge-controller/components/rule/icons/color/rule-color.svg
+  whiteIcon: /extensions/models/aws-eventbridge-controller/components/rule/icons/white/rule-white.svg
+  description: 
+- name: adopted-resource
+  colorIcon: /extensions/models/aws-eventbridge-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: /extensions/models/aws-eventbridge-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: /extensions/models/aws-eventbridge-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: /extensions/models/aws-eventbridge-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 7
+relationships: 
+- type: "binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 3
+featureList: [
+  "Amazon EventBridge Event Bus is a serverless event bus that helps you receive, filter, transform, route, and deliver events.",
+  "Amazon EventBridge Pipes is a serverless point-to-point integration resource that helps you connect event producers to event consumers with optional filtering, enrichment, and transformation capabilities.",
+  "Use Amazon EventBridge Scheduler to schedule tasks and events at scale."
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-eventbridge-controller
+---

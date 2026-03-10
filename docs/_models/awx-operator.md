@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWX Operator
 subtitle: Collaborative and visual infrastructure as design for AWX Operator
-image: /assets/img/integrations/awx-operator/icons/color/awx-operator-color.svg
-permalink: extensibility/integrations/awx-operator
+image: /extensions/models/awx-operator/icons/color/awx-operator-color.svg
+aliases: /extensibility/integrations/awx-operator
 docURL: https://docs.meshery.io/extensibility/integrations/awx-operator
 description: 
 integrations-category: Orchestration & Management
@@ -36,8 +35,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

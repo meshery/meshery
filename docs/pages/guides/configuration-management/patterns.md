@@ -84,4 +84,4 @@ Deployed. Endpoint(s) available at: http://localhost:8000/catalog
 
 ## Related Reading
 
-- [`mesheryctl design`]({{ site.baseurl }}/reference/mesheryctl/pattern)
+- [`mesheryctl design`]({{ site.baseurl }}/reference/mesheryctl/design)

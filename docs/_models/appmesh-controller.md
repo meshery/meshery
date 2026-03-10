@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS App Mesh
 subtitle: Collaborative and visual infrastructure as design for AWS App Mesh
-image: /assets/img/integrations/appmesh-controller/icons/color/appmesh-controller-color.svg
-permalink: extensibility/integrations/appmesh-controller
+image: /extensions/models/appmesh-controller/icons/color/appmesh-controller-color.svg
+aliases: /extensibility/integrations/appmesh-controller
 docURL: https://docs.meshery.io/extensibility/integrations/appmesh-controller
 description: 
 integrations-category: Cloud Native Network
@@ -48,8 +47,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

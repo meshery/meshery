@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Tenant Operator
 subtitle: Collaborative and visual infrastructure as design for Tenant Operator
-image: /assets/img/integrations/tenant-operator/icons/color/tenant-operator-color.svg
-permalink: extensibility/integrations/tenant-operator
+image: /extensions/models/tenant-operator/icons/color/tenant-operator-color.svg
+aliases: /extensibility/integrations/tenant-operator
 docURL: https://docs.meshery.io/extensibility/integrations/tenant-operator
 description: 
 integrations-category: Provisioning
@@ -48,8 +47,5 @@ featureList: [
 ]
 howItWorks: "Integrates with Tenant Operator"
 howItWorksDetails: "Improved isolation and management of tenants within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

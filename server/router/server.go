@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
-    "go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 )
 
 // Router represents Meshery router
@@ -204,6 +204,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/meshmodels/categories", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelCategories), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/models", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModels), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/models/{model}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModelsByName), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/models/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteModel), models.ProviderAuth))).Methods("DELETE")
 
 	gMux.Handle("/api/meshmodels/registrants", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelRegistrants), models.NoAuth))).Methods("GET")
 

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS SageMaker
 subtitle: Collaborative and visual infrastructure as design for AWS SageMaker
-image: /assets/img/integrations/aws-sagemaker-controller/icons/color/aws-sagemaker-controller-color.svg
-permalink: extensibility/integrations/aws-sagemaker-controller
+image: /extensions/models/aws-sagemaker-controller/icons/color/aws-sagemaker-controller-color.svg
+aliases: /extensibility/integrations/aws-sagemaker-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sagemaker-controller
 description: 
 integrations-category: Machine Learning
@@ -184,8 +183,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

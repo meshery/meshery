@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Orkestra
 subtitle: Collaborative and visual infrastructure as design for Azure Orkestra
-image: /assets/img/integrations/azureorkestra/icons/color/azureorkestra-color.svg
-permalink: extensibility/integrations/azureorkestra
+image: /extensions/models/azureorkestra/icons/color/azureorkestra-color.svg
+aliases: /extensibility/integrations/azureorkestra
 docURL: https://docs.meshery.io/extensibility/integrations/azureorkestra
 description: 
 integrations-category: Provisioning
@@ -96,8 +95,5 @@ featureList: [
 ]
 howItWorks: "Integrates with Azure Orkestra"
 howItWorksDetails: "Streamlined hybrid and multi-cloud orchestration within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

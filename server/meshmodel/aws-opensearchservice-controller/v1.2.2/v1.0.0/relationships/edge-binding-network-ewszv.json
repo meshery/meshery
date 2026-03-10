@@ -1,0 +1,100 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "version": "",
+    "name": "aws-opensearchservice-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.2.2"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Domain",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-opensearchservice-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vpcOptions",
+                  "subnetIds"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Subnet",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-ec2-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}

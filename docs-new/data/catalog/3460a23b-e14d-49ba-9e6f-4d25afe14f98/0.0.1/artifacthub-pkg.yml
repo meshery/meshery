@@ -1,0 +1,20 @@
+version: 0.0.1
+name: postgres-deployment
+displayName: Postgres Deployment
+createdAt: "2023-02-01T19:01:53Z"
+description: The combination of PostgreSQL and Kubernetes provides a scalable and highly available (HA) database solution that’s well suited for modern application development and deployment practices. While creating a HA solution is out of the scope of this article, you’ll learn how to set up a simple container with PostgreSQL, which offers a number of benefits.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3460a23b-e14d-49ba-9e6f-4d25afe14f98/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "It’s important to remember that this need to be configured to store data in node-local memory. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 173202fe-b94d-4064-8a86-1cf063732884
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

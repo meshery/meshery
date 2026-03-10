@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Kubernetes Service
 subtitle: Collaborative and visual infrastructure as design for Azure Kubernetes Service
-image: /assets/img/integrations/azure-kubernetes-service/icons/color/azure-kubernetes-service-color.svg
-permalink: extensibility/integrations/azure-kubernetes-service
+image: /extensions/models/azure-kubernetes-service/icons/color/azure-kubernetes-service-color.svg
+aliases: /extensibility/integrations/azure-kubernetes-service
 docURL: https://docs.meshery.io/extensibility/integrations/Azure Kubernetes Service
 description: 
 integrations-category: Orchestration & Management
@@ -36,8 +35,5 @@ featureList: [
 ]
 howItWorks: "Manages AKS clusters"
 howItWorksDetails: "Easy and scalable Kubernetes management on Azure"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS DocumentDB
 subtitle: Collaborative and visual infrastructure as design for AWS DocumentDB
-image: /assets/img/integrations/aws-documentdb-controller/icons/color/aws-documentdb-controller-color.svg
-permalink: extensibility/integrations/aws-documentdb-controller
+image: /extensions/models/aws-documentdb-controller/icons/color/aws-documentdb-controller-color.svg
+aliases: /extensibility/integrations/aws-documentdb-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-documentdb-controller
 description: 
 integrations-category: App Definition and Development
@@ -71,8 +70,5 @@ featureList: [
 ]
 howItWorks: "Integrates DocumentDB"
 howItWorksDetails: "Simplified NoSQL database management on AWS"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

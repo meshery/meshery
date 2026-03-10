@@ -36,6 +36,7 @@ import (
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	schemasOrganization "github.com/meshery/schemas/models/v1beta1/organization"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -125,11 +126,11 @@ func main() {
 
 	// initialize tracing
 	otelConfigString := viper.GetString("OTEL_CONFIG")
-log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
+	log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
 	tracingProvider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
 
 	if err != nil {
-		log.Error(fmt.Errorf("Failed to initialize OpenTelemetry tracing: %v", err))
+		log.Error(fmt.Errorf("failed to initialize OpenTelemetry tracing: %v", err))
 	} else {
 		log.Info("OpenTelemetry tracing initialized with config:" + otelConfigString)
 	}
@@ -137,7 +138,7 @@ log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
 	defer func() {
 		if tracingProvider != nil {
 			if err := tracingProvider.Shutdown(context.Background()); err != nil {
-				log.Error(fmt.Errorf("Failed to shutdown OpenTelemetry tracer provider: %v", err))
+				log.Error(fmt.Errorf("failed to shutdown OpenTelemetry tracer provider: %v", err))
 			}
 		}
 	}()
@@ -234,7 +235,7 @@ log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
 		models.K8sContext{},
-		models.Organization{},
+		schemasOrganization.Organization{},
 		models.Key{},
 		connections.Connection{},
 		environment.Environment{},
