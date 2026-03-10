@@ -1,1 +1,0 @@
-Hey, I am Jagpreet Singh, am from India sub-continent. I am a full stack developer and a open source contributor at JSON Schema. And recently, I was selected in GSoC program 2025 under the same organination.
