@@ -121,7 +121,7 @@ function NavigatorExtension({ url }) {
           mesheryEventBus: mesheryEventBus,
           ThemeTogglerCore,
           RJSForm: RJSFForm,
-          RJSFForm,
+          RJSFForm: RJSFForm,
           hooks: {
             CAN: CAN,
             useFilterK8sContexts,
