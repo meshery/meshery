@@ -13,8 +13,8 @@ import (
 func expectedSearchMissingFlagsError() error {
 	return utils.ErrFlagsInvalid(fmt.Errorf(
 		"at least one of [--kind, --subtype, --type, --model] is required\n\n" +
-			"Usage: mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]\n" +
-			"Run 'mesheryctl relationship search --help'",
+			"Usage: mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]\n" +
+			"Run 'mesheryctl exp relationship search --help'",
 	))
 }
 

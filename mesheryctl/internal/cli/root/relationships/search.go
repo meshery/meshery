@@ -61,8 +61,8 @@ mesheryctl relationship search [--kind <kind>] [--page <int>]`,
 			searchRelationshipFlagsProvided.Model == "" {
 			return utils.ErrFlagsInvalid(fmt.Errorf(
 				"at least one of [--kind, --subtype, --type, --model] is required\n\n" +
-					"Usage: mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]\n" +
-					"Run 'mesheryctl relationship search --help'",
+					"Usage: mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]\n" +
+					"Run 'mesheryctl exp relationship search --help'",
 			))
 		}
 
@@ -71,7 +71,7 @@ mesheryctl relationship search [--kind <kind>] [--page <int>]`,
 
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			errMsg := "Usage: mesheryctl relationship search\nRun 'mesheryctl relationship search --help' to see detailed help message"
+			errMsg := "Usage: mesheryctl exp relationship search\nRun 'mesheryctl exp relationship search --help' to see detailed help message"
 			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errMsg))
 		}
 		return nil
