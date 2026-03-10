@@ -22,20 +22,20 @@
         "suggested_remediation": "Ensure you pass a valid source type"
       },
       "1003": {
-        "name": "ErrOnboardDesignCode",
+        "name": "ErrDeployDesignCode",
         "code": "1003",
         "severity": "Alert",
-        "long_description": "Unable to onboard design due to empty path",
-        "short_description": "Error Onboarding design",
-        "probable_cause": "File path or design name not provided.",
-        "suggested_remediation": "Provide a file path/design name. \\n\\n%v"
+        "long_description": "Unable to deploy design due to error during the processing",
+        "short_description": "Deploying design failed",
+        "probable_cause": "File path or design name not provided. \nMeshery server failed to interact with the Kubernetes cluster. \nThere was an error connecting to the selected target platform (i.e. Kubernetes cluster(s))..This connection might not be assigned to the selected environment.",
+        "suggested_remediation": "Provide a valid file path/design name. \nEnsure the Meshery server can interact with the Kubernetes cluster. \nCheck if the selected target platform is assigned to the current environment.\\n"
       },
       "1005": {
-        "name": "ErrOffboardDesignCode",
+        "name": "ErrUndeployDesignCode",
         "code": "1005",
         "severity": "Alert",
-        "long_description": "Unable to offboard design due to empty path",
-        "short_description": "Error Offboarding design",
+        "long_description": "Unable to undeploy design due to empty path",
+        "short_description": "Undeploying design failed",
         "probable_cause": "File path or design name not provided.",
         "suggested_remediation": "Provide a file path/design name. \\n\\n%v"
       },
@@ -1667,6 +1667,24 @@
         "short_description": "Selection cancelled",
         "probable_cause": "The selection prompt was interrupted",
         "suggested_remediation": "Run the command again and complete the selection"
+      },
+      "1203": {
+        "name": "ErrMesheryServerInternalErrorCode",
+        "code": "1203",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Internal Server Error",
+        "probable_cause": "An unexpected error occurred on the server side",
+        "suggested_remediation": "Check the server logs using 'mesheryctl system logs' for more details and try again later"
+      },
+      "1204": {
+        "name": "ErrEmptySheetDataCode",
+        "code": "1204",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid or empty spreadsheet provided",
+        "probable_cause": "The spreadsheet must contain valid relationship entries with the required headers.",
+        "suggested_remediation": "Ensure the spreadsheet contains at least two headers and corresponding values for it's headers. Refer to the Meshery relationship csv for the expected spreadsheet format \\\"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\\"
       }
     }
   }

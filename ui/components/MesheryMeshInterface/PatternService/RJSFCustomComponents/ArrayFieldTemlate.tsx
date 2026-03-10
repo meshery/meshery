@@ -10,41 +10,40 @@ import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import pluralize from 'pluralize';
+import { safeDisplayValue, safeStringTitle } from '../helper';
 
 function getTitleForItem(props) {
   const title = getTitle(props);
-
-  return pluralize.singular(title);
+  return pluralize.singular(typeof title === 'string' ? title : String(title ?? ''));
 }
 
 function getTitle(props) {
-  if (!props) {
-    return 'Unknown';
-  }
-  return props.uiSchema['ui:title'] || props.title;
+  if (!props) return 'Unknown';
+  return safeStringTitle(props.uiSchema['ui:title'] ?? props.title) || 'Unknown';
 }
 
 const ArrayFieldTemplate = (props) => {
   const { schema, registry = getDefaultFormState(), classes } = props;
+  const safeId = props.idSchema?.$id ?? 'array-field';
+  const safeProps = { ...props, idSchema: props.idSchema ?? { $id: safeId } };
   // TODO: update types so we don't have to cast registry as any
   if (isMultiSelect(schema, registry.rootSchema)) {
-    return <DefaultFixedArrayFieldTemplate {...props} />;
+    return <DefaultFixedArrayFieldTemplate {...safeProps} />;
   } else {
-    return <DefaultNormalArrayFieldTemplate {...props} />;
+    return <DefaultNormalArrayFieldTemplate {...safeProps} />;
   }
 };
 
 const ArrayFieldTitle = ({ title, classes }) => {
-  if (!title) {
-    return null;
-  }
+  const safeTitle = safeStringTitle(title);
+  if (!safeTitle) return null;
 
   return (
     <Typography
       variant="body1"
       style={{ fontWeight: 'bold', display: 'inline', fontSize: '0.8rem' }}
     >
-      {title.charAt(0).toUpperCase() + title.slice(1)}
+      {safeTitle.charAt(0).toUpperCase() + safeTitle.slice(1)}
     </Typography>
   );
 };
@@ -102,12 +101,14 @@ const DefaultArrayItem = (props) => {
 
 const DefaultFixedArrayFieldTemplate = (props) => {
   const { classes } = props;
+  const safeId = props.idSchema?.$id ?? 'array-field';
+
   return (
     <fieldset className={props.className}>
       {props.canAdd && (
         <Button
           className="array-item-add"
-          onClick={props.onAddClick}
+          onClick={typeof props.onAddClick === 'function' ? props.onAddClick : undefined}
           disabled={props.disabled || props.readonly}
         >
           Add
@@ -115,7 +116,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
       )}
 
       <ArrayFieldTitle
-        key={`array-field-title-${props.idSchema.$id}`}
+        key={`array-field-title-${safeId}`}
         TitleField={props.TitleField}
         idSchema={props.idSchema}
         title={getTitle(props)}
@@ -123,13 +124,13 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         classes={classes}
       />
 
-      {(props.uiSchema['ui:description'] || props.schema.description) && (
-        <div className="field-description" key={`field-description-${props.idSchema.$id}`}>
-          {props.uiSchema['ui:description'] || props.schema.description}
+      {(props.uiSchema['ui:description'] ?? props.schema?.description) != null && (
+        <div className="field-description" key={`field-description-${safeId}`}>
+          {safeDisplayValue(props.uiSchema['ui:description'] ?? props.schema?.description)}
         </div>
       )}
 
-      <div className="row array-item-list" key={`array-item-list-${props.idSchema.$id}`}>
+      <div className="row array-item-list" key={`array-item-list-${safeId}`}>
         {props.items &&
           props.items.map((item, idx) => {
             return (
@@ -148,6 +149,8 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 const DefaultNormalArrayFieldTemplate = (props) => {
   const theme = useTheme();
   const { classes } = props;
+  const safeId = props.idSchema?.$id ?? 'array-field';
+
   return (
     <Paper elevation={0}>
       <Box p={1}>
@@ -159,7 +162,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
         >
           <Grid2 size={{ xs: 4 }}>
             <ArrayFieldTitle
-              key={`array-field-title-${props.idSchema.$id}`}
+              key={`array-field-title-${safeId}`}
               TitleField={props.TitleField}
               idSchema={props.idSchema}
               title={getTitle(props)}
@@ -167,8 +170,12 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               classes={classes}
             />
 
-            {(props.uiSchema['ui:description'] || props.schema.description) && (
-              <CustomTextTooltip title={props.schema.description}>
+            {(props.uiSchema['ui:description'] ?? props.schema?.description) != null && (
+              <CustomTextTooltip
+                title={safeStringTitle(
+                  props.uiSchema['ui:description'] ?? props.schema?.description,
+                )}
+              >
                 <IconButton disableTouchRipple="true" disableRipple="true">
                   <HelpOutlineIcon
                     width="14px"
@@ -183,7 +190,9 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               <CustomTextTooltip
                 bgColor={ERROR_COLOR}
                 interactive={true}
-                title={props.rawErrors?.join('  ')}
+                title={safeStringTitle(
+                  Array.isArray(props.rawErrors) ? props.rawErrors.join('  ') : props.rawErrors,
+                )}
               >
                 <IconButton
                   component="span"
@@ -208,7 +217,9 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                   <Box mt={2}>
                     <IconButton
                       className="array-item-add"
-                      onClick={props.onAddClick}
+                      onClick={
+                        typeof props.onAddClick === 'function' ? props.onAddClick : undefined
+                      }
                       disabled={props.disabled || props.readonly}
                     >
                       <AddIcon width="18px" height="18px" fill="gray" />
@@ -220,7 +231,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
           </Grid2>
         </Grid2>
 
-        <Grid2 container={true} key={`array-item-list-${props.idSchema.$id}`} size={'grow'}>
+        <Grid2 container={true} key={`array-item-list-${safeId}`} size={'grow'}>
           {props.items &&
             props.items.map((item, idx) => {
               return (

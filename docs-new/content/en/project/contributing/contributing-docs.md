@@ -11,195 +11,30 @@ Before contributing, please review the [Documentation Contribution Flow](https:/
 Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally.  You can then make changes, test locally, sign-off and commit, and push the changes made for review.
 
 {{% alert color="info" title="Meshery Documentation Design Specification" %}}
-See the [Meshery Documentation Design Specification](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit#) which serves to provide an overview of the tooling and approach used to create Meshery's documentation and it information architecture.
+See the [Meshery Documentation Design Specification](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit#) which serves to provide an overview of the tooling and approach used to create Meshery's documentation and its information architecture.
 {{% /alert %}}
 
 ## Documentation Framework
 
 Meshery documentation is built using the following components:
 
-- Framework - [Jekyll](https://jekyllrb.com)
-- Theme - [https://github.com/vsoch/docsy-jekyll](https://github.com/vsoch/docsy-jekyll)
+- Framework - [Hugo](https://gohugo.io) (Extended)
+- Theme - [Docsy](https://www.docsy.dev) (imported as a Hugo module)
 - Repo - [https://github.com/meshery/meshery/tree/master/docs](https://github.com/meshery/meshery/tree/master/docs)
 - Site - [https://docs.meshery.io](https://docs.meshery.io)
-- AWS API GW - an instance is configured to redirect from docs.meshery.io to cloud.layer5.io, because of the repo location of where the docs currently reside.
 
 ## Set up your development environment
 
-{{% alert color="info" title="Jekyll" %}}
-The Meshery Docs site is built using Jekyll - a simple static site generator. Jekyll can be installed on different platforms like Windows, Linux, and MacOS by the following steps
+{{% alert color="info" title="Hugo" %}}
+The Meshery Docs site is built using Hugo - a fast static site generator. Hugo is installed automatically as an npm dependency, so you only need Node.js and Go installed on your system.
 {{% /alert %}}
 
-### For Windows
+### Prerequisites
 
-{{% alert color="light" title="Note" %}}
-Windows users can run Jekyll by following the [Windows Installation Guide](https://jekyllrb.com/docs/installation/windows/) and also installing Ruby Version Manager [RVM](https://rvm.io). RVM is a command-line tool which allows you to work with multiple Ruby environments on your local machine. Alternatively, if you're running Windows 10 version 1903 Build 18362 or higher, you can upgrade to Windows Subsystem for Linux [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and run Jekyll in Linux instead.
-{{% /alert %}}
+The following tools are required to build and run the Meshery documentation site locally:
 
-- Fire up your WSL VM and install the ruby version manager (RVM):
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">sudo apt update
-  sudo apt install curl g++ gnupg gcc autoconf automake bison build-essential libc6-dev \
-   	libffi-dev libgdbm-dev libncurses5-dev libsqlite3-dev libtool \
-   	libyaml-dev make pkg-config sqlite3 zlib1g-dev libgmp-dev \
-   	libreadline-dev libssl-dev
-  sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-  curl -sSL https://get.rvm.io | sudo bash -s stable
-  sudo usermod -a -G rvm `whoami`
-  </code>
-  </div></pre>
-
-  
-  If `gpg --keyserver` gives an error, you can use:
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-  </code>
-  </div></pre>
-  
-  OR
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">sudo gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB %}
-  </code>
-  </div></pre>
-
-  Restart your WSL VM before moving forward to install Ruby.
-
-- To install Ruby, run:
-
-    <pre class="codeblock-pre"><div class="codeblock">
-    <code class="clipboardjs">bash
-    rvm install ruby
-    rvm --default use ruby 2.7.5
-    gem update
-    gem install jekyll bundler
-    </code>
-    </div></pre>
-  
-- Update the Gemfile located in meshery/docs directory
-
-    <pre class="codeblock-pre"><div class="codeblock">
-    <code class="clipboardjs">ruby '3.0.2'
-    </code>
-    </div></pre>
-
-  <strong>Note:</strong> In place of `3.0.2` add your installed version
-  
-- Also add this to the next line in the _Gemfile_.
-    <pre class="codeblock-pre"><div class="codeblock">
-    <code class="clipboardjs">gem 'wdm','>=0.1.0' if Gem.win_platform?
-    </code>
-    </div></pre>
-  
-{{% alert color="warning" title="Don't Commit Gemfile" %}}
-This is just a workaround for your local machine. So, do not commit or push the modified Gemfile or Gemfile.lock during Pull Requests.
-{{% /alert %}}
-  
-- Next, navigate to the following folder 
-  ```C:\Ruby24-x64\lib\ruby\gems\2.4.0\gems\eventmachine-1.2.5-x64-mingw32\lib```
-  
-- Add ```require 'em/pure_ruby' ``` in the first line of the <strong>eventmachine.rb</strong> file
-
-### For Linux
-
-- Prerequisites
-  
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">sudo apt-get update
-  sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
-  </code>
-  </div></pre>
-{{% alert color="info" title="Note" %}}
-The latest versions of Debian-based OS'es do not support <code>libgdbm3</code>, so if you encounter an issue with it's installation, try replacing <code>libgdbm3</code> with <code>libgdbm5</code> or <code>libgdbm6</code>.
-{{% /alert %}}
-
-#### Installing rbenv
-
-- Cloning the rbenv repository
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-  </code>
-  </div></pre>
-
-{{% alert color="info" title="Note" %}}
-Change bashrc with your shell specific rc file, for eg: if you are using zsh then the filename is zshrc.
-{{% /alert %}}
-
-- Setting the path
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-  </code>
-  </div></pre>
-
-- rbenv init
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-  </code>
-  </div></pre>
-
-- Reload your bashrc
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">source ~/.bashrc
-  </code>
-  </div></pre>
-
-- Check installation
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">type rbenv
-  </code>
-  </div></pre>
-
-{{% alert color="info" title="Note" %}}
-After installing rbenv, you need to install the ruby-build plugin to use the `rbenv install` command. This step is necessary for both package manager and manual installations of rbenv.
-{{% /alert %}}
-
-- Install ruby-build as an rbenv plugin
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
-  </code>
-  </div></pre>
-  
-#### Install Ruby
-
-- rbenv install version
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">rbenv install 3.2.6
-  </code>
-  </div></pre>
-
-- To list all the versions that can be installed
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">rbenv install --list
-  </code>
-  </div></pre>
-
-- Set which Ruby version you want to use
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">rbenv global version
-  </code>
-  </div></pre>
-
-- Check Ruby installation
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">ruby -v
-  </code>
-  </div></pre>
-
-### For MacOS
-
-- Use docs here [Jekyll installation](https://jekyllrb.com/docs/installation/macos/)
+- [Node.js](https://nodejs.org/) (LTS recommended)
+- [Go](https://go.dev/dl/) (required for Hugo modules)
 
 {{% alert color="light" title="Note" %}}
 In case of any installation issues, use the [discussion forum](https://meshery.io/community#discussion-forums).
@@ -215,81 +50,54 @@ In case of any installation issues, use the [discussion forum](https://meshery.i
   </div></pre>
 
 - Change to the docs directory
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">cd docs
   </code>
   </div></pre>
 
-- Install any Ruby dependencies
-  
+- Install dependencies
+
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">gem install bundler
-  bundle install
+  <code class="clipboardjs">make setup
   </code>
   </div></pre>
 
-{{% alert color="info" title="Note" %}}
-If you are a Mac user you do not need to install the Ruby dependencies, after moving on to the docs directory, you can serve the site.
-{{% /alert %}}
+  This runs `npm install`, which installs Hugo Extended and all other required dependencies.
 
 ### Serve the site
 
-- Serve the code locally.
-  
+- Serve the site locally.
+
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">make docs
+  <code class="clipboardjs">make site
   </code>
   </div></pre>
 
-- If that gives an error run:
-  
+  This runs `hugo server -D -F`, which serves the site with draft and future content enabled. The site will be available at `http://localhost:1313`.
+
+- To build the site without serving:
+
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">bundle exec jekyll serve --drafts --config _config_dev.yml
+  <code class="clipboardjs">make build
   </code>
   </div></pre>
-
-  
-  _From the `Makefile`, this command runs `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command results in an error, try running the server without Livereload using the command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Note that you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configurations, `jekyll serve` for local development and `jekyll build` to generate site artefacts for production deployment._
 
 ### Using Docker
 
-If you've Docker and `make` installed in your system, then you can serve the site locally. This doesn't require the need to install _Jekyll_ and _Ruby_ in your system. 
+If you have Docker and `make` installed on your system, then you can serve the site locally. This doesn't require the need to install _Hugo_, _Node.js_, or _Go_ on your system.
 
 {{% alert color="info" %}}
 This may not work in Windows.
 {{% /alert %}}
 
-Run the following command from the _docs_ folder, else it will fail.
+Run the following command from the _docs_ folder.
 
 ```bash
 make docker
 ```
 
-
-#### Troubleshooting Note
-
-While performing any of the above steps, if you receive an error about mismatching ruby versions similar to the example below, follow one of the steps mentioned below.
-
-`Your ruby version is x.x.x but your Gemfile specified 2.7.x`
-
-The reason for this error is because Jekyll always considers the exact version of Ruby unlike JavaScript.
-
-- Install the required Ruby version by using `rvm` or by any means given above.
-- If you're unable to install the required Ruby version, then manually configure the `Gemfile` (This is not recommended and should be done only if the above steps fail). Modify the ruby version inside the Gemfile similar to the example below:
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">source "https://rubygems.org"
-  ruby '3.1.1' //Change to the version you have installed
-  </code>
-  </div></pre>
-
-The `Gemfile.lock` will be updated automatically once the `make docs` command is run. 
-(For Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
-
-{{% alert color="warning" title="Don't Commit Gemfile" %}}
-If you have followed the third step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR.
-{{% /alert %}}
+This runs `docker compose watch`, which builds and serves the site inside a container.
 
 ### Using Gitpod
 - Ensure you have an account on <a href="https://www.gitpod.io/" class="meshery-light">Gitpod</a> and add the <a href="https://chromewebstore.google.com/detail/gitpod/dodmmooeoklaejobgleioelladacbeki" class="meshery-light">Gitpod extension</a> to your browser.
@@ -301,73 +109,75 @@ Gitpod will automatically clone and open the repository for you in a browser-bas
 {{% /alert %}}
 
 - After opening the project on Gitpod, change to the docs directory.
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">cd docs
   </code>
   </div></pre>
 
-- Serve the code locally.
-  
+- Install dependencies and serve the site.
+
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">make docs
+  <code class="clipboardjs">make setup
+  make site
   </code>
   </div></pre>
 
-You should be able to access the site on port `4000`. If you want to access it in your localhost read the [docs for port-forwarding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
+You should be able to access the site on port `1313`. If you want to access it in your localhost read the [docs for port-forwarding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
 
-### Using Github Codespaces
+### Using GitHub Codespaces
 
-- Ensure you have an account on <a href="https://www.github.com/" class="meshery-light">Github</a>
+- Ensure you have an account on <a href="https://www.github.com/" class="meshery-light">GitHub</a>
 - Open your forked Meshery repository on GitHub.
-- Click on the "**Code**" button of your forked repository it will give you the option to open the project in Gituhub Codespaces.
+- Click on the "**Code**" button of your forked repository it will give you the option to open the project in GitHub Codespaces.
 
-{{% alert color="dark" title="About Github Codespaces" %}}
-Github Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quiet helpful to spin up the development environment for [Meshery](https://github.com/meshery/meshery).
+{{% alert color="dark" title="About GitHub Codespaces" %}}
+GitHub Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quite helpful to spin up the development environment for [Meshery](https://github.com/meshery/meshery).
 {{% /alert %}}
 
-- After opening the project on Github Codespaces, change to the docs directory.
-  
+- After opening the project on GitHub Codespaces, change to the docs directory.
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">cd docs
   </code>
   </div></pre>
 
-- Serve the code locally.
-  
+- Install dependencies and serve the site.
+
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">make docs
+  <code class="clipboardjs">make setup
+  make site
   </code>
   </div></pre>
 
-You should be able to access the site on port `4000`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your Github Codespace this will launch a Github Codespace instance in your local machine and connects with the remote Github Codespace environment after that run `cd docs` then `make docs` and it will start the development server on port `4000`.
+You should be able to access the site on port `1313`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your GitHub Codespace this will launch a GitHub Codespace instance in your local machine and connects with the remote GitHub Codespace environment after that run `cd docs` then `make setup && make site` and it will start the development server on port `1313`.
 
 ### Make Necessary Changes
 - Make changes as required based on the issue you are solving.
-- Ensure to verify that your changes reflect correctly by serving the site locally using `make docs`.
+- Ensure to verify that your changes reflect correctly by serving the site locally using `make site`.
 
 {{% alert color="light" title="Note" %}}
-If the issue requires making new doc page that replaces the old page, please don't forget to add a redirect link on the old page. This redirect link field should have the link of the new page created.
+If the issue requires making new doc page that replaces the old page, please don't forget to add a redirect link on the old page. In Hugo, you can add an `aliases` field in the frontmatter of the new page to redirect from the old URL.
 {{% /alert %}}
 
 
 ### Create a Pull Request
 
 - After making changes, don't forget to commit with the sign-off flag (-s)!
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">git commit -s -m “my commit message w/signoff”
+  <code class="clipboardjs">git commit -s -m "my commit message w/signoff"
   </code>
   </div></pre>
 
 - Once all changes have been committed, push the changes.
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">git push origin [branch-name]
   </code>
   </div></pre>
 
-- Then on Github, navigate to the [Meshery repository](https://github.com/meshery/meshery) and create a pull request from your recently pushed changes!
+- Then on GitHub, navigate to the [Meshery repository](https://github.com/meshery/meshery) and create a pull request from your recently pushed changes!
 
 ---
 
@@ -379,26 +189,26 @@ If the issue requires making new doc page that replaces the old page, please don
 
 Most popular clipboard plugins like Clipboard JS require the manual creation of a new ID for each code snippet. A different approach is used here. For code snippets, we either use html tags or markdown in the following manner:
 
-```html
+```
 <pre class="codeblock-pre"><div class="codeblock">
 <code class="clipboardjs">code_snippet_here</code>
 </div></pre>
 ```
 
-You can also use the `code` component created for this feature to make it easy to use. It can be used by including code.html and then passing the code snippet to it.
+You can also use the `code` shortcode created for this feature to make it easy to use. It can be used by passing the code snippet to it.
 
 If the code snippet does not contain any special characters then, it can be used directly as below:
 ```
-{{< code code="code_snippet_here" >}}
+{{</* code code="code_snippet_here" */>}}
 ```
 
-If the code snippet has special characters then it must be captured first in a variable, and then pass it to the component:
+If the code snippet has special characters then use backtick delimiters:
 
 ```
-{{< code code="code_snippet_here" >}}
+{{</* code code=`code_snippet_here` */>}}
 ```
 
-Don't use `code` component when the snippet is in between an ordered list, this breaks the order and next item in the list will start numbering from 1. Instead, use `<pre class="codeblock-pre">...</pre>` method described above.
+Don't use `code` shortcode when the snippet is in between an ordered list, this breaks the order and next item in the list will start numbering from 1. Instead, use `<pre class="codeblock-pre">...</pre>` method described above.
 
 **A full block:**
 ```
@@ -433,27 +243,27 @@ The following is a concise summary of the steps to contribute to Meshery documen
    `git checkout -b <my-changes>`
 4. Edit/add documentation.
    `vi <specific page>.md`
-5. Add redirect link on the old page (only when a new page is created that replaces the old page)
-5. Run site locally to preview changes.
-   `make docs`
-6. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
+5. Add redirect link on the old page (only when a new page is created that replaces the old page). In Hugo, use the `aliases` frontmatter field.
+6. Run site locally to preview changes.
+   `make site`
+7. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
    `git push origin <my-changes>`
-7. Open a pull request (in your web browser) against the repo: https://github.com/meshery/meshery.
+8. Open a pull request (in your web browser) against the repo: https://github.com/meshery/meshery.
 
 ### Navigation Table of Contents in Sidebar (toc)
 
-Sidebars use toc to create a table of contents. It is written in the following manner:
+Sidebars use a data file at `data/toc.yml` to create a table of contents. It is written in the following manner:
 
 ```
-    toc:
-  - title: Group 1
-    subfolderitems:
-      - page: Thing 1
-        url: /thing1.html
-      - page: Thing 2
-        url: /thing2.html
-      - page: Thing 3
-        url: /thing3.html
+- title: Group 1
+  url: group1
+  links:
+    - title: Thing 1
+      url: group1/thing1
+    - title: Thing 2
+      url: group1/thing2
+    - title: Thing 3
+      url: group1/thing3
 ```
 
 The output of the code snippet would be:
@@ -470,20 +280,20 @@ In this example, **Group 1** is a ``parent`` section within the Table of Content
 ``Grandchildren`` are added in the sidebars in the following manner:
 
 ```
-    toc:
-  - title: Group 1
-    subfolderitems:
-      - page: Thing 1
-        url: /thing1.html
-        subfolderitems:
-          - page: Subthing 1.1
-            url: /subthing1_1.html
-          - page: Subthing 1.2
-            url: /subthing1_2.html
-      - page: Thing 2
-        url: /thing2.html
-      - page: Thing 3
-        url: /thing3.html
+- title: Group 1
+  url: group1
+  links:
+    - title: Thing 1
+      url: group1/thing1
+      children:
+        - title: Subthing 1.1
+          url: group1/thing1/subthing1_1
+        - title: Subthing 1.2
+          url: group1/thing1/subthing1_2
+    - title: Thing 2
+      url: group1/thing2
+    - title: Thing 3
+      url: group1/thing3
 ```
 
 The output of the code snippet would be:
@@ -499,11 +309,12 @@ The output of the code snippet would be:
 
 Here, **Subthing 1.1** and **Subthing 1.2** are the ``grandchildren`` of **Thing 1**.
 
-In `docs/_includes/sidebar.html` contains three levels of navigation hierarchy.
+The sidebar template in `layouts/partials/sidebar.html` reads from `data/toc.yml` and supports up to four levels of navigation hierarchy.
 
 - **Parent**: It serves as a top level category for related content.
-- **Children**: They are immediate subsections or topics that fall under the parent section. 
-- **Grandchildren**: They are nested under Thing 1 and provide a more detailed breakdown of information within the child section. Grandchildren are used to organize content further, offering a more detailed structure for a specific topic.
+- **Children** (`links`): They are immediate subsections or topics that fall under the parent section.
+- **Grandchildren** (`children`): They are nested under a link and provide a more detailed breakdown of information within the child section. Grandchildren are used to organize content further, offering a more detailed structure for a specific topic.
+- **Great-grandchildren** (`grandchildren`): An additional level of nesting for even finer-grained organization.
 
 These sections create a hierarchical and organized navigation experience for readers.
 
@@ -544,9 +355,9 @@ This is a light alert
 This is a dark alert
 {{% /alert %}}
 
-#### alert.html
+#### alert shortcode
 
-Meshery Docs has a common include file [alert.html](https://github.com/meshery/meshery/blob/master/docs/_includes/alert.html), to provide consistent formatting for notes, warnings, and various informative callouts intended for the readers.
+Meshery Docs uses the `alert` shortcode (provided by the Docsy theme) to provide consistent formatting for notes, warnings, and various informative callouts intended for the readers.
 
 To use the `alert` shortcode feature in our documentation include the following code:
 
@@ -593,7 +404,7 @@ If you need to specify dimensions, use:
 
 ### Quotes
 
-You can include block quotes to emphasize text. 
+You can include block quotes to emphasize text.
 
 > Here is an example. Isn't this much more prominent to the user?
 
@@ -601,30 +412,29 @@ You can include block quotes to emphasize text.
 
 ### Adding Integration Specific Information to Individual Integration Pages
 
-Integration pages ([example](https://docs.meshery.io/extensibility/integrations/aws)) are automatically generated, however, integration specific documentation is often needed. 
+Integration pages ([example](/extensibility/integrations/aws)) are automatically generated, however, integration specific documentation is often needed.
 
-[modelscustominfo](https://github.com/meshery/meshery/tree/master/docs/_modelscustominfo) collection holds custom markdown files. Follow these steps:
+[modelscustominfo](https://github.com/meshery/meshery/tree/master/docs/data/modelscustominfo) collection holds custom markdown files. Follow these steps:
 
 1. Create a file inside the `modelscustominfo` collection.
 2. Ensure the file includes frontmatter with the `title` key, set to the title of the integration.
 
 The content that follows the frontmatter in this file will be automatically parsed and rendered on the integration page
 
-Example: 
+Example:
 
-file: `_modelscustominfo/aad.md`
+file: `modelscustominfo/aad.md`
 
-```md
+```
 ---
 title: Azure Active Directory (AAD)
 ---
-
 <h2>Azure Active Directory (AAD)</h2>
 
 ```
 
 In this example, the heading "<b>Azure Active Directory</b>" will be displayed on the integration page:
-[Azure Active Directory Integration Page](https://docs.meshery.io/extensibility/integrations/aad-pod-identity)
+[Azure Active Directory Integration Page](/extensibility/integrations/aad-pod-identity)
 
 ### Suggested Reading
 
@@ -640,11 +450,11 @@ Set to `true` (make "editable" toolbar visible) or `false` (hide "editable" tool
 
 ### `if` conditional
 
-This executes the block of code only if the given condition is true. It is executed in the following manner:
+In Hugo templates, conditionals are written using Go template syntax:
 
-{{< code code=`{{ \"{% if product.title == 'Awesome Shoes' \" }}%}
+{{< code code=`{{ if eq .Params.title "Awesome Shoes" }}
   These shoes are awesome!
-{{ \"{% endif \" }}%}` >}}
+{{ end }}` >}}
 
 If the condition is true, the output would be:
 
@@ -652,37 +462,43 @@ If the condition is true, the output would be:
     These shoes are awesome!
 ```
 
-### `for` loop
+### `range` loop
 
-The for statement executes a block of code repeatedly. It is wriiten in the following manner:
+The `range` action iterates over a collection. It is written in the following manner:
 
-{{< code code=`{{ \"{% for names in collection.names \" }}%}
-  {{ \"{{ name.title \"}}}}
-{{ \"{% endfor \" }}%}` >}}
+{{< code code=`{{ range .Pages }}
+  {{ .Title }}
+{{ end }}` >}}
 
-The output produced by the above code snippet:
-
-```
-    Sam Ham Ethan
-```
+The output produced by the above code snippet would list the titles of all pages in the current section.
 
 ### Comment
 
-Comments allow to leave a block of code unattended, any statements between opening and closing comment would not be executed.
+In Hugo templates, comments are written using Go template comment syntax:
 
-### Include
+{{< code code=`{{/* This is a comment */}}` >}}
 
-The above tag is used to insert a already rendered file within the current template. It is written in the following manner:
+Any content inside `{{/* */}}` will not be rendered in the output.
 
-{{< code code=`{{ \"{% include file.html \" }}%}` >}}
+### Partial
 
-### Assign
+Partials are used to include reusable template fragments. They are written in the following manner:
 
-The assign tag is used to create a new variable. It is written in the following manner:
+{{< code code=`{{ partial "header.html" . }}` >}}
 
-{{< code code=`{{ \"{% assign variable1 = true \" }}%}` >}}
+### Shortcode
+
+Shortcodes are reusable content snippets that can be used in Markdown files. They are written in the following manner:
+
+{{< code code=`{{</* shortcode-name param="value" */>}}` >}}
+
+### Variable
+
+In Hugo templates, variables are defined using the `:=` operator:
+
+{{< code code=`{{ $variable1 := true }}` >}}
 
 Two helpful resources:
 
-1. Liquid Docs - [https://shopify.github.io/liquid/](https://shopify.github.io/liquid/)
-2. Jekyll Docs - [https://jekyllrb.com/docs/](https://jekyllrb.com/docs/)
+1. Hugo Docs - [https://gohugo.io/documentation/](https://gohugo.io/documentation/)
+2. Go Template Docs - [https://pkg.go.dev/text/template](https://pkg.go.dev/text/template)
