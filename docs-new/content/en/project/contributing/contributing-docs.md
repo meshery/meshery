@@ -20,7 +20,7 @@ Meshery documentation is built using the following components:
 
 - Framework - [Hugo](https://gohugo.io) (Extended)
 - Theme - [Docsy](https://www.docsy.dev) (imported as a Hugo module)
-- Repo - [https://github.com/meshery/meshery/tree/master/docs-new](https://github.com/meshery/meshery/tree/master/docs-new)
+- Repo - [https://github.com/meshery/meshery/tree/master/docs](https://github.com/meshery/meshery/tree/master/docs)
 - Site - [https://docs.meshery.io](https://docs.meshery.io)
 
 ## Set up your development environment
@@ -49,10 +49,10 @@ In case of any installation issues, use the [discussion forum](https://meshery.i
   </code>
   </div></pre>
 
-- Change to the docs-new directory
+- Change to the docs directory
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">cd docs-new
+  <code class="clipboardjs">cd docs
   </code>
   </div></pre>
 
@@ -91,7 +91,7 @@ If you have Docker and `make` installed on your system, then you can serve the s
 This may not work in Windows.
 {{% /alert %}}
 
-Run the following command from the _docs-new_ folder.
+Run the following command from the _docs_ folder.
 
 ```bash
 make docker
@@ -108,10 +108,10 @@ This runs `docker compose watch`, which builds and serves the site inside a cont
 Gitpod will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It will also automatically build the project for you on launch, comes with Docker and other tools pre-installed, making it one of the fastest ways to spin up a development environment for [Meshery](https://github.com/meshery/meshery).
 {{% /alert %}}
 
-- After opening the project on Gitpod, change to the docs-new directory.
+- After opening the project on Gitpod, change to the docs directory.
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">cd docs-new
+  <code class="clipboardjs">cd docs
   </code>
   </div></pre>
 
@@ -135,10 +135,10 @@ You should be able to access the site on port `1313`. If you want to access it i
 GitHub Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quite helpful to spin up the development environment for [Meshery](https://github.com/meshery/meshery).
 {{% /alert %}}
 
-- After opening the project on GitHub Codespaces, change to the docs-new directory.
+- After opening the project on GitHub Codespaces, change to the docs directory.
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">cd docs-new
+  <code class="clipboardjs">cd docs
   </code>
   </div></pre>
 
@@ -150,7 +150,7 @@ GitHub Codespaces will automatically clone and open the repository for you in a 
   </code>
   </div></pre>
 
-You should be able to access the site on port `1313`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your GitHub Codespace this will launch a GitHub Codespace instance in your local machine and connects with the remote GitHub Codespace environment after that run `cd docs-new` then `make setup && make site` and it will start the development server on port `1313`.
+You should be able to access the site on port `1313`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your GitHub Codespace this will launch a GitHub Codespace instance in your local machine and connects with the remote GitHub Codespace environment after that run `cd docs` then `make setup && make site` and it will start the development server on port `1313`.
 
 ### Make Necessary Changes
 - Make changes as required based on the issue you are solving.
@@ -237,8 +237,8 @@ For contributing `mesheryctl` reference section, refer [Contributing CLI](/proje
 The following is a concise summary of the steps to contribute to Meshery documentation.
 
 1. Create a fork, if you have not already, by following the steps described [here](CONTRIBUTING-gitflow.md)
-2. In the local copy of your fork, navigate to the docs-new folder.
-   `cd docs-new`
+2. In the local copy of your fork, navigate to the docs folder.
+   `cd docs`
 3. Create and checkout a new branch to make changes within
    `git checkout -b <my-changes>`
 4. Edit/add documentation.
@@ -412,9 +412,9 @@ You can include block quotes to emphasize text.
 
 ### Adding Integration Specific Information to Individual Integration Pages
 
-Integration pages ([example](https://docs.meshery.io/extensibility/integrations/aws)) are automatically generated, however, integration specific documentation is often needed.
+Integration pages ([example](/extensibility/integrations/aws)) are automatically generated, however, integration specific documentation is often needed.
 
-[modelscustominfo](https://github.com/meshery/meshery/tree/master/docs-new/content/en/modelscustominfo) collection holds custom markdown files. Follow these steps:
+[modelscustominfo](https://github.com/meshery/meshery/tree/master/docs/data/modelscustominfo) collection holds custom markdown files. Follow these steps:
 
 1. Create a file inside the `modelscustominfo` collection.
 2. Ensure the file includes frontmatter with the `title` key, set to the title of the integration.
@@ -434,7 +434,7 @@ title: Azure Active Directory (AAD)
 ```
 
 In this example, the heading "<b>Azure Active Directory</b>" will be displayed on the integration page:
-[Azure Active Directory Integration Page](https://docs.meshery.io/extensibility/integrations/aad-pod-identity)
+[Azure Active Directory Integration Page](/extensibility/integrations/aad-pod-identity)
 
 ### Suggested Reading
 
