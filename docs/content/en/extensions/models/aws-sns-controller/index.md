@@ -1,0 +1,64 @@
+---
+title: AWS Simple Notification Service
+subtitle: Collaborative and visual infrastructure as design for AWS Simple Notification Service
+image: /extensions/models/aws-sns-controller/icons/color/aws-sns-controller-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/aws-sns-controller
+description: 
+integrations-category: App Definition and Development
+integrations-subcategory: App Integration
+registrant: GitHub
+components: 
+- name: platform-endpoint
+  colorIcon: /extensions/models/aws-sns-controller/components/platform-endpoint/icons/color/platform-endpoint-color.svg
+  whiteIcon: /extensions/models/aws-sns-controller/components/platform-endpoint/icons/white/platform-endpoint-white.svg
+  description: 
+- name: platform-application
+  colorIcon: /extensions/models/aws-sns-controller/components/platform-application/icons/color/platform-application-color.svg
+  whiteIcon: /extensions/models/aws-sns-controller/components/platform-application/icons/white/platform-application-white.svg
+  description: 
+- name: field-export
+  colorIcon: /extensions/models/aws-sns-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: /extensions/models/aws-sns-controller/components/field-export/icons/white/field-export-white.svg
+  description: 
+- name: adopted-resource
+  colorIcon: /extensions/models/aws-sns-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: /extensions/models/aws-sns-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  description: 
+- name: subscription
+  colorIcon: /extensions/models/aws-sns-controller/components/subscription/icons/color/subscription-color.svg
+  whiteIcon: /extensions/models/aws-sns-controller/components/subscription/icons/white/subscription-white.svg
+  description: 
+- name: topic
+  colorIcon: /extensions/models/aws-sns-controller/components/topic/icons/color/topic-color.svg
+  whiteIcon: /extensions/models/aws-sns-controller/components/topic/icons/white/topic-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: /extensions/models/aws-sns-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: /extensions/models/aws-sns-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 7
+relationships: 
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 4
+featureList: [
+  "Message fanout: Each account can support 100,000 Standard topics and each topic supports up to 12.5M subscriptions.",
+  "Amazon SNS supports VPC Endpoints (VPCE) via AWS PrivateLink.",
+  "Amazon SNS mobile notifications make it simple and cost effective to fan out mobile push notifications to iOS, Android, Fire, Windows, and Baidu devices."
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-sns-controller
+---

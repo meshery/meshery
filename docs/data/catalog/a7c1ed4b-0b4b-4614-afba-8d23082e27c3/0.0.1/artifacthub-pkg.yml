@@ -1,0 +1,20 @@
+version: 0.0.1
+name: fortio-server
+displayName: Fortio Server
+createdAt: "2023-08-17T08:26:41Z"
+description: 'This infrastructure design defines a service and a deployment for a component called Fortio-server **Service: fortio-server-service**- Type: Kubernetes Service - Namespace: Default - Port: Exposes port 8080 - Selector: Routes traffic to pods with the label app: fortio-server - Session Affinity: None - Service Type: ClusterIP - MeshMap Metadata: Describes its relationship with Kubernetes and its category as Scheduling & Orchestration. - Position: Positioned within a graphical representation of infrastructure. **Deployment: fortio-server-deployment** - Type: Kubernetes Deployment - Namespace: Default - Replicas: 1 - Selector: Matches pods with the label app: fortio-server - Pod Template: Specifies a container image for Fortio-server, its resource requests, and a service account. - Container Image: Uses the fortio/fortio:1.32.1 image - MeshMap Metadata: Specifies its parent-child relationship with the fortio-server-service and provides styling information. - Position: Positioned relative to the service within the infrastructure diagram. This configuration sets up a service and a corresponding deployment for Fortio-server in a Kubernetes environment. The service exposes port 8080, while the deployment runs a container with the Fortio-server image. These components are visualized using MeshMap for tracking and visualization purposes.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/a7c1ed4b-0b4b-4614-afba-8d23082e27c3/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure networking is setup properly and enuough resources are available \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 0b17a549-c99d-449b-b7b5-147fc490edb1
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

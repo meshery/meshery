@@ -1,0 +1,24 @@
+---
+title: CRI-O
+subtitle: Collaborative and visual infrastructure as design for CRI-O
+image: /extensions/models/cri-o/icons/color/cri-o-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/cri-o
+description: 
+integrations-category: Runtime
+integrations-subcategory: Container Runtime
+registrant: Artifact Hub
+components: 
+components-count: 0
+relationships: 
+relationship-count: 0
+featureList: [
+  "Supports multiple image formats including the existing Docker image format.",
+  "Container image management (managing image layers, overlay filesystems, etc).",
+  "Container process lifecycle management"
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/cri-o
+---
