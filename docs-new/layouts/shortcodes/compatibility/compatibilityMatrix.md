@@ -63,21 +63,6 @@
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/traefik-mesh.svg" /><a href="{{ .Site.Params.repo }}-traefik-mesh">meshery-traefik-mesh</a></th>
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/cilium.svg" /><a href="{{ .Site.Params.repo }}-cilium">meshery-cilium</a></th>
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/consul.svg" /><a href="{{ .Site.Params.repo }}-consul">meshery-consul</a></th>
-
-{{/* 
-Jekyll include data loop - DEPRECATED
-Functionality now in compatibility-matrix-kubernetes.html shortcode
-This file is no longer being used. All Jekyll liquid syntax is commented out.
-
-Original Jekyll loop:
-{% for k8s in {{include.k8s_tests_group}} %}
-*/}}
-
-  {{/* DEPRECATED: All Jekyll liquid loop code below is commented out
-  Functionality has been migrated to compatibility-matrix-kubernetes.html shortcode
-  Original Jekyll loop from here onwards is non-functional in Hugo.
-  */}}
-
 </table>
 
 <script>
