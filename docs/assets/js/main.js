@@ -39,25 +39,7 @@ layout: null
         });
     });
 }(jQuery));
-(function($) {
-    'use strict';
-    var Search = {
-        init: function() {
-            $(document).ready(function() {
-                $(document).on('keypress', '.sidebar__search-input', function(e) {
-                    if (e.keyCode !== 13) {
-                        return
-                    }
-                    var query = $(this).val();
-                    var searchPage = "{{ site.baseurl }}/search/?q=" + query;
-                    document.location = searchPage;
-                    return false;
-                });
-            });
-        },
-    };
-    Search.init();
-}(jQuery));
+// Search logic moved to sidebar-search.js
 
 
 /*popup-hidden-div*/

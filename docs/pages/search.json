@@ -1,0 +1,33 @@
+---
+layout: null
+permalink: /search.json
+---
+[
+  {% assign added = false %}
+  {% for post in site.docs %}
+    {% unless post.excluded_in_search %}
+      {% if added %},{% endif %}
+      {
+        "id": "{{ post.url | slugify }}",
+        "title": {{ post.title | jsonify }},
+        "categories": "{{ post.categories | join: ', ' | xml_escape }}",
+        "url": "{{ post.url }}",
+        "content": {{ post.content | strip_html | replace_regex: "[\s/\n]+"," " | strip | jsonify }}
+      }
+      {% assign added = true %}
+    {% endunless %}
+  {% endfor %}
+  {% for page in site.pages %}
+    {% unless page.excluded_in_search or page.title == nil %}
+      {% if added %},{% endif %}
+      {
+        "id": "{{ page.url | slugify }}",
+        "title": {{ page.title | jsonify }},
+        "categories": "{{ page.categories | join: ', ' | xml_escape }}",
+        "url": "{{ page.url }}",
+        "content": {{ page.content | strip_html | replace_regex: "[\s/\n]+"," " | strip | jsonify }}
+      }
+      {% assign added = true %}
+    {% endunless %}
+  {% endfor %}
+]
