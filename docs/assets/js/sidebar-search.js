@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    var searchInput = document.getElementById('sidebar-search-input');
+    var searchInput = document.querySelector('.sidebar__search-input');
     var searchSuggestions = document.getElementById('search-suggestions');
     var fuse = null;
     var searchData = null;
@@ -7,10 +7,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!searchInput || !searchSuggestions) return;
 
+    // Utility to get base URL
+    function getBaseUrl() {
+        var baseUrl = window.location.origin;
+        if (window.location.pathname.startsWith('/meshery/')) {
+            baseUrl += '/meshery';
+        }
+        return baseUrl;
+    }
+
+    // Utility to HTML escape against XSS
+    function escapeHTML(str) {
+        if (!str) return "";
+        return str.replace(/[&<>'"]/g, function(tag) {
+            var charsToReplace = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            };
+            return charsToReplace[tag] || tag;
+        });
+    }
+
+    // Utility to prevent javascript: URI injection
+    function isValidUrl(url) {
+        if (!url) return false;
+        // Block javascript:, vbscript:, data: URIs
+        if (/^(javascript|vbscript|data):/i.test(url.trim())) {
+            return false;
+        }
+        return true;
+    }
+
     // Helper to highlight matched characters in the title
     function highlight(resultItem) {
         var item = resultItem.item;
-        var title = item.title || "";
+        var title = escapeHTML(item.title || "");
         
         if (resultItem.matches) {
            var titleMatchObj = resultItem.matches.find(function(m) { return m.key === 'title'; });
@@ -20,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
                var last = 0;
                indices.forEach(function(idx) {
                    res += title.substring(last, idx[0]);
-                   res += "<mark style='background-color: rgba(0, 179, 159, 0.3); color: inherit; padding: 0 2px; border-radius: 2px;'>" + title.substring(idx[0], idx[1] + 1) + "</mark>";
+                   res += "<mark class='search-highlight'>" + title.substring(idx[0], idx[1] + 1) + "</mark>";
                    last = idx[1] + 1;
                });
                res += title.substring(last);
@@ -42,18 +76,20 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var i = 0; i < maxResults; i++) {
             var item = results[i].item;
             var url = item.url;
-            var titleHTML = highlight(results[i]) || item.title;
+            if (!isValidUrl(url)) continue; // Skip items with malicious URLs
+            
+            var titleHTML = highlight(results[i]) || escapeHTML(item.title);
             
             var cats = item.categories ? item.categories.split(', ') : [];
             var catsHTML = '';
             if (cats.length > 0 && cats[0]) {
-               catsHTML = '<span style="display:inline-block; font-size:10px; padding:2px 8px; border-radius:12px; background-color:#00b39f; color:white; margin-left:10px; font-weight: normal; text-transform: uppercase; letter-spacing: 0.5px;">' + cats[0] + '</span>';
+               catsHTML = '<span class="search-category-badge">' + escapeHTML(cats[0]) + '</span>';
             }
 
-            html += '<li style="border-bottom: 1px solid rgba(128,128,128,0.2);">';
-            html += '<a href="' + url + '" style="display: block; padding: 12px 14px; color: inherit; text-decoration: none; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor=\'rgba(0, 179, 159, 0.1)\'" onmouseout="this.style.backgroundColor=\'transparent\'">';
-            html += '<div style="font-size: 14px; font-weight: 500; display:flex; align-items:center; justify-content: space-between;">';
-            html += '<span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%;">' + titleHTML + '</span>';
+            html += '<li class="search-result-item">';
+            html += '<a href="' + escapeHTML(url) + '" class="search-result-link">';
+            html += '<div class="search-result-content">';
+            html += '<span class="search-result-title">' + titleHTML + '</span>';
             html += catsHTML;
             html += '</div>';
             html += '</a></li>';
@@ -68,11 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (fuse || isFetching) return;
         isFetching = true;
         
-        // Ensure accurate path to JSON index
-        var baseUrl = window.location.origin;
-        if (window.location.pathname.startsWith('/meshery/')) {
-            baseUrl += '/meshery';
-        }
+        var baseUrl = getBaseUrl();
 
         fetch(baseUrl + '/search.json')
             .then(function(res) { return res.json(); })
@@ -137,11 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.href = firstResult.href;
             } else {
                 // If nothing in suggestions, use standard search logic
-                var searchPageUrl = window.location.origin;
-                if (window.location.pathname.startsWith('/meshery/')) {
-                    searchPageUrl += '/meshery';
-                }
-                searchPageUrl += '/search/?q=' + encodeURIComponent(searchInput.value);
+                var searchPageUrl = getBaseUrl() + '/search/?q=' + encodeURIComponent(searchInput.value);
                 window.location.href = searchPageUrl;
             }
         }
