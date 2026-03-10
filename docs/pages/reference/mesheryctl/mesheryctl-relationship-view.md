@@ -1,16 +1,16 @@
 ---
 layout: default
-title: mesheryctl-exp-relationship-view
-permalink: reference/mesheryctl/exp/relationship/view
-redirect_from: reference/mesheryctl/exp/relationship/view/
+title: mesheryctl-relationship-view
+permalink: reference/mesheryctl/relationship/view
+redirect_from: reference/mesheryctl/relationship/view/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: relationship
+command: relationship
+subcommand: view
 ---
 
-# mesheryctl exp relationship view
+# mesheryctl relationship view
 
 view relationships of a model by its name
 
@@ -19,7 +19,7 @@ view relationships of a model by its name
 view a relationship queried by the model name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [flags]
+mesheryctl relationship view [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl exp relationship view [flags]
 View relationships of a model in default format yaml
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [model-name]
+mesheryctl relationship view [model-name]
 
 </div>
 </pre> 
@@ -37,7 +37,7 @@ mesheryctl exp relationship view [model-name]
 View relationships of a model in JSON format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [model-name] --output-format json
+mesheryctl relationship view [model-name] --output-format json
 
 </div>
 </pre> 
@@ -45,7 +45,7 @@ mesheryctl exp relationship view [model-name] --output-format json
 View relationships of a model in json format and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [model-name] --output-format json --save
+mesheryctl relationship view [model-name] --output-format json --save
 
 </div>
 </pre> 

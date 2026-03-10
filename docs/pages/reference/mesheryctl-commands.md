@@ -28,6 +28,7 @@ Meshery CLI commands are categorized by function, which are:
 - [`mesheryctl environment`](#meshery-environment) - Logical group of connections and their associated credentials.
 - [`mesheryctl connection`](#meshery-connection) - Managed or unmanaged resources that either through discovery or manual entry are tracked by Meshery.
 - [`mesheryctl organization`](#meshery-organization) - Manage and interact with registered organizations.
+- [`mesheryctl relationship`](#meshery-relationship) - View and manage relationships registered in Meshery.
 - [`mesheryctl exp`](#experimental-featuresexp) - Experimental features
 
 
@@ -890,6 +891,51 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </thead>
 </table>
 
+## Meshery Relationship
+<table>
+<thead>
+  <tr>
+    <th>Command</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+  {% assign cmdRelationship = site.data.mesheryctlcommands.cmds.relationship %}
+  {% assign subcommand_flag_count = 0 %}
+    {% for subcommand_hash in cmdRelationship.subcommands %}
+      {% assign subcommand = subcommand_hash[1] %}
+      {% assign subcommand_flag_count = subcommand_flag_count | plus: subcommand.flags.size %}
+    {% endfor %}
+    {% assign total_rowspan = cmdRelationship.subcommands.size | plus: subcommand_flag_count | plus: cmdRelationship.flags.size | plus: 1 %}
+    <tr>
+      <td rowspan={{ total_rowspan }}><a href="{{ site.baseurl }}/reference/mesheryctl/{{ cmdRelationship.name }}">{{ cmdRelationship.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ cmdRelationship.description }}</td>
+    </tr>
+    {% for flag_hash in cmdRelationship.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for subcommand_hash in cmdRelationship.subcommands %}{% assign subcomand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan={{ subcomand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ cmdRelationship.name }}/{{ subcomand.name }}">{{ subcomand.name }}</a></td>
+        <td></td>
+        <td>{{ subcomand.description }}</td>
+      </tr>
+      {% for flag_hash in subcomand.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+</thead>
+</table>
+
 ## Experimental Features(exp)
 <table>
 <thead>
@@ -942,4 +988,3 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 Refer the following <a href='/guides/mesheryctl/working-with-mesheryctl'>Frequently asked questions</a> related to Meshery CLI.
 
 {% include related-discussions.html tag="mesheryctl" %}
-
