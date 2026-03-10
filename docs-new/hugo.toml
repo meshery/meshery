@@ -10,6 +10,9 @@ enableMissingTranslationPlaceholders = true
 
 enableRobotsTXT = true
 
+[build]
+writeStats = true
+
 # Ignore in build
 ignoreFiles = ["^meetings/.*", "^notes/.*", "^integrations/.*" ]
 
