@@ -205,6 +205,8 @@
           url: guides/tutorials/publish-to-artifacthub
         - title: Kubernetes Request Flow – A Visual Guide
           url: guides/tutorials/kubernetes-request-flow
+        - title: Deploying NGINX with Meshery Playground
+          url: guides/tutorials/deploying-nginx
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
