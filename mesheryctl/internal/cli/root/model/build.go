@@ -36,13 +36,9 @@ mesheryctl model build [model-name]/[model-version]
 		}
 
 		{
-			flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-			if !ok || flagValidator == nil {
-				return utils.ErrCommandContextMissing("flags-validator")
-			}
-			err := flagValidator.Validate(cmdModelBuildFlagsProvided)
+			err := mesheryctlflags.ValidateCmdFlags(cmd, &cmdModelBuildFlagsProvided)
 			if err != nil {
-				return utils.ErrFlagsInvalid(err)
+				return err
 			}
 		}
 

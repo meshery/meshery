@@ -42,27 +42,24 @@ mesheryctl model init [model-name] --path [path-to-location] (default is current
 mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		err := mesheryctlflags.ValidateCmdFlags(cmd, &modelInitFlags)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelInitFlags)
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
 
-		{
-			// validate model name
-			if len(args) != 1 {
-				return ErrModelInitFromString(errInitOneArg)
-			}
-			modelName := args[0]
-			input := map[string]any{"name": modelName}
-			schema, err := initModelReadTemplate(initModelModelSchema)
-			if err != nil {
-				return ErrModelInit(err)
-			}
-			if err := initModelValidateDataOverSchema(schema, input); err != nil {
-				return ErrModelInit(
-					fmt.Errorf("invalid model name: %v", err),
-				)
-			}
+		// validate model name
+		if len(args) != 1 {
+			return ErrModelInitFromString(errInitOneArg)
+		}
+		modelName := args[0]
+		input := map[string]any{"name": modelName}
+		schema, err := initModelReadTemplate(initModelModelSchema)
+		if err != nil {
+			return ErrModelInit(err)
+		}
+		if err := initModelValidateDataOverSchema(schema, input); err != nil {
+			return ErrModelInit(
+				fmt.Errorf("invalid model name: %v", err),
+			)
 		}
 
 		return nil
