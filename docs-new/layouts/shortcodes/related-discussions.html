@@ -6,7 +6,7 @@
   
   {{- if and $data $data.topic_list $data.topic_list.topics -}}
     <ul>
-      {{- range first 5 $data.topic_list.topics -}}
+      {{- range first 8 $data.topic_list.topics -}}
         <li>
           <a href="https://discuss.layer5.io/t/{{ .slug }}/{{ .id }}" target="_blank" rel="noopener noreferrer">
             {{ .title }}
