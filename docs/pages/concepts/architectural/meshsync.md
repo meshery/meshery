@@ -82,7 +82,14 @@ The informer in MeshSync actively listens to changes in resources and updates th
 
 ### Synthetic Test of MeshSync
 
-_TODO: Include an example of how to invoke this built-in check._
+MeshSync health can be verified using Meshery's built-in system checks. For example, run:
+
+```bash
+mesheryctl system check --operator
+```
+
+This check reports the status of Meshery Operator and its controllers, including MeshSync and Broker.
+You can also trigger the same check from the UI by clicking the connection chip in the Connections view.
 
 ## Scalability and Performance
 
