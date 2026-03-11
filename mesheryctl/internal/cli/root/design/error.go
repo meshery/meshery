@@ -39,7 +39,6 @@ const (
 	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1192"
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 	ErrEvaluateDesignCode             = "mesheryctl-1200"
-	ErrEvaluateOutputRequiredCode     = "mesheryctl-1201"
 	ErrEvaluateDesignResponseCode     = "mesheryctl-1202"
 )
 
@@ -179,17 +178,9 @@ func ErrDesignInvalidApiResponse(message string) error {
 func ErrEvaluateDesign() error {
 	return errors.New(ErrEvaluateDesignCode, errors.Alert,
 		[]string{"Design not specified for evaluation"},
-		[]string{"No design file path or ID was provided"},
-		[]string{"A design must be specified either by file path (-f) or by ID as an argument"},
-		[]string{"Provide a design file using '-f' flag or pass a design ID as an argument.\n\nUsage: mesheryctl design evaluate [ID] -o [output-file]\n       mesheryctl design evaluate -f [file] -o [output-file]"})
-}
-
-func ErrEvaluateOutputRequired() error {
-	return errors.New(ErrEvaluateOutputRequiredCode, errors.Alert,
-		[]string{"Output file not specified"},
-		[]string{"The '-o' flag is required to save the evaluated design"},
-		[]string{"The evaluated design must be saved to a file"},
-		[]string{"Provide an output file path using the '-o' flag.\n\nUsage: mesheryctl design evaluate [ID] -o [output-file]"})
+		[]string{"Exactly one of a design file path (-f) or a design ID must be provided, not both"},
+		[]string{"A design must be specified either by file path (-f) or by ID as an argument, but not both simultaneously"},
+		[]string{"Provide a design file using '-f' flag or pass a design ID as an argument (not both).\n\nUsage: mesheryctl design evaluate [ID] -o [output-file]\n       mesheryctl design evaluate -f [file] -o [output-file]"})
 }
 
 func ErrEvaluateDesignResponse(err error) error {
