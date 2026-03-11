@@ -50,7 +50,7 @@ require (
 	github.com/lib/pq v1.11.1
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
-	github.com/meshery/meshkit v0.8.68
+	github.com/meshery/meshkit v0.8.69-0.20260311194936-fba3a9d831ca
 	github.com/meshery/meshsync v0.8.26
 	github.com/meshery/schemas v0.8.126
 	github.com/nsf/termbox-go v1.1.1
@@ -177,6 +177,7 @@ require (
 	github.com/dgryski/go-farm v0.0.0-20240924180020-3414d57e47da // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/distribution/reference v0.6.0 // indirect
+	github.com/dlclark/regexp2 v1.11.0 // indirect
 	github.com/docker/buildx v0.29.1 // indirect
 	github.com/docker/cli-docs-tool v0.10.0 // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect

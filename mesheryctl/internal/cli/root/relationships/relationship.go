@@ -28,7 +28,7 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd}
+	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd, validateCmd}
 	relationshipApiPath  = "api/meshmodels/relationships"
 )
 
@@ -60,6 +60,9 @@ mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subty
 
 // View a specific relationship
 mesheryctl relationship view [model-name]
+
+// Validate a relationship definition file
+mesheryctl relationship validate --file ./relationship.yaml
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
@@ -84,7 +87,7 @@ mesheryctl relationship view [model-name]
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl relationship --help' to display usage guide.\n", args[0]), "relationship"))
+			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please use one of [view, generate, list, search, validate]. Use 'mesheryctl relationship --help' to display usage guide.\n", args[0]), "relationship"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
