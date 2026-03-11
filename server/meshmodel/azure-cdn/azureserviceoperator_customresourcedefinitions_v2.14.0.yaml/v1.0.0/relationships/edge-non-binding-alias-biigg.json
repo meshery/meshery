@@ -4,12 +4,12 @@
   "kind": "edge",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
     "version": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "Route",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -46,7 +45,6 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
@@ -90,7 +88,8 @@
                   "reference",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -98,7 +97,6 @@
           {
             "id": null,
             "kind": "AfdOriginGroup",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -113,7 +111,6 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
@@ -128,7 +125,8 @@
                   "metadata",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]
