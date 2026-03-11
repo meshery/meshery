@@ -14,14 +14,14 @@ Manage your GKE clusters with Meshery. Deploy Meshery in GKE [in-cluster](#in-cl
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
   <ol>
-    <li>Install the Meshery command line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+    <li>Install the Meshery command line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
     <li>Install <a href="https://cloud.google.com/sdk/docs/install">gcloud CLI</a>, configured for your environment.</li>
     <li>Access to an active GKE cluster in your Google Cloud project.</li>
   </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubernetes)
+Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
 
 ## Available Deployment Methods
 
@@ -57,8 +57,8 @@ Read through the following considerations prior to deploying Meshery on GKE.
 
 ### Preflight: Plan your access to Meshery UI
 
-1. If you are using port-forwarding, please refer to the [port-forwarding]({{ site.baseurl }}/reference/mesheryctl/system/dashboard) guide for detailed instructions.
-2. If you are using a LoadBalancer, please refer to the [LoadBalancer]({{ site.baseurl }}/installation/kubernetes#exposing-meshery-serviceloadbalancer) guide for detailed instructions.
+1. If you are using port-forwarding, please refer to the [port-forwarding](/reference/mesheryctl/system/dashboard) guide for detailed instructions.
+2. If you are using a LoadBalancer, please refer to the [LoadBalancer](/installation/kubernetes#exposing-meshery-serviceloadbalancer) guide for detailed instructions.
 3. Customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
 
 {{< code code="MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start" >}}

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: External Secrets Operator
 subtitle: Collaborative and visual infrastructure as design for External Secrets Operator
-image: /assets/img/integrations/external-secrets-operator/icons/color/external-secrets-operator-color.svg
-permalink: extensibility/integrations/external-secrets-operator
+image: /extensions/models/external-secrets-operator/icons/color/external-secrets-operator-color.svg
+aliases: /extensibility/integrations/external-secrets-operator
 docURL: https://docs.meshery.io/extensibility/integrations/external-secrets-operator
 description: 
 integrations-category: Provisioning
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Manages external secrets"
 howItWorksDetails: "Secure and centralized secret management for Kubernetes applications"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

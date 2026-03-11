@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Consul
 subtitle: Collaborative and visual infrastructure as design for Consul
-image: /assets/img/integrations/consul/icons/color/consul-color.svg
-permalink: extensibility/integrations/consul
+image: /extensions/models/consul/icons/color/consul-color.svg
+aliases: /extensibility/integrations/consul
 docURL: https://docs.meshery.io/extensibility/adapters/consul
 description: 
 integrations-category: Cloud Native Network
@@ -144,8 +143,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

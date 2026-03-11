@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Jenkins Operator
 subtitle: Collaborative and visual infrastructure as design for Jenkins Operator
-image: /assets/img/integrations/jenkins-operator/icons/color/jenkins-operator-color.svg
-permalink: extensibility/integrations/jenkins-operator
+image: /extensions/models/jenkins-operator/icons/color/jenkins-operator-color.svg
+aliases: /extensibility/integrations/jenkins-operator
 docURL: https://docs.meshery.io/extensibility/integrations/jenkins-operator
 description: 
 integrations-category: App Definition and Development
@@ -64,8 +63,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Jenkins"
 howItWorksDetails: "Streamlined Jenkins management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

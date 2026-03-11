@@ -146,7 +146,7 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
 
 <details close><summary>Visual Representation of Edge-Firewall Relationship</summary>
            <br>
-           <figure><figcaption>Edge - Firewall: Pod to Pod<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=58fda714-eaa4-490f-b228-b8bcfe3a1e47s"> (open in playground)</a></figcaption>
+           <figure><figcaption>Edge - Firewall: Pod to Pod<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=58fda714-eaa4-490f-b228-b8bcfe3a1e47"> (open in playground)</a></figcaption>
            <img alt="Edge - Firewall" src="./images/edge_firewall_relationship_pod_to_pod.svg">
            </figure>
    </details>

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kyverno Operator
 subtitle: Collaborative and visual infrastructure as design for Kyverno Operator
-image: /assets/img/integrations/kyverno-operator/icons/color/kyverno-operator-color.svg
-permalink: extensibility/integrations/kyverno-operator
+image: /extensions/models/kyverno-operator/icons/color/kyverno-operator-color.svg
+aliases: /extensibility/integrations/kyverno-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kyverno-operator
 description: 
 integrations-category: Provisioning
@@ -26,8 +25,5 @@ match resources using label selectors and wildcards.",
 ]
 howItWorks: "Block non-conformant resources"
 howItWorksDetails: "Using Kanvas, apply best practice design templates for admission control over non-conformant resources."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Gitlab Runner Operator
 subtitle: Collaborative and visual infrastructure as design for Gitlab Runner Operator
-image: /assets/img/integrations/gitlab-runner-operator/icons/color/gitlab-runner-operator-color.svg
-permalink: extensibility/integrations/gitlab-runner-operator
+image: /extensions/models/gitlab-runner-operator/icons/color/gitlab-runner-operator-color.svg
+aliases: /extensibility/integrations/gitlab-runner-operator
 docURL: https://docs.meshery.io/extensibility/integrations/gitlab-runner-operator
 description: 
 integrations-category: App Definition and Development
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

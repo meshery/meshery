@@ -268,7 +268,6 @@ func _processPattern(opts *core.ProcessPatternOptions) (map[string]interface{}, 
 			opIsDelete:             opts.IsDelete,
 			patternName:            strings.ToLower(opts.Pattern.Name),
 		}
-		fmt.Println("line 244 reached")
 
 		chain := stages.CreateChain()
 		chain.

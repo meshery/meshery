@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Percona Postgres Operator
 subtitle: Create and manage highly available, enterprise-ready MySQL, PostgreSQL, and MongoDB clusters on Kubernetes.
-image: /assets/img/integrations/pg-operator/icons/color/pg-operator-color.svg
-permalink: extensibility/integrations/pg-operator
+image: /extensions/models/pg-operator/icons/color/pg-operator-color.svg
+aliases: /extensibility/integrations/pg-operator
 docURL: https://docs.meshery.io/extensibility/integrations/pg-operator
 description: 
 integrations-category: Database
@@ -56,8 +55,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Chaos Mesh
 subtitle: Collaborative and visual infrastructure as design for Chaos Mesh
-image: /assets/img/integrations/chaos-mesh/icons/color/chaos-mesh-color.svg
-permalink: extensibility/integrations/chaos-mesh
+image: /extensions/models/chaos-mesh/icons/color/chaos-mesh-color.svg
+aliases: /extensibility/integrations/chaos-mesh
 docURL: https://docs.meshery.io/extensibility/integrations/chaos-mesh
 description: 
 integrations-category: Observability and Analysis
@@ -112,8 +111,5 @@ featureList: [
 ]
 howItWorks: "Integrates ChaosBlade experiments"
 howItWorksDetails: "Improves system resilience and fault tolerance through chaos testing"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

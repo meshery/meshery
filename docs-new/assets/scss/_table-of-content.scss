@@ -4,6 +4,9 @@
   box-shadow: var(--box-shadow-primary);
   z-index: 9;
   height: fit-content;
+  max-height: calc(100vh - var(--navbar-height) - 6rem);
+  overflow-y: auto;
+  scrollbar-width: none; // Firefox
   top: calc(var(--navbar-height) + 5rem);
   position: sticky;
   margin: 0 0 0 auto;
@@ -11,6 +14,10 @@
   border-radius: 7px;
   width: 90%;
   max-width: 200px;
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari, Edge
+  }
 }
 
 .content-table {
@@ -28,6 +35,7 @@
     flex: 0 0 23%;
     // overflow-x: scroll;
   }
+
   @media (max-width: 56.25em) {
     display: none;
   }
@@ -41,6 +49,7 @@
     border-radius: 11px;
     overflow: hidden;
   }
+
   &::-webkit-scrollbar-thumb {
     background: #868e96;
     width: 0.2rem;
@@ -55,15 +64,18 @@
   &__editable {
     display: flex;
     flex-direction: column;
-    
+
     & a:first-of-type {
       margin-bottom: 4px;
     }
+
     & a:last-of-type {
       margin-top: 4px;
     }
+
     & a {
       color: var(--color-secondary-medium);
+
       &:hover {
         text-decoration: underline;
       }
@@ -77,14 +89,17 @@
     // gap: 10px;
     .selected {
       font-weight: 600;
+
       &:hover {
         text-decoration: none;
       }
     }
+
     & ul {
       font-size: .9rem;
       padding-inline-start: 0px;
       margin-bottom: 0;
+
       & li {
         list-style: none !important;
 
@@ -96,14 +111,14 @@
             text-decoration: underline;
           }
 
+        }
       }
-    }
 
-    & .md-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+      & .md-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
 
     }
   }

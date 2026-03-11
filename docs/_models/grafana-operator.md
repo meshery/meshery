@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Grafana Operator
 subtitle: Operational dashboards for your data with Grafana and Meshery
-image: /assets/img/integrations/grafana-operator/icons/color/grafana-operator-color.svg
-permalink: extensibility/integrations/grafana-operator
+image: /extensions/models/grafana-operator/icons/color/grafana-operator-color.svg
+aliases: /extensibility/integrations/grafana-operator
 docURL: https://docs.meshery.io/extensibility/integrations/grafana-operator
 description: 
 integrations-category: Observability and Analysis
@@ -68,8 +67,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

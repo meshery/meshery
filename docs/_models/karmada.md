@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Karmada
 subtitle: Collaborative and visual infrastructure as design for Karmada
-image: /assets/img/integrations/karmada/icons/color/karmada-color.svg
-permalink: extensibility/integrations/karmada
+image: /extensions/models/karmada/icons/color/karmada-color.svg
+aliases: /extensibility/integrations/karmada
 docURL: https://docs.meshery.io/extensibility/integrations/karmada
 description: 
 integrations-category: Orchestration & Management
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Integrates Karmada clusters"
 howItWorksDetails: "Streamlined multi-cluster management and governance"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

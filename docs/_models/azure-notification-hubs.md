@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Notification Hubs
 subtitle: Collaborative and visual infrastructure as design for Azure Notification Hubs
-image: /assets/img/integrations/azure-notification-hubs/icons/color/azure-notification-hubs-color.svg
-permalink: extensibility/integrations/azure-notification-hubs
+image: /extensions/models/azure-notification-hubs/icons/color/azure-notification-hubs-color.svg
+aliases: /extensibility/integrations/azure-notification-hubs
 docURL: https://docs.meshery.io/extensibility/integrations/azure-notification-hubs
 description: 
 integrations-category: Observability and Analysis
@@ -42,8 +41,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
