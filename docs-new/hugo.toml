@@ -191,6 +191,19 @@ no = 'Sorry to hear that. Please <a href="https://github.com/meshery/meshery/iss
 [params.ui.readingtime]
 enable = false
 
+[[cascade]]
+  [cascade._target]
+    path = '/catalog'
+    kind = 'section'
+  [cascade.build]
+    render = 'never'
+
+[[cascade]]
+  [cascade._target]
+    path = '/catalog/**'
+  [cascade.build]
+    render = 'never'
+
 # hugo module configuration
 
 [module]
