@@ -126,7 +126,7 @@ func readDesignFromFile(filePath string) (pattern.PatternFile, error) {
 	return pf, nil
 }
 
-func sendEvaluationRequest(baseUrl string, designPayload pattern.PatternFile) (*pattern.EvaluationResponse, error) {
+func sendEvaluationRequest(designPayload pattern.PatternFile) (*pattern.EvaluationResponse, error) {
 	evalReq := pattern.EvaluationRequest{
 		Design: designPayload,
 	}
@@ -136,16 +136,9 @@ func sendEvaluationRequest(baseUrl string, designPayload pattern.PatternFile) (*
 		return nil, utils.ErrMarshal(err)
 	}
 
-	url := fmt.Sprintf("%s/api/meshmodels/relationships/evaluate", baseUrl)
-	req, err := utils.NewRequest(http.MethodPost, url, bytes.NewBuffer(payloadBytes))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-
 	s := utils.CreateDefaultSpinner("Evaluating design", "")
 	s.Start()
-	resp, err := utils.MakeRequest(req)
+	resp, err := api.Add("api/meshmodels/relationships/evaluate", bytes.NewBuffer(payloadBytes), nil)
 	s.Stop()
 	if err != nil {
 		return nil, err
