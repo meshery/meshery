@@ -109,8 +109,8 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 
 	h.log.Info(description)
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
 	w.WriteHeader(http.StatusCreated)
+	fmt.Fprint(w, string(resp))
 }
 
 // swagger:route DELETE /api/environments/{id} EnvironmentAPI idDeleteEnvironmentHandler
