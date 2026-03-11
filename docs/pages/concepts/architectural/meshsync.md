@@ -89,7 +89,7 @@ mesheryctl system check --operator
 ```
 
 This check reports the status of Meshery Operator and its controllers, including MeshSync and Broker.
-You can also trigger the same check from the UI by clicking the connection chip in the Connections view.
+This check can also be triggered in the UI from the **Connections** view by clicking the **connection chip**
 
 ## Scalability and Performance
 
