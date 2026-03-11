@@ -1,42 +1,35 @@
 ---
 layout: default
-title: mesheryctl-design-onboard
-permalink: reference/mesheryctl/design/onboard
-redirect_from: reference/mesheryctl/design/onboard/
+title: mesheryctl-design-deploy
+permalink: reference/mesheryctl/design/deploy
+redirect_from: reference/mesheryctl/design/deploy/
 type: reference
 display-title: "false"
 language: en
 command: design
-subcommand: onboard
+subcommand: deploy
 ---
 
-# mesheryctl design onboard
+# mesheryctl design deploy
 
-Onboard design
+Deploy design
 
 ## Synopsis
 
 Command will trigger deploy of design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design onboard [flags]
+mesheryctl design deploy [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Onboard design by providing file path
+Deploy design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design onboard -f [filepath] -s [source type]
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
+mesheryctl design deploy -f [filepath] -s [source type]
 
 </div>
 </pre> 
@@ -46,7 +39,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -f, --file string          Path to design file
-  -h, --help                 help for onboard
+  -h, --help                 help for deploy
       --skip-save            Skip saving a design
   -s, --source-type string   Type of source file (ex. manifest / compose / helm)
 
@@ -66,7 +59,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 
 ## Screenshots
 
-Usage of mesheryctl design onboard
+Usage of mesheryctl design deploy
 ![pattern-onboard-usage](/assets/img/mesheryctl/pattern-onboard.png)
 
 ## See Also

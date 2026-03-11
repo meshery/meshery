@@ -613,20 +613,9 @@ adapter:
 
 design:
   name: design
-  description: Manage cloud native infrastructure using predefined design patterns
-  usage: mesheryctl design [flags] or mesheryctl design [command]
-  example: mesheryctl design list
-  flags:
-    file:
-      name: --file, -f
-      description: (required) path to design file.
-      usage: |
-        mesheryctl design apply --file [design path]
-        mesheryctl design delete --file [design path]
-      example: |
-        mesheryctl design apply --file "bookInfo.yaml"
-          mesheryctl design delete --file "bookInfo.yaml"
-
+  description: Manage cloud native infrastructure using predefined application designs
+  usage: mesheryctl design [flags] or mesheryctl design [command] [flags]
+  example: mesheryctl design --help
   subcommands:
     apply:
       name: apply
@@ -638,7 +627,6 @@ design:
           description: apply design file will trigger deploy of the design file and also supports file retrieval from GitHub
           usage: mesheryctl design apply --file [path to design file]
           example: mesheryctl design apply -f "bookInfo.yaml"
-
     delete:
       name: delete
       description: Deprovision cloud native infrastructure using a design /design file
@@ -649,7 +637,57 @@ design:
           description: Deletes the resources that were created, using design file
           usage: mesheryctl design delete -f [path to design file]
           example: mesheryctl design delete -f "bookInfo.yaml"
-
+    deploy:
+      name: deploy
+      description: Deploy application
+      usage: mesheryctl design deploy [app name] [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: Deploy application with application file
+          usage: mesheryctl design deploy --file [filepath]
+          example: mesheryctl design deploy -f "bookInfo.yaml"
+        skip-save:
+          name: --skip-save
+          description: Skip saving an application
+          usage: mesheryctl design deploy --file [filepath] --skip-save
+          example: mesheryctl design deploy -f "bookInfo.yaml" --skip-save
+        source-type:
+          name: --source-type, -s
+          description: Type of source file (ex. manifest / compose / helm)
+          usage: mesheryctl design deploy --file [filepath] --source-type [manifest/compose/helm]
+          example: mesheryctl design deploy -f "bookInfo.yaml" --source-type manifest
+    export:
+      name: export
+      description: Export a design from Meshery
+      usage: mesheryctl design export [design-name | ID]
+      flags:
+        type:
+          name: --type
+          description: Specify the design type to export (default current). Supported types are oci,current,original
+          usage: mesheryctl design export --type [design-type]
+          example: mesheryctl design export --type oci
+        output:
+          name: --output, -o
+          description: Specify the output directory to save the design
+          usage: mesheryctl design export --output [directory-path]
+          example: mesheryctl design export --output ./exports
+    import:
+      name: import
+      description: Import app manifests
+      usage: mesheryctl design import -f [file/URL]
+      example: mesheryctl design import -f "bookInfo.yaml"
+      flags:
+        file:
+          name: --file, -f
+          description: Path/URL to app file
+          usage: mesheryctl design import -f [file/URL]
+          example: mesheryctl design import -f "bookInfo.yaml"
+        source-type:
+          name: --source-type, -s
+          description: Type of source file (ex. manifest / compose / helm)
+          usage: mesheryctl design import -f [file/URL] --source-type [manifest/compose/helm]
+          example: mesheryctl design import -f "bookInfo.yaml" --source-type manifest
     list:
       name: list
       description: Displays a list of available design files
@@ -673,86 +711,31 @@ design:
           description: display the total number of available designs
           usage: mesheryctl design list --count
           example: mesheryctl design list --count
-
+    undeploy:
+      name: undeploy
+      description: Undeploy application
+      usage: mesheryctl design undeploy [app-name] [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: Undeploy application with an application file
+          usage: mesheryctl design undeploy -f [filepath]
+          example: mesheryctl design undeploy -f "bookInfo.yaml"
     view:
       name: view
-      description: displays the contents of a specific design file
+      description: Displays the contents of a specific design file
       usage: mesheryctl design view [design-name|design-id]
       flags:
         all:
           name: --all, -a
-          description: show all design file content
+          description: Show all design file content
           usage: mesheryctl design view [design-name|design-id] --all
           example: mesheryctl design view bookInfo --all
         json:
           name: -o json
-          description: display the content of a design in json format
+          description: Display the content of a design in JSON format
           usage: mesheryctl design view [design-name|design-id] -o json
           example: mesheryctl design view bookInfo -o json
-
-    import:
-      name: import
-      description: Import app manifests
-      usage: mesheryctl design import -f [file/URL]
-      example: mesheryctl design import -f "bookInfo.yaml"
-      flags:
-        file:
-          name: --file, -f
-          description: Path/URL to app file
-          usage: mesheryctl design import -f [file/URL]
-          example: mesheryctl design import -f "bookInfo.yaml"
-        source-type:
-          name: --source-type, -s
-          description: Type of source file (ex. manifest / compose / helm)
-          usage: mesheryctl design import -f [file/URL] --source-type [manifest/compose/helm]
-          example: mesheryctl design import -f "bookInfo.yaml" --source-type manifest
-    export:
-      name: export
-      description: Export a design from Meshery
-      usage: mesheryctl design export [design-name | ID]
-      flags:
-        type:
-          name: --type
-          description: Specify the design type to export (default current). Supported types are oci,current,original
-          usage: mesheryctl design export --type [design-type]
-          example: mesheryctl design export --type oci
-        output:
-          name: --output, -o
-          description: Specify the output directory to save the design
-          usage: mesheryctl design export --output [directory-path]
-          example: mesheryctl design export --output ./exports
-
-    offboard:
-      name: offboard
-      description: Offboard application
-      usage: mesheryctl design offboard [app-name] [flags]
-      flags:
-        file:
-          name: --file, -f
-          description: Offboard application with an application file
-          usage: mesheryctl design offboard -f [filepath]
-          example: mesheryctl design offboard -f "bookInfo.yaml"
-
-    onboard:
-      name: onboard
-      description: Onboard application
-      usage: mesheryctl design onboard [app name] [flags]
-      flags:
-        file:
-          name: --file, -f
-          description: Onboard application with application file
-          usage: mesheryctl design onboard --file [filepath]
-          example: mesheryctl design onboard -f "bookInfo.yaml"
-        skip-save:
-          name: --skip-save
-          description: Skip saving an application
-          usage: mesheryctl design onboard --file [filepath] --skip-save
-          example: mesheryctl design onboard -f "bookInfo.yaml" --skip-save
-        source-type:
-          name: --source-type, -s
-          description: Type of source file (ex. manifest / compose / helm)
-          usage: mesheryctl design onboard mesheryctl design onboard --file [filepath] --source-type manifest
-          example: mesheryctl mesheryctl design onboard -f "bookInfo.yaml" --source-type manifest
 
 filter:
   name: filter
@@ -1175,56 +1158,57 @@ organization:
           name: --count
           description: (optional) Get the total of registered organizations
 
+relationship:
+  name: relationship
+  description: View list of relationships and details of relationship
+  usage: mesheryctl relationship [command] [flags]
+  flags:
+  subcommands:
+    generate:
+      name: generate
+      description: generate relationships docs from the google spreadsheets
+      usage: mesheryctl relationship generate [flags]
+      flags:
+        sheet:
+          name: -s, --sheetId
+          description: google sheet id
+    list:
+      name: list
+      description: list all relationships registered in Meshery Server
+      usage: mesheryctl relationship list [flags]
+      flags:
+        page:
+          name: -p, --page
+          description: "(optional) List next set of relationship list with --page (default = 1) (default 1)."
+          usage: mesheryctl relationship list --page [page number]
+          example: mesheryctl relationship list --page 2
+    view:
+      name: view
+      description: view a relationship queried by the model name
+      usage: mesheryctl relationship view [flags]
+      flags:
+        output-format:
+          name: -o, --output-format
+          description: (optional) format to display in [json|yaml] (default "yaml")
+    search:
+      name: search
+      description: search for relationship using a query
+      usage: mesheryctl relationship search [flags] [query-text]
+      flags:
+        kind:
+          name: -k --kind
+          description: kind of relationships
+        model:
+          name: -m, --model
+          description: model name
+        subtype:
+          name: -s, --subtype
+          description: subtype of relationships
+        type:
+          name: -t, --type
+          description: type of relationships
+
 exp:
-  relationship:
-    name: relationship
-    description: View list of relationships and details of relationship
-    usage: mesheryctl exp relationship [command] [flags]
-    flags:
-    subcommands:
-      generate:
-        name: generate
-        description: generate relationships docs from the google spreadsheets
-        usage: mesheryctl exp relationship generate [flags]
-        flags:
-          sheet:
-            name: -s, --sheetId
-            description: google sheet id
-      list:
-        name: list
-        description: list all relationships registered in Meshery Server
-        usage: mesheryctl exp relationship list [flags]
-        flags:
-          page:
-            name: -p, --page
-            description: "(optional) List next set of exp relationship list with --page (default = 1) (default 1)."
-            usage: mesheryctl exp relationship list --page [page number]
-            example: mesheryctl exp relationship list --page 2
-      view:
-        name: view
-        description: view a relationship queried by the model name
-        usage: mesheryctl exp relationship view [flags]
-        flags:
-          output-format:
-            name: -o, --output-format
-            description: (optional) format to display in [json|yaml] (default "yaml")
-      search:
-        name: search
-        description: search for relationship using a query
-        usage: mesheryctl exp relationship search [flags] [query-text]
-        flags:
-          kind:
-            name: -k --kind
-            description: kind of relationships
-          model:
-            name: -m, --model
-            description: model name
-          subtype:
-            name: -s, --subtype
-            description: subtype of relationships
-          type:
-            name: -t, --type
-            description: type of relationships 
   workspace:
     name: workspace
     description: View list of workspaces and detail of workspaces
