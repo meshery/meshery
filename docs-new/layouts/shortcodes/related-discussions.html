@@ -1,9 +1,24 @@
-{{- $tag := .Get "tag" -}}
+{{- $tag := .Get "tag" | default "meshery" -}}
+{{- $data := index .Site.Data.discuss $tag -}}
+
 <div class="related-discussions">
-  <h3>Recent Discussions with "meshery" Tag</h3>
+  <h3>Recent Discussions with "{{ $tag }}" Tag</h3>
+  
+  {{- if and $data $data.topic_list $data.topic_list.topics -}}
+    <ul>
+      {{- range first 5 $data.topic_list.topics -}}
+        <li>
+          <a href="https://discuss.layer5.io/t/{{ .slug }}/{{ .id }}" target="_blank" rel="noopener noreferrer">
+            {{ .title }}
+          </a>
+        </li>
+      {{- end -}}
+    </ul>
+  {{- end -}}
+
   <p>
     <a href="https://discuss.layer5.io/tag/{{ $tag }}" target="_blank" rel="noopener noreferrer">
-      View discussions tagged with <code>{{ $tag }}</code>
+      View all discussions tagged with <code>{{ $tag }}</code>
     </a>
   </p>
 </div>
