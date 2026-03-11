@@ -4,12 +4,12 @@
   "kind": "hierarchical",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
     "version": "",
@@ -46,14 +46,14 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
                   "spec",
                   "vpcID"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -76,12 +76,12 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "displayName"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]
