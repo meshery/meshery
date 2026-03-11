@@ -230,7 +230,7 @@ const ExtensionSandbox = React.memo<ExtensionSandboxProps>(
     // close the drawer when extension is loaded
     useEffect(() => {
       if (type === 'navigator' && !isDrawerCollapsed) {
-        dispatch(toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed }));
+        dispatch(toggleDrawer({ isDrawerCollapsed: true }));
       }
     }, []);
 
