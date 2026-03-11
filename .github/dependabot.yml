@@ -64,7 +64,7 @@ updates:
   - kind/chore
   - pr/dependencies
 - package-ecosystem: gomod
-  directory: "/docs-new"
+  directory: "/docs"
   schedule:
     interval: monthly
   open-pull-requests-limit: 5
