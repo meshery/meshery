@@ -227,11 +227,14 @@ const ExtensionSandbox = React.memo<ExtensionSandboxProps>(
     const { capabilitiesRegistry, isDrawerCollapsed } = useSelector((state: RootState) => state.ui);
     const dispatch = useDispatch();
 
+    // close the drawer when extension is loaded
     useEffect(() => {
       if (type === 'navigator' && !isDrawerCollapsed) {
         dispatch(toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed }));
       }
+    }, []);
 
+    useEffect(() => {
       if (capabilitiesRegistry && capabilitiesRegistry.extensions) {
         try {
           const extensionData = capabilitiesRegistry.extensions[type];
@@ -251,7 +254,7 @@ const ExtensionSandbox = React.memo<ExtensionSandboxProps>(
         setExtension([]);
         setIsLoading(true);
       };
-    }, [type, capabilitiesRegistry, isDrawerCollapsed, dispatch]);
+    }, [type, capabilitiesRegistry]);
 
     const renderContent = (): React.ReactNode => {
       if (isLoading) {
