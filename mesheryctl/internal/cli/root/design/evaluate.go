@@ -202,7 +202,7 @@ func printActionsOverview(evalResponse *pattern.EvaluationResponse) {
 
 	timestamp := ""
 	if evalResponse.Timestamp != nil {
-		timestamp = evalResponse.Timestamp.Format("2006-01-02 15:04:05 MST")
+        timestamp = evalResponse.Timestamp.Format(time.DateTime + " MST")
 	}
 	if timestamp != "" {
 		utils.Log.Infof("Evaluation completed at %s", timestamp)
