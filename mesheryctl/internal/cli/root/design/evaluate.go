@@ -23,17 +23,26 @@ import (
 	"os"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models/pattern/core"
+	encoding "github.com/meshery/meshkit/encoding"
+	meshkitutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
 )
 
-var evaluateOutputFile string
-var evaluateOutputFormat string
+type evaluateDesignFlag struct {
+	File         string `json:"file"          validate:"omitempty"`
+	OutputFile   string `json:"output"        validate:"required"`
+	OutputFormat string `json:"output-format" validate:"omitempty,oneof=json yaml"`
+}
+
+var evaluateFlags = &evaluateDesignFlag{}
 
 var evaluateCmd = &cobra.Command{
 	Use:   "evaluate [ID]",
@@ -53,15 +62,18 @@ mesheryctl design evaluate -f design.yaml --output-format json -o evaluated-desi
 	`,
 	Args: cobra.MaximumNArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if file == "" && len(args) == 0 {
-			return ErrEvaluateDesign()
-		}
-		if evaluateOutputFile == "" {
-			return ErrEvaluateOutputRequired()
-		}
-		if err := display.ValidateOutputFormat(evaluateOutputFormat); err != nil {
+		if err := mesheryctlflags.ValidateCmdFlags(cmd, evaluateFlags); err != nil {
 			return err
 		}
+
+		// Require exactly one of -f or positional ID
+		if evaluateFlags.File == "" && len(args) == 0 {
+			return ErrEvaluateDesign()
+		}
+		if evaluateFlags.File != "" && len(args) > 0 {
+			return ErrEvaluateDesign()
+		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -74,32 +86,27 @@ mesheryctl design evaluate -f design.yaml --output-format json -o evaluated-desi
 
 		var designPayload pattern.PatternFile
 
-		if file != "" {
-			// Read design from local file
-			designPayload, err = readDesignFromFile(file)
+		if evaluateFlags.File != "" {
+			designPayload, err = readDesignFromFile(evaluateFlags.File)
 			if err != nil {
 				return err
 			}
 		} else {
-			// Fetch design from server by ID
 			designPayload, err = fetchDesignByID(baseUrl, args[0])
 			if err != nil {
 				return err
 			}
 		}
 
-		// Send evaluation request
 		evalResponse, err := sendEvaluationRequest(baseUrl, designPayload)
 		if err != nil {
 			return err
 		}
 
-		// Save evaluated design to output file
-		if err := saveEvaluatedDesign(evalResponse.Design, evaluateOutputFile, evaluateOutputFormat); err != nil {
+		if err := saveEvaluatedDesign(evalResponse.Design, evaluateFlags.OutputFile, evaluateFlags.OutputFormat); err != nil {
 			return err
 		}
 
-		// Pretty print actions overview
 		printActionsOverview(evalResponse)
 
 		return nil
@@ -113,20 +120,6 @@ func readDesignFromFile(filePath string) (pattern.PatternFile, error) {
 	}
 
 	pf, err := core.NewPatternFile(content)
-	if err != nil {
-		return pattern.PatternFile{}, ErrParseDesignFile(err)
-	}
-	return pf, nil
-}
-
-func fetchDesignByID(baseUrl, designID string) (pattern.PatternFile, error) {
-	dataURL := fmt.Sprintf("%s/api/pattern/%s", baseUrl, designID)
-	patternData, err := fetchPatternData(dataURL)
-	if err != nil {
-		return pattern.PatternFile{}, err
-	}
-
-	pf, err := core.NewPatternFile([]byte(patternData.PatternFile))
 	if err != nil {
 		return pattern.PatternFile{}, ErrParseDesignFile(err)
 	}
@@ -177,21 +170,27 @@ func sendEvaluationRequest(baseUrl string, designPayload pattern.PatternFile) (*
 }
 
 func saveEvaluatedDesign(design pattern.PatternFile, outputFile string, format string) error {
-	outputFormatterFactory := display.OutputFormatterFactory[pattern.PatternFile]{}
-	outputFormatter, err := outputFormatterFactory.New(format, design)
+	var content []byte
+	var err error
+
+	switch format {
+	case "json":
+		content, err = encoding.Marshal(design)
+	case "yaml":
+		content, err = yaml.Marshal(design)
+	default:
+		content, err = yaml.Marshal(design)
+	}
 	if err != nil {
+		return utils.ErrMarshal(err)
+	}
+
+	if err := meshkitutils.WriteToFile(outputFile, string(content)); err != nil {
 		return err
 	}
 
-	outputFormatterSaverFactory := display.OutputFormatterSaverFactory[pattern.PatternFile]{
-		OutputFormatter: outputFormatter,
-	}
-	outputSaver, err := outputFormatterSaverFactory.New(format, outputFormatter)
-	if err != nil {
-		return err
-	}
-
-	return outputSaver.WithFilePath(outputFile).Save()
+	utils.Log.Infof("Evaluated design saved to %s", outputFile)
+	return nil
 }
 
 func printActionsOverview(evalResponse *pattern.EvaluationResponse) {
@@ -200,16 +199,12 @@ func printActionsOverview(evalResponse *pattern.EvaluationResponse) {
 		return
 	}
 
-	timestamp := ""
 	if evalResponse.Timestamp != nil {
-        timestamp = evalResponse.Timestamp.Format(time.DateTime + " MST")
-	}
-	if timestamp != "" {
-		utils.Log.Infof("Evaluation completed at %s", timestamp)
+		utils.Log.Infof("Evaluation completed at %s", evalResponse.Timestamp.Format("2006-01-02 15:04:05 MST"))
 	} else {
 		utils.Log.Info("Evaluation completed")
 	}
-	fmt.Printf("Total actions: %d\n\n", len(evalResponse.Actions))
+	utils.Log.Infof("Total actions: %d\n", len(evalResponse.Actions))
 
 	// Group actions by operation type
 	groups := groupActionsByOp(evalResponse.Actions)
@@ -459,7 +454,11 @@ func formatActionValue(raw interface{}) string {
 }
 
 func init() {
-	evaluateCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
-	evaluateCmd.Flags().StringVarP(&evaluateOutputFile, "output", "o", "", "Path to save the evaluated design")
-	evaluateCmd.Flags().StringVarP(&evaluateOutputFormat, "output-format", "", "yaml", "Output format for the evaluated design [json|yaml]")
+	evaluateCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
+		return pflag.NormalizedName(strings.ToLower(name))
+	})
+
+	evaluateCmd.Flags().StringVarP(&evaluateFlags.File, "file", "f", "", "Path to design file")
+	evaluateCmd.Flags().StringVarP(&evaluateFlags.OutputFile, "output", "o", "", "Path to save the evaluated design")
+	evaluateCmd.Flags().StringVar(&evaluateFlags.OutputFormat, "output-format", "yaml", "Output format for the evaluated design [json|yaml]")
 }
