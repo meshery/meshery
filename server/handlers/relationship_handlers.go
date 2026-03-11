@@ -130,13 +130,18 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, _, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	typ := mux.Vars(r)["model"]
+	var greedy bool
+	if search == "true" {
+		greedy = true
+	}
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{
 		Id:               r.URL.Query().Get("id"),
 		Version:          r.URL.Query().Get("version"),
 		ModelName:        typ,
+		Greedy:           greedy,
 		Limit:            limit,
 		Offset:           offset,
 		OrderOn:          order,
