@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000004",
-  "evaluationQuery": "",
+  "evaluationQuery": "edge_non_binding_control_relationship",
   "kind": "edge",
   "metadata": {
     "description": "MetricAlarm triggers Auto Scaling Group scaling policies based on metric thresholds",
