@@ -1,3 +1,6 @@
+@use "project-variables" as *;
+@use "adapters" as adapters;
+
 /* COMMAND REFERENCE */
 table.mesherycomponents {
   th {
@@ -6,7 +9,7 @@ table.mesherycomponents {
   }
   td.childcomponent {
     color: white;
-    background-color: $tealblue;
+    background-color: adapters.$tealblue;
   }
 }
 
@@ -18,17 +21,16 @@ table.mesherycomponents {
 div.prereqs {
   background-color: $charcoal;
   font-size: 1.5rem;
+  color: #ddd;
+  margin: 0.5rem;
+  padding: 15px;
+  border-radius: 0.3rem;
   & > *,
   & > * > * {
     color: #ddd;
     margin-top: 0;
   }
-  color: #ddd;
-  margin: 0.5rem;
-  padding: 15px;
-  border-radius: 0.3rem;
 }
 a.meshery-light {
   color: $keppel;
 }
-
