@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 12th 2026, 10:42:30 pm
+- Testing started at: March 12th 2026, 11:03:46 pm
 
 **📦 Test Result Summary**
 
-- ✅ 68 passed
-- ❌ 1 failed
+- ✅ 63 passed
+- ❌ 4 failed
 - ⚠️ 0 flaked
-- ⏩ 3 skipped
+- ⏩ 5 skipped
 
-⌛ _Duration: 4 minutes and 57 seconds_
+⌛ _Duration: 5 minutes and 8 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -67,13 +67,13 @@
 | 44 | None | chromium-local-provider | Create a Model |  | ✅ |
 | 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 46 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
-| 48 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
-| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
+| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 48 | None | chromium-local-provider | Import a Model via File Import |  | ❌ |
+| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 51 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 52 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
-| 53 | None | chromium-local-provider | should edit design in Design Configurator |  | ✅ |
+| 53 | None | chromium-local-provider | should edit design in Design Configurator |  | ❌ |
 | 54 | None | chromium-local-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 55 | None | chromium-local-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 56 | None | chromium-local-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
@@ -81,7 +81,7 @@
 | 58 | None | chromium-local-provider | should identify relationships for meshery-design | relationship | ✅ |
 | 59 | None | chromium-local-provider | should identify relationships for pv-pvc-edge-non-binding-reference-relationship | relationship | ✅ |
 | 60 | None | chromium-local-provider | should identify relationships for Service-To-Deployment-Network | relationship | ✅ |
-| 61 | None | chromium-local-provider | should verify Design Configurator page elements |  | ✅ |
+| 61 | None | chromium-local-provider | should verify Design Configurator page elements |  | ❌ |
 | 62 | None | chromium-local-provider | Test if Left Navigation Panel is displayed |  | ✅ |
 | 63 | None | chromium-local-provider | Test if Notification button is displayed |  | ✅ |
 | 64 | None | chromium-local-provider | Test if Profile button is displayed |  | ✅ |
@@ -120,6 +120,66 @@ The following tests failed. Click on each to see the failure reason:
 ```
 
 
+
+</details>
+
+<details>
+<summary>❌ should verify Design Configurator page elements (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
+ [90m  6 |[39m
+[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
+ [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
+ [90m 10 |[39m     })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Import a Model via File Import (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
+ [90m  6 |[39m
+[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
+ [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
+ [90m 10 |[39m     })[33m;[39m[0m
+```
 
 </details>
 
