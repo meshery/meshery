@@ -26,7 +26,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/mesheryctl/pkg/utils/format"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -321,14 +320,9 @@ func setContext(configFile, cname string) error {
 		return utils.ErrReadResponseBody(err)
 	}
 	utils.Log.Debugf("Set context API response: %s", string(body))
-	var output interface{}
-	if err := json.Unmarshal(body, &output); err == nil {
-		if err := format.OutputJson(output); err != nil {
-			return errors.Wrap(err, "failed to format response for new connection")
-		}
-		return nil
+	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusMultipleChoices {
+		return errors.Errorf("failed to set context: status code %d: %s", res.StatusCode, strings.TrimSpace(string(body)))
 	}
-	utils.Log.Info(string(body))
 	return nil
 }
 
