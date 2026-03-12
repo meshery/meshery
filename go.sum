@@ -1498,8 +1498,8 @@ github.com/maxatome/go-testdeep v1.14.0 h1:rRlLv1+kI8eOI3OaBXZwb3O7xY3exRzdW5QyX
 github.com/maxatome/go-testdeep v1.14.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
 github.com/meshery/meshery-operator v0.8.11 h1:eDo2Sw0jjVrXsvvhF8LenADM58pK+7Z68ROPVIejTPc=
 github.com/meshery/meshery-operator v0.8.11/go.mod h1:hQEtFKKa5Fr/Mskk6bV5ip3bQ0+3F0u1voYS3XisBp4=
-github.com/meshery/meshkit v0.8.69-0.20260311194936-fba3a9d831ca h1:SRJAu6iqtJT3cymplQoY0jo8AWUcvfZbxbC4tXpGDnY=
-github.com/meshery/meshkit v0.8.69-0.20260311194936-fba3a9d831ca/go.mod h1:c7iQRt4v6QxkPHV3nm85EG/2FcUT4ESdDvWQhpsnoP8=
+github.com/meshery/meshkit v0.8.69-0.20260312153433-367e9903694e h1:srUXKtOE9D8ZdcPAV1wpnXLasF0ApcybBVNz79JllqM=
+github.com/meshery/meshkit v0.8.69-0.20260312153433-367e9903694e/go.mod h1:me7lsxn+sIbbATey1+f6e500G1TYKzCGTcinScMEqII=
 github.com/meshery/meshsync v0.8.26 h1:GM5jzECZMCQGx3BMNo9cahcAfD/TXYue/DPWFGpjnho=
 github.com/meshery/meshsync v0.8.26/go.mod h1:RNQnmmg/hq/TaGbu6hIVAPCnjB4dIMm9Nmi729OgmFM=
 github.com/meshery/schemas v0.8.126 h1:Y01U758NIovH6p6S6mPGUZIgKJ55AXd9ZX/wlPgIp4w=
