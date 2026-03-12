@@ -334,7 +334,7 @@ Pull request requirements:
 
 ### Adding a Concept Page
 
-1. Create file under appropiate section in `/docs/content/en/concepts/`
+1. Create file under appropriate section in `/docs/content/en/concepts/`
 2. Add Hugo front matter
 3. Structure content:
    - **Overview**: What is this concept?
