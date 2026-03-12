@@ -86,7 +86,7 @@ mesheryctl relationship validate --file https://example.com/relationship.json
 		}, relationshipData)
 		if err != nil {
 			if details, ok := meshkitschema.ValidationDetailsFromError(err); ok {
-				return ErrRelationshipValidationFailedForFile(relationshipValidateFlagsProvided.File, details)
+				return ErrRelationshipValidationFailed(details)
 			}
 			return err
 		}
