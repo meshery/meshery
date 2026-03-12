@@ -16,6 +16,7 @@ import (
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
@@ -580,7 +581,11 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		code := http.StatusInternalServerError
+		if errors.GetCode(err) == models.ErrResultNotFoundCode {
+			code = http.StatusNotFound
+		}
+		http.Error(w, _err.Error(), code)
 		return
 	}
 
