@@ -1,0 +1,24 @@
+version: 0.0.1
+name: prometheus-adapter
+displayName: Prometheus adapter
+createdAt: "2024-05-20T05:11:11Z"
+description: This YAML configuration defines a Kubernetes Deployment for the prometheus-adapter, a component of the kube-prometheus stack within the monitoring namespace. The deployment manages two replicas of the prometheus-adapter pod to ensure high availability. Each pod runs a container using the prometheus-adapter image from the Kubernetes registry, configured with various command-line arguments to specify settings like the configuration file path, metrics re-list interval, and Prometheus URL.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7ab91040-5402-406f-8211-37c3ab9eb2bb/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Namespace: Ensure that the monitoring namespace exists before deploying this configuration.\n2. ConfigMap: Verify that the adapter-config ConfigMap is created and contains the correct configuration data required by the prometheus-adapter.\n3. TLS Configuration: The deployment includes TLS settings with specific cipher suites; ensure these align with your security policies and requirements.\n4. Resource Allocation: The specified CPU and memory limits and requests should be reviewed to match the expected load and cluster capacity.\n5. Service Account: Ensure that the prometheus-adapter service account has the necessary permissions to operate correctly within the cluster \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7ab91040-5402-406f-8211-37c3ab9eb2bb-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7ab91040-5402-406f-8211-37c3ab9eb2bb-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

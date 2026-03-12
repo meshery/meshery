@@ -1,0 +1,18 @@
+{
+  "id": "c9f61b82-6721-44b6-9d50-76a2ebdf49b9",
+  "name": "",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.20",
+  "metadata": {
+    "resolvedAliases": {}
+  },
+  "components": [],
+  "preferences": {
+    "layers": {
+      "relationships": {
+        "hierarchical-sibling-matchlabels": false
+      }
+    }
+  },
+  "relationships": []
+}
