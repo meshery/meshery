@@ -16,7 +16,6 @@ var (
 	ErrGcpGKEGetCredentialsCode   = "mesheryctl-1175"
 	ErrReadKubeConfigCode         = "mesheryctl-1187"
 	ErrWriteKubeConfigCode        = "mesheryctl-1188"
-	ErrConnectionNotFoundCode     = "mesheryctl-1197"
 )
 
 var (
