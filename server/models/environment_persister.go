@@ -34,7 +34,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	query := ep.DB.Model(&environment.Environment{})

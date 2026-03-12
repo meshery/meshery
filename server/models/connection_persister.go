@@ -24,7 +24,7 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	query := cp.DB.Model(&connections.Connection{})
