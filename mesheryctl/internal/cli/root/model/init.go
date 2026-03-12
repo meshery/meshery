@@ -16,7 +16,7 @@ import (
 )
 
 type cmdModelInitFlags struct {
-	Path         string `json:"path" validate:"min=1"`
+	Path         string `json:"path" validate:"omitempty,relpath"`
 	Version      string `json:"version" validate:"semver"`
 	OutputFormat string `json:"output-format" validate:"oneof=json yaml"`
 }

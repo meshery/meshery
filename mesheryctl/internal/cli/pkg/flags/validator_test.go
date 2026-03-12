@@ -1,6 +1,8 @@
 package mesheryctlflags
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/go-playground/validator/v10"
@@ -311,4 +313,81 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 
 	// Reset custom errors after tests to avoid side effects
 	fv.CustomErrors = make(map[string]string)
+}
+
+func TestValidateRelativePath(t *testing.T) {
+	flagValidator := GetFlagValidator()
+
+	cwd, err := os.Getwd()
+	assert.NoError(t, err)
+	if err != nil {
+		t.FailNow()
+	}
+
+	absolutePath := filepath.Join(cwd, "testdata", "meshery")
+
+	tests := []struct {
+		name    string
+		path    string
+		wantErr bool
+	}{
+		{
+			name:    "given empty path is valid",
+			path:    "",
+			wantErr: false,
+		},
+		{
+			name:    "given current relative path is valid",
+			path:    ".",
+			wantErr: false,
+		},
+		{
+			name:    "given simple relative path is valid",
+			path:    "configs/meshery.yaml",
+			wantErr: false,
+		},
+		{
+			name:    "given dot relative path is valid",
+			path:    "./configs/meshery.yaml",
+			wantErr: false,
+		},
+		{
+			name:    "given parent relative path is valid",
+			path:    "../configs/meshery.yaml",
+			wantErr: false,
+		},
+		{
+			name:    "given absolute path is invalid",
+			path:    absolutePath,
+			wantErr: true,
+		},
+	}
+
+	// Add a Windows-style absolute path case when running on Windows.
+	if vol := filepath.VolumeName(cwd); vol != "" {
+		tests = append(tests, struct {
+			name    string
+			path    string
+			wantErr bool
+		}{
+			name:    "windows absolute path is invalid",
+			path:    vol + `\meshery\config.yaml`,
+			wantErr: true,
+		})
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			type testStruct struct {
+				Path string `validate:"relpath"`
+			}
+
+			err := flagValidator.Validate(testStruct{Path: tt.path})
+			if tt.wantErr {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+		})
+	}
 }

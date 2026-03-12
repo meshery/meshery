@@ -56,15 +56,7 @@ mesheryctl model import --file [path-to-model]
 mesheryctl model import --file [path-to-csv-directory]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(modelImportFlags)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelImportFlags)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		if modelImportFlags.File == "" && len(args) == 0 {
