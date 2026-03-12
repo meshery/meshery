@@ -38,6 +38,8 @@ const (
 
 	errGenerateUsageMsg = "Usage: mesheryctl model generate [ file | filePath | URL ] path\nRun 'mesheryctl model generate --help' to see detailed help message"
 	errImportUsageMsg   = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
+
+	errGenerateMissingArgsMsg = "either --file flag, a URL or a path as argument must be specified\n\n%s"
 )
 
 func ErrExportModel(err error, name string) error {
