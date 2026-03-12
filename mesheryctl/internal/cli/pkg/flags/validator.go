@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"path/filepath"
 	"reflect"
 	"regexp"
 	"strings"
@@ -52,6 +53,14 @@ func (fv *FlagValidator) Validate(s interface{}) error {
 
 func validateSemver(fl validator.FieldLevel) bool {
 	return vSemverRegex.MatchString(fl.Field().String())
+}
+
+func validateRelativePath(fl validator.FieldLevel) bool {
+	path := fl.Field().String()
+	if path == "" {
+		return true // Omit empty check should be handled by 'omitempty' tag
+	}
+	return !filepath.IsAbs(path)
 }
 
 // validateBoolean is a custom validation function that checks if a field is a boolean value (true or false)
@@ -103,8 +112,14 @@ func GetFlagValidator() *FlagValidator {
 			log.Fatalf("Error registering validation: %v", err)
 		}
 
-		// Register a custom validation function for boolean values that accepts "true", "false"
+		// Register a custom validation function for boolean values that accepts "true", "false" with tag name "boolean"
 		err = validate.RegisterValidation("boolean", validateBoolean)
+		if err != nil {
+			log.Fatalf("Error registering validation: %v", err)
+		}
+
+		// Register a custom validation function for relative file paths with a tag name "relpath"
+		err = validate.RegisterValidation("relpath", validateRelativePath)
 		if err != nil {
 			log.Fatalf("Error registering validation: %v", err)
 		}

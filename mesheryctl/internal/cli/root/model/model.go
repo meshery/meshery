@@ -30,7 +30,7 @@ import (
 )
 
 type cmdModelFlags struct {
-	Count bool
+	Count bool `json:"count" validate:"boolean"`
 }
 
 var modelFlags cmdModelFlags
@@ -79,15 +79,7 @@ mesheryctl model build [model-name]
 mesheryctl model build [model-name]/[model-version]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(modelFlags)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelFlags)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
