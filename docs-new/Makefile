@@ -21,10 +21,6 @@ setup:
 ## Run docs.meshery.io on your local machine with draft and future content enabled.
 site: check-go
 	hugo server -D -F
-	
-## Run docs.meshery.io on your local machine. Alternate method.
-site-fast:
-	gatsby develop
 
 ## Build docs.meshery.io on your local machine.
 build:
