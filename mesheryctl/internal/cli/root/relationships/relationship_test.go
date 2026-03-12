@@ -2,6 +2,7 @@ package relationships
 
 import (
 	"flag"
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -34,13 +35,16 @@ func TestRelationship(t *testing.T) {
 			IsOutputGolden:   true,
 		},
 		{
-			Name:             "Display error given invalid command",
-			Args:             []string{"invalidCommand"},
-			URL:              "",
-			Fixture:          "list.relationship.api.empty.response.golden",
-			ExpectedResponse: "relationship.invalid.command.output.golden",
-			ExpectError:      true,
-			IsOutputGolden:   true,
+			Name:        "Display error given invalid command",
+			Args:        []string{"invalidCommand"},
+			URL:         "",
+			Fixture:     "list.relationship.api.empty.response.golden",
+			ExpectError: true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf(
+				"'%s' is an invalid subcommand. Please use one of [%s]. Use 'mesheryctl relationship --help' to display usage guide",
+				"invalidCommand",
+				"generate, list, search, validate, view",
+			)),
 		},
 		{
 			Name:             "Display count of registered relationships empty",

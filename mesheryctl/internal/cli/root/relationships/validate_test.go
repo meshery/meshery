@@ -1,14 +1,18 @@
 package relationships
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	meshkitschema "github.com/meshery/meshkit/schema"
 )
+
+func expectedValidateMissingFileError() error {
+	return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --file ''"))
+}
 
 func TestValidate(t *testing.T) {
 	mesheryctlflags.InitValidators(RelationshipCmd)
@@ -31,12 +35,26 @@ func TestValidate(t *testing.T) {
 			IsOutputGolden:   true,
 		},
 		{
-			Name:        "given an invalid relationship file when running relationship validate then validation fails",
-			Args:        []string{"validate", "--file", invalidRelationshipPath},
+			Name:             "given an invalid relationship file when running relationship validate then validation failures are surfaced",
+			Args:             []string{"validate", "--file", invalidRelationshipPath},
+			ExpectedResponse: "validate.relationship.invalid.output.golden",
+			ExpectError:      true,
+			IsOutputGolden:   true,
+		},
+		{
+			Name:          "given no file flag when running relationship validate then shared flag validation fails",
+			Args:          []string{"validate"},
+			ExpectError:   true,
+			ExpectedError: expectedValidateMissingFileError(),
+		},
+		{
+			Name:        "given an unexpected positional argument when running relationship validate then argument validation fails",
+			Args:        []string{"validate", "unexpected", "--file", validRelationshipPath},
 			ExpectError: true,
-			ExpectedError: ErrRelationshipValidationFailed(meshkitschema.ValidationDetails{
-				Violations: []meshkitschema.Violation{{InstancePath: "/kind", Message: "invalid value"}},
-			}),
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf(
+				"too many arguments specified\n\n%s",
+				relationshipValidateUsage,
+			)),
 		},
 	}
 

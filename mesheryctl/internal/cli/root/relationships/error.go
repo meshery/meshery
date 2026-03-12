@@ -57,7 +57,7 @@ func formatRelationshipViolations(violations []meshkitschema.Violation) []string
 			message = fmt.Sprintf("Validation failed for %s", location)
 		}
 
-		formatted = append(formatted, fmt.Sprintf("%s: %s", location, message))
+		formatted = append(formatted, fmt.Sprintf(" Violation at %s: %s", location, message))
 	}
 
 	return formatted

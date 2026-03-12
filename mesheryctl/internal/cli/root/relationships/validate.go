@@ -3,8 +3,8 @@ package relationships
 import (
 	"fmt"
 	"os"
-	"strings"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitschema "github.com/meshery/meshkit/schema"
 	schemav1alpha3 "github.com/meshery/schemas/models/v1alpha3"
@@ -12,7 +12,7 @@ import (
 )
 
 type relationshipValidateFlags struct {
-	file string
+	File string `json:"file" validate:"required"`
 }
 
 var relationshipValidateFlagsProvided relationshipValidateFlags
@@ -29,20 +29,19 @@ mesheryctl relationship validate --file ./relationship.yaml
 
 // Validate a JSON relationship definition file
 mesheryctl relationship validate --file ./relationship.json
-	`,
+`,
+	PreRunE: func(cmd *cobra.Command, _ []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &relationshipValidateFlagsProvided)
+	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
 			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", relationshipValidateUsage))
 		}
 
-		if strings.TrimSpace(relationshipValidateFlagsProvided.file) == "" {
-			return utils.ErrInvalidArgument(fmt.Errorf("--file is required\n\n%s", relationshipValidateUsage))
-		}
-
 		return nil
 	},
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		relationshipData, err := os.ReadFile(relationshipValidateFlagsProvided.file)
+	RunE: func(_ *cobra.Command, _ []string) error {
+		relationshipData, err := os.ReadFile(relationshipValidateFlagsProvided.File)
 		if err != nil {
 			return utils.ErrFileRead(err)
 		}
@@ -58,11 +57,11 @@ mesheryctl relationship validate --file ./relationship.json
 			return err
 		}
 
-		_, err = fmt.Fprintln(cmd.OutOrStdout(), "Relationship definition is valid.")
-		return err
+		utils.Log.Info("Relationship definition is valid.")
+		return nil
 	},
 }
 
 func init() {
-	validateCmd.Flags().StringVarP(&relationshipValidateFlagsProvided.file, "file", "f", "", "(required) path to the relationship definition file")
+	validateCmd.Flags().StringVarP(&relationshipValidateFlagsProvided.File, "file", "f", "", "(required) path to the relationship definition file")
 }
