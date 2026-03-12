@@ -1,41 +1,96 @@
 {
-  "schemaVersion": "core.meshery.io/v1alpha2",
-  "version": "v1.0.0",
-  "kind": "Hierarchical",
-  "type": "Parent",
-  "subType": "Parent",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "hierarchical_parent_relationship",
+  "kind": "hierarchical",
   "metadata": {
-    "description": "A CacheCluster must be placed inside a CacheSubnetGroup to operate within a VPC. The CacheSubnetGroup defines which VPC subnets the cluster nodes can be placed in, making it a prerequisite (parent) for the CacheCluster (child)."
+    "description": "A CacheCluster must be placed inside a CacheSubnetGroup to operate within a VPC. The CacheSubnetGroup defines which VPC subnets the cluster nodes can be placed in, making it a prerequisite (parent) for the CacheCluster (child).",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
   },
-  "model": "aws-elasticache-controller",
+  "model": {
+    "version": "",
+    "name": "aws-elasticache-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.3.3"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
     {
       "allow": {
         "from": [
           {
+            "id": null,
             "kind": "CacheCluster",
-            "model": "aws-elasticache-controller",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-elasticache-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["settings", "cacheSubnetGroupName"]],
-              "description": "The CacheCluster references the CacheSubnetGroup by name to determine VPC subnet placement."
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "cacheSubnetGroupName"
+                ]
+              ]
             }
           }
         ],
         "to": [
           {
+            "id": null,
             "kind": "CacheSubnetGroup",
-            "model": "aws-elasticache-controller",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-elasticache-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [["settings", "cacheSubnetGroupName"]],
-              "description": "The CacheSubnetGroup provides its name for CacheCluster to reference."
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
             }
           }
         ]
       },
-      "deny": {}
+      "deny": null
     }
   ],
-  "evaluationQuery": "hierarchical_parent_relationship"
+  "subType": "parent",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
 }

@@ -1,31 +1,80 @@
 {
-  "schemaVersion": "core.meshery.io/v1alpha2",
-  "version": "v1.0.0",
-  "kind": "Sibling",
-  "type": "Non-Binding",
-  "subType": "Sibling",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "sibling_relationship",
+  "kind": "sibling",
   "metadata": {
-    "description": "In a Redis cluster mode disabled ReplicationGroup, individual CacheCluster nodes (one primary, up to 5 replicas) are siblings — they share the same ReplicationGroup parent, operate at the same hierarchical level, and replicate data between each other. Understanding this sibling relationship helps model the primary/replica topology within a single shard."
+    "description": "In a Redis cluster mode disabled ReplicationGroup, individual CacheCluster nodes (one primary, up to 5 replicas) are siblings. They share the same ReplicationGroup parent, operate at the same hierarchical level, and replicate data between each other.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
   },
-  "model": "aws-elasticache-controller",
+  "model": {
+    "version": "",
+    "name": "aws-elasticache-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.3.3"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
     {
       "allow": {
         "from": [
           {
+            "id": null,
             "kind": "CacheCluster",
-            "model": "aws-elasticache-controller"
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-elasticache-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": null
           }
         ],
         "to": [
           {
+            "id": null,
             "kind": "CacheCluster",
-            "model": "aws-elasticache-controller"
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-elasticache-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": null
           }
         ]
       },
-      "deny": {}
+      "deny": null
     }
   ],
-  "evaluationQuery": "sibling_relationship"
+  "subType": "sibling",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
 }

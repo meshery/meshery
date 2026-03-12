@@ -1,41 +1,96 @@
 {
-  "schemaVersion": "core.meshery.io/v1alpha2",
-  "version": "v1.0.0",
-  "kind": "Hierarchical",
-  "type": "Inventory",
-  "subType": "Inventory",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "hierarchical_inventory_relationship",
+  "kind": "hierarchical",
   "metadata": {
-    "description": "A UserGroup is a collection of User resources. In ElastiCache RBAC for Redis/Valkey, User objects (with specific command/key permissions) are grouped into UserGroups, which are then associated with ReplicationGroups. The UserGroup configuration inherits its access rules from all its member Users."
+    "description": "A UserGroup is a collection of User resources. In ElastiCache RBAC for Redis/Valkey, User objects with specific command/key permissions are grouped into UserGroups, which are then associated with ReplicationGroups.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
   },
-  "model": "aws-elasticache-controller",
+  "model": {
+    "version": "",
+    "name": "aws-elasticache-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.3.3"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
     {
       "allow": {
         "from": [
           {
+            "id": null,
             "kind": "User",
-            "model": "aws-elasticache-controller",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-elasticache-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["settings", "userID"]],
-              "description": "The User provides its userID to be enrolled in the UserGroup."
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "userID"
+                ]
+              ]
             }
           }
         ],
         "to": [
           {
+            "id": null,
             "kind": "UserGroup",
-            "model": "aws-elasticache-controller",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-elasticache-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [["settings", "userIDs", "_"]],
-              "description": "The UserGroup holds an array of userIDs referencing member User resources."
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
             }
           }
         ]
       },
-      "deny": {}
+      "deny": null
     }
   ],
-  "evaluationQuery": "hierarchical_inventory_relationship"
+  "subType": "inventory",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
 }

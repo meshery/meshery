@@ -1,41 +1,96 @@
 {
-  "schemaVersion": "core.meshery.io/v1alpha2",
-  "version": "v1.0.0",
-  "kind": "Edge",
-  "type": "Non-Binding",
-  "subType": "Network",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_network_relationship",
+  "kind": "edge",
   "metadata": {
-    "description": "A ServerlessCache is associated with EC2 Security Groups that restrict network access to the serverless cache endpoint. This controls which VPC resources are permitted to connect to the cache."
+    "description": "A ServerlessCache is associated with EC2 Security Groups that restrict network access to the serverless cache endpoint. This controls which VPC resources are permitted to connect to the cache.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
   },
-  "model": "aws-elasticache-controller",
+  "model": {
+    "version": "",
+    "name": "aws-elasticache-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.3.3"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
     {
       "allow": {
         "from": [
           {
+            "id": null,
             "kind": "ServerlessCache",
-            "model": "aws-elasticache-controller",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-elasticache-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["settings", "securityGroupIDs", "_"]],
-              "description": "The ServerlessCache references security group IDs for network access control."
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "securityGroupIDs"
+                ]
+              ]
             }
           }
         ],
         "to": [
           {
+            "id": null,
             "kind": "SecurityGroup",
-            "model": "aws-ec2-controller",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-ec2-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [["settings", "groupID"]],
-              "description": "The EC2 SecurityGroup controls inbound network access to the ServerlessCache."
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
             }
           }
         ]
       },
-      "deny": {}
+      "deny": null
     }
   ],
-  "evaluationQuery": "edge_network_relationship"
+  "subType": "network",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
 }

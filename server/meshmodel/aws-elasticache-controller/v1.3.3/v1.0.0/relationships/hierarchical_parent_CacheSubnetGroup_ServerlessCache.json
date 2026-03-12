@@ -1,41 +1,96 @@
 {
-  "schemaVersion": "core.meshery.io/v1alpha2",
-  "version": "v1.0.0",
-  "kind": "Hierarchical",
-  "type": "Parent",
-  "subType": "Parent",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "hierarchical_parent_relationship",
+  "kind": "hierarchical",
   "metadata": {
-    "description": "A ServerlessCache must be placed inside a CacheSubnetGroup. The CacheSubnetGroup determines VPC subnet placement for the serverless cache's internal resources."
+    "description": "A ServerlessCache must be placed inside a CacheSubnetGroup. The CacheSubnetGroup determines VPC subnet placement for the serverless cache's internal resources.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
   },
-  "model": "aws-elasticache-controller",
+  "model": {
+    "version": "",
+    "name": "aws-elasticache-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.3.3"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
     {
       "allow": {
         "from": [
           {
+            "id": null,
             "kind": "ServerlessCache",
-            "model": "aws-elasticache-controller",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-elasticache-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["settings", "subnetIds"]],
-              "description": "The ServerlessCache references subnet IDs from the CacheSubnetGroup."
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "subnetIDs"
+                ]
+              ]
             }
           }
         ],
         "to": [
           {
+            "id": null,
             "kind": "CacheSubnetGroup",
-            "model": "aws-elasticache-controller",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-elasticache-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [["settings", "subnetIds"]],
-              "description": "The CacheSubnetGroup provides subnet IDs for the ServerlessCache."
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
             }
           }
         ]
       },
-      "deny": {}
+      "deny": null
     }
   ],
-  "evaluationQuery": "hierarchical_parent_relationship"
+  "subType": "parent",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
 }

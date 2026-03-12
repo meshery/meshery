@@ -1,41 +1,96 @@
 {
-  "schemaVersion": "core.meshery.io/v1alpha2",
-  "version": "v1.0.0",
-  "kind": "Edge",
-  "type": "Non-Binding",
-  "subType": "Permission",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_permission_relationship",
+  "kind": "edge",
   "metadata": {
-    "description": "A ServerlessCache can use a customer-managed AWS KMS Key for at-rest encryption. The KMS Key controls access to the encrypted serverless cache data, providing an additional layer of data security beyond default AWS-managed encryption."
+    "description": "A ServerlessCache can use a customer-managed AWS KMS Key for at-rest encryption. The KMS Key controls access to the encrypted serverless cache data.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
   },
-  "model": "aws-elasticache-controller",
+  "model": {
+    "version": "",
+    "name": "aws-elasticache-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.3.3"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
     {
       "allow": {
         "from": [
           {
+            "id": null,
             "kind": "ServerlessCache",
-            "model": "aws-elasticache-controller",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-elasticache-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["settings", "kmsKeyID"]],
-              "description": "The ServerlessCache references the KMS Key ID for at-rest encryption."
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "kmsKeyID"
+                ]
+              ]
             }
           }
         ],
         "to": [
           {
+            "id": null,
             "kind": "Key",
-            "model": "aws-kms-controller",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-kms-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [["settings", "keyID"]],
-              "description": "The KMS Key provides encryption capability for the ServerlessCache."
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
             }
           }
         ]
       },
-      "deny": {}
+      "deny": null
     }
   ],
-  "evaluationQuery": "edge_permission_relationship"
+  "subType": "permission",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
 }

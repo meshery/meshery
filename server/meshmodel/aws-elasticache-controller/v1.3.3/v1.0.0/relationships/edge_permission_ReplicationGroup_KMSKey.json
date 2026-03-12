@@ -1,41 +1,96 @@
 {
-  "schemaVersion": "core.meshery.io/v1alpha2",
-  "version": "v1.0.0",
-  "kind": "Edge",
-  "type": "Non-Binding",
-  "subType": "Permission",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_permission_relationship",
+  "kind": "edge",
   "metadata": {
-    "description": "A ReplicationGroup can use a customer-managed AWS KMS Key for at-rest encryption of the cache data. The KMS Key governs access to the encrypted data, and IAM policies on the key control which services and roles can encrypt/decrypt the ReplicationGroup's data."
+    "description": "A ServerlessCache can use a customer-managed AWS KMS Key for at-rest encryption. The KMS Key controls access to the encrypted serverless cache data.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
   },
-  "model": "aws-elasticache-controller",
+  "model": {
+    "version": "",
+    "name": "aws-elasticache-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.3.3"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "kind": "ReplicationGroup",
-            "model": "aws-elasticache-controller",
+            "id": null,
+            "kind": "ServerlessCache",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-elasticache-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["settings", "kmsKeyID"]],
-              "description": "The ReplicationGroup references the KMS Key ID to enable at-rest encryption."
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "kmsKeyID"
+                ]
+              ]
             }
           }
         ],
         "to": [
           {
+            "id": null,
             "kind": "Key",
-            "model": "aws-kms-controller",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-kms-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [["settings", "keyID"]],
-              "description": "The KMS Key provides encryption-at-rest capability for the ReplicationGroup."
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
             }
           }
         ]
       },
-      "deny": {}
+      "deny": null
     }
   ],
-  "evaluationQuery": "edge_permission_relationship"
+  "subType": "permission",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
 }
