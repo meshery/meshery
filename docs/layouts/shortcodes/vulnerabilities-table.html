@@ -1,0 +1,25 @@
+<table>
+<tr>
+  <th> DATE ANNOUNCED </th>
+  <th> CVE ID </th>
+  <th> DESCRIPTION </th>
+  <th> AFFECTED COMPONENT </th>
+  <th> VULNERABLE VERSION </th>
+  <th> PATCHED VERSION </th>
+  <th> FIX DETAILS </th>
+  <th> LINKS </th>
+</tr>
+{{ $vulns := sort site.Data.vulnerabilities.announce "DateAnnounced" "desc" }}
+{{ range $vulns }}
+<tr>
+  <td> {{ .DateAnnounced }} </td>
+  <td> {{ .CVE }} </td>
+  <td> {{ .Description }} </td>
+  <td> {{ .AffectedComponent }} </td>
+  <td> {{ .VulnerableVersion }} </td>
+  <td> {{ .PatchedVersion }} </td>
+  <td> {{ .FixDetails | safeHTML }} </td>
+  <td> {{ .Links | safeHTML }} </td>
+</tr>
+{{ end }}
+</table>

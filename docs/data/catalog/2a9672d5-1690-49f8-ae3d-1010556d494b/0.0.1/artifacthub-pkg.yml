@@ -1,0 +1,24 @@
+version: 0.0.1
+name: clickhouse-9.4.4.tgz
+displayName: clickhouse-9.4.4.tgz
+createdAt: "2025-10-10T18:22:04Z"
+description: “Bitnami ClickHouse Helm chart v9.4.4 — imported into Meshery as a reusable deployment design.”
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2a9672d5-1690-49f8-ae3d-1010556d494b/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "• The Bitnami ClickHouse chart is optimized for basic deployments and not pre-tuned for production-scale clusters. Review resource limits and persistence settings before use in a multi-node environment.\n• Ensure that the underlying storage class supports ReadWriteOnce access for ClickHouse volumes.\n• Network policies, security contexts, and TLS configuration are simplified in the default chart; harden these as per your organization’s requirements.\n• If integrating with external data sources or S3 storage, configure the appropriate Secrets and ConfigMaps after import.\n• Meshery relationships (auto-detected) represent intra-chart dependencies between components; validate these before publishing to the Catalog. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 985074f5-27a0-406c-b83a-7f247ba77746
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2a9672d5-1690-49f8-ae3d-1010556d494b-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2a9672d5-1690-49f8-ae3d-1010556d494b-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

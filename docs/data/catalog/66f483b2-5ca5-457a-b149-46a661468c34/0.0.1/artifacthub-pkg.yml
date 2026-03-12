@@ -1,0 +1,20 @@
+version: 0.0.1
+name: webserver
+displayName: webserver
+createdAt: "2023-09-25T23:12:02Z"
+description: This designs runs a simple python webserver at port 8000. It also containers k8s service which connects to the deployment
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/66f483b2-5ca5-457a-b149-46a661468c34/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure port are not pre-occupied. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a550f4d6-d3bd-44f1-9b4c-167114452062
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
