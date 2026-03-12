@@ -20,7 +20,7 @@ func (op *OrganizationPersister) GetOrganizations(search, order string, page, pa
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	count := int64(0)

@@ -122,7 +122,7 @@ mesheryctl system logs meshery-istio
 
 		// switch statement for multiple platform
 		switch currPlatform {
-		case "docker":
+		case platformDocker:
 			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
 				utils.Log.Error(err)
@@ -149,7 +149,7 @@ mesheryctl system logs meshery-istio
 			if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, true, os.Stdout); err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to get logs"))
 			}
-		case "kubernetes":
+		case platformKubernetes:
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
 

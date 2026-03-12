@@ -109,7 +109,7 @@ func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
 	}
 
 	switch currCtx.GetPlatform() {
-	case "docker":
+	case platformDocker:
 
 		log.Printf("Fetching default docker-compose file as per current-context: %s...", mctlCfg.GetCurrentContextName())
 		err = utils.DownloadDockerComposeFile(currCtx, true)
@@ -132,7 +132,7 @@ func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
 
 		log.Info("...meshconfig (" + utils.DockerComposeFile + ") now reset to default settings.")
 
-	case "kubernetes":
+	case platformKubernetes:
 
 		log.Printf("Fetching Meshery Server and Meshery Operator manifests for  %s context...", mctlCfg.GetCurrentContextName())
 		// fetch the manifest files corresponding to the version specified
