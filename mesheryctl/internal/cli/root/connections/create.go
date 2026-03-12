@@ -323,7 +323,9 @@ func setContext(configFile, cname string) error {
 	utils.Log.Debugf("Set context API response: %s", string(body))
 	var output interface{}
 	if err := json.Unmarshal(body, &output); err == nil {
-		_ = format.OutputJson(output)
+		if err := format.OutputJson(output); err != nil {
+			return errors.Wrap(err, "failed to format response for new connection")
+		}
 		return nil
 	}
 	utils.Log.Info(string(body))
