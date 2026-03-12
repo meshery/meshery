@@ -1461,8 +1461,9 @@ github.com/lestrrat-go/jwx/v3 v3.0.12/go.mod h1:HiUSaNmMLXgZ08OmGBaPVvoZQgJVOQph
 github.com/lestrrat-go/option/v2 v2.0.0 h1:XxrcaJESE1fokHy3FpaQ/cXW8ZsIdWcdFzzLOcID3Ss=
 github.com/lestrrat-go/option/v2 v2.0.0/go.mod h1:oSySsmzMoR0iRzCDCaUfsCzxQHUEuhOViQObyy7S6Vg=
 github.com/lib/pq v0.0.0-20150723085316-0dad96c0b94f/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
-github.com/lib/pq v1.10.9 h1:YXG7RB+JIjhP29X+OtkiDnYaXQwpS4JEWq7dtCCRUEw=
 github.com/lib/pq v1.10.9/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
+github.com/lib/pq v1.11.1 h1:wuChtj2hfsGmmx3nf1m7xC2XpK6OtelS2shMY+bGMtI=
+github.com/lib/pq v1.11.1/go.mod h1:/p+8NSbOcwzAEI7wiMXFlgydTwcgTr3OSKMsD2BitpA=
 github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de h1:9TO3cAIGXtEhnIaL+V+BEER86oLrvS+kWobKpbJuye0=
 github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de/go.mod h1:zAbeS9B/r2mtpb6U+EI2rYA5OAXxsYw6wTamcNW+zcE=
 github.com/lithammer/dedent v1.1.0 h1:VNzHMVCBNG1j0fh3OrsFRkVUwStdDArbgBWoPAffktY=
@@ -1501,8 +1502,8 @@ github.com/meshery/meshkit v0.8.68 h1:RjSeU4Z6SmuE/QSmVCpZKifgKqwc2aFiLvRuI0RuPM
 github.com/meshery/meshkit v0.8.68/go.mod h1:9XYjjk6dH4o8G4CNcFs2oAMqyi+S5eMb/phQq8yAk2U=
 github.com/meshery/meshsync v0.8.26 h1:GM5jzECZMCQGx3BMNo9cahcAfD/TXYue/DPWFGpjnho=
 github.com/meshery/meshsync v0.8.26/go.mod h1:RNQnmmg/hq/TaGbu6hIVAPCnjB4dIMm9Nmi729OgmFM=
-github.com/meshery/schemas v0.8.116 h1:0h1j6SRkvgwdi4TkqV/E7kvnwYxuUhuqgZPybNF3lPo=
-github.com/meshery/schemas v0.8.116/go.mod h1:UwoDPg3j/2BMfytdgaalpemRKUxB9HhFsUZqJA01/G4=
+github.com/meshery/schemas v0.8.126 h1:Y01U758NIovH6p6S6mPGUZIgKJ55AXd9ZX/wlPgIp4w=
+github.com/meshery/schemas v0.8.126/go.mod h1:A80zsWIugXpKDDxL9Inh6rDNufVrI1bqJqTgf0H33Q0=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
 github.com/miekg/pkcs11 v1.0.2/go.mod h1:XsNlhZGX73bx86s2hdc/FuaLm2CPZJemRLMA+WTFxgs=
