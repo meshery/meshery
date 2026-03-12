@@ -35,7 +35,7 @@ mesheryctl connection delete [connection_id]
 		_, err := api.Delete(fmt.Sprintf("%s/%s", connectionApiPath, args[0]))
 		if err != nil {
 			if errors.GetCode(err) == utils.ErrNotFoundCode {
-				utils.Log.Warnf("No connection with ID %q found", args[0])
+				utils.Log.Warnf("No connection with ID \"%s\" found", args[0])
 				return nil
 			}
 

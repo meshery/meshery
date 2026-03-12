@@ -580,12 +580,13 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
-		h.log.Error(_err)
-		code := http.StatusInternalServerError
 		if errors.GetCode(err) == models.ErrResultNotFoundCode {
-			code = http.StatusNotFound
+			h.log.Warnf("No connection with ID %q found to delete", connectionID)
+			http.Error(w, _err.Error(), http.StatusNotFound)
+			return
 		}
-		http.Error(w, _err.Error(), code)
+		h.log.Error(_err)
+		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
 	}
 
