@@ -1,9 +1,4 @@
-Relationship definition is invalid
+Relationship validation failed: 1 schema violation found in validate.relationship.invalid.yaml
 
-Schema violations (1):
-
-  /kind
-    - value is not one of the allowed values ["hierarchical","edge","sibling"]
-
-
-Review the schema violations above and update the relationship definition file.
+Violations:
+  1. /kind: value is not one of the allowed values ["hierarchical","edge","sibling"]
