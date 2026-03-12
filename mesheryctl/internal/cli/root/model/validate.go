@@ -16,15 +16,10 @@ package model
 
 import (
 	"fmt"
-	"io"
-	"net/http"
-	"os"
 	"path/filepath"
-	"sort"
-	"strings"
-	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/validation"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
@@ -33,28 +28,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ValidationResult represents the result of validating a single entity
-type ValidationResult struct {
-	FilePath   string   `json:"filePath" yaml:"filePath"`
-	EntityType string   `json:"entityType" yaml:"entityType"`
-	EntityName string   `json:"entityName" yaml:"entityName"`
-	IsValid    bool     `json:"isValid" yaml:"isValid"`
-	Errors     []string `json:"errors,omitempty" yaml:"errors,omitempty"`
-}
-
-// ValidationSummary holds the overall validation results
-type ValidationSummary struct {
-	TotalEntities int                `json:"totalEntities" yaml:"totalEntities"`
-	TotalValid    int                `json:"totalValid" yaml:"totalValid"`
-	TotalInvalid  int                `json:"totalInvalid" yaml:"totalInvalid"`
-	Results       []ValidationResult `json:"results" yaml:"results"`
-}
-
 var validateModelCmd = &cobra.Command{
 	Use:   "validate",
 	Short: "Validate model definitions",
 	Long: `Validate model definitions and their constituent constructs (models, components, relationships)
-against their schemas. Supports validating multiple models in one invocation.
+for basic structural correctness and required fields. Supports validating multiple models in one invocation.
 Accepts local file paths, directories, and HTTP/HTTPS URLs.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/validate`,
 	Example: `
@@ -97,9 +75,9 @@ mesheryctl model validate -f ./my-model/ -o yaml
 		outputFormat, _ := cmd.Flags().GetString("output-format")
 
 		// Collect all files to validate
-		fileContents, err := collectModelFiles(files)
+		fileContents, err := validation.CollectFiles(files, validation.AnyEntityFilter)
 		if err != nil {
-			return err
+			return ErrValidateModel(err)
 		}
 
 		if len(fileContents) == 0 {
@@ -107,16 +85,11 @@ mesheryctl model validate -f ./my-model/ -o yaml
 			return nil
 		}
 
-		// Sort file paths for consistent output
-		sortedPaths := make([]string, 0, len(fileContents))
-		for p := range fileContents {
-			sortedPaths = append(sortedPaths, p)
-		}
-		sort.Strings(sortedPaths)
+		sortedPaths := validation.SortedPaths(fileContents)
 
 		// Validate each file
-		summary := ValidationSummary{
-			Results: make([]ValidationResult, 0, len(fileContents)),
+		summary := validation.Summary{
+			Results: make([]validation.Result, 0, len(fileContents)),
 		}
 
 		for _, path := range sortedPaths {
@@ -130,7 +103,13 @@ mesheryctl model validate -f ./my-model/ -o yaml
 			}
 		}
 
-		return displayModelValidationResults(summary, outputFormat)
+		if err := validation.DisplayResults(summary, outputFormat, "entities"); err != nil {
+			return err
+		}
+		if summary.TotalInvalid > 0 {
+			return ErrValidateModel(fmt.Errorf("validation failed: %d of %d entities invalid", summary.TotalInvalid, summary.TotalEntities))
+		}
+		return nil
 	},
 }
 
@@ -139,106 +118,11 @@ func init() {
 	validateModelCmd.Flags().StringP("output-format", "o", "", "Output format [json|yaml] (default: table)")
 }
 
-// entityHeader is used to detect the entity type from the schemaVersion field
-type entityHeader struct {
-	SchemaVersion string `json:"schemaVersion" yaml:"schemaVersion"`
-}
-
-// collectModelFiles gathers file contents from the given paths (files, directories, or URLs)
-func collectModelFiles(paths []string) (map[string][]byte, error) {
-	result := make(map[string][]byte)
-
-	for _, path := range paths {
-		if utils.IsValidUrl(path) {
-			data, err := fetchFileFromURL(path)
-			if err != nil {
-				return nil, ErrValidateModel(err)
-			}
-			result[path] = data
-			continue
-		}
-
-		info, err := os.Stat(path)
-		if err != nil {
-			return nil, ErrValidateModel(fmt.Errorf("cannot access %s: %w", path, err))
-		}
-
-		if info.IsDir() {
-			err := filepath.Walk(path, func(filePath string, fi os.FileInfo, walkErr error) error {
-				if walkErr != nil {
-					return walkErr
-				}
-				if fi.IsDir() {
-					return nil
-				}
-				ext := strings.ToLower(filepath.Ext(filePath))
-				if ext != ".json" && ext != ".yaml" && ext != ".yml" {
-					return nil
-				}
-				data, readErr := os.ReadFile(filePath)
-				if readErr != nil {
-					return nil // skip unreadable files during directory walk
-				}
-				// Only include files with a recognized schemaVersion
-				if detectEntityType(data) != "" {
-					result[filePath] = data
-				}
-				return nil
-			})
-			if err != nil {
-				return nil, ErrValidateModel(err)
-			}
-		} else {
-			data, err := os.ReadFile(path)
-			if err != nil {
-				return nil, ErrValidateModel(fmt.Errorf("failed to read file %s: %w", path, err))
-			}
-			result[path] = data
-		}
-	}
-
-	return result, nil
-}
-
-// fetchFileFromURL retrieves file content from a URL
-func fetchFileFromURL(url string) ([]byte, error) {
-	client := &http.Client{Timeout: 30 * time.Second}
-	resp, err := client.Get(url) // nolint:gosec
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch %s: %w", url, err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch %s: HTTP %d", url, resp.StatusCode)
-	}
-
-	return io.ReadAll(resp.Body)
-}
-
-// detectEntityType determines the entity type from the schemaVersion field
-func detectEntityType(data []byte) string {
-	var header entityHeader
-	if err := encoding.Unmarshal(data, &header); err != nil {
-		return ""
-	}
-	switch {
-	case strings.HasPrefix(header.SchemaVersion, "models.meshery.io"):
-		return "model"
-	case strings.HasPrefix(header.SchemaVersion, "components.meshery.io"):
-		return "component"
-	case strings.HasPrefix(header.SchemaVersion, "relationships.meshery.io"):
-		return "relationship"
-	default:
-		return ""
-	}
-}
-
 // validateEntityData validates a single entity file and returns the result
-func validateEntityData(filePath string, data []byte) ValidationResult {
-	entityType := detectEntityType(data)
+func validateEntityData(filePath string, data []byte) validation.Result {
+	entityType := validation.DetectEntityType(data)
 	if entityType == "" {
-		return ValidationResult{
+		return validation.Result{
 			FilePath:   filePath,
 			EntityType: "unknown",
 			EntityName: filepath.Base(filePath),
@@ -255,7 +139,7 @@ func validateEntityData(filePath string, data []byte) ValidationResult {
 	case "relationship":
 		return validateRelationshipDef(filePath, data)
 	default:
-		return ValidationResult{
+		return validation.Result{
 			FilePath:   filePath,
 			EntityType: entityType,
 			EntityName: filepath.Base(filePath),
@@ -266,10 +150,10 @@ func validateEntityData(filePath string, data []byte) ValidationResult {
 }
 
 // validateModelDef validates a model definition file
-func validateModelDef(filePath string, data []byte) ValidationResult {
+func validateModelDef(filePath string, data []byte) validation.Result {
 	var m modelDef.ModelDefinition
 	if err := encoding.Unmarshal(data, &m); err != nil {
-		return ValidationResult{
+		return validation.Result{
 			FilePath:   filePath,
 			EntityType: "model",
 			EntityName: filepath.Base(filePath),
@@ -294,7 +178,7 @@ func validateModelDef(filePath string, data []byte) ValidationResult {
 		name = filepath.Base(filePath)
 	}
 
-	return ValidationResult{
+	return validation.Result{
 		FilePath:   filePath,
 		EntityType: "model",
 		EntityName: name,
@@ -304,10 +188,10 @@ func validateModelDef(filePath string, data []byte) ValidationResult {
 }
 
 // validateComponentDef validates a component definition file
-func validateComponentDef(filePath string, data []byte) ValidationResult {
+func validateComponentDef(filePath string, data []byte) validation.Result {
 	var comp component.ComponentDefinition
 	if err := encoding.Unmarshal(data, &comp); err != nil {
-		return ValidationResult{
+		return validation.Result{
 			FilePath:   filePath,
 			EntityType: "component",
 			EntityName: filepath.Base(filePath),
@@ -335,7 +219,7 @@ func validateComponentDef(filePath string, data []byte) ValidationResult {
 		name = filepath.Base(filePath)
 	}
 
-	return ValidationResult{
+	return validation.Result{
 		FilePath:   filePath,
 		EntityType: "component",
 		EntityName: name,
@@ -345,10 +229,10 @@ func validateComponentDef(filePath string, data []byte) ValidationResult {
 }
 
 // validateRelationshipDef validates a relationship definition file
-func validateRelationshipDef(filePath string, data []byte) ValidationResult {
+func validateRelationshipDef(filePath string, data []byte) validation.Result {
 	var rel relationship.RelationshipDefinition
 	if err := encoding.Unmarshal(data, &rel); err != nil {
-		return ValidationResult{
+		return validation.Result{
 			FilePath:   filePath,
 			EntityType: "relationship",
 			EntityName: filepath.Base(filePath),
@@ -363,6 +247,15 @@ func validateRelationshipDef(filePath string, data []byte) ValidationResult {
 	}
 	if rel.Kind == "" {
 		errs = append(errs, "kind is required")
+	} else {
+		validKinds := map[relationship.RelationshipDefinitionKind]bool{
+			relationship.Edge:         true,
+			relationship.Hierarchical: true,
+			relationship.Sibling:      true,
+		}
+		if !validKinds[rel.Kind] {
+			errs = append(errs, fmt.Sprintf("invalid kind %q: must be one of [edge, hierarchical, sibling]", rel.Kind))
+		}
 	}
 	if rel.RelationshipType == "" {
 		errs = append(errs, "type is required")
@@ -382,7 +275,7 @@ func validateRelationshipDef(filePath string, data []byte) ValidationResult {
 		name = filepath.Base(filePath)
 	}
 
-	return ValidationResult{
+	return validation.Result{
 		FilePath:   filePath,
 		EntityType: "relationship",
 		EntityName: name,
@@ -391,56 +284,3 @@ func validateRelationshipDef(filePath string, data []byte) ValidationResult {
 	}
 }
 
-// displayModelValidationResults renders the validation results in the specified format
-func displayModelValidationResults(summary ValidationSummary, outputFormat string) error {
-	switch outputFormat {
-	case "json":
-		formatter := display.NewJSONOutputFormatter(summary)
-		if err := formatter.Display(); err != nil {
-			return err
-		}
-	case "yaml":
-		formatter := display.NewYAMLOutputFormatter(summary)
-		if err := formatter.Display(); err != nil {
-			return err
-		}
-	default:
-		header := []string{"FILE", "TYPE", "NAME", "STATUS"}
-		rows := make([][]string, 0, len(summary.Results))
-		for _, result := range summary.Results {
-			status := "PASS"
-			if !result.IsValid {
-				status = "FAIL"
-			}
-			rows = append(rows, []string{
-				result.FilePath,
-				result.EntityType,
-				result.EntityName,
-				status,
-			})
-		}
-		utils.PrintToTable(header, rows, nil)
-
-		// Show errors for failed entities
-		for _, result := range summary.Results {
-			if !result.IsValid {
-				fmt.Printf("\n  %s %s:\n", utils.BoldString("Errors in"), result.FilePath)
-				for _, e := range result.Errors {
-					fmt.Printf("    - %s\n", e)
-				}
-			}
-		}
-
-		fmt.Printf("\n%s: %d entities validated, %d passed, %d failed\n",
-			utils.BoldString("SUMMARY"),
-			summary.TotalEntities,
-			summary.TotalValid,
-			summary.TotalInvalid,
-		)
-	}
-
-	if summary.TotalInvalid > 0 {
-		return ErrValidateModel(fmt.Errorf("validation failed: %d of %d entities invalid", summary.TotalInvalid, summary.TotalEntities))
-	}
-	return nil
-}
