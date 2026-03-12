@@ -54,6 +54,7 @@ const (
 	ErrUnmarshallConfigCode              = "mesheryctl-1088"
 	ErrUploadFileParamsCode              = "mesheryctl-1089"
 	ErrContextNotExistsCode              = "mesheryctl-1196"
+	ErrSkipK8sHealthCheckCode            = "mesheryctl-1205"
 )
 
 var (
@@ -102,7 +103,15 @@ func FormatErrorReference() string {
 	}
 	return fmt.Sprintf("\nSee %s for usage details\n", baseURL)
 }
-
+func ErrSkipK8sHealthCheck(err error) error {
+	return errors.New(ErrSkipK8sHealthCheckCode,
+		errors.Alert,
+		[]string{"Skipping Kubernetes health checks"},
+		[]string{err.Error()},
+		[]string{"Meshery server is not running"},
+		[]string{"Start Meshery server with `mesheryctl system start` to run Kubernetes health checks"},
+	)
+}
 func ErrHealthCheckFailed(err error) error {
 	return errors.New(ErrHealthCheckFailedCode,
 		errors.Alert,
