@@ -293,7 +293,6 @@ func getContexts(configFile string) ([]string, error) {
 }
 
 func setContext(configFile, cname string) error {
-	client := &http.Client{}
 	contextParams := map[string]string{
 		"contextName": cname,
 	}
@@ -309,9 +308,9 @@ func setContext(configFile, cname string) error {
 	if err != nil {
 		return utils.ErrUploadFileWithParams(err, configFile)
 	}
-	res, err := client.Do(req)
+	res, err := utils.MakeRequest(req)
 	if err != nil {
-		return utils.ErrRequestResponse(err)
+		return err
 	}
 	defer func() { _ = res.Body.Close() }()
 
@@ -320,9 +319,6 @@ func setContext(configFile, cname string) error {
 		return utils.ErrReadResponseBody(err)
 	}
 	utils.Log.Debugf("Set context API response: %s", string(body))
-	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusMultipleChoices {
-		return errors.Errorf("failed to set context: status code %d: %s", res.StatusCode, strings.TrimSpace(string(body)))
-	}
 	return nil
 }
 

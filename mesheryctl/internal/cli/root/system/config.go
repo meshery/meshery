@@ -20,7 +20,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 
@@ -122,9 +121,6 @@ func setContext(configFile, cname string) error {
 		return utils.ErrReadResponseBody(err)
 	}
 	log.Debugf("Set context API response: %s", string(body))
-	if res.StatusCode < 200 || res.StatusCode >= 300 {
-		return errors.Errorf("failed to set context: status code %d: %s", res.StatusCode, strings.TrimSpace(string(body)))
-	}
 	return nil
 }
 
