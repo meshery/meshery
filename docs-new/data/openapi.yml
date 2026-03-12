@@ -5867,6 +5867,7 @@ paths:
                             type: object
                             required:
                               - id
+                              - schemaVersion
                               - name
                               - description
                               - organization_id
@@ -5883,18 +5884,40 @@ paths:
                                 x-go-type: uuid.UUID
                                 x-go-type-import:
                                   path: github.com/gofrs/uuid
+                              schemaVersion:
+                                description: >-
+                                  Specifies the version of the schema to which
+                                  the environment conforms.
+                                x-order: 2
+                                x-oapi-codegen-extra-tags:
+                                  yaml: schemaVersion
+                                  db: '-'
+                                  gorm: '-'
+                                default: environments.meshery.io/v1beta1
+                                type: string
+                                minLength: 2
+                                maxLength: 100
+                                pattern: >-
+                                  ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                                example:
+                                  - v1
+                                  - v1alpha1
+                                  - v2beta3
+                                  - v1.custom-suffix
+                                  - models.meshery.io/v1beta1
+                                  - capability.meshery.io/v1alpha1
                               name:
                                 x-oapi-codegen-extra-tags:
                                   db: name
                                   yaml: name
-                                x-order: 2
+                                x-order: 3
                                 type: string
                                 description: Environment name
                               description:
                                 x-oapi-codegen-extra-tags:
                                   db: description
                                   yaml: description
-                                x-order: 3
+                                x-order: 4
                                 type: string
                                 description: Environment description
                               organization_id:
@@ -5902,7 +5925,7 @@ paths:
                                 x-oapi-codegen-extra-tags:
                                   db: organization_id
                                   yaml: organization_id
-                                x-order: 4
+                                x-order: 5
                                 description: Environment organization ID
                                 type: string
                                 format: uuid
@@ -5913,7 +5936,7 @@ paths:
                                 x-oapi-codegen-extra-tags:
                                   db: owner
                                   yaml: owner
-                                x-order: 5
+                                x-order: 6
                                 description: Environment owner
                                 type: string
                                 format: uuid
@@ -5924,7 +5947,7 @@ paths:
                                 x-oapi-codegen-extra-tags:
                                   db: created_at
                                   yaml: created_at
-                                x-order: 6
+                                x-order: 7
                                 type: string
                                 format: date-time
                                 x-go-type-skip-optional-pointer: true
@@ -5932,7 +5955,7 @@ paths:
                                 x-oapi-codegen-extra-tags:
                                   db: metadata
                                   yaml: metadata
-                                x-order: 7
+                                x-order: 8
                                 x-go-type: core.Map
                                 x-go-type-skip-optional-pointer: true
                                 type: object
@@ -5940,7 +5963,7 @@ paths:
                                 x-oapi-codegen-extra-tags:
                                   db: updated_at
                                   yaml: updated_at
-                                x-order: 8
+                                x-order: 9
                                 type: string
                                 format: date-time
                                 x-go-type-skip-optional-pointer: true
@@ -5950,7 +5973,7 @@ paths:
                                   yaml: deleted_at
                                 x-go-type: core.NullTime
                                 x-go-import: database/sql
-                                x-order: 9
+                                x-order: 10
                                 type: string
                                 format: date-time
                                 x-go-type-skip-optional-pointer: true
@@ -5974,12 +5997,14 @@ paths:
                           minLength: 2
                           maxLength: 100
                           pattern: >-
-                            ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                           example:
                             - v1
                             - v1alpha1
                             - v2beta3
                             - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                     x-order: 1
                   total_count:
                     type: integer
@@ -6257,6 +6282,7 @@ paths:
                       type: object
                       required:
                         - id
+                        - schemaVersion
                         - name
                         - description
                         - organization_id
@@ -6273,18 +6299,40 @@ paths:
                           x-go-type: uuid.UUID
                           x-go-type-import:
                             path: github.com/gofrs/uuid
+                        schemaVersion:
+                          description: >-
+                            Specifies the version of the schema to which the
+                            environment conforms.
+                          x-order: 2
+                          x-oapi-codegen-extra-tags:
+                            yaml: schemaVersion
+                            db: '-'
+                            gorm: '-'
+                          default: environments.meshery.io/v1beta1
+                          type: string
+                          minLength: 2
+                          maxLength: 100
+                          pattern: >-
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                          example:
+                            - v1
+                            - v1alpha1
+                            - v2beta3
+                            - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                         name:
                           x-oapi-codegen-extra-tags:
                             db: name
                             yaml: name
-                          x-order: 2
+                          x-order: 3
                           type: string
                           description: Environment name
                         description:
                           x-oapi-codegen-extra-tags:
                             db: description
                             yaml: description
-                          x-order: 3
+                          x-order: 4
                           type: string
                           description: Environment description
                         organization_id:
@@ -6292,7 +6340,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: organization_id
                             yaml: organization_id
-                          x-order: 4
+                          x-order: 5
                           description: Environment organization ID
                           type: string
                           format: uuid
@@ -6303,7 +6351,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: owner
                             yaml: owner
-                          x-order: 5
+                          x-order: 6
                           description: Environment owner
                           type: string
                           format: uuid
@@ -6314,7 +6362,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: created_at
                             yaml: created_at
-                          x-order: 6
+                          x-order: 7
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -6322,7 +6370,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: metadata
                             yaml: metadata
-                          x-order: 7
+                          x-order: 8
                           x-go-type: core.Map
                           x-go-type-skip-optional-pointer: true
                           type: object
@@ -6330,7 +6378,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: updated_at
                             yaml: updated_at
-                          x-order: 8
+                          x-order: 9
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -6340,7 +6388,7 @@ paths:
                             yaml: deleted_at
                           x-go-type: core.NullTime
                           x-go-import: database/sql
-                          x-order: 9
+                          x-order: 10
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -6363,12 +6411,15 @@ paths:
                     type: string
                     minLength: 2
                     maxLength: 100
-                    pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                     example:
                       - v1
                       - v1alpha1
                       - v2beta3
                       - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
         '400':
           description: Invalid request parameters
         '500':
@@ -6555,6 +6606,7 @@ paths:
                       type: object
                       required:
                         - id
+                        - schemaVersion
                         - name
                         - description
                         - organization_id
@@ -6571,18 +6623,40 @@ paths:
                           x-go-type: uuid.UUID
                           x-go-type-import:
                             path: github.com/gofrs/uuid
+                        schemaVersion:
+                          description: >-
+                            Specifies the version of the schema to which the
+                            environment conforms.
+                          x-order: 2
+                          x-oapi-codegen-extra-tags:
+                            yaml: schemaVersion
+                            db: '-'
+                            gorm: '-'
+                          default: environments.meshery.io/v1beta1
+                          type: string
+                          minLength: 2
+                          maxLength: 100
+                          pattern: >-
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                          example:
+                            - v1
+                            - v1alpha1
+                            - v2beta3
+                            - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                         name:
                           x-oapi-codegen-extra-tags:
                             db: name
                             yaml: name
-                          x-order: 2
+                          x-order: 3
                           type: string
                           description: Environment name
                         description:
                           x-oapi-codegen-extra-tags:
                             db: description
                             yaml: description
-                          x-order: 3
+                          x-order: 4
                           type: string
                           description: Environment description
                         organization_id:
@@ -6590,7 +6664,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: organization_id
                             yaml: organization_id
-                          x-order: 4
+                          x-order: 5
                           description: Environment organization ID
                           type: string
                           format: uuid
@@ -6601,7 +6675,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: owner
                             yaml: owner
-                          x-order: 5
+                          x-order: 6
                           description: Environment owner
                           type: string
                           format: uuid
@@ -6612,7 +6686,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: created_at
                             yaml: created_at
-                          x-order: 6
+                          x-order: 7
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -6620,7 +6694,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: metadata
                             yaml: metadata
-                          x-order: 7
+                          x-order: 8
                           x-go-type: core.Map
                           x-go-type-skip-optional-pointer: true
                           type: object
@@ -6628,7 +6702,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: updated_at
                             yaml: updated_at
-                          x-order: 8
+                          x-order: 9
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -6638,7 +6712,7 @@ paths:
                             yaml: deleted_at
                           x-go-type: core.NullTime
                           x-go-import: database/sql
-                          x-order: 9
+                          x-order: 10
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -6661,12 +6735,15 @@ paths:
                     type: string
                     minLength: 2
                     maxLength: 100
-                    pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                     example:
                       - v1
                       - v1alpha1
                       - v2beta3
                       - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
         '404':
           description: Connection not found
         '500':
@@ -6922,6 +6999,7 @@ paths:
                       type: object
                       required:
                         - id
+                        - schemaVersion
                         - name
                         - description
                         - organization_id
@@ -6938,18 +7016,40 @@ paths:
                           x-go-type: uuid.UUID
                           x-go-type-import:
                             path: github.com/gofrs/uuid
+                        schemaVersion:
+                          description: >-
+                            Specifies the version of the schema to which the
+                            environment conforms.
+                          x-order: 2
+                          x-oapi-codegen-extra-tags:
+                            yaml: schemaVersion
+                            db: '-'
+                            gorm: '-'
+                          default: environments.meshery.io/v1beta1
+                          type: string
+                          minLength: 2
+                          maxLength: 100
+                          pattern: >-
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                          example:
+                            - v1
+                            - v1alpha1
+                            - v2beta3
+                            - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                         name:
                           x-oapi-codegen-extra-tags:
                             db: name
                             yaml: name
-                          x-order: 2
+                          x-order: 3
                           type: string
                           description: Environment name
                         description:
                           x-oapi-codegen-extra-tags:
                             db: description
                             yaml: description
-                          x-order: 3
+                          x-order: 4
                           type: string
                           description: Environment description
                         organization_id:
@@ -6957,7 +7057,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: organization_id
                             yaml: organization_id
-                          x-order: 4
+                          x-order: 5
                           description: Environment organization ID
                           type: string
                           format: uuid
@@ -6968,7 +7068,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: owner
                             yaml: owner
-                          x-order: 5
+                          x-order: 6
                           description: Environment owner
                           type: string
                           format: uuid
@@ -6979,7 +7079,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: created_at
                             yaml: created_at
-                          x-order: 6
+                          x-order: 7
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -6987,7 +7087,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: metadata
                             yaml: metadata
-                          x-order: 7
+                          x-order: 8
                           x-go-type: core.Map
                           x-go-type-skip-optional-pointer: true
                           type: object
@@ -6995,7 +7095,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: updated_at
                             yaml: updated_at
-                          x-order: 8
+                          x-order: 9
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -7005,7 +7105,7 @@ paths:
                             yaml: deleted_at
                           x-go-type: core.NullTime
                           x-go-import: database/sql
-                          x-order: 9
+                          x-order: 10
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -7028,12 +7128,15 @@ paths:
                     type: string
                     minLength: 2
                     maxLength: 100
-                    pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                     example:
                       - v1
                       - v1alpha1
                       - v2beta3
                       - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
         '404':
           description: Connection not found
         '500':
@@ -7311,6 +7414,7 @@ paths:
                 type: object
                 required:
                   - id
+                  - schemaVersion
                   - name
                   - description
                   - organization_id
@@ -7327,18 +7431,40 @@ paths:
                     x-go-type: uuid.UUID
                     x-go-type-import:
                       path: github.com/gofrs/uuid
+                  schemaVersion:
+                    description: >-
+                      Specifies the version of the schema to which the
+                      environment conforms.
+                    x-order: 2
+                    x-oapi-codegen-extra-tags:
+                      yaml: schemaVersion
+                      db: '-'
+                      gorm: '-'
+                    default: environments.meshery.io/v1beta1
+                    type: string
+                    minLength: 2
+                    maxLength: 100
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                    example:
+                      - v1
+                      - v1alpha1
+                      - v2beta3
+                      - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
                   name:
                     x-oapi-codegen-extra-tags:
                       db: name
                       yaml: name
-                    x-order: 2
+                    x-order: 3
                     type: string
                     description: Environment name
                   description:
                     x-oapi-codegen-extra-tags:
                       db: description
                       yaml: description
-                    x-order: 3
+                    x-order: 4
                     type: string
                     description: Environment description
                   organization_id:
@@ -7346,7 +7472,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: organization_id
                       yaml: organization_id
-                    x-order: 4
+                    x-order: 5
                     description: Environment organization ID
                     type: string
                     format: uuid
@@ -7357,7 +7483,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: owner
                       yaml: owner
-                    x-order: 5
+                    x-order: 6
                     description: Environment owner
                     type: string
                     format: uuid
@@ -7368,7 +7494,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: created_at
                       yaml: created_at
-                    x-order: 6
+                    x-order: 7
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -7376,7 +7502,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: metadata
                       yaml: metadata
-                    x-order: 7
+                    x-order: 8
                     x-go-type: core.Map
                     x-go-type-skip-optional-pointer: true
                     type: object
@@ -7384,7 +7510,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: updated_at
                       yaml: updated_at
-                    x-order: 8
+                    x-order: 9
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -7394,7 +7520,7 @@ paths:
                       yaml: deleted_at
                     x-go-type: core.NullTime
                     x-go-import: database/sql
-                    x-order: 9
+                    x-order: 10
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -7477,6 +7603,7 @@ paths:
                       type: object
                       required:
                         - id
+                        - schemaVersion
                         - name
                         - description
                         - organization_id
@@ -7493,18 +7620,40 @@ paths:
                           x-go-type: uuid.UUID
                           x-go-type-import:
                             path: github.com/gofrs/uuid
+                        schemaVersion:
+                          description: >-
+                            Specifies the version of the schema to which the
+                            environment conforms.
+                          x-order: 2
+                          x-oapi-codegen-extra-tags:
+                            yaml: schemaVersion
+                            db: '-'
+                            gorm: '-'
+                          default: environments.meshery.io/v1beta1
+                          type: string
+                          minLength: 2
+                          maxLength: 100
+                          pattern: >-
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                          example:
+                            - v1
+                            - v1alpha1
+                            - v2beta3
+                            - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                         name:
                           x-oapi-codegen-extra-tags:
                             db: name
                             yaml: name
-                          x-order: 2
+                          x-order: 3
                           type: string
                           description: Environment name
                         description:
                           x-oapi-codegen-extra-tags:
                             db: description
                             yaml: description
-                          x-order: 3
+                          x-order: 4
                           type: string
                           description: Environment description
                         organization_id:
@@ -7512,7 +7661,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: organization_id
                             yaml: organization_id
-                          x-order: 4
+                          x-order: 5
                           description: Environment organization ID
                           type: string
                           format: uuid
@@ -7523,7 +7672,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: owner
                             yaml: owner
-                          x-order: 5
+                          x-order: 6
                           description: Environment owner
                           type: string
                           format: uuid
@@ -7534,7 +7683,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: created_at
                             yaml: created_at
-                          x-order: 6
+                          x-order: 7
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -7542,7 +7691,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: metadata
                             yaml: metadata
-                          x-order: 7
+                          x-order: 8
                           x-go-type: core.Map
                           x-go-type-skip-optional-pointer: true
                           type: object
@@ -7550,7 +7699,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: updated_at
                             yaml: updated_at
-                          x-order: 8
+                          x-order: 9
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -7560,7 +7709,7 @@ paths:
                             yaml: deleted_at
                           x-go-type: core.NullTime
                           x-go-import: database/sql
-                          x-order: 9
+                          x-order: 10
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -7632,12 +7781,15 @@ paths:
                       type: string
                       minLength: 2
                       maxLength: 100
-                      pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                      pattern: >-
+                        ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                       example:
                         - v1
                         - v1alpha1
                         - v2beta3
                         - v1.custom-suffix
+                        - models.meshery.io/v1beta1
+                        - capability.meshery.io/v1alpha1
                     version:
                       default: v0.0.1
                       x-order: 4
@@ -7785,12 +7937,14 @@ paths:
                             minLength: 2
                             maxLength: 100
                             pattern: >-
-                              ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                              ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                             example:
                               - v1
                               - v1alpha1
                               - v2beta3
                               - v1.custom-suffix
+                              - models.meshery.io/v1beta1
+                              - capability.meshery.io/v1alpha1
                           version:
                             x-order: 3
                             description: Version of the component definition.
@@ -7880,12 +8034,14 @@ paths:
                                 minLength: 2
                                 maxLength: 100
                                 pattern: >-
-                                  ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                  ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                 example:
                                   - v1
                                   - v1alpha1
                                   - v2beta3
                                   - v1.custom-suffix
+                                  - models.meshery.io/v1beta1
+                                  - capability.meshery.io/v1alpha1
                               version:
                                 description: Version of the model definition.
                                 type: string
@@ -8157,6 +8313,7 @@ paths:
                                       type: object
                                       required:
                                         - id
+                                        - schemaVersion
                                         - name
                                         - description
                                         - organization_id
@@ -8177,18 +8334,40 @@ paths:
                                           x-oapi-codegen-extra-tags:
                                             db: id
                                             yaml: id
+                                        schemaVersion:
+                                          description: >-
+                                            Specifies the version of the schema to
+                                            which the environment conforms.
+                                          x-order: 2
+                                          x-oapi-codegen-extra-tags:
+                                            yaml: schemaVersion
+                                            db: '-'
+                                            gorm: '-'
+                                          default: environments.meshery.io/v1beta1
+                                          type: string
+                                          minLength: 2
+                                          maxLength: 100
+                                          pattern: >-
+                                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                                          example:
+                                            - v1
+                                            - v1alpha1
+                                            - v2beta3
+                                            - v1.custom-suffix
+                                            - models.meshery.io/v1beta1
+                                            - capability.meshery.io/v1alpha1
                                         name:
                                           x-oapi-codegen-extra-tags:
                                             db: name
                                             yaml: name
-                                          x-order: 2
+                                          x-order: 3
                                           type: string
                                           description: Environment name
                                         description:
                                           x-oapi-codegen-extra-tags:
                                             db: description
                                             yaml: description
-                                          x-order: 3
+                                          x-order: 4
                                           type: string
                                           description: Environment description
                                         organization_id:
@@ -8206,7 +8385,7 @@ paths:
                                           x-oapi-codegen-extra-tags:
                                             db: organization_id
                                             yaml: organization_id
-                                          x-order: 4
+                                          x-order: 5
                                         owner:
                                           type: string
                                           format: uuid
@@ -8221,12 +8400,12 @@ paths:
                                           x-oapi-codegen-extra-tags:
                                             db: owner
                                             yaml: owner
-                                          x-order: 5
+                                          x-order: 6
                                         created_at:
                                           x-oapi-codegen-extra-tags:
                                             db: created_at
                                             yaml: created_at
-                                          x-order: 6
+                                          x-order: 7
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
@@ -8234,7 +8413,7 @@ paths:
                                           x-oapi-codegen-extra-tags:
                                             db: metadata
                                             yaml: metadata
-                                          x-order: 7
+                                          x-order: 8
                                           x-go-type: core.Map
                                           x-go-type-skip-optional-pointer: true
                                           type: object
@@ -8242,7 +8421,7 @@ paths:
                                           x-oapi-codegen-extra-tags:
                                             db: updated_at
                                             yaml: updated_at
-                                          x-order: 8
+                                          x-order: 9
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
@@ -8252,7 +8431,7 @@ paths:
                                             yaml: deleted_at
                                           x-go-type: core.NullTime
                                           x-go-import: database/sql
-                                          x-order: 9
+                                          x-order: 10
                                           type: string
                                           format: date-time
                                           x-go-type-skip-optional-pointer: true
@@ -8276,12 +8455,14 @@ paths:
                                     minLength: 2
                                     maxLength: 100
                                     pattern: >-
-                                      ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                     example:
                                       - v1
                                       - v1alpha1
                                       - v2beta3
                                       - v1.custom-suffix
+                                      - models.meshery.io/v1beta1
+                                      - capability.meshery.io/v1alpha1
                               registrantId:
                                 type: string
                                 format: uuid
@@ -8504,12 +8685,14 @@ paths:
                                           minLength: 2
                                           maxLength: 100
                                           pattern: >-
-                                            ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                           example:
                                             - v1
                                             - v1alpha1
                                             - v2beta3
                                             - v1.custom-suffix
+                                            - models.meshery.io/v1beta1
+                                            - capability.meshery.io/v1alpha1
                                         version:
                                           description: Version of the capability definition.
                                           type: string
@@ -9625,12 +9808,14 @@ paths:
                                   minLength: 2
                                   maxLength: 100
                                   pattern: >-
-                                    ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                    ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                   example:
                                     - v1
                                     - v1alpha1
                                     - v2beta3
                                     - v1.custom-suffix
+                                    - models.meshery.io/v1beta1
+                                    - capability.meshery.io/v1alpha1
                                 version:
                                   description: Version of the capability definition.
                                   type: string
@@ -10127,12 +10312,14 @@ paths:
                             minLength: 2
                             maxLength: 100
                             pattern: >-
-                              ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                              ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                             example:
                               - v1
                               - v1alpha1
                               - v2beta3
                               - v1.custom-suffix
+                              - models.meshery.io/v1beta1
+                              - capability.meshery.io/v1alpha1
                           version:
                             type: string
                             minLength: 5
@@ -10244,12 +10431,14 @@ paths:
                                   minLength: 2
                                   maxLength: 100
                                   pattern: >-
-                                    ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                    ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                   example:
                                     - v1
                                     - v1alpha1
                                     - v2beta3
                                     - v1.custom-suffix
+                                    - models.meshery.io/v1beta1
+                                    - capability.meshery.io/v1alpha1
                                 version:
                                   description: Version of the capability definition.
                                   type: string
@@ -12684,12 +12873,15 @@ paths:
                         type: string
                         minLength: 2
                         maxLength: 100
-                        pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                        pattern: >-
+                          ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                         example:
                           - v1
                           - v1alpha1
                           - v2beta3
                           - v1.custom-suffix
+                          - models.meshery.io/v1beta1
+                          - capability.meshery.io/v1alpha1
                       version:
                         default: v0.0.1
                         x-order: 4
@@ -12838,12 +13030,14 @@ paths:
                               minLength: 2
                               maxLength: 100
                               pattern: >-
-                                ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                               example:
                                 - v1
                                 - v1alpha1
                                 - v2beta3
                                 - v1.custom-suffix
+                                - models.meshery.io/v1beta1
+                                - capability.meshery.io/v1alpha1
                             version:
                               x-order: 3
                               description: Version of the component definition.
@@ -12934,12 +13128,14 @@ paths:
                                   minLength: 2
                                   maxLength: 100
                                   pattern: >-
-                                    ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                    ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                   example:
                                     - v1
                                     - v1alpha1
                                     - v2beta3
                                     - v1.custom-suffix
+                                    - models.meshery.io/v1beta1
+                                    - capability.meshery.io/v1alpha1
                                 version:
                                   description: Version of the model definition.
                                   type: string
@@ -13211,6 +13407,7 @@ paths:
                                         type: object
                                         required:
                                           - id
+                                          - schemaVersion
                                           - name
                                           - description
                                           - organization_id
@@ -13231,18 +13428,40 @@ paths:
                                             x-oapi-codegen-extra-tags:
                                               db: id
                                               yaml: id
+                                          schemaVersion:
+                                            description: >-
+                                              Specifies the version of the schema to
+                                              which the environment conforms.
+                                            x-order: 2
+                                            x-oapi-codegen-extra-tags:
+                                              yaml: schemaVersion
+                                              db: '-'
+                                              gorm: '-'
+                                            default: environments.meshery.io/v1beta1
+                                            type: string
+                                            minLength: 2
+                                            maxLength: 100
+                                            pattern: >-
+                                              ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                                            example:
+                                              - v1
+                                              - v1alpha1
+                                              - v2beta3
+                                              - v1.custom-suffix
+                                              - models.meshery.io/v1beta1
+                                              - capability.meshery.io/v1alpha1
                                           name:
                                             x-oapi-codegen-extra-tags:
                                               db: name
                                               yaml: name
-                                            x-order: 2
+                                            x-order: 3
                                             type: string
                                             description: Environment name
                                           description:
                                             x-oapi-codegen-extra-tags:
                                               db: description
                                               yaml: description
-                                            x-order: 3
+                                            x-order: 4
                                             type: string
                                             description: Environment description
                                           organization_id:
@@ -13260,7 +13479,7 @@ paths:
                                             x-oapi-codegen-extra-tags:
                                               db: organization_id
                                               yaml: organization_id
-                                            x-order: 4
+                                            x-order: 5
                                           owner:
                                             type: string
                                             format: uuid
@@ -13275,12 +13494,12 @@ paths:
                                             x-oapi-codegen-extra-tags:
                                               db: owner
                                               yaml: owner
-                                            x-order: 5
+                                            x-order: 6
                                           created_at:
                                             x-oapi-codegen-extra-tags:
                                               db: created_at
                                               yaml: created_at
-                                            x-order: 6
+                                            x-order: 7
                                             type: string
                                             format: date-time
                                             x-go-type-skip-optional-pointer: true
@@ -13288,7 +13507,7 @@ paths:
                                             x-oapi-codegen-extra-tags:
                                               db: metadata
                                               yaml: metadata
-                                            x-order: 7
+                                            x-order: 8
                                             x-go-type: core.Map
                                             x-go-type-skip-optional-pointer: true
                                             type: object
@@ -13296,7 +13515,7 @@ paths:
                                             x-oapi-codegen-extra-tags:
                                               db: updated_at
                                               yaml: updated_at
-                                            x-order: 8
+                                            x-order: 9
                                             type: string
                                             format: date-time
                                             x-go-type-skip-optional-pointer: true
@@ -13306,7 +13525,7 @@ paths:
                                               yaml: deleted_at
                                             x-go-type: core.NullTime
                                             x-go-import: database/sql
-                                            x-order: 9
+                                            x-order: 10
                                             type: string
                                             format: date-time
                                             x-go-type-skip-optional-pointer: true
@@ -13330,12 +13549,14 @@ paths:
                                       minLength: 2
                                       maxLength: 100
                                       pattern: >-
-                                        ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                        ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                       example:
                                         - v1
                                         - v1alpha1
                                         - v2beta3
                                         - v1.custom-suffix
+                                        - models.meshery.io/v1beta1
+                                        - capability.meshery.io/v1alpha1
                                 registrantId:
                                   type: string
                                   format: uuid
@@ -13558,12 +13779,14 @@ paths:
                                             minLength: 2
                                             maxLength: 100
                                             pattern: >-
-                                              ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                              ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                             example:
                                               - v1
                                               - v1alpha1
                                               - v2beta3
                                               - v1.custom-suffix
+                                              - models.meshery.io/v1beta1
+                                              - capability.meshery.io/v1alpha1
                                           version:
                                             description: Version of the capability definition.
                                             type: string
@@ -14694,12 +14917,14 @@ paths:
                                     minLength: 2
                                     maxLength: 100
                                     pattern: >-
-                                      ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                     example:
                                       - v1
                                       - v1alpha1
                                       - v2beta3
                                       - v1.custom-suffix
+                                      - models.meshery.io/v1beta1
+                                      - capability.meshery.io/v1alpha1
                                   version:
                                     description: Version of the capability definition.
                                     type: string
@@ -15202,12 +15427,14 @@ paths:
                               minLength: 2
                               maxLength: 100
                               pattern: >-
-                                ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                               example:
                                 - v1
                                 - v1alpha1
                                 - v2beta3
                                 - v1.custom-suffix
+                                - models.meshery.io/v1beta1
+                                - capability.meshery.io/v1alpha1
                             version:
                               type: string
                               minLength: 5
@@ -15321,12 +15548,14 @@ paths:
                                     minLength: 2
                                     maxLength: 100
                                     pattern: >-
-                                      ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                     example:
                                       - v1
                                       - v1alpha1
                                       - v2beta3
                                       - v1.custom-suffix
+                                      - models.meshery.io/v1beta1
+                                      - capability.meshery.io/v1alpha1
                                   version:
                                     description: Version of the capability definition.
                                     type: string
@@ -24679,12 +24908,14 @@ components:
           type: string
           minLength: 2
           maxLength: 100
-          pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+          pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
           example:
             - v1
             - v1alpha1
             - v2beta3
             - v1.custom-suffix
+            - models.meshery.io/v1beta1
+            - capability.meshery.io/v1alpha1
         version:
           description: Specifies the version of the relationship definition.
           x-order: 13
@@ -24785,12 +25016,14 @@ components:
                 type: string
                 minLength: 2
                 maxLength: 100
-                pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                 example:
                   - v1
                   - v1alpha1
                   - v2beta3
                   - v1.custom-suffix
+                  - models.meshery.io/v1beta1
+                  - capability.meshery.io/v1alpha1
               version:
                 description: Version of the capability definition.
                 type: string
@@ -38030,12 +38263,14 @@ components:
           type: string
           minLength: 2
           maxLength: 100
-          pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+          pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
           example:
             - v1
             - v1alpha1
             - v2beta3
             - v1.custom-suffix
+            - models.meshery.io/v1beta1
+            - capability.meshery.io/v1alpha1
         version:
           x-order: 3
           description: Version of the component definition.
@@ -38119,12 +38354,14 @@ components:
               type: string
               minLength: 2
               maxLength: 100
-              pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+              pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
               example:
                 - v1
                 - v1alpha1
                 - v2beta3
                 - v1.custom-suffix
+                - models.meshery.io/v1beta1
+                - capability.meshery.io/v1alpha1
             version:
               description: Version of the model definition.
               type: string
@@ -38366,6 +38603,7 @@ components:
                     type: object
                     required:
                       - id
+                      - schemaVersion
                       - name
                       - description
                       - organization_id
@@ -38382,18 +38620,40 @@ components:
                         x-go-type: uuid.UUID
                         x-go-type-import:
                           path: github.com/gofrs/uuid
+                      schemaVersion:
+                        description: >-
+                          Specifies the version of the schema to which the
+                          environment conforms.
+                        x-order: 2
+                        x-oapi-codegen-extra-tags:
+                          yaml: schemaVersion
+                          db: '-'
+                          gorm: '-'
+                        default: environments.meshery.io/v1beta1
+                        type: string
+                        minLength: 2
+                        maxLength: 100
+                        pattern: >-
+                          ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                        example:
+                          - v1
+                          - v1alpha1
+                          - v2beta3
+                          - v1.custom-suffix
+                          - models.meshery.io/v1beta1
+                          - capability.meshery.io/v1alpha1
                       name:
                         x-oapi-codegen-extra-tags:
                           db: name
                           yaml: name
-                        x-order: 2
+                        x-order: 3
                         type: string
                         description: Environment name
                       description:
                         x-oapi-codegen-extra-tags:
                           db: description
                           yaml: description
-                        x-order: 3
+                        x-order: 4
                         type: string
                         description: Environment description
                       organization_id:
@@ -38401,7 +38661,7 @@ components:
                         x-oapi-codegen-extra-tags:
                           db: organization_id
                           yaml: organization_id
-                        x-order: 4
+                        x-order: 5
                         description: Environment organization ID
                         type: string
                         format: uuid
@@ -38412,7 +38672,7 @@ components:
                         x-oapi-codegen-extra-tags:
                           db: owner
                           yaml: owner
-                        x-order: 5
+                        x-order: 6
                         description: Environment owner
                         type: string
                         format: uuid
@@ -38423,7 +38683,7 @@ components:
                         x-oapi-codegen-extra-tags:
                           db: created_at
                           yaml: created_at
-                        x-order: 6
+                        x-order: 7
                         type: string
                         format: date-time
                         x-go-type-skip-optional-pointer: true
@@ -38431,7 +38691,7 @@ components:
                         x-oapi-codegen-extra-tags:
                           db: metadata
                           yaml: metadata
-                        x-order: 7
+                        x-order: 8
                         x-go-type: core.Map
                         x-go-type-skip-optional-pointer: true
                         type: object
@@ -38439,7 +38699,7 @@ components:
                         x-oapi-codegen-extra-tags:
                           db: updated_at
                           yaml: updated_at
-                        x-order: 8
+                        x-order: 9
                         type: string
                         format: date-time
                         x-go-type-skip-optional-pointer: true
@@ -38449,7 +38709,7 @@ components:
                           yaml: deleted_at
                         x-go-type: core.NullTime
                         x-go-import: database/sql
-                        x-order: 9
+                        x-order: 10
                         type: string
                         format: date-time
                         x-go-type-skip-optional-pointer: true
@@ -38470,12 +38730,14 @@ components:
                   type: string
                   minLength: 2
                   maxLength: 100
-                  pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                  pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                   example:
                     - v1
                     - v1alpha1
                     - v2beta3
                     - v1.custom-suffix
+                    - models.meshery.io/v1beta1
+                    - capability.meshery.io/v1alpha1
             registrantId:
               description: ID of the registrant.
               x-oapi-codegen-extra-tags:
@@ -38675,12 +38937,15 @@ components:
                         type: string
                         minLength: 2
                         maxLength: 100
-                        pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                        pattern: >-
+                          ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                         example:
                           - v1
                           - v1alpha1
                           - v2beta3
                           - v1.custom-suffix
+                          - models.meshery.io/v1beta1
+                          - capability.meshery.io/v1alpha1
                       version:
                         description: Version of the capability definition.
                         type: string
@@ -39659,12 +39924,14 @@ components:
                 type: string
                 minLength: 2
                 maxLength: 100
-                pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                 example:
                   - v1
                   - v1alpha1
                   - v2beta3
                   - v1.custom-suffix
+                  - models.meshery.io/v1beta1
+                  - capability.meshery.io/v1alpha1
               version:
                 description: Version of the capability definition.
                 type: string
@@ -40246,6 +40513,7 @@ components:
             type: object
             required:
               - id
+              - schemaVersion
               - name
               - description
               - organization_id
@@ -40262,18 +40530,39 @@ components:
                 x-go-type: uuid.UUID
                 x-go-type-import:
                   path: github.com/gofrs/uuid
+              schemaVersion:
+                description: >-
+                  Specifies the version of the schema to which the environment
+                  conforms.
+                x-order: 2
+                x-oapi-codegen-extra-tags:
+                  yaml: schemaVersion
+                  db: '-'
+                  gorm: '-'
+                default: environments.meshery.io/v1beta1
+                type: string
+                minLength: 2
+                maxLength: 100
+                pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                example:
+                  - v1
+                  - v1alpha1
+                  - v2beta3
+                  - v1.custom-suffix
+                  - models.meshery.io/v1beta1
+                  - capability.meshery.io/v1alpha1
               name:
                 x-oapi-codegen-extra-tags:
                   db: name
                   yaml: name
-                x-order: 2
+                x-order: 3
                 type: string
                 description: Environment name
               description:
                 x-oapi-codegen-extra-tags:
                   db: description
                   yaml: description
-                x-order: 3
+                x-order: 4
                 type: string
                 description: Environment description
               organization_id:
@@ -40281,7 +40570,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: organization_id
                   yaml: organization_id
-                x-order: 4
+                x-order: 5
                 description: Environment organization ID
                 type: string
                 format: uuid
@@ -40292,7 +40581,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: owner
                   yaml: owner
-                x-order: 5
+                x-order: 6
                 description: Environment owner
                 type: string
                 format: uuid
@@ -40303,7 +40592,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: created_at
                   yaml: created_at
-                x-order: 6
+                x-order: 7
                 type: string
                 format: date-time
                 x-go-type-skip-optional-pointer: true
@@ -40311,7 +40600,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: metadata
                   yaml: metadata
-                x-order: 7
+                x-order: 8
                 x-go-type: core.Map
                 x-go-type-skip-optional-pointer: true
                 type: object
@@ -40319,7 +40608,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: updated_at
                   yaml: updated_at
-                x-order: 8
+                x-order: 9
                 type: string
                 format: date-time
                 x-go-type-skip-optional-pointer: true
@@ -40329,7 +40618,7 @@ components:
                   yaml: deleted_at
                 x-go-type: core.NullTime
                 x-go-import: database/sql
-                x-order: 9
+                x-order: 10
                 type: string
                 format: date-time
                 x-go-type-skip-optional-pointer: true
@@ -40350,12 +40639,14 @@ components:
           type: string
           minLength: 2
           maxLength: 100
-          pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+          pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
           example:
             - v1
             - v1alpha1
             - v2beta3
             - v1.custom-suffix
+            - models.meshery.io/v1beta1
+            - capability.meshery.io/v1alpha1
     Connection_API_ConnectionPage:
       $id: https://schemas.meshery.io/connection_page.yaml
       $schema: http://json-schema.org/draft-07/schema#
@@ -40531,6 +40822,7 @@ components:
                   type: object
                   required:
                     - id
+                    - schemaVersion
                     - name
                     - description
                     - organization_id
@@ -40547,18 +40839,40 @@ components:
                       x-go-type: uuid.UUID
                       x-go-type-import:
                         path: github.com/gofrs/uuid
+                    schemaVersion:
+                      description: >-
+                        Specifies the version of the schema to which the
+                        environment conforms.
+                      x-order: 2
+                      x-oapi-codegen-extra-tags:
+                        yaml: schemaVersion
+                        db: '-'
+                        gorm: '-'
+                      default: environments.meshery.io/v1beta1
+                      type: string
+                      minLength: 2
+                      maxLength: 100
+                      pattern: >-
+                        ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                      example:
+                        - v1
+                        - v1alpha1
+                        - v2beta3
+                        - v1.custom-suffix
+                        - models.meshery.io/v1beta1
+                        - capability.meshery.io/v1alpha1
                     name:
                       x-oapi-codegen-extra-tags:
                         db: name
                         yaml: name
-                      x-order: 2
+                      x-order: 3
                       type: string
                       description: Environment name
                     description:
                       x-oapi-codegen-extra-tags:
                         db: description
                         yaml: description
-                      x-order: 3
+                      x-order: 4
                       type: string
                       description: Environment description
                     organization_id:
@@ -40566,7 +40880,7 @@ components:
                       x-oapi-codegen-extra-tags:
                         db: organization_id
                         yaml: organization_id
-                      x-order: 4
+                      x-order: 5
                       description: Environment organization ID
                       type: string
                       format: uuid
@@ -40577,7 +40891,7 @@ components:
                       x-oapi-codegen-extra-tags:
                         db: owner
                         yaml: owner
-                      x-order: 5
+                      x-order: 6
                       description: Environment owner
                       type: string
                       format: uuid
@@ -40588,7 +40902,7 @@ components:
                       x-oapi-codegen-extra-tags:
                         db: created_at
                         yaml: created_at
-                      x-order: 6
+                      x-order: 7
                       type: string
                       format: date-time
                       x-go-type-skip-optional-pointer: true
@@ -40596,7 +40910,7 @@ components:
                       x-oapi-codegen-extra-tags:
                         db: metadata
                         yaml: metadata
-                      x-order: 7
+                      x-order: 8
                       x-go-type: core.Map
                       x-go-type-skip-optional-pointer: true
                       type: object
@@ -40604,7 +40918,7 @@ components:
                       x-oapi-codegen-extra-tags:
                         db: updated_at
                         yaml: updated_at
-                      x-order: 8
+                      x-order: 9
                       type: string
                       format: date-time
                       x-go-type-skip-optional-pointer: true
@@ -40614,7 +40928,7 @@ components:
                         yaml: deleted_at
                       x-go-type: core.NullTime
                       x-go-import: database/sql
-                      x-order: 9
+                      x-order: 10
                       type: string
                       format: date-time
                       x-go-type-skip-optional-pointer: true
@@ -40635,12 +40949,14 @@ components:
                 type: string
                 minLength: 2
                 maxLength: 100
-                pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                 example:
                   - v1
                   - v1alpha1
                   - v2beta3
                   - v1.custom-suffix
+                  - models.meshery.io/v1beta1
+                  - capability.meshery.io/v1alpha1
           x-order: 1
         total_count:
           type: integer
@@ -41027,12 +41343,14 @@ components:
           type: string
           minLength: 2
           maxLength: 100
-          pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+          pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
           example:
             - v1
             - v1alpha1
             - v2beta3
             - v1.custom-suffix
+            - models.meshery.io/v1beta1
+            - capability.meshery.io/v1alpha1
         version:
           default: v0.0.1
           x-order: 4
@@ -41172,12 +41490,14 @@ components:
                 type: string
                 minLength: 2
                 maxLength: 100
-                pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                 example:
                   - v1
                   - v1alpha1
                   - v2beta3
                   - v1.custom-suffix
+                  - models.meshery.io/v1beta1
+                  - capability.meshery.io/v1alpha1
               version:
                 x-order: 3
                 description: Version of the component definition.
@@ -41264,12 +41584,15 @@ components:
                     type: string
                     minLength: 2
                     maxLength: 100
-                    pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                     example:
                       - v1
                       - v1alpha1
                       - v2beta3
                       - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
                   version:
                     description: Version of the model definition.
                     type: string
@@ -41526,6 +41849,7 @@ components:
                           type: object
                           required:
                             - id
+                            - schemaVersion
                             - name
                             - description
                             - organization_id
@@ -41545,18 +41869,40 @@ components:
                               x-oapi-codegen-extra-tags:
                                 db: id
                                 yaml: id
+                            schemaVersion:
+                              description: >-
+                                Specifies the version of the schema to which the
+                                environment conforms.
+                              x-order: 2
+                              x-oapi-codegen-extra-tags:
+                                yaml: schemaVersion
+                                db: '-'
+                                gorm: '-'
+                              default: environments.meshery.io/v1beta1
+                              type: string
+                              minLength: 2
+                              maxLength: 100
+                              pattern: >-
+                                ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                              example:
+                                - v1
+                                - v1alpha1
+                                - v2beta3
+                                - v1.custom-suffix
+                                - models.meshery.io/v1beta1
+                                - capability.meshery.io/v1alpha1
                             name:
                               x-oapi-codegen-extra-tags:
                                 db: name
                                 yaml: name
-                              x-order: 2
+                              x-order: 3
                               type: string
                               description: Environment name
                             description:
                               x-oapi-codegen-extra-tags:
                                 db: description
                                 yaml: description
-                              x-order: 3
+                              x-order: 4
                               type: string
                               description: Environment description
                             organization_id:
@@ -41573,7 +41919,7 @@ components:
                               x-oapi-codegen-extra-tags:
                                 db: organization_id
                                 yaml: organization_id
-                              x-order: 4
+                              x-order: 5
                             owner:
                               type: string
                               format: uuid
@@ -41587,12 +41933,12 @@ components:
                               x-oapi-codegen-extra-tags:
                                 db: owner
                                 yaml: owner
-                              x-order: 5
+                              x-order: 6
                             created_at:
                               x-oapi-codegen-extra-tags:
                                 db: created_at
                                 yaml: created_at
-                              x-order: 6
+                              x-order: 7
                               type: string
                               format: date-time
                               x-go-type-skip-optional-pointer: true
@@ -41600,7 +41946,7 @@ components:
                               x-oapi-codegen-extra-tags:
                                 db: metadata
                                 yaml: metadata
-                              x-order: 7
+                              x-order: 8
                               x-go-type: core.Map
                               x-go-type-skip-optional-pointer: true
                               type: object
@@ -41608,7 +41954,7 @@ components:
                               x-oapi-codegen-extra-tags:
                                 db: updated_at
                                 yaml: updated_at
-                              x-order: 8
+                              x-order: 9
                               type: string
                               format: date-time
                               x-go-type-skip-optional-pointer: true
@@ -41618,7 +41964,7 @@ components:
                                 yaml: deleted_at
                               x-go-type: core.NullTime
                               x-go-import: database/sql
-                              x-order: 9
+                              x-order: 10
                               type: string
                               format: date-time
                               x-go-type-skip-optional-pointer: true
@@ -41641,12 +41987,15 @@ components:
                         type: string
                         minLength: 2
                         maxLength: 100
-                        pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                        pattern: >-
+                          ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                         example:
                           - v1
                           - v1alpha1
                           - v2beta3
                           - v1.custom-suffix
+                          - models.meshery.io/v1beta1
+                          - capability.meshery.io/v1alpha1
                   registrantId:
                     type: string
                     format: uuid
@@ -41860,12 +42209,14 @@ components:
                               minLength: 2
                               maxLength: 100
                               pattern: >-
-                                ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                               example:
                                 - v1
                                 - v1alpha1
                                 - v2beta3
                                 - v1.custom-suffix
+                                - models.meshery.io/v1beta1
+                                - capability.meshery.io/v1alpha1
                             version:
                               description: Version of the capability definition.
                               type: string
@@ -42877,12 +43228,15 @@ components:
                       type: string
                       minLength: 2
                       maxLength: 100
-                      pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                      pattern: >-
+                        ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                       example:
                         - v1
                         - v1alpha1
                         - v2beta3
                         - v1.custom-suffix
+                        - models.meshery.io/v1beta1
+                        - capability.meshery.io/v1alpha1
                     version:
                       description: Version of the capability definition.
                       type: string
@@ -43354,12 +43708,14 @@ components:
                 type: string
                 minLength: 2
                 maxLength: 100
-                pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                 example:
                   - v1
                   - v1alpha1
                   - v2beta3
                   - v1.custom-suffix
+                  - models.meshery.io/v1beta1
+                  - capability.meshery.io/v1alpha1
               version:
                 type: string
                 minLength: 5
@@ -43465,12 +43821,15 @@ components:
                       type: string
                       minLength: 2
                       maxLength: 100
-                      pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                      pattern: >-
+                        ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                       example:
                         - v1
                         - v1alpha1
                         - v2beta3
                         - v1.custom-suffix
+                        - models.meshery.io/v1beta1
+                        - capability.meshery.io/v1alpha1
                     version:
                       description: Version of the capability definition.
                       type: string
@@ -45944,12 +46303,14 @@ components:
               type: string
               minLength: 2
               maxLength: 100
-              pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+              pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
               example:
                 - v1
                 - v1alpha1
                 - v2beta3
                 - v1.custom-suffix
+                - models.meshery.io/v1beta1
+                - capability.meshery.io/v1alpha1
             version:
               default: v0.0.1
               x-order: 4
@@ -46091,12 +46452,15 @@ components:
                     type: string
                     minLength: 2
                     maxLength: 100
-                    pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                     example:
                       - v1
                       - v1alpha1
                       - v2beta3
                       - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
                   version:
                     x-order: 3
                     description: Version of the component definition.
@@ -46183,12 +46547,15 @@ components:
                         type: string
                         minLength: 2
                         maxLength: 100
-                        pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                        pattern: >-
+                          ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                         example:
                           - v1
                           - v1alpha1
                           - v2beta3
                           - v1.custom-suffix
+                          - models.meshery.io/v1beta1
+                          - capability.meshery.io/v1alpha1
                       version:
                         description: Version of the model definition.
                         type: string
@@ -46448,6 +46815,7 @@ components:
                               type: object
                               required:
                                 - id
+                                - schemaVersion
                                 - name
                                 - description
                                 - organization_id
@@ -46468,18 +46836,40 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: id
                                     yaml: id
+                                schemaVersion:
+                                  description: >-
+                                    Specifies the version of the schema to which
+                                    the environment conforms.
+                                  x-order: 2
+                                  x-oapi-codegen-extra-tags:
+                                    yaml: schemaVersion
+                                    db: '-'
+                                    gorm: '-'
+                                  default: environments.meshery.io/v1beta1
+                                  type: string
+                                  minLength: 2
+                                  maxLength: 100
+                                  pattern: >-
+                                    ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                                  example:
+                                    - v1
+                                    - v1alpha1
+                                    - v2beta3
+                                    - v1.custom-suffix
+                                    - models.meshery.io/v1beta1
+                                    - capability.meshery.io/v1alpha1
                                 name:
                                   x-oapi-codegen-extra-tags:
                                     db: name
                                     yaml: name
-                                  x-order: 2
+                                  x-order: 3
                                   type: string
                                   description: Environment name
                                 description:
                                   x-oapi-codegen-extra-tags:
                                     db: description
                                     yaml: description
-                                  x-order: 3
+                                  x-order: 4
                                   type: string
                                   description: Environment description
                                 organization_id:
@@ -46497,7 +46887,7 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: organization_id
                                     yaml: organization_id
-                                  x-order: 4
+                                  x-order: 5
                                 owner:
                                   type: string
                                   format: uuid
@@ -46512,12 +46902,12 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: owner
                                     yaml: owner
-                                  x-order: 5
+                                  x-order: 6
                                 created_at:
                                   x-oapi-codegen-extra-tags:
                                     db: created_at
                                     yaml: created_at
-                                  x-order: 6
+                                  x-order: 7
                                   type: string
                                   format: date-time
                                   x-go-type-skip-optional-pointer: true
@@ -46525,7 +46915,7 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: metadata
                                     yaml: metadata
-                                  x-order: 7
+                                  x-order: 8
                                   x-go-type: core.Map
                                   x-go-type-skip-optional-pointer: true
                                   type: object
@@ -46533,7 +46923,7 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: updated_at
                                     yaml: updated_at
-                                  x-order: 8
+                                  x-order: 9
                                   type: string
                                   format: date-time
                                   x-go-type-skip-optional-pointer: true
@@ -46543,7 +46933,7 @@ components:
                                     yaml: deleted_at
                                   x-go-type: core.NullTime
                                   x-go-import: database/sql
-                                  x-order: 9
+                                  x-order: 10
                                   type: string
                                   format: date-time
                                   x-go-type-skip-optional-pointer: true
@@ -46567,12 +46957,14 @@ components:
                             minLength: 2
                             maxLength: 100
                             pattern: >-
-                              ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                              ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                             example:
                               - v1
                               - v1alpha1
                               - v2beta3
                               - v1.custom-suffix
+                              - models.meshery.io/v1beta1
+                              - capability.meshery.io/v1alpha1
                       registrantId:
                         type: string
                         format: uuid
@@ -46787,12 +47179,14 @@ components:
                                   minLength: 2
                                   maxLength: 100
                                   pattern: >-
-                                    ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                    ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                   example:
                                     - v1
                                     - v1alpha1
                                     - v2beta3
                                     - v1.custom-suffix
+                                    - models.meshery.io/v1beta1
+                                    - capability.meshery.io/v1alpha1
                                 version:
                                   description: Version of the capability definition.
                                   type: string
@@ -47839,12 +48233,14 @@ components:
                           minLength: 2
                           maxLength: 100
                           pattern: >-
-                            ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                           example:
                             - v1
                             - v1alpha1
                             - v2beta3
                             - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                         version:
                           description: Version of the capability definition.
                           type: string
@@ -48321,12 +48717,15 @@ components:
                     type: string
                     minLength: 2
                     maxLength: 100
-                    pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                     example:
                       - v1
                       - v1alpha1
                       - v2beta3
                       - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
                   version:
                     type: string
                     minLength: 5
@@ -48435,12 +48834,14 @@ components:
                           minLength: 2
                           maxLength: 100
                           pattern: >-
-                            ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                           example:
                             - v1
                             - v1alpha1
                             - v2beta3
                             - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                         version:
                           description: Version of the capability definition.
                           type: string
@@ -50956,12 +51357,15 @@ components:
                     type: string
                     minLength: 2
                     maxLength: 100
-                    pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                     example:
                       - v1
                       - v1alpha1
                       - v2beta3
                       - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
                   version:
                     default: v0.0.1
                     x-order: 4
@@ -51109,12 +51513,14 @@ components:
                           minLength: 2
                           maxLength: 100
                           pattern: >-
-                            ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                           example:
                             - v1
                             - v1alpha1
                             - v2beta3
                             - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                         version:
                           x-order: 3
                           description: Version of the component definition.
@@ -51203,12 +51609,14 @@ components:
                               minLength: 2
                               maxLength: 100
                               pattern: >-
-                                ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                               example:
                                 - v1
                                 - v1alpha1
                                 - v2beta3
                                 - v1.custom-suffix
+                                - models.meshery.io/v1beta1
+                                - capability.meshery.io/v1alpha1
                             version:
                               description: Version of the model definition.
                               type: string
@@ -51477,6 +51885,7 @@ components:
                                     type: object
                                     required:
                                       - id
+                                      - schemaVersion
                                       - name
                                       - description
                                       - organization_id
@@ -51497,18 +51906,40 @@ components:
                                         x-oapi-codegen-extra-tags:
                                           db: id
                                           yaml: id
+                                      schemaVersion:
+                                        description: >-
+                                          Specifies the version of the schema to
+                                          which the environment conforms.
+                                        x-order: 2
+                                        x-oapi-codegen-extra-tags:
+                                          yaml: schemaVersion
+                                          db: '-'
+                                          gorm: '-'
+                                        default: environments.meshery.io/v1beta1
+                                        type: string
+                                        minLength: 2
+                                        maxLength: 100
+                                        pattern: >-
+                                          ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                                        example:
+                                          - v1
+                                          - v1alpha1
+                                          - v2beta3
+                                          - v1.custom-suffix
+                                          - models.meshery.io/v1beta1
+                                          - capability.meshery.io/v1alpha1
                                       name:
                                         x-oapi-codegen-extra-tags:
                                           db: name
                                           yaml: name
-                                        x-order: 2
+                                        x-order: 3
                                         type: string
                                         description: Environment name
                                       description:
                                         x-oapi-codegen-extra-tags:
                                           db: description
                                           yaml: description
-                                        x-order: 3
+                                        x-order: 4
                                         type: string
                                         description: Environment description
                                       organization_id:
@@ -51526,7 +51957,7 @@ components:
                                         x-oapi-codegen-extra-tags:
                                           db: organization_id
                                           yaml: organization_id
-                                        x-order: 4
+                                        x-order: 5
                                       owner:
                                         type: string
                                         format: uuid
@@ -51541,12 +51972,12 @@ components:
                                         x-oapi-codegen-extra-tags:
                                           db: owner
                                           yaml: owner
-                                        x-order: 5
+                                        x-order: 6
                                       created_at:
                                         x-oapi-codegen-extra-tags:
                                           db: created_at
                                           yaml: created_at
-                                        x-order: 6
+                                        x-order: 7
                                         type: string
                                         format: date-time
                                         x-go-type-skip-optional-pointer: true
@@ -51554,7 +51985,7 @@ components:
                                         x-oapi-codegen-extra-tags:
                                           db: metadata
                                           yaml: metadata
-                                        x-order: 7
+                                        x-order: 8
                                         x-go-type: core.Map
                                         x-go-type-skip-optional-pointer: true
                                         type: object
@@ -51562,7 +51993,7 @@ components:
                                         x-oapi-codegen-extra-tags:
                                           db: updated_at
                                           yaml: updated_at
-                                        x-order: 8
+                                        x-order: 9
                                         type: string
                                         format: date-time
                                         x-go-type-skip-optional-pointer: true
@@ -51572,7 +52003,7 @@ components:
                                           yaml: deleted_at
                                         x-go-type: core.NullTime
                                         x-go-import: database/sql
-                                        x-order: 9
+                                        x-order: 10
                                         type: string
                                         format: date-time
                                         x-go-type-skip-optional-pointer: true
@@ -51596,12 +52027,14 @@ components:
                                   minLength: 2
                                   maxLength: 100
                                   pattern: >-
-                                    ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                    ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                   example:
                                     - v1
                                     - v1alpha1
                                     - v2beta3
                                     - v1.custom-suffix
+                                    - models.meshery.io/v1beta1
+                                    - capability.meshery.io/v1alpha1
                             registrantId:
                               type: string
                               format: uuid
@@ -51820,12 +52253,14 @@ components:
                                         minLength: 2
                                         maxLength: 100
                                         pattern: >-
-                                          ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                          ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                         example:
                                           - v1
                                           - v1alpha1
                                           - v2beta3
                                           - v1.custom-suffix
+                                          - models.meshery.io/v1beta1
+                                          - capability.meshery.io/v1alpha1
                                       version:
                                         description: Version of the capability definition.
                                         type: string
@@ -52927,12 +53362,14 @@ components:
                                 minLength: 2
                                 maxLength: 100
                                 pattern: >-
-                                  ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                  ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                 example:
                                   - v1
                                   - v1alpha1
                                   - v2beta3
                                   - v1.custom-suffix
+                                  - models.meshery.io/v1beta1
+                                  - capability.meshery.io/v1alpha1
                               version:
                                 description: Version of the capability definition.
                                 type: string
@@ -53425,12 +53862,14 @@ components:
                           minLength: 2
                           maxLength: 100
                           pattern: >-
-                            ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                           example:
                             - v1
                             - v1alpha1
                             - v2beta3
                             - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                         version:
                           type: string
                           minLength: 5
@@ -53542,12 +53981,14 @@ components:
                                 minLength: 2
                                 maxLength: 100
                                 pattern: >-
-                                  ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                  ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                 example:
                                   - v1
                                   - v1alpha1
                                   - v2beta3
                                   - v1.custom-suffix
+                                  - models.meshery.io/v1beta1
+                                  - capability.meshery.io/v1alpha1
                               version:
                                 description: Version of the capability definition.
                                 type: string
@@ -56108,12 +56549,14 @@ components:
                   type: string
                   minLength: 2
                   maxLength: 100
-                  pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                  pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                   example:
                     - v1
                     - v1alpha1
                     - v2beta3
                     - v1.custom-suffix
+                    - models.meshery.io/v1beta1
+                    - capability.meshery.io/v1alpha1
                 version:
                   default: v0.0.1
                   x-order: 4
@@ -56260,12 +56703,15 @@ components:
                         type: string
                         minLength: 2
                         maxLength: 100
-                        pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                        pattern: >-
+                          ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                         example:
                           - v1
                           - v1alpha1
                           - v2beta3
                           - v1.custom-suffix
+                          - models.meshery.io/v1beta1
+                          - capability.meshery.io/v1alpha1
                       version:
                         x-order: 3
                         description: Version of the component definition.
@@ -56353,12 +56799,14 @@ components:
                             minLength: 2
                             maxLength: 100
                             pattern: >-
-                              ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                              ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                             example:
                               - v1
                               - v1alpha1
                               - v2beta3
                               - v1.custom-suffix
+                              - models.meshery.io/v1beta1
+                              - capability.meshery.io/v1alpha1
                           version:
                             description: Version of the model definition.
                             type: string
@@ -56624,6 +57072,7 @@ components:
                                   type: object
                                   required:
                                     - id
+                                    - schemaVersion
                                     - name
                                     - description
                                     - organization_id
@@ -56644,18 +57093,40 @@ components:
                                       x-oapi-codegen-extra-tags:
                                         db: id
                                         yaml: id
+                                    schemaVersion:
+                                      description: >-
+                                        Specifies the version of the schema to
+                                        which the environment conforms.
+                                      x-order: 2
+                                      x-oapi-codegen-extra-tags:
+                                        yaml: schemaVersion
+                                        db: '-'
+                                        gorm: '-'
+                                      default: environments.meshery.io/v1beta1
+                                      type: string
+                                      minLength: 2
+                                      maxLength: 100
+                                      pattern: >-
+                                        ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                                      example:
+                                        - v1
+                                        - v1alpha1
+                                        - v2beta3
+                                        - v1.custom-suffix
+                                        - models.meshery.io/v1beta1
+                                        - capability.meshery.io/v1alpha1
                                     name:
                                       x-oapi-codegen-extra-tags:
                                         db: name
                                         yaml: name
-                                      x-order: 2
+                                      x-order: 3
                                       type: string
                                       description: Environment name
                                     description:
                                       x-oapi-codegen-extra-tags:
                                         db: description
                                         yaml: description
-                                      x-order: 3
+                                      x-order: 4
                                       type: string
                                       description: Environment description
                                     organization_id:
@@ -56673,7 +57144,7 @@ components:
                                       x-oapi-codegen-extra-tags:
                                         db: organization_id
                                         yaml: organization_id
-                                      x-order: 4
+                                      x-order: 5
                                     owner:
                                       type: string
                                       format: uuid
@@ -56688,12 +57159,12 @@ components:
                                       x-oapi-codegen-extra-tags:
                                         db: owner
                                         yaml: owner
-                                      x-order: 5
+                                      x-order: 6
                                     created_at:
                                       x-oapi-codegen-extra-tags:
                                         db: created_at
                                         yaml: created_at
-                                      x-order: 6
+                                      x-order: 7
                                       type: string
                                       format: date-time
                                       x-go-type-skip-optional-pointer: true
@@ -56701,7 +57172,7 @@ components:
                                       x-oapi-codegen-extra-tags:
                                         db: metadata
                                         yaml: metadata
-                                      x-order: 7
+                                      x-order: 8
                                       x-go-type: core.Map
                                       x-go-type-skip-optional-pointer: true
                                       type: object
@@ -56709,7 +57180,7 @@ components:
                                       x-oapi-codegen-extra-tags:
                                         db: updated_at
                                         yaml: updated_at
-                                      x-order: 8
+                                      x-order: 9
                                       type: string
                                       format: date-time
                                       x-go-type-skip-optional-pointer: true
@@ -56719,7 +57190,7 @@ components:
                                         yaml: deleted_at
                                       x-go-type: core.NullTime
                                       x-go-import: database/sql
-                                      x-order: 9
+                                      x-order: 10
                                       type: string
                                       format: date-time
                                       x-go-type-skip-optional-pointer: true
@@ -56743,12 +57214,14 @@ components:
                                 minLength: 2
                                 maxLength: 100
                                 pattern: >-
-                                  ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                  ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                 example:
                                   - v1
                                   - v1alpha1
                                   - v2beta3
                                   - v1.custom-suffix
+                                  - models.meshery.io/v1beta1
+                                  - capability.meshery.io/v1alpha1
                           registrantId:
                             type: string
                             format: uuid
@@ -56967,12 +57440,14 @@ components:
                                       minLength: 2
                                       maxLength: 100
                                       pattern: >-
-                                        ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                        ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                       example:
                                         - v1
                                         - v1alpha1
                                         - v2beta3
                                         - v1.custom-suffix
+                                        - models.meshery.io/v1beta1
+                                        - capability.meshery.io/v1alpha1
                                     version:
                                       description: Version of the capability definition.
                                       type: string
@@ -58059,12 +58534,14 @@ components:
                               minLength: 2
                               maxLength: 100
                               pattern: >-
-                                ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                               example:
                                 - v1
                                 - v1alpha1
                                 - v2beta3
                                 - v1.custom-suffix
+                                - models.meshery.io/v1beta1
+                                - capability.meshery.io/v1alpha1
                             version:
                               description: Version of the capability definition.
                               type: string
@@ -58549,12 +59026,15 @@ components:
                         type: string
                         minLength: 2
                         maxLength: 100
-                        pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                        pattern: >-
+                          ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                         example:
                           - v1
                           - v1alpha1
                           - v2beta3
                           - v1.custom-suffix
+                          - models.meshery.io/v1beta1
+                          - capability.meshery.io/v1alpha1
                       version:
                         type: string
                         minLength: 5
@@ -58666,12 +59146,14 @@ components:
                               minLength: 2
                               maxLength: 100
                               pattern: >-
-                                ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                               example:
                                 - v1
                                 - v1alpha1
                                 - v2beta3
                                 - v1.custom-suffix
+                                - models.meshery.io/v1beta1
+                                - capability.meshery.io/v1alpha1
                             version:
                               description: Version of the capability definition.
                               type: string
@@ -61095,6 +61577,7 @@ components:
       type: object
       required:
         - id
+        - schemaVersion
         - name
         - description
         - organization_id
@@ -61111,18 +61594,39 @@ components:
           x-go-type: uuid.UUID
           x-go-type-import:
             path: github.com/gofrs/uuid
+        schemaVersion:
+          description: >-
+            Specifies the version of the schema to which the environment
+            conforms.
+          x-order: 2
+          x-oapi-codegen-extra-tags:
+            yaml: schemaVersion
+            db: '-'
+            gorm: '-'
+          default: environments.meshery.io/v1beta1
+          type: string
+          minLength: 2
+          maxLength: 100
+          pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+          example:
+            - v1
+            - v1alpha1
+            - v2beta3
+            - v1.custom-suffix
+            - models.meshery.io/v1beta1
+            - capability.meshery.io/v1alpha1
         name:
           x-oapi-codegen-extra-tags:
             db: name
             yaml: name
-          x-order: 2
+          x-order: 3
           type: string
           description: Environment name
         description:
           x-oapi-codegen-extra-tags:
             db: description
             yaml: description
-          x-order: 3
+          x-order: 4
           type: string
           description: Environment description
         organization_id:
@@ -61130,7 +61634,7 @@ components:
           x-oapi-codegen-extra-tags:
             db: organization_id
             yaml: organization_id
-          x-order: 4
+          x-order: 5
           description: Environment organization ID
           type: string
           format: uuid
@@ -61141,7 +61645,7 @@ components:
           x-oapi-codegen-extra-tags:
             db: owner
             yaml: owner
-          x-order: 5
+          x-order: 6
           description: Environment owner
           type: string
           format: uuid
@@ -61152,7 +61656,7 @@ components:
           x-oapi-codegen-extra-tags:
             db: created_at
             yaml: created_at
-          x-order: 6
+          x-order: 7
           type: string
           format: date-time
           x-go-type-skip-optional-pointer: true
@@ -61160,7 +61664,7 @@ components:
           x-oapi-codegen-extra-tags:
             db: metadata
             yaml: metadata
-          x-order: 7
+          x-order: 8
           x-go-type: core.Map
           x-go-type-skip-optional-pointer: true
           type: object
@@ -61168,7 +61672,7 @@ components:
           x-oapi-codegen-extra-tags:
             db: updated_at
             yaml: updated_at
-          x-order: 8
+          x-order: 9
           type: string
           format: date-time
           x-go-type-skip-optional-pointer: true
@@ -61178,7 +61682,7 @@ components:
             yaml: deleted_at
           x-go-type: core.NullTime
           x-go-import: database/sql
-          x-order: 9
+          x-order: 10
           type: string
           format: date-time
           x-go-type-skip-optional-pointer: true
@@ -61285,6 +61789,7 @@ components:
             type: object
             required:
               - id
+              - schemaVersion
               - name
               - description
               - organization_id
@@ -61301,18 +61806,39 @@ components:
                 x-go-type: uuid.UUID
                 x-go-type-import:
                   path: github.com/gofrs/uuid
+              schemaVersion:
+                description: >-
+                  Specifies the version of the schema to which the environment
+                  conforms.
+                x-order: 2
+                x-oapi-codegen-extra-tags:
+                  yaml: schemaVersion
+                  db: '-'
+                  gorm: '-'
+                default: environments.meshery.io/v1beta1
+                type: string
+                minLength: 2
+                maxLength: 100
+                pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                example:
+                  - v1
+                  - v1alpha1
+                  - v2beta3
+                  - v1.custom-suffix
+                  - models.meshery.io/v1beta1
+                  - capability.meshery.io/v1alpha1
               name:
                 x-oapi-codegen-extra-tags:
                   db: name
                   yaml: name
-                x-order: 2
+                x-order: 3
                 type: string
                 description: Environment name
               description:
                 x-oapi-codegen-extra-tags:
                   db: description
                   yaml: description
-                x-order: 3
+                x-order: 4
                 type: string
                 description: Environment description
               organization_id:
@@ -61320,7 +61846,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: organization_id
                   yaml: organization_id
-                x-order: 4
+                x-order: 5
                 description: Environment organization ID
                 type: string
                 format: uuid
@@ -61331,7 +61857,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: owner
                   yaml: owner
-                x-order: 5
+                x-order: 6
                 description: Environment owner
                 type: string
                 format: uuid
@@ -61342,7 +61868,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: created_at
                   yaml: created_at
-                x-order: 6
+                x-order: 7
                 type: string
                 format: date-time
                 x-go-type-skip-optional-pointer: true
@@ -61350,7 +61876,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: metadata
                   yaml: metadata
-                x-order: 7
+                x-order: 8
                 x-go-type: core.Map
                 x-go-type-skip-optional-pointer: true
                 type: object
@@ -61358,7 +61884,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: updated_at
                   yaml: updated_at
-                x-order: 8
+                x-order: 9
                 type: string
                 format: date-time
                 x-go-type-skip-optional-pointer: true
@@ -61368,7 +61894,7 @@ components:
                   yaml: deleted_at
                 x-go-type: core.NullTime
                 x-go-import: database/sql
-                x-order: 9
+                x-order: 10
                 type: string
                 format: date-time
                 x-go-type-skip-optional-pointer: true
@@ -61413,12 +61939,14 @@ components:
               type: string
               minLength: 2
               maxLength: 100
-              pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+              pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
               example:
                 - v1
                 - v1alpha1
                 - v2beta3
                 - v1.custom-suffix
+                - models.meshery.io/v1beta1
+                - capability.meshery.io/v1alpha1
             version:
               default: v0.0.1
               x-order: 4
@@ -61560,12 +62088,15 @@ components:
                     type: string
                     minLength: 2
                     maxLength: 100
-                    pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                     example:
                       - v1
                       - v1alpha1
                       - v2beta3
                       - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
                   version:
                     x-order: 3
                     description: Version of the component definition.
@@ -61652,12 +62183,15 @@ components:
                         type: string
                         minLength: 2
                         maxLength: 100
-                        pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                        pattern: >-
+                          ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                         example:
                           - v1
                           - v1alpha1
                           - v2beta3
                           - v1.custom-suffix
+                          - models.meshery.io/v1beta1
+                          - capability.meshery.io/v1alpha1
                       version:
                         description: Version of the model definition.
                         type: string
@@ -61917,6 +62451,7 @@ components:
                               type: object
                               required:
                                 - id
+                                - schemaVersion
                                 - name
                                 - description
                                 - organization_id
@@ -61937,18 +62472,40 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: id
                                     yaml: id
+                                schemaVersion:
+                                  description: >-
+                                    Specifies the version of the schema to which
+                                    the environment conforms.
+                                  x-order: 2
+                                  x-oapi-codegen-extra-tags:
+                                    yaml: schemaVersion
+                                    db: '-'
+                                    gorm: '-'
+                                  default: environments.meshery.io/v1beta1
+                                  type: string
+                                  minLength: 2
+                                  maxLength: 100
+                                  pattern: >-
+                                    ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                                  example:
+                                    - v1
+                                    - v1alpha1
+                                    - v2beta3
+                                    - v1.custom-suffix
+                                    - models.meshery.io/v1beta1
+                                    - capability.meshery.io/v1alpha1
                                 name:
                                   x-oapi-codegen-extra-tags:
                                     db: name
                                     yaml: name
-                                  x-order: 2
+                                  x-order: 3
                                   type: string
                                   description: Environment name
                                 description:
                                   x-oapi-codegen-extra-tags:
                                     db: description
                                     yaml: description
-                                  x-order: 3
+                                  x-order: 4
                                   type: string
                                   description: Environment description
                                 organization_id:
@@ -61966,7 +62523,7 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: organization_id
                                     yaml: organization_id
-                                  x-order: 4
+                                  x-order: 5
                                 owner:
                                   type: string
                                   format: uuid
@@ -61981,12 +62538,12 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: owner
                                     yaml: owner
-                                  x-order: 5
+                                  x-order: 6
                                 created_at:
                                   x-oapi-codegen-extra-tags:
                                     db: created_at
                                     yaml: created_at
-                                  x-order: 6
+                                  x-order: 7
                                   type: string
                                   format: date-time
                                   x-go-type-skip-optional-pointer: true
@@ -61994,7 +62551,7 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: metadata
                                     yaml: metadata
-                                  x-order: 7
+                                  x-order: 8
                                   x-go-type: core.Map
                                   x-go-type-skip-optional-pointer: true
                                   type: object
@@ -62002,7 +62559,7 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: updated_at
                                     yaml: updated_at
-                                  x-order: 8
+                                  x-order: 9
                                   type: string
                                   format: date-time
                                   x-go-type-skip-optional-pointer: true
@@ -62012,7 +62569,7 @@ components:
                                     yaml: deleted_at
                                   x-go-type: core.NullTime
                                   x-go-import: database/sql
-                                  x-order: 9
+                                  x-order: 10
                                   type: string
                                   format: date-time
                                   x-go-type-skip-optional-pointer: true
@@ -62036,12 +62593,14 @@ components:
                             minLength: 2
                             maxLength: 100
                             pattern: >-
-                              ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                              ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                             example:
                               - v1
                               - v1alpha1
                               - v2beta3
                               - v1.custom-suffix
+                              - models.meshery.io/v1beta1
+                              - capability.meshery.io/v1alpha1
                       registrantId:
                         type: string
                         format: uuid
@@ -62256,12 +62815,14 @@ components:
                                   minLength: 2
                                   maxLength: 100
                                   pattern: >-
-                                    ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                    ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                   example:
                                     - v1
                                     - v1alpha1
                                     - v2beta3
                                     - v1.custom-suffix
+                                    - models.meshery.io/v1beta1
+                                    - capability.meshery.io/v1alpha1
                                 version:
                                   description: Version of the capability definition.
                                   type: string
@@ -63308,12 +63869,14 @@ components:
                           minLength: 2
                           maxLength: 100
                           pattern: >-
-                            ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                           example:
                             - v1
                             - v1alpha1
                             - v2beta3
                             - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                         version:
                           description: Version of the capability definition.
                           type: string
@@ -63790,12 +64353,15 @@ components:
                     type: string
                     minLength: 2
                     maxLength: 100
-                    pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                     example:
                       - v1
                       - v1alpha1
                       - v2beta3
                       - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
                   version:
                     type: string
                     minLength: 5
@@ -63904,12 +64470,14 @@ components:
                           minLength: 2
                           maxLength: 100
                           pattern: >-
-                            ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                           example:
                             - v1
                             - v1alpha1
                             - v2beta3
                             - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                         version:
                           description: Version of the capability definition.
                           type: string
@@ -66300,12 +66868,14 @@ components:
               type: string
               minLength: 2
               maxLength: 100
-              pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+              pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
               example:
                 - v1
                 - v1alpha1
                 - v2beta3
                 - v1.custom-suffix
+                - models.meshery.io/v1beta1
+                - capability.meshery.io/v1alpha1
             version:
               default: v0.0.1
               x-order: 4
@@ -66447,12 +67017,15 @@ components:
                     type: string
                     minLength: 2
                     maxLength: 100
-                    pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                     example:
                       - v1
                       - v1alpha1
                       - v2beta3
                       - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
                   version:
                     x-order: 3
                     description: Version of the component definition.
@@ -66539,12 +67112,15 @@ components:
                         type: string
                         minLength: 2
                         maxLength: 100
-                        pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                        pattern: >-
+                          ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                         example:
                           - v1
                           - v1alpha1
                           - v2beta3
                           - v1.custom-suffix
+                          - models.meshery.io/v1beta1
+                          - capability.meshery.io/v1alpha1
                       version:
                         description: Version of the model definition.
                         type: string
@@ -66804,6 +67380,7 @@ components:
                               type: object
                               required:
                                 - id
+                                - schemaVersion
                                 - name
                                 - description
                                 - organization_id
@@ -66824,18 +67401,40 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: id
                                     yaml: id
+                                schemaVersion:
+                                  description: >-
+                                    Specifies the version of the schema to which
+                                    the environment conforms.
+                                  x-order: 2
+                                  x-oapi-codegen-extra-tags:
+                                    yaml: schemaVersion
+                                    db: '-'
+                                    gorm: '-'
+                                  default: environments.meshery.io/v1beta1
+                                  type: string
+                                  minLength: 2
+                                  maxLength: 100
+                                  pattern: >-
+                                    ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                                  example:
+                                    - v1
+                                    - v1alpha1
+                                    - v2beta3
+                                    - v1.custom-suffix
+                                    - models.meshery.io/v1beta1
+                                    - capability.meshery.io/v1alpha1
                                 name:
                                   x-oapi-codegen-extra-tags:
                                     db: name
                                     yaml: name
-                                  x-order: 2
+                                  x-order: 3
                                   type: string
                                   description: Environment name
                                 description:
                                   x-oapi-codegen-extra-tags:
                                     db: description
                                     yaml: description
-                                  x-order: 3
+                                  x-order: 4
                                   type: string
                                   description: Environment description
                                 organization_id:
@@ -66853,7 +67452,7 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: organization_id
                                     yaml: organization_id
-                                  x-order: 4
+                                  x-order: 5
                                 owner:
                                   type: string
                                   format: uuid
@@ -66868,12 +67467,12 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: owner
                                     yaml: owner
-                                  x-order: 5
+                                  x-order: 6
                                 created_at:
                                   x-oapi-codegen-extra-tags:
                                     db: created_at
                                     yaml: created_at
-                                  x-order: 6
+                                  x-order: 7
                                   type: string
                                   format: date-time
                                   x-go-type-skip-optional-pointer: true
@@ -66881,7 +67480,7 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: metadata
                                     yaml: metadata
-                                  x-order: 7
+                                  x-order: 8
                                   x-go-type: core.Map
                                   x-go-type-skip-optional-pointer: true
                                   type: object
@@ -66889,7 +67488,7 @@ components:
                                   x-oapi-codegen-extra-tags:
                                     db: updated_at
                                     yaml: updated_at
-                                  x-order: 8
+                                  x-order: 9
                                   type: string
                                   format: date-time
                                   x-go-type-skip-optional-pointer: true
@@ -66899,7 +67498,7 @@ components:
                                     yaml: deleted_at
                                   x-go-type: core.NullTime
                                   x-go-import: database/sql
-                                  x-order: 9
+                                  x-order: 10
                                   type: string
                                   format: date-time
                                   x-go-type-skip-optional-pointer: true
@@ -66923,12 +67522,14 @@ components:
                             minLength: 2
                             maxLength: 100
                             pattern: >-
-                              ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                              ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                             example:
                               - v1
                               - v1alpha1
                               - v2beta3
                               - v1.custom-suffix
+                              - models.meshery.io/v1beta1
+                              - capability.meshery.io/v1alpha1
                       registrantId:
                         type: string
                         format: uuid
@@ -67143,12 +67744,14 @@ components:
                                   minLength: 2
                                   maxLength: 100
                                   pattern: >-
-                                    ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                                    ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                                   example:
                                     - v1
                                     - v1alpha1
                                     - v2beta3
                                     - v1.custom-suffix
+                                    - models.meshery.io/v1beta1
+                                    - capability.meshery.io/v1alpha1
                                 version:
                                   description: Version of the capability definition.
                                   type: string
@@ -68195,12 +68798,14 @@ components:
                           minLength: 2
                           maxLength: 100
                           pattern: >-
-                            ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                           example:
                             - v1
                             - v1alpha1
                             - v2beta3
                             - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                         version:
                           description: Version of the capability definition.
                           type: string
@@ -68677,12 +69282,15 @@ components:
                     type: string
                     minLength: 2
                     maxLength: 100
-                    pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                     example:
                       - v1
                       - v1alpha1
                       - v2beta3
                       - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
                   version:
                     type: string
                     minLength: 5
@@ -68791,12 +69399,14 @@ components:
                           minLength: 2
                           maxLength: 100
                           pattern: >-
-                            ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                            ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                           example:
                             - v1
                             - v1alpha1
                             - v2beta3
                             - v1.custom-suffix
+                            - models.meshery.io/v1beta1
+                            - capability.meshery.io/v1alpha1
                         version:
                           description: Version of the capability definition.
                           type: string
@@ -72502,12 +73112,14 @@ components:
           type: string
           minLength: 2
           maxLength: 100
-          pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+          pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
           example:
             - v1
             - v1alpha1
             - v2beta3
             - v1.custom-suffix
+            - models.meshery.io/v1beta1
+            - capability.meshery.io/v1alpha1
         version:
           type: string
           minLength: 5
@@ -72751,6 +73363,7 @@ components:
                 type: object
                 required:
                   - id
+                  - schemaVersion
                   - name
                   - description
                   - organization_id
@@ -72767,18 +73380,40 @@ components:
                     x-go-type: uuid.UUID
                     x-go-type-import:
                       path: github.com/gofrs/uuid
+                  schemaVersion:
+                    description: >-
+                      Specifies the version of the schema to which the
+                      environment conforms.
+                    x-order: 2
+                    x-oapi-codegen-extra-tags:
+                      yaml: schemaVersion
+                      db: '-'
+                      gorm: '-'
+                    default: environments.meshery.io/v1beta1
+                    type: string
+                    minLength: 2
+                    maxLength: 100
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                    example:
+                      - v1
+                      - v1alpha1
+                      - v2beta3
+                      - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
                   name:
                     x-oapi-codegen-extra-tags:
                       db: name
                       yaml: name
-                    x-order: 2
+                    x-order: 3
                     type: string
                     description: Environment name
                   description:
                     x-oapi-codegen-extra-tags:
                       db: description
                       yaml: description
-                    x-order: 3
+                    x-order: 4
                     type: string
                     description: Environment description
                   organization_id:
@@ -72786,7 +73421,7 @@ components:
                     x-oapi-codegen-extra-tags:
                       db: organization_id
                       yaml: organization_id
-                    x-order: 4
+                    x-order: 5
                     description: Environment organization ID
                     type: string
                     format: uuid
@@ -72797,7 +73432,7 @@ components:
                     x-oapi-codegen-extra-tags:
                       db: owner
                       yaml: owner
-                    x-order: 5
+                    x-order: 6
                     description: Environment owner
                     type: string
                     format: uuid
@@ -72808,7 +73443,7 @@ components:
                     x-oapi-codegen-extra-tags:
                       db: created_at
                       yaml: created_at
-                    x-order: 6
+                    x-order: 7
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -72816,7 +73451,7 @@ components:
                     x-oapi-codegen-extra-tags:
                       db: metadata
                       yaml: metadata
-                    x-order: 7
+                    x-order: 8
                     x-go-type: core.Map
                     x-go-type-skip-optional-pointer: true
                     type: object
@@ -72824,7 +73459,7 @@ components:
                     x-oapi-codegen-extra-tags:
                       db: updated_at
                       yaml: updated_at
-                    x-order: 8
+                    x-order: 9
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -72834,7 +73469,7 @@ components:
                       yaml: deleted_at
                     x-go-type: core.NullTime
                     x-go-import: database/sql
-                    x-order: 9
+                    x-order: 10
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -72855,12 +73490,14 @@ components:
               type: string
               minLength: 2
               maxLength: 100
-              pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+              pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
               example:
                 - v1
                 - v1alpha1
                 - v2beta3
                 - v1.custom-suffix
+                - models.meshery.io/v1beta1
+                - capability.meshery.io/v1alpha1
         registrantId:
           description: ID of the registrant.
           x-oapi-codegen-extra-tags:
@@ -73060,12 +73697,15 @@ components:
                     type: string
                     minLength: 2
                     maxLength: 100
-                    pattern: ([a-z.])*(?!^/)v(alpha|beta|[0-9]+)([.-]*[a-z0-9]+)*$
+                    pattern: >-
+                      ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
                     example:
                       - v1
                       - v1alpha1
                       - v2beta3
                       - v1.custom-suffix
+                      - models.meshery.io/v1beta1
+                      - capability.meshery.io/v1alpha1
                   version:
                     type: string
                     minLength: 5
