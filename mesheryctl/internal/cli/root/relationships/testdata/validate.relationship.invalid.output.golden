@@ -1,1 +1,9 @@
-The supplied relationship definition is invalid | Short Description: Relationship validation failed | Probable Cause: The relationship definition violates the Meshery relationship schema. Violation at /kind: value is not one of the allowed values ["hierarchical","edge","sibling"] | Suggested Remediation: Review the reported schema violations and update the relationship definition file
+Relationship definition is invalid
+
+Schema violations (1):
+
+  /kind
+    - value is not one of the allowed values ["hierarchical","edge","sibling"]
+
+
+Review the schema violations above and update the relationship definition file.
