@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // Our variables
 $base-font-family: Helvetica, Arial, sans-serif;
 $base-font-size: 0.9rem;
@@ -11,8 +13,8 @@ $background-color: #fdfdfd;
 $brand-color: #2a7ae2;
 
 $grey-color: #1D2C33;
-$grey-color-light: lighten($grey-color, 40%);
-$grey-color-dark: darken($grey-color, 25%);
+$grey-color-light: color.adjust($grey-color, $lightness: 40%);
+$grey-color-dark: color.adjust($grey-color, $lightness: -25%);
 // Width of the content area
 $content-width: 800px;
 
@@ -238,7 +240,7 @@ h5 {
     }
   }
   tr:nth-child(odd) {
-    background: lighten($grey-color-light, 6%);
+    background: color.adjust($grey-color-light, $lightness: 6%);
   }
 }
 
