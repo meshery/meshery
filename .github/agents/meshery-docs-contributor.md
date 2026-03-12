@@ -163,6 +163,18 @@ aliases:
 ---
 ```
 
+Required fields:
+
+- `title`: Page title (used in navigation and SEO)
+
+Optional but recommended:
+
+- `description`: Brief description for SEO and previews
+- `type`: If the page uses a custom layout, specify it here (e.g. `type: integration`)
+- `categories`: Organizational categories (Hugo taxonomy)
+- `display-toolbar`: Set to false to hide intra-page TOC
+- `suggested-reading`: Set to false to disable suggested reading
+
 Use only fields that the current docs actually consume. Confirm patterns from nearby files in `docs/content/en/` before introducing new fields.
 
 ### Alerts
