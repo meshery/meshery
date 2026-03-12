@@ -190,7 +190,7 @@ func GenerateMDStyleDocs(model meshkitRegistryUtils.ModelCSV, components []meshk
 	relationshipsCount := len(relationships)
 	// dir for markdown
 	modelsOutputPath, _ := filepath.Abs(filepath.Join("../", modelPath))
-	mdDir := filepath.Join(modelsOutputPath) // path, "pages", "integrations"
+	mdDir := filepath.Join(modelsOutputPath) // path, "extensions", "models"
 	err := os.MkdirAll(mdDir, 0777)
 	if err != nil {
 		return err
@@ -229,7 +229,7 @@ func GenerateMDStyleDocs(model meshkitRegistryUtils.ModelCSV, components []meshk
 	}
 
 	// generate components metadata and create svg files
-	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName, "components") // "assets", "img", "integrations"
+	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName, "components") // "extensions", "models"
 	_imgOutputPath := filepath.Join(imgsOutputPath, "components")
 	componentMetadata, err := meshkitRegistryUtils.CreateComponentsMetadataAndCreateSVGsForMDStyle(model, components, _imgOutputPath, _iconsSubDir)
 	if err != nil {
