@@ -26,6 +26,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils/format"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
@@ -120,8 +121,13 @@ func setContext(configFile, cname string) error {
 	if err != nil {
 		return utils.ErrReadResponseBody(err)
 	}
-	// TODO: Pretty print the output
 	log.Debugf("Set context API response: %s", string(body))
+	var output interface{}
+	if err := json.Unmarshal(body, &output); err == nil {
+		_ = format.OutputJson(output)
+		return nil
+	}
+	log.Info(string(body))
 	return nil
 }
 
