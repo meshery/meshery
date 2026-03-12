@@ -319,7 +319,7 @@ const MeshModelComponent_ = ({
   }, [searchText]);
 
   useEffect(() => {
-    const fetchCounts = async () => {
+    const fetchCounts = () => {
       const params = { page: 0, pagesize: 1, search: '' };
       getMeshModelsData({ params: { ...params, components: false, relationships: false } }, true);
       getComponentsData({ params: { ...params, trim: true } }, true);
