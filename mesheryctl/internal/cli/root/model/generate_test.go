@@ -50,7 +50,7 @@ func TestModelGenerate(t *testing.T) {
 			ExpectedResponse: "generate.no-args.output.golden",
 			ExpectHelp:       true,
 			ExpectErr:        true,
-			RaisedError:      utils.ErrInvalidArgument(fmt.Errorf("either --file or a path as argument must be specified\n\n%s", errGenerateUsageMsg)),
+			RaisedError:      utils.ErrInvalidArgument(fmt.Errorf(errGenerateMissingArgsMsg, errGenerateUsageMsg)),
 		},
 		{
 			Name:             "model generate: from CSV directory",
