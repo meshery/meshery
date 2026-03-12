@@ -1,0 +1,24 @@
+version: 0.0.1
+name: fluentd-deployment
+displayName: fluentd deployment
+createdAt: "2024-04-02T19:52:43Z"
+description: This configuration sets up Fluentd-ES to collect and forward logs from Kubernetes pods to Elasticsearch for storage and analysis. Ensure that Elasticsearch is properly configured and accessible by Fluentd-ES for successful log aggregation and visualization. Additionally, adjust resource requests and limits according to your cluster's capacity and requirements.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/96c43aaf-4bd9-4f28-bc02-c64e3d26f1f8/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Resource Utilisation:\nFluentd can consume significant CPU and memory resources, especially in environments with high log volumes. Monitor resource usage closely and adjust resource requests and limits according to your cluster's capacity and workload requirements.\n\n2. Configuration Complexity:\nFluentd's configuration can be complex, particularly when configuring input, filtering, and output plugins. Thoroughly test and validate the Fluentd configuration to ensure it meets your logging requirements and effectively captures relevant log data.\n\n3. Security Considerations:\nSecure the Fluentd deployment by following best practices for managing secrets and access control. Ensure that sensitive information, such as credentials and configuration details, are properly encrypted and protected. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/96c43aaf-4bd9-4f28-bc02-c64e3d26f1f8-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/96c43aaf-4bd9-4f28-bc02-c64e3d26f1f8-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

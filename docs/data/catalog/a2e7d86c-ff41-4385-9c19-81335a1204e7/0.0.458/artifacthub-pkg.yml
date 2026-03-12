@@ -1,0 +1,24 @@
+version: 0.0.458
+name: keycloak-sso-with-oauth2-proxy-design
+displayName: Keycloak SSO with OAuth2 Proxy design
+createdAt: "2025-10-21T10:15:28Z"
+description: This design shows a Keycloak SSO setup using OAuth2 Proxy for unified authentication. NGINX Ingress handles TLS and routes traffic to the OAuth2 Proxy, which authenticates users through Keycloak via OAuth2/OpenID Connect. Tools like Grafana, Prometheus UI, and Longhorn UI are secured with centralized SSO, ensuring consistent and secure user access across services.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/a2e7d86c-ff41-4385-9c19-81335a1204e7/0.0.458/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "When using this design, ensure proper token refresh and redirect URI configuration to avoid login issues. Keycloak availability is critical, so high availability and backups are recommended. The OAuth2 Proxy adds minor latency but improves security. Careful management of sessions, TLS certificates, and role-based access is required to maintain stability and prevent over-privileged access. Some services may also need additional setup for full OAuth2/OpenID Connect compatibility. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c191d146-dd71-44ac-8ef9-bccac10068fe
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a2e7d86c-ff41-4385-9c19-81335a1204e7-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a2e7d86c-ff41-4385-9c19-81335a1204e7-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
