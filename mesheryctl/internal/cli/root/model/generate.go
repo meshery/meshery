@@ -53,15 +53,7 @@ mesheryctl model generate --f [URL] -t [path-to-template.json]
 mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(modelGenerateFlags)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelGenerateFlags)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		if modelGenerateFlags.File == "" && len(args) == 0 {
