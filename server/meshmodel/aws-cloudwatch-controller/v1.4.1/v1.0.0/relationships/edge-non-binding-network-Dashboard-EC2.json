@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000006",
-  "evaluationQuery": "edge_non_binding_network_relationship",
+  "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
     "description": "CloudWatch Dashboard visualizes metrics from EC2 instances for monitoring and observability",
