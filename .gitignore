@@ -50,11 +50,6 @@ cmd/meshery
 log.txt
 
 # Docs
-docs/_site
-docs/.sass-cache
-docs/.jekyll-metadata
-docs/.jekyll-cache
-
 docs/static/v0.8/
 docs/static/v0.7/
 docs/static/v0.6/
