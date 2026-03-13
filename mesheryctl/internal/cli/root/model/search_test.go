@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -42,5 +43,6 @@ func TestSearchModel(t *testing.T) {
 		},
 	}
 
+	mesheryctlflags.InitValidators(ModelCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, ModelCmd, tests, currDir, "model")
 }
