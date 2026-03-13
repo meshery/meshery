@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   For%20detailed%20considerations%20on%20each%20relationship%20type%2C%20refer%20to%20the%20corresponding%20individual%20published%20designs.%20These%20designs%20provide%20in-depth%20insights%20into%20best%20practices%2C%20configuration%20strategies%2C%20and%20potential%20impacts%20for%20each%20type%20of%20relationship.
 permalink: catalog/deployment/all-relationships-2fdf5dcb-a3c0-4c2c-a64f-a3943ac87d5f.html
-designURL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/2fdf5dcb-a3c0-4c2c-a64f-a3943ac87d5f/0.0.310/design.yml'
+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/2fdf5dcb-a3c0-4c2c-a64f-a3943ac87d5f/0.0.310/design.yml'
 downloadLink: 2fdf5dcb-a3c0-4c2c-a64f-a3943ac87d5f/design.yml
 ---

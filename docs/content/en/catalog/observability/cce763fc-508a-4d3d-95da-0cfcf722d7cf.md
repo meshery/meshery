@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   for%20Caveats%20And%20Considerations%20consider%20checking%20this%20docs%20https%3A%2F%2Fwww.ibm.com%2Fproducts%2Finstana%0A
 permalink: catalog/observability/instana-agent-for-kubernetes-cce763fc-508a-4d3d-95da-0cfcf722d7cf.html
-designURL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/cce763fc-508a-4d3d-95da-0cfcf722d7cf/0.0.1/design.yml'
+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/cce763fc-508a-4d3d-95da-0cfcf722d7cf/0.0.1/design.yml'
 downloadLink: cce763fc-508a-4d3d-95da-0cfcf722d7cf/design.yml
 ---

@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   The%20purpose%20is%20for%20visualization%20and%20learning%2C%20not%20for%20direct%20production%20deployment%20without%20modification.
 permalink: catalog/traffic-management/kubernetes-service-traffic-distribution-a95b76ce-ceaf-4bdf-bac7-95a6773168cd.html
-designURL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/a95b76ce-ceaf-4bdf-bac7-95a6773168cd/0.0.616/design.yml'
+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/a95b76ce-ceaf-4bdf-bac7-95a6773168cd/0.0.616/design.yml'
 downloadLink: a95b76ce-ceaf-4bdf-bac7-95a6773168cd/design.yml
 ---

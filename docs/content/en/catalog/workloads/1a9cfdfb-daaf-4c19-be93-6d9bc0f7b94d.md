@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   The%20purpose%20is%20for%20visualization%20and%20learning%2C%20not%20for%20direct%20production%20deployment%20without%20modification.
 permalink: catalog/workloads/kubernetes-workload-controllers-overview-1a9cfdfb-daaf-4c19-be93-6d9bc0f7b94d.html
-designURL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/1a9cfdfb-daaf-4c19-be93-6d9bc0f7b94d/0.0.144/design.yml'
+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/1a9cfdfb-daaf-4c19-be93-6d9bc0f7b94d/0.0.144/design.yml'
 downloadLink: 1a9cfdfb-daaf-4c19-be93-6d9bc0f7b94d/design.yml
 ---

@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   This%20is%20an%20sample%20network%20%20policy%20with%20ingress%2Cegress%20defined%20%2C%20change%20according%20to%20your%20requirements
 permalink: catalog/traffic-management/network-policy-7b2e40b0-3cc8-4da3-bccd-b66bc6cd206a.html
-designURL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/7b2e40b0-3cc8-4da3-bccd-b66bc6cd206a/0.0.1/design.yml'
+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/7b2e40b0-3cc8-4da3-bccd-b66bc6cd206a/0.0.1/design.yml'
 downloadLink: 7b2e40b0-3cc8-4da3-bccd-b66bc6cd206a/design.yml
 ---

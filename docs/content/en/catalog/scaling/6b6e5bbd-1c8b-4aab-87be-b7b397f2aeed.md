@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   get%20info%20from%20this%20https%3A%2F%2Fgithub.com%2Fkubernetes%2Fautoscaler%2Fblob%2Fmaster%2Fcluster-autoscaler%2FFAQ.md%23how-can-i-configure-overprovisioning-with-cluster-autoscaler
 permalink: catalog/scaling/k8-s-cluster-overprovisioner-6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed.html
-designURL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed/0.0.5/design.yml'
+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed/0.0.5/design.yml'
 downloadLink: 6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed/design.yml
 ---

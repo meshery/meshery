@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   Design%20is%20topology-focused%3B%20some%20components%20(Kafka%20Producer%2C%20Logstash%2C%20Kibana)%20are%20represented%20as%20generic%20workloads%2FNamespaces.%0AProvides%20a%20Logstash%20pipeline%20that%20consumes%20from%20Kafka%20and%20outputs%20to%20Elasticsearch.%0AUpdate%20hostnames%2Fports%20for%20your%20environment%20(e.g.%2C%20kafka%3A9092%2C%20elasticsearch%3A9200).%0ASecurity%2Fauth%20not%20configured%20(no%20TLS%2FSASL%20for%20Kafka%2C%20no%20X-Pack%20auth%20for%20ES%2FKibana).%0AIntended%20for%20a%20single-namespace%20demo%3B%20scaling%20and%20production%20hardening%20are%20out%20of%20scope.
 permalink: catalog/deployment/elkk-stack-with-kafka-a1eaf8c4-4da3-4cc4-ba75-edc9e808ab98.html
-designURL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/a1eaf8c4-4da3-4cc4-ba75-edc9e808ab98/0.0.49/design.yml'
+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/a1eaf8c4-4da3-4cc4-ba75-edc9e808ab98/0.0.49/design.yml'
 downloadLink: a1eaf8c4-4da3-4cc4-ba75-edc9e808ab98/design.yml
 ---

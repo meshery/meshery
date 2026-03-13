@@ -16,6 +16,6 @@ patternInfo: |
 patternCaveats: |
   ""
 permalink: catalog/deployment/expose-kubernetes-app-with-nginx-ingress-dbc5cf33-6db9-4644-a5aa-c8df5ffaf0a6.html
-designURL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/dbc5cf33-6db9-4644-a5aa-c8df5ffaf0a6/0.0.109/design.yml'
+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/dbc5cf33-6db9-4644-a5aa-c8df5ffaf0a6/0.0.109/design.yml'
 downloadLink: dbc5cf33-6db9-4644-a5aa-c8df5ffaf0a6/design.yml
 ---

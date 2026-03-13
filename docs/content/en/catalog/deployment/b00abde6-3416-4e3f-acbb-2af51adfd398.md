@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   test
 permalink: catalog/deployment/untitled-design-b00abde6-3416-4e3f-acbb-2af51adfd398.html
-designURL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/b00abde6-3416-4e3f-acbb-2af51adfd398/0.0.1/design.yml'
+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/b00abde6-3416-4e3f-acbb-2af51adfd398/0.0.1/design.yml'
 downloadLink: b00abde6-3416-4e3f-acbb-2af51adfd398/design.yml
 ---

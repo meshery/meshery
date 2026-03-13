@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   Requires%20Kubernetes%201.21%2B%20and%20Helm%203%2B
 permalink: catalog/deployment/aspnet-core-6-0-0-tgz-8cff4bae-818f-4c9b-8511-a6feaabf6b1e.html
-designURL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/8cff4bae-818f-4c9b-8511-a6feaabf6b1e/0.0.1/design.yml'
+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/8cff4bae-818f-4c9b-8511-a6feaabf6b1e/0.0.1/design.yml'
 downloadLink: 8cff4bae-818f-4c9b-8511-a6feaabf6b1e/design.yml
 ---
