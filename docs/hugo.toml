@@ -67,8 +67,9 @@ id = "G-HX135VWX9B"
 # Language configuration
 
 [languages]
-[languages.en]
-languageName = "English"
+  [languages.en]
+    languageName = "English"
+    disabled = false
 # Weight used for sorting.
 weight = 1
 [languages.en.params]
