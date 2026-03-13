@@ -17,7 +17,6 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshkit/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -214,20 +213,6 @@ func StartMockery(t *testing.T) {
 	// activate http mocking
 	httpmock.Activate()
 
-	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
-
-	apiResponse := NewGoldenFile(t, "validate.version.github.golden", fixturesDir).Load()
-
-	// For validate version requests
-	url1 := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/tag/" + "v0.5.54"
-	httpmock.RegisterResponder("GET", url1,
-		httpmock.NewStringResponder(200, apiResponse))
 }
 
 // stop HTTP mock client
