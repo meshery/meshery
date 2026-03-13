@@ -287,138 +287,79 @@ func DesignViewError(msg string) string {
 	return formatError(msg, cmdDesignView)
 }
 
+var cmdUsageURLs = map[cmdType]string{
+	cmdRoot:                     rootUsageURL,
+	cmdPerf:                     perfUsageURL,
+	cmdMesh:                     meshUsageURL,
+	cmdSystem:                   systemUsageURL,
+	cmdSystemStop:               systemStopURL,
+	cmdSystemUpdate:             systemUpdateURL,
+	cmdSystemReset:              systemResetURL,
+	cmdSystemStatus:             systemStatusURL,
+	cmdSystemRestart:            systemRestartURL,
+	cmdExp:                      expUsageURL,
+	cmdFilter:                   filterUsageURL,
+	cmdFilterImport:             filterImportURL,
+	cmdFilterDelete:             filterDeleteURL,
+	cmdFilterList:               filterListURL,
+	cmdFilterView:               filterViewURL,
+	cmdDesign:                   designUsageURL,
+	cmdDesignView:               designViewURL,
+	cmdDesignExport:             designExportURL,
+	cmdContextDelete:            contextDeleteURL,
+	cmdContextCreate:            contextCreateURL,
+	cmdContextView:              contextViewURL,
+	cmdContext:                  contextUsageURL,
+	cmdChannelSwitch:            channelSwitchURL,
+	cmdChannelView:              channelViewURL,
+	cmdChannelSet:               channelSetURL,
+	cmdChannel:                  channelUsageURL,
+	cmdProviderView:             providerViewURL,
+	cmdProviderList:             providerListURL,
+	cmdProviderSet:              providerSetURL,
+	cmdProviderSwitch:           providerSwitchURL,
+	cmdProviderReset:            providerResetURL,
+	cmdProvider:                 providerUsageURL,
+	cmdToken:                    tokenUsageURL,
+	cmdModel:                    modelUsageURL,
+	cmdModelList:                modelListURL,
+	cmdModelImport:              modelImportURl,
+	cmdModelView:                modelViewURL,
+	cmdRegistry:                 registryUsageURL,
+	cmdRegistryPublish:          registryPublishURL,
+	cmdRegistryGenerate:         registryGenerateURL,
+	cmdRegistryUpdate:           registryUpdateURL,
+	cmdEnvironment:              environmentUsageURL,
+	cmdEnvironmentCreate:        environmentCreateURL,
+	cmdEnvironmentDelete:        environmentDeleteURL,
+	cmdEnvironmentList:          environmentListURL,
+	cmdEnvironmentView:          environmentViewURL,
+	cmdExpWorkspace:             workspaceUsageURL,
+	cmdExpWorkspaceCreate:       workspaceCreateURL,
+	cmdExpWorkspaceList:         workspaceListURL,
+	cmdRelationshipView:         relationshipViewURL,
+	cmdRelationships:            relationshipUsageURL,
+	cmdRelationshipGenerateDocs: cmdRelationshipGenerateDocsURL,
+	cmdComponent:                componentUsageURL,
+	cmdComponentList:            componentListURL,
+	cmdComponentSearch:          componentSearchURL,
+	cmdComponentView:            componentViewURL,
+	cmdConnection:               connectionUsageURL,
+	cmdConnectionDelete:         connectionDeleteURL,
+	cmdConnectionList:           connectionListURL,
+	cmdExpRelationship:          expRelationshipUsageURL,
+	cmdExpRelationshipGenerate:  expRelationshipGenerateURL,
+	cmdExpRelationshipView:      expRelationshipViewURL,
+	cmdExpRelationshipList:      expRelationshipListURL,
+}
+
 // formatError returns a formatted error message with a link to the meshery command URL
 func formatError(msg string, cmd cmdType) string {
-	switch cmd {
-	case cmdRoot:
-		return formatUsageDetails(msg, rootUsageURL)
-	case cmdPerf:
-		return formatUsageDetails(msg, perfUsageURL)
-	case cmdMesh:
-		return formatUsageDetails(msg, meshUsageURL)
-	case cmdSystem:
-		return formatUsageDetails(msg, systemUsageURL)
-	case cmdSystemStop:
-		return formatUsageDetails(msg, systemStopURL)
-	case cmdSystemUpdate:
-		return formatUsageDetails(msg, systemUpdateURL)
-	case cmdSystemReset:
-		return formatUsageDetails(msg, systemResetURL)
-	case cmdSystemStatus:
-		return formatUsageDetails(msg, systemStatusURL)
-	case cmdSystemRestart:
-		return formatUsageDetails(msg, systemRestartURL)
-	case cmdExp:
-		return formatUsageDetails(msg, expUsageURL)
-	case cmdFilter:
-		return formatUsageDetails(msg, filterUsageURL)
-	case cmdFilterImport:
-		return formatUsageDetails(msg, filterImportURL)
-	case cmdFilterDelete:
-		return formatUsageDetails(msg, filterDeleteURL)
-	case cmdFilterList:
-		return formatUsageDetails(msg, filterListURL)
-	case cmdFilterView:
-		return formatUsageDetails(msg, filterViewURL)
-	case cmdDesign:
-		return formatUsageDetails(msg, designUsageURL)
-	case cmdDesignView:
-		return formatUsageDetails(msg, designViewURL)
-	case cmdDesignExport:
-		return formatUsageDetails(msg, designExportURL)
-	case cmdContextDelete:
-		return formatUsageDetails(msg, contextDeleteURL)
-	case cmdContextCreate:
-		return formatUsageDetails(msg, contextCreateURL)
-	case cmdContextView:
-		return formatUsageDetails(msg, contextViewURL)
-	case cmdContext:
-		return formatUsageDetails(msg, contextUsageURL)
-	case cmdChannelSwitch:
-		return formatUsageDetails(msg, channelSwitchURL)
-	case cmdChannelView:
-		return formatUsageDetails(msg, channelViewURL)
-	case cmdChannelSet:
-		return formatUsageDetails(msg, channelSetURL)
-	case cmdChannel:
-		return formatUsageDetails(msg, channelUsageURL)
-	case cmdProviderView:
-		return formatUsageDetails(msg, providerViewURL)
-	case cmdProviderList:
-		return formatUsageDetails(msg, providerListURL)
-	case cmdProviderSet:
-		return formatUsageDetails(msg, providerSetURL)
-	case cmdProviderSwitch:
-		return formatUsageDetails(msg, providerSwitchURL)
-	case cmdProviderReset:
-		return formatUsageDetails(msg, providerResetURL)
-	case cmdProvider:
-		return formatUsageDetails(msg, providerUsageURL)
-	case cmdToken:
-		return formatUsageDetails(msg, tokenUsageURL)
-	case cmdModel:
-		return formatUsageDetails(msg, modelUsageURL)
-	case cmdModelList:
-		return formatUsageDetails(msg, modelListURL)
-	case cmdModelImport:
-		return formatUsageDetails(msg, modelImportURl)
-	case cmdModelView:
-		return formatUsageDetails(msg, modelViewURL)
-	case cmdRegistry:
-		return formatUsageDetails(msg, registryUsageURL)
-	case cmdRegistryPublish:
-		return formatUsageDetails(msg, registryPublishURL)
-	case cmdRegistryGenerate:
-		return formatUsageDetails(msg, registryGenerateURL)
-	case cmdRegistryUpdate:
-		return formatUsageDetails(msg, registryUpdateURL)
-	case cmdEnvironment:
-		return formatUsageDetails(msg, environmentUsageURL)
-	case cmdEnvironmentCreate:
-		return formatUsageDetails(msg, environmentCreateURL)
-	case cmdEnvironmentDelete:
-		return formatUsageDetails(msg, environmentDeleteURL)
-	case cmdEnvironmentList:
-		return formatUsageDetails(msg, environmentListURL)
-	case cmdEnvironmentView:
-		return formatUsageDetails(msg, environmentViewURL)
-	case cmdExpWorkspace:
-		return formatUsageDetails(msg, workspaceUsageURL)
-	case cmdExpWorkspaceCreate:
-		return formatUsageDetails(msg, workspaceCreateURL)
-	case cmdExpWorkspaceList:
-		return formatUsageDetails(msg, workspaceListURL)
-	case cmdRelationshipView:
-		return formatUsageDetails(msg, relationshipViewURL)
-	case cmdRelationships:
-		return formatUsageDetails(msg, relationshipUsageURL)
-	case cmdRelationshipGenerateDocs:
-		return formatUsageDetails(msg, cmdRelationshipGenerateDocsURL)
-	case cmdComponent:
-		return formatUsageDetails(msg, componentUsageURL)
-	case cmdComponentList:
-		return formatUsageDetails(msg, componentListURL)
-	case cmdComponentSearch:
-		return formatUsageDetails(msg, componentSearchURL)
-	case cmdComponentView:
-		return formatUsageDetails(msg, componentViewURL)
-	case cmdConnection:
-		return formatUsageDetails(msg, connectionUsageURL)
-	case cmdConnectionDelete:
-		return formatUsageDetails(msg, connectionDeleteURL)
-	case cmdConnectionList:
-		return formatUsageDetails(msg, connectionListURL)
-	case cmdExpRelationship:
-		return formatUsageDetails(msg, expRelationshipUsageURL)
-	case cmdExpRelationshipGenerate:
-		return formatUsageDetails(msg, expRelationshipGenerateURL)
-	case cmdExpRelationshipView:
-		return formatUsageDetails(msg, expRelationshipViewURL)
-	case cmdExpRelationshipList:
-		return formatUsageDetails(msg, expRelationshipListURL)
-	default:
-		return fmt.Sprintf("%s\n", msg)
+	if docURL, ok := cmdUsageURLs[cmd]; ok {
+		return formatUsageDetails(msg, docURL)
 	}
+
+	return fmt.Sprintf("%s\n", msg)
 }
 
 func formatUsageDetails(msg string, docURL string) string {
