@@ -49,6 +49,8 @@
               url: installation/upgrades#upgrading-meshery-cli
         - title: Using Multiple Meshery Adapters
           url: installation/multiple-adapters
+        - title: Production Deployment Considerations
+          url: installation/prod-deployment-considerations
         - title: Meshery Playground
           url: installation/playground
         - title: FAQs
