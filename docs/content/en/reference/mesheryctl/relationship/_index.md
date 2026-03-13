@@ -1,11 +1,11 @@
 ---
-title: mesheryctl-exp-relationship
+title: mesheryctl-relationship
 display_title: false
-command: exp
-subcommand: relationship
+command: relationship
+subcommand: nil
 ---
 
-# mesheryctl exp relationship
+# mesheryctl relationship
 
 Manage relationships
 
@@ -16,7 +16,7 @@ Meshery uses relationships to define how interconnected components interact.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship [flags]
+mesheryctl relationship [flags]
 
 </div>
 </pre> 
@@ -34,7 +34,7 @@ mesheryctl relationship --count
 Generate a relationship documentation 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship generate [flags]
+mesheryctl relationship generate [flags]
 
 </div>
 </pre> 
@@ -42,7 +42,7 @@ mesheryctl exp relationship generate [flags]
 List available relationship(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship list [flags]
+mesheryctl relationship list [flags]
 
 </div>
 </pre> 
@@ -50,7 +50,7 @@ mesheryctl exp relationship list [flags]
 Search for a specific relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship search [flags] [query-text]
+mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
 
 </div>
 </pre> 
@@ -58,7 +58,7 @@ mesheryctl exp relationship search [flags] [query-text]
 View a specific relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [model-name]
+mesheryctl relationship view [model-name]
 
 </div>
 </pre> 
@@ -83,7 +83,6 @@ mesheryctl exp relationship view [model-name]
 </div>
 </pre>
 
+## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
-
-## See Also

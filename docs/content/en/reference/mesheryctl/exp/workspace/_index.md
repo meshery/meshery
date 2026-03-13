@@ -12,7 +12,7 @@ Managge workspaces under an organization
 ## Synopsis
 
 Create, list of workspaces under an organization
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace [flags]
@@ -58,7 +58,6 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 </div>
 </pre>
 
+## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
-
-## See Also

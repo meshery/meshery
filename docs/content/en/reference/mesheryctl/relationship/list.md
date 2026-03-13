@@ -1,11 +1,11 @@
 ---
-title: mesheryctl-exp-relationship-list
+title: mesheryctl-relationship-list
 display_title: false
-command: exp
-subcommand: relationship
+command: relationship
+subcommand: list
 ---
 
-# mesheryctl exp relationship list
+# mesheryctl relationship list
 
 List registered relationships
 
@@ -14,22 +14,22 @@ List registered relationships
 List all relationships registered in Meshery Server
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship list [flags]
+mesheryctl relationship list [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-List of relationships
+List all relationships
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship list
+mesheryctl relationship list
 
 </div>
 </pre> 
 
-List of relationships for a specified page
+List relationships for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl relationship list --page [page-number]
@@ -37,7 +37,15 @@ mesheryctl relationship list --page [page-number]
 </div>
 </pre> 
 
-Display number of available relationships in Meshery
+List relationships with a custom page size
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl relationship list --pagesize [page-size]
+
+</div>
+</pre> 
+
+Display the total number of available relationships in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl relationship list --count
@@ -49,9 +57,10 @@ mesheryctl relationship list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --count      (optional) Get the number of relationship(s) in total
-  -h, --help       help for list
-  -p, --page int   (optional) List next set of relationships with --page (default = 1) (default 1)
+  -c, --count          (optional) Display the total count of relationships only
+  -h, --help           help for list
+  -p, --page int       (optional) List next set of relationships with --page (default = 1) (default 1)
+      --pagesize int   (optional) Number of results per page (default = 10) (default 10)
 
 </div>
 </pre>

@@ -1,54 +1,30 @@
 ---
-title: mesheryctl
+title: mesheryctl-relationship-generate
 display_title: false
-command: mesheryctl
-subcommand: nil
+command: relationship
+subcommand: generate
 ---
 
-# mesheryctl
+# mesheryctl relationship generate
 
-Meshery Command Line tool
+Generate relationships documents
 
 ## Synopsis
 
-As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
-
+Generate relationships documents from the google spreadsheets
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl [flags]
+mesheryctl relationship generate [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Base command:
+Generate relationships documentss
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl
-
-</div>
-</pre> 
-
-Display help about command/subcommand:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl --help
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl system start --help
-
-</div>
-</pre> 
-
-For viewing verbose output:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl -v [or] --verbose
+mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 
 </div>
 </pre> 
@@ -57,8 +33,18 @@ mesheryctl -v [or] --verbose
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+  -h, --help                      help for generate
+      --spreadsheet-cred string   base64 encoded credential to download the spreadsheet
+      --spreadsheet-id string     spreadsheet ID for the integration spreadsheet
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
       --config string   path to config file (default "/home/runner/.meshery/config.yaml")
-  -h, --help            help for mesheryctl
   -v, --verbose         verbose output
 
 </div>

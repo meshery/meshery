@@ -1,30 +1,39 @@
 ---
-title: mesheryctl-design-offboard
+title: mesheryctl-organization
 display_title: false
-command: design
-subcommand: offboard
+command: organization
+subcommand: nil
 ---
 
-# mesheryctl design offboard
+# mesheryctl organization
 
-Offboard design
+Interact with registered organizations
 
 ## Synopsis
 
-Offboard design will trigger undeploy of design
+Interact with registered organizations to display detailed information
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design offboard [flags]
+mesheryctl organization [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Offboard design by providing file path
+Number of  registered orgs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design offboard -f [filepath]
+mesheryctl organization --count
+
+</div>
+</pre> 
+
+List registerd orgs
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl organization list
 
 </div>
 </pre> 
@@ -33,8 +42,8 @@ mesheryctl design offboard -f [filepath]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -f, --file string   Path to design file
-  -h, --help          help for offboard
+      --count   total number of registered organizations
+  -h, --help    help for organization
 
 </div>
 </pre>
@@ -44,7 +53,6 @@ mesheryctl design offboard -f [filepath]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "/home/runner/.meshery/config.yaml")
-  -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
 </div>
