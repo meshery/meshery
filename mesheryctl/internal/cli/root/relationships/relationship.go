@@ -16,19 +16,19 @@ package relationships
 
 import (
 	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
-
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd}
+	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd, validateCmd}
 	relationshipApiPath  = "api/meshmodels/relationships"
 )
 
@@ -60,7 +60,10 @@ mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subty
 
 // View a specific relationship
 mesheryctl relationship view [model-name]
-	`,
+
+// Validate a relationship definition file
+mesheryctl relationship validate --file ./relationship.yaml
+`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
 		if len(args) == 0 && !count {
@@ -84,7 +87,11 @@ mesheryctl relationship view [model-name]
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl relationship --help' to display usage guide.\n", args[0]), "relationship"))
+			return utils.ErrInvalidArgument(fmt.Errorf(
+				"'%s' is an invalid subcommand. Please use one of [%s]. Use 'mesheryctl relationship --help' to display usage guide",
+				args[0],
+				strings.Join(relationshipSubcommandNames(), ", "),
+			))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -102,6 +109,17 @@ mesheryctl relationship view [model-name]
 func init() {
 	RelationshipCmd.AddCommand(availableSubcommands...)
 	RelationshipCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of relationship(s) in total")
+}
+
+func relationshipSubcommandNames() []string {
+	names := make([]string, 0, len(availableSubcommands))
+	for _, subcommand := range availableSubcommands {
+		names = append(names, subcommand.Name())
+	}
+
+	sort.Strings(names)
+
+	return names
 }
 
 func generateRelationshipDataToDisplay(relationshipResponse *MeshmodelRelationshipsAPIResponse) ([][]string, int64) {

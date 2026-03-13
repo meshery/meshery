@@ -1,0 +1,112 @@
+---
+title: Crossplane
+subtitle: Collaborative and visual infrastructure as design for Crossplane
+image: /extensions/models/crossplane/icons/color/crossplane-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/crossplane
+description: 
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
+registrant: GitHub
+components: 
+- name: composite-resource-definition
+  colorIcon: /extensions/models/crossplane/components/composite-resource-definition/icons/color/composite-resource-definition-color.svg
+  whiteIcon: /extensions/models/crossplane/components/composite-resource-definition/icons/white/composite-resource-definition-white.svg
+  description: 
+- name: composition-revision
+  colorIcon: /extensions/models/crossplane/components/composition-revision/icons/color/composition-revision-color.svg
+  whiteIcon: /extensions/models/crossplane/components/composition-revision/icons/white/composition-revision-white.svg
+  description: 
+- name: composition
+  colorIcon: /extensions/models/crossplane/components/composition/icons/color/composition-color.svg
+  whiteIcon: /extensions/models/crossplane/components/composition/icons/white/composition-white.svg
+  description: 
+- name: environment-config
+  colorIcon: /extensions/models/crossplane/components/environment-config/icons/color/environment-config-color.svg
+  whiteIcon: /extensions/models/crossplane/components/environment-config/icons/white/environment-config-white.svg
+  description: 
+- name: usage
+  colorIcon: /extensions/models/crossplane/components/usage/icons/color/usage-color.svg
+  whiteIcon: /extensions/models/crossplane/components/usage/icons/white/usage-white.svg
+  description: 
+- name: configuration-revision
+  colorIcon: /extensions/models/crossplane/components/configuration-revision/icons/color/configuration-revision-color.svg
+  whiteIcon: /extensions/models/crossplane/components/configuration-revision/icons/white/configuration-revision-white.svg
+  description: 
+- name: configuration
+  colorIcon: /extensions/models/crossplane/components/configuration/icons/color/configuration-color.svg
+  whiteIcon: /extensions/models/crossplane/components/configuration/icons/white/configuration-white.svg
+  description: 
+- name: controller-config
+  colorIcon: /extensions/models/crossplane/components/controller-config/icons/color/controller-config-color.svg
+  whiteIcon: /extensions/models/crossplane/components/controller-config/icons/white/controller-config-white.svg
+  description: 
+- name: deployment-runtime-config
+  colorIcon: /extensions/models/crossplane/components/deployment-runtime-config/icons/color/deployment-runtime-config-color.svg
+  whiteIcon: /extensions/models/crossplane/components/deployment-runtime-config/icons/white/deployment-runtime-config-white.svg
+  description: 
+- name: function-revision
+  colorIcon: /extensions/models/crossplane/components/function-revision/icons/color/function-revision-color.svg
+  whiteIcon: /extensions/models/crossplane/components/function-revision/icons/white/function-revision-white.svg
+  description: 
+- name: function
+  colorIcon: /extensions/models/crossplane/components/function/icons/color/function-color.svg
+  whiteIcon: /extensions/models/crossplane/components/function/icons/white/function-white.svg
+  description: 
+- name: lock
+  colorIcon: /extensions/models/crossplane/components/lock/icons/color/lock-color.svg
+  whiteIcon: /extensions/models/crossplane/components/lock/icons/white/lock-white.svg
+  description: 
+- name: provider-revision
+  colorIcon: /extensions/models/crossplane/components/provider-revision/icons/color/provider-revision-color.svg
+  whiteIcon: /extensions/models/crossplane/components/provider-revision/icons/white/provider-revision-white.svg
+  description: 
+- name: provider
+  colorIcon: /extensions/models/crossplane/components/provider/icons/color/provider-color.svg
+  whiteIcon: /extensions/models/crossplane/components/provider/icons/white/provider-white.svg
+  description: 
+- name: store-config
+  colorIcon: /extensions/models/crossplane/components/store-config/icons/color/store-config-color.svg
+  whiteIcon: /extensions/models/crossplane/components/store-config/icons/white/store-config-white.svg
+  description: 
+- name: image-config
+  colorIcon: /extensions/models/crossplane/components/image-config/icons/color/image-config-color.svg
+  whiteIcon: /extensions/models/crossplane/components/image-config/icons/white/image-config-white.svg
+  description: 
+- name: cluster-usage
+  colorIcon: /extensions/models/crossplane/components/cluster-usage/icons/color/cluster-usage-color.svg
+  whiteIcon: /extensions/models/crossplane/components/cluster-usage/icons/white/cluster-usage-white.svg
+  description: 
+- name: managed-resource-activation-policy
+  colorIcon: /extensions/models/crossplane/components/managed-resource-activation-policy/icons/color/managed-resource-activation-policy-color.svg
+  whiteIcon: /extensions/models/crossplane/components/managed-resource-activation-policy/icons/white/managed-resource-activation-policy-white.svg
+  description: 
+- name: managed-resource-definition
+  colorIcon: /extensions/models/crossplane/components/managed-resource-definition/icons/color/managed-resource-definition-color.svg
+  whiteIcon: /extensions/models/crossplane/components/managed-resource-definition/icons/white/managed-resource-definition-white.svg
+  description: 
+- name: cron-operation
+  colorIcon: /extensions/models/crossplane/components/cron-operation/icons/color/cron-operation-color.svg
+  whiteIcon: /extensions/models/crossplane/components/cron-operation/icons/white/cron-operation-white.svg
+  description: 
+- name: operation
+  colorIcon: /extensions/models/crossplane/components/operation/icons/color/operation-color.svg
+  whiteIcon: /extensions/models/crossplane/components/operation/icons/white/operation-white.svg
+  description: 
+- name: watch-operation
+  colorIcon: /extensions/models/crossplane/components/watch-operation/icons/color/watch-operation-color.svg
+  whiteIcon: /extensions/models/crossplane/components/watch-operation/icons/white/watch-operation-white.svg
+  description: 
+components-count: 22
+relationships: 
+relationship-count: 0
+featureList: [
+  "Highly extensible backend that enables you to orchestrate applications and infrastructure no matter where they run.",
+  "Highly configurable frontend that lets you define the declarative API it offers.",
+  "Provides reliability and security features like Role Based Access Control (RBAC) to orchestrate everything - not just containers."
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/crossplane
+---

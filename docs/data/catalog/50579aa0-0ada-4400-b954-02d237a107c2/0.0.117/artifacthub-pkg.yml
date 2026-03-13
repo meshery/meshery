@@ -1,0 +1,24 @@
+version: 0.0.117
+name: mattermost-server-scaling-for-aws-design
+displayName: Mattermost Server Scaling for aws design
+createdAt: "2025-10-23T14:29:41Z"
+description: This design shows a scalable Mattermost server setup on AWS, where client requests pass through an Elastic Load Balancer to multiple Mattermost application servers. Data is stored in Amazon Aurora and files in Amazon S3, ensuring performance, scalability, and secure access through VPN and internet gateways.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/50579aa0-0ada-4400-b954-02d237a107c2/0.0.117/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design requires careful management of load balancing and database scaling to prevent performance bottlenecks. Network latency, cost optimization, and secure access configurations must be monitored. Regular backups, efficient S3 storage management, and instance right-sizing are essential for reliability and cost control. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c191d146-dd71-44ac-8ef9-bccac10068fe
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/50579aa0-0ada-4400-b954-02d237a107c2-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/50579aa0-0ada-4400-b954-02d237a107c2-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

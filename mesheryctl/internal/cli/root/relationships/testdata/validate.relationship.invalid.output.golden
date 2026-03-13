@@ -1,0 +1,9 @@
+Relationship definition is invalid
+
+Schema violations (1):
+
+  /kind
+    - value is not one of the allowed values ["hierarchical","edge","sibling"]
+
+
+Review the schema violations above and update the relationship definition file.

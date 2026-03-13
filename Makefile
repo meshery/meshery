@@ -388,31 +388,34 @@ ui-integration-tests: ui-setup
 # Meshery Docs
 #-----------------------------------------------------------------------------
 #Incorporating Make docs commands from the Docs Makefile
-.PHONY: docs docs-build site docs-docker docs-mesheryctl
-jekyll=bundle exec jekyll
+.PHONY: docs docs-build site docs-docker docs-mesheryctl check-go
 
 site: docs
 site-serve: docs-serve
 
 ## Run Meshery Docs. Listen for changes.
-docs:
-	cd docs; bundle install; bundle exec jekyll serve --drafts --incremental --config _config_dev.yml
+docs: check-go
+	cd docs; hugo server -D -F 
 
 ## Run Meshery Docs. Do not listen for changes.
-docs-serve:
-	cd docs; bundle install; bundle exec jekyll serve --drafts --config _config_dev.yml
+docs-serve: check-go
+	cd docs; hugo server -D -F --watch=false
 
 ## Build Meshery Docs on your local machine.
 docs-build:
-	cd docs; $(jekyll) build --drafts
+	cd docs; hugo 
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
-	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0 bash -c "bundle install; jekyll serve --drafts --livereload"
+	cd docs; docker run --rm --name meshery-docs -p 1313:1313 -v `pwd`:/src -w /src ghcr.io/gohugoio/hugo:v0.157.0 server -D -F --bind 0.0.0.0
+
 
 ## Build Meshery CLI docs
 docs-mesheryctl:
 	cd mesheryctl; make docs;
+
+check-go:
+	$(MAKE) -C docs check-go
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
