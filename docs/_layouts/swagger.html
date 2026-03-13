@@ -5,12 +5,12 @@ title: Rest API Docs
 
 {{ content }}
 
-{% if page.data %}
-{% assign swagger = site.data[page.data] %}
+{% if openapi.data %}
+{% assign openapi = site.data[openapi.data] %}
 {% else %}
-{% assign swagger = page %}
+{% assign openapi = page %}
 {% endif %}
-{% assign sorted_paths = swagger.paths | sort %}
+{% assign sorted_paths = openapi.paths | sort %}
 
 <details>
 <summary>
@@ -124,7 +124,7 @@ title: Rest API Docs
                     </tbody>
                 </table>
                 {% endif %}
-                {% for content_type in swagger.produces %}
+                {% for content_type in openapi.produces %}
                     {% if response[1].examples[content_type] %}
                         {% assign example = response[1].examples[content_type] %}
                         {% if content_type contains 'json' %}
