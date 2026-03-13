@@ -12,7 +12,7 @@ import (
 
 const minimalMeshConfig = "contexts: {}\ncurrent-context: \"\"\ntokens: []\n"
 
-func TestMutateConfigIfNeeded(t *testing.T) {
+func TestConfigMutation(t *testing.T) {
 
 	tests := []struct {
 		name        string
@@ -20,21 +20,21 @@ func TestMutateConfigIfNeeded(t *testing.T) {
 		thenCreated bool
 	}{
 		{
-			name: "Given missing config file, when mutate is called, then default config is created",
+			name: "Given missing config file, when mutation is needed, then default config is created",
 			given: func(_ string) {
 				// file intentionally missing
 			},
 			thenCreated: true,
 		},
 		{
-			name: "Given empty config file, when mutate is called, then default config is created",
+			name: "Given empty config file, when mutation is needed, then default config is created",
 			given: func(configPath string) {
 				_ = os.WriteFile(configPath, []byte(""), 0o644)
 			},
 			thenCreated: true,
 		},
 		{
-			name: "Given existing config file, when mutate is called, then config is NOT modified",
+			name: "Given existing config file, when mutation is not needed, then config is NOT modified",
 			given: func(configPath string) {
 				_ = os.WriteFile(configPath, []byte("already-exists"), 0o644)
 			},
@@ -44,6 +44,7 @@ func TestMutateConfigIfNeeded(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+
 			viper.Reset()
 			t.Cleanup(viper.Reset)
 
@@ -59,19 +60,26 @@ func TestMutateConfigIfNeeded(t *testing.T) {
 			}
 
 			// WHEN
-			err := config.MutateConfigIfNeeded(
-				configPath,
-				mesheryFolder,
-				utils.TemplateToken,
-				utils.TemplateContext,
-				createConfig,
-			)
-
-			// THEN
+			needsMutation, err := config.NeedsMutation(configPath)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
+			if needsMutation {
+				err = config.InitDefaultConfig(
+					configPath,
+					mesheryFolder,
+					utils.TemplateToken,
+					utils.TemplateContext,
+					createConfig,
+				)
+
+				if err != nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+			}
+
+			// THEN
 			data, err := os.ReadFile(configPath)
 			if err != nil {
 				t.Fatalf("config not found: %v", err)

@@ -1,10 +1,27 @@
 package config
 
-import (
-	"os"
-)
+import "os"
 
-func MutateConfigIfNeeded(
+// What needs to be mutated
+func NeedsMutation(configPath string) (bool, error) {
+	stat, err := os.Stat(configPath)
+
+	switch {
+	case os.IsNotExist(err):
+		return true, nil
+
+	case err == nil && stat.Size() == 0:
+		return true, nil
+
+	case err != nil:
+		return false, err
+	}
+
+	return false, nil
+}
+
+// Mutation logic
+func InitDefaultConfig(
 	configPath string,
 	mesheryFolder string,
 	token Token,
@@ -12,25 +29,7 @@ func MutateConfigIfNeeded(
 	createConfigFile func() error,
 ) error {
 
-	stat, err := os.Stat(configPath)
-	createDefaultConfig := false
-
-	switch {
-	case os.IsNotExist(err):
-		createDefaultConfig = true
-
-	case err == nil && stat.Size() == 0:
-		createDefaultConfig = true
-
-	case err != nil:
-		return err
-	}
-
-	if !createDefaultConfig {
-		return nil
-	}
-
-	if err := os.MkdirAll(mesheryFolder, 0o775); err != nil {
+	if err := os.MkdirAll(mesheryFolder, 0o700); err != nil {
 		return err
 	}
 
