@@ -10,6 +10,7 @@ import {
   Toolbar,
   CustomTooltip,
   styled,
+  useTheme,
 } from '@sistent/sistent';
 import React, { useEffect, useRef, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
@@ -24,8 +25,8 @@ import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
 import { useRouter } from 'next/router';
 import { ArrowBack } from '@mui/icons-material';
+import { SaveAsIcon } from '@sistent/sistent';
 import TooltipButton from '../../../utils/TooltipButton';
-import { SaveAs as SaveAsIcon } from '@mui/icons-material';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
@@ -53,7 +54,7 @@ export default function DesignConfigurator() {
     updateDesignData,
   } = useDesignLifecycle();
   const formReference = useRef();
-
+  const theme = useTheme();
   const router = useRouter();
   const { design_id } = router.query;
 
@@ -196,7 +197,7 @@ export default function DesignConfigurator() {
                 onClick={designSave}
                 disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
               >
-                <SaveAsIcon style={iconMedium} />
+                <SaveAsIcon fill={theme.palette.icon.default} style={{ margin: '0 2px' }} />
               </IconButton>
             </div>
           </CustomTooltip>
