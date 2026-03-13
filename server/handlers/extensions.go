@@ -112,5 +112,7 @@ func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, _ 
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(resp.StatusCode)
-	fmt.Fprint(w, string(resp.Body))
+	if _, err := fmt.Fprint(w, string(resp.Body)); err != nil {
+		h.log.Error(err)
+	}
 }

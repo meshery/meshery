@@ -4,12 +4,12 @@
   "kind": "edge",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
     "version": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "EndpointSlice",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -46,7 +45,6 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
@@ -55,7 +53,8 @@
                   "targetRef",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -63,7 +62,6 @@
           {
             "id": null,
             "kind": "Pod",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -78,13 +76,13 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "metadata",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]

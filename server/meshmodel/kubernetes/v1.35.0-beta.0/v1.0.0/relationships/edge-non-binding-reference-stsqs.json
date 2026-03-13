@@ -4,12 +4,12 @@
   "kind": "edge",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
     "version": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "ClusterTrustBundle",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -46,14 +45,14 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
                   "spec",
                   "signerName"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -61,7 +60,6 @@
           {
             "id": null,
             "kind": "CertificateSigningRequest",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -76,14 +74,14 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
                   "spec",
                   "signerName"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]

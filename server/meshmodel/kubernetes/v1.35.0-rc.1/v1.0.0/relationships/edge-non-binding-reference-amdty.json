@@ -4,12 +4,12 @@
   "kind": "edge",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
     "version": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "WatchEvent",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -46,14 +45,14 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
                   "object",
                   "kind"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -61,7 +60,6 @@
           {
             "id": null,
             "kind": "APIResource",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -76,7 +74,6 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
@@ -84,7 +81,8 @@
                   "_",
                   "kind"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]

@@ -4,12 +4,12 @@
   "kind": "edge",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
     "version": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "ValidatingWebhookConfiguration",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -46,7 +45,6 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
@@ -56,7 +54,8 @@
                   "service",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -64,7 +63,6 @@
           {
             "id": null,
             "kind": "Service",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -79,13 +77,13 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "metadata",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]

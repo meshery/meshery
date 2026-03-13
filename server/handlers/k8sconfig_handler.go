@@ -295,7 +295,9 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "failed to get the token for the user")
+		if _, err := fmt.Fprintf(w, "failed to get the token for the user"); err != nil {
+			h.log.Error(err)
+		}
 		return
 	}
 
@@ -305,7 +307,9 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		k8sContext, err := provider.GetK8sContext(token, connectionID)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, "failed to get kubernetes context for the given ID")
+			if _, err := fmt.Fprintf(w, "failed to get kubernetes context for the given ID"); err != nil {
+				h.log.Error(err)
+			}
 			return
 		}
 
@@ -313,7 +317,9 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		kubeclient, err := k8sContext.GenerateKubeHandler()
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			fmt.Fprintf(w, "failed to get kubernetes config for the user")
+			if _, err := fmt.Fprintf(w, "failed to get kubernetes config for the user"); err != nil {
+				h.log.Error(err)
+			}
 			return
 		}
 		version, err := kubeclient.KubeClient.ServerVersion()

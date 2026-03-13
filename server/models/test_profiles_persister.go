@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/meshkit/database"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshkit/database"
 )
 
 // TestProfilesPersister assists with persisting session in store
@@ -33,7 +33,7 @@ func (s *TestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]byte, e
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
-	order := "updated_at desc"
+	order := defaultOrderUpdatedAtDesc
 	query := s.DB.Order(order)
 	total := int64(0)
 	s.DB.Model(&PerformanceTestConfig{}).Count(&total)
