@@ -6,4 +6,4 @@ list: exclude
 language: en
 ---
 
-{{ site.data.swagger }}
+{{ site.data.openapi }}
