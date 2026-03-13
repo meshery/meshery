@@ -1,28 +1,24 @@
 package utils
 
 import (
-	"bytes"
 	"testing"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSetupMeshkitLogger(t *testing.T) {
-	t.Run("Given_SetupMeshkitLogger_is_called_When_debug_is_enabled_Then_it_should_return_a_valid_handler", func(t *testing.T) {
-		var buf bytes.Buffer
-		name := "test-logger-debug"
-		
-		handler := SetupMeshkitLogger(name, true, &buf)
-		
-		assert.NotNil(t, handler, "Handler should not be nil")
-	})
+func TestTerminalFormatter_Format(t *testing.T) {
+	formatter := &TerminalFormatter{}
+	entry := &log.Entry{Message: "test message"}
 
-	t.Run("Given_SetupMeshkitLogger_is_called_When_debug_is_disabled_Then_it_should_return_a_valid_handler", func(t *testing.T) {
-		var buf bytes.Buffer
-		name := "test-logger-no-debug"
-		
-		handler := SetupMeshkitLogger(name, false, &buf)
-		
-		assert.NotNil(t, handler, "Handler should not be nil")
+	b, err := formatter.Format(entry)
+
+	assert.NoError(t, err)
+	assert.Equal(t, "test message\n", string(b))
+}
+
+func TestSetupLogrusFormatter(t *testing.T) {
+	assert.NotPanics(t, func() {
+		SetupLogrusFormatter()
 	})
 }
