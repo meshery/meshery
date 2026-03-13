@@ -167,22 +167,29 @@ func initConfig() {
 
 	} else {
 
-		err := config.MutateConfigIfNeeded(
-			utils.DefaultConfigPath,
-			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
-			utils.CreateConfigFile,
-		)
-
+		needsMutation, err := config.NeedsMutation(utils.DefaultConfigPath)
 		if err != nil {
 			utils.Log.Fatal(err)
+		}
+
+		if needsMutation {
+			err = config.InitDefaultConfig(
+				utils.DefaultConfigPath,
+				utils.MesheryFolder,
+				utils.TemplateToken,
+				utils.TemplateContext,
+				utils.CreateConfigFile,
+			)
+
+			if err != nil {
+				utils.Log.Fatal(err)
+			}
 		}
 	}
 
 	viper.SetConfigFile(cfgFile)
 
-	viper.AutomaticEnv() // read in environment variables that match
+	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
 		utils.Log.Debugf("unable to read config file: %v", err)
