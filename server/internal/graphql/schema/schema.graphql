@@ -9,7 +9,9 @@ scalar Time
 scalar Any
 directive @KubernetesMiddleware on FIELD_DEFINITION
 
-# Service Mesh Types
+"""
+Service Mesh Types
+"""
 enum MeshType {
   # All meshes that Meshery supports
   ALL_MESH
@@ -106,10 +108,14 @@ enum Status {
 }
 
 type Error {
-  # Error Code
+  """
+  Error Code
+  """
   code: String!
 
-  # Error Details
+  """
+  Error Details
+  """
   description: String!
 }
 
@@ -145,46 +151,72 @@ enum Severity {
 # ================ DASHBOARD ================
 
 type Resource {
-  # Name of resource
+  """
+  Name of resource
+  """
   kind: String!,
-  # Number of resouce
+  """
+  Number of resouce
+  """
   count: Int!
 }
 
-# Details about discovered workloads
+"""
+Details about discovered workloads
+"""
 type ClusterResources {
   resources: [Resource!]!,
 }
 
 # =================== ADDONS =====================
 
-# Input for changing Addon Status
+"""
+Input for changing Addon Status
+"""
 input AddonStatusInput {
-  # Filter by Serice Mesh
+  """
+  Filter by Serice Mesh
+  """
   selector: MeshType
-  #kubernetes context ID
+  """
+  kubernetes context ID
+  """
   k8scontextID: String!
-  # Desired Status
+  """
+  Desired Status
+  """
   targetStatus: Status!
 }
 
-# Deatils about the Addon Component
+"""
+Deatils about the Addon Component
+"""
 type AddonList {
-  # Name
+  """
+  Name
+  """
   name: String!
 
-  # Owner
+  """
+  Owner
+  """
   owner: String!
 }
 
 # ============== DATA PLANE =======================
 
-# Data Plane for a particular Mesh
+"""
+Data Plane for a particular Mesh
+"""
 type DataPlane {
-  # Service Mesh Name
+  """
+  Service Mesh Name
+  """
   name: String!
 
-  # Members of the Mesh
+  """
+  Members of the Mesh
+  """
   proxies: [Container!]!
 }
 
@@ -193,9 +225,13 @@ type Container {
   containerName: String!
   image: String!
   status: Container_Status
-  # args: NOT IMPLEMENTED
+  """
+  args: NOT IMPLEMENTED
+  """
   ports: [Container_Port]
-  # env: NOT IMPLEMENTED,
+  """
+  env: NOT IMPLEMENTED,
+  """
   resources: Any
 }
 
@@ -206,9 +242,11 @@ type Container_Status {
   lastState: Any
   ready: Boolean!
   restartCount: Any
-  # image: String!
-  # imageID: String!
-  # containerID: String!
+  """
+  image: String!
+  imageID: String!
+  containerID: String!
+  """
   started: Boolean!
   imageID: Any
   containerID: Any
@@ -222,37 +260,59 @@ type Container_Port {
 
 # ============== CONTROL PLANE =======================
 
-# Filter Control Plane Query
+"""
+Filter Control Plane Query
+"""
 input ServiceMeshFilter {
-  # Filter by Service Mesh
+  """
+  Filter by Service Mesh
+  """
   type: MeshType
   k8sClusterIDs: [String!]
 }
 
-# Control Plane data for a particular Mesh
+"""
+Control Plane data for a particular Mesh
+"""
 type ControlPlane {
-  # Service Mesh Name
+  """
+  Service Mesh Name
+  """
   name: String!
 
-  # Members of the Mesh
+  """
+  Members of the Mesh
+  """
   members: [ControlPlaneMember!]!
 }
 
-# Member Details
+"""
+Member Details
+"""
 type ControlPlaneMember {
-  # Name
+  """
+  Name
+  """
   name: String!
 
-  # Component
+  """
+  Component
+  """
   component: String!
 
-  # Version
+  """
+  Version
+  """
   version: String!
 
-  # Namespace
+  """
+  Namespace
+  """
   namespace: String!
 
-  # DataPlanes
+  """
+  DataPlanes
+  """
   data_planes: [Container!]
 }
 
@@ -266,26 +326,40 @@ enum MeshSyncEventType {
 
 # ============== OPERATOR =============================
 
-# Input for status change of Meshery Operator
+"""
+Input for status change of Meshery Operator
+"""
 input OperatorStatusInput {
-  # Desired status for Meshery Operator
+  """
+  Desired status for Meshery Operator
+  """
   targetStatus: Status!
 
   contextID: String!
 }
 
-# Controllers of Meshery Operator
+"""
+Controllers of Meshery Operator
+"""
 type OperatorControllerStatus {
-  # Controller Name
+  """
+  Controller Name
+  """
   name: String!
 
-  # Controller Verison
+  """
+  Controller Verison
+  """
   version: String!
 
-  # Controller Status
+  """
+  Controller Status
+  """
   status: Status!
 
-  # Controller Error Log
+  """
+  Controller Error Log
+  """
   error: Error
 
   connectionID: String!
@@ -294,9 +368,13 @@ type OperatorControllerStatus {
 
 # ============== NAMESPACE =============================
 
-# Type to define a k8s Namespace
+"""
+Type to define a k8s Namespace
+"""
 type NameSpace {
-  # Namespace Name
+  """
+  Namespace Name
+  """
   namespace: String!
 }
 
@@ -528,7 +606,9 @@ type TelemetryComp {
 }
 # ============== RESYNC =============================
 
-# Type ReSyncActions define the actions involved during resync
+"""
+Type ReSyncActions define the actions involved during resync
+"""
 input ReSyncActions {
   clearDB: String!
   ReSync: String!
@@ -541,7 +621,9 @@ input MeshModelSummarySelector {
   type: String!
 }
 
-# Type MeshModelComponentsSummary define the summary of a Mesh Model
+"""
+Type MeshModelComponentsSummary define the summary of a Mesh Model
+"""
 type MeshModelSummary {
   components: [MeshModelComponent!]
   relationships: [MeshModelRelationship!]
@@ -562,19 +644,25 @@ type MeshModelRelationship {
 type Query {
   # Query details about Addons available (Eg. Prometheus and Grafana)
   getAvailableAddons(
-    # Select Mesh Type
+    """
+    Select Mesh Type
+    """
      filter: ServiceMeshFilter
   ): [AddonList!]!
 
   # Query Control Plane data for a Service Mesh (or all) in your cluster
   getControlPlanes(
-    # Filter Control Plane Query
+    """
+    Filter Control Plane Query
+    """
     filter: ServiceMeshFilter
   ): [ControlPlane!]!
 
   # Query Data Plane information for a Service Mesh (or all) in your cluster
   getDataPlanes(
-    # Filter Control Plane Query
+    """
+    Filter Control Plane Query
+    """
     filter: ServiceMeshFilter
   ): [DataPlane!]!
 
@@ -585,7 +673,9 @@ type Query {
 
   # Query to resync the cluster discovery
   resyncCluster(
-    # Selector to control several resync actions
+    """
+    Selector to control several resync actions
+    """
     selector: ReSyncActions
     k8scontextID: String!
   ): Status!  @KubernetesMiddleware
@@ -641,15 +731,23 @@ type Query {
 
 #
 
-# Input for status change of Meshery Operator
+"""
+Input for status change of Meshery Operator
+"""
 input AdapterStatusInput {
-  # Desired status for Meshery Operator
+  """
+  Desired status for Meshery Operator
+  """
   targetStatus: Status!
 
-  # The port on which adapter will be deployed
+  """
+  The port on which adapter will be deployed
+  """
   targetPort: String!
 
-  # Name of the adapter to be deployed
+  """
+  Name of the adapter to be deployed
+  """
   adapter: String!
 }
 
@@ -691,7 +789,9 @@ type Subscription {
 
   subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
 
-  # Publish events to user
+  """
+  Publish events to user
+  """
   subscribeEvents : Event!
 }
 

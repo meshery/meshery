@@ -20,7 +20,9 @@ module Graphql
         @output_dir = output_dir
         @template = template
         @schema = schema
-        @layout = Haml::Engine.new(File.read(template))
+        template_content = File.read(template)
+        options = { escape_html: false }
+        @layout = Haml::Template.new(options) { template_content }
         @parsed_schema = GraphQLDocs::Parser.new(schema, {}).parse
         @seen = Set.new
       end
@@ -31,7 +33,7 @@ module Graphql
       end
 
       def write
-        filename = File.join(@output_dir, 'graphql-api-reference.md')
+        filename = File.join(@output_dir, 'graphql-apis.md')
 
         FileUtils.mkdir_p(@output_dir)
         File.write(filename, contents)

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 require 'graphql-docs'
 require 'active_support/core_ext/string/strip'
+require 'active_support/core_ext/object/blank'
+require 'active_support/core_ext/string/inflections'
 
 module Utils
   module StrongMemoize
@@ -351,7 +353,7 @@ module Graphql
 
         return if desc.blank?
 
-        desc += '.' unless desc.ends_with?('.')
+        desc += '.' unless desc.end_with?('.')
         see = doc_reference(object, owner)
         desc += " #{see}" if see
         desc += " (see [Connections](#connections))" if connection?(object) && context != :block
@@ -414,7 +416,7 @@ module Graphql
 
       def connection?(field)
         type_name = field.dig(:type, :name)
-        type_name.present? && type_name.ends_with?('Connection')
+        type_name.present? && type_name.end_with?('Connection')
       end
 
       # We are ignoring connections and built in types for now,
@@ -428,9 +430,9 @@ module Graphql
             .map do |type|
               name = type[:name]
               type.merge(
-                is_edge: name.ends_with?('Edge'),
-                is_connection: name.ends_with?('Connection'),
-                is_payload: name.ends_with?('Payload') && mutations.include?(name.chomp('Payload').camelcase(:lower)),
+                is_edge: name.end_with?('Edge'),
+                is_connection: name.end_with?('Connection'),
+                is_payload: name.end_with?('Payload') && mutations.include?(name.chomp('Payload').camelcase(:lower)),
                 fields: type[:fields] + type[:connections]
               )
             end
