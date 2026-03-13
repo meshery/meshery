@@ -388,7 +388,7 @@ ui-integration-tests: ui-setup
 # Meshery Docs
 #-----------------------------------------------------------------------------
 #Incorporating Make docs commands from the Docs Makefile
-.PHONY: docs docs-build site docs-docker docs-mesheryctl check-go
+.PHONY: docs docs-build site docs-docker docs-mesheryctl check-go docs-production-build
 
 site: docs
 site-serve: docs-serve
@@ -400,6 +400,9 @@ docs: check-go
 ## Run Meshery Docs. Do not listen for changes.
 docs-serve: check-go
 	cd docs; hugo server -D -F --watch=false
+
+docs-production-build: check-go
+	cd docs;  hugo --gc --minify --cleanDestinationDir --baseURL "/"
 
 ## Build Meshery Docs on your local machine.
 docs-build:
