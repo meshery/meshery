@@ -10,7 +10,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/spf13/cobra"
 )
@@ -50,20 +49,7 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 		modelNameorId := args[0]
 		urlPath := getModelViewUrlPath(modelNameorId)
 
-		selectedModel := new(model.ModelDefinition)
-
-		err := display.PromptAsyncPagination(
-			display.DisplayDataAsync{
-				UrlPath:        urlPath,
-				ErrNotFoundMsg: fmt.Sprintf("No model(s) found for the given name or ID %s", modelNameorId),
-			},
-			formatLabel,
-			func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
-				return data.Models, data.Count
-			},
-			selectedModel,
-		)
-
+		selectedModel, err := promptModelSelection(modelNameorId, urlPath)
 		if err != nil {
 
 			return err
