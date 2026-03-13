@@ -397,7 +397,7 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 				os.Stdout = originalStdout
 			}()
 
-			Log = SetupMeshkitLogger("mesheryctl", true, w)
+			_ = SetupMeshkitLoggerTesting(t, false)
 			cmd.SetArgs(tt.Args)
 			cmd.SetOut(w)
 			err := cmd.Execute()
