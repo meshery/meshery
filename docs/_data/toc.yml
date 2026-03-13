@@ -205,6 +205,8 @@
           url: guides/tutorials/publish-to-artifacthub
         - title: Kubernetes Request Flow – A Visual Guide
           url: guides/tutorials/kubernetes-request-flow
+        - title: Exploring Canary Deployments in Kubernetes
+          url: guides/tutorials/canary-deployment
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
