@@ -1199,8 +1199,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 }
 
 func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
-	connection := connections.Connection{ID: connectionID}
-	return l.ConnectionPersister.DeleteConnection(&connection)
+	return l.ConnectionPersister.DeleteConnectionById(connectionID)
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
