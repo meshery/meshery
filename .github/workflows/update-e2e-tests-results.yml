@@ -1,4 +1,4 @@
-name: Update Jekyll Page with Test Report
+name: Update Test Report
 
 on:
   workflow_run:
@@ -31,7 +31,7 @@ jobs:
            github-token: ${{ secrets.GITHUB_TOKEN }}
            run-id: ${{ github.event.workflow_run.id }}
       
-      - name: Move test report to Jekyll folder
+      - name: Move test report to shortcodes folder
         run: |
             if [ ! -f e2e-test-reporter/ui/test-report.md ]; then
             echo "Error: Test report not found!" && exit 1
