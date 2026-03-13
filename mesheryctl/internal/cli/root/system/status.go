@@ -110,7 +110,7 @@ mesheryctl system status --verbose
 		}
 
 		switch currPlatform {
-		case "docker":
+		case platformDocker:
 			// List the running Meshery containers using compose library
 			composeClient, err := utils.NewComposeClient()
 			if err != nil {
@@ -143,7 +143,7 @@ mesheryctl system status --verbose
 			}
 
 			fallthrough
-		case "kubernetes":
+		case platformKubernetes:
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
 

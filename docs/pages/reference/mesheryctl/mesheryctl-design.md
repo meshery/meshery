@@ -83,11 +83,11 @@ mesheryctl design list
 
 * [mesheryctl design apply](/reference/mesheryctl/design/apply)
 * [mesheryctl design delete](/reference/mesheryctl/design/delete)
+* [mesheryctl design deploy](/reference/mesheryctl/design/deploy)
 * [mesheryctl design export](/reference/mesheryctl/design/export)
 * [mesheryctl design import](/reference/mesheryctl/design/import)
 * [mesheryctl design list](/reference/mesheryctl/design/list)
-* [mesheryctl design offboard](/reference/mesheryctl/design/offboard)
-* [mesheryctl design onboard](/reference/mesheryctl/design/onboard)
+* [mesheryctl design undeploy](/reference/mesheryctl/design/undeploy)
 * [mesheryctl design view](/reference/mesheryctl/design/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

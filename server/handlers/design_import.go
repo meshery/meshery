@@ -123,12 +123,14 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	}
 
 	tempDir, err := os.MkdirTemp("", "temp-import")
-
-	defer os.RemoveAll(tempDir)
-
 	if err != nil {
 		return emptyDesign, "", fmt.Errorf("failed to create tmp directory %w", err)
 	}
+	defer func() {
+		if err := os.RemoveAll(tempDir); err != nil {
+			logger.Error(err)
+		}
+	}()
 
 	now := time.Now()
 	// NOTE: the FileName must also have extension
