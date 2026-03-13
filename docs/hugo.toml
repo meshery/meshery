@@ -222,3 +222,7 @@ enable = false
     source = "static"
     target = "static"
     disableWatch = true
+  [[module.mounts]]
+    source = "i18n"
+    target = "i18n"
+    disableWatch = true
