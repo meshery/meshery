@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   IndeterminateCheckBox,
   CompareArrows,
@@ -7,7 +8,6 @@ import {
   styled,
   NoSsr,
 } from '@sistent/sistent';
-import React, { useState } from 'react';
 import MesheryChartDialog from './MesheryChartDialog';
 import MesheryChart from './MesheryChart';
 import { useDispatch, useSelector } from 'react-redux';
