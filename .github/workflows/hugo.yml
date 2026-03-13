@@ -59,6 +59,7 @@ jobs:
           HUGO_ENV: production
         run: |
           cd docs
+          hugo mod clean --all
           hugo \
             --gc \
             --minify \
