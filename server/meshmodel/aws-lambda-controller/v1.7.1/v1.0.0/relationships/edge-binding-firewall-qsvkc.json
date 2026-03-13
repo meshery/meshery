@@ -4,12 +4,12 @@
   "kind": "edge",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
     "version": "",
@@ -46,7 +46,6 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
@@ -58,7 +57,8 @@
                   "spec",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -81,7 +81,6 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
@@ -94,7 +93,8 @@
                   "spec",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]

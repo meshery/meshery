@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Aperture Agent
 subtitle: Collaborative and visual infrastructure as design for Aperture Agent
-image: /assets/img/integrations/aperture-agent/icons/color/aperture-agent-color.svg
-permalink: extensibility/integrations/aperture-agent
+image: /extensions/models/aperture-agent/icons/color/aperture-agent-color.svg
+aliases: /extensibility/integrations/aperture-agent
 docURL: https://docs.meshery.io/extensibility/integrations/aperture-agent
 description: 
 integrations-category: Orchestration & Management
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Integrates Aperture Agent"
 howItWorksDetails: "Enhanced observability and security for Kubernetes applications"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

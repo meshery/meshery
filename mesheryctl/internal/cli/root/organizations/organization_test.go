@@ -29,8 +29,8 @@ func TestOrganization(t *testing.T) {
 		Args             []string
 		ExpectedResponse string
 		ExpectError      bool
-		ExpectedError    error `default:"nil"`
-		IsOutputGolden   bool  `default:"true"`
+		ExpectedError    error
+		IsOutputGolden   bool
 	}{
 		{
 			Name:             "Launch organization without args",

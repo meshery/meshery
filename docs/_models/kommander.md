@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kommander
 subtitle: Collaborative and visual infrastructure as design for Kommander
-image: /assets/img/integrations/kommander/icons/color/kommander-color.svg
-permalink: extensibility/integrations/kommander
+image: /extensions/models/kommander/icons/color/kommander-color.svg
+aliases: /extensibility/integrations/kommander
 docURL: https://docs.meshery.io/extensibility/integrations/kommander
 description: 
 integrations-category: Orchestration & Management
@@ -196,8 +195,5 @@ featureList: [
 ]
 howItWorks: "Integrates Kommander clusters"
 howItWorksDetails: "Streamlined multi-cluster management and governance"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

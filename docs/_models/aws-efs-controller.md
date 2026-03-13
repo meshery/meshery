@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Elastic File System
 subtitle: Collaborative and visual infrastructure as design for AWS Elastic File System
-image: /assets/img/integrations/aws-efs-controller/icons/color/aws-efs-controller-color.svg
-permalink: extensibility/integrations/aws-efs-controller
+image: /extensions/models/aws-efs-controller/icons/color/aws-efs-controller-color.svg
+aliases: /extensibility/integrations/aws-efs-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-efs-controller
 description: 
 integrations-category: Cloud Native Storage
@@ -62,8 +61,5 @@ featureList: [
 ]
 howItWorks: "Integrates EFS storage"
 howItWorksDetails: "Provides scalable and reliable file storage for Kubernetes applications"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

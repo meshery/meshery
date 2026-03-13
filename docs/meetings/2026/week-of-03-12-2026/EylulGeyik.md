@@ -1,0 +1,3 @@
+I'm Eylül. I'm a third-year Computer Science student. I’m following the GSoC 2026 projects and particularly interested in 'Relationships for AWS services'.
+I have experience with open-source projects. I contributed to Crossplane (a CNCF graduated project). Crossplane is a Kubernetes-native control plane to manage cloud native softwares and infrastructures. I focused on AWS resources. Additionally, to test my changes, I worked on the Moto project, it is a mock AWS Service.
+During these experiences, I became familiar with concepts such as Kubernetes, AWS, YAML, and relationships. Coming across this project has excited me. For this reason, I would like to take on a 'good first issue' and get to know the project more closely.

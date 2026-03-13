@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Systems Manager
 subtitle: Collaborative and visual infrastructure as design for AWS Systems Manager
-image: /assets/img/integrations/aws-ssm-controller/icons/color/aws-ssm-controller-color.svg
-permalink: extensibility/integrations/aws-ssm-controller
+image: /extensions/models/aws-ssm-controller/icons/color/aws-ssm-controller-color.svg
+aliases: /extensibility/integrations/aws-ssm-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ssm-controller
 description: 
 integrations-category: Orchestration & Management
@@ -64,8 +63,5 @@ featureList: [
 ]
 howItWorks: "Integrates with AWS SSM"
 howItWorksDetails: "Streamlined AWS resource management and automation within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

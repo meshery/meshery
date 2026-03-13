@@ -81,7 +81,6 @@ mesheryctl design list --count
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		header := func(provider string) []string {
 			if provider == "None" {
 				return []string{"DESIGN ID", "NAME", "CREATED", "UPDATED"}

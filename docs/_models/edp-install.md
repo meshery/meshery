@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: EDP Install
 subtitle: Collaborative and visual infrastructure as design for EDP Install
-image: /assets/img/integrations/edp-install/icons/color/edp-install-color.svg
-permalink: extensibility/integrations/edp-install
+image: /extensions/models/edp-install/icons/color/edp-install-color.svg
+aliases: /extensibility/integrations/edp-install
 docURL: https://docs.meshery.io/extensibility/integrations/edp-install
 description: 
 integrations-category: Provisioning
@@ -152,8 +151,5 @@ featureList: [
 ]
 howItWorks: "Deploys EDP with Helm"
 howItWorksDetails: "Easy and standardized EDP installation"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -27,7 +27,6 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -253,10 +252,10 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 		for i := range event {
 			if strings.Contains(i.Data.Details, query) {
 				eventChan <- "successful"
-				log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
+				utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
 			} else if strings.Contains(i.Data.Details, "Error") {
 				eventChan <- "error"
-				log.Infof("%s\n", i.Data.Summary)
+				utils.Log.Infof("%s\n", i.Data.Summary)
 			}
 		}
 	}()
@@ -301,10 +300,10 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 		for i := range event {
 			if strings.Contains(i.Data.Summary, query) {
 				eventChan <- "successful"
-				log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
+				utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
 			} else if strings.Contains(i.Data.Details, "error") {
 				eventChan <- "error"
-				log.Infof("%s", i.Data.Summary)
+				utils.Log.Infof("%s", i.Data.Summary)
 			}
 		}
 	}()

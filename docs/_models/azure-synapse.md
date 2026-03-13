@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Synapse
 subtitle: Collaborative and visual infrastructure as design for Azure Synapse
-image: /assets/img/integrations/azure-synapse/icons/color/azure-synapse-color.svg
-permalink: extensibility/integrations/azure-synapse
+image: /extensions/models/azure-synapse/icons/color/azure-synapse-color.svg
+aliases: /extensibility/integrations/azure-synapse
 docURL: https://docs.meshery.io/extensibility/integrations/azure-synapse
 description: 
 integrations-category: Observability and Analysis
@@ -31,8 +30,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

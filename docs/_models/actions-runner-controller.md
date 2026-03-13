@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Actions Runner Controller (ARC)
 subtitle: Collaborative and visual infrastructure as design for Actions Runner Controller (ARC)
-image: /assets/img/integrations/actions-runner-controller/icons/color/actions-runner-controller-color.svg
-permalink: extensibility/integrations/actions-runner-controller
+image: /extensions/models/actions-runner-controller/icons/color/actions-runner-controller-color.svg
+aliases: /extensibility/integrations/actions-runner-controller
 docURL: https://docs.meshery.io/extensibility/integrations/actions-runner-controller
 description: 
 integrations-category: App Definition and Development
@@ -40,8 +39,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

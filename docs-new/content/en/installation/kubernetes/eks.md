@@ -14,14 +14,14 @@ Manage your EKS clusters with Meshery. Deploy Meshery in EKS [in-cluster](#in-cl
 
 <div class="prereqs"><h4>Prerequisites</h4>
   <ol>
-    <li>Install the Meshery command line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+    <li>Install the Meshery command line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
     <li>Install <a href="https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html">AWS CLI</a>, configured for your environment.</li>
     <li>Access to an active EKS cluster in an AWS account.</li>
   </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubernetes)
+Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
 
 ### Available Deployment Methods
 
@@ -68,7 +68,9 @@ You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
 # Out-of-cluster Installation
 
-{% include alert.html title='Out-of-cluster EKS deployments not currently supported' type="warning" alert='Out-of-cluster support for EKS is still beta and on <a href="https://github.com/meshery/meshery/blob/master/ROADMAP.md">roadmap</a>.' %}
+{{% alert title="Out-of-cluster EKS deployments not currently supported" color="warning" %}}
+Out-of-cluster support for EKS is still beta and on the [roadmap](https://github.com/meshery/meshery/blob/master/ROADMAP.md).
+{{% /alert %}}
 
 Install Meshery on Docker (out-of-cluster) and connect it to your EKS cluster.
 

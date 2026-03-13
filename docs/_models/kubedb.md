@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubedb
 subtitle: Collaborative and visual infrastructure as design for Kubedb
-image: /assets/img/integrations/kubedb/icons/color/kubedb-color.svg
-permalink: extensibility/integrations/kubedb
+image: /extensions/models/kubedb/icons/color/kubedb-color.svg
+aliases: /extensibility/integrations/kubedb
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb
 description: 
 integrations-category: App Definition and Development
@@ -204,8 +203,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

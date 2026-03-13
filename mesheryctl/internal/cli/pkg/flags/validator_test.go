@@ -8,7 +8,7 @@ import (
 )
 
 func TestValidateSemver(t *testing.T) {
-	flagValidator := NewFlagValidator()
+	flagValidator := GetFlagValidator()
 
 	tests := []struct {
 		name    string
@@ -79,7 +79,7 @@ func TestValidateSemver(t *testing.T) {
 }
 
 func TestValidateBoolean(t *testing.T) {
-	flagValidator := NewFlagValidator()
+	flagValidator := GetFlagValidator()
 
 	tests := []struct {
 		name    string
@@ -114,14 +114,8 @@ func TestValidateBoolean(t *testing.T) {
 	}
 }
 
-func TestReadValidationErrorMessages_Empty(t *testing.T) {
-	var emptyErrors validator.ValidationErrors
-	err := ReadValidationErrorMessages(emptyErrors)
-	assert.Nil(t, err)
-}
-
 func TestNewValidator(t *testing.T) {
-	flagValidator := NewFlagValidator()
+	flagValidator := GetFlagValidator()
 	assert.NotNil(t, flagValidator)
 
 	// Test that custom validations are registered
@@ -145,7 +139,7 @@ func TestNewValidator(t *testing.T) {
 }
 
 func TestReadValidationErrorMessages(t *testing.T) {
-	flagValidator := NewFlagValidator()
+	flagValidator := GetFlagValidator()
 
 	tests := []struct {
 		name            string
@@ -216,4 +210,105 @@ func TestReadValidationErrorMessages(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestReadValidationErrorMessages_Direct(t *testing.T) {
+
+	fv := GetFlagValidator()
+
+	getValidationErrors := func(t *testing.T, v interface{}) validator.ValidationErrors {
+		t.Helper()
+		err := fv.Validator.Struct(v)
+		assert.Error(t, err)
+
+		verrs, ok := err.(validator.ValidationErrors)
+		assert.True(t, ok)
+		return verrs
+	}
+
+	t.Run("given no custom error exists then falls back to default message", func(t *testing.T) {
+
+		verrs := getValidationErrors(t, struct {
+			RequiredField string `json:"required-field" validate:"required"`
+		}{RequiredField: ""})
+
+		err := fv.ReadValidationErrorMessages(verrs)
+		assert.Error(t, err)
+		assert.Equal(t, "Invalid value for --required-field ''", err.Error())
+	})
+
+	t.Run("given empty validation errors then returns nil", func(t *testing.T) {
+
+		var empty validator.ValidationErrors
+		err := fv.ReadValidationErrorMessages(empty)
+		assert.NoError(t, err)
+	})
+
+	t.Run("given semver validation error then formats semver error", func(t *testing.T) {
+
+		verrs := getValidationErrors(t, struct {
+			Version string `json:"version" validate:"semver"`
+		}{Version: "1.2.3"})
+
+		err := fv.ReadValidationErrorMessages(verrs)
+		assert.Error(t, err)
+		assert.Equal(t, "Invalid value for --version '1.2.3': version must be in format vX.X.X", err.Error())
+	})
+
+	t.Run("given oneof validation error then formats oneof error", func(t *testing.T) {
+
+		verrs := getValidationErrors(t, struct {
+			Format string `json:"format" validate:"oneof=json yaml"`
+		}{Format: "xml"})
+
+		err := fv.ReadValidationErrorMessages(verrs)
+		assert.Error(t, err)
+		assert.Equal(t, "Invalid value for --format 'xml': valid values are json yaml", err.Error())
+	})
+
+	t.Run("given dir validation error then formats dir error", func(t *testing.T) {
+
+		verrs := getValidationErrors(t, struct {
+			OutputDir string `json:"output-dir" validate:"dir"`
+		}{OutputDir: "/this/path/should/not/exist"})
+
+		err := fv.ReadValidationErrorMessages(verrs)
+		assert.Error(t, err)
+		assert.Equal(t, "Invalid value for --output-dir '/this/path/should/not/exist': directory does not exist", err.Error())
+	})
+
+	t.Run("given custom error exists then uses custom error", func(t *testing.T) {
+
+		fv.CustomErrors["required"] = "required-field must be provided"
+
+		verrs := getValidationErrors(t, struct {
+			RequiredField string `json:"required-field" validate:"required"`
+		}{RequiredField: ""})
+
+		err := fv.ReadValidationErrorMessages(verrs)
+		assert.Error(t, err)
+		assert.Equal(t, "required-field must be provided", err.Error())
+	})
+
+	t.Run("given multiple validation errors then joins messages with comma", func(t *testing.T) {
+
+		verrs := getValidationErrors(t, struct {
+			Version string `json:"version" validate:"semver"`
+			Format  string `json:"format" validate:"oneof=json yaml"`
+		}{
+			Version: "invalid",
+			Format:  "xml",
+		})
+
+		err := fv.ReadValidationErrorMessages(verrs)
+		assert.Error(t, err)
+		assert.Equal(
+			t,
+			"Invalid value for --version 'invalid': version must be in format vX.X.X, Invalid value for --format 'xml': valid values are json yaml",
+			err.Error(),
+		)
+	})
+
+	// Reset custom errors after tests to avoid side effects
+	fv.CustomErrors = make(map[string]string)
 }

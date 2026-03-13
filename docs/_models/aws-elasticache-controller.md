@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS ElastiCache
 subtitle: Collaborative and visual infrastructure as design for AWS ElastiCache
-image: /assets/img/integrations/aws-elasticache-controller/icons/color/aws-elasticache-controller-color.svg
-permalink: extensibility/integrations/aws-elasticache-controller
+image: /extensions/models/aws-elasticache-controller/icons/color/aws-elasticache-controller-color.svg
+aliases: /extensibility/integrations/aws-elasticache-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticache-controller
 description: 
 integrations-category: App Definition and Development
@@ -83,8 +82,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
