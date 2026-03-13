@@ -70,7 +70,7 @@ const VersionedModelComponentTree = ({
         <CircularProgress />
       ) : (
         <StyledTreeItem
-          nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+          itemId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
             versionedModelDef.id
           }.1`}
           data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
@@ -85,7 +85,7 @@ const VersionedModelComponentTree = ({
               return (
                 <StyledTreeItem
                   key={subIndex}
-                  nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                  itemId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
                     versionedModelDef.id
                   }.1.${component.id}`}
                   data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${

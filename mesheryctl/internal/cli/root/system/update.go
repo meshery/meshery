@@ -109,7 +109,7 @@ mesheryctl system update --skip-reset
 		log.Info("Updating Meshery...")
 
 		switch currCtx.GetPlatform() {
-		case "docker":
+		case platformDocker:
 			log.Info("Updating Meshery containers")
 			err = utils.UpdateMesheryContainers()
 			if err != nil {
@@ -122,7 +122,7 @@ mesheryctl system update --skip-reset
 				return err
 			}
 
-		case "kubernetes":
+		case platformKubernetes:
 			// create a client
 			kubeClient, err := meshkitkube.New([]byte(""))
 			if err != nil {

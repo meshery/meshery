@@ -170,17 +170,18 @@ const Environments = () => {
     environmentsError,
     environmentConnectionsError,
     connectionsError,
-    handleError,
   ]);
 
-  const handleError = (action) => (error) => {
-    updateProgress({ showProgress: false });
-    notify({
-      message: `${action.error_msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
-  };
+  function handleError(action) {
+    return (error) => {
+      updateProgress({ showProgress: false });
+      notify({
+        message: `${action.error_msg}: ${error}`,
+        event_type: EVENT_TYPES.ERROR,
+        details: error.toString(),
+      });
+    };
+  }
 
   const handleSuccess = (msg) => {
     updateProgress({ showProgress: false });
