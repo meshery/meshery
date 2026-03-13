@@ -66,13 +66,13 @@ mesheryctl version
 				}
 
 				// Add Token to context file
-				err = config.AddTokenToConfig(config.TemplateToken, utils.DefaultConfigPath)
+				err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
 				if err != nil {
 					utils.Log.Error(ErrAddingTokenToConfig)
 				}
 
 				// Add Context to context file
-				err = config.AddContextToConfig("local", config.TemplateContext, utils.DefaultConfigPath, true, false)
+				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
 				if err != nil {
 					utils.Log.Error(ErrAddingContextToConfig)
 				}

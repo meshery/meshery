@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	config "github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/viper"
 )
 
@@ -61,8 +62,8 @@ func TestMutateConfigIfNeeded(t *testing.T) {
 			err := config.MutateConfigIfNeeded(
 				configPath,
 				mesheryFolder,
-				config.TemplateToken,
-				config.TemplateContext,
+				utils.TemplateToken,
+				utils.TemplateContext,
 				createConfig,
 			)
 
