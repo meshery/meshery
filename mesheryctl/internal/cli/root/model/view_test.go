@@ -29,7 +29,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:           "given no argument provided when running mesheryctl model view then an error message is displayed",
 			Args:           []string{"view"},
-			URL:            "api/meshmodels/models",
+			URL:            "/api/meshmodels/models",
 			HttpMethod:     "GET",
 			HttpStatusCode: 200,
 			Fixture:        "list.model.empty.api.response.golden",
@@ -38,9 +38,9 @@ func TestViewModel(t *testing.T) {
 			IsOutputGolden: false,
 		},
 		{
-			Name:             "given a valid model-id provided when running mesheryctl model view valid-id then the detailed information of the model is displayed",
+			Name:             "given a valid model-id when model view then display detailed information",
 			Args:             []string{"view", modelId},
-			URL:              fmt.Sprintf("/%s?id=%s&page=0&pagesize=10", modelsApiPath, url.QueryEscape(modelId)),
+			URL:              fmt.Sprintf("/api/meshmodels/models?id=%s&page=0&pagesize=10", url.QueryEscape(modelId)),
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
 			Fixture:          "list.model.api.response.golden",
@@ -49,9 +49,9 @@ func TestViewModel(t *testing.T) {
 			IsOutputGolden:   true,
 		},
 		{
-			Name:             "given a valid model-name provided when running mesheryctl model view valid-name then the detailed information of the model is displayed",
+			Name:             "given a valid model-name when model view then display detailed information",
 			Args:             []string{"view", modelName},
-			URL:              fmt.Sprintf("/%s?search=%s&page=0&pagesize=10", modelsApiPath, url.QueryEscape(modelName)),
+			URL:              fmt.Sprintf("/api/meshmodels/models?page=0&pagesize=10&search=%s", url.QueryEscape(modelName)),
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
 			Fixture:          "list.model.api.response.golden",
@@ -60,7 +60,7 @@ func TestViewModel(t *testing.T) {
 			IsOutputGolden:   true,
 		},
 		{
-			Name:             "given a multiple model-name provided when running mesheryctl model view name1 name2 then an error message is displayed",
+			Name:             "given multiple model-names when model view then throw error",
 			Args:             []string{"view", "name1", "name2"},
 			URL:              "",
 			HttpMethod:       "GET",
@@ -72,9 +72,9 @@ func TestViewModel(t *testing.T) {
 			IsOutputGolden:   false,
 		},
 		{
-			Name:           "given an invalid format provided for --output-format flag when running mesheryctl model view valid-name --output-format invalid-format then an error message is displayed",
+			Name:           "given an invalid format when model view then throw error",
 			Args:           []string{"view", modelName, "--output-format", "invalid-format"},
-			URL:            fmt.Sprintf("/%s?search=%s", modelsApiPath, url.QueryEscape(modelName)),
+			URL:            fmt.Sprintf("/%s", getModelViewUrlPath(url.QueryEscape(modelName))),
 			HttpMethod:     "GET",
 			HttpStatusCode: 200,
 			Fixture:        "list.model.empty.api.response.golden",
@@ -83,7 +83,7 @@ func TestViewModel(t *testing.T) {
 			IsOutputGolden: false,
 		},
 		{
-			Name:             "given a valid format provided when running mesheryctl model view valid-name --output-format valid-format then a detailed information of the model is displayed",
+			Name:             "given a valid format when model view then display detailed information",
 			Args:             []string{"view", modelName, "--output-format", "json"},
 			URL:              fmt.Sprintf("/%s?search=%s&page=0&pagesize=10", modelsApiPath, url.QueryEscape(modelName)),
 			HttpMethod:       "GET",

@@ -46,10 +46,20 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		modelNameorId := args[0]
-		urlPath := getModelViewUrlPath(modelNameorId)
+		modelNameOrId := args[0]
 
-		selectedModel, err := promptModelSelection(modelNameorId, urlPath)
+		var selectedModel *model.ModelDefinition
+		var err error
+
+		if !utils.IsUUID(modelNameOrId) {
+			selectedModel, err = promptModelSelection(modelNameOrId, modelsApiPath)
+		} else {
+			queryParams := url.Values{}
+			queryParams.Add("id", modelNameOrId)
+			modelViewApiPath := fmt.Sprintf("%s?%s", modelsApiPath, queryParams.Encode())
+			selectedModel, err = promptModelSelection("", modelViewApiPath)
+		}
+
 		if err != nil {
 
 			return err
