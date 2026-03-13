@@ -258,13 +258,13 @@ This section walks you through the **Create** workflow — perfect for users who
     {% include alert.html type="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" content="Meshery CLI has a set of commands that pertain to the lifecycle management of models:
     <br />
 
-    - <code>mesheryctl registry</code> - interact with and update spreadsheets
+    - <code>mesheryctl registry</code> - manage the state and contents of Meshery’s internal registry of capabilities
     <br />
-    - <code>mesheryctl models</code> - interact with and update Meshery Server
+    - <code>mesheryctl model</code> - export, generate, import, list, search and view model(s) and detailed information
     <br />
-    - <code>mesheryctl component</code> - interact with and update Meshery Server
+    - <code>mesheryctl component</code> - list, search and view component(s) and detailed information
     <br />
-    - <code>mesheryctl relationships</code> - interact with and update Meshery Server" %}
+    - <code>mesheryctl exp relationship</code> - generate, list, search and view relationship(s) and detailed information" %}
 
       </section>
   </div>

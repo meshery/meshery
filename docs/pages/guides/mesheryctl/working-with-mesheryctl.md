@@ -11,13 +11,16 @@ abstract: Guides for common tasks while using Meshery's CLI, mesheryctl.
 
 Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecyle of Meshery itself and to access and invoke any of Meshery's application and cloud native management functions. `mesheryctl` commands can be categorized as follows:
 
-- `mesheryctl` - Global overrides and flags
-- `mesheryctl app` - Cloud Native Application Management
-- `mesheryctl filter` - Cloud Native Filter Management
-- `mesheryctl mesh` - Cloud Native Lifecycle & Configuration Management
-- `mesheryctl perf` - Cloud Native Performance Management
-- `mesheryctl design` - Cloud Native Pattern Configuration & Management
-- `mesheryctl system` - Meshery Lifecycle and Troubleshooting
+- `mesheryctl` - Global overrides and flags(A global command that displays an overview of all commands.)
+- `mesheryctl filter` - Cloud Native Filter Management.
+- `mesheryctl adapter` - Cloud Native Lifecycle & Configuration Management.
+- `mesheryctl perf` - Cloud Native Performance Management.
+- `mesheryctl design` - Cloud Native Design Configuration & Management.
+- `mesheryctl system` - Meshery Lifecycle and Troubleshooting.
+- `mesheryctl registry` - Manage the state and contents of Meshery's internal registry of capabilities.
+- `mesheryctl model` - Export, generate, import, list, search and view model(s) and detailed information.
+- `mesheryctl component` - List, search and view component(s) and detailed information.
+- `mesheryctl exp relationship` - Generate, list, search and view relationship(s) and detailed information.
 
 ## Configuring Meshery Deployments with meshconfig
 
