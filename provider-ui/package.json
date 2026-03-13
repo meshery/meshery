@@ -32,9 +32,9 @@
     "xstate": "^5.28.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.5",
-    "@eslint/js": "^10.0.1",
-    "eslint": "^10.0.3",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.39.2",
+    "eslint": "^9.39.2",
     "eslint-config-next": "^15.1.0",
     "start-server-and-test": "^2.1.5",
     "typescript": "^5.9.3"
