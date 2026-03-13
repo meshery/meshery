@@ -44,7 +44,7 @@ Components have several key properties that define their behavior:
 - **Kind**: The specific type of resource the component represents
 - **Version**: The API version of the component
 - **Spec**: The detailed configuration for the component
-- **Status**: The current state of the component (for semantic components)
+- **Status**: The current operational state of a component (applies only to semantic components)
 
 Understanding the distinction between semantic and non-semantic components helps you effectively use them to both manage real infrastructure and document your designs clearly.
 
