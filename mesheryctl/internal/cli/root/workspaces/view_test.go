@@ -11,7 +11,7 @@ import (
 )
 
 func expectedViewFlagError(outputFormat string) error {
-	fv := mesheryctlflags.NewFlagValidator()
+	fv := mesheryctlflags.GetFlagValidator()
 	return fv.Validate(&workspaceViewFlags{OutputFormat: outputFormat})
 }
 
