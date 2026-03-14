@@ -17,8 +17,6 @@ func TestCreateWorkspace(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	validWorkspaceName := "workspace-test"
-	testOrgId := "2d2c0b60-076a-4f0a-8a63-de538570a553"
 
 	tests := []utils.MesheryCommandTest{
 		{

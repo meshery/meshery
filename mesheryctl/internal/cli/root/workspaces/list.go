@@ -28,7 +28,7 @@ type cmdWorkspaceListFlags struct {
 	Page     int    `json:"page" validate:"min=1"`
 	PageSize int    `json:"page-size" validate:"min=1,max=100"`
 	Count    bool   `json:"count" validate:"boolean"`
-	OrgId    string `json:"orgId" validate:"required,uuid"`
+	OrgId    string `json:"organization-id" validate:"required,uuid"`
 }
 
 var workspaceListFlags cmdWorkspaceListFlags
@@ -55,12 +55,8 @@ mesheryctl exp workspace list --orgId [orgId] --count
 		urlQueryParams := url.Values{}
 		urlQueryParams.Add("orgID", workspaceListFlags.OrgId)
 		if cmd.Flags().Changed("page") {
-			// Adjusting page number to be zero-based index for API compatibility,
-			// while keeping the user-facing flag as one-based index for better UX
-			urlQueryParams.Add("page", fmt.Sprint(workspaceListFlags.Page-1))
+			urlQueryParams.Add("page", fmt.Sprint(workspaceListFlags.Page))
 		}
-		// API will use default page size if page-size flag is not provided,
-		// so only add page-size to query params if the flag is explicitly set by the user
 		if cmd.Flags().Changed("page-size") {
 			urlQueryParams.Add("pagesize", fmt.Sprint(workspaceListFlags.PageSize))
 		}
@@ -73,7 +69,7 @@ mesheryctl exp workspace list --orgId [orgId] --count
 			Page:             workspaceListFlags.Page,
 			PageSize:         workspaceListFlags.PageSize,
 			IsPage:           cmd.Flags().Changed("page"),
-			DisplayCountOnly: workspaceListFlags.Count,
+			DisplayCountOnly: cmd.Flags().Changed("count"),
 		}
 
 		return display.ListAsyncPagination(modelData, processDataToDisplay)
@@ -82,7 +78,7 @@ mesheryctl exp workspace list --orgId [orgId] --count
 
 func init() {
 	listWorkspaceCmd.Flags().BoolVarP(&workspaceListFlags.Count, "count", "", false, "total number of registered workspaces")
-	listWorkspaceCmd.Flags().StringVarP(&workspaceListFlags.OrgId, "orgId", "o", "", "Organization ID")
+	listWorkspaceCmd.Flags().StringVarP(&workspaceListFlags.OrgId, "organization-id", "o", "", "Organization ID")
 	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlags.Page, "page", "", 1, "page number for paginated results. (default: 1)")
 	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlags.PageSize, "page-size", "", 10, "number of items to be displayed per page for paginated results. (default: 10, max limit: 100)")
 }
