@@ -45,7 +45,7 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
       const designToTest = { ...design, relationships: [] };
 
       const response = await request.post(
-        `${ENV.MESHERY_SERVER_URL}/api/meshmodels/relationships/evaluate`,
+        `${ENV.MESHERY_SERVER_URL}/api/registry/relationships/evaluate`,
         {
           data: {
             design: designToTest,

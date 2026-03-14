@@ -191,7 +191,7 @@ const ModelContents = ({ modelDef }: { modelDef: any }) => {
   };
   const handleExport = () => {
     const a = document.createElement('a');
-    a.href = '/api/meshmodels/export?id=' + modelDef.id;
+    a.href = '/api/registry/export?id=' + modelDef.id;
     document.body.appendChild(a);
     a.click();
     a.remove();

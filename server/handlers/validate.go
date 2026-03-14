@@ -40,7 +40,7 @@ type jsonSchemaValidationType struct {
 	Schema string `json:"$schema,omitempty"`
 }
 
-// swagger:route POST /api/meshmodel/validate MeshmodelValidate idPostMeshModelValidate
+// swagger:route POST /api/registry/validate MeshmodelValidate idPostMeshModelValidate
 // Handle POST request for validate
 //
 // Validate the given value with the given schema

@@ -136,7 +136,7 @@ Generating Models does not require Meshery Server
     Flow: Dynamically Generated Components
     Import and Export of Models
 13. Dynamic generation and registration occurs upon initial connection[b] to each supported platform (e.g. a Kubernetes context transitions to Discovered state)
-14. [Adapter] pushes its specific capabilities to Meshery Server. In order to register capabilities, Adapters will send a POST request to/api/meshmodel/components/register.
+14. [Adapter] pushes its specific capabilities to Meshery Server. In order to register capabilities, Adapters will send a POST request to /api/registry/components/register.
 15. [Meshery Server] Components can be registered with the server by interfacing with MeshModel APIs, mesheryctl and Meshery UI are two clients (will be) capable of invoking generation and registration. User imports a Meshery Application as a single file reference, folder reference (to be recursively searched), or a git repository to be walked.
     Flow: Importing Designs
     Importing Designs requires Meshery Server, so that your Design can be associated with your account.

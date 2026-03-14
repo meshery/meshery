@@ -13,10 +13,10 @@ import (
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 )
 
-// swagger:route GET /api/meshmodels/models/{model}/relationships/{name} GetMeshmodelRelationshipByName idGetMeshmodelRelationshipByName
+// swagger:route GET /api/registry/models/{model}/relationships/{name} GetMeshmodelRelationshipByName idGetMeshmodelRelationshipByName
 // Handle GET request for getting meshmodel relationships of a specific model by name.
 //
-// Example: ```/api/meshmodels/models/kubernetes/relationships/Edge```
+// Example: ```/api/registry/models/kubernetes/relationships/Edge```
 //
 // # Relationships can be further filtered through query parameter
 //
@@ -79,7 +79,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 	}
 }
 
-// swagger:route GET /api/meshmodels/relationships GetAllMeshmodelRelationships idGetAllMeshmodelRelationships
+// swagger:route GET /api/registry/relationships GetAllMeshmodelRelationships idGetAllMeshmodelRelationships
 // Handle GET request for getting all meshmodel relationships
 //
 // # Relationships can be further filtered through query parameter
@@ -102,7 +102,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 // ```?type={type}```  Filters relationship based type
 //	200: meshmodelRelationshipsResponseWrapper
 
-// swagger:route GET /api/meshmodels/models/{model}/relationships GetAllMeshmodelRelationships idGetAllMeshmodelRelationshipsByModel
+// swagger:route GET /api/registry/models/{model}/relationships GetAllMeshmodelRelationships idGetAllMeshmodelRelationshipsByModel
 // Handle GET request for getting meshmodel relationships of a specific model
 //
 // Example: ```/api/meshmodel/model/kubernetes/relationship```

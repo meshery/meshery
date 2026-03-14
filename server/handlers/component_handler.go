@@ -46,7 +46,7 @@ import (
 /**Meshmodel endpoints **/
 const DefaultPageSizeForMeshModelComponents = 25
 
-// swagger:route GET /api/meshmodels/categories/{category}/models GetMeshmodelModelsByCategories idGetMeshmodelModelsByCategories
+// swagger:route GET /api/registry/categories/{category}/models GetMeshmodelModelsByCategories idGetMeshmodelModelsByCategories
 //
 // Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
 //
@@ -119,7 +119,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories/{category}/models/{model} GetMeshmodelModelsByCategoriesByModel idGetMeshmodelModelsByCategoriesByModel
+// swagger:route GET /api/registry/categories/{category}/models/{model} GetMeshmodelModelsByCategoriesByModel idGetMeshmodelModelsByCategoriesByModel
 //
 // Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
 //
@@ -194,7 +194,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 }
 
-// swagger:route GET /api/meshmodels/models GetMeshmodelModels idGetMeshmodelModels
+// swagger:route GET /api/registry/models GetMeshmodelModels idGetMeshmodelModels
 // Handle GET request for getting all meshmodel models
 //
 // # Returns a list of registered models across all categories
@@ -274,7 +274,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route GET /api/meshmodels/models/{model} GetMeshmodelModelsByName idGetMeshmodelModelsByName
+// swagger:route GET /api/registry/models/{model} GetMeshmodelModelsByName idGetMeshmodelModelsByName
 // Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
 //
 // # Returns a list of registered models across all categories
@@ -351,7 +351,7 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories GetMeshmodelCategories idGetMeshmodelCategories
+// swagger:route GET /api/registry/categories GetMeshmodelCategories idGetMeshmodelCategories
 // Handle GET request for getting all meshmodel categories
 //
 // ```?order={field}``` orders on the passed field
@@ -407,7 +407,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories/{category} GetMeshmodelCategoriesByName idGetMeshmodelCategoriesByName
+// swagger:route GET /api/registry/categories/{category} GetMeshmodelCategoriesByName idGetMeshmodelCategoriesByName
 // Handle GET request for getting all meshmodel categories of a given name
 //
 // ```?order={field}``` orders on the passed field
@@ -464,10 +464,10 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories/{category}/models/{model}/components/{name} GetMeshmodelComponentsByNameByModelByCategory idGetMeshmodelComponentsByNameByModelByCategory
+// swagger:route GET /api/registry/categories/{category}/models/{model}/components/{name} GetMeshmodelComponentsByNameByModelByCategory idGetMeshmodelComponentsByNameByModelByCategory
 // Handle GET request for getting meshmodel components of a specific type by model and category.
 //
-// Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components/Namespace
+// Example: ```/api/registry/categories/Orchestration``` and Management/models/kubernetes/components/Namespace
 // Components can be further filtered through query parameter
 //
 // ```?version={version}``` If version is unspecified then all model versions are returned
@@ -541,10 +541,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories/{category}/components/{name} GetMeshmodelComponentsByNameByCategory idGetMeshmodelComponentsByNameByCategory
+// swagger:route GET /api/registry/categories/{category}/components/{name} GetMeshmodelComponentsByNameByCategory idGetMeshmodelComponentsByNameByCategory
 // Handle GET request for getting meshmodel components of a specific type category.
 //
-// Example: ```/api/meshmodels/categories/Orchestration``` and Management/components/Namespace
+// Example: ```/api/registry/categories/Orchestration``` and Management/components/Namespace
 // Components can be further filtered through query parameter
 //
 // ```?model={model}``` If model is unspecified then all models are returned
@@ -619,10 +619,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	}
 }
 
-// swagger:route GET /api/meshmodels/models/{model}/components/{name} GetMeshmodelComponentsByNameByModel idGetMeshmodelComponentsByNameByModel
+// swagger:route GET /api/registry/models/{model}/components/{name} GetMeshmodelComponentsByNameByModel idGetMeshmodelComponentsByNameByModel
 // Handle GET request for getting meshmodel components of a specific  model.
 //
-// Example: ```/api/meshmodels/models/kubernetes/components/Namespace```
+// Example: ```/api/registry/models/kubernetes/components/Namespace```
 // Components can be further filtered through query parameter
 //
 // ```?version={version}``` If version is unspecified then all model versions are returned
@@ -696,10 +696,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	}
 }
 
-// swagger:route GET /api/meshmodels/components/{name} GetAllMeshmodelComponentsByName idGetAllMeshmodelComponentsByName
+// swagger:route GET /api/registry/components/{name} GetAllMeshmodelComponentsByName idGetAllMeshmodelComponentsByName
 // Handle GET request for getting meshmodel components of a specific type by name across all models and categories
 //
-// Example: ```/api/meshmodels/components/Namespace```
+// Example: ```/api/registry/components/Namespace```
 // Components can be further filtered through query parameter
 //
 // ```?model={model}``` If model is unspecified then all models are returned
@@ -774,10 +774,10 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	}
 }
 
-// swagger:route GET /api/meshmodels/models/{model}/components GetMeshmodelComponentByModel idGetMeshmodelComponentByModel
+// swagger:route GET /api/registry/models/{model}/components GetMeshmodelComponentByModel idGetMeshmodelComponentByModel
 // Handle GET request for getting meshmodel components of a specific model. The component type/model name should be lowercase like "kubernetes", "istio"
 //
-// Example: ```/api/meshmodels/models/kubernetes/components```
+// Example: ```/api/registry/models/kubernetes/components```
 // Components can be further filtered through query parameter
 //
 // ```?version={version}```
@@ -850,11 +850,11 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories/{category}/models/{model}/components GetMeshmodelComponentByModelByCategory idGetMeshmodelComponentByModelByCategory
+// swagger:route GET /api/registry/categories/{category}/models/{model}/components GetMeshmodelComponentByModelByCategory idGetMeshmodelComponentByModelByCategory
 //
 // Handle GET request for getting meshmodel components of a specific model and category. The component type/model name should be lowercase like "kubernetes", "istio"
 //
-// Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components
+// Example: ```/api/registry/categories/Orchestration``` and Management/models/kubernetes/components
 // Components can be further filtered through query parameter
 //
 // ```?version={version}```
@@ -927,7 +927,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories/{category}/components GetMeshmodelComponentByCategory idGetMeshmodelComponentByCategory
+// swagger:route GET /api/registry/categories/{category}/components GetMeshmodelComponentByCategory idGetMeshmodelComponentByCategory
 // Handle GET request for getting meshmodel components of a specific model and category.
 //
 // # Components can be further filtered through query parameter
@@ -1001,7 +1001,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	}
 }
 
-// swagger:route GET /api/meshmodels/components GetAllMeshmodelComponents idGetAllMeshmodelComponents
+// swagger:route GET /api/registry/components GetAllMeshmodelComponents idGetAllMeshmodelComponents
 // Handle GET request for getting meshmodel components across all models and categories
 //
 // # Components can be further filtered through query parameter
@@ -1077,7 +1077,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 }
 
-// swagger:route POST /api/meshmodel/components/register MeshmodelValidate idPostMeshModelValidate
+// swagger:route POST /api/registry/components/register MeshmodelValidate idPostMeshModelValidate
 // Handle POST request for registering meshmodel components.
 //
 // Validate the given value with the given schema
@@ -1119,7 +1119,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	go h.config.MeshModelSummaryChannel.Publish()
 }
 
-// swagger:route GET /api/meshmodels/registrants GetMeshmodelRegistrants
+// swagger:route GET /api/registry/registrants GetMeshmodelRegistrants
 // Handle GET request for getting all meshmodel registrants
 //
 // # Returns a list of registrants and summary count of its models, components, and relationships
@@ -1182,7 +1182,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 }
 
-// swagger:route POST /api/meshmodel/update/status MeshModelUpdateEntityStatus idPostMeshModelUpdateEntityStatus
+// swagger:route POST /api/registry/{entityType}/status MeshModelUpdateEntityStatus idPostMeshModelUpdateEntityStatus
 // Handle POST request for updating the ignore status of a model.
 //
 // Update the ignore status of a model based on the provided parameters.
@@ -1249,7 +1249,7 @@ func processComponentDefinitions(entities []entity.Entity) []component.Component
 	return comps
 }
 
-// swagger:route POST /api/meshmodels/register RegisterMeshmodels idRegisterMeshmodels
+// swagger:route POST /api/registry/register RegisterMeshmodels idRegisterMeshmodels
 // Handle POST request for registering entites like components and relationships model.
 //
 // Register model based on thier Schema Version.
@@ -1600,7 +1600,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 }
 
-// swagger:route GET /api/meshmodels/export ExportModel idExportModel
+// swagger:route GET /api/registry/export ExportModel idExportModel
 // Handle GET request for exporting a model.
 //
 // # Export model with the given id in the output format specified
@@ -1851,7 +1851,7 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 	return meshkitutils.ErrInvalidSchemaVersion
 }
 
-// swagger:route DELETE /api/meshmodels/models/{id} MeshmodelAPI idDeleteModel
+// swagger:route DELETE /api/registry/models/{id} MeshmodelAPI idDeleteModel
 // Handle DELETE request for a model by ID
 //
 // Deletes a model and its associated registry entries from the database.

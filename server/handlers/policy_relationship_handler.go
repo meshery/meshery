@@ -343,7 +343,7 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 	return unknownComponents
 }
 
-// swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
+// swagger:route POST /api/registry/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
 // Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
 //
 // responses:
@@ -469,10 +469,10 @@ func (h *Handler) EvaluateRelationshipPolicy(
 // 	return
 // }
 
-// swagger:route GET /api/meshmodels/models/{model}/policies/{name} GetMeshmodelPoliciesByName idGetMeshmodelPoliciesByName
+// swagger:route GET /api/registry/models/{model}/policies/{name} GetMeshmodelPoliciesByName idGetMeshmodelPoliciesByName
 // Handle GET request for getting meshmodel policies of a specific model by name.
 //
-// Example: ```/api/meshmodels/models/kubernetes/policies/{name}```
+// Example: ```/api/registry/models/kubernetes/policies/{name}```
 //
 // ```?order={field}``` orders on the passed field
 //
@@ -529,10 +529,10 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 }
 
-// swagger:route GET /api/meshmodels/models/{model}/policies/ GetMeshmodelPolicies idGetMeshmodelPolicies
+// swagger:route GET /api/registry/models/{model}/policies/ GetMeshmodelPolicies idGetMeshmodelPolicies
 // Handle GET request for getting meshmodel policies of a specific model by name.
 //
-// Example: ```/api/meshmodels/models/kubernetes/policies```
+// Example: ```/api/registry/models/kubernetes/policies```
 //
 // // ```?order={field}``` orders on the passed field
 //

@@ -31,7 +31,7 @@ type componentGenerationResponseDataItem struct {
 	Errors     []string                        `json:"errors"`
 }
 
-// swagger:route POST /api/meshmodel/generate MeshmodelComponentGenerate idPostMeshModelComponentGenerate
+// swagger:route POST /api/registry/generate MeshmodelComponentGenerate idPostMeshModelComponentGenerate
 // Handle POST request for component generation
 //
 // Generates Meshery Components for the given payload

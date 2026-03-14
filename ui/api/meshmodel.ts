@@ -6,8 +6,8 @@ import {
   SORT,
 } from '../constants/endpoints';
 
-const COMPONENTS_ENDPOINT = '/api/meshmodels/components';
-const CATEGORIES_ENDPOINT = '/api/meshmodels/categories';
+const COMPONENTS_ENDPOINT = '/api/registry/components';
+const CATEGORIES_ENDPOINT = '/api/registry/categories';
 
 /**
  * @typedef {{
@@ -76,7 +76,7 @@ export async function getDuplicateComponents(componentKind, apiVersion, modelNam
 
 export async function getMeshModelRegistrants(page = 1, pageSize = 'all') {
   return await promisifiedDataFetch(
-    `/api/meshmodels/registrants?page=${page}&pageSize=${pageSize}`,
+    `/api/registry/registrants?page=${page}&pageSize=${pageSize}`,
   );
 }
 
@@ -98,14 +98,14 @@ export async function getComponentsDetailWithPageSize(
   order = '',
 ) {
   return await promisifiedDataFetch(
-    `api/meshmodels/components?page=${page}&pagesize=${pageSize}&order=${encodeURIComponent(
+    `/api/registry/components?page=${page}&pagesize=${pageSize}&order=${encodeURIComponent(
       order,
     )}&sort=${sort}`,
   );
 }
 
 export async function getComponentsDetail(page) {
-  return await promisifiedDataFetch(`api/meshmodels/components?page=${page}`);
+  return await promisifiedDataFetch(`/api/registry/components?page=${page}`);
 }
 
 export async function getModelsDetail(page) {
@@ -119,14 +119,14 @@ export async function getRelationshipsDetailWithPageSize(
   order = '',
 ) {
   return await promisifiedDataFetch(
-    `api/meshmodels/relationships?page=${page}&pagesize=${pageSize}&sort=${sort}&order=${encodeURIComponent(
+    `/api/registry/relationships?page=${page}&pagesize=${pageSize}&sort=${sort}&order=${encodeURIComponent(
       order,
     )}`,
   );
 }
 
 export async function getRelationshipsDetail(page) {
-  return await promisifiedDataFetch(`api/meshmodels/relationships?page=${page}`);
+  return await promisifiedDataFetch(`/api/registry/relationships?page=${page}`);
 }
 
 export async function getMeshModelComponent(model, component, version, apiVersion) {
@@ -170,7 +170,7 @@ export async function searchModels(queryString, options = defaultOptions) {
 
 export async function searchComponents(queryString, options = defaultOptions) {
   return promisifiedDataFetch(
-    `/api/meshmodels/components?search=${encodeURI(queryString)}&${optionToQueryConvertor(
+    `/api/registry/components?search=${encodeURI(queryString)}&${optionToQueryConvertor(
       options,
     )}`,
   );

@@ -546,7 +546,7 @@ _Note: The Tier-2 eval results can override Tier-1 eval results._
 
 #### Tier-2: (First Part of Tier-2 eval) Server side eval:
 
-REST API: POST request to `/api/meshmodels/relationships/evaluate`
+REST API: POST request to `/api/registry/relationships/evaluate`
 
 ```
 Body: {
