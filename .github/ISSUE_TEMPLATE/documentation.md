@@ -14,6 +14,11 @@ assignees: ''
 
 ---
 
+### Docs Migration (Jekyll -> Hugo)
+
+- [ ] This issue is related to the Jekyll -> Hugo migration.
+- If yes, does it affect URLs, redirects, or navigation? Please note any specifics.
+
 ### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://meshery.io/community#handbook)
 - 📚 [Instructions for contributing to documentation](https://docs.meshery.io/project/contributing/contributing-docs)
    - Meshery documentation [site](https://docs.meshery.io/) and [source](https://github.com/meshery/meshery/tree/master/docs)

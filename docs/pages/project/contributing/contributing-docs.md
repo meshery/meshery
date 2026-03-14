@@ -25,6 +25,12 @@ Meshery documentation is built using the following components:
 - Site - [https://docs.meshery.io](https://docs.meshery.io)
 - AWS API GW - an instance is configured to redirect from docs.meshery.io to cloud.layer5.io, because of the repo location of where the docs currently reside.
 
+### Docs Migration Checklist
+
+If you are contributing to the Jekyll to Hugo migration effort, follow the migration checklist:
+
+- [Docs Migration Checklist]({{ site.baseurl }}/project/contributing/docs-migration-checklist)
+
 ## Set up your development environment
 
 {% include alert.html type="info" title="Jekyll" content="The Meshery Docs site is built using Jekyll - a simple static site generator. Jekyll can be installed on different platforms like Windows, Linux, and MacOS by the following steps " %}
