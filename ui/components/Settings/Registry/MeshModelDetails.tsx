@@ -424,6 +424,7 @@ const TitleWithImg = ({ displayName, iconSrc }: { displayName?: string; iconSrc?
     {iconSrc && (
       <img
         src={iconSrc}
+        alt={displayName ? `${displayName} icon` : 'Model or component icon'}
         height="32px"
         width="32px"
         style={{ objectFit: 'contain', marginRight: '0.6rem' }}
