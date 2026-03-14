@@ -1,13 +1,15 @@
 <div class="sidebar-menu">
-  <form class="sidebar__search-form">
+  <form class="sidebar__search-form" action="{{ "search" | relURL }}" method="GET">
+    <div class="td-search__icon" aria-hidden="true"></div>
     <input
       type="search"
-      class="sidebar__search-input"
+      name="q"
       id="sidebar-search-input"
-      placeholder="Search this site..."
+      class="form-control sidebar__search-input"
+      placeholder="Search..."
       aria-label="Search this site..."
       autocomplete="off"
-    />
+    >
   </form>
   <script type="text/javascript">
     // Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView

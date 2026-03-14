@@ -38,7 +38,9 @@ func (h *Handler) SavePerformanceProfileHandler(
 		rw.WriteHeader(http.StatusBadRequest)
 		//failed to read request body
 		h.log.Error(ErrRequestBody(err))
-		fmt.Fprintf(rw, ErrRequestBody(err).Error(), err)
+		if _, writeErr := fmt.Fprintf(rw, ErrRequestBody(err).Error(), err); writeErr != nil {
+			h.log.Error(writeErr)
+		}
 		return
 	}
 
@@ -67,7 +69,9 @@ func (h *Handler) SavePerformanceProfileHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/user/performance/profiles PerformanceAPI idGetPerformanceProfiles
@@ -108,7 +112,9 @@ func (h *Handler) GetPerformanceProfilesHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route DELETE /api/user/performance/profiles/{id} PerformanceAPI idDeletePerformanceProfile
@@ -138,7 +144,9 @@ func (h *Handler) DeletePerformanceProfileHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/user/performance/profiles/{id} PerformanceAPI idGetSinglePerformanceProfile
@@ -169,5 +177,7 @@ func (h *Handler) GetPerformanceProfileHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }

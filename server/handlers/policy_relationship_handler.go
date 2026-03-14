@@ -44,6 +44,9 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 		return alias, false
 	}
 
+	if relationshipDeclaration.Selectors == nil {
+		return alias, false
+	}
 	selectors := *relationshipDeclaration.Selectors
 
 	if len(selectors) == 0 {
@@ -66,6 +69,10 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 	mutatedRefs := *from.Patch.MutatedRef
 
 	if len(mutatedRefs) == 0 {
+		return alias, false
+	}
+
+	if to.Id == nil || from.Id == nil {
 		return alias, false
 	}
 
@@ -486,7 +493,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 	var greedy bool
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 
@@ -546,7 +553,7 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	typ := mux.Vars(r)["model"]
 
 	var greedy bool
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 
