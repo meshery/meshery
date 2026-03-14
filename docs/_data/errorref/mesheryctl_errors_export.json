@@ -1614,15 +1614,6 @@
         "probable_cause": "Non exists context name is provided",
         "suggested_remediation": "Run `mesheryctl system context list` to see available context name"
       },
-      "1197": {
-        "name": "ErrConnectionNotFoundCode",
-        "code": "1197",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Connection not found",
-        "probable_cause": "The specified connection ID does not exist",
-        "suggested_remediation": "Verify the connection ID using `mesheryctl connection list`"
-      },
       "1198": {
         "name": "ErrInvalidOutputFormatCode",
         "code": "1198",

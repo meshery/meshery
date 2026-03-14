@@ -4,12 +4,12 @@
   "kind": "hierarchical",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
     "version": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "Pod",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -46,14 +45,14 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
                   "spec",
                   "nodeName"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -61,7 +60,6 @@
           {
             "id": null,
             "kind": "Node",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -76,12 +74,12 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "displayName"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]
