@@ -57,7 +57,7 @@ func TestCreateWorkspace(t *testing.T) {
 		},
 		{
 			Name:             "given missing flag description when workspace create then workspace is created with empty description",
-			Args:             []string{"create", "--orgId", testOrgId, "-n", "workspace-test"},
+			Args:             []string{"create", "--orgId", testOrgId, "-n", validWorkspaceName},
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			HttpStatusCode:   201,
@@ -66,7 +66,7 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name:             "given multiple name and orgId flags when workspace create then throw error",
+			Name:             "given missing name and orgId flags when workspace create then throw error",
 			Args:             []string{"create", "-d", "integration test"},
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
