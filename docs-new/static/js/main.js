@@ -1,10 +1,3 @@
-<<<<<<< fix-code-block
-/*clipboard*/
-
-const codeBlockElements = $('.clipboardjs'); /*create custom id*/
-
-codeBlockElements.each(function(i) {  
-=======
 (function($) {
     'use strict';
     $(function() {
@@ -60,23 +53,18 @@ function HideToggleFunction() {
 var getcodeelement = $('.clipboardjs'); /*create custom id*/
 
 getcodeelement.each(function(i) {  
->>>>>>> master
     /*target*/
     var currentId = 'codeblock' + (i + 1);
     $(this).attr('id', currentId);
 
     /*trigger*/
     var text = $(this).text();
-<<<<<<< fix-code-block
-    text = text.replace(/\$ /gi, '').replace(/"/g, "&quot;");
-=======
     text = text.replace(/\$ /gi, '')
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/'/g, "&#39;")
     .replace(/"/g, "&quot;");
->>>>>>> master
     var clipButton = '<div class="btn-copy-wrap"><button class="clipbtn" data-clipboard-text="' + text + '" data-clipboard-target="#' + currentId + '"><i class="far fa-copy"></i></button></div>';
        $(this).after(clipButton);
 });
@@ -84,22 +72,6 @@ getcodeelement.each(function(i) {
 var clipboard = new Clipboard('.clipbtn');
 
 /* Change copy icon to text when successfully copied*/
-<<<<<<< fix-code-block
-clipboard.on("success", (e) => {
-    const originalIcon = e.trigger.querySelector('i');
-    if (!originalIcon) return;
-
-    const feedbackText = document.createElement('span');
-    feedbackText.textContent = "Copied!";
-    feedbackText.classList.add('clipboard-success');
-
-    e.trigger.replaceChild(feedbackText, originalIcon);
-
-    setTimeout(() => {
-        e.trigger.replaceChild(originalIcon, feedbackText);
-    }, 2000);
-});
-=======
 clipboard.on("success", (e)=>{
     console.info(e.trigger);
     console.info(e.trigger.childNodes[0]);
@@ -146,4 +118,3 @@ document.addEventListener("click", (event) => {
         }
     }
 })
->>>>>>> master
