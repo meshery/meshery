@@ -45,7 +45,16 @@
                 "version": ""
               }
             },
-            "patch": null
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "iamInstanceProfile"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
           }
         ],
         "to": [
@@ -66,7 +75,14 @@
                 "version": ""
               }
             },
-            "patch": null
+            "patch": {
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
           }
         ]
       },
