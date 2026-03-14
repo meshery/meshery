@@ -26,7 +26,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -123,7 +122,7 @@ mesheryctl system status --verbose
 			}
 
 			if strings.Contains(outputString, "meshery") {
-				log.Info(outputString)
+				utils.Log.Info(outputString)
 			}
 
 			hcOptions := &HealthCheckOptions{
@@ -212,17 +211,17 @@ mesheryctl system status --verbose
 			if currPlatform == "kubernetes" {
 				endpoint, err := utils.GetMesheryEndpoint(cmd.Context(), client)
 				if err != nil && verboseStatus {
-					log.Warnf("Could not discover Meshery service endpoint: %v", err)
+					utils.Log.Warnf("Could not discover Meshery service endpoint: %v", err)
 				}
 				if err == nil && endpoint.External != nil && endpoint.External.Address != "" {
 					displayEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port)
 				}
 			}
 
-			log.Info(fmt.Sprintf("\nMeshery endpoint is %s", displayEndpoint))
+			utils.Log.Info(fmt.Sprintf("\nMeshery endpoint is %s", displayEndpoint))
 			if displayEndpoint != configuredEndpoint {
-				log.Info(fmt.Sprintf("Note: Your configured endpoint (%s) differs from the discovered endpoint.", configuredEndpoint))
-				log.Info("Run 'mesheryctl system dashboard' to update your configuration.")
+				utils.Log.Info(fmt.Sprintf("Note: Your configured endpoint (%s) differs from the discovered endpoint.", configuredEndpoint))
+				utils.Log.Info("Run 'mesheryctl system dashboard' to update your configuration.")
 			}
 		}
 		return nil
