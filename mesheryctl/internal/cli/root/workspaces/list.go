@@ -28,7 +28,7 @@ type cmdWorkspaceListFlags struct {
 	Page     int    `json:"page" validate:"min=1"`
 	PageSize int    `json:"page-size" validate:"min=1,max=100"`
 	Count    bool   `json:"count" validate:"boolean"`
-	OrgId    string `json:"organization-id" validate:"required,uuid"`
+	OrgId    string `json:"orgId" validate:"required,uuid"`
 }
 
 var workspaceListFlags cmdWorkspaceListFlags
@@ -78,7 +78,7 @@ mesheryctl exp workspace list --orgId [orgId] --count
 
 func init() {
 	listWorkspaceCmd.Flags().BoolVarP(&workspaceListFlags.Count, "count", "", false, "total number of registered workspaces")
-	listWorkspaceCmd.Flags().StringVarP(&workspaceListFlags.OrgId, "organization-id", "o", "", "Organization ID")
+	listWorkspaceCmd.Flags().StringVarP(&workspaceListFlags.OrgId, "orgId", "o", "", "Organization ID")
 	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlags.Page, "page", "", 1, "page number for paginated results. (default: 1)")
 	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlags.PageSize, "page-size", "", 10, "number of items to be displayed per page for paginated results. (default: 10, max limit: 100)")
 }
