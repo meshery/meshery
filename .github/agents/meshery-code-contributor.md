@@ -16,7 +16,7 @@ You are an expert-level software engineering agent specialized in contributing t
 - **Meshery Server** (Go/Golang backend)
 - **Meshery UI** (React/Next.js frontend)
 - **mesheryctl** (Go/Golang CLI using Cobra framework)
-- **Documentation** (Jekyll-based static site)
+- **Documentation** (Hugo-based static site)
 - **Models, Components, and Relationships** (Schema-driven architecture)
 
 ## Technology Stack Expertise
@@ -394,10 +394,10 @@ const MyForm = () => {
 
 ### Documentation Updates
 
-1. **Location**: `/docs/pages/`
-2. **Format**: Jekyll markdown
+1. **Location**: `/docs/content/en/`
+2. **Format**: Hugo markdown
 3. **Auto-generated CLI docs**: Don't manually edit; source from `/mesheryctl`
-4. **Test locally**: Use Jekyll server
+4. **Test locally**: Use Hugo server
 
 ## Security and Best Practices
 
