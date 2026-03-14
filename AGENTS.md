@@ -15,7 +15,7 @@ performance management, and multi-tenancy capabilities across any cloud or on-pr
   state management, and Relay for GraphQL queries.
 - **/mesheryctl** – Meshery CLI built with Go and Cobra framework; provides commands for installation,
   lifecycle management, pattern deployment, and system validation.
-- **/docs** – Documentation site powered by Jekyll; contains user guides, concepts, contributing
+- **/docs** – Documentation site powered by Hugo; contains user guides, concepts, contributing
   guides, and API references.
 - **/install** – Installation artifacts including Dockerfiles, Kubernetes manifests, Helm charts,
   Docker Compose files, and platform-specific deployment scripts.
@@ -113,7 +113,7 @@ make docker-local-cloud
 ### Documentation
 
 ```bash
-# Run docs site with live reload (port 4000)
+# Run docs site with and listen for changes (port 1313)
 make docs
 
 # Build docs site
