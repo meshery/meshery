@@ -2,7 +2,6 @@
   position: sticky;
   z-index: 9;
   height: calc(100vh - var(--navbar-height));
-  width: 21.5vw;
   transition: all 0.5s ease-in-out;
   margin-top: calc(var(--navbar-height));
   top: calc(var(--navbar-height));
@@ -19,7 +18,7 @@
     @media (max-width: 75em) {
       margin-top: 3rem;
       position: absolute;
-      right: -2rem;
+      right: -3rem;
       display: block;
     }
   }
@@ -29,7 +28,7 @@
     position: fixed;
     display: flex;
     width: 300px;
-    left: 0;
+    left: -1rem;
   }
   &--active {
     transform: translateX(0%);
