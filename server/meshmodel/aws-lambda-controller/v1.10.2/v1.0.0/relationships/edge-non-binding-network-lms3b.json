@@ -1,0 +1,83 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "Lambda functions read and write objects in S3 buckets for event-driven data processing. S3 event notifications can trigger Lambda invocations on object creation or deletion, enabling serverless ETL pipelines, image processing, and log analysis workflows.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "version": "",
+    "name": "aws-lambda-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.10.2"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Function",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "lambda-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Bucket",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "s3-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": null
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
