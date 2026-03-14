@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Couchbase Operator
 subtitle: Collaborative and visual infrastructure as design for Couchbase Operator
-image: /assets/img/integrations/couchbase-operator/icons/color/couchbase-operator-color.svg
-permalink: extensibility/integrations/couchbase-operator
+image: /extensions/models/couchbase-operator/icons/color/couchbase-operator-color.svg
+aliases: /extensibility/integrations/couchbase-operator
 docURL: https://docs.meshery.io/extensibility/integrations/couchbase-operator
 description: 
 integrations-category: App Definition and Development
@@ -92,8 +91,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Couchbase"
 howItWorksDetails: "Streamlined Couchbase management in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

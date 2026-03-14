@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Teller
 subtitle: Collaborative and visual infrastructure as design for Teller
-image: /assets/img/integrations/teller/icons/color/teller-color.svg
-permalink: extensibility/integrations/teller
+image: /extensions/models/teller/icons/color/teller-color.svg
+aliases: /extensibility/integrations/teller
 docURL: https://docs.meshery.io/extensibility/integrations/teller
 description: 
 integrations-category: Provisioning
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

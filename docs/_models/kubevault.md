@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubevault
 subtitle: Collaborative and visual infrastructure as design for Kubevault
-image: /assets/img/integrations/kubevault/icons/color/kubevault-color.svg
-permalink: extensibility/integrations/kubevault
+image: /extensions/models/kubevault/icons/color/kubevault-color.svg
+aliases: /extensibility/integrations/kubevault
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault
 description: 
 integrations-category: Security & Compliance
@@ -122,7 +121,19 @@ components:
   colorIcon: assets/img/integrations/kubevault/components/order/icons/color/order-color.svg
   whiteIcon: assets/img/integrations/kubevault/components/order/icons/white/order-white.svg
   description: 
-components-count: 28
+- name: certificate
+  colorIcon: assets/img/integrations/kubevault/components/certificate/icons/color/certificate-color.svg
+  whiteIcon: assets/img/integrations/kubevault/components/certificate/icons/white/certificate-white.svg
+  description: 
+- name: issuer
+  colorIcon: assets/img/integrations/kubevault/components/issuer/icons/color/issuer-color.svg
+  whiteIcon: assets/img/integrations/kubevault/components/issuer/icons/white/issuer-white.svg
+  description: 
+- name: issuer
+  colorIcon: assets/img/integrations/kubevault/components/issuer/icons/color/issuer-color.svg
+  whiteIcon: assets/img/integrations/kubevault/components/issuer/icons/white/issuer-white.svg
+  description: 
+components-count: 31
 relationships: 
 relationship-count: 0
 featureList: [
@@ -132,8 +143,5 @@ featureList: [
 ]
 howItWorks: "Integrates KubeVault deployments"
 howItWorksDetails: "Streamlined and secure Vault management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

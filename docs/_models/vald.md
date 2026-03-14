@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Vald
 subtitle: Collaborative and visual infrastructure as design for Vald
-image: /assets/img/integrations/vald/icons/color/vald-color.svg
-permalink: extensibility/integrations/vald
+image: /extensions/models/vald/icons/color/vald-color.svg
+aliases: /extensibility/integrations/vald
 docURL: https://docs.meshery.io/extensibility/integrations/vald
 description: 
 integrations-category: App Definition and Development
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Integrates with Vald"
 howItWorksDetails: "Enhanced search capabilities within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

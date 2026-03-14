@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Route 53
 subtitle: Collaborative and visual infrastructure as design for AWS Route 53
-image: /assets/img/integrations/aws-route53-controller/icons/color/aws-route53-controller-color.svg
-permalink: extensibility/integrations/aws-route53-controller
+image: /extensions/models/aws-route53-controller/icons/color/aws-route53-controller-color.svg
+aliases: /extensibility/integrations/aws-route53-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-route53-controller
 description: 
 integrations-category: Cloud Native Network
@@ -59,8 +58,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

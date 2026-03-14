@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Vault Config Operator
 subtitle: Collaborative and visual infrastructure as design for Vault Config Operator
-image: /assets/img/integrations/vault-config-operator/icons/color/vault-config-operator-color.svg
-permalink: extensibility/integrations/vault-config-operator
+image: /extensions/models/vault-config-operator/icons/color/vault-config-operator-color.svg
+aliases: /extensibility/integrations/vault-config-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vault-config-operator
 description: 
 integrations-category: Provisioning
@@ -172,8 +171,5 @@ featureList: [
 ]
 howItWorks: "Manages Vault configurations"
 howItWorksDetails: "Streamlined Vault configuration management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

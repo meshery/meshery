@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubeflow MPI Operator
 subtitle: Collaborative and visual infrastructure as design for Kubeflow MPI Operator
-image: /assets/img/integrations/mpi-operator/icons/color/mpi-operator-color.svg
-permalink: extensibility/integrations/mpi-operator
+image: /extensions/models/mpi-operator/icons/color/mpi-operator-color.svg
+aliases: /extensibility/integrations/mpi-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mpi-operator
 description: 
 integrations-category: Machine Learning
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

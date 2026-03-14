@@ -611,7 +611,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 
 // RecordPreferences - records the user preference
 func (l *DefaultLocalProvider) RecordPreferences(_ *http.Request, userID string, data *Preference) error {
-	return l.MapPreferencePersister.WriteToPersister(userID, data)
+	return l.WriteToPersister(userID, data)
 }
 
 // UpdateToken - specific to remote auth
@@ -1199,8 +1199,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 }
 
 func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
-	connection := connections.Connection{ID: connectionID}
-	return l.ConnectionPersister.DeleteConnection(&connection)
+	return l.ConnectionPersister.DeleteConnectionById(connectionID)
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
@@ -1787,12 +1786,22 @@ func downloadContent(comp string, downloadpath string) error {
 			if err != nil {
 				return err
 			}
-			defer file.Close()
 			content, err := base64.StdEncoding.DecodeString(gca.Content)
 			if err != nil {
+				if closeErr := file.Close(); closeErr != nil {
+					return fmt.Errorf("%w (close error: %v)", err, closeErr)
+				}
 				return err
 			}
-			fmt.Fprintf(file, "%s", content)
+			if _, err := fmt.Fprintf(file, "%s", content); err != nil {
+				if closeErr := file.Close(); closeErr != nil {
+					return fmt.Errorf("%w (close error: %v)", err, closeErr)
+				}
+				return err
+			}
+			if err := file.Close(); err != nil {
+				return err
+			}
 			return nil
 		}).Walk()
 	case "Filter":
@@ -1840,9 +1849,14 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 					return err
 				}
 				if _, err := io.Copy(outFile, tarReader); err != nil {
+					if closeErr := outFile.Close(); closeErr != nil {
+						return fmt.Errorf("%w (close error: %v)", err, closeErr)
+					}
 					return err
 				}
-				outFile.Close()
+				if err := outFile.Close(); err != nil {
+					return err
+				}
 			}
 		}
 	}

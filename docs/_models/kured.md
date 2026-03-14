@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kured
 subtitle: Collaborative and visual infrastructure as design for Kured
-image: /assets/img/integrations/kured/icons/color/kured-color.svg
-permalink: extensibility/integrations/kured
+image: /extensions/models/kured/icons/color/kured-color.svg
+aliases: /extensibility/integrations/kured
 docURL: https://docs.meshery.io/extensibility/integrations/kured
 description: 
 integrations-category: Orchestration & Management
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Integrates with Kured"
 howItWorksDetails: "Improved node reliability and security in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

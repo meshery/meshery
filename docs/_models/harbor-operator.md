@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Harbor Operator
 subtitle: Collaborative and visual infrastructure as design for Harbor Operator
-image: /assets/img/integrations/harbor-operator/icons/color/harbor-operator-color.svg
-permalink: extensibility/integrations/harbor-operator
+image: /extensions/models/harbor-operator/icons/color/harbor-operator-color.svg
+aliases: /extensibility/integrations/harbor-operator
 docURL: https://docs.meshery.io/extensibility/integrations/harbor-operator
 description: 
 integrations-category: Provisioning
@@ -44,8 +43,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

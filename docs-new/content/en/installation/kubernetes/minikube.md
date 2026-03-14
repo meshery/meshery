@@ -25,14 +25,14 @@ After your cluster has been added as a connection, you can use Meshery to make i
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
   <ol>
-    <li>Install the Meshery command-line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+    <li>Install the Meshery command-line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
     <li>Install <a href="https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Fx86-64%2Fstable%2Fbinary+download"> Minikube</a> on your local machine.</li>
     <li>Install <a href="https://helm.sh/docs/intro/install/">Helm</a>.</li>
   </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubernetes)
+Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
 
 ## Available Deployment Methods
 
@@ -90,7 +90,7 @@ To verify your deployment, run:
 After deployment, access the Meshery UI using port forwarding, with the command:
 
 {{< code code="mesheryctl system dashboard --port-forward" >}}
-For detailed instructions on port forwarding, refer to the [port-forwarding]({{ site.baseurl }}/reference/mesheryctl/system/dashboard) guide.
+For detailed instructions on port forwarding, refer to the [port-forwarding](/reference/mesheryctl/system/dashboard) guide.
 
 By default, Meshery auto-detects your Minikube cluster and establishes a connection. However, if this doesn’t happen, you can connect by running the following command:
 

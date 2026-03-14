@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Subscription
 subtitle: Collaborative and visual infrastructure as design for Azure Subscription
-image: /assets/img/integrations/azure-subscription/icons/color/azure-subscription-color.svg
-permalink: extensibility/integrations/azure-subscription
+image: /extensions/models/azure-subscription/icons/color/azure-subscription-color.svg
+aliases: /extensibility/integrations/azure-subscription
 docURL: https://docs.meshery.io/extensibility/integrations/azure-subscription
 description: 
 integrations-category: Runtime
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
