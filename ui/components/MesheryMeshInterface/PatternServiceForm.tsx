@@ -3,13 +3,13 @@ import {
   AppBar,
   Box,
   Delete,
+  Help,
   IconButton,
   Settings,
   Toolbar,
   Tooltip,
   useTheme,
 } from '@sistent/sistent';
-import { HelpOutline } from '@mui/icons-material';
 import React, { useEffect } from 'react';
 import { iconSmall } from '../../css/icons.styles';
 import { pSBCr } from '../../utils/lightenOrDarkenColor';
@@ -120,7 +120,7 @@ function PatternServiceForm({
                   <label htmlFor="help-button">
                     <Tooltip title={schemaSet?.workload?.description} interactive>
                       <IconButton component="span">
-                        <HelpOutline width="22px" style={{ color: '#fff' }} height="22px" />
+                        <Help width="22px" style={{ color: '#fff' }} height="22px" />
                       </IconButton>
                     </Tooltip>
                   </label>

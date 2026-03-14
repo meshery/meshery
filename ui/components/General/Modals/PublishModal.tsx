@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
-import Public from '@sistent/sistent';
+import { Public } from '@sistent/sistent';
 import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';
 import { modifyRJSFSchema } from '../../utils/utils';

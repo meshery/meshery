@@ -12,7 +12,7 @@ const TextContent = styled('div')({
   borderRadius: '10px',
 });
 
-const StyledAddIcon = styled(Add)(({ theme }) => ({
+const StyledIcon = styled(Add)(({ theme }) => ({
   width: theme.spacing(2.5),
   marginRight: theme.spacing(0.5),
 }));
@@ -31,7 +31,7 @@ export const K8sEmptyState = ({ message }) => {
           color="primary"
           sx={{ margin: '0.6rem 0.6rem', whiteSpace: 'nowrap' }}
         >
-          <StyledAddIcon />
+          <StyledIcon />
           Connect Clusters
         </Button>
       </Link>

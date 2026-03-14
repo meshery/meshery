@@ -9,7 +9,7 @@ import {
   Lock,
   SimCard,
   SupervisedUserCircle,
-} from '@mui/icons-material';
+} from '@sistent/sistent';
 import TouchApp from '@mui/icons-material';
 import React from 'react';
 

@@ -551,7 +551,7 @@ function PerformanceProfile({ handleDelete }) {
                   !CAN(keys.ADD_PERFORMANCE_PROFILE.action, keys.ADD_PERFORMANCE_PROFILE.subject)
                 }
               >
-                <Typography className="Add">Add Performance Profile</Typography>
+                <Typography className="addIcon">Add Performance Profile</Typography>
               </Button>
             </ProfileContainer>
           </Paper>
