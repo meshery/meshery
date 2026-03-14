@@ -1,3 +1,5 @@
+@use "project-variables" as *;
+
 /***** OVERVIEW ********/
 
 /*button style*/
@@ -106,4 +108,3 @@ a > strong:hover {
   float: right;
   padding-right: 10px;
 }
-
