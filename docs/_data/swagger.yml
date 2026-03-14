@@ -8261,7 +8261,7 @@ paths:
     /api/registry/models/{model}/relationships:
         get:
             description: |-
-                Example: ```/api/registry/model/kubernetes/relationship```
+                Example: ```/api/registry/models/kubernetes/relationships```
 
                 # Relationships can be further filtered through query parameter
 
