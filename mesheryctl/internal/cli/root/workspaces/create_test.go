@@ -17,6 +17,9 @@ func TestCreateWorkspace(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
+	validWorkspaceName := "workspace-test"
+	testOrgId := "2d2c0b60-076a-4f0a-8a63-de538570a553"
+	description := "integration test"
 
 	tests := []utils.MesheryCommandTest{
 		{
@@ -28,22 +31,38 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
+<<<<<<< HEAD
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId '', Invalid value for --name ''")),
 		},
 		{
 			Name:             "given missing flag orgId when workspace create throw error",
 			Args:             []string{"create", "-n", validWorkspaceName, "-d", workspaceDescription},
+=======
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgid '', Invalid value for --name ''")),
+		},
+		{
+			Name:             "given missing flag orgId when workspace create throw error",
+			Args:             []string{"create", "-n", validWorkspaceName, "-d", description},
+>>>>>>> 98ac7433124 (refactor(mesheryctl): enhance workspace creation command using flags validator)
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			Fixture:          "",
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
+<<<<<<< HEAD
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId ''")),
 		},
 		{
 			Name:             "given missing flag name when workspace create throw error",
 			Args:             []string{"create", "--orgId", testOrgId, "-d", workspaceDescription},
+=======
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgid ''")),
+		},
+		{
+			Name:             "given missing flag name when workspace create throw error",
+			Args:             []string{"create", "--orgId", testOrgId, "-d", "integration test"},
+>>>>>>> 98ac7433124 (refactor(mesheryctl): enhance workspace creation command using flags validator)
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			Fixture:          "",
@@ -54,7 +73,11 @@ func TestCreateWorkspace(t *testing.T) {
 		},
 		{
 			Name:             "given missing flag description when workspace create then workspace is created with empty description",
+<<<<<<< HEAD
 			Args:             []string{"create", "--orgId", testOrgId, "-n", validWorkspaceName},
+=======
+			Args:             []string{"create", "--orgId", testOrgId, "-n", "workspace-test"},
+>>>>>>> 98ac7433124 (refactor(mesheryctl): enhance workspace creation command using flags validator)
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			HttpStatusCode:   201,
@@ -63,8 +86,13 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
+<<<<<<< HEAD
 			Name:             "given missing name and orgId flags when workspace create then throw error",
 			Args:             []string{"create", "-d", workspaceDescription},
+=======
+			Name:             "given multiple name and orgId flags when workspace create then throw error",
+			Args:             []string{"create", "-d", "integration test"},
+>>>>>>> 98ac7433124 (refactor(mesheryctl): enhance workspace creation command using flags validator)
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			HttpStatusCode:   404,
@@ -72,11 +100,19 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
+<<<<<<< HEAD
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId '', Invalid value for --name ''")),
 		},
 		{
 			Name:             "given an invalid organization Id when workspace create throw error",
 			Args:             []string{"create", "-n", validWorkspaceName, "-d", workspaceDescription, "--orgId", testOrgId},
+=======
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgid '', Invalid value for --name ''")),
+		},
+		{
+			Name:             "given an invalid organization Id when workspace create throw error",
+			Args:             []string{"create", "-n", "workspace-test-error", "-d", "integration test", "--orgId", testOrgId},
+>>>>>>> 98ac7433124 (refactor(mesheryctl): enhance workspace creation command using flags validator)
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			HttpStatusCode:   404,
@@ -88,7 +124,11 @@ func TestCreateWorkspace(t *testing.T) {
 		},
 		{
 			Name:             "given all flags provided when workspace create then workspace is created",
+<<<<<<< HEAD
 			Args:             []string{"create", "-n", validWorkspaceName, "-d", workspaceDescription, "--orgId", testOrgId},
+=======
+			Args:             []string{"create", "-n", "workspace-test", "-d", "integration test", "--orgId", testOrgId},
+>>>>>>> 98ac7433124 (refactor(mesheryctl): enhance workspace creation command using flags validator)
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			HttpStatusCode:   201,
