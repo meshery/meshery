@@ -2,7 +2,9 @@ package config
 
 import "os"
 
-// What needs to be mutated
+// NeedsMutation determines whether the Meshery config file needs to be created or updated based on its existence and content.
+// needs to be initialized. It returns true if the config file
+// does not exist or exists but is empty.
 func NeedsMutation(configPath string) (bool, error) {
 	stat, err := os.Stat(configPath)
 
@@ -20,7 +22,8 @@ func NeedsMutation(configPath string) (bool, error) {
 	return false, nil
 }
 
-// Mutation logic
+// InitDefaultConfig creates the default Meshery configuration,
+// including the config directory, default token, and default context.
 func InitDefaultConfig(
 	configPath string,
 	mesheryFolder string,
@@ -29,7 +32,17 @@ func InitDefaultConfig(
 	createConfigFile func() error,
 ) error {
 
-	if err := os.MkdirAll(mesheryFolder, 0o700); err != nil {
+	stat, err := os.Stat(configPath)
+
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+
+	if err == nil && stat.Size() > 0 {
+		return nil
+	}
+
+	if err := os.MkdirAll(mesheryFolder, 0o775); err != nil {
 		return err
 	}
 
