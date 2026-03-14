@@ -23,6 +23,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -82,7 +83,7 @@ mesheryctl design evaluate -f design.yaml --output-format json -o evaluated-desi
 			return err
 		}
 
-		baseUrl := mctlCfg.GetBaseMesheryURL()
+		baseURL := mctlCfg.GetBaseMesheryURL()
 
 		var designPayload pattern.PatternFile
 
@@ -92,13 +93,13 @@ mesheryctl design evaluate -f design.yaml --output-format json -o evaluated-desi
 				return err
 			}
 		} else {
-			designPayload, err = fetchDesignByID(baseUrl, args[0])
+			designPayload, err = fetchDesignByID(baseURL, args[0])
 			if err != nil {
 				return err
 			}
 		}
 
-		evalResponse, err := sendEvaluationRequest(baseUrl, designPayload)
+		evalResponse, err := sendEvaluationRequest(designPayload)
 		if err != nil {
 			return err
 		}
