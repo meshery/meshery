@@ -30,7 +30,6 @@ type MesheryDesignImportPayload struct {
 	URL      string `json:"url,omitempty"`
 	File     []byte `json:"file,omitempty"`
 	FileName string `json:"file_name,omitempty"`
-	Save     *bool  `json:"save,omitempty"`
 }
 
 type FileToImport struct {
@@ -304,41 +303,10 @@ func (h *Handler) DesignFileImportHandler(
 		},
 	}
 
-	var savedDesignByt []byte
-	if importDesignPayload.Save != nil && !*importDesignPayload.Save {
-		id, err := uuid.NewV4()
-		if err != nil {
-			h.log.Error(ErrSavePattern(err))
-			http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
-
-			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrSavePattern(err),
-			}).WithDescription(ErrSavePattern(err).Error()).Build()
-
-			_ = provider.PersistEvent(*event, nil)
-			go h.config.EventBroadcaster.Publish(userID, event)
-			return
-		}
-		designRecord.ID = &id
-		savedDesignByt, err = json.Marshal([]models.MesheryPattern{designRecord})
-		if err != nil {
-			h.log.Error(ErrSavePattern(err))
-			http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
-
-			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrSavePattern(err),
-			}).WithDescription(ErrSavePattern(err).Error()).Build()
-
-			_ = provider.PersistEvent(*event, nil)
-			go h.config.EventBroadcaster.Publish(userID, event)
-			return
-		}
-	} else {
-		savedDesignByt, err = provider.SaveMesheryPattern(token, &designRecord)
-		if err != nil {
-			h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider)
-			return
-		}
+	savedDesignByt, err := provider.SaveMesheryPattern(token, &designRecord)
+	if err != nil {
+		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider)
+		return
 	}
 
 	_, _ = rw.Write(savedDesignByt)

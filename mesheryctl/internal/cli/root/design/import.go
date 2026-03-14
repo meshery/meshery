@@ -25,6 +25,8 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/patterns"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 
 	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/spf13/cobra"
@@ -208,4 +210,18 @@ func init() {
 	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to design file")
 	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / design)")
 	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the design file")
+}
+
+func readPatternFromFile(filePath string) (*pattern.PatternFile, error) {
+	fileContent, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, utils.ErrFileRead(err)
+	}
+
+	patternFile, err := patterns.GetPatternFormat(string(fileContent))
+	if err != nil {
+		return nil, err
+	}
+
+	return patternFile, nil
 }
