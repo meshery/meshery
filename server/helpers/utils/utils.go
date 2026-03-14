@@ -243,7 +243,9 @@ func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
 
 func DeleteSVGsFromFileSystem() {
 	for _, path := range UISVGPaths {
-		os.RemoveAll(path)
+		if err := os.RemoveAll(path); err != nil && !errors.Is(err, os.ErrNotExist) {
+			fmt.Println(err)
+		}
 	}
 }
 func getRelativePathForAPI(path string) string {
@@ -512,18 +514,26 @@ func CopyDirectory(src string, dst string) error {
 	return nil
 }
 
-func copyFile(src, dst string) error {
+func copyFile(src, dst string) (err error) {
 	srcFile, err := os.Open(src)
 	if err != nil {
 		return err
 	}
-	defer srcFile.Close()
+	defer func() {
+		if closeErr := srcFile.Close(); err == nil && closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	dstFile, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer dstFile.Close()
+	defer func() {
+		if closeErr := dstFile.Close(); err == nil && closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	if _, err := io.Copy(dstFile, srcFile); err != nil {
 		return err

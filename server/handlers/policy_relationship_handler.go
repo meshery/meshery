@@ -493,7 +493,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 	var greedy bool
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 
@@ -553,7 +553,7 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	typ := mux.Vars(r)["model"]
 
 	var greedy bool
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 

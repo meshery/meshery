@@ -149,7 +149,9 @@ mesheryctl perf result saturday-profile --view
 				return err
 			}
 
-			outputFormatter.Display()
+			if err := outputFormatter.Display(); err != nil {
+				return err
+			}
 		} else if !viewSingleResult { // print all results
 			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data, nil)
 		} else {
