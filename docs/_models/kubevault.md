@@ -121,7 +121,19 @@ components:
   colorIcon: assets/img/integrations/kubevault/components/order/icons/color/order-color.svg
   whiteIcon: assets/img/integrations/kubevault/components/order/icons/white/order-white.svg
   description: 
-components-count: 28
+- name: certificate
+  colorIcon: assets/img/integrations/kubevault/components/certificate/icons/color/certificate-color.svg
+  whiteIcon: assets/img/integrations/kubevault/components/certificate/icons/white/certificate-white.svg
+  description: 
+- name: issuer
+  colorIcon: assets/img/integrations/kubevault/components/issuer/icons/color/issuer-color.svg
+  whiteIcon: assets/img/integrations/kubevault/components/issuer/icons/white/issuer-white.svg
+  description: 
+- name: issuer
+  colorIcon: assets/img/integrations/kubevault/components/issuer/icons/color/issuer-color.svg
+  whiteIcon: assets/img/integrations/kubevault/components/issuer/icons/white/issuer-white.svg
+  description: 
+components-count: 31
 relationships: 
 relationship-count: 0
 featureList: [
