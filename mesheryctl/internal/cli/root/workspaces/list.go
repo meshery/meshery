@@ -55,8 +55,12 @@ mesheryctl exp workspace list --orgId [orgId] --count
 		urlQueryParams := url.Values{}
 		urlQueryParams.Add("orgID", workspaceListFlags.OrgId)
 		if cmd.Flags().Changed("page") {
-			urlQueryParams.Add("page", fmt.Sprint(workspaceListFlags.Page))
+			// Adjusting page number to be zero-based index for API compatibility,
+			// while keeping the user-facing flag as one-based index for better UX
+			urlQueryParams.Add("page", fmt.Sprint(workspaceListFlags.Page-1))
 		}
+		// API will use default page size if page-size flag is not provided,
+		// so only add page-size to query params if the flag is explicitly set by the user
 		if cmd.Flags().Changed("page-size") {
 			urlQueryParams.Add("pagesize", fmt.Sprint(workspaceListFlags.PageSize))
 		}
@@ -69,7 +73,7 @@ mesheryctl exp workspace list --orgId [orgId] --count
 			Page:             workspaceListFlags.Page,
 			PageSize:         workspaceListFlags.PageSize,
 			IsPage:           cmd.Flags().Changed("page"),
-			DisplayCountOnly: cmd.Flags().Changed("count"),
+			DisplayCountOnly: workspaceListFlags.Count,
 		}
 
 		return display.ListAsyncPagination(modelData, processDataToDisplay)
