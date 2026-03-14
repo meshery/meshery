@@ -10,7 +10,7 @@ func TestIsUUID(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name string // Explicit name for Given, When, Then convention
+		name string
 		in   string
 		want bool
 	}{
