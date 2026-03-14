@@ -17,9 +17,6 @@ func TestCreateWorkspace(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	validWorkspaceName := "workspace-test"
-	testOrgId := "2d2c0b60-076a-4f0a-8a63-de538570a553"
-	description := "integration test"
 
 	tests := []utils.MesheryCommandTest{
 		{
@@ -35,7 +32,7 @@ func TestCreateWorkspace(t *testing.T) {
 		},
 		{
 			Name:             "given missing flag orgId when workspace create throw error",
-			Args:             []string{"create", "-n", validWorkspaceName, "-d", description},
+			Args:             []string{"create", "-n", validWorkspaceName, "-d", workspaceDescription},
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			Fixture:          "",
@@ -46,7 +43,7 @@ func TestCreateWorkspace(t *testing.T) {
 		},
 		{
 			Name:             "given missing flag name when workspace create throw error",
-			Args:             []string{"create", "--orgId", testOrgId, "-d", "integration test"},
+			Args:             []string{"create", "--orgId", testOrgId, "-d", workspaceDescription},
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			Fixture:          "",
@@ -67,7 +64,7 @@ func TestCreateWorkspace(t *testing.T) {
 		},
 		{
 			Name:             "given missing name and orgId flags when workspace create then throw error",
-			Args:             []string{"create", "-d", "integration test"},
+			Args:             []string{"create", "-d", workspaceDescription},
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			HttpStatusCode:   404,
@@ -79,7 +76,7 @@ func TestCreateWorkspace(t *testing.T) {
 		},
 		{
 			Name:             "given an invalid organization Id when workspace create throw error",
-			Args:             []string{"create", "-n", "workspace-test-error", "-d", "integration test", "--orgId", testOrgId},
+			Args:             []string{"create", "-n", validWorkspaceName, "-d", workspaceDescription, "--orgId", testOrgId},
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			HttpStatusCode:   404,
@@ -87,11 +84,11 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    returnFailedCreateWorkspaceError("workspace-test-error", testOrgId),
+			ExpectedError:    returnFailedCreateWorkspaceError(validWorkspaceName, testOrgId),
 		},
 		{
 			Name:             "given all flags provided when workspace create then workspace is created",
-			Args:             []string{"create", "-n", "workspace-test", "-d", "integration test", "--orgId", testOrgId},
+			Args:             []string{"create", "-n", validWorkspaceName, "-d", workspaceDescription, "--orgId", testOrgId},
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			HttpStatusCode:   201,
