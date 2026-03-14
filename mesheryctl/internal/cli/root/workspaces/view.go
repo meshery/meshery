@@ -55,24 +55,26 @@ mesheryctl exp workspace view [workspace-id] --output-format json --save
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("please provide exactly one workspace name or ID\n\n%v", errMsg))
 		}
+		
 		// Validate orgId is provided when arg is not a UUID
-		if !utils.IsUUID(args[0]) && cmd.Flags().Lookup("orgId").Value.String() == "" {
+		if !utils.IsUUID(args[0]) && workspaceViewFlagsProvided.OrgID == "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("--orgId is required when searching by name\n\nUsage: mesheryctl exp workspace view [workspace-name] --orgId [orgId]"))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		workspaceNameOrID := args[0]
-		orgID := workspaceViewFlagsProvided.OrgID
-
 		selectedWorkspace := new(workspace.Workspace)
 
+		var urlPath string
+		var displayData display.DisplayDataAsync
+
 		if utils.IsUUID(workspaceNameOrID) {
-			urlPath := fmt.Sprintf("%s/%s", workspacesApiPath, workspaceNameOrID)
+			urlPath = fmt.Sprintf("%s/%s", workspacesApiPath, url.PathEscape(workspaceNameOrID))
+			displayData = display.DisplayDataAsync{UrlPath: urlPath}
+
 			err := display.PromptAsyncPagination(
-				display.DisplayDataAsync{
-					UrlPath: urlPath,
-				},
+				displayData,
 				formatWorkspaceLabel,
 				func(data *workspace.Workspace) ([]workspace.Workspace, int64) {
 					return []workspace.Workspace{*data}, 1
@@ -84,16 +86,17 @@ mesheryctl exp workspace view [workspace-id] --output-format json --save
 			}
 		} else {
 			viewUrlValue := url.Values{}
-			viewUrlValue.Add("orgID", orgID)
+			viewUrlValue.Add("orgID", workspaceViewFlagsProvided.OrgID)
 			viewUrlValue.Add("search", workspaceNameOrID)
 
-			urlPath := fmt.Sprintf("%s?%s", workspacesApiPath, viewUrlValue.Encode())
+			urlPath = fmt.Sprintf("%s?%s", workspacesApiPath, viewUrlValue.Encode())
+			displayData = display.DisplayDataAsync{
+				UrlPath:    urlPath,
+				SearchTerm: workspaceNameOrID,
+			}
 
 			err := display.PromptAsyncPagination(
-				display.DisplayDataAsync{
-					UrlPath:    urlPath,
-					SearchTerm: workspaceNameOrID,
-				},
+				displayData,
 				formatWorkspaceLabel,
 				func(data *workspace.WorkspacePage) ([]workspace.Workspace, int64) {
 					return data.Workspaces, int64(data.TotalCount)
@@ -110,6 +113,7 @@ mesheryctl exp workspace view [workspace-id] --output-format json --save
 		if err != nil {
 			return err
 		}
+		
 		outputFormatter = outputFormatter.WithOutput(cmd.OutOrStdout())
 
 		err = outputFormatter.Display()
