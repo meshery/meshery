@@ -22,7 +22,7 @@
     "relay": "relay-compiler",
     "prepare": "cd .. && husky ui/.husky",
     "postinstall": "patch-package",
-    "clean": "rm -rf .next,out"
+    "clean": "rm -rf .next out"
   },
   "keywords": [],
   "author": "Meshery Authors",
