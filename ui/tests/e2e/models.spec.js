@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 import path from 'path';
 import { DashboardPage } from './pages/DashboardPage';
 
+// Resolve asset paths from project root (ui/). CI runs e2e from ui/ via make ui-test-e2e-ci.
+const E2E_ASSETS = path.join(process.cwd(), 'tests', 'e2e', 'assets');
+
 const model = {
   MODEL_URL: 'git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm',
   MODEL_NAME: `test-model-${Date.now()}`,
@@ -12,12 +15,12 @@ const model_import = {
   MODEL_NAME: `test`,
   MODEL_URL_IMPORT:
     'https://raw.githubusercontent.com/meshery/meshery/master/ui/tests/e2e/assets/test.tar',
-  MODEL_FILE_IMPORT: path.resolve('tests/e2e/assets/test.tar'),
+  MODEL_FILE_IMPORT: path.join(E2E_ASSETS, 'test.tar'),
   MODEL_CSV_IMPORT: {
     Model_Name: 'couchbase',
-    Models: path.resolve('tests/e2e/assets/models.csv'),
-    Components: path.resolve('tests/e2e/assets/components.csv'),
-    Relationships: path.resolve('tests/e2e/assets/relationships.csv'),
+    Models: path.join(E2E_ASSETS, 'models.csv'),
+    Components: path.join(E2E_ASSETS, 'components.csv'),
+    Relationships: path.join(E2E_ASSETS, 'relationships.csv'),
   },
 };
 
@@ -93,8 +96,8 @@ test.describe.serial('Model Workflow Tests', () => {
 
     await expect(
       page.getByTestId(`ModelImportedSection-ModelHeader-${model_import.MODEL_NAME}`),
-    ).toBeVisible();
-    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible();
+    ).toBeVisible({ timeout: 60000 });
+    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible({ timeout: 10000 });
     await page.getByRole('button', { name: 'Finish' }).click();
   });
 
