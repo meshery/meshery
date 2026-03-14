@@ -32,16 +32,6 @@ func InitDefaultConfig(
 	createConfigFile func() error,
 ) error {
 
-	stat, err := os.Stat(configPath)
-
-	if err != nil && !os.IsNotExist(err) {
-		return err
-	}
-
-	if err == nil && stat.Size() > 0 {
-		return nil
-	}
-
 	if err := os.MkdirAll(mesheryFolder, 0o775); err != nil {
 		return err
 	}
