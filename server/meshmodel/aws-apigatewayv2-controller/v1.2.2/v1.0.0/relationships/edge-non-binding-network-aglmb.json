@@ -35,11 +35,11 @@
             "match_strategy_matrix": null,
             "model": {
               "version": "",
-              "name": "apigatewayv2-controller",
+              "name": "aws-apigatewayv2-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
-                "kind": "artifacthub"
+                "kind": "github"
               },
               "model": {
                 "version": ""
