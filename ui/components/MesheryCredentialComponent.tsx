@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Chip,
+  Delete,
   IconButton,
   Tooltip,
   TableCell,
@@ -11,7 +12,6 @@ import {
 } from '@sistent/sistent';
 import Modal from './Modal';
 import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useNotification } from '../utils/hooks/useNotification';
@@ -296,7 +296,7 @@ const MesheryCredentialComponent: React.FC = () => {
                   }
                   size="large"
                 >
-                  <DeleteIcon />
+                  <Delete />
                 </IconButton>
               </Tooltip>
             </ActionContainer>

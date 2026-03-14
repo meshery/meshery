@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Description,
   ModalFooter,
   useStepper,
   CustomizedStepper,
@@ -16,7 +17,6 @@ import {
 import { GlobalStyles } from '@mui/material';
 import { styled } from '@sistent/sistent';
 import { RelationshipDefinitionV1Alpha3OpenApiSchema } from '@meshery/schemas';
-import DescriptionIcon from '@mui/icons-material/Description';
 import CodeIcon from '@mui/icons-material/Code';
 import LinkIcon from '@mui/icons-material/Link';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
@@ -268,7 +268,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
             </Grid2>
           </div>
         ),
-        icon: DescriptionIcon,
+        icon: Description,
         label: 'Basic Details',
         helpText: (
           <>

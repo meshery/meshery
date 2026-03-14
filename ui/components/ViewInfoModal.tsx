@@ -4,11 +4,13 @@ import {
   Chip,
   CircularProgress,
   FormLabel,
-  Typography,
-  ViewIcon,
   getFullFormattedTime,
+  Lock,
+  Public,
   styled,
+  Typography,
   useTheme,
+  ViewIcon,
 } from '@sistent/sistent';
 import React, { useState } from 'react';
 import _ from 'lodash';
@@ -25,7 +27,6 @@ import { ModalButtonSecondary } from '@sistent/sistent';
 import { handleUpdateViewVisibility, viewPath } from './SpacesSwitcher/hooks';
 import { ModalButtonPrimary } from '@sistent/sistent';
 import rehypeSanitize from 'rehype-sanitize';
-import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '@/utils/Enum';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 

@@ -2,15 +2,15 @@ import {
   AddCircle,
   BuildRounded,
   DirectionsCar,
+  Explore,
+  FileCopy,
   Filter,
+  ListAlt,
+  Lock,
   SimCard,
   SupervisedUserCircle,
-  TouchApp,
 } from '@mui/icons-material';
-import ExploreIcon from '@mui/icons-material/Explore';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import LockIcon from '@mui/icons-material/Lock';
+import TouchApp from '@mui/icons-material';
 import React from 'react';
 
 /**
@@ -31,15 +31,15 @@ export default function NameToIcon({ name, color = '#607D8B', ...other }) {
       return <CustomIcon Icon={BuildRounded} />;
     // Istio
     case 'AuthorizationPolicy':
-      return <CustomIcon Icon={LockIcon} />;
+      return <CustomIcon Icon={Lock} />;
     case 'DestinationRule':
-      return <CustomIcon Icon={ExploreIcon} />;
+      return <CustomIcon Icon={Explore} />;
     case 'EnvoyFilter':
       return <CustomIcon Icon={Filter} />;
     case 'Gateway':
-      return <CustomIcon Icon={ListAltIcon} />;
+      return <CustomIcon Icon={ListAlt} />;
     case 'PeerAuthentication':
-      return <CustomIcon Icon={FileCopyIcon} />;
+      return <CustomIcon Icon={FileCopy} />;
     case 'Sidecar':
       return <CustomIcon Icon={DirectionsCar} />;
     case 'VirtualService':

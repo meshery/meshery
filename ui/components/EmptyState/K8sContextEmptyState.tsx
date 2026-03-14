@@ -1,7 +1,6 @@
-import { Button, Link, Typography, styled, useTheme } from '@sistent/sistent';
+import { Add, Button, Link, Typography, styled, useTheme } from '@sistent/sistent';
 import OperatorLight from '../../assets/img/OperatorLight';
 import Operator from '../../assets/img/Operator';
-import AddIcon from '@mui/icons-material/Add';
 
 const TextContent = styled('div')({
   display: 'flex',
@@ -13,7 +12,7 @@ const TextContent = styled('div')({
   borderRadius: '10px',
 });
 
-const StyledAddIcon = styled(AddIcon)(({ theme }) => ({
+const StyledAddIcon = styled(Add)(({ theme }) => ({
   width: theme.spacing(2.5),
   marginRight: theme.spacing(0.5),
 }));

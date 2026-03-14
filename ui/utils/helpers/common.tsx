@@ -1,6 +1,5 @@
 /* eslint-disable react/display-name */
-import { IconButton } from '@sistent/sistent';
-import CloseIcon from '@mui/icons-material/Close';
+import { Close, IconButton } from '@sistent/sistent';
 import { EVENT_TYPES } from '../../lib/event-types';
 
 /**
@@ -10,7 +9,7 @@ import { EVENT_TYPES } from '../../lib/event-types';
  */
 export const closeButtonForSnackbarAction = (closeSnackbar) => (key) => (
   <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-    <CloseIcon />
+    <Close />
   </IconButton>
 );
 

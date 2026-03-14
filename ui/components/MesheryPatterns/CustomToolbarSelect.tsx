@@ -1,6 +1,5 @@
 import React from 'react';
-import { IconButton, CustomTooltip } from '@sistent/sistent';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Delete, IconButton, CustomTooltip } from '@sistent/sistent';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
@@ -36,7 +35,7 @@ const CustomToolbarSelect = ({
             onClick={handleClickDelete}
             disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
           >
-            <DeleteIcon />
+            <Delete />
           </IconButton>
         </div>
       </CustomTooltip>

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Typography, Button, styled } from '@sistent/sistent';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
+import { Add, Typography, Button, styled } from '@sistent/sistent';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
@@ -62,7 +61,7 @@ function MesheryMetrics({
         onClick={() => handleGrafanaChartAddition()}
         disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
       >
-        <AddIcon style={iconMedium} />
+        <Add style={iconMedium} />
         Configure Metrics
       </MetricsConfigButton>
     </MetricsContainer>

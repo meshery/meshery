@@ -1,7 +1,15 @@
 // @ts-check
-import { AppBar, Box, IconButton, Toolbar, Tooltip, useTheme } from '@sistent/sistent';
-import { Delete, HelpOutline } from '@mui/icons-material';
-import SettingsIcon from '@mui/icons-material/Settings';
+import {
+  AppBar,
+  Box,
+  Delete,
+  IconButton,
+  Settings,
+  Toolbar,
+  Tooltip,
+  useTheme,
+} from '@sistent/sistent';
+import { HelpOutline } from '@mui/icons-material';
 import React, { useEffect } from 'react';
 import { iconSmall } from '../../css/icons.styles';
 import { pSBCr } from '../../utils/lightenOrDarkenColor';
@@ -97,7 +105,7 @@ function PatternServiceForm({
                   height: '0.7rem !important',
                 }}
               >
-                <SettingsIcon style={{ ...iconSmall, color: 'black' }} />
+                <Settings style={{ ...iconSmall, color: 'black' }} />
                 <p
                   style={{
                     margin: 'auto auto auto 10px',

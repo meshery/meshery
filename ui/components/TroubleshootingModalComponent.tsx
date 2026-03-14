@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  Close,
   Typography,
   Accordion,
   AccordionDetails,
@@ -13,7 +14,6 @@ import {
   keyframes,
 } from '@sistent/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import CloseIcon from '@mui/icons-material/Close';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   top: '50%',
@@ -71,7 +71,7 @@ const ModalFooter = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.brand.default,
 }));
 
-const rotateCloseIcon = keyframes`
+const rotateClose = keyframes`
   from {
     transform: rotate(0deg);
   }
@@ -93,7 +93,7 @@ const ModelHeader = styled(Typography)({
   color: 'white',
 });
 
-const IconStyle = styled(CloseIcon)({
+const IconStyle = styled(Close)({
   color: 'white',
 });
 
@@ -101,7 +101,7 @@ const IconContainer = styled(IconButton)({
   transition: 'all .3s',
   '&:hover': {
     backgroundColor: 'transparent !important',
-    animation: `${rotateCloseIcon} 1s`,
+    animation: `${rotateClose} 1s`,
   },
 });
 

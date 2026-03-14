@@ -1,6 +1,6 @@
 import React from 'react';
-import DescriptionIcon from '@mui/icons-material/Description';
 import {
+  Description,
   ModalFooter,
   useStepper,
   CustomizedStepper,
@@ -248,7 +248,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
             </Grid2>
           </div>
         ),
-        icon: DescriptionIcon,
+        icon: Description,
         label: 'Model Details',
         helpText: (
           <>

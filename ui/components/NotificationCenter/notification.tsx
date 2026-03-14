@@ -24,6 +24,7 @@ import {
   Expanded,
   GridItem,
   Message,
+  MoreVert,
   StyledAvatarStack,
   Root,
   Summary,
@@ -31,7 +32,6 @@ import {
 
 import { SEVERITY, SEVERITY_STYLE, STATUS } from './constants';
 import { iconLarge, iconMedium } from '../../css/icons.styles';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FacebookIcon from '../../assets/icons/FacebookIcon';
 import LinkedInIcon from '../../assets/icons/LinkedInIcon';
 import TwitterIcon from '../../assets/icons/TwitterIcon';
@@ -126,7 +126,7 @@ const BasicMenu = ({ event }) => {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        <MoreVertIcon />
+        <MoreVert />
       </IconButton>
       <Popover
         open={open}
