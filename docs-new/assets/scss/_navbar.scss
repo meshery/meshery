@@ -55,14 +55,17 @@ html {
   & .icon-container {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
 
     .nav-mode-icon {
       background: none;
       border: none;
+      display: flex;
+      align-items: center;
 
       & > img {
         padding: 0 !important;
-        margin-left: 10%;
+        margin-left: 0;
         width: 2.2rem;
         height: 2.2rem;
         filter: var(--image-color);
@@ -176,7 +179,7 @@ html {
       position: fixed;
       top: calc(var(--navbar-height) - 0rem);
       right: 0;
-      width: max(20vh, 25vw);
+      width: 250px;
       height: 100vh;
       z-index: 9;
       transform: translateX(100%);
