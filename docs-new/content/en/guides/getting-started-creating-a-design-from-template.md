@@ -10,32 +10,46 @@ Meshery offers a wide array of templates within its catalog to help users jumpst
 ## Prerequisites
 
 - Access to a Meshery instance.
-- Basic familiarity with Meshery's interface.
+- Basic familiarity with the Meshery interface.
 
 ## Steps to Clone a Design from Template
 
-### Step 1: Accessing the Meshery Catalog
-1. **Login**: Log in to your Meshery instance.
-2. **Navigate to Catalog**: Locate and click on the "Catalog" or "Templates" section in the navigation menu.
+### Step 1: Access the Meshery Catalog
 
-### Step 2: Exploring Templates
-1. **Browse Templates**: Explore the available templates based on categories, tags, or search keywords.
-2. **Select Template**: Click on the desired template to view its details and configurations.
+1. **Log in** to your Meshery instance.
+2. Navigate to the **Catalog** or **Templates** section from the main navigation menu.
 
-### Step 3: Cloning the Template
-1. **Clone Template**: Look for the "Clone" or "Use Template" option on the template's page.
-2. **Customize Settings** (if available): Configure any settings or parameters based on your project requirements, if prompted.
+### Step 2: Explore and Clone a Template
 
-### Step 4: Confirmation
-- **Confirmation Popup**: Meshery might prompt a confirmation dialog or ask for final confirmation before cloning. Review and confirm the cloning process.
+1. **Browse Templates**  
+   Explore the available templates using categories, tags, or search keywords.
 
-### Step 5: Accessing Cloned Design
-- **Navigate to Cloned Design**: Once the cloning process completes, access the cloned design from your project list or a designated area.
+2. **Select a Template**  
+   Click on the desired template to view its details and configuration options.
+
+3. **Clone the Template**  
+   Look for the **Clone** or **Use Template** option on the template page.
+
+4. **Customize Settings (Optional)**  
+   If prompted, configure any parameters or settings according to your project requirements.
+
+5. **Confirm Cloning**  
+   Meshery may prompt a confirmation dialog before completing the cloning process. Review the details and confirm.
+
+### Step 3: Access the Cloned Design
+
+1. Once the cloning process completes, navigate to your **design workspace** or **project list**.
+2. Locate the newly cloned design and begin modifying or deploying it as needed.
 
 ## Troubleshooting Tips
 
 ### Common Issues
-- **Failed Cloning**: If the cloning process fails, check your internet connection and try again. If the issue persists, reach out to Meshery support.
+
+- **Failed Cloning**  
+  If the cloning process fails, check your internet connection and try again.  
+  If the issue persists, seek help from the [Meshery community](https://layer5.io/community).
 
 ### Additional Assistance
-- **Meshery Community**: Visit the [Meshery community forums](https://layer5.io/community) for help and discussion.
+
+- **Community Support**  
+  Visit the [Meshery Community](https://layer5.io/community) to ask questions, report issues, or get assistance from other users and maintainers.
