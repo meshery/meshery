@@ -4,7 +4,7 @@
 /* COMMAND REFERENCE */
 table.mesherycomponents {
   th {
-    background-color: $charcoal;
+    background-color: project.$charcoal;
     color: white;
   }
   td.childcomponent {
@@ -19,7 +19,7 @@ table.mesherycomponents {
 
 /* INSTALLATION */
 div.prereqs {
-  background-color: $charcoal;
+  background-color: project.$charcoal;
   font-size: 1.5rem;
   color: #ddd;
   margin: 0.5rem;
@@ -32,5 +32,5 @@ div.prereqs {
   }
 }
 a.meshery-light {
-  color: $keppel;
+  color: project.$keppel;
 }
