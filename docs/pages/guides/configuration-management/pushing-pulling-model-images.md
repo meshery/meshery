@@ -15,10 +15,10 @@ You can push or pull Meshery model images to or from any OCI-compatible image re
 
 ## Prerequisites
 
-- [mesheryctl installed](/installation/mesheryctl)
-- [ORAS CLI installed](https://oras.land/docs/installation) (required for pushing model images as OCI artifacts)
-- [Docker CLI installed](https://docs.docker.com/get-docker/) (required for Docker Hub authentication)
-- [AWS CLI installed](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) (required for AWS ECR authentication)
+- [mesheryctl](/installation/mesheryctl)
+- [ORAS CLI](https://oras.land/docs/installation) (optional, for pushing model images as OCI artifacts)
+- [Docker CLI](https://docs.docker.com/get-docker/) (optional, for Docker Hub authentication)
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) (optional, for AWS ECR authentication)
 - Credentials for your target registry
 
 ## Pull a Model Image
