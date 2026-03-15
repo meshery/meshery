@@ -32,6 +32,7 @@ test.describe('Extensions Section Tests', () => {
   });
 
   test('Verify Kanvas Details', async ({ context }) => {
+    await expect(extensionsPage.kanvasSignupHeading).toBeVisible({ timeout: 15000 });
     await extensionsPage.verifyKanvasSignupUI();
     await extensionsPage.verifyNewTab(context, extensionsPage.kanvasSignupBtn, URLS.KANVAS.DOCS);
   });

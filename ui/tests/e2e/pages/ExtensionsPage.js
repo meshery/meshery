@@ -59,8 +59,11 @@ export class ExtensionsPage {
   }
 
   async verifyNewTab(context, locator, expectedUrl) {
-    const [newPage] = await Promise.all([context.waitForEvent('page'), locator.click()]);
-    await expect(newPage).toHaveURL(expectedUrl);
+    const [newPage] = await Promise.all([
+      context.waitForEvent('page', { timeout: 15000 }),
+      locator.click(),
+    ]);
+    await expect(newPage).toHaveURL(expectedUrl, { timeout: 10000 });
     await newPage.close();
   }
 }

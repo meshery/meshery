@@ -191,7 +191,7 @@ const ModelContents = ({ modelDef }: { modelDef: any }) => {
   };
   const handleExport = () => {
     const a = document.createElement('a');
-    a.href = '/api/meshmodels/export?id=' + modelDef.id;
+    a.href = '/api/registry/export?id=' + modelDef.id;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -424,6 +424,7 @@ const TitleWithImg = ({ displayName, iconSrc }: { displayName?: string; iconSrc?
     {iconSrc && (
       <img
         src={iconSrc}
+        alt={displayName ? `${displayName} icon` : 'Model or component icon'}
         height="32px"
         width="32px"
         style={{ objectFit: 'contain', marginRight: '0.6rem' }}

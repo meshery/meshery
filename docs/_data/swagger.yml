@@ -7799,7 +7799,7 @@ paths:
             summary: Handle GET request for getting all connections status
             tags:
                 - GetConnectionsStatus
-    /api/meshmodel/components/register:
+    /api/registry/components/register:
         post:
             description: Validate the given value with the given schema
             operationId: idPostMeshModelValidate
@@ -7809,7 +7809,7 @@ paths:
             summary: Handle POST request for registering meshmodel components.
             tags:
                 - MeshmodelValidate
-    /api/meshmodel/generate:
+    /api/registry/generate:
         post:
             description: Generates Meshery Components for the given payload
             operationId: idPostMeshModelComponentGenerate
@@ -7819,7 +7819,7 @@ paths:
             summary: Handle POST request for component generation
             tags:
                 - MeshmodelComponentGenerate
-    /api/meshmodel/update/status:
+    /api/registry/{entityType}/status:
         post:
             description: Update the ignore status of a model based on the provided parameters.
             operationId: idPostMeshModelUpdateEntityStatus
@@ -7829,7 +7829,7 @@ paths:
             summary: Handle POST request for updating the ignore status of a model.
             tags:
                 - MeshModelUpdateEntityStatus
-    /api/meshmodel/validate:
+    /api/registry/validate:
         post:
             description: Validate the given value with the given schema
             operationId: idPostMeshModelValidate
@@ -7839,7 +7839,7 @@ paths:
             summary: Handle POST request for validate
             tags:
                 - MeshmodelValidate
-    /api/meshmodels/categories:
+    /api/registry/categories:
         get:
             description: |-
                 ```?order={field}``` orders on the passed field
@@ -7858,7 +7858,7 @@ paths:
             summary: Handle GET request for getting all meshmodel categories
             tags:
                 - GetMeshmodelCategories
-    /api/meshmodels/categories/{category}:
+    /api/registry/categories/{category}:
         get:
             description: |-
                 ```?order={field}``` orders on the passed field
@@ -7877,7 +7877,7 @@ paths:
             summary: Handle GET request for getting all meshmodel categories of a given name
             tags:
                 - GetMeshmodelCategoriesByName
-    /api/meshmodels/categories/{category}/components:
+    /api/registry/categories/{category}/components:
         get:
             description: |-
                 # Components can be further filtered through query parameter
@@ -7906,10 +7906,10 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific model and category.
             tags:
                 - GetMeshmodelComponentByCategory
-    /api/meshmodels/categories/{category}/components/{name}:
+    /api/registry/categories/{category}/components/{name}:
         get:
             description: |-
-                Example: ```/api/meshmodels/categories/Orchestration``` and Management/components/Namespace
+                Example: ```/api/registry/categories/Orchestration``` and Management/components/Namespace
                 Components can be further filtered through query parameter
 
                 ```?model={model}``` If model is unspecified then all models are returned
@@ -7936,7 +7936,7 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific type category.
             tags:
                 - GetMeshmodelComponentsByNameByCategory
-    /api/meshmodels/categories/{category}/models:
+    /api/registry/categories/{category}/models:
         get:
             description: |-
                 ```?version={version}``` If version is unspecified then all models are returned
@@ -7958,7 +7958,7 @@ paths:
             summary: Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelModelsByCategories
-    /api/meshmodels/categories/{category}/models/{model}:
+    /api/registry/categories/{category}/models/{model}:
         get:
             description: |-
                 ```?version={version}``` If version is unspecified then all models are returned
@@ -7979,10 +7979,10 @@ paths:
             summary: Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelModelsByCategoriesByModel
-    /api/meshmodels/categories/{category}/models/{model}/components:
+    /api/registry/categories/{category}/models/{model}/components:
         get:
             description: |-
-                Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components
+                Example: ```/api/registry/categories/Orchestration``` and Management/models/kubernetes/components
                 Components can be further filtered through query parameter
 
                 ```?version={version}```
@@ -8009,10 +8009,10 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific model and category. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelComponentByModelByCategory
-    /api/meshmodels/categories/{category}/models/{model}/components/{name}:
+    /api/registry/categories/{category}/models/{model}/components/{name}:
         get:
             description: |-
-                Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components/Namespace
+                Example: ```/api/registry/categories/Orchestration``` and Management/models/kubernetes/components/Namespace
                 Components can be further filtered through query parameter
 
                 ```?version={version}``` If version is unspecified then all model versions are returned
@@ -8037,7 +8037,7 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific type by model and category.
             tags:
                 - GetMeshmodelComponentsByNameByModelByCategory
-    /api/meshmodels/components:
+    /api/registry/components:
         get:
             description: |-
                 # Components can be further filtered through query parameter
@@ -8066,10 +8066,10 @@ paths:
             summary: Handle GET request for getting meshmodel components across all models and categories
             tags:
                 - GetAllMeshmodelComponents
-    /api/meshmodels/components/{name}:
+    /api/registry/components/{name}:
         get:
             description: |-
-                Example: ```/api/meshmodels/components/Namespace```
+                Example: ```/api/registry/components/Namespace```
                 Components can be further filtered through query parameter
 
                 ```?model={model}``` If model is unspecified then all models are returned
@@ -8098,7 +8098,7 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific type by name across all models and categories
             tags:
                 - GetAllMeshmodelComponentsByName
-    /api/meshmodels/export:
+    /api/registry/export:
         get:
             description: |-
                 # Export model with the given id in the output format specified
@@ -8112,7 +8112,7 @@ paths:
             summary: Handle GET request for exporting a model.
             tags:
                 - ExportModel
-    /api/meshmodels/models:
+    /api/registry/models:
         get:
             description: |-
                 # Returns a list of registered models across all categories
@@ -8135,7 +8135,7 @@ paths:
             summary: Handle GET request for getting all meshmodel models
             tags:
                 - GetMeshmodelModels
-    /api/meshmodels/models/{model}:
+    /api/registry/models/{model}:
         get:
             description: |-
                 # Returns a list of registered models across all categories
@@ -8158,10 +8158,10 @@ paths:
             summary: Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelModelsByName
-    /api/meshmodels/models/{model}/components:
+    /api/registry/models/{model}/components:
         get:
             description: |-
-                Example: ```/api/meshmodels/models/kubernetes/components```
+                Example: ```/api/registry/models/kubernetes/components```
                 Components can be further filtered through query parameter
 
                 ```?version={version}```
@@ -8188,10 +8188,10 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific model. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelComponentByModel
-    /api/meshmodels/models/{model}/components/{name}:
+    /api/registry/models/{model}/components/{name}:
         get:
             description: |-
-                Example: ```/api/meshmodels/models/kubernetes/components/Namespace```
+                Example: ```/api/registry/models/kubernetes/components/Namespace```
                 Components can be further filtered through query parameter
 
                 ```?version={version}``` If version is unspecified then all model versions are returned
@@ -8216,10 +8216,10 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific  model.
             tags:
                 - GetMeshmodelComponentsByNameByModel
-    /api/meshmodels/models/{model}/policies/:
+    /api/registry/models/{model}/policies/:
         get:
             description: |-
-                Example: ```/api/meshmodels/models/kubernetes/policies```
+                Example: ```/api/registry/models/kubernetes/policies```
 
                 ```?order={field}``` orders on the passed field
 
@@ -8237,10 +8237,10 @@ paths:
             summary: Handle GET request for getting meshmodel policies of a specific model by name.
             tags:
                 - GetMeshmodelPolicies
-    /api/meshmodels/models/{model}/policies/{name}:
+    /api/registry/models/{model}/policies/{name}:
         get:
             description: |-
-                Example: ```/api/meshmodels/models/kubernetes/policies/{name}```
+                Example: ```/api/registry/models/kubernetes/policies/{name}```
 
                 ```?order={field}``` orders on the passed field
 
@@ -8258,10 +8258,10 @@ paths:
             summary: Handle GET request for getting meshmodel policies of a specific model by name.
             tags:
                 - GetMeshmodelPoliciesByName
-    /api/meshmodels/models/{model}/relationships:
+    /api/registry/models/{model}/relationships:
         get:
             description: |-
-                Example: ```/api/meshmodel/model/kubernetes/relationship```
+                Example: ```/api/registry/models/kubernetes/relationships```
 
                 # Relationships can be further filtered through query parameter
 
@@ -8281,10 +8281,10 @@ paths:
             summary: Handle GET request for getting meshmodel relationships of a specific model
             tags:
                 - GetAllMeshmodelRelationships
-    /api/meshmodels/models/{model}/relationships/{name}:
+    /api/registry/models/{model}/relationships/{name}:
         get:
             description: |-
-                Example: ```/api/meshmodels/models/kubernetes/relationships/Edge```
+                Example: ```/api/registry/models/kubernetes/relationships/Edge```
 
                 # Relationships can be further filtered through query parameter
 
@@ -8306,7 +8306,7 @@ paths:
             summary: Handle GET request for getting meshmodel relationships of a specific model by name.
             tags:
                 - GetMeshmodelRelationshipByName
-    /api/meshmodels/register:
+    /api/registry/register:
         post:
             description: Register model based on their Schema Version.
             operationId: idRegisterMeshmodels
@@ -8316,7 +8316,7 @@ paths:
             summary: Handle POST request for registering entites like components and relationships model.
             tags:
                 - RegisterMeshmodels
-    /api/meshmodels/registrants:
+    /api/registry/registrants:
         get:
             description: |-
                 # Returns a list of registrants and summary count of its models, components, and relationships
@@ -8335,7 +8335,7 @@ paths:
                 "200":
                     $ref: '#/responses/meshmodelRegistrantsResponseWrapper'
             summary: Handle GET request for getting all meshmodel registrants
-    /api/meshmodels/relationships:
+    /api/registry/relationships:
         get:
             description: |-
                 # Relationships can be further filtered through query parameter
@@ -8356,7 +8356,7 @@ paths:
             summary: Handle GET request for getting all meshmodel relationships
             tags:
                 - GetAllMeshmodelRelationships
-    /api/meshmodels/relationships/evaluate:
+    /api/registry/relationships/evaluate:
         post:
             description: Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
             operationId: relationshipPolicyEvalPayloadWrapper
