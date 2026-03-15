@@ -82,7 +82,29 @@ The informer in MeshSync actively listens to changes in resources and updates th
 
 ### Synthetic Test of MeshSync
 
-_TODO: Include an example of how to invoke this built-in check._
+MeshSync health can be verified using Meshery's built-in system checks. For example, run:
+
+```bash
+mesheryctl system check --operator
+```
+
+This check reports the status of Meshery Operator and its controllers, including MeshSync and Broker.
+This check can also be triggered in the UI from the **Connections** view by clicking the **connection chip**.
+
+Example output:
+
+```text
+Meshery Operators
+--------------
+✓ Meshery Operator is running
+✓ Meshsync is running
+✓ Meshery Broker is running
+✓ Meshery Broker CR contains Status.Endpoint (External: <public-endpoint>, Internal: <cluster-endpoint>)
+```
+
+How to interpret:
+- A ✓ line means that component is healthy and reachable.
+- A "!!" line indicates the component is not running or a required status field is missing.
 
 ## Scalability and Performance
 
