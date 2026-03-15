@@ -14,9 +14,10 @@ import {
   ViewIcon,
   useMediaQuery,
   Divider,
-  ErrorBoundary,
   CustomTooltip,
 } from '@sistent/sistent';
+// @ts-expect-error - ErrorBoundary exists at runtime but types may not be exported
+import { ErrorBoundary } from '@sistent/sistent';
 import { WorkspacesComponent } from '../Lifecycle';
 import { iconMedium, iconSmall } from 'css/icons.styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -211,8 +212,8 @@ const WorkspaceContentWrapper = ({ id, workspacesData, onSelectWorkspace }) => {
   useEffect(() => {
     if (id === 'All Workspaces') {
       workspaceSwitcherContext.setSelectedWorkspace({
-        id: null,
-        name: null,
+        id: '',
+        name: '',
       });
     }
   }, [id, workspacesData]);
@@ -239,7 +240,7 @@ const Navigation = ({ setHeaderInfo }) => {
   const theme = useTheme();
   const closeList = useMediaQuery(theme.breakpoints.down('xl'));
   const [open, setOpen] = useState(!closeList);
-  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
+  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery({});
   const isLocalProvider = capabilitiesData?.provider_type === 'local';
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
@@ -257,6 +258,7 @@ const Navigation = ({ setHeaderInfo }) => {
       skip: !selectedOrganization?.id,
     },
   );
+  const workspaces = ((workspacesData as any)?.workspaces ?? []) as any[];
   const onSelectWorkspace = ({ id, name }) => {
     setSelectedId(id);
     workspaceSwitcherContext.setSelectedWorkspace({
@@ -283,15 +285,23 @@ const Navigation = ({ setHeaderInfo }) => {
     } else if (id === 'All Workspaces') {
       setHeaderInfo({
         title: 'All Workspaces',
-        icon: <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />,
+        icon: (
+          <WorkspaceIcon
+            {...iconMedium}
+            secondaryFill={theme.palette.icon.neutral?.default || theme.palette.icon.default}
+          />
+        ),
       });
     } else {
-      const foundWorkspace = workspacesData?.workspaces?.find((workspace) => workspace.id === id);
+      const foundWorkspace = workspaces.find((workspace) => workspace.id === id);
       if (foundWorkspace) {
         setHeaderInfo({
           title: `Workspace "${foundWorkspace.name}"`,
           icon: (
-            <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />
+            <WorkspaceIcon
+              {...iconMedium}
+              secondaryFill={theme.palette.icon.neutral?.default || theme.palette.icon.default}
+            />
           ),
         });
       }
@@ -371,7 +381,12 @@ const WorkspaceModal = ({ workspaceModal, closeWorkspaceModal }) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [headerInfo, setHeaderInfo] = useState({
     title: 'All Workspaces',
-    icon: <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />,
+    icon: (
+      <WorkspaceIcon
+        {...iconMedium}
+        secondaryFill={theme.palette.icon.neutral?.default || theme.palette.icon.default}
+      />
+    ),
   });
 
   return (

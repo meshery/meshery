@@ -59,6 +59,15 @@ export const WORKSPACE_ACTION_TYPES = {
   EDIT: 'edit',
 };
 
+type WorkspaceSelection = {
+  id: string;
+  name: string;
+};
+
+type WorkspacesPageProps = {
+  onSelectWorkspace?: (_workspace: WorkspaceSelection) => void;
+};
+
 const columnList = [
   {
     name: 'id',
@@ -122,7 +131,7 @@ const columnList = [
   },
 ];
 
-const Workspaces = ({ onSelectWorkspace }) => {
+const Workspaces = ({ onSelectWorkspace }: WorkspacesPageProps) => {
   const theme = useTheme();
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
@@ -576,7 +585,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
   );
 };
 
-const WorkspacesPageWithErrorBoundary = ({ onSelectWorkspace }) => {
+const WorkspacesPageWithErrorBoundary = ({ onSelectWorkspace }: WorkspacesPageProps) => {
   return (
     <NoSsr>
       <Workspaces onSelectWorkspace={onSelectWorkspace} />

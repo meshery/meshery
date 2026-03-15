@@ -82,7 +82,8 @@ const SearchBar = ({
     } else {
       setExpanded(true);
       setTimeout(() => {
-        searchRef.current.focus();
+        const inputEl = searchRef.current as HTMLInputElement | null;
+        inputEl?.focus();
       }, 300);
     }
   };
@@ -112,7 +113,8 @@ const SearchBar = ({
       {expanded ? (
         <ClickAwayListener
           onClickAway={(event) => {
-            const isTable = event.target.closest('#ref');
+            const target = event.target as HTMLElement | null;
+            const isTable = target?.closest ? target.closest('#ref') : null;
 
             if (searchText !== '') {
               return;

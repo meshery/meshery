@@ -3,6 +3,7 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
 import OrgIcon from 'assets/icons/OrgIcon';
+// @ts-expect-error
 import { ErrorBoundary, FormControl, FormGroup, MenuItem, useTheme, NoSsr } from '@sistent/sistent';
 import {
   OrgName,
@@ -17,6 +18,7 @@ import { useGetCurrentAbilities } from 'rtk-query/ability';
 import CustomErrorFallback from '../ErrorBoundary';
 import { useDispatch, useSelector } from 'react-redux';
 import { setKeys, setOrganization } from '@/store/slices/mesheryUi';
+import type { RootState } from '../../../store';
 
 const RequestForm = () => {
   const {
@@ -27,8 +29,9 @@ const RequestForm = () => {
   } = useGetOrgsQuery({});
 
   const theme = useTheme();
-  let orgs = orgsResponse?.organizations || [];
-  const { organization } = useSelector((state) => state.ui);
+  let orgs = (orgsResponse?.organizations || []) as Array<{ id: string; name: string }>;
+  const { organization } = useSelector((state: RootState) => state.ui);
+  const organizationTyped = organization as { id: string; name: string } | null;
   const dispatch = useDispatch();
   const abilitiesResult = useGetCurrentAbilities(organization);
 
@@ -41,12 +44,14 @@ const RequestForm = () => {
 
   useEffect(() => {
     if (isOrgsError) {
+      const errorMessage =
+        (orgsError as any)?.data || ((orgsError as any)?.message as string) || 'Unknown error';
       notify({
-        message: `There was an error fetching available data ${orgsError?.data}`,
+        message: `There was an error fetching available data ${errorMessage}`,
         event_type: EVENT_TYPES.ERROR,
       });
     }
-  }, [orgsError]);
+  }, [orgsError, isOrgsError, notify]);
 
   const handleOrgSelect = (e) => {
     const id = e.target.value;
@@ -71,10 +76,11 @@ const RequestForm = () => {
             <FormGroup>
               <StyledFormControlLabel
                 key="SelectRecipient"
+                label=""
                 control={
                   <StyledSelect
                     fullWidth
-                    value={organization?.id ? organization.id : ''}
+                    value={organizationTyped?.id ? organizationTyped.id : ''}
                     onChange={handleOrgSelect}
                     SelectDisplayProps={{
                       style: { display: 'flex' },

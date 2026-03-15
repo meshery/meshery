@@ -118,9 +118,9 @@ function MesheryResultDialog(props) {
   };
 
   const renderLoadProfile = (rowData) => {
-    let contents = '';
+    let contents: React.ReactNode[] = [];
     if (rowData.runner_results) {
-      let percentiles = '';
+      let percentiles: React.ReactNode[] = [];
       if (
         rowData.runner_results.DurationHistogram &&
         rowData.runner_results.DurationHistogram.Percentiles

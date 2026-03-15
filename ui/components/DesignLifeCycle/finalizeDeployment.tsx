@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { selectSelectedEnvs } from '@/store/slices/globalEnvironmentContext';
-const { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } = require('@sistent/sistent');
-const { processDesign, CheckBoxField, StepHeading } = require('./common');
+import { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } from '@sistent/sistent';
+import { processDesign, CheckBoxField, StepHeading } from './common';
 
 const StyledSummaryItem = styled(Box)(({ theme }) => ({
   borderRadius: '0.5rem',
@@ -14,13 +14,15 @@ const StyledEnvironment = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '0.5rem',
-  color: theme.palette.text.neutral.default,
+  color: theme.palette.text.neutral?.default || theme.palette.text.primary,
 }));
 
 export const FinalizeDeployment = ({ design }) => {
   const { configurableComponents } = processDesign(design);
   const selectedEnvironments = useSelector(selectSelectedEnvs);
-  const envNames = Object.values(selectedEnvironments).map((env) => env.name);
+  const envNames = (Object.values(selectedEnvironments) as Array<{ name?: string }>)
+    .map((env) => env?.name)
+    .filter((name): name is string => typeof name === 'string');
 
   const theme = useTheme();
   const palette = theme.palette;
@@ -35,8 +37,8 @@ export const FinalizeDeployment = ({ design }) => {
           <Stack gap={1} mt={1}>
             {envNames.map((env) => (
               <StyledEnvironment key={env}>
-                <EnvironmentIcon fill={palette.text.neutral.default} />
-                <Typography key={env}>{env}</Typography>
+                <EnvironmentIcon fill={palette.text.neutral?.default || palette.text.primary} />
+                <Typography>{env}</Typography>
               </StyledEnvironment>
             ))}
           </Stack>
@@ -51,8 +53,8 @@ export const FinalizeDeployment = ({ design }) => {
             <Typography
               sx={{
                 fontSize: '3.2rem',
+                color: palette.text.neutral?.default || palette.text.primary,
               }}
-              color={palette.text.neutral.default}
             >
               {configurableComponents.length}
             </Typography>

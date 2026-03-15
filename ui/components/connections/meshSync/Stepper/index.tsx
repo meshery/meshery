@@ -9,7 +9,9 @@ import {
 } from './constants';
 import { ColorlibConnector, CustomLabelStyle, StepperContainer } from '../../styles';
 
-const StepIconWrapper = styled('div')(({ theme, active, completed }) => ({
+const StepIconWrapper = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'active' && prop !== 'completed',
+})<{ active?: boolean; completed?: boolean }>(({ theme, active, completed }) => ({
   backgroundColor: theme.palette.background.card,
   zIndex: 1,
   color: '#fff',
@@ -56,8 +58,17 @@ const StepperContent = styled(Box)({
   width: '100%',
 });
 
-function StepperIcon({ active, completed, stepIcons, icon }) {
-  const iconComponent = stepIcons[String(icon)];
+type CustomizedSteppersProps = {
+  sharedData: any;
+  setSharedData: React.Dispatch<React.SetStateAction<any>>;
+  connectionData: any;
+  onClose: () => void;
+  handleRegistrationComplete: (_resourceId: string) => void;
+};
+
+function StepperIcon(props: any) {
+  const { active, completed, stepIcons, icon } = props;
+  const iconComponent = stepIcons[String(icon)] as React.ReactElement;
   const additionalProps = {
     fill: completed ? 'white' : 'currentColor',
   };
@@ -69,7 +80,13 @@ function StepperIcon({ active, completed, stepIcons, icon }) {
   );
 }
 
-export default function CustomizedSteppers({ sharedData, setSharedData, connectionData, onClose }) {
+export default function CustomizedSteppers({
+  sharedData,
+  setSharedData,
+  connectionData,
+  onClose,
+  handleRegistrationComplete: _handleRegistrationComplete,
+}: CustomizedSteppersProps) {
   const [activeStep, setActiveStep] = React.useState(0);
   const stepData = {
     stepContent: registerConnectionContent,
@@ -125,7 +142,7 @@ export default function CustomizedSteppers({ sharedData, setSharedData, connecti
       </StepperHeader>
       <StepperContent>
         <TipsCarousel tips={ConnectionStepperTips} />
-        {React.cloneElement(ActiveStepContent, stepProps)}
+        {ActiveStepContent && <ActiveStepContent {...(stepProps || {})} />}
       </StepperContent>
     </StepperLayout>
   );

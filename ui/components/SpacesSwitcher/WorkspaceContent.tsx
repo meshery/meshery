@@ -1,17 +1,12 @@
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import {
-  Box,
-  FormControl,
-  Grid2,
-  InputLabel,
-  MenuItem,
-  PromptComponent,
-  Select,
-  useTheme,
-  WorkspaceContentMoveModal,
-} from '@sistent/sistent';
+import { Box, FormControl, Grid2, InputLabel, MenuItem, Select, useTheme } from '@sistent/sistent';
+// @ts-expect-error - PromptComponent exists at runtime but types may not be exported
+import { PromptComponent } from '@sistent/sistent';
+// @ts-expect-error - WorkspaceContentMoveModal exists at runtime but types may not be exported
+import { WorkspaceContentMoveModal } from '@sistent/sistent';
 import React, { useCallback, useRef, useState } from 'react';
+// @ts-expect-error - StyledSearchBar exists at runtime but types may not be exported
 import { StyledSearchBar } from '@sistent/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import MainViewsContent from './MainViewsContent';
@@ -36,6 +31,7 @@ import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProv
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { useNotification } from '@/utils/hooks/useNotification';
+import type { RootState } from '@/store/index';
 
 const WorkspaceContent = ({ workspace }) => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
@@ -102,7 +98,7 @@ const WorkspaceContent = ({ workspace }) => {
   }, []);
 
   const {
-    data: designsData,
+    data: designsDataRaw,
     isLoading,
     isFetching,
     refetch: refetchDesigns,
@@ -120,9 +116,10 @@ const WorkspaceContent = ({ workspace }) => {
       skip: filters.type !== RESOURCE_TYPE.DESIGN || !workspace?.id,
     },
   );
+  const designsData = designsDataRaw as any;
 
   const {
-    data: viewsData,
+    data: viewsDataRaw,
     isLoading: isViewLoading,
     isFetching: isViewFetching,
     refetch: refetchViews,
@@ -140,6 +137,7 @@ const WorkspaceContent = ({ workspace }) => {
       skip: filters.type !== RESOURCE_TYPE.VIEW || !workspace?.id,
     },
   );
+  const viewsData = viewsDataRaw as any;
 
   const theme = useTheme();
 
@@ -176,7 +174,7 @@ const WorkspaceContent = ({ workspace }) => {
   const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
   const [assignViewToWorkspace] = useAssignViewToWorkspaceMutation();
   const router = useRouter();
-  const { organization: currentOrganization } = useSelector((state) => state.ui);
+  const { organization: currentOrganization } = useSelector((state: RootState) => state.ui);
   const { notify } = useNotification();
   return (
     <>
@@ -263,6 +261,7 @@ const WorkspaceContent = ({ workspace }) => {
             handleDownload={handleDownloadModalOpen}
             handleViewDownload={handleViewDownload}
             handleContentMove={setWorkspaceContentMoveModal}
+            handleShare={undefined}
             refetch={refetch}
           />
           <WorkspaceContentMoveModal

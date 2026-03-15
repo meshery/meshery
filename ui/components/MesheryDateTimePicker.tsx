@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { TextField } from '@sistent/sistent';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
+import type { Moment } from 'moment';
 
 interface MesheryDateTimePickerProps {
   label: string;

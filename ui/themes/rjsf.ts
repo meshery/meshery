@@ -1,10 +1,13 @@
 import { createTheme } from '@sistent/sistent';
 
-const breakpoints = createTheme().breakpoints;
+const baseTheme = createTheme();
+const breakpoints = baseTheme.breakpoints;
 
 export const rjsfTheme = createTheme({
   palette: {
+    ...baseTheme.palette,
     primary: {
+      ...baseTheme.palette.primary,
       main: '#607d8b',
     },
   },
@@ -42,11 +45,7 @@ export const rjsfTheme = createTheme({
         },
       },
     },
-    MuiMenu: {
-      defaultProps: {
-        variant: 'outlined',
-      },
-    },
+    MuiMenu: {},
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
@@ -93,13 +92,6 @@ export const rjsfTheme = createTheme({
         root: {
           textTransform: 'capitalize',
           padding: '3px',
-        },
-      },
-    },
-    MuiBox: {
-      styleOverrides: {
-        root: {
-          marginTop: 0,
         },
       },
     },
@@ -254,10 +246,18 @@ export const rjsfTheme = createTheme({
   },
 });
 
+const baseDarkTheme = createTheme({
+  palette: {
+    ...(baseTheme.palette as any),
+    mode: 'dark',
+  },
+});
+
 export const darkRjsfTheme = createTheme({
   palette: {
-    mode: 'dark',
+    ...baseDarkTheme.palette,
     primary: {
+      ...baseDarkTheme.palette.primary,
       main: '#00B39F',
     },
   },
@@ -292,12 +292,7 @@ export const darkRjsfTheme = createTheme({
         },
       },
     },
-    MuiOutlinedInput: {
-      defaultProps: {
-        variant: 'outlined',
-        margin: 'dense',
-      },
-    },
+    MuiOutlinedInput: {},
     MuiCheckbox: {
       defaultProps: {
         color: 'primary',
@@ -369,13 +364,6 @@ export const darkRjsfTheme = createTheme({
         root: {
           textTransform: 'capitalize',
           padding: '3px',
-        },
-      },
-    },
-    MuiBox: {
-      styleOverrides: {
-        root: {
-          marginTop: 0,
         },
       },
     },

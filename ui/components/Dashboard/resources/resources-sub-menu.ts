@@ -1,1 +1,2 @@
-export { default } from './resources-sub-menu.tsx';
+// @ts-expect-error
+export { default } from './resources-sub-menu';

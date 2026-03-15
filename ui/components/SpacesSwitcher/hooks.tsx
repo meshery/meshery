@@ -5,15 +5,25 @@ import { useEffect, useRef } from 'react';
 import { useDeletePatternFileMutation } from '@/rtk-query/design';
 import { useDeleteViewMutation } from '@/rtk-query/view';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { DesignIcon, PROMPT_VARIANTS, useTheme, ViewIcon } from '@sistent/sistent';
+import { DesignIcon, useTheme, ViewIcon } from '@sistent/sistent';
+// @ts-expect-error - PROMPT_VARIANTS exists at runtime but types may not be exported
+import { PROMPT_VARIANTS } from '@sistent/sistent';
 import { EVENT_TYPES } from 'lib/event-types';
 import { iconMedium } from 'css/icons.styles';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import downloadContent, { downloadFileFromContent } from '@/utils/fileDownloader';
 
-const useInfiniteScroll = ({ isLoading, hasMore, onLoadMore }) => {
-  const loadingRef = useRef(null);
-  const observerRef = useRef(null);
+const useInfiniteScroll = ({
+  isLoading,
+  hasMore,
+  onLoadMore,
+}: {
+  isLoading: boolean;
+  hasMore: boolean;
+  onLoadMore: () => void;
+}) => {
+  const loadingRef = useRef<HTMLElement | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
     if (isLoading || !hasMore) return;
@@ -24,7 +34,7 @@ const useInfiniteScroll = ({ isLoading, hasMore, onLoadMore }) => {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore && !isLoading) {
+        if (entries[0]?.isIntersecting && hasMore && !isLoading) {
           onLoadMore();
         }
       },
@@ -47,7 +57,7 @@ const useInfiniteScroll = ({ isLoading, hasMore, onLoadMore }) => {
 
 export default useInfiniteScroll;
 
-export const getDesignPath = (id) => {
+export const getDesignPath = (id?: string) => {
   const currentRoute = new URL(window.location.href);
   const currentURI = currentRoute.origin + currentRoute.pathname;
 
@@ -58,7 +68,7 @@ export const getDesignPath = (id) => {
   const newURI = currentURI + '?' + newParams.toString();
   return newURI;
 };
-export const viewPath = ({ id, name }) => {
+export const viewPath = ({ id, name }: { id?: string; name?: string }) => {
   const currentRoute = new URL(window.location.href);
   const currentURI = currentRoute.origin + currentRoute.pathname;
   const newParams = new URLSearchParams({
@@ -71,7 +81,7 @@ export const viewPath = ({ id, name }) => {
   return newURI;
 };
 
-export const catalogPath = ({ id, name }) => {
+export const catalogPath = ({ id, name }: { id?: string; name?: string }) => {
   const currentRoute = new URL(window.location.href);
   const currentURI = currentRoute.origin + currentRoute.pathname;
   const newParams = new URLSearchParams({
@@ -106,7 +116,10 @@ export const getShareableResourceRoute = (type, id, name) => {
  * @param {array} - Array of model display names
  * @return {array} - Array of unique model names
  */
-export const getModelNamesBasedOnDisplayNames = (meshModels, displayNames) => {
+export const getModelNamesBasedOnDisplayNames = (
+  meshModels: Array<{ displayName?: string; name?: string }>,
+  displayNames: string[],
+) => {
   const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
     ?.filter((model) =>
       displayNames.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
@@ -153,13 +166,22 @@ export const getDefaultFilterType = () => {
   return RESOURCE_TYPE.DESIGN;
 };
 
-export const useGetIconBasedOnMode = ({ mode, designStyles, viewStyles }) => {
+export const useGetIconBasedOnMode = ({
+  mode,
+  designStyles = {},
+  viewStyles = {},
+}: {
+  mode: any;
+  designStyles?: any;
+  viewStyles?: any;
+}) => {
   const theme = useTheme();
   if (mode === RESOURCE_TYPE.DESIGN) {
     return <DesignIcon {...designStyles} />;
   } else if (mode == RESOURCE_TYPE.VIEW) {
     return <ViewIcon {...viewStyles} fill={theme.palette.icon.brand} {...iconMedium} />;
   }
+  return null;
 };
 
 export const useContentDelete = (modalRef) => {

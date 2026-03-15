@@ -11,8 +11,24 @@ import { InputField, Root, DropDown } from './style';
 import React, { useState, useEffect } from 'react';
 import { iconSmall } from 'css/icons.styles';
 
-function transformData(data) {
-  const result = {};
+type FilterSchemaEntry = {
+  value: string;
+  description: string;
+  type?: string;
+  values?: string[];
+  multiple?: boolean;
+};
+
+type FilterSchema = Record<string, FilterSchemaEntry>;
+
+type FilterOption = {
+  type: string;
+  value: string;
+  label: string;
+};
+
+function transformData(data: Array<Pick<FilterOption, 'type' | 'value'>>) {
+  const result: Record<string, string | string[]> = {};
 
   data.forEach(({ type, value }) => {
     const key = type.toLowerCase();
@@ -84,27 +100,39 @@ function transformData(data) {
  * @param {object[]} defaultFilters - An array of default filters to initialize the component.
  * @returns {JSX.Element} - A React JSX element representing the TypingFilter component.
  */
-const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters }) => {
+const TypingFilter = ({
+  filterSchema,
+  placeholder,
+  handleFilter,
+  defaultFilters,
+}: {
+  filterSchema: FilterSchema;
+  handleFilter: (_filters: Record<string, string | string[]>) => void;
+  placeholder?: string;
+  defaultFilters: FilterOption[];
+}) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [selectedFilters, setSelectedFilters] = useState(defaultFilters);
+  const [selectedFilters, setSelectedFilters] = useState<FilterOption[]>(defaultFilters);
 
   useEffect(() => {
     setSelectedFilters(defaultFilters);
-  }, [defaultFilters.length]);
+  }, [defaultFilters]);
 
   const getOptions = () => {
     if (inputValue.includes(':')) {
-      const [filterTypeInput, searchValue = ''] = inputValue.split(':');
+      const [filterTypeInput = '', searchValue = ''] = inputValue.split(':');
       const filterTypeInputLower = filterTypeInput.toLowerCase().trim();
 
       // Find the matching schema key
-      const schemaKey = Object.keys(filterSchema).find(
-        (key) => filterSchema[key].value.toLowerCase() === filterTypeInputLower,
-      );
+      const schemaKey = Object.keys(filterSchema).find((key) => {
+        const entry = filterSchema[key];
+        return entry?.value?.toLowerCase() === filterTypeInputLower;
+      });
 
       if (schemaKey) {
         const schema = filterSchema[schemaKey];
+        if (!schema) return [];
 
         // If the filter has predefined values, filter them by the search term
         if (schema.values && schema.values.length > 0) {
@@ -140,16 +168,18 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
     }));
   };
 
-  const handleSelect = (option) => {
+  const handleSelect = (option?: FilterOption) => {
     if (!option) return;
 
     if (!inputValue.includes(':')) {
       setInputValue(`${option.value}: `);
     } else {
+      const schema = filterSchema[option.type];
+      if (!schema) return;
       const newFilter = {
         type: option.type,
         value: option.value,
-        label: `${filterSchema[option.type]?.value}: ${option.value}`,
+        label: `${schema.value}: ${option.value}`,
       };
 
       const existingFilterIndex = selectedFilters.findIndex(
@@ -160,7 +190,7 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
         return;
       }
 
-      if (filterSchema[option.type].multiple === false) {
+      if (schema.multiple === false) {
         setSelectedFilters((prev) => [...prev.filter((f) => f.type !== option.type), newFilter]);
       } else {
         setSelectedFilters((prev) => [...prev, newFilter]);
@@ -171,17 +201,19 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
     }
   };
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && inputValue.includes(':')) {
-      const [filterType, value] = inputValue.split(':');
-      const schemaKey = Object.keys(filterSchema).find(
-        (key) => filterSchema[key].value.toLowerCase() === filterType.toLowerCase(),
-      );
-      if (schemaKey && !filterSchema[schemaKey].values?.length && value.trim()) {
+      const [filterType = '', value = ''] = inputValue.split(':');
+      const schemaKey = Object.keys(filterSchema).find((key) => {
+        const entry = filterSchema[key];
+        return entry?.value?.toLowerCase() === filterType.toLowerCase();
+      });
+      const schema = schemaKey ? filterSchema[schemaKey] : undefined;
+      if (schemaKey && schema && !schema.values?.length && value.trim()) {
         handleSelect({
           type: schemaKey,
           value: value.trim(),
-          label: `${filterSchema[schemaKey].value}: ${value.trim()}`,
+          label: `${schema.value}: ${value.trim()}`,
         });
       }
     }
@@ -199,9 +231,11 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
   };
 
   const theme = useTheme();
+  // Sistent's Autocomplete typings are stricter than runtime (e.g. `multiple` / `freeSolo`)
+  const SAutocomplete = Autocomplete as any;
   return (
     <Root className="mui-fixed">
-      <Autocomplete
+      <SAutocomplete
         style={{ paddingLeft: '0px' }}
         size="small"
         multiple
@@ -230,12 +264,12 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
             handleSelect(details.option);
           }
         }}
-        getOptionLabel={(option) => option.label}
-        isOptionEqualToValue={(option, value) =>
+        getOptionLabel={(option: FilterOption) => option.label}
+        isOptionEqualToValue={(option: FilterOption, value: FilterOption) =>
           option.type === value.type && option.value === value.value
         }
-        renderOption={(props, option, { index }) => {
-          const options = getOptions();
+        renderOption={(props: any, option: FilterOption, { index }: { index: number }) => {
+          const options = getOptions() as FilterOption[];
           return (
             <React.Fragment key={option.label}>
               <li
@@ -252,8 +286,8 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
             </React.Fragment>
           );
         }}
-        renderTags={(value, getTagProps) => {
-          return value
+        renderTags={(value: FilterOption[], getTagProps: any) => {
+          return (value as FilterOption[])
             .filter((option) => filterSchema[option?.type]?.value)
             .map((option, index) => (
               <Chip
@@ -304,6 +338,7 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
               placeholder={placeholder}
               onKeyDown={handleKeyDown}
               InputProps={customInputProps}
+              variant="outlined"
             />
           );
         }}

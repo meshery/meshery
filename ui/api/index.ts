@@ -6,7 +6,7 @@ const instance = axios.create({
 
 instance.interceptors.response.use((response) => {
   if (response.request.responseURL.includes('/auth/login')) {
-    window.location = '/auth/login';
+    window.location.href = '/auth/login';
     window.onbeforeunload = null;
   }
   return response;

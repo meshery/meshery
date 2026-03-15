@@ -7,13 +7,13 @@ export const HeaderAppBar = styled(AppBar)(({ theme }) => ({
 
 export const StyledToolbar = styled(Toolbar, {
   shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
-})(({ theme, isDrawerCollapsed }) => ({
+})(({ theme, isDrawerCollapsed }: any) => ({
   minHeight: 59,
   padding: 16,
   paddingLeft: isDrawerCollapsed ? 0 : 14,
   paddingRight: 14,
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.card : darkTeal.main,
-  boxShadow: `3px 0px 4px ${theme.palette.background.brand.default}`,
+  boxShadow: `3px 0px 4px ${theme.palette.background.brand?.default || theme.palette.primary.main}`,
   [theme.breakpoints.down('sm')]: {
     paddingRight: 8,
   },
@@ -43,7 +43,7 @@ export const UserContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-export const SettingsWrapper = styled('div')(({ isDesktop }) => ({
+export const SettingsWrapper = styled('div')(({ isDesktop }: any) => ({
   display: isDesktop ? 'block' : 'none',
 }));
 
@@ -66,9 +66,9 @@ export const HeaderIcons = styled(MenuIcon)(({ theme }) => ({
   fontSize: '1.5rem',
   height: '24px',
   width: '24px',
-  fill: theme.palette.background.constant.white,
+  fill: theme.palette.background.constant?.white || '#fff',
   '&:hover': {
-    fill: theme.palette.background.brand.default,
+    fill: theme.palette.background.brand?.default || theme.palette.primary.main,
   },
 }));
 
@@ -115,10 +115,10 @@ export const IconButtonMenu = styled(IconButton)(({ theme }) => ({
   color: theme.palette.common.white,
 }));
 
-export const UserInfoContainer = styled('div')(({ theme }) => ({
+export const UserInfoContainer = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
-  [theme.breakpoints.down('399')]: {
+  [`@media (max-width: 399px)`]: {
     gap: '0.3rem',
   },
 }));

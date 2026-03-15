@@ -17,12 +17,12 @@ import { calculateGrid, safeStringTitle } from '../helper';
  * @returns {Array} raw errors.
  */
 
-const getRawErrors = (errorSchema) => {
+const getRawErrors = (errorSchema: any) => {
   if (!errorSchema) return [];
-  const errors = [];
+  const errors: string[] = [];
   Object.keys(errorSchema).forEach((key) => {
     if (errorSchema?.[key]?.__errors) {
-      errors.push(...errorSchema[key].__errors);
+      errors.push(...(errorSchema[key].__errors as string[]));
     }
   });
   return errors;
@@ -65,7 +65,7 @@ const ObjectFieldTemplate = ({
     return (
       <Box mb={1} mt={1} id={id}>
         <CssBaseline />
-        <Grid2 container justify="flex-start" alignItems="center" size="grow">
+        <Grid2 container justifyContent="flex-start" alignItems="center" size="grow">
           {canExpand(schema, uiSchema, formData) ? (
             <Grid2
               onClick={() => {
@@ -78,11 +78,11 @@ const ObjectFieldTemplate = ({
                 disabled={disabled || readonly}
               >
                 <AddIcon
+                  width="16px"
+                  height="16px"
+                  fill="#ffffff"
                   style={{
                     backgroundColor: `${theme.palette.mode === 'dark' ? '#00b39F' : '#647881'}`,
-                    width: '16px',
-                    height: '16px',
-                    color: '#ffffff',
                     borderRadius: '.2rem',
                   }}
                 />
@@ -93,9 +93,19 @@ const ObjectFieldTemplate = ({
               <Grid2>
                 <IconButton className="object-property-expand" onClick={() => setShow(!show)}>
                   {show ? (
-                    <ExpandLessIcon style={iconMedium} fill="gray" />
+                    <ExpandLessIcon
+                      width={String(iconMedium.width)}
+                      height={String(iconMedium.height)}
+                      style={iconMedium}
+                      fill="gray"
+                    />
                   ) : (
-                    <ExpandMoreIcon style={iconMedium} fill="gray" />
+                    <ExpandMoreIcon
+                      width={String(iconMedium.width)}
+                      height={String(iconMedium.height)}
+                      style={iconMedium}
+                      fill="gray"
+                    />
                   )}
                 </IconButton>
               </Grid2>
@@ -117,8 +127,8 @@ const ObjectFieldTemplate = ({
             {safeStringTitle(descProp ?? safeDescriptionStr) && (
               <CustomTextTooltip title={safeStringTitle(descProp ?? safeDescriptionStr)}>
                 <IconButton
-                  disableTouchRipple="true"
-                  disableRipple="true"
+                  disableTouchRipple={true}
+                  disableRipple={true}
                   component="span"
                   size="small"
                 >
@@ -137,8 +147,8 @@ const ObjectFieldTemplate = ({
                 title={safeStringTitle(Array.isArray(rawErrors) ? rawErrors.join('  ') : rawErrors)}
               >
                 <IconButton
-                  disableTouchRipple="true"
-                  disableRipple="true"
+                  disableTouchRipple={true}
+                  disableRipple={true}
                   component="span"
                   size="small"
                 >

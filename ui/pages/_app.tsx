@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';

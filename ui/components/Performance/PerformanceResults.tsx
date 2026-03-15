@@ -40,10 +40,10 @@ const COL_MAPPING = {
   P99: 6,
 };
 
-function generateResultsForDisplay(results) {
+function generateResultsForDisplay(results: any) {
   if (Array.isArray(results)) {
-    return results.map((record) => {
-      const data = {
+    return results.map((record: any) => {
+      const data: any = {
         name: record.name,
         mesh: record.mesh,
         test_start_time: record.runner_results.StartTime,
@@ -53,9 +53,11 @@ function generateResultsForDisplay(results) {
       };
 
       if (record.runner_results?.DurationHistogram?.Percentiles) {
-        record.runner_results.DurationHistogram.Percentiles.forEach(({ Percentile, Value }) => {
-          data[`p${Percentile}`.replace('.', '_')] = Value.toFixed(3);
-        });
+        record.runner_results.DurationHistogram.Percentiles.forEach(
+          ({ Percentile, Value }: any) => {
+            data[`p${Percentile}`.replace('.', '_')] = Value.toFixed(3);
+          },
+        );
       } else {
         data.p50 = 0;
         data.p75 = 0;
@@ -72,15 +74,15 @@ function generateResultsForDisplay(results) {
 }
 
 function generateColumnsForDisplay(
-  sortOrder,
-  setSelectedProfileIdxForChart,
-  setSelectedProfileIdxForNodeDetails,
-  theme,
-  handleSocialExpandClick,
-  handleClickAway,
-  socialExpand,
-  anchorEl,
-  socialMessage,
+  sortOrder: string,
+  setSelectedProfileIdxForChart: any,
+  setSelectedProfileIdxForNodeDetails: any,
+  theme: any,
+  handleSocialExpandClick: any,
+  handleClickAway: any,
+  socialExpand: any,
+  anchorEl: any,
+  socialMessage: any,
 ) {
   const columns = [
     {
@@ -90,13 +92,19 @@ function generateColumnsForDisplay(
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+        customHeadRender: function CustomHead(
+          { index, ...column }: any,
+          sortColumn: any,
+          columnMeta: any,
+        ) {
           return (
             <SortableTableCell
               index={index}
               columnData={column}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
+              icon={undefined}
+              tooltip={undefined}
             />
           );
         },
@@ -109,13 +117,19 @@ function generateColumnsForDisplay(
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+        customHeadRender: function CustomHead(
+          { index, ...column }: any,
+          sortColumn: any,
+          columnMeta: any,
+        ) {
           return (
             <SortableTableCell
               index={index}
               columnData={column}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
+              icon={undefined}
+              tooltip={undefined}
             />
           );
         },
@@ -128,13 +142,19 @@ function generateColumnsForDisplay(
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+        customHeadRender: function CustomHead(
+          { index, ...column }: any,
+          sortColumn: any,
+          columnMeta: any,
+        ) {
           return (
             <SortableTableCell
               index={index}
               columnData={column}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
+              icon={undefined}
+              tooltip={undefined}
             />
           );
         },
@@ -150,8 +170,8 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        customHeadRender: function CustomHead({ ...column }: any) {
+          return <DefaultTableCell columnData={column} icon={undefined} tooltip={undefined} />;
         },
       },
     },
@@ -162,8 +182,8 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        customHeadRender: function CustomHead({ ...column }: any) {
+          return <DefaultTableCell columnData={column} icon={undefined} tooltip={undefined} />;
         },
       },
     },
@@ -175,8 +195,8 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        customHeadRender: function CustomHead({ ...column }: any) {
+          return <DefaultTableCell columnData={column} icon={undefined} tooltip={undefined} />;
         },
       },
     },
@@ -188,8 +208,8 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        customHeadRender: function CustomHead({ ...column }: any) {
+          return <DefaultTableCell columnData={column} icon={undefined} tooltip={undefined} />;
         },
       },
     },
@@ -199,10 +219,10 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        customHeadRender: function CustomHead({ ...column }: any) {
+          return <DefaultTableCell columnData={column} icon={undefined} tooltip={undefined} />;
         },
-        customBodyRender: function CustomBody(value, tableMeta) {
+        customBodyRender: function CustomBody(value: any, tableMeta: any) {
           return (
             <IconButton
               aria-label="more"
@@ -222,10 +242,10 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        customHeadRender: function CustomHead({ ...column }: any) {
+          return <DefaultTableCell columnData={column} icon={undefined} tooltip={undefined} />;
         },
-        customBodyRender: function CustomBody(value, tableMeta) {
+        customBodyRender: function CustomBody(value: any, tableMeta: any) {
           return (
             <IconButton
               aria-label="more"
@@ -244,10 +264,10 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        customHeadRender: function CustomHead({ ...column }: any) {
+          return <DefaultTableCell columnData={column} icon={undefined} tooltip={undefined} />;
         },
-        customBodyRender: function CustomBody(_, tableMeta) {
+        customBodyRender: function CustomBody(_: any, tableMeta: any) {
           return (
             <>
               <IconButton
@@ -268,7 +288,7 @@ function generateColumnsForDisplay(
                 anchorEl={anchorEl[tableMeta.rowIndex]}
                 transition
               >
-                {({ TransitionProps }) => (
+                {({ TransitionProps }: any) => (
                   <ClickAwayListener onClickAway={() => handleClickAway(tableMeta.rowIndex)}>
                     <Fade {...TransitionProps} timeout={350}>
                       <Paper sx={{ padding: theme.spacing(1) }}>
@@ -310,7 +330,7 @@ function generateColumnsForDisplay(
     },
   ];
 
-  return columns.map((column) => {
+  return columns.map((column: any) => {
     if (column.name === sortOrder.split(' ')[0]) {
       column.options.sortDirection = sortOrder.split(' ')[1];
     }
@@ -323,8 +343,8 @@ function getSocialMessageForPerformanceTest(rps, percentile) {
   return `I achieved ${rps.trim()} RPS running my service at a P99.9 of ${percentile} ms using @mesheryio with @smp_spec! Find out how fast your service is with`;
 }
 
-function generateSelectedRows(results_selection, page, pageSize) {
-  const rowsSelected = [];
+function generateSelectedRows(results_selection: any, page: number, pageSize: number) {
+  const rowsSelected: number[] = [];
   Object.keys(results_selection).forEach((pg) => {
     if (parseInt(pg) !== page) {
       Object.keys(results_selection[parseInt(pg)]).forEach((ind) => {
@@ -342,7 +362,15 @@ function generateSelectedRows(results_selection, page, pageSize) {
   return rowsSelected;
 }
 
-function ResultChart({ result, handleTabChange, tabValue }) {
+function ResultChart({
+  result,
+  handleTabChange,
+  tabValue,
+}: {
+  result: any;
+  handleTabChange: any;
+  tabValue: number;
+}) {
   if (!result) return <div />;
 
   // const getMuiTheme = () => createTheme({
@@ -408,7 +436,15 @@ function ResultChart({ result, handleTabChange, tabValue }) {
   );
 }
 
-function ResultNodeDetails({ result, handleTabChange, tabValue }) {
+function ResultNodeDetails({
+  result,
+  handleTabChange,
+  tabValue,
+}: {
+  result: any;
+  handleTabChange: any;
+  tabValue: number;
+}) {
   if (!result) return <div />;
   const chartData = result.runner_results;
 
@@ -483,24 +519,24 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }) {
  *  elevation?: Number
  * }} props
  */
-function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
+function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }: any) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [results, setResults] = useState([]);
-  const [selectedRowChart, setSelectedRowChart] = useState();
-  const [selectedRowNodeDetails, setSelectedRowNodeDetails] = useState();
+  const [results, setResults] = useState<any[]>([]);
+  const [selectedRowChart, setSelectedRowChart] = useState<any>();
+  const [selectedRowNodeDetails, setSelectedRowNodeDetails] = useState<any>();
   const [tabValue, setTabValue] = useState(0);
-  const [socialExpand, setSocialExpand] = useState([false]);
-  const [anchorEl, setAnchorEl] = useState([]);
-  const [socialMessage, setSocialMessage] = useState();
+  const [socialExpand, setSocialExpand] = useState<any[]>([false]);
+  const [anchorEl, setAnchorEl] = useState<any[]>([]);
+  const [socialMessage, setSocialMessage] = useState<string>('');
   const theme = useTheme();
-  const { user } = useSelector((state) => state.ui);
+  const { user } = useSelector((state: any) => state.ui);
   const dispatch = useDispatch();
-  const { results_selection } = useSelector((state) => state.prefTest);
-  const searchTimeout = useRef();
+  const { results_selection } = useSelector((state: any) => state.prefTest);
+  const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { notify } = useNotification();
 
   useEffect(() => {
@@ -539,7 +575,7 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
     };
   }, [page, pageSize, search, sortOrder]);
 
-  const handleSocialExpandClick = (e, tableMeta) => {
+  const handleSocialExpandClick = (e: any, tableMeta: any) => {
     let socialExpandUpdate = [...socialExpand];
     socialExpandUpdate[tableMeta.rowIndex] = !socialExpand[tableMeta.rowIndex];
     setSocialExpand(socialExpandUpdate);
@@ -555,13 +591,13 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
     );
   };
 
-  const handleClickAway = (index) => {
+  const handleClickAway = (index: number) => {
     let socialExpandUpdate = [...socialExpand];
     socialExpandUpdate[index] = !socialExpand[index];
     setSocialExpand(socialExpandUpdate);
   };
 
-  function fetchResults(page, pageSize, search, sortOrder) {
+  function fetchResults(page: number, pageSize: number, search: string, sortOrder: string) {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
 
@@ -596,7 +632,7 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
     });
   }
 
-  function handleError(error) {
+  function handleError(error: any) {
     updateProgress({ showProgress: false });
     notify({
       message: `There was an error fetching results: ${error}`,
@@ -641,11 +677,11 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
     rowsSelected: generateSelectedRows(results_selection, page, pageSize),
     print: false,
     download: false,
-    onRowsSelect: (_, allRowsSelected) => {
+    onRowsSelect: (_: any, allRowsSelected: any) => {
       // const rs = self.props.results_selection;
-      const res = {};
-      allRowsSelected.forEach(({ dataIndex }) => {
-        if (dataIndex < pageSize) {
+      const res: any = {};
+      allRowsSelected.forEach(({ dataIndex }: any) => {
+        if (dataIndex < pageSize && results[dataIndex]) {
           if (res[dataIndex]) delete res[dataIndex];
           else res[dataIndex] = results[dataIndex];
         }
@@ -654,10 +690,10 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
       dispatch(updateResultsSelection({ page, results: res }));
     },
 
-    onTableChange: (action, tableState) => {
+    onTableChange: (action: string, tableState: any) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
       let order = '';
-      if (tableState.activeColumn) {
+      if (tableState.activeColumn !== undefined && columns[tableState.activeColumn]) {
         order = `${columns[tableState.activeColumn].name} desc`;
       }
 
@@ -672,15 +708,18 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
           if (searchTimeout.current) {
             clearTimeout(searchTimeout.current);
           }
-          // @ts-ignore
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
               setSearch(tableState.searchText || '');
             }
-          }, 500);
+          }, 500) as ReturnType<typeof setTimeout>;
           break;
         case 'sort':
-          if (sortInfo.length === 2) {
+          if (
+            sortInfo.length === 2 &&
+            tableState.activeColumn !== undefined &&
+            columns[tableState.activeColumn]
+          ) {
             if (sortInfo[1] === 'ascending') order = `${columns[tableState.activeColumn].name} asc`;
             else order = `${columns[tableState.activeColumn].name} desc`;
           }
@@ -690,22 +729,20 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
       }
     },
     customToolbarSelect: function CustomToolbarSelectComponent(
-      selectedRows,
-      displayData,
-      setSelectedRows,
+      selectedRows: any,
+      displayData: any,
+      setSelectedRows: any,
     ) {
       return (
         <CustomToolbarSelect
-          selectedRows={selectedRows}
-          displayData={displayData}
+          {...({ selectedRows, displayData, results } as any)}
           setSelectedRows={setSelectedRows}
-          results={results}
         />
       );
     },
   };
 
-  function handleTabChange(event, newValue) {
+  function handleTabChange(event: any, newValue: number) {
     setTabValue(newValue);
   }
 
@@ -721,7 +758,6 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
 
       <GenericModal
         open={!!selectedRowChart}
-        // @ts-ignore
         Content={
           <ResultChart
             result={selectedRowChart}
@@ -730,11 +766,11 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
           />
         }
         handleClose={() => setSelectedRowChart(undefined)}
+        {...({ container: undefined } as any)}
       />
 
       <GenericModal
         open={!!selectedRowNodeDetails}
-        // @ts-ignore
         Content={
           <ResultNodeDetails
             result={selectedRowNodeDetails}
@@ -743,6 +779,7 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
           />
         }
         handleClose={() => setSelectedRowNodeDetails(undefined)}
+        {...({ container: undefined } as any)}
       />
     </NoSsr>
   );

@@ -1,8 +1,6 @@
 import React from 'react';
 import {
   ModalFooter,
-  useStepper,
-  CustomizedStepper,
   ModalBody,
   Box,
   TextField,
@@ -13,6 +11,8 @@ import {
   Grid2,
   MenuItem,
 } from '@sistent/sistent';
+// @ts-expect-error - useStepper and CustomizedStepper exist at runtime but types may not be exported
+import { useStepper, CustomizedStepper } from '@sistent/sistent';
 import { GlobalStyles } from '@mui/material';
 import { styled } from '@sistent/sistent';
 import { RelationshipDefinitionV1Alpha3OpenApiSchema } from '@meshery/schemas';
@@ -35,11 +35,11 @@ const StyledSummaryBox = styled(Box)(({ theme }) => ({
   marginBottom: '1rem',
 }));
 const StyledDocsRedirectLink = styled('a')(({ theme }) => ({
-  color: theme.palette.background.brand.default,
+  color: theme.palette.background.brand?.default || theme.palette.primary.main,
   textDecoration: 'underline',
 }));
 
-const RelationshipFormStepper = React.memo(({ handleClose }) => {
+const RelationshipFormStepper = React.memo(({ handleClose }: { handleClose: () => void }) => {
   const RelationshipDefinitionV1Alpha3Schema =
     RelationshipDefinitionV1Alpha3OpenApiSchema.components.schemas.RelationshipDefinition;
 
@@ -70,18 +70,20 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
   );
 
   const [relationshipName, setRelationshipName] = React.useState('');
-  const [formData, setFormData] = React.useState({});
+  const [formData, setFormData] = React.useState<any>({});
   const [jsonOutput, setJsonOutput] = React.useState('');
-  const formRef = React.useRef();
+  const formRef = React.useRef<any>(null);
 
-  const [selectedCategory, setSelectedCategory] = React.useState(null);
-  const [selectedModel, setSelectedModel] = React.useState(null);
+  const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null);
+  const [selectedModel, setSelectedModel] = React.useState<string | null>(null);
   const { models, meshmodelComponents, getModelFromCategory, getComponentsFromModel, categories } =
     useMeshModelComponents();
 
-  const handleFormChange = (formData) => {
+  const handleFormChange = (formData: any) => {
     if (selectedModel && selectedCategory) {
-      const modelData = models[selectedCategory]?.find((model) => model.name === selectedModel);
+      const modelData = models[selectedCategory]?.find(
+        (model: any) => model.name === selectedModel,
+      );
 
       if (modelData) {
         formData = {
@@ -114,36 +116,38 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
     );
   };
 
-  const handleCategoryChange = (event) => {
+  const handleCategoryChange = (event: any) => {
     setSelectedCategory(event.target.value);
     getModelFromCategory(event.target.value);
     setSelectedModel(null);
   };
 
-  const handleModelChange = (event) => {
+  const handleModelChange = (event: any) => {
     if (event.target.value) {
-      getComponentsFromModel(event.target.value);
+      getComponentsFromModel(event.target.value, undefined);
       setSelectedModel(event.target.value);
 
-      const modelData = models[selectedCategory]?.find(
-        (model) => model.name === event.target.value,
-      );
-      if (modelData) {
-        setFormData((prevData) => ({
-          ...prevData,
-          model: {
-            ...formData.model,
-            id: modelData.id,
-            name: modelData.name,
-            schemaVersion: modelData.schemaVersion,
-            subCategory: modelData.subCategory,
-            status: modelData.status,
-            version: modelData.version,
-            displayName: modelData.displayName,
-            registrant: modelData.registrant,
-            metadata: modelData.metadata,
-          },
-        }));
+      if (selectedCategory) {
+        const modelData = models[selectedCategory]?.find(
+          (model: any) => model.name === event.target.value,
+        );
+        if (modelData) {
+          setFormData((prevData: any) => ({
+            ...prevData,
+            model: {
+              ...(prevData.model || {}),
+              id: modelData.id,
+              name: modelData.name,
+              schemaVersion: modelData.schemaVersion,
+              subCategory: modelData.subCategory,
+              status: modelData.status,
+              version: modelData.version,
+              displayName: modelData.displayName,
+              registrant: modelData.registrant,
+              metadata: modelData.metadata,
+            },
+          }));
+        }
       }
     }
   };
@@ -196,10 +200,10 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                           horizontal: 'left',
                         },
                         style: { zIndex: 1500 },
-                        getContentAnchorEl: null,
+                        ...({ getContentAnchorEl: null } as any),
                       },
-                      renderValue: (selected) => {
-                        if (!selected || selected.length === 0) {
+                      renderValue: (selected: any) => {
+                        if (!selected || (typeof selected === 'string' && selected.length === 0)) {
                           return <em>Select Category</em>;
                         }
                         return selected;
@@ -216,7 +220,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                     <MenuItem value="" disabled>
                       <em>Select Category</em>
                     </MenuItem>
-                    {categories.map((cat) => (
+                    {categories.map((cat: any) => (
                       <MenuItem key={cat.name} value={cat.name}>
                         {cat.name}
                       </MenuItem>
@@ -237,10 +241,10 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                           horizontal: 'left',
                         },
                         style: { zIndex: 1500 },
-                        getContentAnchorEl: null,
+                        ...({ getContentAnchorEl: null } as any),
                       },
-                      renderValue: (selected) => {
-                        if (!selected || selected.length === 0) {
+                      renderValue: (selected: any) => {
+                        if (!selected || (typeof selected === 'string' && selected.length === 0)) {
                           return <em>Select Model</em>;
                         }
                         return selected;
@@ -257,11 +261,12 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                     <MenuItem value="" disabled>
                       <em>Select Model</em>
                     </MenuItem>
-                    {models?.[selectedCategory]?.map((model, idx) => (
-                      <MenuItem key={`${model.name}-${idx}`} value={model.name}>
-                        {model.displayName}
-                      </MenuItem>
-                    ))}
+                    {selectedCategory &&
+                      models?.[selectedCategory]?.map((model: any, idx: number) => (
+                        <MenuItem key={`${model.name}-${idx}`} value={model.name}>
+                          {model.displayName}
+                        </MenuItem>
+                      ))}
                   </TextField>
                 </FormControl>
               </Grid2>
@@ -351,17 +356,16 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
             </Box>
             <StyledSummaryBox>
               <pre
-                style={{
-                  whiteSpace: 'pre-wrap',
-                  maxHeight: '400px',
-                  overflowX: 'auto',
-                  padding: '4px',
-                  borderRadius: '4px',
-                  scrollbarWidth: 'none',
-                  '&::-webkit-scrollbar': {
-                    display: 'none',
-                  },
-                }}
+                style={
+                  {
+                    whiteSpace: 'pre-wrap',
+                    maxHeight: '400px',
+                    overflowX: 'auto',
+                    padding: '4px',
+                    borderRadius: '4px',
+                    scrollbarWidth: 'none',
+                  } as React.CSSProperties
+                }
               >
                 {jsonOutput || 'No JSON preview available. Please go back and try again.'}
               </pre>

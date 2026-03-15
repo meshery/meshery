@@ -86,7 +86,10 @@ export const fetchPromGrafanaScanData = (ctx) => {
         credentials: 'include',
       },
       (result) => {
-        let metricsUrls = { grafana: [], prometheus: [] };
+        let metricsUrls: { grafana: string[]; prometheus: string[] } = {
+          grafana: [],
+          prometheus: [],
+        };
         if (!result) res(metricsUrls);
 
         if (Array.isArray(result.prometheus)) {
@@ -111,8 +114,8 @@ export const fetchPromGrafanaScanData = (ctx) => {
  * @param {object[]} scannedData
  * @returns {string[]}
  */
-export const extractURLFromScanData = (data) => {
-  const result = [];
+export const extractURLFromScanData = (data: any): string[] => {
+  const result: string[] = [];
   // scannedData.forEach(data => {
   // Add loadbalancer based url
   if (Array.isArray(data.status?.loadBalancer?.ingress)) {
@@ -127,8 +130,10 @@ export const extractURLFromScanData = (data) => {
           // From kubernetes v1.19 docs
           // Hostname is set for load-balancer ingress points that are DNS based (typically AWS load-balancers)
           // IP is set for load-balancer ingress points that are IP based (typically GCE or OpenStack load-balancers)
-          let address = lbdata.ip || lbdata.hostname;
-          if (address) result.push(`${protocol}://${address}:${port}`);
+          const lbAddress: string | undefined = (lbdata as any).ip || (lbdata as any).hostname;
+          if (lbAddress) {
+            result.push(`${protocol}://${lbAddress}:${port}`);
+          }
         });
       }
     });
@@ -190,9 +195,7 @@ export const handleGrafanaConfigure = (
     },
     (err) => {
       updateProgress({ showProgress: false });
-      if (typeof result !== 'undefined') {
-        notify({ message: 'Grafana was not configured! :' + err, event_type: EVENT_TYPES.ERROR });
-      }
+      notify({ message: 'Grafana was not configured! :' + err, event_type: EVENT_TYPES.ERROR });
     },
   );
 };
@@ -237,12 +240,10 @@ export const handlePrometheusConfigure = (
     },
     (err) => {
       updateProgress({ showProgress: false });
-      if (typeof result !== 'undefined') {
-        notify({
-          message: 'Prometheus was not configured! :' + err,
-          event_type: EVENT_TYPES.ERROR,
-        });
-      }
+      notify({
+        message: 'Prometheus was not configured! :' + err,
+        event_type: EVENT_TYPES.ERROR,
+      });
     },
   );
 };

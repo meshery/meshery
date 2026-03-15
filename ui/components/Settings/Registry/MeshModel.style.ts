@@ -6,7 +6,8 @@ export const DisableButton = styled(Button)(({ theme }) => ({
   '&.MuiButtonBase-root:disabled': {
     cursor: 'not-allowed',
     pointerEvents: 'auto',
-    backgroundColor: theme.palette.background.brand.disabled,
+    backgroundColor:
+      theme.palette.background.brand?.disabled ?? theme.palette.action.disabledBackground,
     color: theme.palette.text.disabled,
   },
 }));
@@ -23,8 +24,8 @@ export const JustifyAndAlignCenter = styled('div')(
   }),
 );
 
-export const StyledTreeItemRoot = styled(TreeItem)(
-  ({ theme, root, lineColor }: { theme: any; root?: boolean; lineColor: string }) => ({
+export const StyledTreeItemRoot = styled(TreeItem)<{ root?: boolean; lineColor: string }>(
+  ({ theme, root, lineColor }) => ({
     position: 'relative',
     '&:before': {
       pointerEvents: 'none',
@@ -53,7 +54,7 @@ export const StyledTreeItemRoot = styled(TreeItem)(
         fontWeight: theme.typography.fontWeightRegular,
       },
     },
-    [`& .${treeItemClasses.group}`]: {
+    [`& .${treeItemClasses.groupTransition}`]: {
       // marginLeft: 34,
       paddingLeft: 36,
       borderLeft: `1px dashed ${alpha(lineColor, 0.4)}`,

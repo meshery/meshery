@@ -8,6 +8,7 @@ import {
   Grid2,
   Box,
   styled,
+  // @ts-expect-error
   PROMPT_VARIANTS,
 } from '@sistent/sistent';
 import React from 'react';
@@ -26,39 +27,39 @@ import CAN from '@/utils/can';
 import { useAddKubernetesConfigMutation } from '../rtk-query/connection';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
-const styles = styled((theme) => ({
-  ctxIcon: {
-    display: 'inline',
-    verticalAlign: 'text-top',
-    width: theme.spacing(2.5),
-    marginLeft: theme.spacing(0.5),
-  },
-  chip: {
-    height: '50px',
-    fontSize: '15px',
-    position: 'relative',
-    top: theme.spacing(0.5),
-    [theme.breakpoints.down('md')]: { fontSize: '12px' },
+const StyledChipGrid = styled(Grid2)(({ theme }) => ({
+  height: '50px',
+  fontSize: '15px',
+  position: 'relative',
+  top: theme.spacing(0.5),
+  [theme.breakpoints.down('md')]: {
+    fontSize: '12px',
   },
 }));
 
 const MesherySettingsEnvButtons = () => {
   let k8sfileElementVal = '';
   let formData = new FormData();
-  const ref = useRef(null);
+  const ref = useRef<any>(null);
   const { notify } = useNotification();
 
-  let contextsRef = useRef();
+  let contextsRef = useRef<any>(null);
 
   const testIDs = useTestIDsGenerator('connection');
 
   const [addK8sConfig] = useAddKubernetesConfigMutation();
 
-  const handleConfigSnackbars = (ctxs) => {
+  const handleConfigSnackbars = (ctxs: any) => {
     updateProgress({ showProgress: false });
-    for (let ctx of ctxs.errored_contexts) {
-      const msg = `Failed to add cluster "${ctx.name}" at ${ctx.server}`;
-      notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: ctx.error.toString() });
+    if (ctxs?.errored_contexts) {
+      for (let ctx of ctxs.errored_contexts) {
+        const msg = `Failed to add cluster "${ctx.name}" at ${ctx.server}`;
+        notify({
+          message: msg,
+          event_type: EVENT_TYPES.ERROR,
+          details: ctx.error?.toString() || '',
+        });
+      }
     }
   };
 
@@ -74,13 +75,17 @@ const MesherySettingsEnvButtons = () => {
   const handleChange = () => {
     const field = document.getElementById('k8sfile');
     const textField = document.getElementById('k8sfileLabelText');
-    if (field instanceof HTMLInputElement) {
-      if (field.files.length < 1) return;
-      const name = field.files[0].name;
-      const formdata = new FormData();
-      formdata.append('k8sfile', field.files[0]);
-      textField.value = name;
-      formData = formdata;
+    if (field instanceof HTMLInputElement && field.files && field.files.length > 0) {
+      const file = field.files[0];
+      if (file) {
+        const name = file.name;
+        const formdata = new FormData();
+        formdata.append('k8sfile', file);
+        if (textField instanceof HTMLInputElement) {
+          textField.value = name;
+        }
+        formData = formdata;
+      }
     }
   };
 
@@ -88,11 +93,12 @@ const MesherySettingsEnvButtons = () => {
     return await addK8sConfig({ body: formData }).unwrap();
   };
 
-  const showUploadedContexts = async (inputFileName) => {
+  const showUploadedContexts = async (inputFileName: string) => {
     const modal = ref.current;
-    const registeredContexts = contextsRef.current.registered_contexts;
-    const connectedContexts = contextsRef.current.connected_contexts;
-    const ignoredContexts = contextsRef.current.ignored_contexts;
+    if (!modal || !contextsRef.current) return;
+    const registeredContexts = contextsRef.current.registered_contexts || [];
+    const connectedContexts = contextsRef.current.connected_contexts || [];
+    const ignoredContexts = contextsRef.current.ignored_contexts || [];
     if (
       registeredContexts.length === 0 &&
       connectedContexts.length == 0 &&
@@ -113,7 +119,6 @@ const MesherySettingsEnvButtons = () => {
             registeredContexts={registeredContexts}
             connectedContexts={connectedContexts}
             ignoredContexts={ignoredContexts}
-            allContextsRef={contextsRef}
             dataTestid={testIDs('discoveredModal')}
           />
         </>
@@ -125,6 +130,7 @@ const MesherySettingsEnvButtons = () => {
 
   const handleClick = async () => {
     const modal = ref.current;
+    if (!modal) return;
     let response = await modal.show({
       title: 'Add Kubernetes Cluster(s)',
       subtitle: (
@@ -148,7 +154,8 @@ const MesherySettingsEnvButtons = () => {
                 variant="outlined"
                 fullWidth
                 onClick={() => {
-                  document.querySelector('#k8sfile')?.click();
+                  const fileInput = document.querySelector('#k8sfile') as HTMLInputElement | null;
+                  fileInput?.click();
                 }}
                 data-testid={testIDs('uploadKubeConfig')}
                 margin="normal"
@@ -172,12 +179,13 @@ const MesherySettingsEnvButtons = () => {
     });
 
     if (response === 'IMPORT') {
-      if (formData.get('k8sfile') === null) {
+      const k8sfile = formData.get('k8sfile');
+      if (!k8sfile || !(k8sfile instanceof File)) {
         handleError('No file selected')('Please select a valid kube config');
         return;
       }
 
-      const inputFileName = formData.get('k8sfile').name;
+      const inputFileName = k8sfile.name;
       const invalidExtensions = /^.*\.(jpg|gif|jpeg|pdf|png|svg)$/i;
 
       if (invalidExtensions.test(inputFileName)) {
@@ -235,6 +243,11 @@ const ShowDiscoveredContexts = ({
   connectedContexts,
   ignoredContexts,
   dataTestid,
+}: {
+  registeredContexts: any[];
+  connectedContexts: any[];
+  ignoredContexts: any[];
+  dataTestid: string;
 }) => {
   const ping = useKubernetesHook();
 
@@ -274,12 +287,19 @@ const ShowDiscoveredContexts = ({
   );
 };
 
-const K8sConnectionItems = ({ status, contexts, ping }) => {
-  const classes = styles();
+const K8sConnectionItems = ({
+  status,
+  contexts,
+  ping,
+}: {
+  status: any;
+  contexts: any[];
+  ping: any;
+}) => {
   return (
     <Grid2 container spacing={2} size={'grow'}>
       {contexts.map((context) => (
-        <Grid2
+        <StyledChipGrid
           direction="column"
           alignContent="center"
           alignItems="center"
@@ -288,7 +308,6 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
           spacing={1}
           id={context.connection_id}
           key={context.connection_id}
-          className={classes.chip}
         >
           <Box minWidth="25%" maxWidth="50%">
             <Tooltip title={`Server: ${context.server}`}>
@@ -297,9 +316,9 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
                   display: 'flex',
                   justifyContent: 'flex-wrap',
                   alignItems: 'center',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
                 }}
-                whiteSpace="no-wrap"
-                textOverflow="ellipsis"
               >
                 <TooltipWrappedConnectionChip
                   title={context.name}
@@ -312,9 +331,9 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
             </Tooltip>
           </Box>
           <Box minWidth="25%" maxWidth="50%">
-            <ConnectionStateChip status={status} />
+            <ConnectionStateChip status={status} actionable={false} />
           </Box>
-        </Grid2>
+        </StyledChipGrid>
       ))}
     </Grid2>
   );

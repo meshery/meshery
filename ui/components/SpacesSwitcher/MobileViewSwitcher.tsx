@@ -12,10 +12,13 @@ import {
 } from '@sistent/sistent';
 import React, { useState } from 'react';
 import { CMenuContainer } from '../Header.styles';
-import WorkspaceSwitcher from './WorkspaceSwitcher';
+import WorkspaceSwitcherBase from './WorkspaceSwitcher';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconXLarge } from 'css/icons.styles';
 import { OrgMenu } from './SpaceSwitcher';
+
+// WorkspaceSwitcher accepts more props at runtime than its exported TS type
+const WorkspaceSwitcher = WorkspaceSwitcherBase as any;
 
 const MobileOrgWksSwither_ = ({ organization, router }) => {
   return (
@@ -49,9 +52,9 @@ function SwitcherMenu({ organization, router }) {
   const [anchorEl, setAnchorEl] = useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
 
-  const styleSlider = {
+  const styleSlider: React.CSSProperties = {
     position: 'absolute',
-    zIndex: '-1',
+    zIndex: -1,
     top: '-8%',
     width: isSmallScreen ? '100%' : '270px',
     transition: 'top 0.4s ease, transform 0.4s ease',
@@ -88,7 +91,7 @@ function SwitcherMenu({ organization, router }) {
             marginLeft: '0.5rem',
           }}
         >
-          <DashboardSwitcherIcon height={28} width={28} />
+          <DashboardSwitcherIcon height="28" width="28" />
         </Button>
 
         <Slide
@@ -102,12 +105,22 @@ function SwitcherMenu({ organization, router }) {
           <div>
             <ClickAwayListener
               onClickAway={(e) => {
+                const target = e.target as (HTMLElement | SVGElement | null) | null;
+                if (!target) return;
+                const tagName =
+                  (target as any).tagName && typeof (target as any).tagName === 'string'
+                    ? (target as any).tagName.toLowerCase()
+                    : '';
+                const hasSwitcherClass =
+                  'classList' in target &&
+                  !!(target as HTMLElement).classList?.contains?.('switcher-icon-button');
+
                 if (
-                  !(e.target.tagName.toLowerCase() === 'body') &&
-                  !e.target.classList.contains('switcher-icon-button') &&
-                  !(e.target.tagName.toLowerCase() === 'path') &&
-                  !(e.target.tagName.toLowerCase() === 'svg') &&
-                  !(e.target.tagName.toLowerCase() === 'circle')
+                  tagName !== 'body' &&
+                  !hasSwitcherClass &&
+                  tagName !== 'path' &&
+                  tagName !== 'svg' &&
+                  tagName !== 'circle'
                 ) {
                   setAnchorEl(false);
                   setShowFullContextMenu(false);
@@ -117,7 +130,12 @@ function SwitcherMenu({ organization, router }) {
               <CMenuContainer>
                 <Grid2 container spacing={2} alignItems="center" flexDirection={'column'}>
                   <StyledGrid container>
-                    <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.icon.default} />
+                    <OrgOutlinedIcon
+                      {...iconXLarge}
+                      height="28"
+                      width="28"
+                      fill={theme.palette.icon.default}
+                    />
                     <OrgMenu open={true} fromMobileView={true} organization={organization} />
                   </StyledGrid>
 

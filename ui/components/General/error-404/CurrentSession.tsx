@@ -10,6 +10,7 @@ import {
 } from './styles';
 import { NoSsr } from '@sistent/sistent';
 import OrgIcon from 'assets/icons/OrgIcon';
+// @ts-expect-error
 import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../ErrorBoundary';
 import { useGetSelectedOrganization } from '@/rtk-query/user';
@@ -32,7 +33,7 @@ const CurrentSessionInfo = () => {
     // isSuccess: isProviderRolesSuccess,
     // isError: isProviderRolesError,
     // error: providerRolesError,
-  } = useGetUserProviderRolesQuery();
+  } = useGetUserProviderRolesQuery(undefined);
 
   console.log('rolesRes', rolesRes, 'providerRolesRes', providerRolesRes);
 

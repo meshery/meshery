@@ -29,7 +29,9 @@ const ResultContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-const Separator = styled('div')(({ theme, vertical }) => ({
+const Separator = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'vertical',
+})(({ theme, vertical }: any) => ({
   ...(vertical
     ? {
         height: '10.4rem',
@@ -62,7 +64,7 @@ function Dashboard() {
   const [runTest, setRunTest] = useState(false);
   const { notify } = useNotification();
   const router = useRouter();
-  const { grafana } = useSelector((state) => state.telemetry);
+  const { grafana } = useSelector((state: any) => state.telemetry);
   const theme = useTheme();
 
   /**
@@ -155,7 +157,7 @@ function Dashboard() {
             alignContent="space-around"
             size="grow"
           >
-            <Grid2 cspacing={1} direction="column" size={{ xs: 12, lg: 6 }}>
+            <Grid2 spacing={1} direction="column" size={{ xs: 12, lg: 6 }}>
               <Grid2>
                 <StyledPaper>
                   <ResultContainer>
@@ -193,6 +195,7 @@ function Dashboard() {
                         </StyledButton>
                       </div>
                     </StyledPaper>
+                    {/* @ts-expect-error - vertical is a custom prop handled by shouldForwardProp */}
                     <Separator vertical />
                     <Separator />
                     <StyledPaper sx={{ boxShadow: 'none' }}>

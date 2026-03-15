@@ -6,7 +6,7 @@
  * @param {Array.<string>} ctx The context Array
  * @returns {string} The final query-parametrised URL
  */
-export function ctxUrl(url, ctx) {
+export function ctxUrl(url: string, ctx?: string[]): string {
   if (ctx?.length) {
     const contextQuery = ctx.map((context) => `contexts=${context}`).join('&');
     return `${url}?${contextQuery}`;
@@ -19,18 +19,21 @@ export function ctxUrl(url, ctx) {
  *  their respective cluster IDs associated to them
  *
  * @param {Array.<string>} selectedContexts
- * @param {Array.<string>} k8sconfig
+ * @param {Array.<Object>} k8sconfig
  * @returns
  */
-export const getK8sClusterIdsFromCtxId = (selectedContexts, k8sconfig) => {
+export const getK8sClusterIdsFromCtxId = (
+  selectedContexts: string[] | undefined,
+  k8sconfig: Array<{ id: string; kubernetes_server_id?: string }> | undefined,
+): string[] => {
   if (!selectedContexts || !k8sconfig || selectedContexts.length === 0) {
     return [];
   }
 
   if (selectedContexts.includes('all')) {
-    return k8sconfig.map((cfg) => cfg?.kubernetes_server_id);
+    return k8sconfig.map((cfg) => cfg?.kubernetes_server_id || '').filter(Boolean) as string[];
   }
-  const clusterIds = [];
+  const clusterIds: string[] = [];
   selectedContexts.forEach((context) => {
     const clusterId = k8sconfig.find((cfg) => cfg.id === context)?.kubernetes_server_id;
     if (clusterId) {
@@ -44,19 +47,22 @@ export const getK8sClusterIdsFromCtxId = (selectedContexts, k8sconfig) => {
 /**
  *
  * @param {Array.<string>} selectedK8sContexts
- * @param {Array.<string>} k8sConfig
+ * @param {Array.<Object>} k8sConfig
  * @returns {string} The context ID
  */
-export function getFirstCtxIdFromSelectedCtxIds(selectedK8sContexts, k8sConfig) {
+export function getFirstCtxIdFromSelectedCtxIds(
+  selectedK8sContexts: string[] | undefined,
+  k8sConfig: Array<{ id: string }>,
+): string {
   if (!selectedK8sContexts?.length) {
     return '';
   }
 
   if (selectedK8sContexts?.includes('all')) {
-    return k8sConfig[0]?.id;
+    return k8sConfig[0]?.id || '';
   }
 
-  return selectedK8sContexts[0];
+  return selectedK8sContexts[0] || '';
 }
 
 /**
@@ -64,7 +70,9 @@ export function getFirstCtxIdFromSelectedCtxIds(selectedK8sContexts, k8sConfig) 
  * @param {Array.<Object>} k8sConfig
  * @returns
  */
-export function getK8sConfigIdsFromK8sConfig(k8sConfig) {
+export function getK8sConfigIdsFromK8sConfig(
+  k8sConfig: Array<{ id: string }> | undefined,
+): string[] {
   if (!k8sConfig || !k8sConfig.length) {
     return [];
   }
@@ -72,7 +80,10 @@ export function getK8sConfigIdsFromK8sConfig(k8sConfig) {
   return k8sConfig.map((cfg) => cfg.id);
 }
 
-export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
+export const getK8sClusterNamesFromCtxId = (
+  selectedContexts: string[],
+  k8sconfig: Array<{ id: string; name?: string }>,
+): string[] => {
   if (selectedContexts.length === 0) {
     return [];
   }
@@ -81,7 +92,7 @@ export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
     return ['all'];
   }
 
-  const clusterNames = [];
+  const clusterNames: string[] = [];
 
   selectedContexts.forEach((context) => {
     const name = k8sconfig.find((cfg) => cfg.id === context)?.name;
@@ -113,12 +124,15 @@ export function getK8sContextFromClusterId(clusterId, k8sConfig) {
  * @param {Array<Object>} k8sConfig Kubernetes config
  * @returns {string} Kubernetes cluster name
  */
-export function getClusterNameFromClusterId(clusterId, k8sConfig) {
+export function getClusterNameFromClusterId(
+  clusterId: string,
+  k8sConfig: Array<{ kubernetes_server_id?: string; name?: string }>,
+): string {
   const cluster = k8sConfig.find((cfg) => cfg.kubernetes_server_id === clusterId);
   if (!cluster) {
     return '';
   }
-  return cluster.name;
+  return cluster.name || '';
 }
 
 /**
@@ -127,12 +141,15 @@ export function getClusterNameFromClusterId(clusterId, k8sConfig) {
  * @param {Array<Object>} k8sConfig Kubernetes config
  * @returns {string} Kubernetes cluster name
  */
-export function getClusterNameFromConnectionId(connId, k8sConfig) {
+export function getClusterNameFromConnectionId(
+  connId: string,
+  k8sConfig: Array<{ connection_id?: string; name?: string }>,
+): string {
   const cluster = k8sConfig.find((cfg) => cfg.connection_id === connId);
   if (!cluster) {
     return '';
   }
-  return cluster.name;
+  return cluster.name || '';
 }
 
 /**
@@ -141,12 +158,15 @@ export function getClusterNameFromConnectionId(connId, k8sConfig) {
  * @param {Array<Object>} k8sConfig Kubernetes config
  * @returns {string} Kubernetes connection ID
  */
-export function getConnectionIdFromClusterId(clusterId, k8sConfig) {
+export function getConnectionIdFromClusterId(
+  clusterId: string,
+  k8sConfig: Array<{ kubernetes_server_id?: string; connection_id?: string }>,
+): string {
   const cluster = k8sConfig.find((cfg) => cfg.kubernetes_server_id === clusterId);
   if (!cluster) {
     return '';
   }
-  return cluster.connection_id;
+  return cluster.connection_id || '';
 }
 
 /**
@@ -155,12 +175,15 @@ export function getConnectionIdFromClusterId(clusterId, k8sConfig) {
  * @param {Array<Object>} k8sConfig Kubernetes config
  * @returns {string} Kubernetes cluster name
  */
-export function getClusterNameFromCtxId(ctxId, k8sConfig) {
+export function getClusterNameFromCtxId(
+  ctxId: string,
+  k8sConfig: Array<{ id?: string; name?: string }>,
+): string {
   const cluster = k8sConfig.find((cfg) => cfg.id === ctxId);
   if (!cluster) {
     return '';
   }
-  return cluster.name;
+  return cluster.name || '';
 }
 
 /**
@@ -169,9 +192,14 @@ export function getClusterNameFromCtxId(ctxId, k8sConfig) {
  * @param {Array<Object>} k8sConfig Kubernetes config
  * @returns {Array<string>} array of connection ID for given kubernetes contexts
  */
-export function getConnectionIDsFromContextIds(contexts, k8sConfig) {
+export function getConnectionIDsFromContextIds(
+  contexts: string[],
+  k8sConfig: Array<{ id?: string; connection_id?: string }>,
+): string[] {
   const filteredK8sConnfigs = k8sConfig.filter((config) =>
     contexts.some((context) => context == config.id),
   );
-  return filteredK8sConnfigs.map((config) => config.connection_id);
+  return filteredK8sConnfigs
+    .map((config) => config.connection_id)
+    .filter((id): id is string => Boolean(id));
 }

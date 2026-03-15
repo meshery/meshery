@@ -100,9 +100,10 @@ const GrafanaCustomCharts = (props) => {
   const [refresh, setRefresh] = useState('10s');
   const [sparkline] = useState(propSparkline && propSparkline !== null ? true : false);
   const [chartDialogOpen, setChartDialogOpen] = useState(false);
-  const [chartDialogPanelData, setChartDialogPanelData] = useState({});
-  const [chartDialogPanel, setChartDialogPanel] = useState({});
-  const [chartDialogBoard, setChartDialogBoard] = useState({});
+  // These are set dynamically when opening the chart dialog
+  const [chartDialogPanelData, setChartDialogPanelData] = useState<any>({});
+  const [chartDialogPanel, setChartDialogPanel] = useState<any>({});
+  const [chartDialogBoard, setChartDialogBoard] = useState<any>({});
 
   const updateDateRange = useCallback((from, startDate, to, endDate, liveTail, refresh) => {
     setFrom(from);
@@ -171,7 +172,7 @@ const GrafanaCustomCharts = (props) => {
             aria-labelledby="max-width-dialog-title"
           >
             <StyledDialogTitle id="max-width-dialog-title">
-              <div>{chartDialogPanel.title}</div>
+              <div>{chartDialogPanel?.title ?? ''}</div>
               {!(
                 chartDialogPanelData &&
                 chartDialogPanelData !== null &&
@@ -206,7 +207,7 @@ const GrafanaCustomCharts = (props) => {
                 endDate={endDate}
                 liveTail={liveTail}
                 refresh={refresh}
-                templateVars={chartDialogBoard.templateVars}
+                templateVars={chartDialogBoard?.templateVars ?? []}
                 updateDateRange={updateDateRange}
                 inDialog
                 connectionID={connectionID}

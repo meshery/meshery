@@ -50,7 +50,7 @@ const ExportOption = ({
       >
         <ListItemIcon style={{ minWidth: '2rem', marginRight: '1rem' }}>{Icon}</ListItemIcon>
         <ListItemText primary={title} />
-        <InfoTooltip placement="top" title={description} content={description} />
+        <InfoTooltip placement="top" helpText={description} />
         <IconButton
           disabled={disabled}
           onClick={onClick}
@@ -76,21 +76,28 @@ const ExportModal = (props) => {
   const ExportOptions = [
     {
       title: 'Meshery Design (yaml)',
-      icon: <PatternIcon width={'30'} height="30" fill={Colors.caribbeanGreen} />,
+      icon: (
+        <PatternIcon
+          width={'30'}
+          height="30"
+          fill={Colors.caribbeanGreen}
+          color={Colors.caribbeanGreen}
+        />
+      ),
       onClick: (e) => handleDesignDownload(e, downloadModal.content),
       description:
         'Export your design as a complete, self-contained Meshery Design file (YAML). This file includes embedded images and all configuration details. It&apos;s the perfect format for creating backups, sharing with colleagues using Meshery, or transferring designs between Meshery environments without losing any information (lossless transfer).',
     },
     {
       title: 'Meshery Design (OCI image)',
-      icon: <OCIImageIcon width={'30'} height="30" />,
+      icon: <OCIImageIcon width={30} height={30} />,
       onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'oci=true'),
       description:
         'Download your design as an OCI compatible container image, which can be pushed to and pulled from container registries like Docker Hub, AWS ECR, and so on.',
     },
     {
       title: 'Kubernetes Manifest (yaml)',
-      icon: <KubernetesIcon width={'30'} height="30" />,
+      icon: <KubernetesIcon width="30" height="30" fill="#fff" style={{}} />,
       onClick: (e) =>
         handleDesignDownload(e, downloadModal.content, null, 'export=Kubernetes Manifest'),
       description: (
@@ -111,7 +118,7 @@ const ExportModal = (props) => {
     },
     {
       title: 'Helm Chart (tar.gz)',
-      icon: <HelmIcon width={'30'} height="30" />,
+      icon: <HelmIcon width={30} height={30} style={{}} />,
 
       onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'export=helm-chart'),
       disabled: false,
@@ -131,7 +138,7 @@ const ExportModal = (props) => {
   ];
 
   const exportModal = useModal({
-    headerIcon: <PatternIcon fill={'#fff'} height={'2rem'} width="2rem" />,
+    headerIcon: <PatternIcon fill={'#fff'} height={'2rem'} width="2rem" color="#fff" />,
   });
   return (
     <>

@@ -2,6 +2,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Box, FormControl, Grid2, InputLabel, MenuItem, Select, useTheme } from '@sistent/sistent';
 import React, { useCallback, useState } from 'react';
+// @ts-expect-error - StyledSearchBar exists at runtime but types may not be exported
 import { StyledSearchBar } from '@sistent/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
@@ -214,7 +215,7 @@ const RecentContent = () => {
           {/* Import Button */}
           {filters.type === RESOURCE_TYPE.DESIGN && (
             <Grid2 size={{ xs: 6, sm: 3, md: 3, lg: 1 }}>
-              <ImportButton refetch={refetch} />
+              <ImportButton workspaceId={undefined} refetch={refetch} />
             </Grid2>
           )}
         </Grid2>
@@ -247,7 +248,9 @@ const RecentContent = () => {
               views={viewsData?.views}
               hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
               total_count={viewsData?.total_count}
+              workspace={undefined}
               refetch={refetch}
+              isMultiSelectMode={false}
             />
           )}
         </>

@@ -86,7 +86,7 @@ export const formatDryRunResponse = (dryRunResponse) => {
     return [];
   }
 
-  let errorList = [];
+  let errorList: any[] = [];
   if (dryRunResponse) {
     Object.keys(dryRunResponse).forEach((compName) => {
       const contextsErrors = dryRunResponse?.[compName];
@@ -114,7 +114,8 @@ export const formatDryRunResponse = (dryRunResponse) => {
   return errorList;
 };
 
-const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) => {
+const DryRunDesignActor = fromPromise(async ({ input }: any) => {
+  const validationPayload = input?.validationPayload;
   const { design, k8sContexts, dryRunType, includeDependencies } = validationPayload;
   // const { pattern_file, pattern_id } = design;
   const dryRunEndpoint =
@@ -147,7 +148,7 @@ const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) =
 
 const dryRunValidatorMachine = dataValidatorMachine.provide({
   actors: {
-    ValidateActor: DryRunDesignActor,
+    ValidateActor: DryRunDesignActor as any,
   },
 });
 
@@ -163,7 +164,7 @@ const getAllComponentsDefsInDesign = async (design) => {
       ),
     )
   )
-    .filter((result) => result.status === 'fulfilled' && result.value)
+    .filter((result): result is PromiseFulfilledResult<any> => result.status === 'fulfilled')
     .map((result) => result.value);
 
   const componentStore = componentDefs.reduce((acc, componentDef) => {
@@ -185,6 +186,15 @@ export const designValidationMachine = createMachine({
       entry: [
         assign({
           schemaValidator: ({ spawn }) =>
+            spawn(
+              fromWorkerfiedActor(
+                new Worker(new URL('./schemaValidatorWorker', import.meta.url), { type: 'module' }),
+              ),
+              {
+                id: 'schemaValidator',
+                syncSnapshot: true,
+              } as any,
+            ),
             spawn(schemaValidatorMachine, {
               name: 'schemaValidator',
               id: 'schemaValidator',
@@ -193,10 +203,9 @@ export const designValidationMachine = createMachine({
 
           dryRunValidator: ({ spawn }) =>
             spawn(dryRunValidatorMachine, {
-              name: 'dryRunValidator',
               id: 'dryRunValidator',
               syncSnapshot: true,
-            }),
+            } as any),
         }),
       ],
       always: 'idle',
@@ -213,8 +222,8 @@ export const designValidationMachine = createMachine({
         [DESIGN_VALIDATOR_COMMANDS.DRY_RUN_DESIGN]: {
           actions: sendTo('dryRunValidator', ({ event }) =>
             dataValidatorCommands.validateData({
-              validationPayload: event.data,
-              returnAddress: event.returnAddress,
+              validationPayload: (event as any).data,
+              returnAddress: (event as any).returnAddress,
             }),
           ),
         },
@@ -358,7 +367,7 @@ export const selectComponentDryRunResults = (state, componentName) => {
 
   try {
     const designValidationResults = selectValidationResults(dryRunValidatorActor.getSnapshot());
-    return designValidationResults?.find((result) => result.compName === componentName);
+    return (designValidationResults as any[])?.find((result) => result.compName === componentName);
   } catch (error) {
     console.warn('Error getting component dry run results:', error);
     return null;
@@ -371,7 +380,7 @@ export const useIsValidatingDesign = (validationMachine, validatorName) => {
     // If validator is null/undefined, return false instead of crashing
     if (!validator || !state) return false;
     try {
-      return selectIsValidating(state);
+      return selectIsValidating(state as any);
     } catch (error) {
       console.warn('Error checking validation state:', error);
       return false;

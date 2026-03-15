@@ -1,10 +1,16 @@
 import React, { Suspense, lazy, useState } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@sistent/sistent';
-import { Grid2, ExpansionPanelDetails, Typography, styled } from '@sistent/sistent';
+import {
+  Grid2,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+  styled,
+} from '@sistent/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
-import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
 
 const Wrapper = styled('div')({
   width: '100%',
@@ -82,8 +88,8 @@ const GrafanaCharts = ({ grafanaURL, boardPanelConfigs }) => {
           />
         </DateRangePickerContainer>
         {boardPanelConfigs.map((config, ind) => (
-          <ExpansionPanel key={ind} square defaultExpanded={false}>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+          <Accordion key={ind} square defaultExpanded={false}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Column>
                 <StyledHeading variant="subtitle1" gutterBottom>
                   {config.board.title}
@@ -96,8 +102,8 @@ const GrafanaCharts = ({ grafanaURL, boardPanelConfigs }) => {
                     : ''}
                 </SecondaryHeading>
               </Column>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
+            </AccordionSummary>
+            <AccordionDetails>
               <Grid2 container spacing={5} size="grow">
                 {config.panels.map((panel, ind) => (
                   <IframeGridItem key={ind} size={{ xs: 12, sm: 6, md: 4 }}>
@@ -113,8 +119,8 @@ const GrafanaCharts = ({ grafanaURL, boardPanelConfigs }) => {
                   </IframeGridItem>
                 ))}
               </Grid2>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
+            </AccordionDetails>
+          </Accordion>
         ))}
       </Wrapper>
     </NoSsr>

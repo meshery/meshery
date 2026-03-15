@@ -47,7 +47,7 @@ const HeaderIcon = styled(IconButton)(({ theme }) => ({
 }));
 
 const ErrorText = styled('span')(({ theme }) => ({
-  color: theme.palette.error.default,
+  color: theme.palette.error.main,
 }));
 
 function GrafanaCustomChart(props) {
@@ -71,8 +71,8 @@ function GrafanaCustomChart(props) {
     sparkline,
   } = props;
 
-  const chartRef = useRef(null);
-  const [chart, setChart] = useState(null);
+  const chartRef = useRef<HTMLDivElement | null>(null);
+  const [chart, setChart] = useState<any>(null);
   const timeFormat = 'MM/DD/YYYY HH:mm:ss';
   const bbTimeFormat = '%Y-%m-%d %h:%M:%S %p';
 
@@ -92,13 +92,15 @@ function GrafanaCustomChart(props) {
   }
 
   // State declarations
-  const [datasetIndex, setDatasetIndex] = useState({});
-  const [xAxis, setXAxis] = useState([]);
-  const [chartData, setChartData] = useState([]);
+  const [datasetIndex, setDatasetIndex] = useState<any>({});
+  const [xAxis, setXAxis] = useState<any[]>([]);
+  const [chartData, setChartData] = useState<any[]>([]);
   const [error, setError] = useState('');
   const [errorCount, setErrorCount] = useState(0);
   const [isSparkline] = useState(!!sparkline);
-  const [interval, setIntervalState] = useState(undefined);
+  const [interval, setIntervalState] = useState<ReturnType<typeof setInterval> | undefined>(
+    undefined,
+  );
 
   // Helper function to get or create index
   const getOrCreateIndex = (datasetInd) => {
@@ -214,9 +216,9 @@ function GrafanaCustomChart(props) {
       data.data.result &&
       data.data.result.length > 0
     ) {
-      const fullData = [];
-      data.data.result.forEach((r) => {
-        const localData = r.values.map((arr) => {
+      const fullData: any[] = [];
+      data.data.result.forEach((r: any) => {
+        const localData = r.values.map((arr: any) => {
           const x = moment(arr[0] * 1000).format(timeFormat);
           const y = parseFloat(parseFloat(arr[1]).toFixed(2));
           return { x, y };
@@ -279,16 +281,16 @@ function GrafanaCustomChart(props) {
       // }
     };
 
-    const yAxes = { show: showAxis && !isSparkline };
+    const yAxes: any = { show: showAxis && !isSparkline };
     if (panel.yaxes) {
-      panel.yaxes.forEach((ya) => {
+      panel.yaxes.forEach((ya: any) => {
         if (typeof ya.label !== 'undefined' && ya.label !== null) {
           yAxes.label = { text: ya.label, position: 'outer-middle' };
         }
         if (ya.format.toLowerCase().startsWith('percent')) {
           const mulFactor = ya.format.toLowerCase() === 'percentunit' ? 100 : 1;
           yAxes.tick = {
-            format(d) {
+            format(d: any) {
               const tk = (d * mulFactor).toFixed(2);
               return `${tk}%`;
             },
@@ -318,7 +320,7 @@ function GrafanaCustomChart(props) {
     }
 
     if (chartRef && chartRef.current) {
-      const chartConfig = {
+      const chartConfig: any = {
         // oninit: function(args){
         //   console.log(JSON.stringify(args));
         // },
@@ -328,7 +330,7 @@ function GrafanaCustomChart(props) {
               // width: 150,
               height: 50,
             }
-          : null,
+          : undefined,
         data: {
           x: 'x',
           xFormat: bbTimeFormat,
@@ -429,8 +431,10 @@ function GrafanaCustomChart(props) {
         }
       });
     }
-    const start = Math.round(grafanaDateRangeToDate(from).getTime() / 1000);
-    const end = Math.round(grafanaDateRangeToDate(to).getTime() / 1000);
+    const startDate = grafanaDateRangeToDate(from, undefined);
+    const endDate = grafanaDateRangeToDate(to, startDate);
+    const start = Math.round(startDate.getTime() / 1000);
+    const end = Math.round(endDate.getTime() / 1000);
 
     let ds = datasource?.charAt(0).toUpperCase() + datasource?.substring(1);
 
@@ -454,12 +458,12 @@ function GrafanaCustomChart(props) {
           return;
         }
 
-        const newChartData = [...currentChartData];
-        let newXAxis = [...currentXAxis];
+        const newChartData: any[] = [...currentChartData];
+        let newXAxis: any[] = [...currentXAxis];
 
-        fullData.forEach(({ metric, data }, di) => {
+        fullData.forEach(({ metric, data }: any, di: number) => {
           const datasetInd = getOrCreateIndex(`${ind}_${di}`);
-          const newData = [];
+          const newData: any[] = [];
 
           // if (typeof cd.labels[datasetInd] === 'undefined' || typeof cd.datasets[datasetInd] === 'undefined'){
           let legend = typeof target.legendFormat !== 'undefined' ? target.legendFormat : '';
@@ -488,17 +492,17 @@ function GrafanaCustomChart(props) {
           newData.push(legend);
           newXAxis = ['x'];
           // }
-          data.forEach(({ x, y }) => {
+          data.forEach(({ x, y }: any) => {
             newData.push(y);
             newXAxis.push(new Date(x));
           });
           newChartData[datasetInd] = newData;
         });
 
-        let groups = [];
+        let groups: any[] = [];
         if (typeof panel.stack !== 'undefined' && panel.stack) {
-          const panelGroups = [];
-          newChartData.forEach((y) => {
+          const panelGroups: any[] = [];
+          newChartData.forEach((y: any) => {
             if (y && y.length > 0) {
               panelGroups.push(y[0]); // just the label
             }
@@ -574,7 +578,7 @@ function GrafanaCustomChart(props) {
     if (liveTail) {
       const newInterval = setInterval(
         () => {
-          collectChartData();
+          collectChartData(chart);
         },
         computeRefreshInterval(refresh) * 1000,
       );
@@ -582,7 +586,7 @@ function GrafanaCustomChart(props) {
     }
 
     // Initial data collection
-    collectChartData();
+    collectChartData(chart);
   };
 
   // ComponentDidMount equivalent

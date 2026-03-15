@@ -16,6 +16,7 @@ import {
   MendeleyIcon,
   FileIcon,
   useTheme,
+  Box,
 } from '@sistent/sistent';
 import DashboardMeshModelGraph from '../Dashboard/charts/DashboardMeshModelGraph';
 import Link from 'next/link';
@@ -50,6 +51,7 @@ import ConnectionStatsChart from '../Dashboard/charts/ConnectionCharts';
 import { SecondaryTab, SecondaryTabs } from '../Dashboard/style';
 import { useSelector } from 'react-redux';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import type { RootState } from '@/store/index';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -85,8 +87,8 @@ function TabContainer({ children }: TabContainerProps) {
 }
 
 type SettingsRouter = {
-  selectedSettingsCategory?: string;
-  selectedTab?: string;
+  selectedSettingsCategory?: string | undefined;
+  selectedTab?: string | undefined;
   handleChangeSettingsCategory: (_settingsCategory?: string) => void;
   handleChangeSelectedTab: (_tab: string) => void;
   handleChangeSelectedTabCustomCategory: (_settingsCategory: string, _tab: string) => void;
@@ -95,10 +97,12 @@ type SettingsRouter = {
 const settingsRouter = (router: ReturnType<typeof useRouter>): SettingsRouter => {
   const { query, push: pushRoute, route } = router;
 
-  const selectedSettingsCategory = query.settingsCategory;
-  const selectedTab = query.tab;
+  const selectedSettingsCategory = Array.isArray(query.settingsCategory)
+    ? query.settingsCategory[0]
+    : query.settingsCategory;
+  const selectedTab = Array.isArray(query.tab) ? query.tab[0] : query.tab;
 
-  const handleChangeSettingsCategory = (_settingsCategory) => {
+  const handleChangeSettingsCategory = (_settingsCategory?: string) => {
     if (query.settingsCategory === _settingsCategory) {
       return;
     }
@@ -109,7 +113,7 @@ const settingsRouter = (router: ReturnType<typeof useRouter>): SettingsRouter =>
     );
   };
 
-  const handleChangeSelectedTab = (_tab) => {
+  const handleChangeSelectedTab = (_tab: string) => {
     if (query.tab === _tab) {
       return;
     }
@@ -118,7 +122,7 @@ const settingsRouter = (router: ReturnType<typeof useRouter>): SettingsRouter =>
     });
   };
 
-  const handleChangeSelectedTabCustomCategory = (_settingsCategory, _tab) => {
+  const handleChangeSelectedTabCustomCategory = (_settingsCategory: string, _tab: string) => {
     if (query.tab === _tab) {
       return;
     }
@@ -141,11 +145,11 @@ const MesherySettings = () => {
   const router = useRouter();
   const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
   const theme = useTheme();
-  const { k8sConfig } = useSelector((state) => state.ui);
-  const { prometheus } = useSelector((state) => state.telemetry);
-  const { grafana } = useSelector((state) => state.telemetry);
-  const { meshAdapters } = useSelector((state) => state.adapter);
-  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery();
+  const { k8sConfig } = useSelector((state: RootState) => state.ui);
+  const { prometheus } = useSelector((state: RootState) => state.telemetry);
+  const { grafana } = useSelector((state: RootState) => state.telemetry);
+  const { meshAdapters } = useSelector((state: RootState) => state.adapter);
+  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery(undefined);
   const [state, setState] = useState({
     meshAdapters,
     grafana,
@@ -156,7 +160,7 @@ const MesherySettings = () => {
     componentsCount: 0,
     relationshipsCount: 0,
     registrantCount: 0,
-    isMeshConfigured: k8sConfig.clusterConfigured,
+    isMeshConfigured: k8sConfig.length > 0,
     scannedPrometheus: [],
     scannedGrafana: [],
   });
@@ -166,10 +170,10 @@ const MesherySettings = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const modelsResponse = await getMeshModels();
-        const componentsResponse = await getComponentsDetail();
-        const relationshipsResponse = await getRelationshipsDetail();
-        const registrantResponce = await getMeshModelRegistrants();
+        const modelsResponse = (await getMeshModels()) as { models: any[] };
+        const componentsResponse = (await getComponentsDetail(1)) as { total_count: number };
+        const relationshipsResponse = (await getRelationshipsDetail(1)) as { total_count: number };
+        const registrantResponce = (await getMeshModelRegistrants()) as { total_count: number };
 
         const modelsCount = removeDuplicateVersions(modelsResponse.models).length;
         const componentsCount = componentsResponse.total_count;
@@ -200,14 +204,14 @@ const MesherySettings = () => {
     }
   }, [router]);
 
-  const handleChange = (val) => {
+  const handleChange = (val: string) => {
     const {
       handleChangeSettingsCategory,
       handleChangeSelectedTab,
       handleChangeSelectedTabCustomCategory,
     } = settingsRouter(router);
 
-    return (_event, newVal, ..._args) => {
+    return (_event: React.SyntheticEvent, newVal: string, ..._args: any[]) => {
       if (val === 'tabVal') {
         if (newVal === METRICS) {
           handleChangeSelectedTabCustomCategory(newVal, GRAFANA);
@@ -234,8 +238,8 @@ const MesherySettings = () => {
   };
 
   const { tabVal, subTabVal } = state;
-  let backToPlay = '';
-  if (k8sConfig.clusterConfigured === true && meshAdapters.length > 0) {
+  let backToPlay: React.ReactNode = null;
+  if (k8sConfig.length > 0 && meshAdapters.length > 0) {
     backToPlay = (
       <div>
         <Link href="/management">
@@ -251,18 +255,18 @@ const MesherySettings = () => {
     <>
       {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
         <>
-          <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
+          <Box sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
             <StyledPaper square>
               <Tabs
                 value={tabVal}
                 onChange={handleChange('tabVal')}
                 variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
-                scrollButtons="on"
+                scrollButtons={true}
                 indicatorColor="primary"
                 textColor="primary"
                 centered
               >
-                <CustomTooltip title="Overview" placement="top" value={OVERVIEW}>
+                <CustomTooltip title="Overview" placement="top">
                   <Tab
                     icon={
                       <img
@@ -282,7 +286,6 @@ const MesherySettings = () => {
                   title="Connect Meshery Adapters"
                   data-testid="settings-tab-adapters"
                   placement="top"
-                  value={ADAPTERS}
                 >
                   <Tab
                     icon={<MendeleyIcon {...iconMedium} fill={theme.palette.icon.default} />}
@@ -297,7 +300,7 @@ const MesherySettings = () => {
                     }
                   />
                 </CustomTooltip>
-                <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
+                <CustomTooltip title="Configure Metrics backends" placement="top">
                   <Tab
                     icon={<PollIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Metrics"
@@ -308,7 +311,7 @@ const MesherySettings = () => {
                   />
                 </CustomTooltip>
 
-                <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
+                <CustomTooltip title="Registry" placement="top">
                   <Tab
                     icon={<FileIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Registry"
@@ -318,7 +321,7 @@ const MesherySettings = () => {
                   />
                 </CustomTooltip>
 
-                <CustomTooltip title="Reset System" placement="top" value={RESET}>
+                <CustomTooltip title="Reset System" placement="top">
                   <Tab
                     icon={<DatabaseIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Reset"
@@ -355,16 +358,18 @@ const MesherySettings = () => {
                             : ''}
                         </Typography>
                       </div>
-                      <Typography
-                        variant="body2"
-                        component="a"
+                      <a
                         href="https://docs.meshery.io/extensibility/providers"
                         target="_blank"
                         rel="noopener noreferrer"
-                        sx={{ color: theme.palette.primary.main }}
+                        style={{
+                          color: theme.palette.primary.main,
+                          fontSize: '0.875rem',
+                          textDecoration: 'none',
+                        }}
                       >
                         Learn about providers
-                      </Typography>
+                      </a>
                     </Paper>
                     <DashboardMeshModelGraph />
                     <Grid2 container spacing={2} size="grow">
@@ -450,7 +455,7 @@ const MesherySettings = () => {
             )}
             {backToPlay}
             <_PromptComponent ref={systemResetPromptRef} />
-          </div>
+          </Box>
         </>
       ) : (
         <DefaultError />

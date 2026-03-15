@@ -84,14 +84,14 @@ const PrometheusSelectionComponent = (props) => {
   } = props;
 
   const [grafanaBoard, setGrafanaBoard] = useState(dummyBoard);
-  const [grafanaBoardObject, setGrafanaBoardObject] = useState({});
-  const [templateVars, setTemplateVars] = useState([]);
-  const [templateVarOptions, setTemplateVarOptions] = useState([]);
-  const [panels, setPanels] = useState([]);
-  const [selectedPanels, setSelectedPanels] = useState([]);
-  const [selectedTemplateVars, setSelectedTemplateVars] = useState([]);
+  const [grafanaBoardObject, setGrafanaBoardObject] = useState<any>({});
+  const [templateVars, setTemplateVars] = useState<any[]>([]);
+  const [templateVarOptions, setTemplateVarOptions] = useState<any[][]>([]);
+  const [panels, setPanels] = useState<any[]>([]);
+  const [selectedPanels, setSelectedPanels] = useState<any[]>([]);
+  const [selectedTemplateVars, setSelectedTemplateVars] = useState<string[]>([]);
 
-  const boardTimeoutRef = useRef(null);
+  const boardTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {
@@ -108,7 +108,7 @@ const PrometheusSelectionComponent = (props) => {
   const setSelectedTemplateVar = (ind, val) => {
     setSelectedTemplateVars((prev) => {
       const newVars = [...prev];
-      newVars[ind] = val;
+      newVars[ind] = String(val ?? '');
       for (let i = ind + 1; i < newVars.length; i++) {
         newVars[i] = '';
       }
@@ -176,7 +176,7 @@ const PrometheusSelectionComponent = (props) => {
     updateProgress({ showProgress: true });
     try {
       const result = await triggerTemplateQuery({ connectionID, query: queryStr }).unwrap();
-      let tmpVarOpts = [];
+      let tmpVarOpts: any[] = [];
 
       if (Array.isArray(result?.data)) {
         if (
@@ -185,7 +185,7 @@ const PrometheusSelectionComponent = (props) => {
           typeof result.data[0] === 'object'
         ) {
           const q = vars[ind].query.replace('label_values(', '').slice(0, -1);
-          const qInd = q.split(',').pop().trim();
+          const qInd = q.split(',').pop()?.trim() ?? '';
           result.data.forEach((d) => {
             const v = d[qInd];
             if (v && !tmpVarOpts.includes(v)) tmpVarOpts.push(v);
@@ -194,7 +194,7 @@ const PrometheusSelectionComponent = (props) => {
           tmpVarOpts = result.data;
         }
       } else if (result?.data?.result) {
-        tmpVarOpts = result.data.result.map(({ metric }) => Object.values(metric)?.[0]);
+        tmpVarOpts = result.data.result.map(({ metric }: any) => Object.values(metric)?.[0]);
       }
 
       setTemplateVarOptions((prev) => {
@@ -219,15 +219,15 @@ const PrometheusSelectionComponent = (props) => {
   };
 
   const handlePanelSelection = (e) => {
-    setSelectedPanels(e.target.value);
+    setSelectedPanels((e as any)?.target?.value ?? []);
   };
 
   const addBoardConfig = () => {
     const boardConfig = {
       board: grafanaBoardObject,
-      panels: panels.filter((p) => selectedPanels.includes(p.id)),
-      templateVars: templateVars.map(({ name }, i) =>
-        selectedTemplateVars[i] ? `${name}=${selectedTemplateVars[i]}` : '',
+      panels: panels.filter((p: any) => selectedPanels.includes(p.id)),
+      templateVars: templateVars.map((tv: any, i: number) =>
+        tv?.name && selectedTemplateVars[i] ? `${tv.name}=${selectedTemplateVars[i]}` : '',
       ),
     };
     addSelectedBoardPanelConfig(boardConfig);
@@ -323,7 +323,7 @@ const PrometheusSelectionComponent = (props) => {
                       <MenuItem value="">
                         <em>None</em>
                       </MenuItem>
-                      {templateVarOptions[ind]?.map((opt) => (
+                      {templateVarOptions[ind]?.map((opt: any) => (
                         <MenuItem
                           key={`tmplVarOpt_${name}_${opt}_${ind}_${genRandomNumberForKey()}`}
                           value={opt}
@@ -361,8 +361,8 @@ const PrometheusSelectionComponent = (props) => {
                   multiple: true,
                   renderValue: (selected) => (
                     <PanelChipsContainer>
-                      {selected.map((value) => {
-                        const panel = panels.find((p) => p.id === value);
+                      {(selected as any[]).map((value) => {
+                        const panel = panels.find((p: any) => p.id === value);
                         return (
                           <Chip key={`pl_${value}`} label={panel?.title || ''} className="chip" />
                         );
@@ -371,7 +371,7 @@ const PrometheusSelectionComponent = (props) => {
                   ),
                 }}
               >
-                {panels.map((panel) => (
+                {panels.map((panel: any) => (
                   <MenuItem key={`panel_${panel.id}`} value={panel.id}>
                     {panel.title}
                   </MenuItem>

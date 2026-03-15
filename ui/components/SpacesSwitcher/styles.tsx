@@ -16,7 +16,9 @@ import {
 
 const DRAWER_WIDTH = 300;
 
-export const DrawerHeader = styled('div')(({ theme, open }) => ({
+export const DrawerHeader = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'open',
+})<{ open: boolean }>(({ theme, open }) => ({
   display: 'flex',
   alignItems: 'flex-end',
   justifyContent: open ? 'flex-end' : 'center',
@@ -155,7 +157,7 @@ export const StyledMainMenuComponent = styled('div')({
 
 export const StyledListItemText = styled(ListItemText, {
   shouldForwardProp: (prop) => prop !== 'showWorkspaceName',
-})(({ theme, showWorkspaceName = true }) => ({
+})<{ showWorkspaceName?: boolean }>(({ theme, showWorkspaceName = true }) => ({
   cursor: 'pointer',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
@@ -175,7 +177,7 @@ export const StyledListIcon = styled(ListItemIcon)({
   paddingRight: '1rem',
 });
 
-export const StyledUpdatedText = styled('p')({
+export const StyledUpdatedText = styled(Typography)({
   margin: '0',
   fontSize: '0.8rem',
   fontStyle: 'italic',
@@ -183,7 +185,9 @@ export const StyledUpdatedText = styled('p')({
   cursor: 'pointer',
 });
 
-export const StyledSmallAvatarContainer = styled('div')(({ transform, clipPath }) => ({
+export const StyledSmallAvatarContainer = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'transform' && prop !== 'clipPath',
+})<{ transform: string; clipPath: string }>(({ transform, clipPath }) => ({
   position: 'absolute',
   bottom: '-1.65rem',
   left: '2rem',
@@ -194,7 +198,9 @@ export const StyledSmallAvatarContainer = styled('div')(({ transform, clipPath }
   zIndex: 1,
 }));
 
-export const StyledSmallAvatar = styled(Avatar)(({ borderColor }) => ({
+export const StyledSmallAvatar = styled(Avatar, {
+  shouldForwardProp: (prop) => prop !== 'borderColor',
+})<{ borderColor?: string }>(({ borderColor }) => ({
   height: '23px',
   width: '23px',
   border: borderColor ? `2px solid ${borderColor}` : undefined,

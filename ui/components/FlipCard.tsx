@@ -11,7 +11,7 @@ function FlipCard({ duration = 500, onClick, onShow, children }) {
   const [flipped, setFlipped] = useState(false);
   const [activeBack, setActiveBack] = useState(false);
 
-  const timeout = useRef(null);
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const Front = GetChild(children, 0);
   const Back = GetChild(children, 1);

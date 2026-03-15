@@ -79,10 +79,10 @@ export const ErrorContentContainer = styled('div')(() => ({
 }));
 
 export const ErrorLink = styled('a')(({ theme }) => ({
-  color: theme.palette.background.brand.default,
+  color: theme.palette.background.brand?.default || theme.palette.text.brand,
 }));
 
-export const ErrorMsg = styled('errormsg')(() => ({
+export const ErrorMsg = styled('div')(() => ({
   fontWeight: '600',
 }));
 
@@ -128,7 +128,7 @@ export const StyledBox = styled(Box)(({ theme }) => ({
   borderRadius: '10px',
   fontSize: '1.1rem',
   padding: '1.3rem',
-  border: `1px solid ${theme.palette.background.brand.disabled}`,
+  border: `1px solid ${theme.palette.background.brand?.disabled || theme.palette.border.default}`,
   color: theme.palette.text.default,
 }));
 
@@ -216,6 +216,6 @@ export const CustomDownIcon = styled(LeftArrowIcon)(({ theme }) => ({
   rotate: '-90deg',
   marginInline: '1rem',
   '&.MuiSelect-icon': {
-    fill: theme.palette.background.brand.default,
+    fill: theme.palette.background.brand?.default || theme.palette.icon.default,
   },
 }));

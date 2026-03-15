@@ -2,21 +2,25 @@ import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
 import PublicIcon from '@mui/icons-material/Public';
 import _ from 'lodash';
-import { getMeshModels } from '../../api/meshmodel';
-import { modifyRJSFSchema } from '../../utils/utils';
+import { getMeshModels } from '@/api/meshmodel';
+import { modifyRJSFSchema } from '@/utils/utils';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 
 // This modal is used in Meshery Extensions also
 export default function PublishModal(props) {
   const { open, title, handleClose, handleSubmit } = props;
-  const [publishSchema, setPublishSchema] = useState({});
+  const [publishSchema, setPublishSchema] = useState<{
+    rjsfSchema?: any;
+    uiSchema?: any;
+  }>({});
   const { data: schemaData, isSuccess } = useGetSchemaQuery({ schemaName: 'publish' });
 
   const processSchema = async () => {
     if (isSuccess && schemaData) {
       try {
-        const { models } = await getMeshModels();
-        const modelNames = _.uniq(models?.map((model) => model.displayName));
+        const result = (await getMeshModels()) as { models?: any[] };
+        const { models } = result;
+        const modelNames = _.uniq(models?.map((model: any) => model.displayName));
         modelNames.sort();
 
         const modifiedSchema = modifyRJSFSchema(
@@ -40,8 +44,8 @@ export default function PublishModal(props) {
   return (
     <Modal
       open={open}
-      schema={publishSchema.rjsfSchema}
-      uiSchema={publishSchema.uiSchema}
+      schema={publishSchema.rjsfSchema || undefined}
+      uiSchema={publishSchema.uiSchema || {}}
       title={title}
       handleClose={handleClose}
       handleSubmit={handleSubmit}

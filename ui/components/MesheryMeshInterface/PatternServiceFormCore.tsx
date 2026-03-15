@@ -68,7 +68,7 @@ function PatternServiceFormCore_({
   };
 
   const propagatedChildren = () => [
-    function (props = {}) {
+    function (props: any = {}) {
       return (
         <PatternService
           type="workload"
@@ -77,6 +77,8 @@ function PatternServiceFormCore_({
           onChange={setSettings}
           onSubmit={() => submitHandler({ settings: getSettingsRefValue() })}
           onDelete={() => deleteHandler({ settings: getSettingsRefValue() })}
+          RJSFWrapperComponent={props?.RJSFWrapperComponent}
+          RJSFFormChildComponent={props?.RJSFFormChildComponent}
           {...props}
         />
       );
@@ -97,7 +99,7 @@ function PatternServiceFormCore_({
 
   if (schemaSet.type === 'addon') {
     return (child.current = children(
-      function (props = {}) {
+      function (props: any = {}) {
         return (
           <PatternService
             formData={settings}
@@ -106,6 +108,8 @@ function PatternServiceFormCore_({
             onChange={setSettings}
             onSubmit={() => submitHandler({ settings: getSettingsRefValue() })}
             onDelete={() => deleteHandler({ settings: getSettingsRefValue() })}
+            RJSFWrapperComponent={(props as any)?.RJSFWrapperComponent}
+            RJSFFormChildComponent={(props as any)?.RJSFFormChildComponent}
             {...props}
           />
         );
