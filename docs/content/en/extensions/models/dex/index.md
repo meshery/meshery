@@ -1,0 +1,24 @@
+---
+title: Dex
+subtitle: Collaborative and visual infrastructure as design for Dex
+image: /extensions/models/dex/icons/color/dex-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/dex
+description: 
+integrations-category: Provisioning
+integrations-subcategory: Security & Compliance
+registrant: Artifact Hub
+components: 
+components-count: 0
+relationships: 
+relationship-count: 0
+featureList: [
+  "Simplifies OIDC integration with Kubernetes",
+  "Supports various identity providers",
+  "Provides authentication for Kubernetes services"
+]
+howItWorks: "Integrates Dex with Kubernetes"
+howItWorksDetails: "Centralized authentication for Kubernetes applications"
+categories: [integrations]
+aliases:
+- /extensibility/integrations/dex
+---

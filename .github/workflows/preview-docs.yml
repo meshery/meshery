@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  deploy-docs-new-preview:
+  deploy-docs-preview:
     if: github.repository == 'meshery/meshery' && github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
     steps:
@@ -18,21 +18,21 @@ jobs:
         uses: dawidd6/action-download-artifact@v6
         with:
           github_token: ${{ secrets.GH_ACCESS_TOKEN }}
-          workflow: build-and-preview-docs-new.yml
+          workflow: build-and-preview-docs.yml
           run_id: ${{ github.event.workflow_run.id }}
-          name: docs-new-site
+          name: docs-site
 
       - name: Unzip Site
         run: |
-          mkdir -p docs-new-preview
-          unzip docs-new-site.zip -d docs-new-preview
-          rm -f docs-new-site.zip
+          mkdir -p docs-preview
+          unzip docs-site.zip -d docs-preview
+          rm -f docs-site.zip
 
       - name: Deploy to Netlify
         id: netlify
         uses: nwtgck/actions-netlify@v3
         with:
-          publish-dir: 'docs-new-preview'
+          publish-dir: 'docs-preview'
           production-deploy: false
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           enable-commit-comment: false

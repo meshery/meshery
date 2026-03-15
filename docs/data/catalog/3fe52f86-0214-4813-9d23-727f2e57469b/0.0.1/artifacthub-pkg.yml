@@ -1,0 +1,20 @@
+version: 0.0.1
+name: serve-an-llm-using-multi-host-tpus-on-gke
+displayName: Serve an LLM using multi-host TPUs on GKE
+createdAt: "2024-03-03T13:15:54Z"
+description: "The \"Serve an LLM using multi-host TPUs on GKE\" design in Meshmap details the configuration and deployment of a Language Model (LLM) service on Google Kubernetes Engine (GKE) utilizing multi-host Tensor Processing Units (TPUs). \n\nThis design leverages the high-performance computing capabilities of TPUs to enhance the inference speed and efficiency of the language model. Key aspects of this design include setting up Kubernetes pods with TPU node affinity to ensure the LLM workloads are scheduled on nodes equipped with TPUs. \n\nConfiguration includes defining resource limits and requests to optimize TPU utilization and ensure stable performance under varying workloads. Integration with Google Cloud's TPU provisioning and monitoring tools enables automated scaling and efficient management of TPUs based on demand. Security measures, such as role-based access controls and encryption, are implemented to safeguard data processed by the LLM."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3fe52f86-0214-4813-9d23-727f2e57469b/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "TPUs may not always be available in sufficient quantities or sizes based on demand. This can lead to scalability challenges or delays in provisioning resources for LLM inference tasks. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 62b081a5-1273-4c58-807f-b6be539275d0
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
