@@ -22,7 +22,7 @@ import { Search } from '@mui/icons-material';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
-import React, { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { RoundedTriangleShape } from './shapes/RoundedTriangle';
 import { notificationColors } from '../themes/app';
@@ -126,14 +126,6 @@ export const OctagonText = styled('div')({
   fontSize: '0.8rem',
 });
 
-function usePrevious(value) {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
-
 function ConfirmationMsg(props) {
   const {
     open,
@@ -148,29 +140,19 @@ function ConfirmationMsg(props) {
   } = props;
 
   const [tabVal, setTabVal] = useState(tab);
-  const [disabled, setDisabled] = useState(true);
-  const [context, setContexts] = useState([]);
+
+  const [searchQuery, setSearchQuery] = useState('');
+
   const { notify } = useNotification();
   const { selectedK8sContexts } = useSelector((state) => state.ui);
   const { k8sConfig: k8scontext } = useSelector((state) => state.ui);
-
-  let isDisabled =
-    typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
   const dispatch = useDispatch();
-  const prevOpen = usePrevious(open);
 
-  useEffect(() => {
-    // When the modal transitions from closed to open, initialize the local state.
-    // This strictly adheres to exhaustive-deps while preventing background Redux overwrites.
-    if (!prevOpen && open) {
-      setTabVal(tab);
-      setContexts(k8scontext);
-    }
-  }, [open, prevOpen, tab, k8scontext]);
+  const isDisabled =
+    typeof selectedK8sContexts?.length === 'undefined' || selectedK8sContexts?.length === 0;
 
-  useEffect(() => {
-    setDisabled(isDisabled);
-  }, [selectedK8sContexts]);
+  const filteredContexts =
+    searchQuery === '' ? k8scontext : k8scontext.filter((ctx) => ctx.name.includes(searchQuery));
 
   const handleTabValChange = (event, newVal) => {
     setTabVal(newVal);
@@ -206,17 +188,7 @@ function ConfirmationMsg(props) {
   };
 
   const searchContexts = (search) => {
-    if (search === '') {
-      setContexts(k8scontext);
-      return;
-    }
-    let matchedCtx = [];
-    k8scontext.forEach((ctx) => {
-      if (ctx.name.includes(search)) {
-        matchedCtx.push(ctx);
-      }
-    });
-    setContexts(matchedCtx);
+    setSearchQuery(search);
   };
 
   const setContextViewer = (id) => {
@@ -230,8 +202,8 @@ function ConfirmationMsg(props) {
     }
 
     if (selectedK8sContexts?.includes(id)) {
-      const filteredContexts = selectedK8sContexts.filter((cid) => cid !== id);
-      dispatch(setK8sContexts({ selectedK8sContexts: filteredContexts }));
+      const filteredSelectedContexts = selectedK8sContexts.filter((cid) => cid !== id);
+      dispatch(setK8sContexts({ selectedK8sContexts: filteredSelectedContexts }));
     } else if (selectedK8sContexts[0] === 'all') {
       const allContextIds = getK8sConfigIdsFromK8sConfig(k8scontext);
       dispatch(setK8sContexts({ selectedK8sContexts: allContextIds.filter((cid) => cid !== id) }));
@@ -243,7 +215,9 @@ function ConfirmationMsg(props) {
       dispatch(setK8sContexts({ selectedK8sContexts: [...selectedK8sContexts, id] }));
     }
   };
+
   const theme = useTheme();
+
   return (
     <Modal
       open={open}
@@ -296,7 +270,7 @@ function ConfirmationMsg(props) {
           <Tab
             disabled={
               !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) ||
-              (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && disabled)
+              (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && isDisabled)
             }
             data-cy="Undeploy-btn-modal"
             onClick={(event) => handleTabValChange(event, 1)}
@@ -318,7 +292,7 @@ function ConfirmationMsg(props) {
           <Tab
             disabled={
               !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) ||
-              (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && disabled)
+              (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && isDisabled)
             }
             data-cy="deploy-btn-modal"
             onClick={(event) => handleTabValChange(event, 2)}
@@ -373,9 +347,8 @@ function ConfirmationMsg(props) {
                       InputProps={{
                         endAdornment: <Search style={iconMedium} />,
                       }}
-                      // margin="none"
                     />
-                    {context.length > 0 ? (
+                    {filteredContexts.length > 0 ? (
                       <Box display={'table'}>
                         <Checkbox
                           checked={selectedK8sContexts?.includes('all')}
@@ -389,7 +362,7 @@ function ConfirmationMsg(props) {
                     )}
 
                     <ContextsContainer>
-                      {context.map((ctx) => (
+                      {filteredContexts.map((ctx) => (
                         <div
                           key={ctx.id}
                           style={{
@@ -447,7 +420,7 @@ function ConfirmationMsg(props) {
                 color="primary"
                 isUndeploy={tabVal === ACTIONS.UNDEPLOY}
                 isDisabled={isDisabled}
-                disabled={disabled}
+                disabled={isDisabled}
                 data-cy="deploy-btn-confirm"
               >
                 <Typography variant="body2">
@@ -531,7 +504,6 @@ export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => 
         InputProps={{
           endAdornment: <Search style={iconMedium} />,
         }}
-        // margin="none"
       />
       {searchedContexts.length > 0 ? (
         <Box display={'table'}>
