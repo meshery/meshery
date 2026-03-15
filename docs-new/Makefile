@@ -31,19 +31,21 @@ clean:
 	hugo --cleanDestinationDir
 	make site
 
+## Validate Go is installed by delegating to the root Makefile check.
 check-go:
-	@echo "Checking if Go is installed..."
-	@command -v go > /dev/null || (echo "Go is not installed. Please install it before proceeding."; exit 1)
-	@echo "Go is installed."
+	@$(MAKE) -C .. check-go
 
+## Install base OS dependencies needed in Docker-based docs builds.
 docker-install-base-deps:
 	apt-get update
 	apt-get install -y --no-install-recommends nodejs npm ca-certificates wget xz-utils
 	rm -rf /var/lib/apt/lists/*
 
+## Install Node.js dependencies in CI or container contexts.
 docker-deps:
 	npm ci
 
+## Download and unpack a specific Hugo Extended binary for Docker builds.
 docker-download-hugo:
 	@test -n "$(HUGO_VERSION)" || (echo "HUGO_VERSION is required"; exit 1)
 	@test -n "$(TARGETARCH)" || (echo "TARGETARCH is required"; exit 1)
@@ -51,6 +53,7 @@ docker-download-hugo:
 	wget -O /tmp/hugo/hugo.tar.gz "https://github.com/gohugoio/hugo/releases/download/v$(HUGO_VERSION)/hugo_extended_$(HUGO_VERSION)_linux-$(TARGETARCH).tar.gz"
 	tar -xf /tmp/hugo/hugo.tar.gz -C /tmp/hugo hugo
 
+## Build the docs site for Docker output with optional environment/base URL overrides.
 docker-build:
 	set -e; \
 	args="--gc --minify -d /out"; \
@@ -58,19 +61,23 @@ docker-build:
 	if [ -n "$(DOCS_URL)" ]; then args="$$args -b $(DOCS_URL)"; fi; \
 	hugo $$args
 
+## Ensure Hugo generated the stats file required by downstream tooling.
 docker-validate-stats:
 	@test -f /src/hugo_stats.json || (echo "hugo_stats.json was not generated"; exit 1)
 
+## Lint Markdown content during Docker-based checks.
 docker-lint:
 	npx --yes markdownlint-cli2 \
 		"content/**/*.md" \
 		"#content/engine/release-notes/*.md" \
 		"#content/desktop/previous-versions/*.md"
 
+## Install htmltest binary for link validation in container environments.
 docker-install-htmltest:
 	@test -n "$(HTMLTEST_VERSION)" || (echo "HTMLTEST_VERSION is required"; exit 1)
 	GOBIN=/usr/local/bin go install github.com/wjdp/htmltest@v$(HTMLTEST_VERSION)
 
+## Run htmltest against the generated site output.
 docker-htmltest:
 	@test -n "$(HTMLTEST_DIR)" || (echo "HTMLTEST_DIR is required"; exit 1)
 	@if [ -f /src/.htmltest.yml ]; then \
@@ -79,6 +86,7 @@ docker-htmltest:
 		cd "$(HTMLTEST_DIR)" && htmltest; \
 	fi
 
+## Update Hugo modules and vendor dependencies for Docker builds.
 docker-update-modules:
 	set -ex; \
 	if [ -n "$(MODULE)" ]; then \
@@ -91,6 +99,7 @@ docker-update-modules:
 	fi; \
 	hugo mod vendor
 
+## Build docs while ignoring vendored paths for an upstream module.
 docker-build-upstream:
 	@test -n "$(UPSTREAM_MODULE_NAME)" || (echo "UPSTREAM_MODULE_NAME is required"; exit 1)
 	hugo --ignoreVendorPaths "github.com/$(UPSTREAM_MODULE_NAME)" -d /out

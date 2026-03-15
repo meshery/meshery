@@ -388,10 +388,16 @@ ui-integration-tests: ui-setup
 # Meshery Docs
 #-----------------------------------------------------------------------------
 #Incorporating Make docs commands from the Docs Makefile
-.PHONY: docs docs-build site docs-docker docs-mesheryctl check-go
+.PHONY: docs docs-setup docs-build docs-build-production site docs-docker docs-mesheryctl check-go
 
+## Alias target to run Meshery Docs in watch mode.
 site: docs
+## Alias target to run Meshery Docs once without file watching.
 site-serve: docs-serve
+
+## Install docs dependencies.
+docs-setup:
+	cd docs; npm install
 
 ## Run Meshery Docs. Listen for changes.
 docs: check-go
@@ -405,6 +411,19 @@ docs-serve: check-go
 docs-build:
 	cd docs; hugo 
 
+## Build Meshery Docs for production. BASE_URL is optional.
+## Example: make docs-build-production BASE_URL=https://example.com
+docs-build-production:
+	cd docs; \
+	hugo_args="--gc --minify"; \
+	if [ -n "$(BASE_URL)" ]; then \
+		base_url="$(BASE_URL)"; \
+		base_url="$${base_url%/}/"; \
+		hugo_args="$$hugo_args --baseURL $$base_url"; \
+	fi; \
+	echo "Running: hugo $$hugo_args"; \
+	hugo $$hugo_args
+
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
 	cd docs; docker run --rm --name meshery-docs -p 1313:1313 -v `pwd`:/src -w /src ghcr.io/gohugoio/hugo:v0.157.0 server -D -F --bind 0.0.0.0
@@ -414,8 +433,11 @@ docs-docker:
 docs-mesheryctl:
 	cd mesheryctl; make docs;
 
+## Validate Go is installed.
 check-go:
-	$(MAKE) -C docs check-go
+	@echo "Checking if Go is installed..."
+	@command -v go > /dev/null || (echo "Go is not installed. Please install it before proceeding."; exit 1)
+	@echo "Go is installed."
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
