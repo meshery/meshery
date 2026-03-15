@@ -60,13 +60,3 @@ other = "Click here to print"
 other = "Return to the regular view of this page"
 [print_entire_section]
 other = "Print entire section"
-
-# Feedback
-[feedback_title]
-other = "Feedback"
-[feedback_question]
-other = "Was this page helpful?"
-[feedback_positive]
-other = "Yes"
-[feedback_negative]
-other = "No"
