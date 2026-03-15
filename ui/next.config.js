@@ -1,8 +1,14 @@
 /** @type {import('next').NextConfig} */
 const path = require('path');
 
+const isPlaygroundBuild = process.env.PLAYGROUND === 'true';
+
 const nextConfig = {
   reactStrictMode: true,
+
+  env: {
+    NEXT_PUBLIC_PLAYGROUND_BUILD: isPlaygroundBuild ? 'true' : 'false',
+  },
 
   // Static export (replaces removed `next export` in Next.js 15)
   output: 'export',

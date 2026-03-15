@@ -47,20 +47,33 @@
     <section>
         <h3 id="related-designs-header">Designs containing {{ .Title }}</h3>
         {{ $tech := path.Base (strings.TrimSuffix "/" .Params.docURL) }}
-        {{ $catalog := .Site.GetPage "section" "catalog" }}
-        {{ with $catalog }}
         <ul>
-        {{ range .RegularPages }}
-            {{ if in .Params.compatibility $tech }}
+        {{ $catalogRoot := "catalog" }}
+        {{ range readDir $catalogRoot }}
+            {{ if .IsDir }}
+                {{ $catalogType := .Name }}
+                {{ $catalogTypePath := printf "%s/%s" $catalogRoot $catalogType }}
+                {{ range readDir $catalogTypePath }}
+                    {{ if and (not .IsDir) (strings.HasSuffix .Name ".md") }}
+                        {{ $filePath := printf "%s/%s" $catalogTypePath .Name }}
+                        {{ $raw := readFile $filePath }}
+                        {{ $parts := split $raw "---" }}
+                        {{ if ge (len $parts) 3 }}
+                            {{ $meta := transform.Unmarshal (index $parts 1) }}
+                            {{ $compatibility := index $meta "compatibility" }}
+                            {{ if and $compatibility (in $compatibility $tech) }}
             <li class="design-link">
-                <a href="https://meshery.io/catalog/{{ path.Base .File.Dir }}/{{ replace .Params.name "." "-" | urlize }}-{{ .Params.patternId }}" target="_blank">
-                    {{ .Params.name }}
+                <a href="https://meshery.io/catalog/{{ $catalogType }}/{{ replace (index $meta "name") "." "-" | urlize }}-{{ index $meta "patternId" }}" target="_blank">
+                    {{ index $meta "name" }}
                 </a>
             </li>
+                            {{ end }}
+                        {{ end }}
+                    {{ end }}
+                {{ end }}
             {{ end }}
         {{ end }}
     </ul>
-    {{ end }}
     </section>
 
     <!-- Related Tutorials -->

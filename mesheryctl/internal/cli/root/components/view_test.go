@@ -12,7 +12,7 @@ import (
 
 // expectedViewFlagError generates the expected error for an invalid view flag
 func expectedViewFlagError(outputFormat string) error {
-	fv := mesheryctlflags.NewFlagValidator()
+	fv := mesheryctlflags.GetFlagValidator()
 	return fv.Validate(&componentViewFlags{OutputFormat: outputFormat})
 }
 
@@ -32,7 +32,7 @@ func TestComponentView(t *testing.T) {
 			Fixture:        "components.empty.api.response.golden",
 			IsOutputGolden: false,
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("[component-name | component-id] is required but not specified\n\n%s", errViewCmdMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errInvalidArg, viewUsageMsg)),
 		},
 		{
 			Name:             "given a non-existent component is provided when running mesheryctl component view non-existent-component then it displays empty output",
@@ -51,7 +51,7 @@ func TestComponentView(t *testing.T) {
 			Fixture:        "components.empty.api.response.golden",
 			IsOutputGolden: false,
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errViewCmdMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errInvalidArg, viewUsageMsg)),
 		},
 		{
 			Name:             "given a valid component is provided when running mesheryctl component view valid-component then the detailed output of the component is displayed",
