@@ -213,7 +213,7 @@ mesheryctl system status --verbose
 				if err != nil && verboseStatus {
 					utils.Log.Warnf("Could not discover Meshery service endpoint: %v", err)
 				}
-				if err == nil && endpoint.External != nil && endpoint.External.Address != "" {
+				if err == nil && endpoint.External != nil && endpoint.External.Address != "" && endpoint.External.Address != "localhost" {
 					displayEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port)
 				}
 			}
