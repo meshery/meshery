@@ -28,7 +28,7 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgid '', Invalid value for --name ''")),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId '', Invalid value for --name ''")),
 		},
 		{
 			Name:             "given missing flag orgId when workspace create throw error",
@@ -39,7 +39,7 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgid ''")),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId ''")),
 		},
 		{
 			Name:             "given missing flag name when workspace create throw error",
@@ -72,7 +72,7 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgid '', Invalid value for --name ''")),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId '', Invalid value for --name ''")),
 		},
 		{
 			Name:             "given an invalid organization Id when workspace create throw error",
