@@ -124,11 +124,13 @@ oras push [account-id].dkr.ecr.[region].amazonaws.com/[model-name]:[version] [mo
 mesheryctl model import -f oci://[account-id].dkr.ecr.[region].amazonaws.com/[model-name]:[version]
 {% endhighlight %}
 
-> **Note:** ECR requires the repository to exist before pushing. Create it first:
+**Create the repository (if it doesn't exist):**
 
 {% highlight bash %}
 aws ecr create-repository --repository-name [model-name]
 {% endhighlight %}
+
+> **Note:** ECR requires the repository to exist before pushing.
 
 ---
 
