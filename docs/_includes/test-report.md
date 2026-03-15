@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 14th 2026, 6:30:50 am
+- Testing started at: March 15th 2026, 7:23:43 am
 
 **📦 Test Result Summary**
 
-- ✅ 63 passed
-- ❌ 4 failed
+- ✅ 64 passed
+- ❌ 3 failed
 - ⚠️ 0 flaked
 - ⏩ 5 skipped
 
-⌛ _Duration: 5 minutes and 31 seconds_
+⌛ _Duration: 5 minutes and 15 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -36,7 +36,7 @@
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
-| 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ❌ |
+| 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ✅ |
 | 17 | Meshery | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 18 | Meshery | chromium-meshery-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 19 | Meshery | chromium-meshery-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
@@ -143,29 +143,6 @@ The following tests failed. Click on each to see the failure reason:
 ```
 
 
-
-</details>
-
-<details>
-<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
- [90m  6 |[39m
-[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
- [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
- [90m 10 |[39m     })[33m;[39m[0m
-```
 
 </details>
 

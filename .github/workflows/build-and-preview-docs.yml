@@ -28,7 +28,7 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: '0.148.1'
+          hugo-version: '0.157.0'
           extended: true
 
       - name: Install dart-sass
