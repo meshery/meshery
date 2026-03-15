@@ -1,7 +1,6 @@
 **Notes for Reviewers**
 
 - This PR fixes #
-- [ ] Docs migration related (Jekyll -> Hugo). If yes, link the tracking issue.
 
 **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)**
 - [ ] Yes, I signed my commits.
