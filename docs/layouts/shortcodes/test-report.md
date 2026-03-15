@@ -30,9 +30,9 @@
 | 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
 | 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
-| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
+| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
+| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
+| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
