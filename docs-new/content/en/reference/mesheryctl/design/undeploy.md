@@ -1,30 +1,30 @@
 ---
-title: mesheryctl-exp-relationship-search
+title: mesheryctl-design-undeploy
 display_title: false
-command: exp
-subcommand: relationship
+command: design
+subcommand: undeploy
 ---
 
-# mesheryctl exp relationship search
+# mesheryctl design undeploy
 
-Search registered relationship(s)
+Undeploy design
 
 ## Synopsis
 
-Search registred relationship(s) used by different models
+Undeploy design will trigger undeploy of design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship search [flags]
+mesheryctl design undeploy [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Search for relationship using a query
+Undeploy design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]
+mesheryctl design undeploy -f [filepath]
 
 </div>
 </pre> 
@@ -33,11 +33,8 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help             help for search
-  -k, --kind string      search particular kind of relationships
-  -m, --model string     search relationships of particular model name
-  -s, --subtype string   search particular subtype of relationships
-  -t, --type string      search particular type of relationships
+  -f, --file string   Path to design file
+  -h, --help          help for undeploy
 
 </div>
 </pre>
@@ -47,6 +44,7 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
 </div>

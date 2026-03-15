@@ -12,8 +12,7 @@ Manage environments
 ## Synopsis
 
 Create, delete, list of view details of environment(s) of a specific organization
-Documentation for environment can be found at https://docs.meshery.io/concepts/logical/environments
-	
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment [flags]
@@ -74,7 +73,6 @@ mesheryctl environment view --orgID [orgID]
 </div>
 </pre>
 
+## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
-
-## See Also
