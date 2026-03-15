@@ -10,7 +10,7 @@ import {
   SimCard,
   SupervisedUserCircle,
 } from '@sistent/sistent';
-import TouchApp from '@mui/icons-material';
+import TouchApp from '@mui/icons-material/TouchApp';
 import React from 'react';
 
 /**
