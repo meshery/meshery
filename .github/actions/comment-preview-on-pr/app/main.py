@@ -32,9 +32,11 @@ def get_pr_details(repo, event):
         if not head_sha:
             logging.error("No head commit found in workflow_run payload")
             return None, None
-        for pr in repo.get_pulls():
-            if pr.head.sha == head_sha:
-                return pr.number, pr.head.sha
+        commit = repo.get_commit(sha=head_sha)
+        pulls = commit.get_pulls()
+        if pulls.totalCount > 0:
+            # A commit can be in multiple PRs. We'll take the first one found.
+            return pulls[0].number, pulls[0].head.sha
         logging.error(f"No PR found for hash: {head_sha}")
         return None, head_sha
 
