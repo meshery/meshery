@@ -30,35 +30,6 @@
         "from": [
           {
             "id": null,
-            "kind": "ResourceGroup",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "azure-resources",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "id"
-                ]
-              ]
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
             "kind": "Vault",
             "match": {},
             "match_strategy_matrix": null,
@@ -77,6 +48,37 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "owner",
+                  "armId"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "ResourceGroup",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "azure-resources",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "configuration",
                   "id"
