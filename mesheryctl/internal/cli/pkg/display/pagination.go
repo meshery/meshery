@@ -45,11 +45,11 @@ func HandlePaginationAsync[T any](
 		urlPath := ""
 
 		pagesQuerySearch := url.Values{}
-		if !strings.Contains(displayData.UrlPath, "page") {
+		if !strings.Contains(displayData.UrlPath, "page=") {
 			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
 		}
 
-		if !strings.Contains(displayData.UrlPath, "pagesize") {
+		if !strings.Contains(displayData.UrlPath, "pagesize=") {
 			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
 		}
 
