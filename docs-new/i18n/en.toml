@@ -1,0 +1,90 @@
+# UI strings. Buttons and similar.
+
+[ui_pager_prev]
+other = "Previous"
+
+[ui_pager_next]
+other = "Next"
+
+[ui_read_more]
+other = "Read more"
+
+[ui_search]
+other = "Search"
+
+# Used in sentences such as "Posted in News"
+[ui_in]
+other = "in"
+
+# Used in sentences such as "All Tags"
+[ui_all]
+other = "all"
+
+# Footer text
+[footer_all_rights_reserved]
+other = "All Rights Reserved"
+
+[footer_privacy_policy]
+other = "Privacy Policy"
+
+# Post (blog, articles etc.)
+[post_byline_by]
+other = "By"
+[post_created]
+other = "Created"
+[post_last_mod]
+other = "Last modified"
+[post_edit_this]
+other = "Edit this page"
+[post_view_this]
+other = "View page source"
+[post_create_child_page]
+other = "Create child page"
+[post_create_issue]
+other = "Create docs issue"
+[post_create_project_issue]
+other = "Create project issue"
+[post_posts_in]
+other = "Posts in"
+[post_reading_time]
+other = "minute read"
+[post_less_than_a_minute_read]
+other = "less than a minute"
+
+# Print support
+[print_printable_section]
+other = "This is the multi-page printable view of this section."
+[print_click_to_print]
+other = "Click here to print"
+[print_show_regular]
+other = "Return to the regular view of this page"
+[print_entire_section]
+other = "Print entire section"
+
+# Community
+[community_join]
+other = "Join the {{ .Site.Title }} community"
+[community_introduce]
+other = "{{ .Site.Title }} is an open source project that anyone in the community can use, improve, and enjoy. We'd love you to join us! Here's a few ways to find out what's happening and get involved."
+[community_learn]
+other = "Learn and Connect"
+[community_using]
+other = "Using or want to use {{ .Site.Title }}? Find out more here:"
+[community_develop]
+other = "Develop and Contribute"
+[community_contribute]
+other = "If you want to get more involved by contributing to {{ .Site.Title }}, join us here:"
+[community_how_to]
+other = "You can find out how to contribute to {{ .Site.Title }} in our"
+[community_guideline]
+other = "Contribution Guidelines"
+
+# Feedback
+[feedback_title]
+other = "Feedback"
+[feedback_question]
+other = "Was this page helpful?"
+[feedback_positive]
+other = "Yes"
+[feedback_negative]
+other = "No"

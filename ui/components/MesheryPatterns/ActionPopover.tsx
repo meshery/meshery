@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {
-  Button,
-  ButtonGroup,
-  Paper,
-  Popper,
+  ClickAwayListener,
+  IconButton,
   MenuItem,
   MenuList,
-  ClickAwayListener,
+  Paper,
+  Popper,
+  Tooltip,
 } from '@sistent/sistent';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
@@ -37,16 +37,19 @@ const ActionPopover = ({
 
   return (
     <>
-      <ButtonGroup
-        variant="text"
-        style={{ boxShadow: 'none' }}
-        ref={anchorRef}
-        aria-label="Button group with a nested menu"
-      >
-        <Button size="small" onClick={handleToggle} variant="text">
-          <MoreVertIcon />
-        </Button>
-      </ButtonGroup>
+      <div ref={anchorRef} style={{ display: 'inline-flex' }}>
+        <Tooltip title="Actions" placement="top">
+          <IconButton
+            size="small"
+            onClick={handleToggle}
+            aria-label="Open actions menu"
+            aria-haspopup="menu"
+            aria-expanded={open ? 'true' : undefined}
+          >
+            <MoreVertIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
 
       <ClickAwayListener onClickAway={handleClose}>
         <Popper
@@ -57,6 +60,7 @@ const ActionPopover = ({
             anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
             transformOrigin: { vertical: 'top', horizontal: 'left' },
           } as any)}
+          placement="bottom-start"
         >
           <Paper>
             <MenuList autoFocusItem>

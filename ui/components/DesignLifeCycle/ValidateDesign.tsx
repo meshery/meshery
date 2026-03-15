@@ -1,11 +1,13 @@
 // @ts-nocheck
 import React, { useRef, useEffect } from 'react';
+import { useSelector } from '@xstate/react';
 import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { ComponentIcon, Loading, getSvgWhiteForComponent, processDesign } from './common';
 import {
   designValidatorCommands,
   designValidatorEvents,
+  selectValidator,
   useDesignSchemaValidationResults,
   useIsValidatingDesignSchema,
 } from '../../machines/validator/designValidator';
@@ -19,8 +21,12 @@ import {
   ValidationSubHeader,
 } from './styles';
 
-const ComponentErrorList = ({ component, errors, validatorActor }) => {
+const ComponentErrorList = ({ component, errors, validatorActor, canTapErrors }) => {
   const onErrorTap = (error) => {
+    if (!canTapErrors) {
+      return;
+    }
+
     validatorActor.send(
       designValidatorEvents.tapOnError({ error, type: 'schemaValidation', component }),
     );
@@ -38,6 +44,7 @@ const ComponentErrorList = ({ component, errors, validatorActor }) => {
       {errors.map((error) => (
         <ValidationErrorListItem
           disablePadding
+          clickable={canTapErrors}
           key={error.instancePath}
           onClick={() => onErrorTap(error)}
         >
@@ -66,6 +73,7 @@ const ValidationResults_ = (props) => {
     validationResults,
     currentNodeId,
     validationMachine,
+    canTapErrors,
   } = props;
 
   const componentsWithErrors = Object.values(validationResults).filter(
@@ -141,6 +149,7 @@ const ValidationResults_ = (props) => {
                 component={componentResult.component}
                 validatorActor={validationMachine}
                 errors={componentResult.errors}
+                canTapErrors={canTapErrors}
               />
             </Collapse>
           </ValidatedComponent>
@@ -159,8 +168,10 @@ export const ValidationResults = ValidationResults_;
  */
 export const ValidateDesign = ({ design, currentNodeId, validationMachine }) => {
   const validationResults = useDesignSchemaValidationResults(validationMachine);
-  console.log('Validation Results', validationResults);
   const isValidating = useIsValidatingDesignSchema(validationMachine);
+  const hasReturnAddress = useSelector(validationMachine, (state) =>
+    Boolean(selectValidator(state, 'schemaValidator')?.getSnapshot?.()?.context?.returnAddress),
+  );
 
   const designName = design.name;
   const { configurableComponents, annotationComponents } = processDesign(design);
@@ -174,12 +185,8 @@ export const ValidateDesign = ({ design, currentNodeId, validationMachine }) => 
     validationMachine.send(designValidatorCommands.validateDesignSchema({ design }));
   }, []);
 
-  if (isValidating) {
-    return <Loading message="Validating Design" />;
-  }
-
-  if (!validationResults) {
-    return null;
+  if (isValidating || !validationResults) {
+    return <Loading message={isValidating ? 'Validating Design' : 'Loading validation form'} />;
   }
 
   if (typeof validationResults === 'string') {
@@ -195,6 +202,7 @@ export const ValidateDesign = ({ design, currentNodeId, validationMachine }) => 
       annotationCount={annotationComponents.length}
       design={designName}
       validationMachine={validationMachine}
+      canTapErrors={hasReturnAddress}
     />
   );
 };

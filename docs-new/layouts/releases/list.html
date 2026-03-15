@@ -1,5 +1,5 @@
 {{ define "main" }}
-{{ $sorted := sort .Pages "Date" "desc" }}
+{{ $sorted := partial "sort-releases.html" .Pages }}
 {{ .Content }}
 <table>
 <tr><th> Version </th><th> Date </th></tr>

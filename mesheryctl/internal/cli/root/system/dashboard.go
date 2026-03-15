@@ -116,11 +116,11 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		}
 		log.Debug("Fetching Meshery-UI endpoint")
 		switch currCtx.GetPlatform() {
-		case "docker":
+		case platformDocker:
 			if runPortForward {
 				log.Warn("--port-forward is not supported using Docker as Meshery's deployment platform.")
 			}
-		case "kubernetes":
+		case platformKubernetes:
 			client, err := meshkitkube.New([]byte(""))
 			if err != nil {
 				return err

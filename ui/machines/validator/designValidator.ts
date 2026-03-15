@@ -11,8 +11,7 @@ import { encodeDesignFile, processDesign } from '@/utils/utils';
 import { designsApi } from '@/rtk-query/design';
 import { initiateQuery } from '@/rtk-query/utils';
 
-import { componentKey } from './schemaValidator';
-import { fromWorkerfiedActor } from '@sistent/sistent';
+import { componentKey, schemaValidatorMachine } from './schemaValidator';
 
 const DESIGN_VALIDATOR_COMMANDS = {
   VALIDATE_DESIGN_SCHEMA: 'VALIDATE_DESIGN_SCHEMA',
@@ -196,6 +195,11 @@ export const designValidationMachine = createMachine({
                 syncSnapshot: true,
               } as any,
             ),
+            spawn(schemaValidatorMachine, {
+              name: 'schemaValidator',
+              id: 'schemaValidator',
+              syncSnapshot: true,
+            }),
 
           dryRunValidator: ({ spawn }) =>
             spawn(dryRunValidatorMachine, {

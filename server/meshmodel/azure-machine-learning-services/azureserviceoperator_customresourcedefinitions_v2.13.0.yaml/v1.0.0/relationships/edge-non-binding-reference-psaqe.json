@@ -4,12 +4,12 @@
   "kind": "edge",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
     "version": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "Workspace",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -46,7 +45,6 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
@@ -66,7 +64,8 @@
                   "storageAccountReference",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -74,7 +73,6 @@
           {
             "id": null,
             "kind": "StorageAccount",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -89,7 +87,6 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
@@ -104,7 +101,8 @@
                   "spec",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]

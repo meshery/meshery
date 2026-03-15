@@ -1,8 +1,7 @@
 {{ $pages := site.RegularPages }}
 {{ $releases := where $pages "Type" "releases" }}
 {{ $filtered := where $releases "Params.prerelease" false }}
-{{ $sorted := sort $filtered "Date" "desc" }}
-{{ $latest := first 1 $sorted }}
-{{ range $latest }}
+{{ $sorted := partial "sort-releases.html" $filtered }}
+{{ range first 1 $sorted }}
 <h2>{{ .Params.tag }}</h2>
 {{ end }}
