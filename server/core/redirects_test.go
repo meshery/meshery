@@ -50,27 +50,42 @@ func TestEncodeRefUrl(t *testing.T) {
 
 func TestDecodeRefURL(t *testing.T) {
 	testCases := []struct {
-		name     string
-		input    string
-		expected string
+		name        string
+		input       string
+		expected    string
+		expectError bool
 	}{
 		{
-			name:     "Decode Dashboard path",
-			input:    "L2Rhc2hib2FyZA",
-			expected: "/dashboard",
+			name:        "Decode Dashboard path",
+			input:       "L2Rhc2hib2FyZA",
+			expected:    "/dashboard",
+			expectError: false,
 		},
 		{
-			name:     "Decode Empty string",
-			input:    "",
-			expected: "",
+			name:        "Decode Empty string",
+			input:       "",
+			expected:    "",
+			expectError: false,
+		},
+		{
+			name:        "Invalid base64 input",
+			input:       "!!!not-base64!!!", // Added an actual invalid case
+			expected:    "",
+			expectError: true,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// We add '_ ' here to ignore the error return value for now
-			actual, _ := DecodeRefURL(tc.input)
-			if actual != tc.expected {
+			actual, err := DecodeRefURL(tc.input)
+
+			// Verify if the error state matches what we expect
+			if (err != nil) != tc.expectError {
+				t.Fatalf("Test %s: DecodeRefURL() error = %v, wantErr %v", tc.name, err, tc.expectError)
+			}
+
+			// Only check the result if we didn't expect (and get) an error
+			if !tc.expectError && actual != tc.expected {
 				t.Errorf("Test %s failed: expected %q, but got %q", tc.name, tc.expected, actual)
 			}
 		})
