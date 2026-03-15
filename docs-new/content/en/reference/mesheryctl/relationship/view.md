@@ -1,31 +1,46 @@
 ---
-title: mesheryctl-environment-view
+title: mesheryctl-relationship-view
 display_title: false
-command: environment
+command: relationship
 subcommand: view
 ---
 
-# mesheryctl environment view
+# mesheryctl relationship view
 
-View registered environmnents
+view relationships of a model by its name
 
 ## Synopsis
 
-View details of an environment registered in Meshery Server for a specific organization
-
+view a relationship queried by the model name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment view [flags]
+mesheryctl relationship view [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-View details of a specific environment
+View relationships of a model in default format yaml
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment view --orgID [orgID]
+mesheryctl relationship view [model-name]
+
+</div>
+</pre> 
+
+View relationships of a model in JSON format
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl relationship view [model-name] --output-format json
+
+</div>
+</pre> 
+
+View relationships of a model in json format and save it to a file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl relationship view [model-name] --output-format json --save
 
 </div>
 </pre> 
@@ -35,7 +50,6 @@ mesheryctl environment view --orgID [orgID]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help                   help for view
-      --orgID string           Organization ID
   -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
   -s, --save                   (optional) save output as a JSON/YAML file
 

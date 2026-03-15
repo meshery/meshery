@@ -1,46 +1,47 @@
 ---
-title: mesheryctl-exp-relationship-view
+title: mesheryctl-organization-list
 display_title: false
-command: exp
-subcommand: relationship
+command: organization
+subcommand: list
 ---
 
-# mesheryctl exp relationship view
+# mesheryctl organization list
 
-view relationships of a model by its name
+List registered organizations
 
 ## Synopsis
 
-view a relationship queried by the model name
+List all registered organizations with their id, name and date of creation. Organization will be returned based on provider you logged in.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [flags]
+mesheryctl organization list [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-View relationships of a model in default format yaml
+list all organizations
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [model-name]
+mesheryctl organization list
 
 </div>
 </pre> 
 
-View relationships of a model in JSON format
+list organizations for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [model-name] --output-format json
+mesheryctl organization list --page [page-number]
 
 </div>
 </pre> 
 
-View relationships of a model in json format and save it to a file
+Display number of available organizations
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship view [model-name] --output-format json --save
+mesheryctl organization list --count
 
 </div>
 </pre> 
@@ -49,9 +50,10 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help                   help for view
-  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
-  -s, --save                   (optional) save output as a JSON/YAML file
+      --count          total number of registered orgs
+  -h, --help           help for list
+  -p, --page int       (optional) Page number of paginated results (default 1)
+  -s, --pagesize int   (optional) Number of organizations per page (default 10)
 
 </div>
 </pre>

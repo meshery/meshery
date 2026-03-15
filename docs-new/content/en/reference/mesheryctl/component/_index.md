@@ -12,7 +12,7 @@ Manage Meshery components
 ## Synopsis
 
 List, search and view component(s) and detailed informations
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl component [flags]
@@ -49,7 +49,7 @@ mesheryctl component search [component-name]
 View a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [component-name]
+mesheryctl component view [component-name | component-id]
 
 </div>
 </pre> 
@@ -74,7 +74,6 @@ mesheryctl component view [component-name]
 </div>
 </pre>
 
+## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
-
-## See Also

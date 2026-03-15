@@ -39,16 +39,18 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+
 type cmdDesignDeployFlags struct {
 	File       string `json:"file" validate:"omitempty,file"`
 	SourceType string `json:"source-type" validate:"omitempty,design-source-type"`
 	SkipSave   bool   `json:"skip-save" validate:"boolean"`
 }
 
+
 var designDeployFlags cmdDesignDeployFlags
 
 var linkDocDesignDeploy = map[string]string{
-	"link":    "![pattern-onboard-usage](/assets/img/mesheryctl/pattern-onboard.png)",
+	"link":    "![pattern-onboard-usage](/reference/images/pattern-onboard.png)",
 	"caption": "Usage of mesheryctl design deploy",
 }
 

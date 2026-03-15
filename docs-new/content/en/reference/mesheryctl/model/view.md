@@ -11,8 +11,8 @@ View model
 
 ## Synopsis
 
-View a model queried by its name
-Documentation for models view can be found at https://docs.meshery.io/reference/mesheryctl/model/view
+View a model queried by its name or ID
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model view [flags]
@@ -22,10 +22,18 @@ mesheryctl model view [flags]
 
 ## Examples
 
-View a specific model from current provider
+View a specific model from current provider by using [model-name] or [model-id] in default format yaml
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model view [model-name]
+
+</div>
+</pre> 
+
+View a specific model from current provider in JSON format
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model view [model-name] --output-format json
 
 </div>
 </pre> 
