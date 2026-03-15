@@ -100,7 +100,7 @@ oras push [your-acr-name].azurecr.io/[model-name]:[version] [model-file]
 mesheryctl model import -f oci://[your-acr-name].azurecr.io/[model-name]:[version]
 {% endhighlight %}
 
-> **Note:** Ensure your Azure service principal has \`AcrPush\`/\`AcrPull\` role assigned.
+> **Note:** Ensure your Azure service principal has `AcrPush`/`AcrPull` role assigned.
 
 ---
 
@@ -109,9 +109,7 @@ mesheryctl model import -f oci://[your-acr-name].azurecr.io/[model-name]:[versio
 **Login:**
 
 {% highlight bash %}
-aws ecr get-login-password --region [region] | docker login \
-  --username AWS \
-  --password-stdin [account-id].dkr.ecr.[region].amazonaws.com
+aws ecr get-login-password --region [region] | docker login --username AWS --password-stdin [account-id].dkr.ecr.[region].amazonaws.com
 {% endhighlight %}
 
 **Push with ORAS:**
@@ -127,10 +125,10 @@ mesheryctl model import -f oci://[account-id].dkr.ecr.[region].amazonaws.com/[mo
 {% endhighlight %}
 
 > **Note:** ECR requires the repository to exist before pushing. Create it first:
->
-> {% highlight bash %}
-> aws ecr create-repository --repository-name [model-name]
-> {% highlight text %}
+
+{% highlight bash %}
+aws ecr create-repository --repository-name [model-name]
+{% endhighlight %}
 
 ---
 
@@ -138,8 +136,8 @@ mesheryctl model import -f oci://[account-id].dkr.ecr.[region].amazonaws.com/[mo
 
 **Login:**
 
-{% endhighlight %}bash
-echo \$GITHUB_TOKEN | oras login ghcr.io -u [github-username] --password-stdin
+{% highlight bash %}
+echo $GITHUB_TOKEN | oras login ghcr.io -u [github-username] --password-stdin
 {% endhighlight %}
 
 **Push with ORAS:**
@@ -154,7 +152,7 @@ oras push ghcr.io/[github-username]/[model-name]:[version] [model-file]
 mesheryctl model import -f oci://ghcr.io/[github-username]/[model-name]:[version]
 {% endhighlight %}
 
-> **Note:** Your \`GITHUB_TOKEN\` needs \`write:packages\` scope for push and \`read:packages\` for pull.
+> **Note:** Your `GITHUB_TOKEN` needs `write:packages` scope for push and `read:packages` for pull.
 
 ---
 
