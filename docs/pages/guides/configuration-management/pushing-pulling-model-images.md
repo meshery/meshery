@@ -16,109 +16,145 @@ You can push or pull Meshery model images to or from any OCI-compatible image re
 ## Prerequisites
 
 - [mesheryctl installed](/installation/mesheryctl)
-- [ORAS CLI installed](https://oras.land/docs/installation) (for pushing model images)
+- [ORAS CLI installed](https://oras.land/docs/installation) (required for pushing model images as OCI artifacts)
+- [Docker CLI installed](https://docs.docker.com/get-docker/) (required for Docker Hub authentication)
+- [AWS CLI installed](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) (required for AWS ECR authentication)
 - Credentials for your target registry
 
 ## Pull a Model Image
 
 Use `mesheryctl model import` to pull and import a model from any OCI registry:
-```bash
+
+\`\`\`bash
 mesheryctl model import -f [OCI]
-```
+\`\`\`
+
+**Example output (success):**
+
+\`\`\`
+Model imported successfully: [model-name] v[version]
+\`\`\`
+
+**Example output (failure):**
+
+\`\`\`
+Error: failed to pull model image: unauthorized: authentication required
+\`\`\`
 
 ## Push a Model Image
 
 Meshery model images are OCI artifacts. Use the [ORAS CLI](https://oras.land) to push them to any OCI-compatible registry:
-```bash
+
+\`\`\`bash
 oras push [registry-host]/[repository]:[tag] [model-file]
-```
+\`\`\`
+
+**Example output (success):**
+
+\`\`\`
+Pushed [registry-host]/[repository]:[tag]
+Digest: sha256:abc123...
+\`\`\`
 
 ## Registry-Specific Examples
 
 ### Docker Hub
 
 **Login:**
-```bash
+
+\`\`\`bash
 docker login
-```
+\`\`\`
 
 **Push with ORAS:**
-```bash
+
+\`\`\`bash
 oras push docker.io/[your-username]/[model-name]:[version] [model-file]
-```
+\`\`\`
 
 **Pull with mesheryctl:**
-```bash
+
+\`\`\`bash
 mesheryctl model import -f oci://docker.io/[your-username]/[model-name]:[version]
-```
+\`\`\`
 
 ---
 
 ### Azure Container Registry (ACR)
 
 **Login:**
-```bash
+
+\`\`\`bash
 az acr login --name [your-acr-name]
-```
+\`\`\`
 
 **Push with ORAS:**
-```bash
+
+\`\`\`bash
 oras push [your-acr-name].azurecr.io/[model-name]:[version] [model-file]
-```
+\`\`\`
 
 **Pull with mesheryctl:**
-```bash
-mesheryctl model import -f oci://[your-acr-name].azurecr.io/[model-name]:[version]
-```
 
-> **Note:** Ensure your Azure service principal has `AcrPush`/`AcrPull` role assigned.
+\`\`\`bash
+mesheryctl model import -f oci://[your-acr-name].azurecr.io/[model-name]:[version]
+\`\`\`
+
+> **Note:** Ensure your Azure service principal has \`AcrPush\`/\`AcrPull\` role assigned.
 
 ---
 
 ### AWS Elastic Container Registry (ECR)
 
 **Login:**
-```bash
+
+\`\`\`bash
 aws ecr get-login-password --region [region] | docker login \
   --username AWS \
   --password-stdin [account-id].dkr.ecr.[region].amazonaws.com
-```
+\`\`\`
 
 **Push with ORAS:**
-```bash
+
+\`\`\`bash
 oras push [account-id].dkr.ecr.[region].amazonaws.com/[model-name]:[version] [model-file]
-```
+\`\`\`
 
 **Pull with mesheryctl:**
-```bash
+
+\`\`\`bash
 mesheryctl model import -f oci://[account-id].dkr.ecr.[region].amazonaws.com/[model-name]:[version]
-```
+\`\`\`
 
 > **Note:** ECR requires the repository to exist before pushing. Create it first:
-> ```bash
+>
+> \`\`\`bash
 > aws ecr create-repository --repository-name [model-name]
-> ```
+> \`\`\`
 
 ---
 
 ### GitHub Container Registry (GHCR)
 
 **Login:**
-```bash
-echo $GITHUB_TOKEN | oras login ghcr.io -u [github-username] --password-stdin
-```
+
+\`\`\`bash
+echo \$GITHUB_TOKEN | oras login ghcr.io -u [github-username] --password-stdin
+\`\`\`
 
 **Push with ORAS:**
-```bash
+
+\`\`\`bash
 oras push ghcr.io/[github-username]/[model-name]:[version] [model-file]
-```
+\`\`\`
 
 **Pull with mesheryctl:**
-```bash
-mesheryctl model import -f oci://ghcr.io/[github-username]/[model-name]:[version]
-```
 
-> **Note:** Your `GITHUB_TOKEN` needs `write:packages` scope for push and `read:packages` for pull.
+\`\`\`bash
+mesheryctl model import -f oci://ghcr.io/[github-username]/[model-name]:[version]
+\`\`\`
+
+> **Note:** Your \`GITHUB_TOKEN\` needs \`write:packages\` scope for push and \`read:packages\` for pull.
 
 ---
 
