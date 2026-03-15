@@ -2,7 +2,6 @@
 title: Wasmcloud
 subtitle: Collaborative and visual infrastructure as design for Wasmcloud
 image: /extensions/models/wasmcloud/icons/color/wasmcloud-color.svg
-aliases: /extensibility/integrations/wasmcloud
 docURL: https://docs.meshery.io/extensibility/integrations/wasmcloud
 description: 
 integrations-category: Orchestration & Management
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/wasmcloud
 ---

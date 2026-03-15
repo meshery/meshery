@@ -2,7 +2,6 @@
 title: Tinkerbell
 subtitle: Collaborative and visual infrastructure as design for Tinkerbell
 image: /extensions/models/tinkerbell/icons/color/tinkerbell-color.svg
-aliases: /extensibility/integrations/tinkerbell
 docURL: https://docs.meshery.io/extensibility/integrations/tinkerbell
 description: 
 integrations-category: Provisioning
@@ -10,28 +9,28 @@ integrations-subcategory: Automation & Configuration
 registrant: GitHub
 components: 
 - name: hardware
-  colorIcon: content/en/extensions/models/tinkerbell/components/hardware/icons/color/hardware-color.svg
-  whiteIcon: content/en/extensions/models/tinkerbell/components/hardware/icons/white/hardware-white.svg
+  colorIcon: /extensions/models/tinkerbell/components/hardware/icons/color/hardware-color.svg
+  whiteIcon: /extensions/models/tinkerbell/components/hardware/icons/white/hardware-white.svg
   description: 
 - name: template
-  colorIcon: content/en/extensions/models/tinkerbell/components/template/icons/color/template-color.svg
-  whiteIcon: content/en/extensions/models/tinkerbell/components/template/icons/white/template-white.svg
+  colorIcon: /extensions/models/tinkerbell/components/template/icons/color/template-color.svg
+  whiteIcon: /extensions/models/tinkerbell/components/template/icons/white/template-white.svg
   description: 
 - name: workflow
-  colorIcon: content/en/extensions/models/tinkerbell/components/workflow/icons/color/workflow-color.svg
-  whiteIcon: content/en/extensions/models/tinkerbell/components/workflow/icons/white/workflow-white.svg
+  colorIcon: /extensions/models/tinkerbell/components/workflow/icons/color/workflow-color.svg
+  whiteIcon: /extensions/models/tinkerbell/components/workflow/icons/white/workflow-white.svg
   description: 
 - name: job
-  colorIcon: content/en/extensions/models/tinkerbell/components/job/icons/color/job-color.svg
-  whiteIcon: content/en/extensions/models/tinkerbell/components/job/icons/white/job-white.svg
+  colorIcon: /extensions/models/tinkerbell/components/job/icons/color/job-color.svg
+  whiteIcon: /extensions/models/tinkerbell/components/job/icons/white/job-white.svg
   description: 
 - name: machine
-  colorIcon: content/en/extensions/models/tinkerbell/components/machine/icons/color/machine-color.svg
-  whiteIcon: content/en/extensions/models/tinkerbell/components/machine/icons/white/machine-white.svg
+  colorIcon: /extensions/models/tinkerbell/components/machine/icons/color/machine-color.svg
+  whiteIcon: /extensions/models/tinkerbell/components/machine/icons/white/machine-white.svg
   description: 
 - name: task
-  colorIcon: content/en/extensions/models/tinkerbell/components/task/icons/color/task-color.svg
-  whiteIcon: content/en/extensions/models/tinkerbell/components/task/icons/white/task-white.svg
+  colorIcon: /extensions/models/tinkerbell/components/task/icons/color/task-color.svg
+  whiteIcon: /extensions/models/tinkerbell/components/task/icons/white/task-white.svg
   description: 
 components-count: 6
 relationships: 
@@ -44,4 +43,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/tinkerbell
 ---

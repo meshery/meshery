@@ -2,7 +2,6 @@
 title: Azure Event Grid
 subtitle: Collaborative and visual infrastructure as design for Azure Event Grid
 image: /extensions/models/azure-event-grid/icons/color/azure-event-grid-color.svg
-aliases: /extensibility/integrations/azure-event-grid
 docURL: https://docs.meshery.io/extensibility/integrations/azure-event-grid
 description: 
 integrations-category: Observability and Analysis
@@ -10,20 +9,20 @@ integrations-subcategory: Streaming & Messaging
 registrant: GitHub
 components: 
 - name: domain
-  colorIcon: content/en/extensions/models/azure-event-grid/components/domain/icons/color/domain-color.svg
-  whiteIcon: content/en/extensions/models/azure-event-grid/components/domain/icons/white/domain-white.svg
+  colorIcon: /extensions/models/azure-event-grid/components/domain/icons/color/domain-color.svg
+  whiteIcon: /extensions/models/azure-event-grid/components/domain/icons/white/domain-white.svg
   description: 
 - name: domains-topic
-  colorIcon: content/en/extensions/models/azure-event-grid/components/domains-topic/icons/color/domains-topic-color.svg
-  whiteIcon: content/en/extensions/models/azure-event-grid/components/domains-topic/icons/white/domains-topic-white.svg
+  colorIcon: /extensions/models/azure-event-grid/components/domains-topic/icons/color/domains-topic-color.svg
+  whiteIcon: /extensions/models/azure-event-grid/components/domains-topic/icons/white/domains-topic-white.svg
   description: 
 - name: event-subscription
-  colorIcon: content/en/extensions/models/azure-event-grid/components/event-subscription/icons/color/event-subscription-color.svg
-  whiteIcon: content/en/extensions/models/azure-event-grid/components/event-subscription/icons/white/event-subscription-white.svg
+  colorIcon: /extensions/models/azure-event-grid/components/event-subscription/icons/color/event-subscription-color.svg
+  whiteIcon: /extensions/models/azure-event-grid/components/event-subscription/icons/white/event-subscription-white.svg
   description: 
 - name: topic
-  colorIcon: content/en/extensions/models/azure-event-grid/components/topic/icons/color/topic-color.svg
-  whiteIcon: content/en/extensions/models/azure-event-grid/components/topic/icons/white/topic-white.svg
+  colorIcon: /extensions/models/azure-event-grid/components/topic/icons/color/topic-color.svg
+  whiteIcon: /extensions/models/azure-event-grid/components/topic/icons/white/topic-white.svg
   description: 
 components-count: 4
 relationships: 
@@ -45,4 +44,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/azure-event-grid
 ---

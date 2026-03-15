@@ -2,7 +2,6 @@
 title: Schemahero
 subtitle: Collaborative and visual infrastructure as design for Schemahero
 image: /extensions/models/schemahero/icons/color/schemahero-color.svg
-aliases: /extensibility/integrations/schemahero
 docURL: https://docs.meshery.io/extensibility/integrations/schemahero
 description: 
 integrations-category: App Definition and Development
@@ -10,16 +9,16 @@ integrations-subcategory: Database
 registrant: Github
 components: 
 - name: submariner
-  colorIcon: content/en/extensions/models/schemahero/components/submariner/icons/color/submariner-color.svg
-  whiteIcon: content/en/extensions/models/schemahero/components/submariner/icons/white/submariner-white.svg
+  colorIcon: /extensions/models/schemahero/components/submariner/icons/color/submariner-color.svg
+  whiteIcon: /extensions/models/schemahero/components/submariner/icons/white/submariner-white.svg
   description: 
 - name: service-discovery
-  colorIcon: content/en/extensions/models/schemahero/components/service-discovery/icons/color/service-discovery-color.svg
-  whiteIcon: content/en/extensions/models/schemahero/components/service-discovery/icons/white/service-discovery-white.svg
+  colorIcon: /extensions/models/schemahero/components/service-discovery/icons/color/service-discovery-color.svg
+  whiteIcon: /extensions/models/schemahero/components/service-discovery/icons/white/service-discovery-white.svg
   description: 
 - name: broker
-  colorIcon: content/en/extensions/models/schemahero/components/broker/icons/color/broker-color.svg
-  whiteIcon: content/en/extensions/models/schemahero/components/broker/icons/white/broker-white.svg
+  colorIcon: /extensions/models/schemahero/components/broker/icons/color/broker-color.svg
+  whiteIcon: /extensions/models/schemahero/components/broker/icons/white/broker-white.svg
   description: 
 components-count: 3
 relationships: 
@@ -32,4 +31,6 @@ featureList: [
 howItWorks: "Integrates Scribe configurations"
 howItWorksDetails: "Streamlined log management and aggregation within Kubernetes"
 categories: [integrations]
+aliases:
+- /extensibility/integrations/schemahero
 ---

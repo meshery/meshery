@@ -2,7 +2,6 @@
 title: Gitlab Runner Operator
 subtitle: Collaborative and visual infrastructure as design for Gitlab Runner Operator
 image: /extensions/models/gitlab-runner-operator/icons/color/gitlab-runner-operator-color.svg
-aliases: /extensibility/integrations/gitlab-runner-operator
 docURL: https://docs.meshery.io/extensibility/integrations/gitlab-runner-operator
 description: 
 integrations-category: App Definition and Development
@@ -10,8 +9,8 @@ integrations-subcategory: Source Version Control
 registrant: Artifact Hub
 components: 
 - name: runner
-  colorIcon: content/en/extensions/models/gitlab-runner-operator/components/runner/icons/color/runner-color.svg
-  whiteIcon: content/en/extensions/models/gitlab-runner-operator/components/runner/icons/white/runner-white.svg
+  colorIcon: /extensions/models/gitlab-runner-operator/components/runner/icons/color/runner-color.svg
+  whiteIcon: /extensions/models/gitlab-runner-operator/components/runner/icons/white/runner-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -24,4 +23,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/gitlab-runner-operator
 ---

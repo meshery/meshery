@@ -2,7 +2,6 @@
 title: AIGIS UK
 subtitle: Collaborative and visual infrastructure as design for AIGIS UK
 image: /extensions/models/aigisuk/icons/color/aigisuk-color.svg
-aliases: /extensibility/integrations/aigisuk
 docURL: https://docs.meshery.io/extensibility/integrations/aigisuk
 description: 
 integrations-category: App Definition and Development
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Integrates with AIGIS UK"
 howItWorksDetails: "Enhanced data security and compliance in Kubernetes"
 categories: [integrations]
+aliases:
+- /extensibility/integrations/aigisuk
 ---

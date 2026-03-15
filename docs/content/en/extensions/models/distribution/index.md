@@ -2,7 +2,6 @@
 title: Jfrog Distribution
 subtitle: Managed release binary distribution with JFrog distribution
 image: /extensions/models/distribution/icons/color/distribution-color.svg
-aliases: /extensibility/integrations/distribution
 docURL: https://docs.meshery.io/extensibility/integrations/distribution
 description: 
 integrations-category: Provisioning
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Efficient network utilization by optimizing replication, dramatically reducing network load and release bundle synchronization time from source Artifactory to target instance or Edge node."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/distribution
 ---

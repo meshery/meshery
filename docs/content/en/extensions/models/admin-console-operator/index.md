@@ -2,7 +2,6 @@
 title: EPAM Delivery Platform
 subtitle: Collaborative and visual infrastructure as design for EPAM Delivery Platform
 image: /extensions/models/admin-console-operator/icons/color/admin-console-operator-color.svg
-aliases: /extensibility/integrations/admin-console-operator
 docURL: https://docs.meshery.io/extensibility/integrations/admin-console-operator
 description: 
 integrations-category: Provisioning
@@ -10,8 +9,8 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: admin-console
-  colorIcon: content/en/extensions/models/admin-console-operator/components/admin-console/icons/color/admin-console-color.svg
-  whiteIcon: content/en/extensions/models/admin-console-operator/components/admin-console/icons/white/admin-console-white.svg
+  colorIcon: /extensions/models/admin-console-operator/components/admin-console/icons/color/admin-console-color.svg
+  whiteIcon: /extensions/models/admin-console-operator/components/admin-console/icons/white/admin-console-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -24,4 +23,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/admin-console-operator
 ---

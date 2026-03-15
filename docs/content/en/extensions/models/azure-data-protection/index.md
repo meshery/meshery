@@ -2,7 +2,6 @@
 title: Azure Data Protection
 subtitle: Collaborative and visual infrastructure as design for Azure Data Protection
 image: /extensions/models/azure-data-protection/icons/color/azure-data-protection-color.svg
-aliases: /extensibility/integrations/azure-data-protection
 docURL: https://docs.meshery.io/extensibility/integrations/azure-data-protection
 description: 
 integrations-category: Provisioning
@@ -10,16 +9,16 @@ integrations-subcategory: Automation & Configuration
 registrant: GitHub
 components: 
 - name: backup-vault
-  colorIcon: content/en/extensions/models/azure-data-protection/components/backup-vault/icons/color/backup-vault-color.svg
-  whiteIcon: content/en/extensions/models/azure-data-protection/components/backup-vault/icons/white/backup-vault-white.svg
+  colorIcon: /extensions/models/azure-data-protection/components/backup-vault/icons/color/backup-vault-color.svg
+  whiteIcon: /extensions/models/azure-data-protection/components/backup-vault/icons/white/backup-vault-white.svg
   description: 
 - name: backup-vaults-backup-instance
-  colorIcon: content/en/extensions/models/azure-data-protection/components/backup-vaults-backup-instance/icons/color/backup-vaults-backup-instance-color.svg
-  whiteIcon: content/en/extensions/models/azure-data-protection/components/backup-vaults-backup-instance/icons/white/backup-vaults-backup-instance-white.svg
+  colorIcon: /extensions/models/azure-data-protection/components/backup-vaults-backup-instance/icons/color/backup-vaults-backup-instance-color.svg
+  whiteIcon: /extensions/models/azure-data-protection/components/backup-vaults-backup-instance/icons/white/backup-vaults-backup-instance-white.svg
   description: 
 - name: backup-vaults-backup-policy
-  colorIcon: content/en/extensions/models/azure-data-protection/components/backup-vaults-backup-policy/icons/color/backup-vaults-backup-policy-color.svg
-  whiteIcon: content/en/extensions/models/azure-data-protection/components/backup-vaults-backup-policy/icons/white/backup-vaults-backup-policy-white.svg
+  colorIcon: /extensions/models/azure-data-protection/components/backup-vaults-backup-policy/icons/color/backup-vaults-backup-policy-color.svg
+  whiteIcon: /extensions/models/azure-data-protection/components/backup-vaults-backup-policy/icons/white/backup-vaults-backup-policy-white.svg
   description: 
 components-count: 3
 relationships: 
@@ -44,4 +43,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/azure-data-protection
 ---

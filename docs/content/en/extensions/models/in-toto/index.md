@@ -2,7 +2,6 @@
 title: in-toto
 subtitle: Collaborative and visual infrastructure as design for in-toto
 image: /extensions/models/in-toto/icons/color/in-toto-color.svg
-aliases: /extensibility/integrations/in-toto
 docURL: https://docs.meshery.io/extensibility/integrations/in-toto
 description: 
 integrations-category: Provisioning
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Integrates in-toto attestations"
 howItWorksDetails: "Enhanced security and trust in software supply chains in Kubernetes"
 categories: [integrations]
+aliases:
+- /extensibility/integrations/in-toto
 ---

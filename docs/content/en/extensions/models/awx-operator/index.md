@@ -2,7 +2,6 @@
 title: AWX Operator
 subtitle: Collaborative and visual infrastructure as design for AWX Operator
 image: /extensions/models/awx-operator/icons/color/awx-operator-color.svg
-aliases: /extensibility/integrations/awx-operator
 docURL: https://docs.meshery.io/extensibility/integrations/awx-operator
 description: 
 integrations-category: Orchestration & Management
@@ -10,20 +9,20 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: awx-backup
-  colorIcon: content/en/extensions/models/awx-operator/components/awx-backup/icons/color/awx-backup-color.svg
-  whiteIcon: content/en/extensions/models/awx-operator/components/awx-backup/icons/white/awx-backup-white.svg
+  colorIcon: /extensions/models/awx-operator/components/awx-backup/icons/color/awx-backup-color.svg
+  whiteIcon: /extensions/models/awx-operator/components/awx-backup/icons/white/awx-backup-white.svg
   description: 
 - name: awx-restore
-  colorIcon: content/en/extensions/models/awx-operator/components/awx-restore/icons/color/awx-restore-color.svg
-  whiteIcon: content/en/extensions/models/awx-operator/components/awx-restore/icons/white/awx-restore-white.svg
+  colorIcon: /extensions/models/awx-operator/components/awx-restore/icons/color/awx-restore-color.svg
+  whiteIcon: /extensions/models/awx-operator/components/awx-restore/icons/white/awx-restore-white.svg
   description: 
 - name: awx
-  colorIcon: content/en/extensions/models/awx-operator/components/awx/icons/color/awx-color.svg
-  whiteIcon: content/en/extensions/models/awx-operator/components/awx/icons/white/awx-white.svg
+  colorIcon: /extensions/models/awx-operator/components/awx/icons/color/awx-color.svg
+  whiteIcon: /extensions/models/awx-operator/components/awx/icons/white/awx-white.svg
   description: 
 - name: awx-mesh-ingress
-  colorIcon: content/en/extensions/models/awx-operator/components/awx-mesh-ingress/icons/color/awx-mesh-ingress-color.svg
-  whiteIcon: content/en/extensions/models/awx-operator/components/awx-mesh-ingress/icons/white/awx-mesh-ingress-white.svg
+  colorIcon: /extensions/models/awx-operator/components/awx-mesh-ingress/icons/color/awx-mesh-ingress-color.svg
+  whiteIcon: /extensions/models/awx-operator/components/awx-mesh-ingress/icons/white/awx-mesh-ingress-white.svg
   description: 
 components-count: 4
 relationships: 
@@ -36,4 +35,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/awx-operator
 ---

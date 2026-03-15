@@ -2,7 +2,6 @@
 title: Azure API Management
 subtitle: Collaborative and visual infrastructure as design for Azure API Management
 image: /extensions/models/azure-api-management/icons/color/azure-api-management-color.svg
-aliases: /extensibility/integrations/azure-api-management
 docURL: https://docs.meshery.io/extensibility/integrations/azure-api-management
 description: 
 integrations-category: App Definition and Development
@@ -10,60 +9,60 @@ integrations-subcategory: API Gateway
 registrant: GitHub
 components: 
 - name: api
-  colorIcon: content/en/extensions/models/azure-api-management/components/api/icons/color/api-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/api/icons/white/api-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/api/icons/color/api-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/api/icons/white/api-white.svg
   description: 
 - name: api-version-set
-  colorIcon: content/en/extensions/models/azure-api-management/components/api-version-set/icons/color/api-version-set-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/api-version-set/icons/white/api-version-set-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/api-version-set/icons/color/api-version-set-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/api-version-set/icons/white/api-version-set-white.svg
   description: 
 - name: authorization-provider
-  colorIcon: content/en/extensions/models/azure-api-management/components/authorization-provider/icons/color/authorization-provider-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/authorization-provider/icons/white/authorization-provider-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/authorization-provider/icons/color/authorization-provider-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/authorization-provider/icons/white/authorization-provider-white.svg
   description: 
 - name: authorization-providers-authorization
-  colorIcon: content/en/extensions/models/azure-api-management/components/authorization-providers-authorization/icons/color/authorization-providers-authorization-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/authorization-providers-authorization/icons/white/authorization-providers-authorization-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/authorization-providers-authorization/icons/color/authorization-providers-authorization-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/authorization-providers-authorization/icons/white/authorization-providers-authorization-white.svg
   description: 
 - name: authorization-providers-authorizations-access-policy
-  colorIcon: content/en/extensions/models/azure-api-management/components/authorization-providers-authorizations-access-policy/icons/color/authorization-providers-authorizations-access-policy-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/authorization-providers-authorizations-access-policy/icons/white/authorization-providers-authorizations-access-policy-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/authorization-providers-authorizations-access-policy/icons/color/authorization-providers-authorizations-access-policy-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/authorization-providers-authorizations-access-policy/icons/white/authorization-providers-authorizations-access-policy-white.svg
   description: 
 - name: backend
-  colorIcon: content/en/extensions/models/azure-api-management/components/backend/icons/color/backend-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/backend/icons/white/backend-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/backend/icons/color/backend-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/backend/icons/white/backend-white.svg
   description: 
 - name: named-value
-  colorIcon: content/en/extensions/models/azure-api-management/components/named-value/icons/color/named-value-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/named-value/icons/white/named-value-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/named-value/icons/color/named-value-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/named-value/icons/white/named-value-white.svg
   description: 
 - name: policy
-  colorIcon: content/en/extensions/models/azure-api-management/components/policy/icons/color/policy-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/policy/icons/white/policy-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/policy/icons/color/policy-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/policy/icons/white/policy-white.svg
   description: 
 - name: policy-fragment
-  colorIcon: content/en/extensions/models/azure-api-management/components/policy-fragment/icons/color/policy-fragment-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/policy-fragment/icons/white/policy-fragment-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/policy-fragment/icons/color/policy-fragment-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/policy-fragment/icons/white/policy-fragment-white.svg
   description: 
 - name: product-api
-  colorIcon: content/en/extensions/models/azure-api-management/components/product-api/icons/color/product-api-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/product-api/icons/white/product-api-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/product-api/icons/color/product-api-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/product-api/icons/white/product-api-white.svg
   description: 
 - name: product-policy
-  colorIcon: content/en/extensions/models/azure-api-management/components/product-policy/icons/color/product-policy-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/product-policy/icons/white/product-policy-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/product-policy/icons/color/product-policy-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/product-policy/icons/white/product-policy-white.svg
   description: 
 - name: product
-  colorIcon: content/en/extensions/models/azure-api-management/components/product/icons/color/product-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/product/icons/white/product-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/product/icons/color/product-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/product/icons/white/product-white.svg
   description: 
 - name: service
-  colorIcon: content/en/extensions/models/azure-api-management/components/service/icons/color/service-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/service/icons/white/service-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/service/icons/color/service-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/service/icons/white/service-white.svg
   description: 
 - name: subscription
-  colorIcon: content/en/extensions/models/azure-api-management/components/subscription/icons/color/subscription-color.svg
-  whiteIcon: content/en/extensions/models/azure-api-management/components/subscription/icons/white/subscription-white.svg
+  colorIcon: /extensions/models/azure-api-management/components/subscription/icons/color/subscription-color.svg
+  whiteIcon: /extensions/models/azure-api-management/components/subscription/icons/white/subscription-white.svg
   description: 
 components-count: 14
 relationships: 
@@ -103,4 +102,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/azure-api-management
 ---

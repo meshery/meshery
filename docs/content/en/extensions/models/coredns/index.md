@@ -2,7 +2,6 @@
 title: Coredns
 subtitle: Collaborative and visual infrastructure as design for Coredns
 image: /extensions/models/coredns/icons/color/coredns-color.svg
-aliases: /extensibility/integrations/coredns
 docURL: https://docs.meshery.io/extensibility/integrations/coredns
 description: 
 integrations-category: Orchestration & Management
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/coredns
 ---

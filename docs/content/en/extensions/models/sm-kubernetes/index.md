@@ -2,7 +2,6 @@
 title: Bitwarden
 subtitle: Collaborative and visual infrastructure as design for Bitwarden
 image: /extensions/models/sm-kubernetes/icons/color/sm-kubernetes-color.svg
-aliases: /extensibility/integrations/sm-kubernetes
 docURL: https://docs.meshery.io/extensibility/integrations/sm-kubernetes
 description: 
 integrations-category: Security & Compliance
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Streamlined Bitwarden secrets management in Kubernetes"
 howItWorksDetails: "The sm-operator uses a controller to synchronize Bitwarden secrets into Kubernetes secrets. "
 categories: [integrations]
+aliases:
+- /extensibility/integrations/sm-kubernetes
 ---

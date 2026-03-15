@@ -2,7 +2,6 @@
 title: MinIO Operator
 subtitle: Collaborative and visual infrastructure as design for MinIO Operator
 image: /extensions/models/minio-operator/icons/color/minio-operator-color.svg
-aliases: /extensibility/integrations/minio-operator
 docURL: https://docs.meshery.io/extensibility/integrations/minio-operator
 description: 
 integrations-category: App Definition and Development
@@ -10,8 +9,8 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: tenant
-  colorIcon: content/en/extensions/models/minio-operator/components/tenant/icons/color/tenant-color.svg
-  whiteIcon: content/en/extensions/models/minio-operator/components/tenant/icons/white/tenant-white.svg
+  colorIcon: /extensions/models/minio-operator/components/tenant/icons/color/tenant-color.svg
+  whiteIcon: /extensions/models/minio-operator/components/tenant/icons/white/tenant-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -24,4 +23,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/minio-operator
 ---

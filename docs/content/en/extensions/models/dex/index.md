@@ -2,7 +2,6 @@
 title: Dex
 subtitle: Collaborative and visual infrastructure as design for Dex
 image: /extensions/models/dex/icons/color/dex-color.svg
-aliases: /extensibility/integrations/dex
 docURL: https://docs.meshery.io/extensibility/integrations/dex
 description: 
 integrations-category: Provisioning
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Integrates Dex with Kubernetes"
 howItWorksDetails: "Centralized authentication for Kubernetes applications"
 categories: [integrations]
+aliases:
+- /extensibility/integrations/dex
 ---

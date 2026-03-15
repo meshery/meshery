@@ -2,7 +2,6 @@
 title: Azure Kusto
 subtitle: Collaborative and visual infrastructure as design for Azure Kusto
 image: /extensions/models/azure-kusto/icons/color/azure-kusto-color.svg
-aliases: /extensibility/integrations/azure-kusto
 docURL: https://docs.meshery.io/extensibility/integrations/azure-kusto
 description: 
 integrations-category: Orchestration & Management
@@ -10,16 +9,16 @@ integrations-subcategory: Kubernetes
 registrant: GitHub
 components: 
 - name: cluster
-  colorIcon: content/en/extensions/models/azure-kusto/components/cluster/icons/color/cluster-color.svg
-  whiteIcon: content/en/extensions/models/azure-kusto/components/cluster/icons/white/cluster-white.svg
+  colorIcon: /extensions/models/azure-kusto/components/cluster/icons/color/cluster-color.svg
+  whiteIcon: /extensions/models/azure-kusto/components/cluster/icons/white/cluster-white.svg
   description: 
 - name: database
-  colorIcon: content/en/extensions/models/azure-kusto/components/database/icons/color/database-color.svg
-  whiteIcon: content/en/extensions/models/azure-kusto/components/database/icons/white/database-white.svg
+  colorIcon: /extensions/models/azure-kusto/components/database/icons/color/database-color.svg
+  whiteIcon: /extensions/models/azure-kusto/components/database/icons/white/database-white.svg
   description: 
 - name: data-connection
-  colorIcon: content/en/extensions/models/azure-kusto/components/data-connection/icons/color/data-connection-color.svg
-  whiteIcon: content/en/extensions/models/azure-kusto/components/data-connection/icons/white/data-connection-white.svg
+  colorIcon: /extensions/models/azure-kusto/components/data-connection/icons/color/data-connection-color.svg
+  whiteIcon: /extensions/models/azure-kusto/components/data-connection/icons/white/data-connection-white.svg
   description: 
 components-count: 3
 relationships: 
@@ -41,4 +40,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/azure-kusto
 ---

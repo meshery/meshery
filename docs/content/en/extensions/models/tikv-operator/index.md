@@ -2,7 +2,6 @@
 title: Tikv Operator
 subtitle: Collaborative and visual infrastructure as design for Tikv Operator
 image: /extensions/models/tikv-operator/icons/color/tikv-operator-color.svg
-aliases: /extensibility/integrations/tikv-operator
 docURL: https://docs.meshery.io/extensibility/integrations/tikv-operator
 description: 
 integrations-category: App Definition and Development
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/tikv-operator
 ---

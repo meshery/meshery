@@ -2,7 +2,6 @@
 title: AppsCode Application
 subtitle: Collaborative and visual infrastructure as design for AppsCode Application
 image: /extensions/models/application-crds/icons/color/application-crds-color.svg
-aliases: /extensibility/integrations/application-crds
 docURL: https://docs.meshery.io/extensibility/integrations/application-crds
 description: 
 integrations-category: Platform
@@ -10,8 +9,8 @@ integrations-subcategory: Application Definition & Image Build
 registrant: Artifact Hub
 components: 
 - name: application
-  colorIcon: content/en/extensions/models/application-crds/components/application/icons/color/application-color.svg
-  whiteIcon: content/en/extensions/models/application-crds/components/application/icons/white/application-white.svg
+  colorIcon: /extensions/models/application-crds/components/application/icons/color/application-color.svg
+  whiteIcon: /extensions/models/application-crds/components/application/icons/white/application-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -24,4 +23,6 @@ featureList: [
 howItWorks: "Integrates with AppsCode applications"
 howItWorksDetails: "Streamlined deployment and management of AppsCode applications in Kubernetes"
 categories: [integrations]
+aliases:
+- /extensibility/integrations/application-crds
 ---

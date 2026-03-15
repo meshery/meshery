@@ -2,7 +2,6 @@
 title: Buildpacks
 subtitle: Collaborative and visual infrastructure as design for Buildpacks
 image: /extensions/models/buildpacks/icons/color/buildpacks-color.svg
-aliases: /extensibility/integrations/buildpacks
 docURL: https://docs.meshery.io/extensibility/integrations/buildpacks
 description: 
 integrations-category: App Definition and Development
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/buildpacks
 ---

@@ -2,7 +2,6 @@
 title: Oras
 subtitle: Collaborative and visual infrastructure as design for Oras
 image: /extensions/models/oras/icons/color/oras-color.svg
-aliases: /extensibility/integrations/oras
 docURL: https://docs.meshery.io/extensibility/integrations/oras
 description: 
 integrations-category: Cloud Native Storage
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/oras
 ---

@@ -2,7 +2,6 @@
 title: AWS Route 53
 subtitle: Collaborative and visual infrastructure as design for AWS Route 53
 image: /extensions/models/aws-route53-controller/icons/color/aws-route53-controller-color.svg
-aliases: /extensibility/integrations/aws-route53-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-route53-controller
 description: 
 integrations-category: Cloud Native Network
@@ -10,28 +9,28 @@ integrations-subcategory: Networking Content Delivery
 registrant: GitHub
 components: 
 - name: field-export
-  colorIcon: content/en/extensions/models/aws-route53-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: content/en/extensions/models/aws-route53-controller/components/field-export/icons/white/field-export-white.svg
+  colorIcon: /extensions/models/aws-route53-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: /extensions/models/aws-route53-controller/components/field-export/icons/white/field-export-white.svg
   description: 
 - name: adopted-resource
-  colorIcon: content/en/extensions/models/aws-route53-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: content/en/extensions/models/aws-route53-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  colorIcon: /extensions/models/aws-route53-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: /extensions/models/aws-route53-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 - name: hosted-zone
-  colorIcon: content/en/extensions/models/aws-route53-controller/components/hosted-zone/icons/color/hosted-zone-color.svg
-  whiteIcon: content/en/extensions/models/aws-route53-controller/components/hosted-zone/icons/white/hosted-zone-white.svg
+  colorIcon: /extensions/models/aws-route53-controller/components/hosted-zone/icons/color/hosted-zone-color.svg
+  whiteIcon: /extensions/models/aws-route53-controller/components/hosted-zone/icons/white/hosted-zone-white.svg
   description: 
 - name: record-set
-  colorIcon: content/en/extensions/models/aws-route53-controller/components/record-set/icons/color/record-set-color.svg
-  whiteIcon: content/en/extensions/models/aws-route53-controller/components/record-set/icons/white/record-set-white.svg
+  colorIcon: /extensions/models/aws-route53-controller/components/record-set/icons/color/record-set-color.svg
+  whiteIcon: /extensions/models/aws-route53-controller/components/record-set/icons/white/record-set-white.svg
   description: 
 - name: health-check
-  colorIcon: content/en/extensions/models/aws-route53-controller/components/health-check/icons/color/health-check-color.svg
-  whiteIcon: content/en/extensions/models/aws-route53-controller/components/health-check/icons/white/health-check-white.svg
+  colorIcon: /extensions/models/aws-route53-controller/components/health-check/icons/color/health-check-color.svg
+  whiteIcon: /extensions/models/aws-route53-controller/components/health-check/icons/white/health-check-white.svg
   description: 
 - name: iam-role-selector
-  colorIcon: content/en/extensions/models/aws-route53-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
-  whiteIcon: content/en/extensions/models/aws-route53-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  colorIcon: /extensions/models/aws-route53-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: /extensions/models/aws-route53-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
 components-count: 6
 relationships: 
@@ -59,4 +58,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-route53-controller
 ---

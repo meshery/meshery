@@ -2,7 +2,6 @@
 title: AWS CloudWatch Logs
 subtitle: Collaborative and visual infrastructure as design for AWS CloudWatch Logs
 image: /extensions/models/aws-cloudwatchlogs-controller/icons/color/aws-cloudwatchlogs-controller-color.svg
-aliases: /extensibility/integrations/aws-cloudwatchlogs-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudwatchlogs-controller
 description: 
 integrations-category: Observability and Analysis
@@ -10,20 +9,20 @@ integrations-subcategory: Management Governance
 registrant: GitHub
 components: 
 - name: field-export
-  colorIcon: content/en/extensions/models/aws-cloudwatchlogs-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudwatchlogs-controller/components/field-export/icons/white/field-export-white.svg
+  colorIcon: /extensions/models/aws-cloudwatchlogs-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatchlogs-controller/components/field-export/icons/white/field-export-white.svg
   description: 
 - name: adopted-resource
-  colorIcon: content/en/extensions/models/aws-cloudwatchlogs-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudwatchlogs-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  colorIcon: /extensions/models/aws-cloudwatchlogs-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatchlogs-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 - name: log-group
-  colorIcon: content/en/extensions/models/aws-cloudwatchlogs-controller/components/log-group/icons/color/log-group-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudwatchlogs-controller/components/log-group/icons/white/log-group-white.svg
+  colorIcon: /extensions/models/aws-cloudwatchlogs-controller/components/log-group/icons/color/log-group-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatchlogs-controller/components/log-group/icons/white/log-group-white.svg
   description: 
 - name: iam-role-selector
-  colorIcon: content/en/extensions/models/aws-cloudwatchlogs-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudwatchlogs-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  colorIcon: /extensions/models/aws-cloudwatchlogs-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatchlogs-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
 components-count: 4
 relationships: 
@@ -45,4 +44,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-cloudwatchlogs-controller
 ---

@@ -1,0 +1,24 @@
+version: 0.0.1
+name: aws-rds-controller
+displayName: AWS rds controller
+createdAt: "2024-05-19T13:45:35Z"
+description: This YAML manifest defines a Kubernetes Deployment for the ACK RDS Controller application. It orchestrates the deployment of the application within a Kubernetes cluster, ensuring its availability and scalability. The manifest specifies various parameters such as the number of replicas, pod template configurations including container settings, environment variables, resource limits, and security context. Additionally, it includes probes for health checks, node selection preferences, tolerations, and affinity rules for optimal scheduling. The manifest encapsulates the deployment requirements necessary for the ACK RDS Controller application to run effectively in a Kubernetes environment.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/1abccf09-dcb8-46e4-8cac-f9e33c27516d/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Resource Allocation: Ensure that resource requests and limits are appropriately configured based on the expected workload of the application to avoid resource contention and potential performance issues.\n\n2. Security Configuration: Review the security context settings, including privilege escalation, runAsNonRoot, and capabilities, to enforce security best practices and minimize the risk of unauthorized access or privilege escalation within the container.\n\n3. Probe Configuration: Validate the configuration of liveness and readiness probes to ensure they accurately reflect the health and readiness of the application. Incorrect probe settings can lead to unnecessary pod restarts or deployment issues.\n\n4. Environment Variables: Double-check the environment variables provided to the container, ensuring they are correctly set and necessary for the application's functionality. Incorrect or missing environment variables can cause runtime errors or unexpected behavior.\n\n5. Volume Mounts: Verify the volume mounts defined in the deployment, especially if the application requires access to specific data or configuration files. Incorrect volume configurations can result in data loss or application malfunction. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/1abccf09-dcb8-46e4-8cac-f9e33c27516d-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/1abccf09-dcb8-46e4-8cac-f9e33c27516d-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

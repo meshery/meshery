@@ -2,7 +2,6 @@
 title: Azure Notification Hubs
 subtitle: Collaborative and visual infrastructure as design for Azure Notification Hubs
 image: /extensions/models/azure-notification-hubs/icons/color/azure-notification-hubs-color.svg
-aliases: /extensibility/integrations/azure-notification-hubs
 docURL: https://docs.meshery.io/extensibility/integrations/azure-notification-hubs
 description: 
 integrations-category: Observability and Analysis
@@ -10,20 +9,20 @@ integrations-subcategory: Streaming & Messaging
 registrant: GitHub
 components: 
 - name: namespace
-  colorIcon: content/en/extensions/models/azure-notification-hubs/components/namespace/icons/color/namespace-color.svg
-  whiteIcon: content/en/extensions/models/azure-notification-hubs/components/namespace/icons/white/namespace-white.svg
+  colorIcon: /extensions/models/azure-notification-hubs/components/namespace/icons/color/namespace-color.svg
+  whiteIcon: /extensions/models/azure-notification-hubs/components/namespace/icons/white/namespace-white.svg
   description: 
 - name: namespaces-authorization-rule
-  colorIcon: content/en/extensions/models/azure-notification-hubs/components/namespaces-authorization-rule/icons/color/namespaces-authorization-rule-color.svg
-  whiteIcon: content/en/extensions/models/azure-notification-hubs/components/namespaces-authorization-rule/icons/white/namespaces-authorization-rule-white.svg
+  colorIcon: /extensions/models/azure-notification-hubs/components/namespaces-authorization-rule/icons/color/namespaces-authorization-rule-color.svg
+  whiteIcon: /extensions/models/azure-notification-hubs/components/namespaces-authorization-rule/icons/white/namespaces-authorization-rule-white.svg
   description: 
 - name: notification-hub
-  colorIcon: content/en/extensions/models/azure-notification-hubs/components/notification-hub/icons/color/notification-hub-color.svg
-  whiteIcon: content/en/extensions/models/azure-notification-hubs/components/notification-hub/icons/white/notification-hub-white.svg
+  colorIcon: /extensions/models/azure-notification-hubs/components/notification-hub/icons/color/notification-hub-color.svg
+  whiteIcon: /extensions/models/azure-notification-hubs/components/notification-hub/icons/white/notification-hub-white.svg
   description: 
 - name: notification-hubs-authorization-rule
-  colorIcon: content/en/extensions/models/azure-notification-hubs/components/notification-hubs-authorization-rule/icons/color/notification-hubs-authorization-rule-color.svg
-  whiteIcon: content/en/extensions/models/azure-notification-hubs/components/notification-hubs-authorization-rule/icons/white/notification-hubs-authorization-rule-white.svg
+  colorIcon: /extensions/models/azure-notification-hubs/components/notification-hubs-authorization-rule/icons/color/notification-hubs-authorization-rule-color.svg
+  whiteIcon: /extensions/models/azure-notification-hubs/components/notification-hubs-authorization-rule/icons/white/notification-hubs-authorization-rule-white.svg
   description: 
 components-count: 4
 relationships: 
@@ -42,4 +41,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/azure-notification-hubs
 ---

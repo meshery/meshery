@@ -2,7 +2,6 @@
 title: Kubedb UI Server
 subtitle: Collaborative and visual infrastructure as design for Kubedb UI Server
 image: /extensions/models/kubedb-ui-server/icons/color/kubedb-ui-server-color.svg
-aliases: /extensibility/integrations/kubedb-ui-server
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-ui-server
 description: 
 integrations-category: App Definition and Development
@@ -10,52 +9,52 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: elasticsearch
-  colorIcon: content/en/extensions/models/kubedb-ui-server/components/elasticsearch/icons/color/elasticsearch-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ui-server/components/elasticsearch/icons/white/elasticsearch-white.svg
+  colorIcon: /extensions/models/kubedb-ui-server/components/elasticsearch/icons/color/elasticsearch-color.svg
+  whiteIcon: /extensions/models/kubedb-ui-server/components/elasticsearch/icons/white/elasticsearch-white.svg
   description: 
 - name: etcd
-  colorIcon: content/en/extensions/models/kubedb-ui-server/components/etcd/icons/color/etcd-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ui-server/components/etcd/icons/white/etcd-white.svg
+  colorIcon: /extensions/models/kubedb-ui-server/components/etcd/icons/color/etcd-color.svg
+  whiteIcon: /extensions/models/kubedb-ui-server/components/etcd/icons/white/etcd-white.svg
   description: 
 - name: maria-db
-  colorIcon: content/en/extensions/models/kubedb-ui-server/components/maria-db/icons/color/maria-db-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ui-server/components/maria-db/icons/white/maria-db-white.svg
+  colorIcon: /extensions/models/kubedb-ui-server/components/maria-db/icons/color/maria-db-color.svg
+  whiteIcon: /extensions/models/kubedb-ui-server/components/maria-db/icons/white/maria-db-white.svg
   description: 
 - name: memcached
-  colorIcon: content/en/extensions/models/kubedb-ui-server/components/memcached/icons/color/memcached-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ui-server/components/memcached/icons/white/memcached-white.svg
+  colorIcon: /extensions/models/kubedb-ui-server/components/memcached/icons/color/memcached-color.svg
+  whiteIcon: /extensions/models/kubedb-ui-server/components/memcached/icons/white/memcached-white.svg
   description: 
 - name: mongo-db
-  colorIcon: content/en/extensions/models/kubedb-ui-server/components/mongo-db/icons/color/mongo-db-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ui-server/components/mongo-db/icons/white/mongo-db-white.svg
+  colorIcon: /extensions/models/kubedb-ui-server/components/mongo-db/icons/color/mongo-db-color.svg
+  whiteIcon: /extensions/models/kubedb-ui-server/components/mongo-db/icons/white/mongo-db-white.svg
   description: 
 - name: my-sql
-  colorIcon: content/en/extensions/models/kubedb-ui-server/components/my-sql/icons/color/my-sql-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ui-server/components/my-sql/icons/white/my-sql-white.svg
+  colorIcon: /extensions/models/kubedb-ui-server/components/my-sql/icons/color/my-sql-color.svg
+  whiteIcon: /extensions/models/kubedb-ui-server/components/my-sql/icons/white/my-sql-white.svg
   description: 
 - name: percona-xtra-db
-  colorIcon: content/en/extensions/models/kubedb-ui-server/components/percona-xtra-db/icons/color/percona-xtra-db-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ui-server/components/percona-xtra-db/icons/white/percona-xtra-db-white.svg
+  colorIcon: /extensions/models/kubedb-ui-server/components/percona-xtra-db/icons/color/percona-xtra-db-color.svg
+  whiteIcon: /extensions/models/kubedb-ui-server/components/percona-xtra-db/icons/white/percona-xtra-db-white.svg
   description: 
 - name: pg-bouncer
-  colorIcon: content/en/extensions/models/kubedb-ui-server/components/pg-bouncer/icons/color/pg-bouncer-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ui-server/components/pg-bouncer/icons/white/pg-bouncer-white.svg
+  colorIcon: /extensions/models/kubedb-ui-server/components/pg-bouncer/icons/color/pg-bouncer-color.svg
+  whiteIcon: /extensions/models/kubedb-ui-server/components/pg-bouncer/icons/white/pg-bouncer-white.svg
   description: 
 - name: postgres
-  colorIcon: content/en/extensions/models/kubedb-ui-server/components/postgres/icons/color/postgres-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ui-server/components/postgres/icons/white/postgres-white.svg
+  colorIcon: /extensions/models/kubedb-ui-server/components/postgres/icons/color/postgres-color.svg
+  whiteIcon: /extensions/models/kubedb-ui-server/components/postgres/icons/white/postgres-white.svg
   description: 
 - name: proxy-sql
-  colorIcon: content/en/extensions/models/kubedb-ui-server/components/proxy-sql/icons/color/proxy-sql-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ui-server/components/proxy-sql/icons/white/proxy-sql-white.svg
+  colorIcon: /extensions/models/kubedb-ui-server/components/proxy-sql/icons/color/proxy-sql-color.svg
+  whiteIcon: /extensions/models/kubedb-ui-server/components/proxy-sql/icons/white/proxy-sql-white.svg
   description: 
 - name: redis
-  colorIcon: content/en/extensions/models/kubedb-ui-server/components/redis/icons/color/redis-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ui-server/components/redis/icons/white/redis-white.svg
+  colorIcon: /extensions/models/kubedb-ui-server/components/redis/icons/color/redis-color.svg
+  whiteIcon: /extensions/models/kubedb-ui-server/components/redis/icons/white/redis-white.svg
   description: 
 - name: redis-sentinel
-  colorIcon: content/en/extensions/models/kubedb-ui-server/components/redis-sentinel/icons/color/redis-sentinel-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ui-server/components/redis-sentinel/icons/white/redis-sentinel-white.svg
+  colorIcon: /extensions/models/kubedb-ui-server/components/redis-sentinel/icons/color/redis-sentinel-color.svg
+  whiteIcon: /extensions/models/kubedb-ui-server/components/redis-sentinel/icons/white/redis-sentinel-white.svg
   description: 
 components-count: 12
 relationships: 
@@ -68,4 +67,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/kubedb-ui-server
 ---

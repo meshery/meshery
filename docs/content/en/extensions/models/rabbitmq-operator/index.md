@@ -2,7 +2,6 @@
 title: RabbitMQ Operator
 subtitle: Collaborative and visual infrastructure as design for RabbitMQ Operator
 image: /extensions/models/rabbitmq-operator/icons/color/rabbitmq-operator-color.svg
-aliases: /extensibility/integrations/rabbitmq-operator
 docURL: https://docs.meshery.io/extensibility/integrations/rabbitmq-operator
 description: 
 integrations-category: App Definition and Development
@@ -10,8 +9,8 @@ integrations-subcategory: Streaming & Messaging
 registrant: Artifact Hub
 components: 
 - name: rabbitmq-cluster
-  colorIcon: content/en/extensions/models/rabbitmq-operator/components/rabbitmq-cluster/icons/color/rabbitmq-cluster-color.svg
-  whiteIcon: content/en/extensions/models/rabbitmq-operator/components/rabbitmq-cluster/icons/white/rabbitmq-cluster-white.svg
+  colorIcon: /extensions/models/rabbitmq-operator/components/rabbitmq-cluster/icons/color/rabbitmq-cluster-color.svg
+  whiteIcon: /extensions/models/rabbitmq-operator/components/rabbitmq-cluster/icons/white/rabbitmq-cluster-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -24,4 +23,6 @@ featureList: [
 howItWorks: "Simplifies RabbitMQ operations"
 howItWorksDetails: "Streamlined RabbitMQ management within Kubernetes"
 categories: [integrations]
+aliases:
+- /extensibility/integrations/rabbitmq-operator
 ---

@@ -2,7 +2,6 @@
 title: OpenELB
 subtitle: Collaborative and visual infrastructure as design for OpenELB
 image: /extensions/models/openelb/icons/color/openelb-color.svg
-aliases: /extensibility/integrations/openelb
 docURL: https://docs.meshery.io/extensibility/integrations/openelb
 description: 
 integrations-category: Cloud Native Network
@@ -10,16 +9,16 @@ integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
 - name: bgp-conf
-  colorIcon: content/en/extensions/models/openelb/components/bgp-conf/icons/color/bgp-conf-color.svg
-  whiteIcon: content/en/extensions/models/openelb/components/bgp-conf/icons/white/bgp-conf-white.svg
+  colorIcon: /extensions/models/openelb/components/bgp-conf/icons/color/bgp-conf-color.svg
+  whiteIcon: /extensions/models/openelb/components/bgp-conf/icons/white/bgp-conf-white.svg
   description: 
 - name: bgp-peer
-  colorIcon: content/en/extensions/models/openelb/components/bgp-peer/icons/color/bgp-peer-color.svg
-  whiteIcon: content/en/extensions/models/openelb/components/bgp-peer/icons/white/bgp-peer-white.svg
+  colorIcon: /extensions/models/openelb/components/bgp-peer/icons/color/bgp-peer-color.svg
+  whiteIcon: /extensions/models/openelb/components/bgp-peer/icons/white/bgp-peer-white.svg
   description: 
 - name: eip
-  colorIcon: content/en/extensions/models/openelb/components/eip/icons/color/eip-color.svg
-  whiteIcon: content/en/extensions/models/openelb/components/eip/icons/white/eip-white.svg
+  colorIcon: /extensions/models/openelb/components/eip/icons/color/eip-color.svg
+  whiteIcon: /extensions/models/openelb/components/eip/icons/white/eip-white.svg
   description: 
 components-count: 3
 relationships: 
@@ -32,4 +31,6 @@ featureList: [
 howItWorks: "Integrates with OpenELB configurations"
 howItWorksDetails: "Simplified load balancing configuration and management within Kubernetes"
 categories: [integrations]
+aliases:
+- /extensibility/integrations/openelb
 ---

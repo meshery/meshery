@@ -2,7 +2,6 @@
 title: Azure Batch
 subtitle: Collaborative and visual infrastructure as design for Azure Batch
 image: /extensions/models/azure-batch/icons/color/azure-batch-color.svg
-aliases: /extensibility/integrations/azure-batch
 docURL: https://docs.meshery.io/extensibility/integrations/azure-batch
 description: 
 integrations-category: Orchestration & Management
@@ -10,8 +9,8 @@ integrations-subcategory: Compute
 registrant: GitHub
 components: 
 - name: batch-account
-  colorIcon: content/en/extensions/models/azure-batch/components/batch-account/icons/color/batch-account-color.svg
-  whiteIcon: content/en/extensions/models/azure-batch/components/batch-account/icons/white/batch-account-white.svg
+  colorIcon: /extensions/models/azure-batch/components/batch-account/icons/color/batch-account-color.svg
+  whiteIcon: /extensions/models/azure-batch/components/batch-account/icons/white/batch-account-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -24,4 +23,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/azure-batch
 ---

@@ -2,7 +2,6 @@
 title: NGINX
 subtitle: Collaborative and visual infrastructure as design for NGINX
 image: /extensions/models/nginx/icons/color/nginx-color.svg
-aliases: /extensibility/integrations/nginx
 docURL: https://docs.meshery.io/extensibility/integrations/nginx
 description: 
 integrations-category: Cloud Native Network
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Integrates NGINX"
 howItWorksDetails: "Powerful and flexible web serving and load balancing in Kubernetes"
 categories: [integrations]
+aliases:
+- /extensibility/integrations/nginx
 ---

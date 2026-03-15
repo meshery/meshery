@@ -2,7 +2,6 @@
 title: Volcano
 subtitle: Collaborative and visual infrastructure as design for Volcano
 image: /extensions/models/volcano/icons/color/volcano-color.svg
-aliases: /extensibility/integrations/volcano
 docURL: https://docs.meshery.io/extensibility/integrations/volcano
 description: 
 integrations-category: Orchestration & Management
@@ -10,40 +9,40 @@ integrations-subcategory: Scheduling & Orchestration
 registrant: GitHub
 components: 
 - name: hyper-node
-  colorIcon: content/en/extensions/models/volcano/components/hyper-node/icons/color/hyper-node-color.svg
-  whiteIcon: content/en/extensions/models/volcano/components/hyper-node/icons/white/hyper-node-white.svg
+  colorIcon: /extensions/models/volcano/components/hyper-node/icons/color/hyper-node-color.svg
+  whiteIcon: /extensions/models/volcano/components/hyper-node/icons/white/hyper-node-white.svg
   description: 
 - name: job
-  colorIcon: content/en/extensions/models/volcano/components/job/icons/color/job-color.svg
-  whiteIcon: content/en/extensions/models/volcano/components/job/icons/white/job-white.svg
+  colorIcon: /extensions/models/volcano/components/job/icons/color/job-color.svg
+  whiteIcon: /extensions/models/volcano/components/job/icons/white/job-white.svg
   description: 
 - name: command
-  colorIcon: content/en/extensions/models/volcano/components/command/icons/color/command-color.svg
-  whiteIcon: content/en/extensions/models/volcano/components/command/icons/white/command-white.svg
+  colorIcon: /extensions/models/volcano/components/command/icons/color/command-color.svg
+  whiteIcon: /extensions/models/volcano/components/command/icons/white/command-white.svg
   description: 
 - name: numatopology
-  colorIcon: content/en/extensions/models/volcano/components/numatopology/icons/color/numatopology-color.svg
-  whiteIcon: content/en/extensions/models/volcano/components/numatopology/icons/white/numatopology-white.svg
+  colorIcon: /extensions/models/volcano/components/numatopology/icons/color/numatopology-color.svg
+  whiteIcon: /extensions/models/volcano/components/numatopology/icons/white/numatopology-white.svg
   description: 
 - name: pod-group
-  colorIcon: content/en/extensions/models/volcano/components/pod-group/icons/color/pod-group-color.svg
-  whiteIcon: content/en/extensions/models/volcano/components/pod-group/icons/white/pod-group-white.svg
+  colorIcon: /extensions/models/volcano/components/pod-group/icons/color/pod-group-color.svg
+  whiteIcon: /extensions/models/volcano/components/pod-group/icons/white/pod-group-white.svg
   description: 
 - name: queue
-  colorIcon: content/en/extensions/models/volcano/components/queue/icons/color/queue-color.svg
-  whiteIcon: content/en/extensions/models/volcano/components/queue/icons/white/queue-white.svg
+  colorIcon: /extensions/models/volcano/components/queue/icons/color/queue-color.svg
+  whiteIcon: /extensions/models/volcano/components/queue/icons/white/queue-white.svg
   description: 
 - name: cron-job
-  colorIcon: content/en/extensions/models/volcano/components/cron-job/icons/color/cron-job-color.svg
-  whiteIcon: content/en/extensions/models/volcano/components/cron-job/icons/white/cron-job-white.svg
+  colorIcon: /extensions/models/volcano/components/cron-job/icons/color/cron-job-color.svg
+  whiteIcon: /extensions/models/volcano/components/cron-job/icons/white/cron-job-white.svg
   description: 
 - name: colocation-configuration
-  colorIcon: content/en/extensions/models/volcano/components/colocation-configuration/icons/color/colocation-configuration-color.svg
-  whiteIcon: content/en/extensions/models/volcano/components/colocation-configuration/icons/white/colocation-configuration-white.svg
+  colorIcon: /extensions/models/volcano/components/colocation-configuration/icons/color/colocation-configuration-color.svg
+  whiteIcon: /extensions/models/volcano/components/colocation-configuration/icons/white/colocation-configuration-white.svg
   description: 
 - name: node-shard
-  colorIcon: content/en/extensions/models/volcano/components/node-shard/icons/color/node-shard-color.svg
-  whiteIcon: content/en/extensions/models/volcano/components/node-shard/icons/white/node-shard-white.svg
+  colorIcon: /extensions/models/volcano/components/node-shard/icons/color/node-shard-color.svg
+  whiteIcon: /extensions/models/volcano/components/node-shard/icons/white/node-shard-white.svg
   description: 
 components-count: 9
 relationships: 
@@ -56,4 +55,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/volcano
 ---

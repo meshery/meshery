@@ -2,7 +2,6 @@
 title: Fluentd Operator
 subtitle: Collaborative and visual infrastructure as design for Fluentd Operator
 image: /extensions/models/fluentd-operator/icons/color/fluentd-operator-color.svg
-aliases: /extensibility/integrations/fluentd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluentd-operator
 description: 
 integrations-category: Observability and Analysis
@@ -10,8 +9,8 @@ integrations-subcategory: Logging
 registrant: Artifact Hub
 components: 
 - name: fluentd-config
-  colorIcon: content/en/extensions/models/fluentd-operator/components/fluentd-config/icons/color/fluentd-config-color.svg
-  whiteIcon: content/en/extensions/models/fluentd-operator/components/fluentd-config/icons/white/fluentd-config-white.svg
+  colorIcon: /extensions/models/fluentd-operator/components/fluentd-config/icons/color/fluentd-config-color.svg
+  whiteIcon: /extensions/models/fluentd-operator/components/fluentd-config/icons/white/fluentd-config-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -31,4 +30,6 @@ Fluent Bit + Fluentd mode: If you also need to perform some advanced processing 
 Fluentd only mode: If you need to receive logs through networks like HTTP or Syslog and then process and send the log to the final sinks, you only need Fluentd.
 Fluent Operator includes CRDs and controllers for both Fluent Bit and Fluentd which allows you to config your log processing pipelines in the 3 modes mentioned above as you wish."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/fluentd-operator
 ---

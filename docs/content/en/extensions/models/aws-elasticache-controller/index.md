@@ -2,7 +2,6 @@
 title: AWS ElastiCache
 subtitle: Collaborative and visual infrastructure as design for AWS ElastiCache
 image: /extensions/models/aws-elasticache-controller/icons/color/aws-elasticache-controller-color.svg
-aliases: /extensibility/integrations/aws-elasticache-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticache-controller
 description: 
 integrations-category: App Definition and Development
@@ -10,52 +9,52 @@ integrations-subcategory: Database
 registrant: GitHub
 components: 
 - name: cache-parameter-group
-  colorIcon: content/en/extensions/models/aws-elasticache-controller/components/cache-parameter-group/icons/color/cache-parameter-group-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticache-controller/components/cache-parameter-group/icons/white/cache-parameter-group-white.svg
+  colorIcon: /extensions/models/aws-elasticache-controller/components/cache-parameter-group/icons/color/cache-parameter-group-color.svg
+  whiteIcon: /extensions/models/aws-elasticache-controller/components/cache-parameter-group/icons/white/cache-parameter-group-white.svg
   description: 
 - name: cache-subnet-group
-  colorIcon: content/en/extensions/models/aws-elasticache-controller/components/cache-subnet-group/icons/color/cache-subnet-group-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticache-controller/components/cache-subnet-group/icons/white/cache-subnet-group-white.svg
+  colorIcon: /extensions/models/aws-elasticache-controller/components/cache-subnet-group/icons/color/cache-subnet-group-color.svg
+  whiteIcon: /extensions/models/aws-elasticache-controller/components/cache-subnet-group/icons/white/cache-subnet-group-white.svg
   description: 
 - name: field-export
-  colorIcon: content/en/extensions/models/aws-elasticache-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticache-controller/components/field-export/icons/white/field-export-white.svg
+  colorIcon: /extensions/models/aws-elasticache-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: /extensions/models/aws-elasticache-controller/components/field-export/icons/white/field-export-white.svg
   description: 
 - name: adopted-resource
-  colorIcon: content/en/extensions/models/aws-elasticache-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticache-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  colorIcon: /extensions/models/aws-elasticache-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: /extensions/models/aws-elasticache-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 - name: snapshot
-  colorIcon: content/en/extensions/models/aws-elasticache-controller/components/snapshot/icons/color/snapshot-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticache-controller/components/snapshot/icons/white/snapshot-white.svg
+  colorIcon: /extensions/models/aws-elasticache-controller/components/snapshot/icons/color/snapshot-color.svg
+  whiteIcon: /extensions/models/aws-elasticache-controller/components/snapshot/icons/white/snapshot-white.svg
   description: 
 - name: user
-  colorIcon: content/en/extensions/models/aws-elasticache-controller/components/user/icons/color/user-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticache-controller/components/user/icons/white/user-white.svg
+  colorIcon: /extensions/models/aws-elasticache-controller/components/user/icons/color/user-color.svg
+  whiteIcon: /extensions/models/aws-elasticache-controller/components/user/icons/white/user-white.svg
   description: 
 - name: user-group
-  colorIcon: content/en/extensions/models/aws-elasticache-controller/components/user-group/icons/color/user-group-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticache-controller/components/user-group/icons/white/user-group-white.svg
+  colorIcon: /extensions/models/aws-elasticache-controller/components/user-group/icons/color/user-group-color.svg
+  whiteIcon: /extensions/models/aws-elasticache-controller/components/user-group/icons/white/user-group-white.svg
   description: 
 - name: replication-group
-  colorIcon: content/en/extensions/models/aws-elasticache-controller/components/replication-group/icons/color/replication-group-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticache-controller/components/replication-group/icons/white/replication-group-white.svg
+  colorIcon: /extensions/models/aws-elasticache-controller/components/replication-group/icons/color/replication-group-color.svg
+  whiteIcon: /extensions/models/aws-elasticache-controller/components/replication-group/icons/white/replication-group-white.svg
   description: 
 - name: cache-cluster
-  colorIcon: content/en/extensions/models/aws-elasticache-controller/components/cache-cluster/icons/color/cache-cluster-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticache-controller/components/cache-cluster/icons/white/cache-cluster-white.svg
+  colorIcon: /extensions/models/aws-elasticache-controller/components/cache-cluster/icons/color/cache-cluster-color.svg
+  whiteIcon: /extensions/models/aws-elasticache-controller/components/cache-cluster/icons/white/cache-cluster-white.svg
   description: 
 - name: serverless-cache
-  colorIcon: content/en/extensions/models/aws-elasticache-controller/components/serverless-cache/icons/color/serverless-cache-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticache-controller/components/serverless-cache/icons/white/serverless-cache-white.svg
+  colorIcon: /extensions/models/aws-elasticache-controller/components/serverless-cache/icons/color/serverless-cache-color.svg
+  whiteIcon: /extensions/models/aws-elasticache-controller/components/serverless-cache/icons/white/serverless-cache-white.svg
   description: 
 - name: serverless-cache-snapshot
-  colorIcon: content/en/extensions/models/aws-elasticache-controller/components/serverless-cache-snapshot/icons/color/serverless-cache-snapshot-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticache-controller/components/serverless-cache-snapshot/icons/white/serverless-cache-snapshot-white.svg
+  colorIcon: /extensions/models/aws-elasticache-controller/components/serverless-cache-snapshot/icons/color/serverless-cache-snapshot-color.svg
+  whiteIcon: /extensions/models/aws-elasticache-controller/components/serverless-cache-snapshot/icons/white/serverless-cache-snapshot-white.svg
   description: 
 - name: iam-role-selector
-  colorIcon: content/en/extensions/models/aws-elasticache-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticache-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  colorIcon: /extensions/models/aws-elasticache-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: /extensions/models/aws-elasticache-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
 components-count: 12
 relationships: 
@@ -83,4 +82,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-elasticache-controller
 ---

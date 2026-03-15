@@ -2,7 +2,6 @@
 title: AWS CloudFront
 subtitle: Collaborative and visual infrastructure as design for AWS CloudFront
 image: /extensions/models/aws-cloudfront-controller/icons/color/aws-cloudfront-controller-color.svg
-aliases: /extensibility/integrations/aws-cloudfront-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudfront-controller
 description: 
 integrations-category: Cloud Native Network
@@ -10,48 +9,48 @@ integrations-subcategory: Content Delivery Network
 registrant: GitHub
 components: 
 - name: field-export
-  colorIcon: content/en/extensions/models/aws-cloudfront-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudfront-controller/components/field-export/icons/white/field-export-white.svg
+  colorIcon: /extensions/models/aws-cloudfront-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: /extensions/models/aws-cloudfront-controller/components/field-export/icons/white/field-export-white.svg
   description: 
 - name: cached-policy
-  colorIcon: content/en/extensions/models/aws-cloudfront-controller/components/cached-policy/icons/color/cached-policy-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudfront-controller/components/cached-policy/icons/white/cached-policy-white.svg
+  colorIcon: /extensions/models/aws-cloudfront-controller/components/cached-policy/icons/color/cached-policy-color.svg
+  whiteIcon: /extensions/models/aws-cloudfront-controller/components/cached-policy/icons/white/cached-policy-white.svg
   description: 
 - name: adopted-resource
-  colorIcon: content/en/extensions/models/aws-cloudfront-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudfront-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  colorIcon: /extensions/models/aws-cloudfront-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: /extensions/models/aws-cloudfront-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 - name: cache-policy
-  colorIcon: content/en/extensions/models/aws-cloudfront-controller/components/cache-policy/icons/color/cache-policy-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudfront-controller/components/cache-policy/icons/white/cache-policy-white.svg
+  colorIcon: /extensions/models/aws-cloudfront-controller/components/cache-policy/icons/color/cache-policy-color.svg
+  whiteIcon: /extensions/models/aws-cloudfront-controller/components/cache-policy/icons/white/cache-policy-white.svg
   description: 
 - name: distribution
-  colorIcon: content/en/extensions/models/aws-cloudfront-controller/components/distribution/icons/color/distribution-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudfront-controller/components/distribution/icons/white/distribution-white.svg
+  colorIcon: /extensions/models/aws-cloudfront-controller/components/distribution/icons/color/distribution-color.svg
+  whiteIcon: /extensions/models/aws-cloudfront-controller/components/distribution/icons/white/distribution-white.svg
   description: 
 - name: function
-  colorIcon: content/en/extensions/models/aws-cloudfront-controller/components/function/icons/color/function-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudfront-controller/components/function/icons/white/function-white.svg
+  colorIcon: /extensions/models/aws-cloudfront-controller/components/function/icons/color/function-color.svg
+  whiteIcon: /extensions/models/aws-cloudfront-controller/components/function/icons/white/function-white.svg
   description: 
 - name: origin-request-policy
-  colorIcon: content/en/extensions/models/aws-cloudfront-controller/components/origin-request-policy/icons/color/origin-request-policy-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudfront-controller/components/origin-request-policy/icons/white/origin-request-policy-white.svg
+  colorIcon: /extensions/models/aws-cloudfront-controller/components/origin-request-policy/icons/color/origin-request-policy-color.svg
+  whiteIcon: /extensions/models/aws-cloudfront-controller/components/origin-request-policy/icons/white/origin-request-policy-white.svg
   description: 
 - name: response-headers-policy
-  colorIcon: content/en/extensions/models/aws-cloudfront-controller/components/response-headers-policy/icons/color/response-headers-policy-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudfront-controller/components/response-headers-policy/icons/white/response-headers-policy-white.svg
+  colorIcon: /extensions/models/aws-cloudfront-controller/components/response-headers-policy/icons/color/response-headers-policy-color.svg
+  whiteIcon: /extensions/models/aws-cloudfront-controller/components/response-headers-policy/icons/white/response-headers-policy-white.svg
   description: 
 - name: origin-access-control
-  colorIcon: content/en/extensions/models/aws-cloudfront-controller/components/origin-access-control/icons/color/origin-access-control-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudfront-controller/components/origin-access-control/icons/white/origin-access-control-white.svg
+  colorIcon: /extensions/models/aws-cloudfront-controller/components/origin-access-control/icons/color/origin-access-control-color.svg
+  whiteIcon: /extensions/models/aws-cloudfront-controller/components/origin-access-control/icons/white/origin-access-control-white.svg
   description: 
 - name: vpc-origin
-  colorIcon: content/en/extensions/models/aws-cloudfront-controller/components/vpc-origin/icons/color/vpc-origin-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudfront-controller/components/vpc-origin/icons/white/vpc-origin-white.svg
+  colorIcon: /extensions/models/aws-cloudfront-controller/components/vpc-origin/icons/color/vpc-origin-color.svg
+  whiteIcon: /extensions/models/aws-cloudfront-controller/components/vpc-origin/icons/white/vpc-origin-white.svg
   description: 
 - name: iam-role-selector
-  colorIcon: content/en/extensions/models/aws-cloudfront-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
-  whiteIcon: content/en/extensions/models/aws-cloudfront-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  colorIcon: /extensions/models/aws-cloudfront-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: /extensions/models/aws-cloudfront-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
 components-count: 11
 relationships: 
@@ -97,4 +96,6 @@ featureList: [
 howItWorks: "Integrates with CloudFront"
 howItWorksDetails: "Improved content delivery and security for Kubernetes applications"
 categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-cloudfront-controller
 ---

@@ -2,7 +2,6 @@
 title: Kubedb Catalog
 subtitle: Collaborative and visual infrastructure as design for Kubedb Catalog
 image: /extensions/models/kubedb-catalog/icons/color/kubedb-catalog-color.svg
-aliases: /extensibility/integrations/kubedb-catalog
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-catalog
 description: 
 integrations-category: App Definition and Development
@@ -10,136 +9,136 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: hazelcast-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/hazelcast-version/icons/color/hazelcast-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/hazelcast-version/icons/white/hazelcast-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/hazelcast-version/icons/color/hazelcast-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/hazelcast-version/icons/white/hazelcast-version-white.svg
   description: 
 - name: oracle-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/oracle-version/icons/color/oracle-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/oracle-version/icons/white/oracle-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/oracle-version/icons/color/oracle-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/oracle-version/icons/white/oracle-version-white.svg
   description: 
 - name: click-house-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/click-house-version/icons/color/click-house-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/click-house-version/icons/white/click-house-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/click-house-version/icons/color/click-house-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/click-house-version/icons/white/click-house-version-white.svg
   description: 
 - name: druid-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/druid-version/icons/color/druid-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/druid-version/icons/white/druid-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/druid-version/icons/color/druid-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/druid-version/icons/white/druid-version-white.svg
   description: 
 - name: elasticsearch-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/elasticsearch-version/icons/color/elasticsearch-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/elasticsearch-version/icons/white/elasticsearch-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/elasticsearch-version/icons/color/elasticsearch-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/elasticsearch-version/icons/white/elasticsearch-version-white.svg
   description: 
 - name: etcd-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/etcd-version/icons/color/etcd-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/etcd-version/icons/white/etcd-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/etcd-version/icons/color/etcd-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/etcd-version/icons/white/etcd-version-white.svg
   description: 
 - name: ferret-db-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/ferret-db-version/icons/color/ferret-db-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/ferret-db-version/icons/white/ferret-db-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/ferret-db-version/icons/color/ferret-db-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/ferret-db-version/icons/white/ferret-db-version-white.svg
   description: 
 - name: kafka-connector-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/kafka-connector-version/icons/color/kafka-connector-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/kafka-connector-version/icons/white/kafka-connector-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/kafka-connector-version/icons/color/kafka-connector-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/kafka-connector-version/icons/white/kafka-connector-version-white.svg
   description: 
 - name: kafka-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/kafka-version/icons/color/kafka-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/kafka-version/icons/white/kafka-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/kafka-version/icons/color/kafka-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/kafka-version/icons/white/kafka-version-white.svg
   description: 
 - name: maria-db-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/maria-db-version/icons/color/maria-db-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/maria-db-version/icons/white/maria-db-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/maria-db-version/icons/color/maria-db-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/maria-db-version/icons/white/maria-db-version-white.svg
   description: 
 - name: memcached-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/memcached-version/icons/color/memcached-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/memcached-version/icons/white/memcached-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/memcached-version/icons/color/memcached-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/memcached-version/icons/white/memcached-version-white.svg
   description: 
 - name: mongo-db-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/mongo-db-version/icons/color/mongo-db-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/mongo-db-version/icons/white/mongo-db-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/mongo-db-version/icons/color/mongo-db-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/mongo-db-version/icons/white/mongo-db-version-white.svg
   description: 
 - name: mssql-server-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/mssql-server-version/icons/color/mssql-server-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/mssql-server-version/icons/white/mssql-server-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/mssql-server-version/icons/color/mssql-server-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/mssql-server-version/icons/white/mssql-server-version-white.svg
   description: 
 - name: my-sql-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/my-sql-version/icons/color/my-sql-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/my-sql-version/icons/white/my-sql-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/my-sql-version/icons/color/my-sql-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/my-sql-version/icons/white/my-sql-version-white.svg
   description: 
 - name: percona-xtra-db-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/percona-xtra-db-version/icons/color/percona-xtra-db-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/percona-xtra-db-version/icons/white/percona-xtra-db-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/percona-xtra-db-version/icons/color/percona-xtra-db-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/percona-xtra-db-version/icons/white/percona-xtra-db-version-white.svg
   description: 
 - name: pg-bouncer-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/pg-bouncer-version/icons/color/pg-bouncer-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/pg-bouncer-version/icons/white/pg-bouncer-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/pg-bouncer-version/icons/color/pg-bouncer-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/pg-bouncer-version/icons/white/pg-bouncer-version-white.svg
   description: 
 - name: pgpool-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/pgpool-version/icons/color/pgpool-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/pgpool-version/icons/white/pgpool-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/pgpool-version/icons/color/pgpool-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/pgpool-version/icons/white/pgpool-version-white.svg
   description: 
 - name: postgres-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/postgres-version/icons/color/postgres-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/postgres-version/icons/white/postgres-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/postgres-version/icons/color/postgres-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/postgres-version/icons/white/postgres-version-white.svg
   description: 
 - name: proxy-sql-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/proxy-sql-version/icons/color/proxy-sql-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/proxy-sql-version/icons/white/proxy-sql-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/proxy-sql-version/icons/color/proxy-sql-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/proxy-sql-version/icons/white/proxy-sql-version-white.svg
   description: 
 - name: rabbit-mq-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/rabbit-mq-version/icons/color/rabbit-mq-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/rabbit-mq-version/icons/white/rabbit-mq-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/rabbit-mq-version/icons/color/rabbit-mq-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/rabbit-mq-version/icons/white/rabbit-mq-version-white.svg
   description: 
 - name: redis-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/redis-version/icons/color/redis-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/redis-version/icons/white/redis-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/redis-version/icons/color/redis-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/redis-version/icons/white/redis-version-white.svg
   description: 
 - name: schema-registry-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/schema-registry-version/icons/color/schema-registry-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/schema-registry-version/icons/white/schema-registry-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/schema-registry-version/icons/color/schema-registry-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/schema-registry-version/icons/white/schema-registry-version-white.svg
   description: 
 - name: singlestore-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/singlestore-version/icons/color/singlestore-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/singlestore-version/icons/white/singlestore-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/singlestore-version/icons/color/singlestore-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/singlestore-version/icons/white/singlestore-version-white.svg
   description: 
 - name: solr-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/solr-version/icons/color/solr-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/solr-version/icons/white/solr-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/solr-version/icons/color/solr-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/solr-version/icons/white/solr-version-white.svg
   description: 
 - name: zoo-keeper-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/zoo-keeper-version/icons/color/zoo-keeper-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/zoo-keeper-version/icons/white/zoo-keeper-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/zoo-keeper-version/icons/color/zoo-keeper-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/zoo-keeper-version/icons/white/zoo-keeper-version-white.svg
   description: 
 - name: cassandra-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/cassandra-version/icons/color/cassandra-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/cassandra-version/icons/white/cassandra-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/cassandra-version/icons/color/cassandra-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/cassandra-version/icons/white/cassandra-version-white.svg
   description: 
 - name: ignite-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/ignite-version/icons/color/ignite-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/ignite-version/icons/white/ignite-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/ignite-version/icons/color/ignite-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/ignite-version/icons/white/ignite-version-white.svg
   description: 
 - name: db2version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/db2version/icons/color/db2version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/db2version/icons/white/db2version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/db2version/icons/color/db2version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/db2version/icons/white/db2version-white.svg
   description: 
 - name: hana-db-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/hana-db-version/icons/color/hana-db-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/hana-db-version/icons/white/hana-db-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/hana-db-version/icons/color/hana-db-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/hana-db-version/icons/white/hana-db-version-white.svg
   description: 
 - name: milvus-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/milvus-version/icons/color/milvus-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/milvus-version/icons/white/milvus-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/milvus-version/icons/color/milvus-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/milvus-version/icons/white/milvus-version-white.svg
   description: 
 - name: neo4j-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/neo4j-version/icons/color/neo4j-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/neo4j-version/icons/white/neo4j-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/neo4j-version/icons/color/neo4j-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/neo4j-version/icons/white/neo4j-version-white.svg
   description: 
 - name: qdrant-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/qdrant-version/icons/color/qdrant-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/qdrant-version/icons/white/qdrant-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/qdrant-version/icons/color/qdrant-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/qdrant-version/icons/white/qdrant-version-white.svg
   description: 
 - name: weaviate-version
-  colorIcon: content/en/extensions/models/kubedb-catalog/components/weaviate-version/icons/color/weaviate-version-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-catalog/components/weaviate-version/icons/white/weaviate-version-white.svg
+  colorIcon: /extensions/models/kubedb-catalog/components/weaviate-version/icons/color/weaviate-version-color.svg
+  whiteIcon: /extensions/models/kubedb-catalog/components/weaviate-version/icons/white/weaviate-version-white.svg
   description: 
 components-count: 33
 relationships: 
@@ -152,4 +151,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/kubedb-catalog
 ---

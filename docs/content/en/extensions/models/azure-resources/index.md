@@ -2,7 +2,6 @@
 title: Azure Resources
 subtitle: Collaborative and visual infrastructure as design for Azure Resources
 image: /extensions/models/azure-resources/icons/color/azure-resources-color.svg
-aliases: /extensibility/integrations/azure-resources
 docURL: https://docs.meshery.io/extensibility/integrations/azure-resources
 description: 
 integrations-category: Provisioning
@@ -10,8 +9,8 @@ integrations-subcategory: App Integration
 registrant: GitHub
 components: 
 - name: resource-group
-  colorIcon: content/en/extensions/models/azure-resources/components/resource-group/icons/color/resource-group-color.svg
-  whiteIcon: content/en/extensions/models/azure-resources/components/resource-group/icons/white/resource-group-white.svg
+  colorIcon: /extensions/models/azure-resources/components/resource-group/icons/color/resource-group-color.svg
+  whiteIcon: /extensions/models/azure-resources/components/resource-group/icons/white/resource-group-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -27,4 +26,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/azure-resources
 ---

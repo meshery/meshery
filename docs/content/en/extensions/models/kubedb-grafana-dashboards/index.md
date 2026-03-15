@@ -2,7 +2,6 @@
 title: Kubedb Grafana Dashboards
 subtitle: Collaborative and visual infrastructure as design for Kubedb Grafana Dashboards
 image: /extensions/models/kubedb-grafana-dashboards/icons/color/kubedb-grafana-dashboards-color.svg
-aliases: /extensibility/integrations/kubedb-grafana-dashboards
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-grafana-dashboards
 description: 
 integrations-category: App Definition and Development
@@ -10,8 +9,8 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: grafana-dashboard
-  colorIcon: content/en/extensions/models/kubedb-grafana-dashboards/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-grafana-dashboards/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg
+  colorIcon: /extensions/models/kubedb-grafana-dashboards/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg
+  whiteIcon: /extensions/models/kubedb-grafana-dashboards/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -24,4 +23,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/kubedb-grafana-dashboards
 ---

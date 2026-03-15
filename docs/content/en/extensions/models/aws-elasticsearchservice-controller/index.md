@@ -2,7 +2,6 @@
 title: AWS ElasticSearch Service
 subtitle: Collaborative and visual infrastructure as design for AWS ElasticSearch Service
 image: /extensions/models/aws-elasticsearchservice-controller/icons/color/aws-elasticsearchservice-controller-color.svg
-aliases: /extensibility/integrations/aws-elasticsearchservice-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticsearchservice-controller
 description: 
 integrations-category: Observability and Analysis
@@ -10,12 +9,12 @@ integrations-subcategory: Logging
 registrant: GitHub
 components: 
 - name: elasticsearch-domain
-  colorIcon: content/en/extensions/models/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/color/elasticsearch-domain-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/white/elasticsearch-domain-white.svg
+  colorIcon: /extensions/models/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/color/elasticsearch-domain-color.svg
+  whiteIcon: /extensions/models/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/white/elasticsearch-domain-white.svg
   description: 
 - name: adopted-resource
-  colorIcon: content/en/extensions/models/aws-elasticsearchservice-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: content/en/extensions/models/aws-elasticsearchservice-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  colorIcon: /extensions/models/aws-elasticsearchservice-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: /extensions/models/aws-elasticsearchservice-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 components-count: 2
 relationships: 
@@ -34,4 +33,6 @@ featureList: [
 howItWorks: "Deploys and manages Elasticsearch"
 howItWorksDetails: "Simplified Elasticsearch management and integration with AWS"
 categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-elasticsearchservice-controller
 ---

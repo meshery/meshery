@@ -2,7 +2,6 @@
 title: K3s
 subtitle: Collaborative and visual infrastructure as design for K3s
 image: /extensions/models/k3s/icons/color/k3s-color.svg
-aliases: /extensibility/integrations/k3s
 docURL: https://docs.meshery.io/extensibility/integrations/k3s
 description: 
 integrations-category: Platform
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Integrates with K3s clusters"
 howItWorksDetails: "Simplified K3s management and integration with other Kubernetes tools"
 categories: [integrations]
+aliases:
+- /extensibility/integrations/k3s
 ---

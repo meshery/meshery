@@ -2,7 +2,6 @@
 title: Kubedb Metrics
 subtitle: Collaborative and visual infrastructure as design for Kubedb Metrics
 image: /extensions/models/kubedb-metrics/icons/color/kubedb-metrics-color.svg
-aliases: /extensibility/integrations/kubedb-metrics
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-metrics
 description: 
 integrations-category: App Definition and Development
@@ -10,8 +9,8 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: metrics-configuration
-  colorIcon: content/en/extensions/models/kubedb-metrics/components/metrics-configuration/icons/color/metrics-configuration-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-metrics/components/metrics-configuration/icons/white/metrics-configuration-white.svg
+  colorIcon: /extensions/models/kubedb-metrics/components/metrics-configuration/icons/color/metrics-configuration-color.svg
+  whiteIcon: /extensions/models/kubedb-metrics/components/metrics-configuration/icons/white/metrics-configuration-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -24,4 +23,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/kubedb-metrics
 ---

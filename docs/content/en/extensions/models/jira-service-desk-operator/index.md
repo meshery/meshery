@@ -2,7 +2,6 @@
 title: Jira Service Desk Operator
 subtitle: Collaborative and visual infrastructure as design for Jira Service Desk Operator
 image: /extensions/models/jira-service-desk-operator/icons/color/jira-service-desk-operator-color.svg
-aliases: /extensibility/integrations/jira-service-desk-operator
 docURL: https://docs.meshery.io/extensibility/integrations/jira-service-desk-operator
 description: 
 integrations-category: Tools
@@ -10,12 +9,12 @@ integrations-subcategory: Tools
 registrant: Artifact Hub
 components: 
 - name: customer
-  colorIcon: content/en/extensions/models/jira-service-desk-operator/components/customer/icons/color/customer-color.svg
-  whiteIcon: content/en/extensions/models/jira-service-desk-operator/components/customer/icons/white/customer-white.svg
+  colorIcon: /extensions/models/jira-service-desk-operator/components/customer/icons/color/customer-color.svg
+  whiteIcon: /extensions/models/jira-service-desk-operator/components/customer/icons/white/customer-white.svg
   description: 
 - name: project
-  colorIcon: content/en/extensions/models/jira-service-desk-operator/components/project/icons/color/project-color.svg
-  whiteIcon: content/en/extensions/models/jira-service-desk-operator/components/project/icons/white/project-white.svg
+  colorIcon: /extensions/models/jira-service-desk-operator/components/project/icons/color/project-color.svg
+  whiteIcon: /extensions/models/jira-service-desk-operator/components/project/icons/white/project-white.svg
   description: 
 components-count: 2
 relationships: 
@@ -28,4 +27,6 @@ featureList: [
 howItWorks: "Configure and customize Jira Projects and Issues"
 howItWorksDetails: "Automate the process of setting up the Jira Service Desk (JSD) operator configuration of alertmanager in a Kubernetes native way. "
 categories: [integrations]
+aliases:
+- /extensibility/integrations/jira-service-desk-operator
 ---

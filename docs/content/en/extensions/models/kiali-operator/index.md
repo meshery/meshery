@@ -2,7 +2,6 @@
 title: Kiali Operator
 subtitle: Collaborative and visual infrastructure as design for Kiali Operator
 image: /extensions/models/kiali-operator/icons/color/kiali-operator-color.svg
-aliases: /extensibility/integrations/kiali-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kiali-operator
 description: 
 integrations-category: Observability and Analysis
@@ -10,8 +9,8 @@ integrations-subcategory: Monitoring
 registrant: Artifact Hub
 components: 
 - name: kiali
-  colorIcon: content/en/extensions/models/kiali-operator/components/kiali/icons/color/kiali-color.svg
-  whiteIcon: content/en/extensions/models/kiali-operator/components/kiali/icons/white/kiali-white.svg
+  colorIcon: /extensions/models/kiali-operator/components/kiali/icons/color/kiali-color.svg
+  whiteIcon: /extensions/models/kiali-operator/components/kiali/icons/white/kiali-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -24,4 +23,6 @@ featureList: [
 howItWorks: "Simplifies Istio troubleshooting and monitoring"
 howItWorksDetails: "Integrates Kiali visualizations"
 categories: [integrations]
+aliases:
+- /extensibility/integrations/kiali-operator
 ---

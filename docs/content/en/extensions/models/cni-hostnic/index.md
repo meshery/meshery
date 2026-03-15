@@ -2,7 +2,6 @@
 title: CNI Host NIC
 subtitle: Collaborative and visual infrastructure as design for CNI Host NIC
 image: /extensions/models/cni-hostnic/icons/color/cni-hostnic-color.svg
-aliases: /extensibility/integrations/cni-hostnic
 docURL: https://docs.meshery.io/extensibility/integrations/cni-hostnic
 description: 
 integrations-category: Cloud Native Network
@@ -10,20 +9,20 @@ integrations-subcategory: Cloud Native Network
 registrant: Artifact Hub
 components: 
 - name: ipam-block
-  colorIcon: content/en/extensions/models/cni-hostnic/components/ipam-block/icons/color/ipam-block-color.svg
-  whiteIcon: content/en/extensions/models/cni-hostnic/components/ipam-block/icons/white/ipam-block-white.svg
+  colorIcon: /extensions/models/cni-hostnic/components/ipam-block/icons/color/ipam-block-color.svg
+  whiteIcon: /extensions/models/cni-hostnic/components/ipam-block/icons/white/ipam-block-white.svg
   description: 
 - name: ipam-handle
-  colorIcon: content/en/extensions/models/cni-hostnic/components/ipam-handle/icons/color/ipam-handle-color.svg
-  whiteIcon: content/en/extensions/models/cni-hostnic/components/ipam-handle/icons/white/ipam-handle-white.svg
+  colorIcon: /extensions/models/cni-hostnic/components/ipam-handle/icons/color/ipam-handle-color.svg
+  whiteIcon: /extensions/models/cni-hostnic/components/ipam-handle/icons/white/ipam-handle-white.svg
   description: 
 - name: vx-net-pool
-  colorIcon: content/en/extensions/models/cni-hostnic/components/vx-net-pool/icons/color/vx-net-pool-color.svg
-  whiteIcon: content/en/extensions/models/cni-hostnic/components/vx-net-pool/icons/white/vx-net-pool-white.svg
+  colorIcon: /extensions/models/cni-hostnic/components/vx-net-pool/icons/color/vx-net-pool-color.svg
+  whiteIcon: /extensions/models/cni-hostnic/components/vx-net-pool/icons/white/vx-net-pool-white.svg
   description: 
 - name: ip-pool
-  colorIcon: content/en/extensions/models/cni-hostnic/components/ip-pool/icons/color/ip-pool-color.svg
-  whiteIcon: content/en/extensions/models/cni-hostnic/components/ip-pool/icons/white/ip-pool-white.svg
+  colorIcon: /extensions/models/cni-hostnic/components/ip-pool/icons/color/ip-pool-color.svg
+  whiteIcon: /extensions/models/cni-hostnic/components/ip-pool/icons/white/ip-pool-white.svg
   description: 
 components-count: 4
 relationships: 
@@ -36,4 +35,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/cni-hostnic
 ---

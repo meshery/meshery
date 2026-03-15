@@ -2,7 +2,6 @@
 title: Devstream
 subtitle: Collaborative and visual infrastructure as design for Devstream
 image: /extensions/models/devstream/icons/color/devstream-color.svg
-aliases: /extensibility/integrations/devstream
 docURL: https://docs.meshery.io/extensibility/integrations/devstream
 description: 
 integrations-category: Provisioning
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/devstream
 ---

@@ -2,7 +2,6 @@
 title: Cloud Custodian
 subtitle: Collaborative and visual infrastructure as design for Cloud Custodian
 image: /extensions/models/cloud-custodian/icons/color/cloud-custodian-color.svg
-aliases: /extensibility/integrations/cloud-custodian
 docURL: https://docs.meshery.io/extensibility/integrations/cloud-custodian
 description: 
 integrations-category: Provisioning
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs)."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/cloud-custodian
 ---

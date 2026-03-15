@@ -2,7 +2,6 @@
 title: Azure Data Factory
 subtitle: Collaborative and visual infrastructure as design for Azure Data Factory
 image: /extensions/models/azure-data-factory/icons/color/azure-data-factory-color.svg
-aliases: /extensibility/integrations/azure-data-factory
 docURL: https://docs.meshery.io/extensibility/integrations/azure-data-factory
 description: 
 integrations-category: Provisioning
@@ -10,8 +9,8 @@ integrations-subcategory: Container Registry
 registrant: GitHub
 components: 
 - name: factory
-  colorIcon: content/en/extensions/models/azure-data-factory/components/factory/icons/color/factory-color.svg
-  whiteIcon: content/en/extensions/models/azure-data-factory/components/factory/icons/white/factory-white.svg
+  colorIcon: /extensions/models/azure-data-factory/components/factory/icons/color/factory-color.svg
+  whiteIcon: /extensions/models/azure-data-factory/components/factory/icons/white/factory-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -24,4 +23,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/azure-data-factory
 ---

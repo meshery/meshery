@@ -2,7 +2,6 @@
 title: Fonio
 subtitle: Collaborative and visual infrastructure as design for Fonio
 image: /extensions/models/fonio/icons/color/fonio-color.svg
-aliases: /extensibility/integrations/fonio
 docURL: https://docs.meshery.io/extensibility/integrations/fonio
 description: 
 integrations-category: Observability and Analysis
@@ -20,4 +19,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs)."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/fonio
 ---

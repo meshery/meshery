@@ -2,7 +2,6 @@
 title: KubeRocketCI Pipeline Operator
 subtitle: Collaborative and visual infrastructure as design for KubeRocketCI Pipeline Operator
 image: /extensions/models/cd-pipeline-operator/icons/color/cd-pipeline-operator-color.svg
-aliases: /extensibility/integrations/cd-pipeline-operator
 docURL: https://docs.meshery.io/extensibility/integrations/cd-pipeline-operator
 description: 
 integrations-category: App Definition and Development
@@ -10,12 +9,12 @@ integrations-subcategory: Continuous Integration & Delivery
 registrant: Artifact Hub
 components: 
 - name: cd-pipeline
-  colorIcon: content/en/extensions/models/cd-pipeline-operator/components/cd-pipeline/icons/color/cd-pipeline-color.svg
-  whiteIcon: content/en/extensions/models/cd-pipeline-operator/components/cd-pipeline/icons/white/cd-pipeline-white.svg
+  colorIcon: /extensions/models/cd-pipeline-operator/components/cd-pipeline/icons/color/cd-pipeline-color.svg
+  whiteIcon: /extensions/models/cd-pipeline-operator/components/cd-pipeline/icons/white/cd-pipeline-white.svg
   description: 
 - name: stage
-  colorIcon: content/en/extensions/models/cd-pipeline-operator/components/stage/icons/color/stage-color.svg
-  whiteIcon: content/en/extensions/models/cd-pipeline-operator/components/stage/icons/white/stage-white.svg
+  colorIcon: /extensions/models/cd-pipeline-operator/components/stage/icons/color/stage-color.svg
+  whiteIcon: /extensions/models/cd-pipeline-operator/components/stage/icons/white/stage-white.svg
   description: 
 components-count: 2
 relationships: 
@@ -28,4 +27,6 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
+aliases:
+- /extensibility/integrations/cd-pipeline-operator
 ---
