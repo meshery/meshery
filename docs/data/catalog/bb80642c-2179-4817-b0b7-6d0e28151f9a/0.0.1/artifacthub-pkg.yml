@@ -1,0 +1,20 @@
+version: 0.0.1
+name: nginx-deployment
+displayName: nginx-deployment
+createdAt: "2023-08-03T22:02:53Z"
+description: Simple application deployment with nginx
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/bb80642c-2179-4817-b0b7-6d0e28151f9a/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "No caveats \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9ce6dc53-ed27-4d1e-b739-656a5c79732b
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,0 +1,24 @@
+version: 0.0.2
+name: e2e-test-design---relationship---715fa8b5-5a84-4f55-899a-d461ef116177
+displayName: E2E Test Design - Relationship - 715fa8b5-5a84-4f55-899a-d461ef116177
+createdAt: "2024-12-17T16:18:29Z"
+description: sadasdzxcz
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e0d62083-2575-42ba-984b-f547812ae9ac/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "asdsad \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: de7f1b67-5c6d-4c38-8c6c-fda919129ed0
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e0d62083-2575-42ba-984b-f547812ae9ac-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e0d62083-2575-42ba-984b-f547812ae9ac-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

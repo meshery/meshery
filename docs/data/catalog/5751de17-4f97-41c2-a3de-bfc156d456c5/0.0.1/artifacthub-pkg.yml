@@ -1,0 +1,20 @@
+version: 0.0.1
+name: mattermost-cluster-install
+displayName: Mattermost Cluster Install
+createdAt: "2023-05-27T11:09:35Z"
+description: The cluster-installation service is based on the Mattermost Operator model and operates at version 0.3.3. It is responsible for managing the installation and configuration of the Mattermost operator in default namespace
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/5751de17-4f97-41c2-a3de-bfc156d456c5/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure sufficient resources are available in the cluster \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c4431ab5-eec8-4d21-947f-7fd9321c649b
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

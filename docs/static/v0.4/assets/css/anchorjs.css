@@ -1,0 +1,40 @@
+/**
+* Link placement and hover behavior.
+*/
+
+.anchorjs-link {
+    color: inherit !important;
+    text-decoration: none !important; /* do not underline */
+    }
+    
+    @media (max-width: 768px) {
+    /* Do not display AnchorJS icon on less than 768px view point */
+    .anchorjs-link {
+      display: none;
+    }
+    }
+    
+    *:hover > .anchorjs-link {
+    opacity: .75;
+    /* To fade links as they appear, change transition-property from 'color' to 'all' */
+    -webkit-transition: color .16s linear;
+    transition: color .16s linear;
+    }
+    
+    *:hover > .anchorjs-link:hover,
+    .anchorjs-link:focus {
+    text-decoration: none !important; /* do not underline */
+    opacity: 1;
+    }
+
+/**
+* Create an invisible pseudo-element and make it the height of the
+* sticky navbar so the jump takes you to a location above the link
+*/
+:target::before {
+  content: "";
+  display: block;
+  margin-top: -80px;
+  height: 80px;
+  width: 1px;
+}
