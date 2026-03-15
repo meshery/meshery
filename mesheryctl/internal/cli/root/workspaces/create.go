@@ -23,6 +23,7 @@ import (
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	mErrors "github.com/meshery/meshkit/errors"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 
 	"github.com/spf13/cobra"
 )
@@ -48,8 +49,12 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceCreateFlags)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		payloadBytes, err := json.Marshal(workspaceCreateFlags)
+		workspaceCreatePayload := workspace.WorkspacePayload{
+			OrganizationID: workspaceCreateFlags.OrganizationID,
+			Name:           workspaceCreateFlags.Name,
+			Description:    workspaceCreateFlags.Description,
+		}
+		payloadBytes, err := json.Marshal(workspaceCreatePayload)
 		if err != nil {
 			return utils.ErrUnmarshal(err)
 		}
