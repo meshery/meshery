@@ -1,4 +1,4 @@
-name: Update Jekyll Page with Test Report
+name: Update Test Report
 
 on:
   workflow_run:
@@ -31,13 +31,13 @@ jobs:
            github-token: ${{ secrets.GITHUB_TOKEN }}
            run-id: ${{ github.event.workflow_run.id }}
       
-      - name: Move test report to Jekyll folder
+      - name: Move test report to shortcodes folder
         run: |
             if [ ! -f e2e-test-reporter/ui/test-report.md ]; then
             echo "Error: Test report not found!" && exit 1
             fi
-            mkdir -p docs/_includes
-            mv e2e-test-reporter/ui/test-report.md docs/_includes/
+            mkdir -p docs/layouts/shortcodes 
+            mv e2e-test-reporter/ui/test-report.md docs/layouts/shortcodes/test-report.md
             
       - name: Pull changes from remote
         run: git pull origin master
@@ -45,7 +45,7 @@ jobs:
       - name: Commit artifact to Jekyll folder
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          file_pattern: "docs/_includes/test-report.md"
+          file_pattern: "docs/layouts/shortcodes/test-report.md"
           commit_user_name: l5io
           commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
