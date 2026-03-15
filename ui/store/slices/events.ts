@@ -29,14 +29,23 @@ const initialState = {
   isNotificationCenterOpen: false,
 };
 
+type EventEntity = {
+  id: string;
+  created_at?: string;
+  checked?: boolean;
+  is_deleted?: boolean;
+  status?: string;
+  severity?: string;
+  [key: string]: any;
+};
+
 const defaultEventProperties = {
   severity: SEVERITY.INFO,
   status: STATUS.UNREAD,
 };
 
-const eventsEntityAdapter = createEntityAdapter({
-  selectId: (event) => event.id,
-  //sort based on update_at timestamp(utc)
+const eventsEntityAdapter = createEntityAdapter<EventEntity>({
+  // sort based on updated_at timestamp (utc)
   sortComparer: (a, b) => {
     if (b?.created_at?.localeCompare && a?.created_at?.localeCompare) {
       return b.created_at?.localeCompare(a.created_at);
@@ -50,7 +59,7 @@ export const eventsSlice = createSlice({
   initialState: eventsEntityAdapter.getInitialState(initialState),
   reducers: {
     clearEvents: (state) => {
-      state.events = [];
+      eventsEntityAdapter.removeAll(state);
     },
 
     setEvents: (state, action) => {
@@ -101,7 +110,7 @@ export const eventsSlice = createSlice({
 
     clearCurrentView: (state) => {
       state.current_view = initialState.current_view;
-      state.events = [];
+      eventsEntityAdapter.removeAll(state);
     },
 
     setCurrentView: (state, action) => {
@@ -238,7 +247,8 @@ export const selectEventById = (state, id) => {
 };
 
 export const selectIsEventChecked = (state, id) => {
-  return Boolean(selectEventById(state, id).checked);
+  const event = selectEventById(state, id);
+  return Boolean(event && event.checked);
 };
 
 export const selectAreAllEventsChecked = (state) => {
@@ -250,6 +260,9 @@ export const selectAreAllEventsChecked = (state) => {
 
 export const selectIsEventVisible = (state, id) => {
   const event = selectEventById(state, id);
+  if (!event) {
+    return false;
+  }
   const currentFilters = state.events.current_view?.filters || {};
   const shouldBeInCurrentFilteredView = currentFilters.status
     ? currentFilters.status == event.status

@@ -45,7 +45,7 @@ const StyledEnvironmentHeader = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  backgroundColor: theme.palette.background.blur.heavy,
+  backgroundColor: theme.palette.background.blur?.heavy || theme.palette.background.default,
   padding: '0.5rem 1rem',
   borderBottom: `1px solid ${theme.palette.border.strong}`,
   fontWeight: '600',
@@ -57,7 +57,10 @@ const K8sContextConnection = ({ connection, environment }) => {
     selectIsConnectionSelected(state, environment.id, connection.id),
   );
   const dispatch = useDispatch();
-  const toggleK8sConnection = () => dispatch(toggleConnection(environment, connection));
+  const toggleK8sConnection = () => {
+    // @ts-expect-error - thunk action type
+    dispatch(toggleConnection(environment, connection));
+  };
   return (
     <K8sContextConnectionChip
       ctx={{ ...connection.metadata, connection_id: connection.id }}
@@ -66,6 +69,7 @@ const K8sContextConnection = ({ connection, environment }) => {
       selectable
       meshsyncControllerState={meshsyncControllerState}
       connectionMetadataState={connectionMetadataState}
+      onDelete={null}
     />
   );
 };
@@ -106,7 +110,10 @@ const EnvironmentCard = ({ environment }) => {
   );
   const selectedConnectionsCount = selectedConnections.length;
 
-  const toggleEnv = () => dispatch(toggleEnvSelection(environment, connections));
+  const toggleEnv = () => {
+    // @ts-expect-error - thunk action type
+    dispatch(toggleEnvSelection(environment, connections));
+  };
 
   return (
     <StyledEnvironmentCard>
@@ -117,7 +124,10 @@ const EnvironmentCard = ({ environment }) => {
             checked={isEnvSelected}
             onChange={toggleEnv}
           />
-          <Typography variant="textB2SemiBold" color={theme.palette.text.default}>
+          <Typography
+            variant="textB2SemiBold"
+            {...(theme.palette.text.default ? { color: theme.palette.text.default } : {})}
+          >
             {environment.name}
           </Typography>
         </Box>
@@ -127,7 +137,7 @@ const EnvironmentCard = ({ environment }) => {
       </StyledEnvironmentHeader>
       <Box p={2}>
         {isLoading ? (
-          <Loading />
+          <Loading message="Loading connections..." />
         ) : (
           <EnvironmentConnections environment={environment} connections={connections} />
         )}
@@ -141,7 +151,12 @@ export const EnvironmentsEmptyState = ({ message, onButtonClick }) => {
   return (
     <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
       <EnvironmentIcon height={100} width={100} fill={theme.palette.icon.default} />
-      <Typography color={theme.palette.text.neutral.default} variant="textB2SemiBold">
+      <Typography
+        {...(theme.palette.text.neutral?.default
+          ? { color: theme.palette.text.neutral.default }
+          : {})}
+        variant="textB2SemiBold"
+      >
         {message || 'No environments found'}
       </Typography>
 
@@ -150,9 +165,12 @@ export const EnvironmentsEmptyState = ({ message, onButtonClick }) => {
         variant="contained"
         color="primary"
         onClick={onButtonClick}
-        style={{ margin: '0.6rem 0.6rem', whiteSpace: 'nowrap' }}
+        style={{
+          margin: '0.6rem 0.6rem',
+          whiteSpace: 'nowrap',
+        }}
       >
-        <AddIcon fill={theme.palette.background.constant.white} />
+        <AddIcon fill={theme.palette.background.constant?.white || theme.palette.common.white} />
         Add Environments
       </Button>
     </Box>
@@ -160,11 +178,23 @@ export const EnvironmentsEmptyState = ({ message, onButtonClick }) => {
 };
 
 export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
-  const organization = useContext(DeploymentTargetContext).organization;
-  const { data, isLoading, isError } = useGetEnvironmentsQuery({ orgId: organization.id });
+  const context = useContext(DeploymentTargetContext);
+  const organization = context.organization;
+  const orgId =
+    organization && typeof organization === 'object' && 'id' in organization
+      ? (organization as { id: string }).id
+      : undefined;
+  const { data, isLoading, isError } = useGetEnvironmentsQuery(
+    { orgId: orgId || '' },
+    { skip: !orgId },
+  );
+
+  if (!organization || typeof organization !== 'object' || !('id' in organization)) {
+    return <Typography variant="textB1Regular">No organization found</Typography>;
+  }
   const environments = data?.environments || [];
   if (isLoading) {
-    return <Loading />;
+    return <Loading message="Loading environments..." />;
   }
 
   if (isError) {

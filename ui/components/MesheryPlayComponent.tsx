@@ -56,7 +56,7 @@ const AlreadyConfigured = styled('div')({
 const MesheryPlayComponent = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { meshAdapters } = useSelector((state) => state.adapter);
+  const { meshAdapters } = useSelector((state: any) => state.adapter);
   // Initialize state
   const [adapter, setAdapterState] = useState(() => {
     if (meshAdapters && meshAdapters.length > 0) {
@@ -138,8 +138,7 @@ const MesheryPlayComponent = () => {
         <>
           <MesheryAdapterPlayComponent
             adapter={adapter}
-            adapCount={adapCount}
-            adapter_icon={imageIcon}
+            {...({ adapCount, adapter_icon: imageIcon } as any)}
           />
         </>
       );
@@ -233,7 +232,10 @@ const MesheryPlayComponent = () => {
         </PlayRoot>
         <Divider variant="fullWidth" light />
         {adapter && adapter.adapter_location && (
-          <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
+          <MesheryAdapterPlayComponent
+            adapter={adapter}
+            {...({ adapter_icon: imageIcon } as any)}
+          />
         )}
       </NoSsr>
     </>

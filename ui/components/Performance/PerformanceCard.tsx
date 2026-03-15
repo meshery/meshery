@@ -33,9 +33,9 @@ function PerformanceCard({
   handleProfile,
   requestFullSize,
   requestSizeRestore,
-}) {
+}: any) {
   const theme = useTheme();
-  const [userAvatar, setUserAvatar] = useState(null);
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const {
     data: userData,
     isSuccess: isUserDataFetched,
@@ -140,7 +140,7 @@ function PerformanceCard({
     },
   ];
 
-  function genericClickHandler(ev, fn) {
+  function genericClickHandler(ev: any, fn: () => void) {
     ev.stopPropagation();
     fn();
   }
@@ -151,6 +151,7 @@ function PerformanceCard({
         setRenderTable(false);
         requestSizeRestore();
       }}
+      onShow={() => {}}
       duration={600}
     >
       {/* FRONT PART */}
@@ -191,7 +192,7 @@ function PerformanceCard({
         <div style={{}}>
           <BottomPart>
             <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.user_id}`} target="_blank">
-              <Avatar alt="profile-avatar" src={userAvatar} />
+              <Avatar alt="profile-avatar" {...(userAvatar ? { src: userAvatar } : {})} />
             </Link>
             <div
               style={{
@@ -318,8 +319,8 @@ function PerformanceCard({
             </div>
           </Grid2>
         </Grid2>
-        <Table size="small" dense>
-          {tableData.map(function renderDesignTableRow(data) {
+        <Table size="small" {...({ dense: true } as any)}>
+          {tableData.map(function renderDesignTableRow(data: any) {
             const { name, value, omitEmpty } = data;
             return <DetailsTable key={name} rowKey={name} value={value} omitEmpty={omitEmpty} />;
           })}
@@ -332,7 +333,15 @@ function PerformanceCard({
 // @ts-ignore
 export default PerformanceCard;
 
-function DetailsTable({ rowKey, value, omitEmpty }) {
+function DetailsTable({
+  rowKey,
+  value,
+  omitEmpty,
+}: {
+  rowKey: string;
+  value: any;
+  omitEmpty?: boolean;
+}) {
   const [isExpanded, setIsExpanded] = useState(false);
   if (omitEmpty && (value === undefined || value === null)) {
     return null;
@@ -346,7 +355,7 @@ function DetailsTable({ rowKey, value, omitEmpty }) {
       ? JSON.stringify(value)
       : JSON.stringify(value)?.slice(0, MAX_TEXT_LENGTH);
 
-  const handleExpandClick = (e) => {
+  const handleExpandClick = (e: any) => {
     setIsExpanded((prevExpanded) => !prevExpanded);
     e.stopPropagation();
   };

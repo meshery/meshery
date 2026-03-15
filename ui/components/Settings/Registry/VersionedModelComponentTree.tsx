@@ -16,6 +16,23 @@ type VersionedModelComponentTreeProps = {
   showDetailsData: { type: string; data: any };
 };
 
+const getErrorMessage = (err: unknown): string => {
+  if (!err) return 'Unknown error';
+  if (typeof err === 'string') return err;
+  if (typeof err !== 'object') return String(err);
+
+  // RTK Query fetch errors often include `data` and/or `error`
+  if ('data' in err) return JSON.stringify((err as { data?: unknown }).data);
+  if ('error' in err && typeof (err as { error?: unknown }).error === 'string') {
+    return (err as { error: string }).error;
+  }
+  if ('message' in err && typeof (err as { message?: unknown }).message === 'string') {
+    return (err as { message: string }).message;
+  }
+
+  return 'Unknown error';
+};
+
 const VersionedModelComponentTree = ({
   registrantID,
   modelDef,
@@ -37,16 +54,20 @@ const VersionedModelComponentTree = ({
 
   useEffect(() => {
     if (componentsData && componentsData.components && componentsData.components.length > 0) {
-      const selectedIdArr = selectedItemUUID.split('.');
+      const selectedItemUUIDStr = Array.isArray(selectedItemUUID)
+        ? (selectedItemUUID[0] ?? '')
+        : (selectedItemUUID ?? '');
+      const selectedIdArr = selectedItemUUIDStr.split('.');
       // Check if selected item is a component
       if (
         selectedIdArr.length > 0 &&
         selectedIdArr[0] === modelDef.id &&
         selectedIdArr[1] === versionedModelDef.id
       ) {
+        const selectedComponentId = selectedIdArr[selectedIdArr.length - 1] ?? '';
         const showData = getFilteredDataForDetailsComponent(
           componentsData.components,
-          selectedIdArr[selectedIdArr.length - 1],
+          selectedComponentId,
         );
         if (JSON.stringify(showData) !== JSON.stringify(showDetailsData)) {
           setShowDetailsData(showData);
@@ -58,7 +79,7 @@ const VersionedModelComponentTree = ({
   useEffect(() => {
     if (isError) {
       notify({
-        message: `There was an error fetching components data: ${error?.data}`,
+        message: `There was an error fetching components data: ${getErrorMessage(error)}`,
         event_type: EVENT_TYPES.ERROR,
       });
     }

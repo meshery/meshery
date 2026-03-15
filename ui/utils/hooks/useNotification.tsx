@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 //NOTE: This file is being refactored to use the new notification center
 
 import { IconButton, ToggleButtonGroup } from '@sistent/sistent';
@@ -13,6 +14,20 @@ import React from 'react';
 import BellIcon from '../../assets/icons/BellIcon';
 import { AddClassRecursively } from '../Elements';
 import { useCallback } from 'react';
+
+type EventType = string | { type: string };
+
+type NotifyOptions = {
+  id?: string;
+  message: string;
+  dataTestID?: string;
+  details?: string | null;
+  event_type: EventType;
+  timestamp?: number;
+  customEvent?: any;
+  showInNotificationCenter?: boolean;
+  pushToServer?: boolean;
+};
 
 /**
  * A React hook to facilitate emitting events from the client.
@@ -30,8 +45,8 @@ export const useNotification = () => {
    *
    * @param {string} eventId - The ID of the event to be opened.
    */
-  const openEvent = (eventId) => {
-    rtkStore.dispatch(toggleNotificationCenter());
+  const openEvent = (eventId: string) => {
+    rtkStore.dispatch(toggleNotificationCenter({} as any));
   };
 
   /**
@@ -48,39 +63,46 @@ export const useNotification = () => {
    * @param {boolean} options.pushToServer - Whether to push the event to the server. Defaults to `false`.
    */
   const notify = ({
-    id = null,
+    id,
     message,
     dataTestID = 'notify',
     details = null,
     event_type,
-    timestamp = null,
+    timestamp,
     customEvent = null,
     showInNotificationCenter = false,
     pushToServer = false,
-  }) => {
-    timestamp = timestamp ?? moment.utc().valueOf();
-    id = id || v4();
+  }: NotifyOptions) => {
+    const finalTimestamp = timestamp ?? moment.utc().valueOf();
+    const finalId = id || v4();
+
+    const fallbackVariant: 'default' | 'error' | 'success' | 'warning' | 'info' = 'default';
+    const variant =
+      typeof event_type === 'string'
+        ? (event_type as 'default' | 'error' | 'success' | 'warning' | 'info')
+        : (event_type?.type as 'default' | 'error' | 'success' | 'warning' | 'info') ||
+          fallbackVariant;
 
     enqueueSnackbar(message, {
       //NOTE: Need to Consolidate the variant and event_type
-      variant: typeof event_type === 'string' ? event_type : event_type?.type,
+      variant,
       action: function Action(key) {
         return (
           <ToggleButtonGroup data-testid={dataTestID}>
             {showInNotificationCenter && (
               <AddClassRecursively className={NOTIFICATION_CENTER_TOGGLE_CLASS}>
                 <IconButton
-                  key={`openevent-${id}`}
+                  key={`openevent-${finalId}`}
                   aria-label="Open"
                   color="inherit"
-                  onClick={() => openEvent(id)}
+                  onClick={() => openEvent(finalId)}
                 >
                   <BellIcon {...iconMedium} />
                 </IconButton>
               </AddClassRecursively>
             )}
             <IconButton
-              key={`closeevent-${id}`}
+              key={`closeevent-${finalId}`}
               aria-label="Close"
               color="inherit"
               onClick={() => closeSnackbar(key)}

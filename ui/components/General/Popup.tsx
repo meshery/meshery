@@ -7,6 +7,7 @@ import { mesheryExtensionRoute } from '../../pages/_app';
 import { Colors } from '@/themes/app';
 import { EXTENSION_NAMES, EXTENSIONS } from '@/utils/Enum';
 import { useSelector } from 'react-redux';
+import type { RootState } from '../../store';
 
 const StyledPaper = styled('div')(({ theme }) => ({
   position: 'fixed',
@@ -68,7 +69,7 @@ const isMesheryExtensionRegisteredUser = (capabilitiesRegistry) => {
 };
 
 export function MesheryExtensionEarlyAccessCardPopup() {
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state: RootState) => state.ui);
   const [isOpen, setIsOpen] = useState(false);
   const cookies = new Cookies('registered');
 
@@ -108,7 +109,7 @@ export function MesheryExtensionEarlyAccessCard({
 }) {
   const extension = EXTENSIONS[EXTENSION_NAMES.KANVAS];
   const signUpText = 'Sign up';
-  const signupHeader = extension.signup_header || '';
+  const signupHeader = extension?.signup_header || '';
   const [buttonText, setButtonText] = useState(signUpText);
   const [title, setTitle] = useState(signupHeader);
   const { push } = useRouter();
@@ -120,7 +121,7 @@ export function MesheryExtensionEarlyAccessCard({
 
   const handleButtonClick = (e) => {
     if (buttonText === signUpText) {
-      window.open(extension.signup_url, '_blank');
+      window.open(extension?.signup_url || '', '_blank');
     } else {
       push(mesheryExtensionRoute);
     }
@@ -133,11 +134,11 @@ export function MesheryExtensionEarlyAccessCard({
     e.stopPropagation();
   };
 
-  useState(() => {
+  useEffect(() => {
     const isMesheryExtensionUser = isMesheryExtensionRegisteredUser(capabilitiesRegistry);
     if (isMesheryExtensionUser) {
       setTitle('Collaborative management enabled');
-      setButtonText(extension.signup_button);
+      setButtonText(extension?.signup_button || signUpText);
     } else {
       setTitle(signupHeader);
       setButtonText(signUpText);

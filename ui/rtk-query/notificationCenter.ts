@@ -88,7 +88,7 @@ export const notificationCenterApi = api
         query: ({ page = 0, filters = {} }) => {
           const parsedFilters = parseFilters(filters);
           return {
-            url: `/api/system/events`,
+            url: `system/events`,
             params: {
               ...parsedFilters,
               page: page,
@@ -104,12 +104,7 @@ export const notificationCenterApi = api
       getEventsSummary: builder.query({
         query: ({ status }) => {
           return {
-            url: '/api/system/events',
-            params: {
-              page: 0,
-              pagesize: 1,
-              status,
-            },
+            url: `system/events?page=0&pagesize=1&status=${status}`,
           };
         },
         transformResponse: (response) => {
@@ -124,7 +119,7 @@ export const notificationCenterApi = api
 
       updateStatus: builder.mutation({
         query: ({ id, status }) => ({
-          url: `/api/system/events/status/${id}`,
+          url: `system/events/status/${id}`,
           method: 'PUT',
           body: {
             status: status,
@@ -139,7 +134,7 @@ export const notificationCenterApi = api
 
       deleteEvent: builder.mutation({
         query: ({ id }) => ({
-          url: `/api/system/events/${id}`,
+          url: `system/events/${id}`,
           method: 'DELETE',
         }),
         async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
@@ -150,13 +145,13 @@ export const notificationCenterApi = api
       }),
 
       getEventFilters: builder.query({
-        query: () => `/api/system/events/types`,
+        query: () => `system/events/types`,
       }),
 
       //Bulk Operations
       updateEvents: builder.mutation({
         query: ({ ids, updatedFields }) => ({
-          url: `/api/system/events/status/bulk`,
+          url: `system/events/status/bulk`,
           method: 'PUT',
           body: {
             ids,
@@ -184,7 +179,7 @@ export const notificationCenterApi = api
 
       deleteEvents: builder.mutation({
         query: ({ ids }) => ({
-          url: `/api/system/events/bulk`,
+          url: `system/events/bulk`,
           method: 'DELETE',
           body: {
             ids,
@@ -201,7 +196,7 @@ export const notificationCenterApi = api
       // TODO: yet to be integrated
       getEventConfig: builder.query({
         query: () => ({
-          url: `/api/system/events/config`,
+          url: `system/events/config`,
           method: 'GET',
         }),
         transformResponse: (response) => ({
@@ -213,15 +208,14 @@ export const notificationCenterApi = api
 
       updateEventConfig: builder.mutation({
         query: (logLevel) => ({
-          url: `/api/system/events/config`,
+          url: `system/events/config`,
           method: 'PUT',
           body: {
             event_log_level: logLevel,
           },
         }),
-        onQueryStarted: async (logLevel, { dispatch, queryFulfilled }) => {
-          const res = await safeQueryResolve(queryFulfilled);
-          res && dispatch();
+        onQueryStarted: async (_logLevel, { queryFulfilled }) => {
+          await safeQueryResolve(queryFulfilled);
         },
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),

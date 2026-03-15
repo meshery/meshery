@@ -1,0 +1,48 @@
+{{ $ctx := . }}
+{{ $page := $ }}
+
+{{ if ne $ctx.section_title "false" }}
+
+    {{ if eq $page.Layout "models" }}
+        <h2>
+            Related Models in <b>{{ index $page.Params "integrations-category" }}</b>
+        </h2>
+    {{ else }}
+
+        {{ $h2Text := $ctx.h2_text | default "Suggested Reading" }}
+
+        {{ if $ctx.display_suggested_reading }}
+            <h2>{{ $h2Text }}</h2>
+        {{ end }}
+
+    {{ end }}
+
+{{ end }}
+
+{{ $reading := $ctx.reading | default site.Pages }}
+
+<ul>
+{{ range $reading }}
+
+    {{ if and
+        (eq .Type $ctx.type)
+        (eq .Params.category $ctx.category)
+        (ne .Params.list "exclude")
+        (ne .RelPermalink $ctx.url)
+        (eq .Lang $ctx.language)
+        (.Params.display_suggested_reading)
+    }}
+
+        <li>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+
+            {{ with .Params.abstract }}
+                - {{ . }}
+            {{ end }}
+
+        </li>
+
+    {{ end }}
+
+{{ end }}
+</ul>

@@ -6,7 +6,7 @@ import { PaginationWrapper } from './style';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
-function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal, testHandler }) {
+function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal, testHandler }: any) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
 
   return (
@@ -51,11 +51,11 @@ function PerformanceProfileGrid({
   pages = 1,
   setPage,
   testHandler,
-}) {
+}: any) {
   return (
     <>
       <Grid2 container spacing={2} style={{ padding: '1rem' }}>
-        {profiles.map((profile) => (
+        {profiles.map((profile: any) => (
           <PerformanceCardGridItem
             key={profile.id}
             profile={profile}

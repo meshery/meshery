@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Box, styled, useTheme } from '@sistent/sistent';
 import bb, { gauge } from 'billboard.js';
 import { NoSsr } from '@sistent/sistent';
@@ -25,7 +25,7 @@ const ErrorMessage = styled(Box)(() => {
 });
 
 export default function GrafanaCustomGaugeChart(props) {
-  let chartRef = null;
+  const chartRef = useRef<HTMLDivElement | null>(null);
 
   const configChartData = () => {
     const { panel, data } = props;
@@ -64,9 +64,9 @@ export default function GrafanaCustomGaugeChart(props) {
       glabel = data[0][0];
     }
 
-    if (chartRef && chartRef !== null) {
-      self.chart = bb.generate({
-        bindto: chartRef,
+    if (chartRef.current) {
+      bb.generate({
+        bindto: chartRef.current,
         data: {
           columns: [[glabel, gdata]],
           type: gauge(),
@@ -106,7 +106,7 @@ export default function GrafanaCustomGaugeChart(props) {
       <Box>
         {/* <ChartTitle>{props.panel?.title}</ChartTitle> */}
         <ErrorMessage>{error && 'There was an error communicating with the server'}</ErrorMessage>
-        <ChartRoot ref={(ch) => (chartRef = ch)} />
+        <ChartRoot ref={chartRef} />
       </Box>
     </NoSsr>
   );

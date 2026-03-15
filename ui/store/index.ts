@@ -2,6 +2,7 @@ import eventsReducer from './slices/events';
 import globalEnvironmentContextReducer from './slices/globalEnvironmentContext';
 import { configureStore } from '@reduxjs/toolkit';
 import { api } from '../rtk-query/index';
+import { mesheryBaseApi } from '@meshery/schemas/dist/api';
 import mesheryUiReducer from './slices/mesheryUi';
 import prefTestReducer from './slices/prefTest';
 import telemetryReducer from './slices/telemetry';
@@ -17,9 +18,13 @@ export const store = configureStore({
     telemetry: telemetryReducer,
     adapter: adapterReducer,
     [api.reducerPath]: api.reducer,
+    [mesheryBaseApi.reducerPath]: mesheryBaseApi.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(api.middleware, mesheryBaseApi.middleware),
 });
+
+export type RootState = ReturnType<typeof store.getState>;
 
 mesheryEventBus.on('DISPATCH_TO_MESHERY_STORE').subscribe((event) => {
   console.log('Dispatching to Meshery Store:', event.data);

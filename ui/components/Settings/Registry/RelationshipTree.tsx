@@ -1,5 +1,5 @@
 import React from 'react';
-import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
+import { TreeView } from '@mui/x-tree-view/TreeView';
 import { CircularProgress } from '@sistent/sistent';
 import { RELATIONSHIPS } from '@/constants/navigator';
 import MinusSquare from '../../../assets/icons/MinusSquare';
@@ -33,9 +33,14 @@ const RelationshipTree = ({
   isRelationshipFetching,
 }: RelationshipTreeProps) => {
   return (
-    <SimpleTreeView
+    <TreeView
       aria-label="controlled"
-      slots={{ collapseIcon: MinusSquare, expandIcon: PlusSquare, endIcon: DotSquare }}
+      defaultExpandedItems={['3']}
+      slots={{
+        collapseIcon: MinusSquare,
+        expandIcon: PlusSquare,
+        endIcon: DotSquare,
+      }}
       onExpandedItemsChange={handleToggle}
       onSelectedItemsChange={handleSelect}
       multiSelect
@@ -81,7 +86,7 @@ const RelationshipTree = ({
       })}
       <div ref={lastRegistrantRef} style={{ height: '48px' }}></div>
       {isRelationshipFetching ? <CircularProgress color="inherit" /> : null}
-    </SimpleTreeView>
+    </TreeView>
   );
 };
 

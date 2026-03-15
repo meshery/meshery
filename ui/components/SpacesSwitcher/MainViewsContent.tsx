@@ -6,12 +6,14 @@ import {
   ShareIcon,
   InfoIcon,
   DeleteIcon,
-  PromptComponent,
   useTheme,
   useRoomActivity,
   ExportIcon,
-  WorkspaceContentMoveModal,
 } from '@sistent/sistent';
+// @ts-expect-error - PromptComponent exists at runtime but types may not be exported
+import { PromptComponent } from '@sistent/sistent';
+// @ts-expect-error - WorkspaceContentMoveModal exists at runtime but types may not be exported
+import { WorkspaceContentMoveModal } from '@sistent/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll, {
@@ -39,6 +41,7 @@ import {
   useAssignViewToWorkspaceMutation,
   useGetWorkspacesQuery,
 } from '@/rtk-query/workspace';
+import type { RootState } from '@/store/index';
 
 const MainViewsContent = ({
   page,
@@ -56,10 +59,10 @@ const MainViewsContent = ({
 }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [shareModal, setShareModal] = useState(false);
-  const [infoModal, setinfoModal] = useState(null);
+  const [infoModal, setinfoModal] = useState(false);
   const [moveModal, setMoveModal] = useState(false);
 
-  const [selectedView, setSelectedView] = useState(null);
+  const [selectedView, setSelectedView] = useState<any>(null);
   const [updateView] = useUpdateViewVisibilityMutation();
   const handleOpenShareModal = (view) => {
     setSelectedView(view);
@@ -200,8 +203,8 @@ const MainViewsContent = ({
   const isInitialFetch = isFetching && page === 0;
   const isEmpty = total_count === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
-  const { organization: currentOrganization } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state: RootState) => state.ui);
+  const { organization: currentOrganization } = useSelector((state: RootState) => state.ui);
   const providerUrl = capabilitiesRegistry?.provider_url;
   const [activeUsers] = useRoomActivity({
     provider_url: providerUrl,
@@ -241,28 +244,34 @@ const MainViewsContent = ({
                   }}
                   MenuComponent={
                     <MenuComponent
-                      options={getMenuOptions({
-                        view,
-                        user: currentUser,
-                        handleMoveModal,
-                        handleOpenInfoModal,
-                        handleOpenShareModal,
-                        handleDelete,
-                        refetch,
-                      })}
+                      options={
+                        getMenuOptions({
+                          view,
+                          user: currentUser,
+                          handleMoveModal,
+                          handleOpenInfoModal,
+                          handleOpenShareModal,
+                          handleDelete,
+                          refetch,
+                        }) as any
+                      }
                     />
                   }
-                  activeUsers={activeUsers?.[view?.id]}
-                  isMultiSelectMode={isMultiSelectMode}
+                  activeUsers={
+                    Array.isArray(activeUsers?.[view?.id])
+                      ? (activeUsers?.[view?.id] as any)
+                      : undefined
+                  }
+                  isMultiSelectMode={isMultiSelectMode ?? false}
                 />
                 <Divider light />
               </React.Fragment>
             );
           })}
-        <LoadingContainer ref={loadingRef}>
+        <LoadingContainer ref={loadingRef as unknown as React.Ref<HTMLDivElement>}>
           {isLoading || isInitialFetch ? (
             Array(10)
-              .fill()
+              .fill(null)
               .map((_, index) => (
                 <DesignViewListItemSkeleton key={index} isMultiSelectMode={isMultiSelectMode} />
               ))
@@ -271,7 +280,7 @@ const MainViewsContent = ({
           ) : (
             <></>
           )}
-          {!hasMore && !isLoading && !isFetching && views?.length > 0 && !isEmpty && (
+          {!hasMore && !isLoading && !isFetching && (views?.length ?? 0) > 0 && !isEmpty && (
             <ListItemText secondary={`No more views to load`} style={{ padding: '1rem' }} />
           )}
         </LoadingContainer>

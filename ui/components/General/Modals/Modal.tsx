@@ -26,11 +26,11 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   return (
     <div>
       <Tooltip title="Schema_Changer">
-        <IconButton component="span" onClick={(e) => setAnchorEl(e.currentTarget)}>
+        <IconButton component="span" onClick={(e) => setAnchorEl(e.currentTarget as any)}>
           <ArrowDropDown style={{ color: '#000' }} />
         </IconButton>
       </Tooltip>
-      <Menu id="schema-menu" anchorEl={anchorEl} open={open} handleClose={handleClose}>
+      <Menu id="schema-menu" anchorEl={anchorEl} open={open} onClose={handleClose}>
         {schema_array.map((version, index) => (
           <MenuItem
             id="schema-menu-item"
@@ -94,9 +94,9 @@ function Modal(props) {
   const [loadingSchema, setLoadingSchema] = useState(true);
   const { notify } = useNotification();
   const handleFormSubmit = () => {
-    if (formRef.current && formRef.current.validateForm()) {
+    if (formRef.current && (formRef.current as any).validateForm()) {
       handleClose();
-      handleSubmit(formRef.current.state.formData);
+      handleSubmit((formRef.current as any).state.formData);
     }
   };
 
@@ -193,8 +193,8 @@ function RJSFModalWrapper({
   helpText,
   widgets = {},
 }) {
-  const formRef = useRef();
-  const formStateRef = useRef();
+  const formRef = useRef<any>(null);
+  const formStateRef = useRef<any>(null);
   const [canNotSubmit, setCanNotSubmit] = useState(false);
   const [loadingSchema, setLoadingSchema] = useState(true);
   const { notify } = useNotification();
@@ -227,8 +227,8 @@ function RJSFModalWrapper({
   }, [schema]);
 
   const handleFormSubmit = () => {
-    if (formRef.current && formRef.current.validateForm()) {
-      handleSubmit(formRef.current.state.formData);
+    if (formRef.current && (formRef.current as any).validateForm()) {
+      handleSubmit((formRef.current as any).state.formData);
       if (handleNext) {
         handleNext();
       }

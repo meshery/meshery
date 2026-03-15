@@ -1,5 +1,5 @@
 import React from 'react';
-import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
+import { TreeView } from '@mui/x-tree-view/TreeView';
 import { CircularProgress, Box } from '@sistent/sistent';
 import MinusSquare from '../../../assets/icons/MinusSquare';
 import PlusSquare from '../../../assets/icons/PlusSquare';
@@ -30,9 +30,13 @@ const MesheryTreeViewModel = ({
   showDetailsData,
 }: MesheryTreeViewModelProps) => {
   return (
-    <SimpleTreeView
+    <TreeView
       aria-label="controlled"
-      slots={{ collapseIcon: MinusSquare, expandIcon: PlusSquare, endIcon: DotSquare }}
+      slots={{
+        collapseIcon: MinusSquare,
+        expandIcon: PlusSquare,
+        endIcon: DotSquare,
+      }}
       onExpandedItemsChange={handleToggle}
       onSelectedItemsChange={handleSelect}
       multiSelect
@@ -58,7 +62,7 @@ const MesheryTreeViewModel = ({
           </Box>
         )}
       </div>
-    </SimpleTreeView>
+    </TreeView>
   );
 };
 

@@ -1,0 +1,67 @@
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+<script>
+$(document).ready(function() {
+
+    var toc = $('#TOC');
+
+    // Select each header
+    sections = $('.td-content h1');
+        $.each(sections, function(idx, v) {
+            section = $(v);
+            var div_id = $(section).attr('id');
+            if(!section.hasClass('noTOC')){
+               var div_text = section.text().split('¶')[0];
+              var parent = $("#" + div_id)
+              var content = '<li id="link_' + div_id + '" class="md-nav__item"><a class="md-nav__link" href="#' + div_id + '" title="' + div_text +'">' + div_text +'</a></li>';
+              $(document).find(toc).append(content);
+            }
+
+            // Add section code to subnavigation
+            var children = $('<nav class="md-nav"><ul class="md-nav__list"></nav></ul>')
+            var contenders = $("#" + div_id).nextUntil("h1");
+            $.each(contenders, function(idx, contender){
+               if( !$(contender).hasClass("noTOC") && ($(contender).is('h2') || $(contender).is('h3')) ) {
+                   var contender_id = $(contender).attr('id');
+                   var contender_text = $(contender).text().split('¶')[0];
+                   var content = '<li class="md-nav__item"><a class="md-nav__link" href="#' + contender_id + '" title="' + contender_text +'">' + contender_text +'</a></li>';
+                   children.append(content);
+                }
+             })
+             $("#link_" + div_id).append(children);
+        });
+        //added 'selected' tag to the first element of toc
+        $('.md-nav__link').first().addClass('selected');
+
+        $(window).scroll(function(e){
+          // Detect how far are we from the top of the page
+          let windowTop = $(this).scrollTop();
+          // Loop through every navigation menu item
+          $('.md-nav__link').each(function (event) {       
+              if (windowTop >= $($(this).attr('href')).offset().top - 100) {
+              // Remove 'selected' from previously highlighted menu items
+              $('.selected').removeClass('selected');
+              // Highlight the current menu item by adding 'selected' class
+              $(this).addClass('selected');
+          }
+          if($(window).scrollTop() + $(window).height() > $(document).height() - 10) {
+            $('.selected').removeClass('selected');
+              $(this).addClass('selected');
+          }
+        });
+      })
+      // Smooth scroll to target section when clicking on TOC link
+      $('a[href^="#"]').on('click', function(event) {
+        event.preventDefault();
+        var target = $(this.hash);
+        if (target.length) {
+          $('html, body').animate({
+          scrollTop: target.offset().top - 115
+          }, 1000);
+        }
+      });
+    });
+</script>

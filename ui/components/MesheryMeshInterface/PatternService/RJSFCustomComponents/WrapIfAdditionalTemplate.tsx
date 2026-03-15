@@ -23,7 +23,7 @@ const WrapIfAdditionalTemplate = ({
   if (!additional) {
     return <div className={classNames}>{children}</div>;
   }
-  const handleChange = ({ target }) => onKeyChange(target.value);
+  const handleChange = ({ target }: any) => onKeyChange(target.value);
 
   return (
     <Grid2
@@ -43,7 +43,7 @@ const WrapIfAdditionalTemplate = ({
             disabled={disabled || readonly}
             id={`${id}-key`}
             name={`${id}-key`}
-            onChange={!readonly ? handleChange : undefined}
+            {...(!readonly && { onChange: handleChange })}
             type="text"
           />
         </FormControl>

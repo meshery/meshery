@@ -42,7 +42,7 @@ export default function CustomSelectWidget({
   // registry,
   // uiSchema,
   // hideError,
-  formContext,
+  formContext: _formContext,
   ...textFieldProps
 }) {
   const { enumOptions, enumDisabled, emptyValue: optEmptyVal } = options;
@@ -95,7 +95,6 @@ export default function CustomSelectWidget({
               {rawErrors?.length > 0 && (
                 <CustomTextTooltip
                   bgColor={ERROR_COLOR}
-                  flag={formContext?.overrideFlag}
                   title={rawErrors?.join('  ')}
                   interactive={true}
                 >
@@ -111,7 +110,7 @@ export default function CustomSelectWidget({
               )}
               {typeof schema?.description === 'string' && schema.description && (
                 <CustomTextTooltip
-                  flag={formContext?.overrideFlag}
+                  flag={_formContext?.overrideFlag}
                   title={schema.description}
                   interactive={true}
                 >

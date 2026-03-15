@@ -1,0 +1,27 @@
+version: 0.0.28
+name: hello-nginx-design.yml
+displayName: hello-nginx-design.yml
+createdAt: "2025-08-29T20:31:40Z"
+description: |-
+    A Meshery Playground design that demonstrates exposing an NGINX app using Deployment, Service, and Ingress.
+
+    Tags: tutorial, kubernetes, nginx, ingress, meshery
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8b3a14d0-b822-4c0d-8051-571032558408/0.0.28/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "A Meshery Playground design that demonstrates exposing an NGINX app using Deployment, Service, and Ingress.\n\nTags: tutorial, kubernetes, nginx, ingress, meshery \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 10cc20f2-e63f-4071-8ce0-4f42274c8cc1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8b3a14d0-b822-4c0d-8051-571032558408-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8b3a14d0-b822-4c0d-8051-571032558408-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

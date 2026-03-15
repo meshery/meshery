@@ -19,7 +19,7 @@ const ModelName = styled(Typography)(() => ({
 export const ComponentIcon = ({ iconSrc, label }) => {
   const [imgError, setImgError] = React.useState(false);
   if (!iconSrc) {
-    return <PatternIcon fill="#fff" height="1.5rem" width="1.5rem" />;
+    return <PatternIcon fill="#fff" color="#fff" height="1.5rem" width="1.5rem" />;
   }
   if (imgError) {
     return <ModelName title={label}>{label}</ModelName>;
@@ -46,8 +46,8 @@ export const Loading = ({ message, 'data-testid': testId = 'loading' }) => {
       display="flex"
       alignItems="center"
       flexDirection="column"
-      spacing={1}
       justifyContent="center"
+      gap={1}
       data-testid={testId}
     >
       <CircularProgress data-testid={`${testId}-spinner`} />
@@ -71,7 +71,9 @@ export const CheckBoxField = ({
   'data-testid': testId = 'checkbox-field',
 }) => {
   const theme = useTheme();
-  const color = disabled ? theme.palette.text.disabled : theme.palette.text.neutral.default;
+  const color = disabled
+    ? theme.palette.text.disabled
+    : theme.palette.text.neutral?.default || theme.palette.text.primary;
 
   return (
     <Stack
@@ -80,7 +82,7 @@ export const CheckBoxField = ({
       alignItems="center"
       justifyContent="space-between"
       style={{
-        cursor: disabled && 'not-allowed',
+        cursor: disabled ? 'not-allowed' : undefined,
       }}
       data-testid={testId}
     >
@@ -94,9 +96,7 @@ export const CheckBoxField = ({
           value={checked}
           onChange={onChange}
           disabled={disabled}
-          slotProps={{
-            input: { 'data-testid': `${testId}-checkbox` },
-          }}
+          data-testid={`${testId}-checkbox`}
         />
         <Typography variant="body2" color={color} data-testid={`${testId}-label`}>
           {label}

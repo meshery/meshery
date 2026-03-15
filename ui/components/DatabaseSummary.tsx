@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Button, Typography, ResponsiveDataTable } from '@sistent/sistent';
+import { Button, Typography } from '@sistent/sistent';
+// @ts-ignore - ResponsiveDataTable exists at runtime but types may not be exported
+import { ResponsiveDataTable } from '@sistent/sistent';
 import PropTypes from 'prop-types';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
@@ -10,6 +12,7 @@ import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+// @ts-ignore - PROMPT_VARIANTS exists at runtime but types may not be exported
 import { PROMPT_VARIANTS } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
@@ -114,9 +117,10 @@ const DatabaseSummary = (props) => {
 
   const [columnVisibility] = useState(() => {
     // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
+    const initialVisibility: Record<string, boolean> = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
+      initialVisibility[col.name] =
+        (col.options as { sort?: boolean; display?: boolean })?.display !== false;
     });
     return initialVisibility;
   });
@@ -157,6 +161,7 @@ const DatabaseSummary = (props) => {
             expanded={isSearchExpanded}
             setExpanded={setIsSearchExpanded}
             placeholder="Search"
+            setModelsFilters={() => setPage(0)}
           />
         </div>
       </ToolWrapper>

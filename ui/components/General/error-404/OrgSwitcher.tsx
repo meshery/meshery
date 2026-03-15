@@ -5,6 +5,7 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
 import OrgIcon from 'assets/icons/OrgIcon';
+// @ts-ignore
 import { ErrorBoundary, FormControl, FormGroup, MenuItem } from '@sistent/sistent';
 import {
   OrgName,
@@ -26,7 +27,7 @@ const OrgSwitcher = () => {
     isError: isOrgsError,
     error: orgsError,
   } = useGetOrgsQuery({});
-  const { organization } = useSelector((state) => state.ui);
+  const { organization } = useSelector((state: any) => state.ui);
   const dispatch = useDispatch();
   const dispatchSetOrganization = (org) => dispatch(setOrganization(org));
 
@@ -44,8 +45,10 @@ const OrgSwitcher = () => {
 
   useEffect(() => {
     if (isOrgsError) {
+      const errorMessage =
+        (orgsError as any)?.data || ((orgsError as any)?.message as string) || 'Unknown error';
       notify({
-        message: `There was an error fetching available data ${orgsError?.data}`,
+        message: `There was an error fetching available data ${errorMessage}`,
         event_type: EVENT_TYPES.ERROR,
       });
     }
@@ -71,6 +74,7 @@ const OrgSwitcher = () => {
           <FormGroup>
             <StyledFormControlLabel
               key="OrgSwitcher"
+              label=""
               control={
                 <StyledSelect
                   fullWidth

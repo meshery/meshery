@@ -1,13 +1,27 @@
-import { useGetOrgsQuery as useSchemasGetOrgsQuery } from '@meshery/schemas/mesheryApi';
+import { api } from './index';
 
-export const useGetOrgsQuery = (queryArgs, options) =>
-  useSchemasGetOrgsQuery(
-    {
-      page: queryArgs?.page?.toString(),
-      pagesize: queryArgs?.pagesize?.toString(),
-      search: queryArgs?.search,
-      order: queryArgs?.order,
-      all: queryArgs?.all,
-    },
-    options,
-  );
+const TAGS = {
+  ORGANIZATION: 'organization',
+};
+
+const organizationsApi = api
+  .enhanceEndpoints({
+    addTagTypes: [TAGS.ORGANIZATION],
+  })
+  .injectEndpoints({
+    endpoints: (builder) => ({
+      getOrgs: builder.query({
+        keepUnusedDataFor: 0,
+        query: (queryArgs) => ({
+          url: `identity/orgs`,
+          params: {
+            page: queryArgs?.page ?? 0,
+            pagesize: queryArgs?.pagesize ?? 10,
+          },
+        }),
+        providesTags: () => [{ type: TAGS.ORGANIZATION }],
+      }),
+    }),
+  });
+
+export const { useGetOrgsQuery } = organizationsApi;

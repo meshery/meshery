@@ -13,6 +13,18 @@ import {
 } from '@sistent/sistent';
 import CancelIcon from '@mui/icons-material/Cancel';
 
+// Type extension for react-select's selectProps
+// selectProps is a valid runtime prop in react-select but not in TypeScript definitions
+interface SelectPropsWithTextField {
+  selectProps?: {
+    textFieldProps?: {
+      label?: string;
+      InputLabelProps?: { shrink?: boolean };
+      error?: boolean;
+    };
+  };
+}
+
 const StyledNoOptionsMessage = styled(Typography)(({ theme }) => ({
   padding: '0.2rem',
   marginLeft: '0.8rem',
@@ -48,15 +60,15 @@ const StyledChip = styled(Chip)(({ theme }) => ({
   },
 }));
 
-function NoOptionsMessage(props) {
+function NoOptionsMessage(props: any) {
   return <StyledNoOptionsMessage {...props.innerProps}>{props.children}</StyledNoOptionsMessage>;
 }
 
-function inputComponent({ inputRef, ...props }) {
+function inputComponent({ inputRef, ...props }: any) {
   return <div ref={inputRef} {...props} />;
 }
 
-function Control(props) {
+function Control(props: any) {
   return (
     <TextField
       fullWidth
@@ -77,7 +89,7 @@ function Control(props) {
   );
 }
 
-function Option(props) {
+function Option(props: any) {
   return (
     <MenuItem
       ref={props.innerRef}
@@ -91,19 +103,19 @@ function Option(props) {
   );
 }
 
-function Placeholder(props) {
+function Placeholder(props: any) {
   return <StyledPlaceholder {...props.innerProps}>{props.children}</StyledPlaceholder>;
 }
 
-function SingleValue(props) {
+function SingleValue(props: any) {
   return <Typography {...props.innerProps}>{props.children}</Typography>;
 }
 
-function ValueContainer(props) {
+function ValueContainer(props: any) {
   return <StyledValueContainer>{props.children}</StyledValueContainer>;
 }
 
-function MultiValue(props) {
+function MultiValue(props: any) {
   return (
     <StyledChip
       tabIndex={-1}
@@ -114,7 +126,7 @@ function MultiValue(props) {
   );
 }
 
-function Menu(props) {
+function Menu(props: any) {
   return (
     <StyledPaper square {...props.innerProps}>
       {props.children}
@@ -143,10 +155,10 @@ const ReactSelectWrapper = ({
   error,
   isMulti = false,
   noOptionsMessage = 'Type to create a new Environment',
-}) => {
+}: any) => {
   const theme = useTheme();
   const selectStyles = {
-    input: (base) => ({
+    input: (base: any) => ({
       ...base,
       color: theme.palette.text.primary,
       '& input': { font: 'inherit' },
@@ -156,25 +168,30 @@ const ReactSelectWrapper = ({
     }),
   };
 
+  const selectProps = {
+    styles: selectStyles,
+    selectProps: {
+      textFieldProps: {
+        label,
+        InputLabelProps: { shrink: true },
+        error,
+      },
+    },
+    options,
+    components,
+    value,
+    onChange,
+    onInputChange,
+    placeholder,
+    isClearable: true,
+    isMulti,
+    noOptionsMessage: () => noOptionsMessage,
+  };
+
   return (
     <NoSsr>
-      <CreateSelect
-        styles={selectStyles}
-        textFieldProps={{
-          label,
-          InputLabelProps: { shrink: true },
-          error,
-        }}
-        options={options}
-        components={components}
-        value={value}
-        onChange={onChange}
-        onInputChange={onInputChange}
-        placeholder={placeholder}
-        isClearable
-        isMulti={isMulti}
-        noOptionsMessage={() => noOptionsMessage}
-      />
+      {/* selectProps is a valid runtime prop in react-select used to pass custom props to component functions */}
+      <CreateSelect {...(selectProps as SelectPropsWithTextField & typeof selectProps)} />
     </NoSsr>
   );
 };

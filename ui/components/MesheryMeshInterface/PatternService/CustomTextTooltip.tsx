@@ -1,5 +1,11 @@
-import { CustomTooltip, type CustomTooltipProps } from '@sistent/sistent';
+import React from 'react';
+import { CustomTooltip } from '@sistent/sistent';
 
-export const CustomTextTooltip = ({ ...props }: CustomTooltipProps) => {
+type CustomTextTooltipProps = React.ComponentProps<typeof CustomTooltip> & {
+  flag?: unknown;
+  bgColor?: string;
+};
+
+export const CustomTextTooltip = ({ ...props }: CustomTextTooltipProps) => {
   return <CustomTooltip {...props} />;
 };

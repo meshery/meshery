@@ -37,7 +37,7 @@ function GrafanaConfigComponent({
   handleGrafanaConfigure,
   handleChangeApiKey,
 }) {
-  const [availableGrafanaConnection, setAvailableGrafanaConnection] = useState([]);
+  const [availableGrafanaConnection, setAvailableGrafanaConnection] = useState<any[]>([]);
   useEffect(() => {
     dataFetch(
       `/api/integrations/connections?page=0&pagesize=1&status=${encodeURIComponent(
@@ -47,8 +47,11 @@ function GrafanaConfigComponent({
         credentials: 'include',
         method: 'GET',
       },
-      (result) => {
-        setAvailableGrafanaConnection(result?.connections);
+      (result: any) => {
+        setAvailableGrafanaConnection(result?.connections || []);
+      },
+      (error: any) => {
+        console.error('Error fetching Grafana connections:', error);
       },
     );
   }, []);

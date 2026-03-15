@@ -1,0 +1,12 @@
+<table style="display: flex; align-self: center; justify-self: center">
+  <th>Cloud Native Infrastructure</th>
+  <th>Adapter Status</th>
+  <th>Adapter Version</th>
+  <th>Earliest Supported Infrastructure Version</th>
+  <tr>
+    <td><img src="{{ page.image }}" style="width:20px" data-logo-for-dark="{{ page.white_image }}" data-logo-for-light="{{ page.image }}" id="logo-dark-light" loading="lazy"/> {{ page.component }}</td>
+    <td><a href="{{ page.github_link }}">{{ page.project_status }}</a></td>
+    <td>{{ page.adapter_version }}</td>
+    <td>{{page.earliest_version}}</td>
+  </tr>
+</table>

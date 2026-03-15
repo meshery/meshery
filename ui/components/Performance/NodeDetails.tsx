@@ -2,7 +2,7 @@ import React from 'react';
 import { NoSsr, TableCell, TableSortLabel } from '@sistent/sistent';
 import MUIDataTable from '@sistent/mui-datatables';
 
-function NodeDetails(props) {
+function NodeDetails(props: any) {
   const chartData = props.result;
 
   const columns = [
@@ -13,7 +13,7 @@ function NodeDetails(props) {
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }: any, sortColumn: any) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
@@ -34,7 +34,7 @@ function NodeDetails(props) {
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }: any, sortColumn: any) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
@@ -55,7 +55,7 @@ function NodeDetails(props) {
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }: any, sortColumn: any) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
@@ -76,7 +76,7 @@ function NodeDetails(props) {
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }: any, sortColumn: any) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
@@ -97,7 +97,7 @@ function NodeDetails(props) {
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }: any, sortColumn: any) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
@@ -118,7 +118,7 @@ function NodeDetails(props) {
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }: any, sortColumn: any) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
@@ -139,7 +139,7 @@ function NodeDetails(props) {
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }: any, sortColumn: any) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
@@ -155,19 +155,20 @@ function NodeDetails(props) {
     },
   ];
 
-  let data = [];
+  let data: any[][] = [];
 
   const options = {
     filter: false,
-    selectableRows: 'none',
+    selectableRows: 'none' as const,
   };
 
   let server = chartData?.kubernetes?.server_version;
 
-  chartData?.kubernetes?.nodes?.map((node) => {
-    let arr = [];
+  chartData?.kubernetes?.nodes?.map((node: any) => {
+    let arr: any[] = [];
     let m = node?.allocatable_memory;
-    const mem = (String(m).slice(0, String(m).length - 2) * 0.000001024).toPrecision(5);
+    const memString = String(m).slice(0, String(m).length - 2);
+    const mem = (parseFloat(memString) * 0.000001024).toPrecision(5);
     arr.push(node?.hostname);
     arr.push(node?.allocatable_cpu);
     arr.push(mem + 'Gi');

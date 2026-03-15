@@ -9,8 +9,9 @@ import {
   importModelSchema,
   Typography,
 } from '@sistent/sistent';
-import { RJSFModalWrapper } from '../General/Modals/Modal';
-import CsvStepper, { StyledDocsRedirectLink } from './Stepper/CSVStepper';
+import { RJSFModalWrapper } from '../../General/Modals/Modal';
+import CsvStepper from './Stepper/CSVStepper';
+import { StyledDocsRedirectLink } from './Stepper/style';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
@@ -26,32 +27,40 @@ const ImportModelModal = React.memo(
     const [importModalDescription, setImportModalDescription] = useState('');
     const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
     const [importModelReq] = useImportMeshModelMutation();
-    const handleGenerateModal = async (data) => {
-      const { component_csv, model_csv, relationship_csv, register } = data;
-      let requestBody = {
-        importBody: {
-          model_csv: model_csv,
-          component_csv: component_csv,
-          relationship_csv: relationship_csv,
-        },
-        uploadType: 'csv',
-        register: register,
-      };
+    // const handleGenerateModal = async (data: any) => {
+    //   const { component_csv, model_csv, relationship_csv, register } = data;
+    //   let requestBody = {
+    //     importBody: {
+    //       model_csv: model_csv,
+    //       component_csv: component_csv,
+    //       relationship_csv: relationship_csv,
+    //     },
+    //     uploadType: 'csv',
+    //     register: register,
+    //   };
 
-      updateProgress({ showProgress: true });
-      await importModelReq({ importBody: requestBody });
-      updateProgress({ showProgress: false });
-    };
+    //   updateProgress({ showProgress: true });
+    //   await importModelReq({ importBody: requestBody });
+    //   updateProgress({ showProgress: false });
+    // };
 
-    const handleImportModelSubmit = async (data) => {
+    const handleImportModelSubmit = async (data: any) => {
       const { uploadType, url, file } = data;
-      let requestBody = null;
+      let requestBody: any = null;
 
-      const fileElement = document.getElementById('root_file');
+      const fileElement = document.getElementById('root_file') as HTMLInputElement | null;
 
       switch (uploadType) {
         case 'File Import': {
-          const fileName = fileElement.files[0].name;
+          if (!fileElement || !fileElement.files || fileElement.files.length === 0) {
+            console.error('Error: File element not found or no file selected');
+            return;
+          }
+          const fileName = fileElement.files[0]?.name;
+          if (!fileName) {
+            console.error('Error: File name is missing');
+            return;
+          }
           const fileData = getUnit8ArrayDecodedFile(file);
           if (fileData) {
             requestBody = {
@@ -122,7 +131,7 @@ const ImportModelModal = React.memo(
               {label}
             </Typography>
 
-            {enumOptions.map((option, index) => (
+            {enumOptions.map((option: any, index: number) => (
               <FormControlLabel
                 key={option.value}
                 value={option.value}
@@ -160,6 +169,8 @@ const ImportModelModal = React.memo(
             handleSubmit={handleImportModelSubmit}
             submitBtnText="Import"
             handleClose={() => setIsImportModalOpen(false)}
+            handleNext={() => {}}
+            title="Import Model"
             widgets={widgets}
             helpText={
               <p>
@@ -183,10 +194,7 @@ const ImportModelModal = React.memo(
           maxWidth="sm"
           title="Import CSV"
         >
-          <CsvStepper
-            handleGenerateModal={handleGenerateModal}
-            handleClose={() => setIsCsvModalOpen(false)}
-          />
+          <CsvStepper handleClose={() => setIsCsvModalOpen(false)} />
         </Modal>
       </>
     );

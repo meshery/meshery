@@ -29,10 +29,8 @@ export const TryAgainButton = styled(Button)(({ theme }) => ({
 }));
 
 export const EditButton = styled(Button)(({ theme }) => ({
-  backgroundImage: theme.palette.background.brand.prominent,
-  backgroundColor: `${
-    theme.palette.background.brand.prominent || theme.palette.background.brand.default
-  }`,
+  backgroundImage: theme.palette.background.brand?.default || 'none',
+  backgroundColor: theme.palette.background.brand?.default || theme.palette.primary.main,
   '@media (max-width: 768px)': {
     minWidth: '50px',
   },
@@ -56,7 +54,7 @@ export const ToolBarButtonContainer = styled('span')(() => ({
 
 export const StyledListItem = styled(ListItem, {
   shouldForwardProp: (prop) => prop !== 'disableLogo',
-})(({ disableLogo, theme }) => ({
+})(({ disableLogo, theme }: any) => ({
   cursor: 'pointer',
   backgroundColor: charcoal[30],
   boxShadow: '0 -1px 0 #404854 inset',
@@ -65,8 +63,8 @@ export const StyledListItem = styled(ListItem, {
   position: 'sticky',
   top: 0,
   zIndex: 5,
-  color: theme.palette.background.constant.disabled,
-  fill: theme.palette.background.constant.white,
+  color: theme.palette.background.constant?.disabled || theme.palette.text.disabled,
+  fill: theme.palette.background.constant?.white || '#fff',
   ...(disableLogo && {
     ...disabledStyleWithOutOpacity,
   }),
@@ -112,7 +110,7 @@ export const MainLogoText = styled('img')(({ theme }) => ({
 
 export const ExpandMoreIcon = styled('svg', {
   shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
-})(({ isCollapsed, hasChildren, theme }) => ({
+})(({ isCollapsed, hasChildren, theme }: any) => ({
   opacity: 0, // Initially hidden
   visibility: 'hidden',
   cursor: 'pointer',
@@ -132,15 +130,13 @@ export const ExpandMoreIcon = styled('svg', {
   },
 }));
 
-export const ExpandMore = ({ isCollapsed, hasChildren, theme, ...props }) => (
+export const ExpandMore = ({ isCollapsed, hasChildren, theme, ...props }: any) => (
   <ExpandMoreIcon
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     width="20"
     height="20"
-    isCollapsed={isCollapsed}
-    hasChildren={hasChildren}
-    {...props}
+    {...({ isCollapsed, hasChildren, ...props } as any)}
   >
     <CaretDownIcon fill={theme.palette.icon.brand} />
   </ExpandMoreIcon>
@@ -152,7 +148,7 @@ export const NavigatorList = styled(List)({
 
 export const NavigatorListItem = styled(ListItemButton, {
   shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed' && prop !== 'isActive',
-})(({ theme, isDrawerCollapsed, isActive }) => ({
+})(({ theme, isDrawerCollapsed, isActive }: any) => ({
   paddingLeft: isDrawerCollapsed ? theme.spacing(2) : '',
   paddingRight: isDrawerCollapsed ? '16px' : '',
   color: isActive
@@ -177,7 +173,7 @@ export const NavigatorListItem = styled(ListItemButton, {
 export const NavigatorListItemII = styled(ListItemButton, {
   shouldForwardProp: (prop) =>
     prop !== 'depth' && prop !== 'isDrawerCollapsed' && prop !== 'isActive',
-})(({ theme, depth, isDrawerCollapsed, isActive }) => ({
+})(({ theme, depth, isDrawerCollapsed, isActive }: any) => ({
   paddingLeft: isDrawerCollapsed
     ? theme.spacing(2)
     : depth === 1
@@ -185,9 +181,9 @@ export const NavigatorListItemII = styled(ListItemButton, {
       : theme.spacing(5),
   paddingRight: isDrawerCollapsed ? '16px' : '',
   color: isActive
-    ? theme.palette.background.brand.default
-    : theme.palette.background.constant.disabled,
-  fill: isActive ? theme.palette.background.brand.default : '#fff',
+    ? theme.palette.background.brand?.default || theme.palette.primary.main
+    : theme.palette.background.constant?.disabled || theme.palette.text.disabled,
+  fill: isActive ? theme.palette.background.brand?.default || theme.palette.primary.main : '#fff',
   '&:hover': {
     backgroundColor: 'rgba(0, 187, 166, 0.5)',
     '& $expandMoreIcon': {
@@ -202,7 +198,7 @@ export const NavigatorListItemII = styled(ListItemButton, {
 export const NavigatorListItemIII = styled(ListItemButton, {
   shouldForwardProp: (prop) =>
     prop !== 'depth' && prop !== 'isDrawerCollapsed' && prop !== 'isActive' && prop !== 'isShow',
-})(({ theme, depth, isDrawerCollapsed, isActive, isShow }) => ({
+})(({ theme, depth, isDrawerCollapsed, isActive, isShow }: any) => ({
   paddingLeft: isDrawerCollapsed
     ? theme.spacing(2)
     : depth === 1
@@ -210,9 +206,9 @@ export const NavigatorListItemIII = styled(ListItemButton, {
       : theme.spacing(5),
   paddingRight: isDrawerCollapsed ? '16px' : '',
   color: isActive
-    ? theme.palette.background.brand.default
-    : theme.palette.background.constant.disabled,
-  fill: isActive ? theme.palette.background.brand.default : '#fff',
+    ? theme.palette.background.brand?.default || theme.palette.primary.main
+    : theme.palette.background.constant?.disabled || theme.palette.text.disabled,
+  fill: isActive ? theme.palette.background.brand?.default || theme.palette.primary.main : '#fff',
   '&:hover': {
     backgroundColor: 'rgba(0, 187, 166, 0.5)',
     '& $expandMoreIcon': {
@@ -228,7 +224,7 @@ export const NavigatorListItemIII = styled(ListItemButton, {
 
 export const SideBarListItem = styled(ListItemButton, {
   shouldForwardProp: (prop) => prop !== 'link' && prop !== 'isActive' && prop !== 'isShow',
-})(({ link, isActive, isShow, theme }) => ({
+})(({ link, isActive, isShow, theme }: any) => ({
   color: isActive
     ? theme.palette.background.brand.default
     : theme.palette.background.constant.disabled,
@@ -254,7 +250,7 @@ export const SideBarListItem = styled(ListItemButton, {
   fontSize: '1rem',
 }));
 
-export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
+export const SideBarText = styled(ListItemText)(({ drawerCollapsed }: any) => ({
   opacity: drawerCollapsed ? 0 : 1,
   transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
   fontSize: '14px',
@@ -273,7 +269,7 @@ export const PrimaryElement = styled(SideBarText)(({ theme }) => ({
 }));
 export const RootDiv = styled('div', {
   shouldForwardProp: (prop) => prop !== 'show',
-})(({ show }) => ({
+})(({ show }: any) => ({
   cursor: show ? '' : 'not-allowed',
   '& svg': {
     width: '19.36px',
@@ -311,7 +307,7 @@ export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
   display: 'inline-table',
   paddingRight: theme.spacing(0.5),
   marginLeft: theme.spacing(0.8),
-  color: theme.palette.background.constant.white,
+  color: theme.palette.background.constant?.white || '#fff',
   opacity: '0.7',
   transition: 'opacity 200ms linear',
   '&:hover': {
@@ -324,9 +320,9 @@ export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
   },
 }));
 
-export const HiddenText = styled(ListItemText)(({ drawerCollapsed, theme }) => ({
+export const HiddenText = styled(ListItemText)(({ drawerCollapsed, theme }: any) => ({
   opacity: drawerCollapsed ? 0 : 1,
-  color: theme.palette.background.constant.white,
+  color: theme.palette.background.constant?.white || '#fff',
   fontSize: '14px',
   transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
 }));
@@ -347,7 +343,7 @@ export const NavigatorWrapper = styled('div')({
 
 export const NavigatorHelpIcons = styled(ButtonGroup, {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
-})(({ isCollapsed }) => ({
+})(({ isCollapsed }: any) => ({
   ...(isCollapsed && {
     marginRight: 4,
     alignItems: 'center',
@@ -369,7 +365,7 @@ export const NavigatorFooter = styled('div')({
 
 export const ChevronButtonWrapper = styled('div', {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
-})(({ isCollapsed, theme }) => ({
+})(({ isCollapsed, theme }: any) => ({
   backgroundColor: isCollapsed ? '#515b60' : theme.palette.background.tabs,
   color: isCollapsed ? '#ffffff' : 'inherit',
   boxShadow: !isCollapsed
@@ -409,8 +405,8 @@ export const HelpListItem = styled(ListItem)(({ theme }) => ({
   paddingLeft: 0,
   paddingTop: 4,
   paddingBottom: 4,
-  color: theme.palette.background.constant.disabled,
-  fill: theme.palette.background.constant.white,
+  color: theme.palette.background.constant?.disabled || theme.palette.text.disabled,
+  fill: theme.palette.background.constant?.white || '#fff',
   '&:hover': {
     '& $expandMoreIcon': {
       opacity: 1,
@@ -421,7 +417,7 @@ export const HelpListItem = styled(ListItem)(({ theme }) => ({
 
 export const HelpButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
-})(({ isCollapsed }) => ({
+})(({ isCollapsed }: any) => ({
   ...(isCollapsed && {
     height: '23.2px',
     marginTop: '-4px',
@@ -441,7 +437,7 @@ export const FixedSidebarFooter = styled('div')({
 
 export const SidebarDrawer = styled(Drawer, {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
-})(({ theme, isCollapsed }) => ({
+})(({ theme, isCollapsed }: any) => ({
   width: isCollapsed ? 68 : 256,
   flexShrink: 0,
   whiteSpace: 'nowrap',

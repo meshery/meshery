@@ -59,10 +59,14 @@ const MeshModelComponent_ = ({
   });
 
   // Use external search text if provided, otherwise use query from router
-  const [searchText, setSearchText] = useState<string | null>(externalSearchText || searchQuery);
+  const [searchText, setSearchText] = useState<string | null>(
+    externalSearchText || (Array.isArray(searchQuery) ? searchQuery[0] : searchQuery) || null,
+  );
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
   // Use external view if provided, otherwise use selectedTab or default to 'Models'
-  const [view, setView] = useState<string>(externalView || selectedTab || 'Models');
+  const [view, setView] = useState<string>(
+    externalView || (Array.isArray(selectedTab) ? selectedTab[0] : selectedTab) || 'Models',
+  );
   const [showDetailsData, setShowDetailsData] = useState<{ type: string; data: any }>({
     type: '', // Type of selected data eg. (models, components)
     data: {},
@@ -187,7 +191,7 @@ const MeshModelComponent_ = ({
         // Avoid appending data to the previous dataset.
         // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
         // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
-        let newData = [];
+        let newData: any[] = [];
         if (response.data[view.toLowerCase()]) {
           newData =
             searchText || view === RELATIONSHIPS
@@ -239,7 +243,7 @@ const MeshModelComponent_ = ({
     );
     if (registrantResponse.data && registrantResponse.data.registrants) {
       const registrants = registrantResponse.data.registrants;
-      const tempResourcesDetail = [];
+      const tempResourcesDetail: any[] = [];
 
       for (let registrant of registrants) {
         let hostname = toLower(registrant?.hostname);
@@ -272,7 +276,7 @@ const MeshModelComponent_ = ({
     setRowsPerPage(25);
     return response;
   };
-  const handleTabClick = (selectedView) => {
+  const handleTabClick = (selectedView: string) => {
     // -> use settingsRouter when not in modal mode (Settings page)
     if (handleChangeSelectedTab && externalView === null) {
       handleChangeSelectedTab(selectedView);
@@ -314,7 +318,7 @@ const MeshModelComponent_ = ({
   };
 
   useEffect(() => {
-    if (searchText !== null && page[view] > 0) {
+    if (searchText !== null && page[view] !== undefined && page[view] > 0) {
       setPage({
         Models: 0,
         Components: 0,
@@ -322,7 +326,7 @@ const MeshModelComponent_ = ({
         Registrants: 0,
       });
     }
-  }, [searchText]);
+  }, [searchText, page, view]);
 
   useEffect(() => {
     fetchData();
@@ -458,7 +462,7 @@ const MeshModelComponent_ = ({
           </DetailsContainer>
           <MeshModelDetails
             view={view}
-            setShowDetailsData={setShowDetailsData}
+            {...({ setShowDetailsData } as any)}
             showDetailsData={showDetailsData}
           />
         </TreeWrapper>
@@ -467,7 +471,17 @@ const MeshModelComponent_ = ({
   );
 };
 
-const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal }) => {
+const TabBar = ({
+  openImportModal,
+  openCreateModal,
+  view,
+  openRelationshipModal,
+}: {
+  openImportModal: () => void;
+  openCreateModal: () => void;
+  view: string;
+  openRelationshipModal: () => void;
+}) => {
   return (
     <MeshModelToolbar>
       <div
@@ -531,9 +545,19 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
   );
 };
 
-const TabCard = ({ label, count, active, onClick }) => {
+const TabCard = ({
+  label,
+  count,
+  active,
+  onClick,
+}: {
+  label: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
+}) => {
   return (
-    <CardStyle isSelected={active} elevation={3} onClick={onClick}>
+    <CardStyle isSelected={active} onClick={onClick}>
       <span
         style={{
           fontSize: '1rem',
@@ -546,7 +570,7 @@ const TabCard = ({ label, count, active, onClick }) => {
     </CardStyle>
   );
 };
-const MeshModelComponent = (props) => {
+const MeshModelComponent = (props: any) => {
   return (
     <NoSsr>
       <MeshModelComponent_ {...props} />

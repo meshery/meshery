@@ -1,0 +1,28 @@
+version: 0.0.1
+name: pods-image-pull-policy
+displayName: Pods Image Pull Policy
+createdAt: "2024-01-14T09:58:14Z"
+description: |+
+    Configuration and management of image pull policies for Kubernetes pods. The image pull policy determines how and when the container images are pulled from the container registry, impacting both the efficiency and reliability of application deployments. Kubernetes provides three image pull policies: Always, IfNotPresent, and Never.
+
+    1. Always: The image is always pulled from the registry, ensuring the latest version is used but potentially increasing deployment times and registry load.
+    2. IfNotPresent: The image is pulled only if it is not already present on the node, optimizing for faster deployments when the image hasn't changed.
+    3. Never: The image is never pulled from the registry, assuming it is pre-installed on the node, which can be useful in air-gapped environments.
+
+    This design helps Kubernetes administrators and developers choose the appropriate image pull policy based on their specific needs for development, testing, and production environments.
+
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/ea75ea93-1f5a-4c85-8efd-0d862599fbed/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Using the Always policy can lead to increased network dependency and potential delays in deployments if the registry is slow or inaccessible. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

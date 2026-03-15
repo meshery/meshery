@@ -59,13 +59,15 @@ function GrafanaSelectionComponent(props) {
     grafanaBoards: propGrafanaBoards,
   } = props;
 
-  const [grafanaBoards, setGrafanaBoards] = useState([]);
+  const [grafanaBoards, setGrafanaBoards] = useState<any[]>([]);
   const [grafanaBoard, setGrafanaBoard] = useState('');
-  const [templateVars, setTemplateVars] = useState([]);
-  const [templateVarOptions, setTemplateVarOptions] = useState([]); // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
-  const [panels, setPanels] = useState([]);
-  const [selectedPanels, setSelectedPanels] = useState([]);
-  const [selectedTemplateVars, setSelectedTemplateVars] = useState([]); // will contain the selected val at the respective index: [v1, v3]
+  const [templateVars, setTemplateVars] = useState<any[]>([]);
+  // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
+  const [templateVarOptions, setTemplateVarOptions] = useState<any[][]>([]);
+  const [panels, setPanels] = useState<any[]>([]);
+  const [selectedPanels, setSelectedPanels] = useState<any[]>([]);
+  // will contain the selected val at the respective index: [v1, v3]
+  const [selectedTemplateVars, setSelectedTemplateVars] = useState<string[]>([]);
 
   useEffect(() => {
     if (
@@ -83,7 +85,7 @@ function GrafanaSelectionComponent(props) {
     } else if (name.startsWith('template_var_')) {
       setSelectedTemplateVar(parseInt(name.replace('template_var_', '')), event.target.value);
     } else if (name === 'selectedPanels') {
-      setSelectedPanels(event.target.value);
+      setSelectedPanels((event as any)?.target?.value ?? []);
     }
   };
 
@@ -92,7 +94,7 @@ function GrafanaSelectionComponent(props) {
 
   const setSelectedTemplateVar = (ind, val) => {
     const newSelectedTemplateVars = [...selectedTemplateVars];
-    newSelectedTemplateVars[ind] = val;
+    newSelectedTemplateVars[ind] = String(val ?? '');
     for (let i = ind + 1; i < newSelectedTemplateVars.length; i++) {
       newSelectedTemplateVars[i] = '';
     }
@@ -121,17 +123,18 @@ function GrafanaSelectionComponent(props) {
   };
 
   const queryTemplateVars = (ind) => {
-    if (templateVars.length > 0) {
+    const tv = templateVars?.[ind];
+    if (templateVars.length > 0 && tv) {
       let queryURL = `/api/telemetry/metrics/grafana/query/${connectionID}?query=${encodeURIComponent(
-        templateVars[ind].query,
-      )}&dsid=${templateVars[ind].datasource.id}`;
+        tv.query,
+      )}&dsid=${tv.datasource?.id}`;
       for (let i = ind; i > 0; i--) {
-        queryURL += `&${templateVars[i - 1].name}=${selectedTemplateVars[i - 1]}`;
+        const prevTv = templateVars?.[i - 1];
+        if (prevTv?.name) {
+          queryURL += `&${prevTv.name}=${selectedTemplateVars[i - 1] ?? ''}`;
+        }
       }
-      if (
-        templateVars[ind].query.startsWith('label_values') &&
-        templateVars[ind].query.indexOf(',') > -1
-      ) {
+      if (tv.query.startsWith('label_values') && tv.query.indexOf(',') > -1) {
         // series query needs a start and end time or else it will take way longer to return. . .
         // but at this point this component does not have the time range selection bcoz the time range selection comes after this component makes its selections
         // hence for now just limiting the time period to the last 24hrs
@@ -150,15 +153,15 @@ function GrafanaSelectionComponent(props) {
         (result) => {
           updateProgress({ showProgress: false });
           if (typeof result !== 'undefined') {
-            let tmpVarOpts = [];
+            let tmpVarOpts: any[] = [];
             if (Array.isArray(result.data)) {
               if (result.data.length > 0) {
                 if (
-                  templateVars[ind].query.startsWith('label_values') &&
-                  templateVars[ind].query.indexOf(',') > -1 &&
+                  tv.query.startsWith('label_values') &&
+                  tv.query.indexOf(',') > -1 &&
                   typeof result.data[0] === 'object'
                 ) {
-                  let q = templateVars[ind].query.replace('label_values(', '');
+                  let q = tv.query.replace('label_values(', '');
                   q = q.substr(0, q.length - 1);
                   const qInd = q.substr(q.lastIndexOf(',')).replace(',', '').trim();
                   result.data.forEach((d) => {
@@ -174,9 +177,11 @@ function GrafanaSelectionComponent(props) {
             } else {
               tmpVarOpts = result.data.result.map(({ metric }) => {
                 const tmpArr = Object.keys(metric);
-                if (tmpArr.length > 0) {
-                  return metric[tmpArr[0]];
+                const key = tmpArr[0];
+                if (key) {
+                  return metric[key];
                 }
+                return undefined;
               });
             }
             setTemplateVarOptions((prev) => {
@@ -189,7 +194,7 @@ function GrafanaSelectionComponent(props) {
         (error) => {
           setTemplateVarOptions((prev) => {
             const newOptions = [...prev];
-            newOptions[ind] = [templateVars[ind].Value];
+            newOptions[ind] = [tv?.Value ?? ''];
             return newOptions;
           });
           handleError(error);
@@ -199,18 +204,18 @@ function GrafanaSelectionComponent(props) {
   };
 
   const addSelectedBoardPanelConfig = () => {
-    let boardConfig = {};
-    grafanaBoards.forEach((board) => {
-      if (grafanaBoard === board.uri) {
+    const boardConfig: any = {};
+    grafanaBoards.forEach((board: any) => {
+      if (grafanaBoard === board?.uri) {
         boardConfig.board = board;
       }
     });
 
     boardConfig.panels = panels.filter(({ id }) => selectedPanels.indexOf(id) > -1);
 
-    boardConfig.templateVars = templateVars.map(({ name }, index) =>
-      typeof selectedTemplateVars[index] !== 'undefined'
-        ? `${name}=${selectedTemplateVars[index]}`
+    boardConfig.templateVars = templateVars.map((tv: any, index: number) =>
+      tv?.name && typeof selectedTemplateVars[index] !== 'undefined'
+        ? `${tv.name}=${selectedTemplateVars[index]}`
         : '',
     );
     addSelectedBoardPanelConfigProp(boardConfig);
@@ -310,13 +315,13 @@ function GrafanaSelectionComponent(props) {
                 multiple: true,
                 renderValue: (selected) => (
                   <PanelChips>
-                    {selected.map((value) => {
+                    {(selected as any[]).map((value) => {
                       let selVal = '';
                       let panelId = '';
-                      panels.forEach((panel) => {
-                        if (panel.id === value) {
-                          selVal = panel.title;
-                          panelId = panel.id;
+                      panels.forEach((panel: any) => {
+                        if (panel?.id === value) {
+                          selVal = panel?.title;
+                          panelId = panel?.id;
                         }
                       });
                       return <StyledChip key={`pl_--_${panelId}`} label={selVal} />;
@@ -325,7 +330,7 @@ function GrafanaSelectionComponent(props) {
                 ),
               }}
             >
-              {panels?.map((panel) => (
+              {panels?.map((panel: any) => (
                 <MenuItem key={`panel_-__-${panel.id}`} value={panel.id}>
                   {panel.title}
                 </MenuItem>

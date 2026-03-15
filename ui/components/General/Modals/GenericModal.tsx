@@ -17,6 +17,8 @@ export default function GenericModal({ open, Content, handleClose, container }) 
     <StyledModal
       open={open}
       onClose={handleClose}
+      closeModal={handleClose}
+      title=""
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
       slotProps={{ backdrop: { timeout: 200 } }}

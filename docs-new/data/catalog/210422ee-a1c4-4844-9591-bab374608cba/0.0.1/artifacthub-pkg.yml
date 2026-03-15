@@ -1,0 +1,24 @@
+version: 0.0.1
+name: litmus-chaos-operator
+displayName: Litmus Chaos Operator
+createdAt: "2024-05-19T13:30:09Z"
+description: This YAML file defines a Kubernetes Deployment for the Litmus Chaos Operator. It creates a single replica of the chaos-operator pod within the litmus namespace. The deployment is labeled for organization and management purposes, specifying details like the version and component. The container runs the litmuschaos/chaos-operator:ci image with a command to enable leader election and sets various environment variables for operation. Additionally, it uses the litmus service account to manage permissions, ensuring the operator runs with the necessary access rights within the Kubernetes cluster.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/210422ee-a1c4-4844-9591-bab374608cba/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Namespace Watch:\nThe WATCH_NAMESPACE environment variable is set to an empty string, which means the operator will watch all namespaces. This can have security implications and might require broader permissions. Consider restricting it to specific namespaces if not required.\n\n2. Image Tag:\nThe image is set to litmuschaos/chaos-operator:ci, which uses the latest code from the continuous integration pipeline. This might include unstable or untested features. For production environments, it's recommended to use a stable and tagged version of the image.\n\n3. Leader Election:\nThe -leader-elect=true argument ensures high availability by allowing only one active instance of the operator at a time. Ensure that this behavior aligns with your high-availability requirements.\n\n4. Resource Limits and Requests:\nThere are no resource requests or limits defined for the chaos-operator container. It's good practice to specify these to ensure the container has the necessary resources and to prevent it from consuming excessive resources.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/210422ee-a1c4-4844-9591-bab374608cba-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/210422ee-a1c4-4844-9591-bab374608cba-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -6,27 +6,29 @@ import { getDuplicateModels, getDuplicateComponents } from '../api/meshmodel';
 import { MODELS, COMPONENTS } from '../constants/navigator';
 
 const DuplicatesDataTable = ({ view, rowData, classes }) => {
-  const [resourcesDetail, setResourcesDetail] = useState();
-  const [count, setCount] = useState();
+  const [resourcesDetail, setResourcesDetail] = useState<any[] | undefined>(undefined);
+  const [count, setCount] = useState<number | undefined>(undefined);
   const [page, setPage] = useState(0);
   const [, setSearchText] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const { kind, model, version } = rowData;
 
   const getDuplicatedModels = async (model, version) => {
-    const { total_count, models } = await getDuplicateModels(model, version);
-    setCount(total_count);
-    setResourcesDetail(models);
+    const result = (await getDuplicateModels(model, version)) as {
+      total_count?: number;
+      models?: any[];
+    };
+    setCount(result.total_count);
+    setResourcesDetail(result.models);
   };
 
   const getDuplicatedComponents = async (componentKind, apiVersion, modelName) => {
-    const { total_count, components } = await getDuplicateComponents(
-      componentKind,
-      modelName,
-      apiVersion,
-    );
-    setCount(total_count);
-    setResourcesDetail(components);
+    const result = (await getDuplicateComponents(componentKind, modelName, apiVersion)) as {
+      total_count?: number;
+      components?: any[];
+    };
+    setCount(result.total_count);
+    setResourcesDetail(result.components);
   };
 
   const meshmodel_columns = [
@@ -40,7 +42,7 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
-            <TableCell align={'start'} key={index} onClick={() => sortColumn(index)}>
+            <TableCell align={'left'} key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
                 active={column.sortDirection != null}
                 direction={column.sortDirection || 'asc'}
@@ -67,7 +69,7 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
-            <TableCell align={'start'} key={index} onClick={() => sortColumn(index)}>
+            <TableCell align={'left'} key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
                 active={column.sortDirection != null}
                 direction={column.sortDirection || 'asc'}
@@ -93,7 +95,7 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }) {
           return (
-            <TableCell align={'start'} key={index}>
+            <TableCell align={'left'} key={index}>
               <TableSortLabel>
                 <b>{column.label}</b>
               </TableSortLabel>
@@ -121,7 +123,7 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }) {
           return (
-            <TableCell align={'start'} key={index}>
+            <TableCell align={'left'} key={index}>
               <TableSortLabel>
                 <b>{column.label}</b>
               </TableSortLabel>
@@ -149,7 +151,7 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }) {
           return (
-            <TableCell align={'start'} key={index}>
+            <TableCell align={'left'} key={index}>
               <TableSortLabel>
                 <b>{column.label}</b>
               </TableSortLabel>

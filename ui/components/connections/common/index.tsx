@@ -11,13 +11,15 @@ export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon,
           </Typography>
           {icon ? (
             <CustomTextTooltip interactive={true} title={tooltip ? tooltip : ''} placement="top">
-              <Typography style={{ display: 'flex', marginLeft: '5px' }} variant="span">
+              <Typography
+                style={{ display: 'flex', marginLeft: '5px' }}
+                variant="body2"
+                component="span"
+              >
                 {icon}
               </Typography>
             </CustomTextTooltip>
-          ) : (
-            ''
-          )}
+          ) : null}
         </Grid2>
         <TableSortLabel
           active={columnMeta.name === columnData.name}
@@ -38,13 +40,15 @@ export const DefaultTableCell = ({ columnData, icon, tooltip }) => {
           </Typography>
           {icon ? (
             <CustomTextTooltip interactive={true} title={tooltip ? tooltip : ''} placement="top">
-              <Typography style={{ display: 'flex', marginLeft: '5px' }} variant="span">
+              <Typography
+                style={{ display: 'flex', marginLeft: '5px' }}
+                variant="body2"
+                component="span"
+              >
                 {icon}
               </Typography>
             </CustomTextTooltip>
-          ) : (
-            ''
-          )}
+          ) : null}
         </Grid2>
       </Grid2>
     </TableCell>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
+// @ts-ignore - CSS import
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import GenericModal from '../General/Modals/GenericModal';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
@@ -34,8 +35,8 @@ const localizer = momentLocalizer(moment);
  *  resource?: any
  * }[]}
  */
-function generateCalendarEventsFromResults(results) {
-  return results.map(({ test_start_time, name, runner_results }, index) => {
+function generateCalendarEventsFromResults(results: any[]) {
+  return results.map(({ test_start_time, name, runner_results }: any, index: number) => {
     // Remove incorrect timezone info
     const ntzStartTime = new Date(
       moment(test_start_time).utcOffset(test_start_time).format('MM/DD/YYYY HH:mm'),
@@ -62,7 +63,7 @@ function generateCalendarEventsFromResults(results) {
  *  end: string
  * }}
  */
-function generateDateRange(from, to) {
+function generateDateRange(from?: Date, to?: Date) {
   if (from && to) {
     return {
       start: moment(from).format('YYYY-MM-DD'),
@@ -84,10 +85,10 @@ function generateDateRange(from, to) {
  * }} props
  * @returns
  */
-function PerformanceCalendar({ style }) {
+function PerformanceCalendar({ style }: { style?: React.CSSProperties }) {
   const [time, setTime] = useState(generateDateRange());
-  const [results, setResults] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState();
+  const [results, setResults] = useState<any[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<any>();
 
   //hooks
   const { notify } = useNotification();
@@ -96,7 +97,7 @@ function PerformanceCalendar({ style }) {
     fetchResults(time.start, time.end);
   }, [time]);
 
-  async function fetchResults(start, end) {
+  async function fetchResults(start: string, end: string) {
     updateProgress({ showProgress: true });
 
     fetchAllResults({
@@ -125,8 +126,8 @@ function PerformanceCalendar({ style }) {
     });
   }
 
-  function handleError(msg) {
-    return function (error) {
+  function handleError(msg: string) {
+    return function (error: any) {
       updateProgress({ showProgress: false });
       notify({
         message: `${msg}: ${error}`,
@@ -136,11 +137,14 @@ function PerformanceCalendar({ style }) {
     };
   }
 
-  function handleEventClick(result) {
-    setSelectedEvent(results[result.resource]);
+  function handleEventClick(result: any) {
+    const eventResult = results[result.resource];
+    if (eventResult) {
+      setSelectedEvent(eventResult);
+    }
   }
 
-  function ResultChart({ result }) {
+  function ResultChart({ result }: { result: any }) {
     if (!result) return <div />;
 
     const row = result.runner_results;
@@ -200,9 +204,9 @@ function PerformanceCalendar({ style }) {
 
       <GenericModal
         open={!!selectedEvent}
-        // @ts-ignore
         Content={<ResultChart result={selectedEvent} />}
         handleClose={() => setSelectedEvent(undefined)}
+        {...({ container: undefined } as any)}
       />
     </div>
   );

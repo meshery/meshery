@@ -12,6 +12,7 @@
     }
   },
   "model": {
+<<<<<<< HEAD
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
@@ -24,6 +25,20 @@
     "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
+=======
+    "version": "",
+    "name": "aws-dynamodb-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.5.2"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+>>>>>>> 5eed5065df4 (Merge branch 'master' into refactor)
   "selectors": [
     {
       "allow": {
@@ -34,6 +49,7 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
+<<<<<<< HEAD
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "model": {
@@ -44,6 +60,18 @@
                 "kind": "github"
               },
               "version": ""
+=======
+              "version": "",
+              "name": "aws-dynamodb-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+>>>>>>> 5eed5065df4 (Merge branch 'master' into refactor)
             },
             "patch": {
               "mutatorRef": [
@@ -64,6 +92,7 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
+<<<<<<< HEAD
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "model": {
@@ -74,6 +103,18 @@
                 "kind": "github"
               },
               "version": ""
+=======
+              "version": "",
+              "name": "aws-dynamodb-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+>>>>>>> 5eed5065df4 (Merge branch 'master' into refactor)
             },
             "patch": {
               "mutatedRef": [

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useNotificationHandlers } from '../../utils/hooks/useNotification';
@@ -23,20 +22,20 @@ import {
   OutlinedValidateIcon,
   OutlinedResetIcon,
   useTheme,
+  // @ts-expect-error
   ErrorBoundary,
 } from '@sistent/sistent';
+import type { RootState } from '../../store';
 import { WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
-import { Responsive, WidthProvider } from 'react-grid-layout/legacy';
+import { Responsive, WidthProvider } from 'react-grid-layout';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
 import Popup from '../General/Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
 import { useSelector } from 'react-redux';
-import useUnsavedChanges from './useUnsavedChanges';
-import UnsavedChangesModal from './UnsavedChangesModal';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -73,7 +72,7 @@ const useDashboardRouter = () => {
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 
 const Dashboard = () => {
-  const { data: userData, isLoading } = useGetUserPrefQuery();
+  const { data: userData, isLoading } = useGetUserPrefQuery(undefined);
   const [updateUserPref] = useUpdateUserPrefMutation();
   const defaultLayout = isLoading
     ? OVERVIEW_LAYOUT
@@ -94,7 +93,7 @@ const Dashboard = () => {
   const { width } = useWindowDimensions();
   const theme = useTheme();
 
-  if (!ResourceCategoryTabs.includes(resourceCategory)) {
+  if (!ResourceCategoryTabs.includes(resourceCategory as string)) {
     changeResourceTab('Overview');
   }
   const getCurrentDashboardLayoutFromOrgPrefs = (prefs) => {
@@ -105,8 +104,8 @@ const Dashboard = () => {
   };
 
   const [currentBreakPoint, setCurrentBreakpoint] = useState('lg');
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
-  const { k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state: RootState) => state.ui);
+  const { k8sConfig } = useSelector((state: RootState) => state.ui);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const iconsProps = {
@@ -134,30 +133,6 @@ const Dashboard = () => {
   };
   const orgDashboardLayout = getCurrentDashboardLayoutFromOrgPrefs(userData?.dashboardPreferences);
   const [dashboardLayout, setDashboardLayout] = useState(orgDashboardLayout);
-
-  const {
-    showModal: showUnsavedModal,
-    confirmNavigation,
-    cancelNavigation,
-  } = useUnsavedChanges({
-    isEditMode,
-    dashboardLayout,
-    savedLayout: orgDashboardLayout,
-  });
-
-  const handleDiscardAndNavigate = () => {
-    cancelEditing();
-    confirmNavigation();
-  };
-
-  const handleSaveAndNavigate = async () => {
-    const isSaved = await saveLayout();
-    if (!isSaved) {
-      return;
-    }
-    setIsEditMode(false);
-    confirmNavigation();
-  };
 
   const widgetsToAdd = getWidgetsAvailableToBeAdded(dashboardLayout, currentBreakPoint);
 
@@ -191,10 +166,9 @@ const Dashboard = () => {
     const res = await updateUserPref({ dashboardPreferences: dashboardLayout });
     if (res.error) {
       handleError('failed to save layout');
-      return false;
+      return;
     }
     handleSuccess('Layout saved');
-    return true;
   };
 
   const toggleEditMode = () => {
@@ -206,7 +180,7 @@ const Dashboard = () => {
   };
 
   const saveLayout = () => {
-    return updateLayout(dashboardLayout);
+    updateLayout(dashboardLayout);
   };
 
   const resetLayout = () => {
@@ -239,11 +213,8 @@ const Dashboard = () => {
     SAVE_AND_CLOSE: {
       label: 'Save and Close',
       Icon: OutlinedValidateIcon,
-      action: async () => {
-        const isSaved = await saveLayout();
-        if (!isSaved) {
-          return;
-        }
+      action: () => {
+        saveLayout();
         toggleEditMode();
       },
 
@@ -332,9 +303,19 @@ const Dashboard = () => {
                     key={resource}
                     icon={
                       resource === 'Overview' ? (
-                        <MesheryIcon style={iconLarge} />
+                        <MesheryIcon
+                          width={String(iconLarge.width)}
+                          height={String(iconLarge.height)}
+                          fill={theme.palette.icon.default}
+                          style={iconLarge}
+                        />
                       ) : (
-                        <KubernetesIcon style={iconLarge} />
+                        <KubernetesIcon
+                          fill={theme.palette.icon.default}
+                          width={String(iconLarge.width)}
+                          height={String(iconLarge.height)}
+                          style={iconLarge}
+                        />
                       )
                     }
                     label={resource}
@@ -402,7 +383,7 @@ const Dashboard = () => {
         </TabPanel>
 
         {Object.keys(ResourcesConfig).map((resource, idx) => {
-          let CRDsKeys = [];
+          let CRDsKeys: Array<{ name?: unknown; model?: unknown }> = [];
           const isCRDS = resource === 'CRDS';
           if (isCRDS) {
             const TableValue = Object.values(
@@ -415,7 +396,7 @@ const Dashboard = () => {
                 selectedK8sContexts,
               ),
             );
-            CRDsKeys = TableValue.map((item) => _.pick(item, ['name', 'model']));
+            CRDsKeys = TableValue.map((item: any) => _.pick(item, ['name', 'model']));
           }
 
           return (
@@ -446,12 +427,6 @@ const Dashboard = () => {
         })}
       </>
       <Popup />
-      <UnsavedChangesModal
-        open={showUnsavedModal}
-        onClose={cancelNavigation}
-        onDiscard={handleDiscardAndNavigate}
-        onSave={handleSaveAndNavigate}
-      />
     </>
   );
 };

@@ -1,0 +1,26 @@
+version: 0.0.1
+name: aws-otel-collector
+displayName: aws-otel-collector
+createdAt: "2024-06-03T13:48:12Z"
+description: |-
+    AWS Distro for OpenTelemetry Collector (ADOT Collector) is an AWS supported version of the upstream OpenTelemetry Collector and is distributed by Amazon. It supports the selected components from the OpenTelemetry community. It is fully compatible with AWS computing platforms including EC2, ECS, and EKS. It enables users to send telemetry data to AWS CloudWatch Metrics, Traces, and Logs backends as well as the other supported backends.
+    See the AWS Distro for OpenTelemetry documentation for more information. Additionally, the ADOT Collector is now generally available for metrics.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/ff1354ec-81f2-4404-acc7-c5ee426add46/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "To build the ADOT Collector locally, you will need to have Golang installed. You can download and install Golang .\n\nADOT Collector Configuration-\nThe ADOT Collector is built with a default configuration. The ADOT Collector configuration uses the same configuration syntax/design from OpenTelemetry Collector. For more information regarding OpenTelemetry Collector configuration please refer to the upstream documentation. so you can customize or port your OpenTelemetry Collector configuration files when running ADOT Collector. Please refer to the Try out the ADOT Collector section on configuring ADOT Collector.\n\nFor more information about otel collector checkout this repo https://github.com/aws-observability/aws-otel-collector \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ff1354ec-81f2-4404-acc7-c5ee426add46-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ff1354ec-81f2-4404-acc7-c5ee426add46-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -6,7 +6,7 @@ import { KeyValue } from '../../DataFormatter';
  * Helper function to convert camelCase to Title Case with spaces
  * Example: "connectionID" -> "Connection ID", "k8sContextName" -> "K8s Context Name"
  */
-export const humanizeFieldName = (fieldName) => {
+export const humanizeFieldName = (fieldName: string) => {
   return fieldName
     .replace(/([A-Z])/g, ' $1') // Add space before capital letters
     .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
@@ -22,7 +22,13 @@ export const humanizeFieldName = (fieldName) => {
  * @param {string} props.fieldName - The field name to humanize
  * @returns {React.ReactElement|null} Formatted connection field or null if no value
  */
-export const ConnectionFieldFormatter = ({ value, fieldName }) => {
+export const ConnectionFieldFormatter = ({
+  value,
+  fieldName,
+}: {
+  value: string;
+  fieldName: string;
+}) => {
   if (!value) {
     return null;
   }
@@ -36,14 +42,17 @@ export const ConnectionFieldFormatter = ({ value, fieldName }) => {
         <ChipWrapper
           label={value}
           clickable
-          component="a"
-          href={`/management/connections?tab=connections&searchText=${encodeURIComponent(value)}`}
-          target="_self"
+          {...({
+            component: 'a',
+            href: `/management/connections?tab=connections&searchText=${encodeURIComponent(value)}`,
+            target: '_self',
+          } as any)}
           style={{
             marginBlock: '0.25rem',
           }}
         />
       }
+      style={{}}
     />
   );
 };
@@ -53,14 +62,22 @@ export const ConnectionFieldFormatter = ({ value, fieldName }) => {
  * These formatters handle connection, context, and deployment information
  */
 export const MeshSyncPropertyFormatters = {
-  connectionID: (value) => <ConnectionFieldFormatter value={value} fieldName="connectionID" />,
-  k8sContextID: (value) => <ConnectionFieldFormatter value={value} fieldName="k8sContextID" />,
-  k8sContextName: (value) => <ConnectionFieldFormatter value={value} fieldName="k8sContextName" />,
-  meshsyncDeploymentMode: (value) => (
-    <KeyValue Key={humanizeFieldName('meshsyncDeploymentMode')} Value={value} />
+  connectionID: (value: string) => (
+    <ConnectionFieldFormatter value={value} fieldName="connectionID" />
   ),
-  operatorStatus: (value) => <KeyValue Key={humanizeFieldName('operatorStatus')} Value={value} />,
-  brokerEndpoint: (value) => (
+  k8sContextID: (value: string) => (
+    <ConnectionFieldFormatter value={value} fieldName="k8sContextID" />
+  ),
+  k8sContextName: (value: string) => (
+    <ConnectionFieldFormatter value={value} fieldName="k8sContextName" />
+  ),
+  meshsyncDeploymentMode: (value: string) => (
+    <KeyValue Key={humanizeFieldName('meshsyncDeploymentMode')} Value={value} style={{}} />
+  ),
+  operatorStatus: (value: string) => (
+    <KeyValue Key={humanizeFieldName('operatorStatus')} Value={value} style={{}} />
+  ),
+  brokerEndpoint: (value: string) => (
     <KeyValue
       Key={humanizeFieldName('brokerEndpoint')}
       Value={value}

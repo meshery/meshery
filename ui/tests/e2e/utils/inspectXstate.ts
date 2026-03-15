@@ -1,4 +1,4 @@
-import { Page, JSHandle } from '@playwright/test';
+import type { Page, JSHandle } from '@playwright/test';
 import { waitFor } from './waitFor';
 
 interface WaitForEventParams {

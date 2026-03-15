@@ -1,9 +1,4 @@
-import { ctxUrl } from '../utils/multi-ctx';
-import {
-  mesheryApi,
-  useGetTeamsQuery as useSchemasGetTeamsQuery,
-  useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery,
-} from '@meshery/schemas/mesheryApi';
+import { ctxUrl } from '@/utils/multi-ctx';
 import { api } from './index';
 import { initiateQuery } from './utils';
 import { useGetOrgsQuery } from './organization';
@@ -42,18 +37,35 @@ export const userApi = api
         }),
         invalidatesTags: [Tags.LOAD_TEST_PREF],
       }),
+      getLoggedInUser: builder.query({
+        query: () => ({
+          url: `user`,
+          method: 'GET',
+        }),
+      }),
+      getUserById: builder.query({
+        query: (id) => ({
+          url: `user/profile/${id}`,
+          method: 'GET',
+        }),
+        providesTags: [Tags.USER_PREF],
+      }),
       getToken: builder.query({
-        query: () => `/api/user/token`,
-        method: 'GET',
+        query: () => ({
+          url: `token`,
+          method: 'GET',
+        }),
       }),
       getUserPref: builder.query({
-        query: () => '/api/user/prefs',
-        method: 'GET',
+        query: () => ({
+          url: 'user/prefs',
+          method: 'GET',
+        }),
         providesTags: [Tags.USER_PREF],
       }),
       updateUserPref: builder.mutation({
         query: (queryArg) => ({
-          url: '/api/user/prefs',
+          url: 'user/prefs',
           method: 'POST',
           body: queryArg,
           credentials: 'include',
@@ -62,7 +74,7 @@ export const userApi = api
       }),
       getUserPrefWithContext: builder.query({
         query: (selectedK8sContexts) => ({
-          url: ctxUrl('/api/user/prefs', selectedK8sContexts),
+          url: ctxUrl('user/prefs', selectedK8sContexts),
           method: 'GET',
           credentials: 'same-origin',
         }),
@@ -70,7 +82,7 @@ export const userApi = api
       }),
       updateUserPrefWithContext: builder.mutation({
         query: (queryArg) => ({
-          url: ctxUrl('/api/user/prefs', queryArg.selectedK8sContexts),
+          url: ctxUrl('/user/prefs', queryArg.selectedK8sContexts),
           method: 'POST',
           headers: {
             'Content-Type': 'application/json;charset=UTF-8',
@@ -82,9 +94,13 @@ export const userApi = api
         onQueryStarted: async (queryArg, { dispatch, queryFulfilled }) => {
           // Optimistically update the cache with the new preferences
           const patchResult = dispatch(
-            api.util.updateQueryData('getUserPref', queryArg.selectedK8sContexts, (draft) => {
-              Object.assign(draft, queryArg.body);
-            }),
+            userApi.util.updateQueryData(
+              'getUserPrefWithContext',
+              queryArg.selectedK8sContexts,
+              (draft) => {
+                Object.assign(draft, queryArg.body);
+              },
+            ),
           );
           try {
             // Wait for the mutation to complete
@@ -95,22 +111,15 @@ export const userApi = api
           }
         },
       }),
-      getLoggedInUser: builder.query({
+      getProviderCapabilities: builder.query({
         query: () => ({
-          url: '/api/user',
+          url: 'provider/capabilities',
           method: 'GET',
         }),
-        // All callers share one cache entry per user session (client-side Redux store).
-        // This does not affect other users—each browser has its own isolated store.
-        serializeQueryArgs: ({ endpointName }) => endpointName,
-      }),
-      getProviderCapabilities: builder.query({
-        query: () => '/api/provider/capabilities',
-        method: 'GET',
       }),
       getUserProfileSummaryById: builder.query({
         query: (queryArg) => ({
-          url: `/api/user/profile/${queryArg.id}`,
+          url: `/user/profile/${queryArg.id}`,
         }),
         transformResponse: (response) => {
           // Modify the response data to keep only necessary fields
@@ -126,7 +135,7 @@ export const userApi = api
       }),
       getExtensionsByType: builder.query({
         query: () => ({
-          url: '/api/provider/capabilities',
+          url: 'provider/capabilities',
           method: 'GET',
           credentials: 'include',
         }),
@@ -150,7 +159,7 @@ export const userApi = api
       }),
       getFullPageExtensions: builder.query({
         query: () => ({
-          url: '/api/provider/capabilities',
+          url: 'provider/capabilities',
           method: 'GET',
           credentials: 'include',
         }),
@@ -159,7 +168,7 @@ export const userApi = api
             return [];
           }
 
-          let extNames = [];
+          const extNames: Array<{ name: string; uri: any }> = [];
           for (var key of Object.keys(response.extensions)) {
             if (Array.isArray(response.extensions[key])) {
               response.extensions[key].forEach((comp) => {
@@ -180,8 +189,10 @@ export const userApi = api
         providesTags: [Tags.PROVIDER_CAP],
       }),
       getSystemVersion: builder.query({
-        query: () => '/api/system/version',
-        method: 'GET',
+        query: () => ({
+          url: 'system/version',
+          method: 'GET',
+        }),
       }),
       handleFeedbackFormSubmission: builder.mutation({
         query: (queryArg) => ({
@@ -193,13 +204,27 @@ export const userApi = api
       }),
       getAllUsers: builder.query({
         query: (queryArg) => ({
-          url: `/api/identity/users`,
+          url: `identity/users`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
             search: queryArg.search,
             order: queryArg.order,
             filter: queryArg.filter,
+          },
+        }),
+        providesTags: ['users'],
+      }),
+      getUsersForOrg: builder.query({
+        query: (queryArg) => ({
+          url: `extensions/api/identity/orgs/${queryArg.orgId}/users`,
+          params: {
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+            search: queryArg.search,
+            order: queryArg.order,
+            filter: queryArg.filter,
+            teamID: queryArg.teamId,
           },
         }),
         providesTags: ['users'],
@@ -219,9 +244,21 @@ export const userApi = api
         }),
         invalidatesTags: ['users'],
       }),
+      getTeams: builder.query({
+        query: (queryArg) => ({
+          url: `extensions/api/identity/orgs/${queryArg.orgId}/teams`,
+          params: {
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+            search: queryArg.search,
+            order: queryArg.order,
+          },
+        }),
+        providesTags: ['teams'],
+      }),
       getAccessToken: builder.query({
         query: () => ({
-          url: `/api/user/token`,
+          url: `/token`,
         }),
         transformResponse: (response) => {
           return response?.token;
@@ -231,6 +268,7 @@ export const userApi = api
   });
 
 export const {
+  useGetUserProfileSummaryByIdQuery,
   useGetExtensionsByTypeQuery,
   useLazyGetExtensionsByTypeQuery,
   useGetFullPageExtensionsQuery,
@@ -238,98 +276,45 @@ export const {
   useGetLoadTestPrefsQuery,
   useUpdateLoadTestPrefsMutation,
   useHandleUserInviteMutation,
+  useGetLoggedInUserQuery,
+  useGetUserByIdQuery,
   useLazyGetTokenQuery,
   useGetUserPrefQuery,
   useUpdateUserPrefMutation,
   useGetUserPrefWithContextQuery,
   useUpdateUserPrefWithContextMutation,
-  useGetLoggedInUserQuery,
   useGetProviderCapabilitiesQuery,
   useHandleFeedbackFormSubmissionMutation,
+  useGetUsersForOrgQuery,
   useGetAllUsersQuery,
   useRemoveUserFromTeamMutation,
+  useGetTeamsQuery,
+  useLazyGetTeamsQuery,
   useGetSystemVersionQuery,
-  useGetUserProfileSummaryByIdQuery,
 } = userApi;
 
-export const useGetUserByIdQuery = (id, options) =>
-  useGetUserProfileSummaryByIdQuery(
-    {
-      id,
-    },
-    options,
-  );
-
-export const useGetUsersForOrgQuery = (queryArg, options) =>
-  useSchemasGetUsersForOrgQuery(
-    {
-      orgId: queryArg?.orgId,
-      page: queryArg?.page?.toString(),
-      pagesize: queryArg?.pagesize?.toString(),
-      search: queryArg?.search,
-      order: queryArg?.order,
-      filter: queryArg?.filter,
-      teamId: queryArg?.teamId,
-    },
-    options,
-  );
-
-export const useGetTeamsQuery = (queryArg, options) =>
-  useSchemasGetTeamsQuery(
-    {
-      orgId: queryArg?.orgId,
-      search: queryArg?.search,
-      order: queryArg?.order,
-      page: queryArg?.page?.toString(),
-      pagesize: queryArg?.pagesize?.toString(),
-    },
-    options,
-  );
-
-export const useLazyGetTeamsQuery = () => {
-  const [trigger, result, lastPromiseInfo] = mesheryApi.endpoints.getTeams.useLazyQuery();
-
-  const wrappedTrigger = (queryArg, preferCacheValue) =>
-    trigger(
-      {
-        orgId: queryArg?.orgId,
-        search: queryArg?.search,
-        order: queryArg?.order,
-        page: queryArg?.page?.toString(),
-        pagesize: queryArg?.pagesize?.toString(),
-      },
-      preferCacheValue,
-    );
-
-  return [wrappedTrigger, result, lastPromiseInfo] as const;
-};
-
 export const getProviderCapabilities = async () => {
-  const res = await initiateQuery(userApi.endpoints.getProviderCapabilities);
+  const res = await initiateQuery(userApi.endpoints.getProviderCapabilities, undefined);
   return res;
 };
 
 export const getUserAccessToken = async () => {
-  const accessToken = await initiateQuery(userApi.endpoints.getAccessToken, {}, {});
+  const accessToken = await initiateQuery(userApi.endpoints.getAccessToken, undefined);
   return accessToken;
 };
 
 export const getUserProfile = async () => {
-  const userProfile = await initiateQuery(userApi.endpoints.getLoggedInUser);
+  const userProfile = await initiateQuery(userApi.endpoints.getLoggedInUser, undefined);
   return userProfile;
 };
 
 export const getSystemVersion = async () => {
-  const res = await initiateQuery(userApi.endpoints.getSystemVersion);
+  const res = await initiateQuery(userApi.endpoints.getSystemVersion, undefined);
   return res;
 };
 
 export const getAllUsers = async ({ page, pagesize, search }) => {
-  const users = await initiateQuery(
-    userApi.endpoints.getAllUsers,
-    { page, pagesize, search },
-    { skip: !search },
-  );
+  const users = await initiateQuery(userApi.endpoints.getAllUsers, { page, pagesize, search });
   return users;
 };
 
@@ -338,12 +323,12 @@ export const useGetSelectedOrganization = () => {
     data: userPrefs,
     isLoading: isLoadingUserPrefs,
     error: errorLoadingUserPrefs,
-  } = useGetUserPrefQuery();
+  } = useGetUserPrefQuery({});
   const {
     data: allOrgs,
     isLoading: isLoadingAllOrgs,
     error: errorLoadingAllOrgs,
-  } = useGetOrgsQuery();
+  } = useGetOrgsQuery({});
 
   const existingSelectedOrganization = allOrgs?.organizations?.find(
     (org) => org.id === userPrefs?.selectedOrganizationID,
@@ -384,22 +369,24 @@ export const useGetSelectedWorkspace = () => {
     },
   );
   // const [updateSelectedWorkspace] = useUpdateSelectedWorkspaceMutation();
-  const { data: userPrefs, isLoading: isLoadingPrefs } = useGetUserPrefQuery();
+  const { data: userPrefs, isLoading: isLoadingPrefs } = useGetUserPrefQuery({});
   const selectedWorkspaceID =
     userPrefs?.selectedWorkspaceForOrganizations?.[selectedOrganization?.id];
 
-  const existingSelectedWorkspace = (workspacesData?.workspaces ?? []).find(
+  const allWorkspaces = ((workspacesData as any)?.workspaces ?? []) as any[];
+
+  const existingSelectedWorkspace = allWorkspaces.find(
     (workspace) => workspace.id === selectedWorkspaceID,
   );
 
-  const selectedWorkspace = existingSelectedWorkspace ?? workspacesData?.workspaces?.[0];
+  const selectedWorkspace = existingSelectedWorkspace ?? allWorkspaces[0];
 
   const didFallback = !existingSelectedWorkspace;
 
   return {
     selectedWorkspace,
     didFallback,
-    allWorkspaces: workspacesData?.workspaces,
+    allWorkspaces,
     isLoading: isLoadingOrganizations || isLoadingingWorkspaces || isLoadingPrefs,
     isError: isWorkspacesError || errorGetSelectedOrg,
     error: errorGetWorkspaces || errorGetSelectedOrg,
@@ -409,18 +396,18 @@ export const useGetSelectedWorkspace = () => {
 export const useUpdateSelectedOrganizationMutation = () => {
   const [updateUserPref, response] = useUpdateUserPrefMutation();
 
-  const updateSelectedOrganization = async (orgId) => {
+  const updateSelectedOrganization = async (orgId: string) => {
     await updateUserPref({ selectedOrganizationID: orgId });
   };
 
-  return [updateSelectedOrganization, response];
+  return [updateSelectedOrganization, response] as const;
 };
 
 export const useUpdateSelectedWorkspaceMutation = () => {
-  const { data: userPrefs } = useGetUserPrefQuery();
+  const { data: userPrefs } = useGetUserPrefQuery({});
   const [updateUserPref, response] = useUpdateUserPrefMutation();
 
-  const updateSelectedWorkspace = async (orgId, workspaceId) => {
+  const updateSelectedWorkspace = async (orgId: string, workspaceId: string) => {
     await updateUserPref({
       selectedWorkspaceForOrganizations: {
         ...(userPrefs.selectedWorkspaceForOrganizations || {}),
@@ -429,5 +416,5 @@ export const useUpdateSelectedWorkspaceMutation = () => {
     });
   };
 
-  return [updateSelectedWorkspace, response];
+  return [updateSelectedWorkspace, response] as const;
 };

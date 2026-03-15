@@ -8,6 +8,22 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import RelationshipTree from './RelationshipTree';
 
+const getErrorMessage = (err: unknown): string => {
+  if (!err) return 'Unknown error';
+  if (typeof err === 'string') return err;
+  if (typeof err !== 'object') return String(err);
+
+  if ('data' in err) return JSON.stringify((err as { data?: unknown }).data);
+  if ('error' in err && typeof (err as { error?: unknown }).error === 'string') {
+    return (err as { error: string }).error;
+  }
+  if ('message' in err && typeof (err as { message?: unknown }).message === 'string') {
+    return (err as { message: string }).message;
+  }
+
+  return 'Unknown error';
+};
+
 type VersionedModelRelationshipTreeProps = {
   registrantID?: string;
   modelDef: any;
@@ -43,7 +59,7 @@ const VersionedModelRelationshipTree = ({
   useEffect(() => {
     if (isError) {
       notify({
-        message: `There was an error fetching relationships data: ${error?.data}`,
+        message: `There was an error fetching relationships data: ${getErrorMessage(error)}`,
         event_type: EVENT_TYPES.ERROR,
       });
     }

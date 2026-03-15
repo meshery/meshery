@@ -1,5 +1,20 @@
 const { createSlice } = require('@reduxjs/toolkit');
 
+type SelectedConnection = {
+  id: string;
+  kind?: string;
+  [key: string]: any;
+};
+
+type SelectedEnv = {
+  selectedConnections: SelectedConnection[];
+  [key: string]: any;
+};
+
+type GlobalEnvironmentContextState = {
+  selectedEnvs: Record<string, SelectedEnv>;
+};
+
 export const globalEnvironmentContextSlice = createSlice({
   name: 'globalEnvironmentContext',
   initialState: {
@@ -8,7 +23,7 @@ export const globalEnvironmentContextSlice = createSlice({
       //   // selectedConnections : [connection]
       // }
     },
-  },
+  } as GlobalEnvironmentContextState,
 
   reducers: {
     selectEnv: (state, action) => {
@@ -84,22 +99,28 @@ const selectIsConnectionSelected = (state, envId, connectionId) => {
 const selectIsEnvSelected = (state, envId) =>
   Boolean(state.globalEnvironmentContext.selectedEnvs[envId]);
 
-const selectSelectedEnvs = (state) => state.globalEnvironmentContext.selectedEnvs;
+const selectSelectedEnvs = (state: { globalEnvironmentContext: GlobalEnvironmentContextState }) =>
+  state.globalEnvironmentContext.selectedEnvs;
 
 const selectSelectedConnections = (state, envId) =>
   state.globalEnvironmentContext.selectedEnvs[envId]?.selectedConnections || [];
 
-const selectAllSelectedConnections = (state) => {
+const selectAllSelectedConnections = (state: {
+  globalEnvironmentContext: GlobalEnvironmentContextState;
+}): SelectedConnection[] => {
   const selectedEnvs = selectSelectedEnvs(state);
-  return Object.values(selectedEnvs).reduce((acc, { selectedConnections }) => {
-    return [...acc, ...selectedConnections];
+  const envsArray = Object.values(selectedEnvs) as SelectedEnv[];
+  return envsArray.reduce<SelectedConnection[]>((acc, env) => {
+    return [...acc, ...(env.selectedConnections || [])];
   }, []);
 };
 
 const selectSelectedK8sConnections = (state, envId) =>
   selectSelectedConnections(state, envId).filter((connection) => connection.kind === 'kubernetes');
 
-const selectAllSelectedK8sConnections = (state) =>
+const selectAllSelectedK8sConnections = (state: {
+  globalEnvironmentContext: GlobalEnvironmentContextState;
+}): SelectedConnection[] =>
   selectAllSelectedConnections(state).filter((connection) => connection.kind === 'kubernetes');
 
 export {

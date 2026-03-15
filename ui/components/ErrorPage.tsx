@@ -30,6 +30,14 @@ const StyledLink = styled(Link)(({ theme }) => ({
   textDecoration: 'none',
   color: theme.palette.text?.brand,
 }));
+
+const StyledImage = styled('img')(() => ({
+  display: 'block',
+  margin: 'auto',
+  marginTop: '3.125rem',
+  maxWidth: '50%',
+  height: '45%',
+}));
 /**
  * CustomErrorMessage component is used to display a custom error message when a page is not found.
  * @returns {JSX.Element} JSX.Element
@@ -52,7 +60,10 @@ const CustomErrorMessage = ({ message, showImage = true }: CustomErrorMessagePro
       "Well, isn't this a mesh?",
       'Yikes. Things are a mesh here.',
     ];
-    setCustomMessage(customMessages[Math.floor(Math.random() * customMessages.length)]);
+    const randomMessage = customMessages[Math.floor(Math.random() * customMessages.length)];
+    if (randomMessage) {
+      setCustomMessage(randomMessage);
+    }
   }, []);
 
   return (
@@ -65,20 +76,7 @@ const CustomErrorMessage = ({ message, showImage = true }: CustomErrorMessagePro
               {message || 'Page does not exist.'}
             </StyledTypographyH5>
           </Box>
-          {showImage && (
-            <Box
-              component="img"
-              src="/static/img/service-mesh.svg"
-              alt="service meshed"
-              sx={{
-                display: 'block',
-                margin: 'auto',
-                mt: 3.125,
-                maxWidth: '50%',
-                height: '45%',
-              }}
-            />
-          )}
+          {showImage && <StyledImage src="/static/img/service-mesh.svg" alt="service meshed" />}
           <StyledTypographyBody1 variant="body1">
             Start a conversation at the Meshery community{' '}
             <StyledLink

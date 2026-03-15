@@ -1,0 +1,24 @@
+version: 0.0.1
+name: node-feature-discovery
+displayName: node-feature-discovery
+createdAt: "2024-06-01T08:50:46Z"
+description: Node Feature Discovery (NFD) is a Kubernetes add-on for detecting hardware features and system configuration. Detected features are advertised as node labels. NFD provides flexible configuration and extension points for a wide range of vendor and application specific node labeling needs.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/736a8f97-c3f8-4481-888a-1eff27414caa/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Checkout this docs for Caveats And Considerations  https://kubernetes-sigs.github.io/node-feature-discovery/v0.16/get-started/introduction.html \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/736a8f97-c3f8-4481-888a-1eff27414caa-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/736a8f97-c3f8-4481-888a-1eff27414caa-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

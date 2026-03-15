@@ -1,7 +1,3 @@
-import {
-  mesheryApi,
-  useGetConnectionsQuery as useSchemasGetConnectionsQuery,
-} from '@meshery/schemas/mesheryApi';
 import { api } from './index';
 
 const TAGS = {
@@ -36,6 +32,23 @@ const connectionsApi = api.injectEndpoints({
         body: queryArg.body,
       }),
       invalidatesTags: [TAGS.CONNECTIONS],
+    }),
+    getConnections: builder.query({
+      query: (queryArg) => ({
+        url: `integrations/connections`,
+        params: {
+          page: queryArg.page,
+          pagesize: queryArg.pagesize,
+          search: queryArg.search,
+          order: queryArg.order,
+          status: queryArg.status,
+          kind: queryArg.kind,
+          type: queryArg.type,
+          name: queryArg.name,
+        },
+        method: 'GET',
+      }),
+      providesTags: () => [{ type: TAGS.CONNECTIONS }],
     }),
     getConnectionDetails: builder.query({
       query: (queryArg) => ({
@@ -97,6 +110,8 @@ export const {
   useGetCredentialsQuery,
   useVerifyAndRegisterConnectionMutation,
   useConnectToConnectionMutation,
+  useGetConnectionsQuery,
+  useLazyGetConnectionsQuery,
   useLazyGetConnectionDetailsQuery,
   useVerifyConnectionURLMutation,
   useConnectionMetaDataMutation,
@@ -105,39 +120,3 @@ export const {
   useCancelConnectionRegisterMutation,
   useAddKubernetesConfigMutation,
 } = connectionsApi;
-
-export const useGetConnectionsQuery = (queryArg, options) =>
-  useSchemasGetConnectionsQuery(
-    {
-      page: queryArg?.page?.toString(),
-      pagesize: queryArg?.pagesize?.toString(),
-      search: queryArg?.search,
-      order: queryArg?.order,
-      status: queryArg?.status,
-      kind: queryArg?.kind,
-      type: queryArg?.type,
-      name: queryArg?.name,
-    },
-    options,
-  );
-
-export const useLazyGetConnectionsQuery = () => {
-  const [trigger, result, lastPromiseInfo] = mesheryApi.endpoints.getConnections.useLazyQuery();
-
-  const wrappedTrigger = (queryArg, preferCacheValue) =>
-    trigger(
-      {
-        page: queryArg?.page?.toString(),
-        pagesize: queryArg?.pagesize?.toString(),
-        search: queryArg?.search,
-        order: queryArg?.order,
-        status: queryArg?.status,
-        kind: queryArg?.kind,
-        type: queryArg?.type,
-        name: queryArg?.name,
-      },
-      preferCacheValue,
-    );
-
-  return [wrappedTrigger, result, lastPromiseInfo] as const;
-};

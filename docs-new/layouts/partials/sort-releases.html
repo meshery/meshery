@@ -1,0 +1,38 @@
+{{- $pages := . -}}
+{{- $sortable := slice -}}
+{{- range $pages -}}
+	{{- $tag := strings.TrimPrefix "v" .Params.tag -}}
+	{{- $core := replaceRE "-.*$" "" $tag -}}
+	{{- $parts := split $core "." -}}
+	{{- $majorPart := cond (ge (len $parts) 1) (replaceRE "^([0-9]+).*$" "$1" (index $parts 0)) "0" -}}
+	{{- $minorPart := cond (ge (len $parts) 2) (replaceRE "^([0-9]+).*$" "$1" (index $parts 1)) "0" -}}
+	{{- $patchPart := cond (ge (len $parts) 3) (replaceRE "^([0-9]+).*$" "$1" (index $parts 2)) "0" -}}
+	{{- $suffix := cond (strings.Contains $tag "-") (replaceRE "^[^-]+-" "" $tag) "" -}}
+	{{- $suffixNums := findRE "[0-9]+" $suffix -}}
+	{{- $suffixNum := cond (gt (len $suffixNums) 0) (index $suffixNums 0) "0" -}}
+	{{- $suffixAlpha := lower (replaceRE "^[0-9]+[.-]?" "" $suffix) -}}
+	{{- $stageRank := "300000" -}}
+	{{- if strings.Contains $tag "-patch" -}}
+		{{- $stageRank = "200000" -}}
+	{{- else if strings.Contains $tag "-rc" -}}
+		{{- $stageRank = "100000" -}}
+	{{- else if strings.Contains $tag "-beta" -}}
+		{{- $stageRank = "090000" -}}
+	{{- else if strings.Contains $tag "-alpha" -}}
+		{{- $stageRank = "080000" -}}
+	{{- else if ne $suffix "" -}}
+		{{- $stageRank = "050000" -}}
+	{{- end -}}
+	{{- $major := printf "%06d" (int $majorPart) -}}
+	{{- $minor := printf "%06d" (int $minorPart) -}}
+	{{- $patch := printf "%06d" (int $patchPart) -}}
+	{{- $date := .Date.Format "20060102150405" -}}
+	{{- $extra := printf "%06d" (int $suffixNum) -}}
+	{{- $sortable = $sortable | append (dict "key" (printf "%s.%s.%s.%s.%s.%s.%s" $major $minor $patch $date $stageRank $extra $suffixAlpha) "page" .) -}}
+{{- end -}}
+{{- $sorted := sort $sortable "key" "desc" -}}
+{{- $pages = slice -}}
+{{- range $sorted -}}
+	{{- $pages = $pages | append .page -}}
+{{- end -}}
+{{- return $pages -}}

@@ -1,0 +1,109 @@
+/***** OVERVIEW ********/
+
+/*button style*/
+div.overview {
+  display: flex;
+  text-align: center;
+  /* position:relative;float:left; */
+  /* background-color:#ebc017; */
+  background: rgb(60, 73, 79);
+  background: linear-gradient(337deg, $charcoal_rgba 0%, rgba(0, 179, 159, 0.861782212885154) 87%);
+  color: #fff;
+  font-size: 1.4rem;
+  padding: 0.65rem auto;
+  margin: 0.5rem;
+  margin-right: 1rem;
+  width: auto;
+  min-width: 300px;
+  max-width: 500px;
+  overflow-wrap: break-word;
+  border-radius: 1rem;
+  justify-content: space-evenly;
+  align-content: stretch;
+}
+// h3[id]:before {
+//     display: block;
+//     content: " ";
+//     margin-top: -4em;
+//     height: 5.5rem;
+//     visibility: hidden;
+// }
+h2[id]:before,
+h4[id]:before,
+h5[id]:before {
+  display: inline-block;
+  content: " ";
+  visibility: hidden;
+}
+div.wrapper {
+  width: 100%;
+  text-align: justify;
+  display: flex;
+  -ms-flex-align: center;
+  //   justify-content: space-evenly;
+  align-content: stretch;
+  margin: auto;
+}
+
+div.container {
+  text-align: left;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+div.section {
+  flex-basis: 47.5%;
+}
+
+div.overview:hover {
+  background: linear-gradient(337deg, $charcoal_rgba 0%, rgba(0, 179, 159, 0.861782212885154) 73%);
+  color: #eee;
+}
+
+a:hover,
+a > strong:hover {
+  color: #00d3a9;
+}
+
+@media (max-width: 900px) {
+  div.wrapper {
+    display: block;
+  }
+  div.overview {
+    margin-left: 20%;
+    margin-right: 20%;
+    overflow-x: hidden;
+  }
+}
+@media (max-width: 62rem) {
+  div.wrapper {
+    display: block;
+  }
+  div.container {
+    --col-gap: -40rem;
+  }
+  div.overview {
+    margin-left: 0px;
+    margin-right: 20%;
+    overflow-x: hidden;
+  }
+}
+@media (max-width: 600px) {
+  div.container {
+    --col-gap: -30rem;
+    padding: 0;
+  }
+}
+
+@media (max-width: 320px) {
+  div.overview {
+    min-width: 190px;
+  }
+}
+
+/*image align-right*/
+.image-right {
+  float: right;
+  padding-right: 10px;
+}
+

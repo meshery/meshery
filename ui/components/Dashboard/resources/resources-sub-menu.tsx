@@ -1,5 +1,5 @@
 // @ts-nocheck
-
+/* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';

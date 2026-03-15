@@ -1,0 +1,95 @@
+---
+layout: default
+title: Meshery Compatibility Matrix
+---
+
+<h1>Meshery Compatibility Matrix</h1>
+
+<h2>{{page.subheading}} Integration Tests</h2>
+
+<p>This page shows all the integration test run on {{page.subheading}} in the past.</p>
+
+<script type="text/javascript">
+  function toggle_visibility(id) {
+    var e = document.getElementById(id);
+    if (e.style.visibility == "visible") {
+      e.style.display = "none";
+      e.style.visibility = "hidden";
+    } else {
+      e.style.display = "table-row";
+      e.style.visibility = "visible";
+    }
+  }
+  function handleEdgeCheckboxChange() {
+    let e = document.getElementsByClassName("edge");
+    let stable = document.getElementsByClassName("stable");
+    let stable_box = document.getElementById("checkbox_stable");
+    for (let i = 0; i < e.length; i++) {
+      if (e[i].classList.contains("edge_visible")) {
+        e[i].classList.remove("edge_visible");
+        if (!stable_box.checked) {
+          stable_box.checked = true;
+          handleStableCheckboxChange();
+        }
+      } else {
+        e[i].classList.add("edge_visible");
+      }
+    }
+  }
+  function handleStableCheckboxChange() {
+    let e = document.getElementsByClassName("stable");
+    let edge_box = document.getElementById("checkbox_edge");
+    for (let i = 0; i < e.length; i++) {
+      if (e[i].classList.contains("stable_visible")) {
+        e[i].classList.remove("stable_visible");
+        if (!edge_box.checked) {
+          edge_box.checked = true;
+          handleEdgeCheckboxChange();
+        }
+      } else {
+        e[i].classList.add("stable_visible");
+      }
+    }
+  }
+</script>
+
+<style>
+  td.details table tr:hover td{
+    background-color: var(--hidden-details-data-color) !important;
+    cursor: pointer;
+  }
+  td.details {
+    background-color: var(--color-primary-medium);
+    cursor: text;
+  }
+  .edge_visible {
+    display: table-row !important;
+    visibility: visible !important;
+  }
+  .stable_visible {
+    display: table-row !important;
+    visibility: visible !important;
+  }
+  .checkbox {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .edge_test_text {
+    margin-right: 20px;
+  }
+</style>
+
+<div class="checkbox">
+  <div>
+    <input onchange="handleEdgeCheckboxChange();" type="checkbox" id="checkbox_edge" value="Edge Tests" checked />
+    <label for="checkbox_edge" class="edge_test_text">Edge Channel</label>
+  </div>
+  <div>
+    <input onchange="handleStableCheckboxChange();" type="checkbox" id="checkbox_stable" value="Stable Tests" checked />
+    <label for="checkbox_stable">Stable Channel</label>
+  </div>
+</div>
+
+{% include_cached compatibility/past-results.html service-mesh=page.service-mesh %}
+

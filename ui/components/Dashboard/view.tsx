@@ -1,15 +1,16 @@
-// @ts-nocheck
 import React, { useState } from 'react';
 import { ArrowBack } from '@mui/icons-material';
 import { TooltipIconButton } from '../../utils/TooltipButton';
 import {
   Box,
-  ErrorBoundary,
-  OperatorDataFormatter,
+  // @ts-expect-error
+  OperatorDynamicFormatter,
+  // @ts-ignore
   useResourceCleanData,
   Paper,
   Typography,
 } from '@sistent/sistent';
+import ErrorBoundary from '../General/ErrorBoundary';
 import { ALL_VIEW } from './resources/config';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
 import { normalizeStaticImagePath } from '@/utils/fallback';
@@ -116,7 +117,7 @@ const View = (props) => {
             />
           </Header>
           <ErrorBoundary>
-            <OperatorDataFormatter
+            <OperatorDynamicFormatter
               data={cleanData}
               FormatStructuredData={ResourceDetailFormatData}
               ReactJsonFormatter={JSONViewFormatter}
