@@ -3,20 +3,19 @@ package config
 import "os"
 
 // NeedsMutation determines whether the Meshery config file needs to be created or updated based on its existence and content.
-// needs to be initialized. It returns true if the config file
-// does not exist or exists but is empty.
+// needs to be initialized. It returns true if the config file does not exist or exists but is empty, and false otherwise. An error is returned if there is an issue accessing the file.
 func NeedsMutation(configPath string) (bool, error) {
 	stat, err := os.Stat(configPath)
 
-	switch {
-	case os.IsNotExist(err):
-		return true, nil
-
-	case err == nil && stat.Size() == 0:
-		return true, nil
-
-	case err != nil:
+	if err != nil {
+		if os.IsNotExist(err) {
+			return true, nil
+		}
 		return false, err
+	}
+
+	if stat.Size() == 0 {
+		return true, nil
 	}
 
 	return false, nil
@@ -32,7 +31,7 @@ func InitDefaultConfig(
 	createConfigFile func() error,
 ) error {
 
-	if err := os.MkdirAll(mesheryFolder, 0o775); err != nil {
+	if err := os.MkdirAll(mesheryFolder, 0o700); err != nil {
 		return err
 	}
 
