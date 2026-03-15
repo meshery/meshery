@@ -4,7 +4,7 @@
 **Author:** Meshery CLI Working Group
 **Date:** 2026-03-13
 **Related PRs:** [meshery/meshery#17923](https://github.com/meshery/meshery/pull/17923), [meshery/meshkit#932](https://github.com/meshery/meshkit/pull/932)
-**Target repos:** [meshery/meshery](https://github.com/meshery/meshery), [meshery/meshkit](https://github.com/meshery/meshkit), and optionally [meshery/schemas](https://github.com/meshery/schemas)
+**Target repos:** [meshery/meshery](https://github.com/meshery/meshery), [meshery/meshkit](https://github.com/meshery/meshkit), and [meshery/schemas](https://github.com/meshery/schemas)
 
 **Revision note:** This document was updated after `meshery/meshkit#932` merged. The original draft assumed that schema-driven validation in Go required either hand-written rule duplication or a heavy runtime schema-loading path. That assumption is no longer accurate.
 
@@ -16,10 +16,16 @@ The core problem still exists: `meshery/schemas` generates typed Go structs from
 
 What changed materially is the solution space. `meshery/meshkit#932` added a reusable `schema` package that validates Meshery documents against embedded schemas from `github.com/meshery/schemas`, with built-in schema registration, `schemaVersion`-based detection, compiled-schema caching, and structured validation errors. In other words, Meshery now has an authoritative runtime validator that uses the actual schemas and does not depend on filesystem access at runtime.
 
-That changes the recommended design:
+That changes the recommended design.
 
-1. `github.com/meshery/meshkit/schema` should become the canonical validation engine for Meshery consumers such as `mesheryctl` and the server.
-2. If ergonomic `Validate()` methods are still desired on typed structs in `meshery/schemas`, they should be thin adapters over the MeshKit validator, not hand-written re-implementations of schema rules.
+To avoid a validation-layer cycle safely, the canonical engine should live in a dependency-leaf package owned by `meshery/schemas`, for example `github.com/meshery/schemas/validation`. `github.com/meshery/meshkit/schema` should wrap that engine for MeshKit-facing consumers, and any optional `Validate()` methods on typed structs in `meshery/schemas` should delegate to the leaf validator, not back up into MeshKit.
+
+That said, this does not eliminate the broader bidirectional module dependency between `meshery/schemas` and MeshKit. `meshery/schemas` already imports contained MeshKit helper packages for database access, entity typing/status, and utility helpers. So there are two distinct goals:
+
+1. Eliminate the validation-layer package cycle.
+2. Optionally remove the broader schemas↔meshkit module coupling.
+
+This document recommends solving the first goal now. If the project later wants the second goal, it must also remove or extract the existing non-validation MeshKit imports from `meshery/schemas`.
 
 This preserves the original goal of a shared validation surface while avoiding schema drift and taking advantage of the new MeshKit capability.
 
@@ -98,7 +104,9 @@ After `meshery/meshkit#932`, MeshKit now provides a shared runtime validator for
 
 1. Meshery consumers in this repository do not yet use the canonical validator.
 2. `meshery/schemas` still does not expose an ergonomic typed `Validate()` surface on generated structs.
-3. Product decisions such as whether CLI validation should be strict about server-generated fields are still unresolved.
+3. The validation-specific package boundaries between `meshery/schemas` and MeshKit must be resolved explicitly before helper methods are designed.
+4. The project must distinguish validation-layer acyclicity from the broader schemas↔meshkit module coupling that already exists today.
+5. Product decisions such as whether CLI validation should be strict about server-generated fields are still unresolved.
 
 The question is no longer whether Meshery can validate against the real schemas. It can. The question is how Meshery should expose and adopt that capability.
 
@@ -124,6 +132,16 @@ models/
 ```
 
 Those helper files already carry methods such as `TableName()`, `Type()`, `GenerateID()`, `Create(...)`, and serialization helpers. The documented pattern explicitly allows adding validation or business-logic helpers. So a `Validate()` method is still a natural API shape for `meshery/schemas` if the project wants one.
+
+It is also important to state the current dependency picture accurately: `meshery/schemas` is not MeshKit-free today. These helper files already import contained MeshKit packages such as:
+
+- `github.com/meshery/meshkit/database` for CRUD helpers using `database.Handler`
+- `github.com/meshery/meshkit/models/meshmodel/entity` for entity types, status, and related helpers
+- `github.com/meshery/meshkit/utils` for casting, marshal/unmarshal wrappers, file writes, and SVG reads
+
+So the design problem is not "remove MeshKit from `meshery/schemas` entirely." The design problem is "avoid introducing a validation-specific import cycle or making the validation dependency surface harder to reason about."
+
+That means the repo already has bidirectional module coupling in a broad sense: MeshKit imports `meshery/schemas`, and `meshery/schemas` imports selected MeshKit helper packages. The validation proposal can and should eliminate a new package cycle in the validation slice, but it does not by itself remove that broader module-level coupling.
 
 ### 2.2 MeshKit's New Embedded Schema Validator
 
@@ -160,6 +178,7 @@ The new MeshKit package does not automatically solve every ergonomics question:
 - Consumers still need to decide how to render structured violations into CLI output or API responses.
 - Strict schema conformance may reject author-authored drafts that omit fields the server normally generates, such as `id`.
 - The current Meshery repository still depends on an older MeshKit release and therefore does not yet consume this package.
+- The current document still needs to distinguish the existing contained MeshKit dependency from the narrower package-cycle risk around validation.
 
 The capability gap is now about API shape and rollout, not about the absence of a canonical validator.
 
@@ -167,9 +186,41 @@ The capability gap is now about API shape and rollout, not about the absence of 
 
 ## 3. Proposed Solution
 
-### 3.1 Make `meshkit/schema` the Canonical Validation Engine
+### 3.1 Put the Canonical Engine in `meshery/schemas/validation`
 
-All consumer-facing validation in Meshery should treat `github.com/meshery/meshkit/schema` as the source of truth.
+The cyclic-reference concern should be addressed as an architectural prerequisite, not postponed to a later verification step.
+
+The safest design is to factor the reusable validator into a dependency-leaf package such as:
+
+```text
+github.com/meshery/schemas/validation
+```
+
+This package should:
+
+- import `github.com/meshery/schemas` root embedded assets, `kin-openapi`, and generic decode libraries only
+- not import MeshKit
+- not import `meshery/schemas/models/...`
+- discover schema registrations from the embedded schema assets and templates themselves, not from versioned model-package constants
+- expose plain validation types such as `Ref`, `Violation`, and `ValidationDetails`
+
+That gives a validation-specific package graph that is acyclic by construction:
+
+```text
+meshery/schemas root assets
+     ↑
+meshery/schemas/validation
+    ↗ ↖
+meshkit/schema   meshery/schemas/models/... helper methods
+    ↑
+mesheryctl / server / other consumers
+```
+
+This solves the validation-cycle problem even if the broader module-level coupling between `meshery/schemas` and MeshKit remains for other helper concerns.
+
+### 3.2 Make `meshkit/schema` the Canonical Reuse Layer for Meshery Consumers
+
+All consumer-facing validation in Meshery can still treat `github.com/meshery/meshkit/schema` as the preferred entry point, but MeshKit should be wrapping and reusing the lower-level validation engine rather than owning the only implementation.
 
 That means `mesheryctl`, server-side document ingestion paths, and any future importers should validate incoming bytes or typed values through MeshKit's schema package instead of manually checking fields.
 
@@ -186,23 +237,24 @@ if err := meshkitschema.Validate(data); err != nil {
 }
 ```
 
-This ensures every consumer executes the same schema logic against the same embedded artifacts.
+This ensures every consumer executes the same schema logic against the same embedded artifacts while preserving a package graph that is easy to reason about.
 
-### 3.2 If `Validate()` Exists on Typed Structs, It Should Delegate
+### 3.3 If `Validate()` Exists on Typed Structs, It Should Delegate to `meshery/schemas/validation`
 
-If the project still wants an ergonomic method on `meshery/schemas` types, that method should be a thin wrapper over MeshKit's validator rather than a hand-written field checker.
+If the project still wants an ergonomic method on `meshery/schemas` types, that method should be a thin wrapper over the leaf validator in `meshery/schemas`, not a hand-written field checker and not a reverse dependency into MeshKit.
 
 Example shape for `relationship_helper.go`:
 
 ```go
-// SchemaVersion is the canonical schemaVersion string for this package's
-// generated types, derived from schemas/constructs/v1alpha3/relationship/templates/.
-const SchemaVersion = "relationships.meshery.io/v1alpha3"
+import (
+    schemav1alpha3 "github.com/meshery/schemas/models/v1alpha3"
+    schemavalidation "github.com/meshery/schemas/validation"
+)
 
 func (r RelationshipDefinition) Validate() error {
-    return meshkitschema.Default().ValidateAny(meshkitschema.Ref{
-        SchemaVersion: SchemaVersion,
-        Type:          meshkitschema.TypeRelationship,
+    return schemavalidation.ValidateAny(schemavalidation.Ref{
+        SchemaVersion: schemav1alpha3.RelationshipSchemaVersion,
+        Type:          schemavalidation.TypeRelationship,
     }, r)
 }
 ```
@@ -213,20 +265,22 @@ Important properties of this approach:
 - The actual validation remains schema-backed.
 - New required fields, enums, patterns, and nested constraints are picked up automatically when the schema changes.
 - The helper method does not become a second source of truth.
+- The helper method does not create a validation-layer package cycle.
 
-### 3.3 Preserve Structured Errors End-to-End
+### 3.4 Preserve Structured Errors End-to-End
 
-The return type should remain `error`, but the concrete error should be the MeshKit validation error so callers can recover structured details with `ValidationDetailsFromError(err)`.
+The return type should remain `error`, but the underlying validation payload should remain structured end-to-end. The leaf validator in `meshery/schemas/validation` should expose structured details directly, and `meshkit/schema` may wrap those into MeshKit-specific error types for downstream consumers.
 
 The original draft proposed flattening violations into joined strings or inventing a new local `ValidationErrors` type. That is no longer necessary as a baseline design. MeshKit already supplies structured field-level diagnostics.
 
 Guideline:
 
-- Library and helper layers should preserve the original MeshKit error.
+- Library layers should preserve structured validation details.
+- `meshkit/schema` may adapt those details into MeshKit `ErrorV2` values for callers already standardized on MeshKit errors.
 - Presentation layers such as `mesheryctl` may format those violations into human-friendly messages.
-- Callers should not parse `err.Error()` when `ValidationDetailsFromError` is available.
+- Callers should not parse `err.Error()` when structured validation details are available.
 
-### 3.4 Scope of Coverage
+### 3.5 Scope of Coverage
 
 The immediate adoption targets in Meshery should be the current validation-heavy CLI paths:
 
@@ -271,22 +325,39 @@ Unlike the original hand-written proposal, this approach is not limited to top-l
 
 ### 4.2 Thin `Validate()` Wrappers in `meshery/schemas`
 
-**How it works:** Helper methods are added to generated types, but they simply delegate to `meshkit/schema.ValidateAny` with explicit refs.
+**How it works:** Helper methods are added to generated types, but they simply delegate to a leaf validator owned by `meshery/schemas` with explicit refs.
 
 **Advantages:**
 
 - Preserves the ergonomic API shape of `obj.Validate()`
-- Keeps MeshKit as the single validation engine
+- Keeps the validation engine below both MeshKit and versioned schema helper packages
 - Avoids hand-written duplication while still improving typed-API usability
 
 **Disadvantages:**
 
-- Adds explicit dependency from versioned schema model packages to `meshkit/schema`
-- Requires confirming there is no Go package-cycle issue and that the transitive dependency increase is acceptable
+- Requires a cross-repo refactor so MeshKit reuses the lower-level validator
+- Does not by itself remove the broader non-validation MeshKit imports already present in `meshery/schemas`
 
-**Verdict:** Good optional Phase 2 if the ergonomics matter enough to justify the coupling.
+**Verdict:** Recommended if typed ergonomics are desired, because it preserves clean validation-layer ownership.
 
-### 4.3 Hand-Written `Validate()` Methods That Re-Encode Rules
+### 4.3 Extract the Core Validator Below MeshKit
+
+**How it works:** Factor the validation engine into a package such as `github.com/meshery/schemas/validation`, and make `meshkit/schema` reuse that lower-level implementation.
+
+**Advantages:**
+
+- Gives the schema-owning repository direct ownership of the validation implementation
+- Eliminates the validation-layer package cycle by construction
+- Removes pressure to keep `meshkit/schema` permanently isolated from any versioned schema packages
+
+**Disadvantages:**
+
+- Requires more cross-repo refactoring before consumer adoption
+- Does not by itself remove the broader schemas↔meshkit module coupling created by existing helper imports
+
+**Verdict:** Recommended as the safest validation architecture.
+
+### 4.4 Hand-Written `Validate()` Methods That Re-Encode Rules
 
 **How it works:** The original design: helper files manually check required fields and enums with local Go code.
 
@@ -303,7 +374,7 @@ Unlike the original hand-written proposal, this approach is not limited to top-l
 
 **Verdict:** No longer recommended as the canonical design. It is only defensible if dependency layering blocks wrapper-based delegation and the project still insists on a typed method inside `meshery/schemas`.
 
-### 4.4 Generated Wrappers or Generated Validation
+### 4.5 Generated Wrappers or Generated Validation
 
 **How it works:** Extend code generation to emit `Validate()` methods or wrapper stubs from schema metadata.
 
@@ -319,7 +390,7 @@ Unlike the original hand-written proposal, this approach is not limited to top-l
 
 **Verdict:** A reasonable future optimization after the runtime design is proven in real consumers.
 
-### 4.5 Do Nothing / Leave Validation to Each Consumer
+### 4.6 Do Nothing / Leave Validation to Each Consumer
 
 **Verdict:** Still the weakest option. Meshery already has evidence of drift in duplicated validation logic, and `meshkit/schema` now removes most of the old justification for leaving the problem unsolved.
 
@@ -354,18 +425,35 @@ Flattening those violations too early would discard:
 
 Human-readable messages should be generated at the edge, not used as the underlying validation representation.
 
-### 5.4 Helper-Method Coupling Is Real
+### 5.4 Eliminate the Validation Package Cycle First
 
-If versioned packages in `meshery/schemas/models/...` import `meshkit/schema`, the dependency graph needs to be checked carefully. The design is attractive, but it should not be adopted blindly.
+The cleanest way to avoid a validation-layer cycle is not to rely on `meshkit/schema` staying permanently isolated from all versioned model/helper packages. It is to place the canonical engine below both sides in `meshery/schemas/validation`.
 
-Two concrete questions need verification in the target repo:
+That package should depend only on:
 
-- Does importing `meshkit/schema` from versioned schema model packages create any package-cycle issue?
-- Is it acceptable for every Go consumer of those model packages to inherit the validation package's transitive dependencies even if they never call `Validate()`?
+- `github.com/meshery/schemas` root embedded assets
+- `kin-openapi`
+- generic decode libraries
 
-If the answer to either is no, then MeshKit should remain the consumer-side validation engine without adding helper methods to `meshery/schemas`.
+And it should not depend on:
 
-### 5.5 Meshery Adoption Requires a Dependency Upgrade
+- MeshKit
+- `meshery/schemas/models/...`
+
+This gives the validation concern a dependency-leaf package with a stable ownership boundary.
+
+### 5.5 Validation Acyclicity Does Not Remove Existing Module Coupling
+
+Even after the validator is moved into `meshery/schemas/validation`, the broader bidirectional module dependency between `meshery/schemas` and MeshKit still remains because `meshery/schemas` already imports MeshKit helper packages today.
+
+So there are two different cleanup levels:
+
+- Surgical separation in leaf packages: solve the validation-cycle problem only.
+- Full decoupling: also remove or extract the existing MeshKit helper imports from `meshery/schemas`.
+
+For this validation work, surgical separation is less disruptive and should be the default recommendation. Full decoupling is cleaner long term, but it is a larger architectural program touching persistence, entity abstractions, and utility ownership beyond validation.
+
+### 5.6 Meshery Adoption Requires a Dependency Upgrade
 
 This repository currently depends on an older MeshKit release and does not yet have `meshkit/schema` available. So the design is not just about code shape; it also includes a rollout dependency:
 
@@ -379,7 +467,34 @@ The good news is that MeshKit already ships package tests for the new validator,
 
 ## 6. Implementation Plan
 
-### Phase 1: Adopt MeshKit Schema Validation in Meshery Consumers
+### Phase 0: Establish the Dependency-Safe Validation Layer
+
+**Deliverable:** A leaf validation package exists in `meshery/schemas` and owns the schema-backed validation engine.
+
+**Steps:**
+
+1. Create a package such as `github.com/meshery/schemas/validation`.
+2. Move or factor the reusable schema-validation engine into that package.
+3. Ensure it depends only on `meshery/schemas` root embedded assets, `kin-openapi`, and generic decode libraries.
+4. Ensure it does not import MeshKit or `meshery/schemas/models/...`.
+5. Discover schema registrations from embedded schema assets and templates, not from versioned model-package constants.
+6. Expose plain validation types such as `Ref`, `Violation`, and `ValidationDetails`.
+7. Add package tests covering successful validation, invalid enums, missing required fields, and explicit schema-version resolution.
+
+**Architectural rule:** versioned model packages and `meshkit/schema` may import this leaf package; this leaf package must not import either back.
+
+### Phase 1: Make `meshkit/schema` Reuse the Leaf Validator
+
+**Deliverable:** `github.com/meshery/meshkit/schema` becomes a reuse and integration layer over the lower-level validator rather than the only implementation.
+
+**Steps:**
+
+1. Refactor `meshkit/schema` to call into `github.com/meshery/schemas/validation`.
+2. Preserve existing MeshKit-friendly APIs where practical (`Validate`, `ValidateWithRef`, `ValidateAny`, `DecodeAndValidate`).
+3. Decide whether MeshKit wraps lower-level validation details into `ErrorV2` or re-exports them directly.
+4. Add tests proving MeshKit still returns structured validation diagnostics after the refactor.
+
+### Phase 2: Adopt MeshKit Schema Validation in Meshery Consumers
 
 **Deliverable:** `mesheryctl` validation paths use `github.com/meshery/meshkit/schema` instead of inline field checks.
 
@@ -394,19 +509,20 @@ The good news is that MeshKit already ships package tests for the new validator,
 
 **Estimated scope:** dependency bump plus focused CLI refactor; less custom validation code than the original proposal.
 
-### Phase 2: Optional `Validate()` Methods in `meshery/schemas`
+### Phase 3: Optional `Validate()` Methods in `meshery/schemas`
 
-**Deliverable:** Typed helper methods exist only as thin delegators to MeshKit's schema package.
+**Deliverable:** Typed helper methods exist only as thin delegators to the leaf validation package.
 
 **Steps:**
 
-1. Confirm package-graph viability in `meshery/schemas`.
-2. Add `Validate() error` to high-value types such as `RelationshipDefinition`, `ModelDefinition`, and `ComponentDefinition`.
-3. Ensure those methods return the original MeshKit error unchanged.
-4. Add helper-method tests that assert `ValidationDetailsFromError(err)` still works on returned errors.
+1. Add `Validate() error` to high-value types such as `RelationshipDefinition`, `ModelDefinition`, and `ComponentDefinition`.
+2. Ensure those methods call `github.com/meshery/schemas/validation`, not MeshKit.
+3. Preserve structured validation details on the returned errors.
+4. Add helper-method tests that assert the structured validation details remain recoverable.
 5. Update `meshery/schemas` contributor guidance to say that helper methods must delegate to the canonical validator rather than manually duplicate schema rules.
+6. Confirm the validation package graph remains acyclic after the helper methods are added.
 
-### Phase 3: Optional Codegen or Interface Refinement
+### Phase 4: Optional Codegen or Interface Refinement
 
 If helper methods prove broadly useful, investigate generating thin wrapper methods from the schema/model inventory. If validation becomes a ubiquitous contract across entity types, only then consider whether an interface-level `Validate()` method belongs in MeshKit's entity abstractions.
 
@@ -418,14 +534,17 @@ That interface change remains separate because it is a broader API commitment an
 
 The updated design should be considered complete only when the following are true:
 
-1. A valid relationship document passes through `meshkit/schema.Validate(...)` without error.
+1. A valid relationship document passes through the canonical schema-backed validator without error.
 2. An invalid relationship document with `kind: invalid` returns structured validation details that include `instancePath: /kind` and `keyword: enum`.
 3. A document missing required fields returns schema-derived violations rather than consumer-specific hand-written checks.
-4. `mesheryctl relationship validate` delegates to MeshKit schema validation and still produces clear user-facing output.
-5. `mesheryctl model validate` delegates to MeshKit schema validation for models, components, and relationships.
-6. The strict-versus-lenient behavior for server-generated fields such as `id` is explicitly tested according to the product decision taken.
-7. If `Validate()` helper methods are added in `meshery/schemas`, those methods return errors from which `ValidationDetailsFromError` can still recover structured violations.
-8. Meshery builds and tests pass with the upgraded MeshKit dependency on the touched paths.
+4. The canonical validation engine lives in `github.com/meshery/schemas/validation` and imports neither MeshKit nor `meshery/schemas/models/...`.
+5. `meshkit/schema` reuses that lower-level validation engine rather than maintaining a separate implementation.
+6. `mesheryctl relationship validate` delegates to MeshKit schema validation and still produces clear user-facing output.
+7. `mesheryctl model validate` delegates to MeshKit schema validation for models, components, and relationships.
+8. The strict-versus-lenient behavior for server-generated fields such as `id` is explicitly tested according to the product decision taken.
+9. If `Validate()` helper methods are added in `meshery/schemas`, those methods call `github.com/meshery/schemas/validation`, preserve structured validation details, and do not re-encode schema rules by hand.
+10. Meshery builds and tests pass with the upgraded MeshKit dependency on the touched paths.
+11. The document explicitly recognizes that existing non-validation MeshKit imports in `meshery/schemas` remain unless a broader decoupling effort is undertaken.
 
 ---
 
@@ -439,33 +558,45 @@ With MeshKit as the canonical engine, the validator will enforce whatever the sc
 
 **Proposed resolution:** Treat strict schema validation as the canonical behavior. If Meshery wants a draft-authoring workflow, add it explicitly as a separate mode (`lint`, `--lenient`, or a normalization step) rather than weakening the canonical validator.
 
-### 8.2 Should `meshery/schemas` Expose `Validate()` at All? **[Decision needed]**
+### 8.2 Where Should the Canonical Validation Engine Live? **[Decision needed]**
+
+The safest answer for validation-layer acyclicity is to place the canonical engine in `github.com/meshery/schemas/validation`.
+
+**Proposed resolution:** The canonical schema-backed validation engine should live in a dependency-leaf package owned by `meshery/schemas` and should not import MeshKit or `meshery/schemas/models/...`. MeshKit should reuse that engine.
+
+### 8.3 Should `meshery/schemas` Expose `Validate()` at All? **[Decision needed]**
 
 The new MeshKit package may make consumer-side adoption sufficient. `obj.Validate()` is ergonomically appealing, but it is no longer required to achieve shared validation.
 
 **Proposed resolution:** Adopt MeshKit in consumers first. Add helper methods only if there is repeated adapter code or clear external demand for typed ergonomics.
 
-### 8.3 If Helper Methods Exist, Should They Preserve MeshKit Errors or Wrap Them? **[Decision needed]**
+### 8.4 If Helper Methods Exist, Should They Preserve Structured Errors or Wrap Them? **[Decision needed]**
 
-**Proposed resolution:** Preserve the original MeshKit error. Helper methods should not flatten or repackage validation details unless there is a compelling downstream compatibility requirement.
+**Proposed resolution:** Preserve structured validation details. MeshKit may wrap them for MeshKit-facing consumers, but helper methods in `meshery/schemas` should not flatten them.
 
-### 8.4 Is the Package Graph Acceptable for Helper Delegation? **[Decision needed]**
+### 8.5 Should `meshery/schemas` Helper Methods Import MeshKit? **[Decision needed]**
 
-Before adding helper wrappers in `meshery/schemas`, the project should explicitly verify dependency direction and import-cycle safety.
+This is the core cyclic-reference concern.
 
-**Proposed resolution:** Validate the package graph in the target repository as a Phase 2 prerequisite. If the coupling is undesirable, keep validation in MeshKit consumers only.
+**Proposed resolution:** No. If helper methods are added, they should import the leaf validation package in `meshery/schemas`, not MeshKit.
 
-### 8.5 Multi-Version Strategy **[Decision needed]**
+### 8.6 Do We Also Want to Remove the Existing schemas↔meshkit Module Coupling? **[Decision needed]**
+
+This is a broader question than the validation-cycle problem.
+
+**Proposed resolution:** Not in this design. Solve the validation-layer cycle now by extracting `schemas/validation`. If the project later wants to eliminate the broader module-level mutual dependency as well, remove the existing MeshKit helper imports from `meshery/schemas` or extract those concerns into a third leaf module.
+
+### 8.7 Multi-Version Strategy **[Decision needed]**
 
 Schema-backed validation is version-sensitive. `RelationshipDefinition` v1alpha2 and v1alpha3 are different schemas and should not share a silent fallback.
 
 **Proposed resolution:** Consumer-side validation should rely on explicit `schemaVersion` or explicit refs. Optional helper methods should remain version-specific and use explicit refs defined by their package.
 
-### 8.6 Semver and Rollout **[Advisory]**
+### 8.8 Semver and Rollout **[Advisory]**
 
 Using MeshKit's new schema package in Meshery is a consumer-side dependency upgrade. Adding helper `Validate()` methods in `meshery/schemas` would be additive and semver-compatible. Changing common interfaces to require `Validate()` would still be a separate, potentially breaking step.
 
-### 8.7 Long-Term Generation Path **[Advisory]**
+### 8.9 Long-Term Generation Path **[Advisory]**
 
 If the project eventually wants `Validate()` on many schema types, generation should target thin delegate methods or schema/ref registration helpers, not hand-written re-encodings of `required:` and `enum:` blocks.
 
