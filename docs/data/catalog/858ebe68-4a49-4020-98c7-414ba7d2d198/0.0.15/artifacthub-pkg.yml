@@ -1,0 +1,26 @@
+version: 0.0.15
+name: analytics-dashboard-backend
+displayName: Analytics Dashboard Backend
+createdAt: "2025-07-17T09:28:35Z"
+description: |+
+    A backend system for analytics collection using FastAPI and PostgreSQL, deployed as Kubernetes services. This simulates a basic analytics data pipeline backend.
+
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/858ebe68-4a49-4020-98c7-414ba7d2d198/0.0.15/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "For demo purposes only. No persistent volumes configured for PostgreSQL. Replace default credentials before production use. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: d574bd52-93e6-44b7-ad69-edf67c643b2c
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/858ebe68-4a49-4020-98c7-414ba7d2d198-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/858ebe68-4a49-4020-98c7-414ba7d2d198-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
