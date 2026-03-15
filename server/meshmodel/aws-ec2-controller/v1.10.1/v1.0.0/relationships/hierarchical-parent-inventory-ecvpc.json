@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
-  "kind": "edge",
+  "kind": "hierarchical",
   "metadata": {
     "description": "EC2 instances must be launched within a VPC, which provides the foundational network isolation layer. The VPC defines the IP address range, subnets, route tables, and network gateways that govern all network traffic to and from the instance.",
     "isAnnotation": false,
@@ -92,8 +92,8 @@
       }
     }
   ],
-  "subType": "parent",
+  "subType": "inventory",
   "status": "enabled",
-  "type": "non-binding",
+  "type": "parent",
   "version": "v1.0.0"
 }

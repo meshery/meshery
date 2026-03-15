@@ -65,7 +65,7 @@
             "match_strategy_matrix": null,
             "model": {
               "version": "",
-              "name": "dynamodb-controller",
+              "name": "aws-dynamodb-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
