@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -73,11 +72,28 @@ func (c *Broadcast) Publish(id uuid.UUID, data interface{}) {
 	if !ok {
 		return
 	}
-	for _, client := range clientToPublish.listeners {
-		if !utils.IsClosed(client) {
-			client <- data
-		}
+
+	// Lock to get a consistent view of listeners and synchronize with unsubscribe
+	clientToPublish.mu.Lock()
+	listeners := make([]chan interface{}, len(clientToPublish.listeners))
+	copy(listeners, clientToPublish.listeners)
+	clientToPublish.mu.Unlock()
+
+	for _, ch := range listeners {
+		c.safeSend(ch, data)
 	}
+}
+
+// safeSend attempts to send data to the channel, recovering gracefully if the channel
+// is closed. This handles the race condition where a channel may be closed by unsubscribe
+// between the time we copy the listeners slice and when we send.
+func (c *Broadcast) safeSend(ch chan interface{}, data interface{}) {
+	defer func() {
+		if r := recover(); r != nil {
+			// Channel was closed between copy and send, ignore
+		}
+	}()
+	ch <- data
 }
 
 func NewBroadcaster(name string) *Broadcast {
