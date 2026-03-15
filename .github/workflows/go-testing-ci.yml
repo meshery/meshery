@@ -116,7 +116,7 @@ jobs:
           docker compose ps
         working-directory: ./install/docker
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.13.0
         if: matrix.platform == 'kubernetes'

@@ -33,7 +33,7 @@ type cmdRelationshipListFlags struct {
 
 var relationshipListFlags cmdRelationshipListFlags
 
-// represents the mesheryctl exp relationships list command.
+// represents the mesheryctl relationships list command.
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered relationships",
@@ -58,7 +58,7 @@ mesheryctl relationship list --count
 
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			errMsg := "Usage: mesheryctl exp relationship list\nRun 'mesheryctl exp relationship list --help' to see detailed help message"
+			errMsg := "Usage: mesheryctl relationship list\nRun 'mesheryctl relationship list --help' to see detailed help message"
 			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errMsg))
 		}
 		return nil
