@@ -42,7 +42,9 @@ func InitDefaultConfig(
 	if err := AddTokenToConfig(token, configPath); err != nil {
 		return err
 	}
-
+	// "local" is the default Meshery context name created during initialization.
+	// It represents the local Meshery deployment endpoint and is also used
+	// in CI workflows and existing Meshery configuration defaults.
 	if err := AddContextToConfig("local", ctx, configPath, true, false); err != nil {
 		return err
 	}
