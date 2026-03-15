@@ -1,5 +1,5 @@
 <div class="sidebar-menu">
-  <form class="sidebar__search-form">
+  <form class="sidebar__search-form" style="position: relative;">
     <input
       type="search"
       class="sidebar__search-input"
@@ -8,6 +8,9 @@
       aria-label="Search this site..."
       autocomplete="off"
     />
+    <div id="search-suggestions" class="search-suggestions-dropdown">
+      <!-- Suggestions will be injected here -->
+    </div>
   </form>
   <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
   <script type="text/javascript">
