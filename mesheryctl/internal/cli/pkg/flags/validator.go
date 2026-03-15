@@ -75,16 +75,16 @@ func (fv *FlagValidator) ReadValidationErrorMessages(err validator.ValidationErr
 	for _, e := range err {
 		switch e.Tag() {
 		case "semver":
-			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': version must be in format vX.X.X", strings.ToLower(e.Field()), e.Value()))
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': version must be in format vX.X.X", e.Field(), e.Value()))
 		case "oneof":
-			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': valid values are %s", strings.ToLower(e.Field()), e.Value(), e.Param()))
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': valid values are %s", e.Field(), e.Value(), e.Param()))
 		case "dir", "dirpath":
-			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': directory does not exist", strings.ToLower(e.Field()), e.Value()))
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': directory does not exist", e.Field(), e.Value()))
 		default:
 			if customErr, exists := fv.CustomErrors[e.Tag()]; exists {
 				errorMessages = append(errorMessages, customErr)
 			} else {
-				errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v'", strings.ToLower(e.Field()), e.Value()))
+				errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v'", e.Field(), e.Value()))
 			}
 		}
 	}
