@@ -139,20 +139,6 @@ const BtnText = styled('span')(() => ({
   },
 }));
 
-const EllipsisButtonWrapper = styled('div')(({ theme }) => ({
-  display: 'none',
-  [theme.breakpoints.down('lg')]: {
-    display: 'block',
-  },
-}));
-
-const ActionWrapper = styled('div')(({ theme }) => ({
-  display: 'block',
-  [theme.breakpoints.down('lg')]: {
-    display: 'none',
-  },
-}));
-
 const YamlDialogTitle = styled(DialogTitle)(() => ({
   display: 'flex',
   justifyContent: 'space-between',
@@ -162,20 +148,6 @@ const YamlDialogTitle = styled(DialogTitle)(() => ({
 const YamlDialogTitleText = styled(Typography)(() => ({
   flexGrow: 1,
 }));
-
-function TooltipIcon({ children, onClick, title, placement, disabled }) {
-  return (
-    <>
-      <CustomTooltip title={title} placement={placement} interactive>
-        <div>
-          <IconButton disabled={disabled} onClick={onClick}>
-            {children}
-          </IconButton>
-        </div>
-      </CustomTooltip>
-    </>
-  );
-}
 
 function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
   const [yaml, setYaml] = useState(pattern.pattern_file);
@@ -1179,27 +1151,9 @@ function MesheryPatterns({
           ].filter((action) => action.condition === undefined || action.condition);
 
           return (
-            <>
-              <EllipsisButtonWrapper>
-                <ActionPopover actions={actions} />
-              </EllipsisButtonWrapper>
-
-              <ActionWrapper>
-                <Box sx={{ display: 'flex' }}>
-                  {actions.map((action, index) => (
-                    <TooltipIcon
-                      key={index}
-                      placement="top"
-                      title={action.label}
-                      onClick={action.onClick}
-                      disabled={action.disabled}
-                    >
-                      {action.icon}
-                    </TooltipIcon>
-                  ))}
-                </Box>
-              </ActionWrapper>
-            </>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <ActionPopover actions={actions} />
+            </Box>
           );
         },
       },

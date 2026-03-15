@@ -1,3 +1,5 @@
+@use "project-variables" as project;
+
 /***** OVERVIEW ********/
 
 /*button style*/
@@ -7,7 +9,7 @@ div.overview {
   /* position:relative;float:left; */
   /* background-color:#ebc017; */
   background: rgb(60, 73, 79);
-  background: linear-gradient(337deg, $charcoal_rgba 0%, rgba(0, 179, 159, 0.861782212885154) 87%);
+  background: linear-gradient(337deg, project.$charcoal_rgba 0%, rgba(0, 179, 159, 0.861782212885154) 87%);
   color: #fff;
   font-size: 1.4rem;
   padding: 0.65rem auto;
@@ -56,7 +58,7 @@ div.section {
 }
 
 div.overview:hover {
-  background: linear-gradient(337deg, $charcoal_rgba 0%, rgba(0, 179, 159, 0.861782212885154) 73%);
+  background: linear-gradient(337deg, project.$charcoal_rgba 0%, rgba(0, 179, 159, 0.861782212885154) 73%);
   color: #eee;
 }
 
@@ -106,4 +108,3 @@ a > strong:hover {
   float: right;
   padding-right: 10px;
 }
-

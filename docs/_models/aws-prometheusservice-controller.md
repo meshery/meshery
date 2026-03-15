@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Managed Service for Prometheus
 subtitle: Collaborative and visual infrastructure as design for AWS Managed Service for Prometheus
-image: /assets/img/integrations/aws-prometheusservice-controller/icons/color/aws-prometheusservice-controller-color.svg
-permalink: extensibility/integrations/aws-prometheusservice-controller
+image: /extensions/models/aws-prometheusservice-controller/icons/color/aws-prometheusservice-controller-color.svg
+aliases: /extensibility/integrations/aws-prometheusservice-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-prometheusservice-controller
 description: 
 integrations-category: Observability and Analysis
@@ -60,8 +59,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

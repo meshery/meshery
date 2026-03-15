@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: MySQL Operator
 subtitle: Collaborative and visual infrastructure as design for MySQL Operator
-image: /assets/img/integrations/mysql-operator/icons/color/mysql-operator-color.svg
-permalink: extensibility/integrations/mysql-operator
+image: /extensions/models/mysql-operator/icons/color/mysql-operator-color.svg
+aliases: /extensibility/integrations/mysql-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mysql-operator
 description: 
 integrations-category: App Definition and Development
@@ -52,8 +51,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages MySQL"
 howItWorksDetails: "Streamlined MySQL management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

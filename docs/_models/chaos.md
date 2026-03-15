@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Chaos
 subtitle: Collaborative and visual infrastructure as design for Chaos
-image: /assets/img/integrations/chaos/icons/color/chaos-color.svg
-permalink: extensibility/integrations/chaos
+image: /extensions/models/chaos/icons/color/chaos-color.svg
+aliases: /extensibility/integrations/chaos
 docURL: https://docs.meshery.io/extensibility/integrations/chaos
 description: 
 integrations-category: App Definition and Development
@@ -112,8 +111,5 @@ featureList: [
 ]
 howItWorks: "Integrates chaos experiments"
 howItWorksDetails: "Enhanced resilience testing and validation of Kubernetes applications"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

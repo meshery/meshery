@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubedb Opscenter
 subtitle: Collaborative and visual infrastructure as design for Kubedb Opscenter
-image: /assets/img/integrations/kubedb-opscenter/icons/color/kubedb-opscenter-color.svg
-permalink: extensibility/integrations/kubedb-opscenter
+image: /extensions/models/kubedb-opscenter/icons/color/kubedb-opscenter-color.svg
+aliases: /extensibility/integrations/kubedb-opscenter
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-opscenter
 description: 
 integrations-category: App Definition and Development
@@ -116,8 +115,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

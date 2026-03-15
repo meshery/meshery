@@ -1,12 +1,15 @@
+@use "project-variables" as project;
+@use "adapters" as adapters;
+
 /* COMMAND REFERENCE */
 table.mesherycomponents {
   th {
-    background-color: $charcoal;
+    background-color: project.$charcoal;
     color: white;
   }
   td.childcomponent {
     color: white;
-    background-color: $tealblue;
+    background-color: adapters.$tealblue;
   }
 }
 
@@ -16,19 +19,18 @@ table.mesherycomponents {
 
 /* INSTALLATION */
 div.prereqs {
-  background-color: $charcoal;
+  background-color: project.$charcoal;
   font-size: 1.5rem;
+  color: #ddd;
+  margin: 0.5rem;
+  padding: 15px;
+  border-radius: 0.3rem;
   & > *,
   & > * > * {
     color: #ddd;
     margin-top: 0;
   }
-  color: #ddd;
-  margin: 0.5rem;
-  padding: 15px;
-  border-radius: 0.3rem;
 }
 a.meshery-light {
-  color: $keppel;
+  color: project.$keppel;
 }
-

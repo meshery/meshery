@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Pulsar Operator
 subtitle: Collaborative and visual infrastructure as design for Pulsar Operator
-image: /assets/img/integrations/pulsar-operator/icons/color/pulsar-operator-color.svg
-permalink: extensibility/integrations/pulsar-operator
+image: /extensions/models/pulsar-operator/icons/color/pulsar-operator-color.svg
+aliases: /extensibility/integrations/pulsar-operator
 docURL: https://docs.meshery.io/extensibility/integrations/pulsar-operator
 description: 
 integrations-category: App Definition and Development
@@ -36,8 +35,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Pulsar"
 howItWorksDetails: "Simplified Pulsar management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

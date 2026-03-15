@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Fluid
 subtitle: Collaborative and visual infrastructure as design for Fluid
-image: /assets/img/integrations/fluid/icons/color/fluid-color.svg
-permalink: extensibility/integrations/fluid
+image: /extensions/models/fluid/icons/color/fluid-color.svg
+aliases: /extensibility/integrations/fluid
 docURL: https://docs.meshery.io/extensibility/integrations/fluid
 description: 
 integrations-category: Orchestration & Management
@@ -44,8 +43,5 @@ featureList: [
 ]
 howItWorks: "Integrates Fluid datasets"
 howItWorksDetails: "Improved performance and efficiency of data-intensive applications in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Sidekick
 subtitle: Collaborative and visual infrastructure as design for Sidekick
-image: /assets/img/integrations/sidekick/icons/color/sidekick-color.svg
-permalink: extensibility/integrations/sidekick
+image: /extensions/models/sidekick/icons/color/sidekick-color.svg
+aliases: /extensibility/integrations/sidekick
 docURL: https://docs.meshery.io/extensibility/integrations/sidekick
 description: 
 integrations-category: Observability and Analysis
@@ -14,7 +13,15 @@ components:
   colorIcon: assets/img/integrations/sidekick/components/sidekick/icons/color/sidekick-color.svg
   whiteIcon: assets/img/integrations/sidekick/components/sidekick/icons/white/sidekick-white.svg
   description: 
-components-count: 1
+- name: certificate
+  colorIcon: assets/img/integrations/sidekick/components/certificate/icons/color/certificate-color.svg
+  whiteIcon: assets/img/integrations/sidekick/components/certificate/icons/white/certificate-white.svg
+  description: 
+- name: issuer
+  colorIcon: assets/img/integrations/sidekick/components/issuer/icons/color/issuer-color.svg
+  whiteIcon: assets/img/integrations/sidekick/components/issuer/icons/white/issuer-white.svg
+  description: 
+components-count: 3
 relationships: 
 relationship-count: 0
 featureList: [
@@ -24,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Manages Sidekick configurations"
 howItWorksDetails: "Simplified sidecar container management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

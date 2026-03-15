@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Fabedge
 subtitle: Collaborative and visual infrastructure as design for Fabedge
-image: /assets/img/integrations/fabedge/icons/color/fabedge-color.svg
-permalink: extensibility/integrations/fabedge
+image: /extensions/models/fabedge/icons/color/fabedge-color.svg
+aliases: /extensibility/integrations/fabedge
 docURL: https://docs.meshery.io/extensibility/integrations/fabedge
 description: 
 integrations-category: Runtime
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Integrates FabEdge configurations"
 howItWorksDetails: "Streamlined network management and improved performance for edge workloads"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

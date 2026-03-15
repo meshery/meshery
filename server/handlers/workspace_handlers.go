@@ -47,7 +47,9 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/workspaces/{id} WorkspacesAPI idGetWorkspacesByIdHandler
@@ -70,7 +72,9 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route POST /api/workspaces PostWorkspace idSaveWorkspace
@@ -109,7 +113,9 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 	h.log.Info(description)
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(bf))
+	if _, err := fmt.Fprint(w, string(bf)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route DELETE /api/workspaces/{id} WorkspaceAPI idDeleteWorkspaceHandler
@@ -128,7 +134,9 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route PUT /api/workspaces/{id} PostWorkspace idUpdateWorkspaceHandler
@@ -211,7 +219,9 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/workspaces/{id}/designs WorkspacesAPI idGetWorkspaceMesheryDesigns
@@ -240,7 +250,9 @@ func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route POST /api/workspaces/{id}/environments/{environmentID} WorkspacesAPI idAddEnvironmentToWorkspace
@@ -259,7 +271,9 @@ func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *h
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route DELETE /api/workspaces/{id}/environments/{environmentID} WorkspacesAPI idRemoveEnvironmentFromWorkspace
@@ -278,7 +292,9 @@ func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, r
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route POST /api/workspaces/{id}/designs/{designID} WorkspacesAPI idAddMesheryDesignToWorkspace
@@ -297,5 +313,7 @@ func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.R
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }

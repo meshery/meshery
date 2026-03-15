@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: ClickHouse
 subtitle: Collaborative and visual infrastructure as design for ClickHouse
-image: /assets/img/integrations/clickhouse/icons/color/clickhouse-color.svg
-permalink: extensibility/integrations/clickhouse
+image: /extensions/models/clickhouse/icons/color/clickhouse-color.svg
+aliases: /extensibility/integrations/clickhouse
 docURL: https://docs.meshery.io/extensibility/integrations/clickhouse
 description: 
 integrations-category: Database
@@ -36,8 +35,5 @@ featureList: [
 ]
 howItWorks: "Integrates ClickHouse"
 howItWorksDetails: "High-performance analytics database for Kubernetes data"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: K8GB
 subtitle: Collaborative and visual infrastructure as design for K8GB
-image: /assets/img/integrations/k8gb/icons/color/k8gb-color.svg
-permalink: extensibility/integrations/k8gb
+image: /extensions/models/k8gb/icons/color/k8gb-color.svg
+aliases: /extensibility/integrations/k8gb
 docURL: https://docs.meshery.io/extensibility/integrations/k8gb
 description: 
 integrations-category: Orchestration & Management
@@ -28,8 +27,5 @@ featureList: [
 ]
 howItWorks: "Integrates K8GB audits"
 howItWorksDetails: "Enhanced security and compliance for Kubernetes clusters"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

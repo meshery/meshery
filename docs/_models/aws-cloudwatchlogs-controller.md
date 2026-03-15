@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS CloudWatch Logs
 subtitle: Collaborative and visual infrastructure as design for AWS CloudWatch Logs
-image: /assets/img/integrations/aws-cloudwatchlogs-controller/icons/color/aws-cloudwatchlogs-controller-color.svg
-permalink: extensibility/integrations/aws-cloudwatchlogs-controller
+image: /extensions/models/aws-cloudwatchlogs-controller/icons/color/aws-cloudwatchlogs-controller-color.svg
+aliases: /extensibility/integrations/aws-cloudwatchlogs-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudwatchlogs-controller
 description: 
 integrations-category: Observability and Analysis
@@ -45,8 +44,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

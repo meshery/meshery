@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: ChaosBlade
 subtitle: Collaborative and visual infrastructure as design for ChaosBlade
-image: /assets/img/integrations/chaosblade-operator/icons/color/chaosblade-operator-color.svg
-permalink: extensibility/integrations/chaosblade-operator
+image: /extensions/models/chaosblade-operator/icons/color/chaosblade-operator-color.svg
+aliases: /extensibility/integrations/chaosblade-operator
 docURL: https://docs.meshery.io/extensibility/integrations/chaosblade-operator
 description: 
 integrations-category: Observability and Analysis
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
