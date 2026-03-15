@@ -1,30 +1,39 @@
 ---
-title: mesheryctl-exp-relationship-generate
+title: mesheryctl-model-delete
 display_title: false
-command: exp
-subcommand: relationship
+command: model
+subcommand: delete
 ---
 
-# mesheryctl exp relationship generate
+# mesheryctl model delete
 
-Generate relationships documents
+Delete a model
 
 ## Synopsis
 
-Generate relationships documents from the google spreadsheets
+Delete a model by ID or Name
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship generate [flags]
+mesheryctl model delete [model-id | model-name] [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Generate relationships documentss
+Delete a model by ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
+mesheryctl model delete [model-id]
+
+</div>
+</pre> 
+
+Delete a model by name
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model delete [model-name]
 
 </div>
 </pre> 
@@ -33,9 +42,7 @@ mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreads
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help                      help for generate
-      --spreadsheet-cred string   base64 encoded credential to download the spreadsheet
-      --spreadsheet-id string     spreadsheet ID for the integration spreadsheet
+  -h, --help   help for delete
 
 </div>
 </pre>
