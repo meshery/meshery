@@ -242,7 +242,7 @@ func GenerateMDStyleDocs(model meshkitRegistryUtils.ModelCSV, components []meshk
 
 	// generate markdown file
 	md := model.CreateMarkDownForMDStyle(componentMetadata, relationshipMetadata, componentsCount, relationshipsCount, "mesherydocs")
-	file, err := os.Create(filepath.Join(mdDir, modelName+".md"))
+	file, err := os.Create(filepath.Join(mdDir, modelName, "index.md"))
 	if err != nil {
 		return err
 	}
