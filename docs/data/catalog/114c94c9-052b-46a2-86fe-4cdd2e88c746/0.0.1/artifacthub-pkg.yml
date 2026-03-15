@@ -1,0 +1,20 @@
+version: 0.0.1
+name: my-first-app-design
+displayName: my first app design
+createdAt: "2023-08-16T20:58:06Z"
+description: 'This infrastructure design defines two services within a system: 1. **Customer Service**:   - Type: Customer   - Version: 0.0.50   - Model: Jira Service Desk Operator   - Attributes: This service is configured with specific settings, including an email address, legacy customer mode, and a name. It is categorized as a tool within the system.2. **Notebook Service**:   - Type: Notebook   - Version: 1.6.1   - Model: Kubeflow   - Attributes: This service is categorized as a machine learning tool. It has metadata related to its source URI and appearance. These services are components within a larger system or design, each serving a distinct purpose. The Customer Service is associated with customer-related operations, while the Notebook Service is related to machine learning tasks.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/114c94c9-052b-46a2-86fe-4cdd2e88c746/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Make sure to use correct credentials for Jira service operator \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4d90d649-c4b8-42b8-adc6-51702129cb05
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

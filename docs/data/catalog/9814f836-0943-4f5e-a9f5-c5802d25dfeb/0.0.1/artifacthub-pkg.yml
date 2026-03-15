@@ -1,0 +1,24 @@
+version: 0.0.1
+name: ms-emails-grpc-0.0.11.tgz
+displayName: ms-emails-grpc-0.0.11.tgz
+createdAt: "2025-10-07T10:51:25Z"
+description: 'ms-emails-grpc is a Helm chart that deploys a gRPC microservice for sending emails. It creates a Deployment and a ClusterIP Service (default) exposing a gRPC port (commonly 50051). Configuration is provided via values.yaml: image repo/tag, replicas, resources, environment variables, ports, serviceAccount/RBAC, Pod annotations/labels, optional HPA, PDB, and node scheduling settings. Secrets for SMTP or an email-provider API can be mounted or referenced via envFrom/SecretKeyRef. Health checks can be configured as gRPC or HTTP/TCP probes depending on the container.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/9814f836-0943-4f5e-a9f5-c5802d25dfeb/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Provide SMTP or provider credentials via Kubernetes Secrets; don’t place secrets in values.yaml. If exposing gRPC externally, use a load balancer or Ingress with HTTP/2 enabled; for NGINX Ingress set nginx.ingress.kubernetes.io/backend-protocol: \"GRPC\" (or use Envoy) and ensure the port name is grpc for correct protocol detection. For service meshes (Istio/Linkerd), name the port grpc and configure mTLS/cert Secrets as needed. Ensure egress to your mail/queue provider is allowed (NetworkPolicy may be required). Autoscaling requires metrics-server. Changing Service ports or certain probe fields can trigger resource recreation during upgrades. Tune resource requests/limits for your workload. Kubernetes 1.22+ recommended. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4f8d9973-3f42-4e5a-98be-4fbb69d3ed48
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/9814f836-0943-4f5e-a9f5-c5802d25dfeb-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/9814f836-0943-4f5e-a9f5-c5802d25dfeb-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

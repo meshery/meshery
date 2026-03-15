@@ -1,0 +1,27 @@
+version: 0.0.4
+name: hierarchical-parent-inventory-relationship
+displayName: Hierarchical-Parent-Inventory-Relationship
+createdAt: "2024-10-11T03:19:09Z"
+description: |-
+    This represents a parent-child relationship between components, where one component is a dependency of another. Parent-child relationships show clear lineage, similar to a family tree.
+
+    In this design, the namespace serves as a parent to the config map and role.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3255f170-e2b1-48e8-bbed-40d4e0198a90/0.0.4/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Dependency Awareness: Users should understand that the child components (e.g., config maps, roles) depend on the parent (e.g., namespace). If the parent component is deleted or modified, it will affect the child components.\n\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3255f170-e2b1-48e8-bbed-40d4e0198a90-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3255f170-e2b1-48e8-bbed-40d4e0198a90-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
