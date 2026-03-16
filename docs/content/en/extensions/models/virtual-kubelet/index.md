@@ -2,6 +2,7 @@
 title: Virtual Kubelet
 subtitle: Collaborative and visual infrastructure as design for Virtual Kubelet
 image: /extensions/models/virtual-kubelet/icons/color/virtual-kubelet-color.svg
+aliases: /extensibility/integrations/virtual-kubelet
 docURL: https://docs.meshery.io/extensibility/integrations/virtual kubelet
 description: 
 integrations-category: Serverless
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/virtual-kubelet
 ---

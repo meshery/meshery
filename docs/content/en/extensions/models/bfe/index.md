@@ -2,6 +2,7 @@
 title: BFE
 subtitle: Collaborative and visual infrastructure as design for BFE
 image: /extensions/models/bfe/icons/color/bfe-color.svg
+aliases: /extensibility/integrations/bfe
 docURL: https://docs.meshery.io/extensibility/integrations/bfe
 description: 
 integrations-category: Cloud Native Network
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/bfe
 ---

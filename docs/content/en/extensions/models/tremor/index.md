@@ -2,6 +2,7 @@
 title: Tremor
 subtitle: Collaborative and visual infrastructure as design for Tremor
 image: /extensions/models/tremor/icons/color/tremor-color.svg
+aliases: /extensibility/integrations/tremor
 docURL: https://docs.meshery.io/extensibility/integrations/tremor
 description: 
 integrations-category: App Definition and Development
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/tremor
 ---

@@ -2,6 +2,7 @@
 title: SPIRE
 subtitle: Collaborative and visual infrastructure as design for SPIRE
 image: /extensions/models/spire/icons/color/spire-color.svg
+aliases: /extensibility/integrations/spire
 docURL: https://docs.meshery.io/extensibility/integrations/spire
 description: 
 integrations-category: Security & Compliance
@@ -9,16 +10,16 @@ integrations-subcategory: Key Management
 registrant: Artifact Hub
 components: 
 - name: cluster-federated-trust-domain
-  colorIcon: /extensions/models/spire/components/cluster-federated-trust-domain/icons/color/cluster-federated-trust-domain-color.svg
-  whiteIcon: /extensions/models/spire/components/cluster-federated-trust-domain/icons/white/cluster-federated-trust-domain-white.svg
+  colorIcon: content/en/extensions/models/spire/components/cluster-federated-trust-domain/icons/color/cluster-federated-trust-domain-color.svg
+  whiteIcon: content/en/extensions/models/spire/components/cluster-federated-trust-domain/icons/white/cluster-federated-trust-domain-white.svg
   description: 
 - name: cluster-spiffeid
-  colorIcon: /extensions/models/spire/components/cluster-spiffeid/icons/color/cluster-spiffeid-color.svg
-  whiteIcon: /extensions/models/spire/components/cluster-spiffeid/icons/white/cluster-spiffeid-white.svg
+  colorIcon: content/en/extensions/models/spire/components/cluster-spiffeid/icons/color/cluster-spiffeid-color.svg
+  whiteIcon: content/en/extensions/models/spire/components/cluster-spiffeid/icons/white/cluster-spiffeid-white.svg
   description: 
 - name: controller-manager-config
-  colorIcon: /extensions/models/spire/components/controller-manager-config/icons/color/controller-manager-config-color.svg
-  whiteIcon: /extensions/models/spire/components/controller-manager-config/icons/white/controller-manager-config-white.svg
+  colorIcon: content/en/extensions/models/spire/components/controller-manager-config/icons/color/controller-manager-config-color.svg
+  whiteIcon: content/en/extensions/models/spire/components/controller-manager-config/icons/white/controller-manager-config-white.svg
   description: 
 components-count: 3
 relationships: 
@@ -31,6 +32,4 @@ featureList: [
 howItWorks: "Configure your signing framework"
 howItWorksDetails: "Simplify access from identified services to secret stores, databases, services meshes and cloud provider services."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/spire
 ---

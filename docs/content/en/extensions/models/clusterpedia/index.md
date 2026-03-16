@@ -2,6 +2,7 @@
 title: Clusterpedia
 subtitle: Collaborative and visual infrastructure as design for Clusterpedia
 image: /extensions/models/clusterpedia/icons/color/clusterpedia-color.svg
+aliases: /extensibility/integrations/clusterpedia
 docURL: https://docs.meshery.io/extensibility/integrations/clusterpedia
 description: 
 integrations-category: Orchestration & Management
@@ -9,20 +10,20 @@ integrations-subcategory: Scheduling & Orchestration
 registrant: GitHub
 components: 
 - name: cluster-sync-resources
-  colorIcon: /extensions/models/clusterpedia/components/cluster-sync-resources/icons/color/cluster-sync-resources-color.svg
-  whiteIcon: /extensions/models/clusterpedia/components/cluster-sync-resources/icons/white/cluster-sync-resources-white.svg
+  colorIcon: content/en/extensions/models/clusterpedia/components/cluster-sync-resources/icons/color/cluster-sync-resources-color.svg
+  whiteIcon: content/en/extensions/models/clusterpedia/components/cluster-sync-resources/icons/white/cluster-sync-resources-white.svg
   description: 
 - name: pedia-cluster
-  colorIcon: /extensions/models/clusterpedia/components/pedia-cluster/icons/color/pedia-cluster-color.svg
-  whiteIcon: /extensions/models/clusterpedia/components/pedia-cluster/icons/white/pedia-cluster-white.svg
+  colorIcon: content/en/extensions/models/clusterpedia/components/pedia-cluster/icons/color/pedia-cluster-color.svg
+  whiteIcon: content/en/extensions/models/clusterpedia/components/pedia-cluster/icons/white/pedia-cluster-white.svg
   description: 
 - name: cluster-import-policy
-  colorIcon: /extensions/models/clusterpedia/components/cluster-import-policy/icons/color/cluster-import-policy-color.svg
-  whiteIcon: /extensions/models/clusterpedia/components/cluster-import-policy/icons/white/cluster-import-policy-white.svg
+  colorIcon: content/en/extensions/models/clusterpedia/components/cluster-import-policy/icons/color/cluster-import-policy-color.svg
+  whiteIcon: content/en/extensions/models/clusterpedia/components/cluster-import-policy/icons/white/cluster-import-policy-white.svg
   description: 
 - name: pedia-cluster-lifecycle
-  colorIcon: /extensions/models/clusterpedia/components/pedia-cluster-lifecycle/icons/color/pedia-cluster-lifecycle-color.svg
-  whiteIcon: /extensions/models/clusterpedia/components/pedia-cluster-lifecycle/icons/white/pedia-cluster-lifecycle-white.svg
+  colorIcon: content/en/extensions/models/clusterpedia/components/pedia-cluster-lifecycle/icons/color/pedia-cluster-lifecycle-color.svg
+  whiteIcon: content/en/extensions/models/clusterpedia/components/pedia-cluster-lifecycle/icons/white/pedia-cluster-lifecycle-white.svg
   description: 
 components-count: 4
 relationships: 
@@ -35,6 +36,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/clusterpedia
 ---

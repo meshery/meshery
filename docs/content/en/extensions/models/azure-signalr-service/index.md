@@ -2,6 +2,7 @@
 title: Azure SignalR Service
 subtitle: Collaborative and visual infrastructure as design for Azure SignalR Service
 image: /extensions/models/azure-signalr-service/icons/color/azure-signalr-service-color.svg
+aliases: /extensibility/integrations/azure-signalr-service
 docURL: https://docs.meshery.io/extensibility/integrations/azure-signalr-service
 description: 
 integrations-category: Observability and Analysis
@@ -9,20 +10,20 @@ integrations-subcategory: Streaming & Messaging
 registrant: GitHub
 components: 
 - name: custom-certificate
-  colorIcon: /extensions/models/azure-signalr-service/components/custom-certificate/icons/color/custom-certificate-color.svg
-  whiteIcon: /extensions/models/azure-signalr-service/components/custom-certificate/icons/white/custom-certificate-white.svg
+  colorIcon: content/en/extensions/models/azure-signalr-service/components/custom-certificate/icons/color/custom-certificate-color.svg
+  whiteIcon: content/en/extensions/models/azure-signalr-service/components/custom-certificate/icons/white/custom-certificate-white.svg
   description: 
 - name: custom-domain
-  colorIcon: /extensions/models/azure-signalr-service/components/custom-domain/icons/color/custom-domain-color.svg
-  whiteIcon: /extensions/models/azure-signalr-service/components/custom-domain/icons/white/custom-domain-white.svg
+  colorIcon: content/en/extensions/models/azure-signalr-service/components/custom-domain/icons/color/custom-domain-color.svg
+  whiteIcon: content/en/extensions/models/azure-signalr-service/components/custom-domain/icons/white/custom-domain-white.svg
   description: 
 - name: replica
-  colorIcon: /extensions/models/azure-signalr-service/components/replica/icons/color/replica-color.svg
-  whiteIcon: /extensions/models/azure-signalr-service/components/replica/icons/white/replica-white.svg
+  colorIcon: content/en/extensions/models/azure-signalr-service/components/replica/icons/color/replica-color.svg
+  whiteIcon: content/en/extensions/models/azure-signalr-service/components/replica/icons/white/replica-white.svg
   description: 
 - name: signal-r
-  colorIcon: /extensions/models/azure-signalr-service/components/signal-r/icons/color/signal-r-color.svg
-  whiteIcon: /extensions/models/azure-signalr-service/components/signal-r/icons/white/signal-r-white.svg
+  colorIcon: content/en/extensions/models/azure-signalr-service/components/signal-r/icons/color/signal-r-color.svg
+  whiteIcon: content/en/extensions/models/azure-signalr-service/components/signal-r/icons/white/signal-r-white.svg
   description: 
 components-count: 4
 relationships: 
@@ -47,6 +48,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/azure-signalr-service
 ---

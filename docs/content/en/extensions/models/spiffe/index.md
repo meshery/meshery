@@ -2,6 +2,7 @@
 title: SPIFFE
 subtitle: Collaborative and visual infrastructure as design for SPIFFE
 image: /extensions/models/spiffe/icons/color/spiffe-color.svg
+aliases: /extensibility/integrations/spiffe
 docURL: https://docs.meshery.io/extensibility/integrations/spiffe
 description: 
 integrations-category: Security & Compliance
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Wrangle the Workload API"
 howItWorksDetails: "Expertly use the Workload API specification to issue and retrieve SVIDs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/spiffe
 ---

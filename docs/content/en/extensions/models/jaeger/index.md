@@ -2,6 +2,7 @@
 title: Jaeger
 subtitle: Collaborative and visual infrastructure as design for Jaeger
 image: /extensions/models/jaeger/icons/color/jaeger-color.svg
+aliases: /extensibility/integrations/jaeger
 docURL: https://docs.meshery.io/extensibility/integrations/jaeger
 description: 
 integrations-category: Observability and Analysis
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Integrates Jaeger traces"
 howItWorksDetails: "Enhanced observability and troubleshooting of distributed systems in Kubernetes"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/jaeger
 ---
