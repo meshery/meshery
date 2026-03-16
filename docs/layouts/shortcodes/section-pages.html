@@ -1,0 +1,63 @@
+{{- /* Get section parameter from shortcode */ -}}
+{{- $section := .Get "section" -}}
+
+{{- /* If no section provided, try to detect from current page */ -}}
+{{- if not $section -}}
+  {{- $section = .Page.Section -}}
+{{- end -}}
+
+{{- /* Build the landing page URL to exclude */ -}}
+{{- $sectionURL := printf "/%s/" $section -}}
+
+{{- /* Pages to exclude from auto-listing */ -}}
+{{- $excludePages := slice "quick-start" "faq" -}}
+
+{{- /* Load all pages from the specified section - only 1 level deep */ -}}
+{{- $pages := slice -}}
+{{- range site.AllPages -}}
+  {{- if and (strings.Contains .Path $section) (ne .Kind "taxonomy") (ne .Kind "taxonomyTerm") -}}
+    {{- /* Skip pages marked to hide from section listing */ -}}
+    {{- if .Params.hide_homepage -}}
+      {{- continue -}}
+    {{- end -}}
+    {{- /* Exclude the landing page of the current section */ -}}
+    {{- if eq .RelPermalink $sectionURL -}}
+      {{- continue -}}
+    {{- end -}}
+    {{- /* Count the path depth to ensure only 1 level deep */ -}}
+    {{- $sectionParts := strings.Split $section "/" -}}
+    {{- $pageParts := strings.Split .Path "/" -}}
+    {{- /* Only include if page is exactly one level deeper than section */ -}}
+    {{- if and (gt (len $pageParts) (len $sectionParts)) (le (len $pageParts) (add (len $sectionParts) 2)) -}}
+      {{- /* Skip excluded pages by checking the last path segment */ -}}
+      {{- $shouldExclude := false -}}
+      {{- $pagePathSegment := index $pageParts (sub (len $pageParts) 1) -}}
+      {{- range $excludePages -}}
+        {{- if eq $pagePathSegment . -}}
+          {{- $shouldExclude = true -}}
+        {{- end -}}
+      {{- end -}}
+      {{- if not $shouldExclude -}}
+        {{- $pages = $pages | append . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Sort pages by title */ -}}
+{{- $pages = sort $pages "Title" -}}
+
+{{- if $pages -}}
+  {{- range $pages -}}
+<li>
+  <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+  {{- if .Params.description -}}
+    <span> - {{ .Params.description }}</span>
+  {{- end -}}
+</li>
+  {{- end -}}
+{{- else -}}
+<li><em>No pages found in this section.</em></li>
+{{- end -}}
+
+
