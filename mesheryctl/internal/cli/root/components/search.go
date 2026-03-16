@@ -17,16 +17,21 @@ package components
 import (
 	"fmt"
 	"net/url"
+	"strings"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
 type cmdComponentSearchFlags struct {
-	Page     int `json:"page" validate:"omitempty,gte=1"`
-	PageSize int `json:"page-size" validate:"omitempty,gte=1"`
+	Page         int    `json:"page" validate:"omitempty,gte=1"`
+	PageSize     int    `json:"page-size" validate:"omitempty,gte=1"`
+	Model        string `json:"model" validate:"omitempty"`
+	OutputFormat string `json:"output-format" validate:"omitempty"`
 }
 
 var componentSearchFlags cmdComponentSearchFlags
@@ -51,17 +56,57 @@ mesheryctl component search [query-text] [--page 1]
 		return mesheryctlflags.ValidateCmdFlags(cmd, &componentSearchFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%v\n%v", errInvalidArg, searchUsageMsg))
+		if len(args) == 0 && componentSearchFlags.Model == "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("please provide a query text or use --model flag\n\n%v", searchUsageMsg))
+		}
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%v", searchUsageMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		searchValue := url.Values{}
-		searchValue.Add("search", args[0])
+		if len(args) > 0 {
+			searchValue.Add("search", args[0])
+		}
+
+		path := componentApiPath
+		if componentSearchFlags.Model != "" {
+			path = fmt.Sprintf("api/meshmodels/models/%s/components", url.PathEscape(componentSearchFlags.Model))
+		}
+
+		// If output format is specified, we fetch the raw data and display it
+		if componentSearchFlags.OutputFormat != "" {
+			queryPath := fmt.Sprintf("%s?%s", path, searchValue.Encode())
+			// Add pagination params for one-shot fetch if not interactive
+			if !strings.Contains(queryPath, "page=") {
+				queryPath = fmt.Sprintf("%s&page=%d&pagesize=%d", queryPath, componentSearchFlags.Page-1, componentSearchFlags.PageSize)
+			}
+
+			response, err := api.Fetch[models.MeshmodelComponentsAPIResponse](queryPath)
+			if err != nil {
+				return err
+			}
+
+			if componentSearchFlags.OutputFormat == "table" {
+				// Fallback to table if explicitly requested, but non-interactive
+				rows, count := generateComponentDataToDisplay(response)
+				utils.DisplayCount("component", count)
+				utils.PrintToTable([]string{"ID", "Name", "Model", "Version"}, rows, nil)
+				return nil
+			}
+
+			outputFormatterFactory := display.OutputFormatterFactory[models.MeshmodelComponentsAPIResponse]{}
+			outputFormatter, err := outputFormatterFactory.New(strings.ToLower(componentSearchFlags.OutputFormat), *response)
+			if err != nil {
+				return err
+			}
+
+			return outputFormatter.Display()
+		}
 
 		modelData := display.DisplayDataAsync{
-			UrlPath:  fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()),
+			UrlPath:  fmt.Sprintf("%s?%s", path, searchValue.Encode()),
 			DataType: "component",
 			Header:   []string{"ID", "Name", "Model", "Version"},
 			Page:     componentSearchFlags.Page,
@@ -69,15 +114,13 @@ mesheryctl component search [query-text] [--page 1]
 			IsPage:   cmd.Flags().Changed("page"),
 		}
 
-		err := display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
-		if err != nil {
-			return err
-		}
-		return nil
+		return display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
 	},
 }
 
 func init() {
 	searchComponentsCmd.Flags().IntVarP(&componentSearchFlags.Page, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
 	searchComponentsCmd.Flags().IntVarP(&componentSearchFlags.PageSize, "pagesize", "s", 10, "(optional) List next set of components with --pagesize (default = 10)")
+	searchComponentsCmd.Flags().StringVarP(&componentSearchFlags.Model, "model", "m", "", "(optional) Search components of a particular model name")
+	searchComponentsCmd.Flags().StringVarP(&componentSearchFlags.OutputFormat, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 }

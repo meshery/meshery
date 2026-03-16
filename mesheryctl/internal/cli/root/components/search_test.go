@@ -23,14 +23,14 @@ func TestSearchComponent(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
-			Name:             "given no arguments provided when component search  then throw error",
+			Name:             "given no arguments provided when component search without --model then throw error",
 			Args:             []string{"search"},
 			URL:              "",
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%v\n%v", errInvalidArg, searchUsageMsg)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide a query text or use --model flag\n\n%v", searchUsageMsg)),
 		},
 		{
 			Name:             "given multiple argument provided when component search then throw error",
@@ -40,7 +40,7 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%v\n%v", errInvalidArg, searchUsageMsg)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%v", searchUsageMsg)),
 		},
 		{
 			Name:             "given valid name provided when component search then display matching results",
@@ -56,6 +56,22 @@ func TestSearchComponent(t *testing.T) {
 			URL:              fmt.Sprintf("/%s?search=Test&page=1&pagesize=10", componentApiPath),
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.search.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "given --model flag without search term",
+			Args:             []string{"search", "--model", "kubernetes"},
+			URL:              fmt.Sprintf("/api/meshmodels/models/kubernetes/components?page=0&pagesize=10"),
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.search.success.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "given --model flag with search term",
+			Args:             []string{"search", "pod", "--model", "kubernetes"},
+			URL:              fmt.Sprintf("/api/meshmodels/models/kubernetes/components?search=pod&page=0&pagesize=10"),
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.search.success.output.golden",
 			ExpectError:      false,
 		},
 	}
