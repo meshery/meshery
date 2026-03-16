@@ -1,0 +1,277 @@
+name: Apache ShardingSphere Operator
+version: 0.0.9
+services:
+  Generic Node:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Generic Node
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: dec414da-51a5-43b8-91b3-32e537295861
+        label: Generic Node
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"none"}}}'
+          defaultData: '{"label":""}'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 5
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: c08fd490-d4d3-4088-b1ce-aa72a7992882
+        position:
+          posX: 570
+          posY: 410
+        whiteboardData:
+          style:
+            backgroundOpacity: 0
+            visibility: hidden
+            z-index: 12
+    type: GenericNode
+    version: v1.0.0
+  Node Group Inventory Wallet:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Node Group Inventory Wallet
+    namespace: deployment
+    settings:
+      user Messages: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: aa71c8d1-89ac-430c-9ccd-09f3021211e6
+        label: Node Group Inventory Wallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":true},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"label"}}}'
+          defaultData: '{"label":""}'
+          genealogy: parent
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 1
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 6
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: c08fd490-d4d3-4088-b1ce-aa72a7992882
+        position:
+          posX: 550
+          posY: 370
+        whiteboardData:
+          style:
+            z-index: 11
+    type: NodeGroupInventoryWallet
+    version: v1.0.0
+  compute-node:
+    annotations: {}
+    apiVersion: shardingsphere.apache.org/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: apache-shardingsphere-operator-charts
+    name: compute-node
+    namespace: default
+    settings:
+      spec:
+        bootstrap:
+          server Config:
+            authority:
+              users: []
+        env: []
+        image Pull Secrets: []
+        port Bindings: []
+        probes:
+          liveness Probe:
+            exec:
+              command: []
+            http Get:
+              http Headers: []
+          readiness Probe:
+            exec:
+              command: []
+            http Get:
+              http Headers: []
+          startup Probe:
+            exec:
+              command: []
+            http Get:
+              http Headers: []
+        resources:
+          claims: []
+        selector:
+          match Expressions: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a0aadd30-cc12-4ac9-a744-ca17834f78d2
+        label: compute-node
+        meshmodel-data:
+          category:
+            metadata: null
+            name: App Definition and Development
+          displayName: Apache Shardingsphere Operator Charts
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/apache-shardingsphere-operator-charts/color/apache-shardingsphere-operator-charts-color.svg
+            svgWhite: ui/public/static/img/meshmodels/apache-shardingsphere-operator-charts/white/computenode-white.svg
+          name: apache-shardingsphere-operator-charts
+          version: 0.2.0
+        meshmodel-metadata:
+          genealogy: ""
+          logoURL: https://layer5.io/company/brand
+          model: apache-shardingsphere-operator-charts
+          modelDisplayName: Apache Shardingsphere Operator Charts
+          primaryColor: '#F26F23'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          styleOverrides:
+            z-index: 4
+          subCategory: Database
+          svgColor: ui/public/static/img/meshmodels/apache-shardingsphere-operator-charts/color/computenode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/apache-shardingsphere-operator-charts/white/computenode-white.svg
+        position:
+          posX: 390
+          posY: 310
+        whiteboardData:
+          style:
+            z-index: 3
+    type: ComputeNode
+    version: 0.2.0
+  service:
+    annotations: {}
+    apiVersion: serving.knative.dev/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: knative
+    name: service
+    namespace: "8080"
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: e59b446f-f4ba-4dba-a8b6-d2b83cc00352
+        label: service
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Serverless
+          displayName: Knative
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/knative/color/certificate-color.svg
+            svgWhite: ""
+          name: knative
+          version: 0.4.5
+        meshmodel-metadata:
+          genealogy: ""
+          logoURL: https://github.com/cncf/artwork/blob/master/examples/incubating.md#knative-logos
+          model: knative
+          modelDisplayName: Knative
+          primaryColor: '#0865ad'
+          published: true
+          secondaryColor: '#4DAAF2'
+          shape: circle
+          styleOverrides:
+            z-index: 3
+          subCategory: Installable Platform
+          svgColor: ui/public/static/img/meshmodels/knative/color/certificate-color.svg
+          svgComplete: ""
+          svgWhite: ""
+        position:
+          posX: 530
+          posY: 270
+        whiteboardData:
+          style:
+            z-index: 6
+    type: Service
+    version: 0.4.5

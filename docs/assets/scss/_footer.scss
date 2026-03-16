@@ -1,0 +1,109 @@
+html {
+  scroll-padding-bottom: var(--footer-height);
+  scroll-behavior: smooth;
+}
+.footer {
+  background: linear-gradient(to bottom,
+  #151515 5%,
+  #252525 20%,
+  #2f2f2f,
+  #303030,
+  #3d3d3d
+  );
+  display: flex;
+  flex-direction: column;
+  padding: min(2vh, 2vw);
+  gap: min(2vh, 5vw);
+
+  @media (max-width: 600px) {
+    height: calc(var(--footer-height) - 4.0rem);
+  }
+
+  @media (max: 1200px){
+    height: var(--footer-height);
+  }
+
+  & * {
+    color: white;
+  }
+
+  & .text-white {
+    color: #adb5bd;
+    font-size: 1rem;
+    text-align: center;
+
+    @media (max-width: 600px) {
+      font-size: .8rem;
+    }
+  }
+
+  & .footer-icons-list {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    @media (max-width: 600px) {
+      gap: .5rem;
+    }
+
+    & .footer-icons {
+      position: relative;
+
+      & .social__link {
+        & span {
+          position: absolute;
+          left: 50%;
+          top: 0;
+          width: max-content;
+          padding: 0.5rem 1rem;
+          background-color: #495057;
+          transform: translate(-50%, -120%);
+          border-radius: 5px;
+          opacity: 0;
+          transition: all 0.3s;
+          margin-bottom: 0.5rem;
+        }
+
+        & img,
+        svg {
+          transition: all 0.3s;
+          filter: grayscale(1) invert(0.35);
+          width: 25px;
+          height: 25px;
+
+          @media (max-width: 1200px) {
+            width: 2rem;
+            height: 2rem;
+          }
+
+          @media (max-width: 600px) {
+            width: 1.1rem;
+            height: 1.1rem;
+          }
+          &:hover {
+            filter: none;
+
+            & + span {
+              opacity: 1;
+            }
+          }
+        }
+        & img.github:hover {
+          filter: brightness(0) invert(1);
+          fill: white;
+        }
+        & svg:hover {
+          fill: #0073cf;
+        }
+        & .twitter:hover {
+          fill: #000;
+        }
+        & svg.youtube:hover {
+          fill: #FF0000;
+        }
+      }
+    }
+  }
+}
+

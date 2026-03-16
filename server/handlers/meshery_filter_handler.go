@@ -279,7 +279,9 @@ func (h *Handler) GetMesheryFiltersHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/filter/catalog FiltersAPI idGetCatalogMesheryFiltersHandler
@@ -315,7 +317,9 @@ func (h *Handler) GetCatalogMesheryFiltersHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route DELETE /api/filter/{id} FiltersAPI idDeleteMesheryFilter
@@ -345,7 +349,9 @@ func (h *Handler) DeleteMesheryFilterHandler(
 
 	go h.config.FilterChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route POST /api/filter/clone/{id} FiltersAPI idCloneMesheryFilter
@@ -381,7 +387,9 @@ func (h *Handler) CloneMesheryFilterHandler(
 
 	go h.config.FilterChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route POST /api/filter/catalog/publish FiltersAPI idPublishCatalogFilterHandler
@@ -460,7 +468,9 @@ func (h *Handler) PublishCatalogFilterHandler(
 	go h.config.FilterChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusAccepted)
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route DELETE /api/filter/catalog/unpublish FiltersAPI idUnPublishCatalogFilterHandler
@@ -537,7 +547,9 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 
 	go h.config.FilterChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/filter/{id} FiltersAPI idGetMesheryFilter
@@ -565,7 +577,9 @@ func (h *Handler) GetMesheryFilterHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse, eventBuilder *events.EventBuilder) {
@@ -588,7 +602,9 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(data))
+	if _, err := fmt.Fprint(rw, string(data)); err != nil {
+		h.log.Error(err)
+	}
 	for _, filter := range contentMesheryFilterSlice {
 		names = append(names, filter.Name)
 		if filter.ID != nil {

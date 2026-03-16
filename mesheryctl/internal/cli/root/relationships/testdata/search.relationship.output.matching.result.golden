@@ -1,5 +1,4 @@
 Total number of relationships: 1
-[H[2J
-
-KIND  API VERSION  MODEL  TYPE     SUB-TYPE  
-edge  v1.0.0       N/A    network  Mount     
+Page: 1
+ID                                    KIND  API VERSION  MODEL NAME  SUB TYPE  TYPE     
+00000000-0000-0000-0000-000000000000  edge  v1.0.0       N/A         Mount     network  

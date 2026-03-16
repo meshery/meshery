@@ -113,7 +113,11 @@ func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.
 		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			h.log.Error(err)
+		}
+	}()
 
 	// Set the content type to plain text
 	responseWriter.Header().Set("Content-Type", "text/plain")
@@ -148,7 +152,11 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			h.log.Error(err)
+		}
+	}()
 
 	fileName := filepath.Base(filePath)
 	responseWriter.Header().Set("Content-Type", "text/plain")

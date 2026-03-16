@@ -1,0 +1,24 @@
+version: 0.0.1157
+name: prometheus-and-grafana-monitoring-stack
+displayName: Prometheus and Grafana monitoring stack
+createdAt: "2025-10-03T04:47:13Z"
+description: Prometheus and Grafana monitoring stack design
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7a65270b-b5f1-4229-8abc-def9856cd06a/0.0.1157/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Prometheus and Grafana  \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9f89cfe3-9e0f-4095-a39e-f18602b0e798
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7a65270b-b5f1-4229-8abc-def9856cd06a-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7a65270b-b5f1-4229-8abc-def9856cd06a-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

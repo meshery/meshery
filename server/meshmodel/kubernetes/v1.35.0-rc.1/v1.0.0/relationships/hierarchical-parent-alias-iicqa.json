@@ -4,12 +4,12 @@
   "kind": "hierarchical",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
     "version": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "Container",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -46,7 +45,6 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
@@ -56,7 +54,8 @@
                   "containers",
                   "_"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -64,7 +63,6 @@
           {
             "id": null,
             "kind": "Deployment",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -79,7 +77,6 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
@@ -89,7 +86,8 @@
                   "containers",
                   "_"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]
