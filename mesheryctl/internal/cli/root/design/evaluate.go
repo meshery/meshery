@@ -364,7 +364,7 @@ func extractComponentInfo(item interface{}) (kind, displayName string) {
 		return "", ""
 	}
 	if comp, ok := m["component"].(map[string]interface{}); ok {
-		kind, _ = comp["kind"].(string)
+		kind = extractStringField(comp, "kind")
 	}
 	displayName, _ = m["displayName"].(string)
 	if displayName == "" {
