@@ -2,6 +2,7 @@
 title: Nocalhost
 subtitle: Collaborative and visual infrastructure as design for Nocalhost
 image: /extensions/models/nocalhost/icons/color/nocalhost-color.svg
+aliases: /extensibility/integrations/nocalhost
 docURL: https://docs.meshery.io/extensibility/integrations/nocalhost
 description: 
 integrations-category: App Definition and Development
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Integrates Nocalhost environments"
 howItWorksDetails: "Faster and more efficient development of Kubernetes applications"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/nocalhost
 ---

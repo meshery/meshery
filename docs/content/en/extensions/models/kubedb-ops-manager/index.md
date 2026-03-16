@@ -2,6 +2,7 @@
 title: Kubedb Ops Manager
 subtitle: Collaborative and visual infrastructure as design for Kubedb Ops Manager
 image: /extensions/models/kubedb-ops-manager/icons/color/kubedb-ops-manager-color.svg
+aliases: /extensibility/integrations/kubedb-ops-manager
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-ops-manager
 description: 
 integrations-category: App Definition and Development
@@ -9,8 +10,8 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: recommendation
-  colorIcon: /extensions/models/kubedb-ops-manager/components/recommendation/icons/color/recommendation-color.svg
-  whiteIcon: /extensions/models/kubedb-ops-manager/components/recommendation/icons/white/recommendation-white.svg
+  colorIcon: content/en/extensions/models/kubedb-ops-manager/components/recommendation/icons/color/recommendation-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-ops-manager/components/recommendation/icons/white/recommendation-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -23,6 +24,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/kubedb-ops-manager
 ---

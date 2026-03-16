@@ -2,6 +2,7 @@
 title: AWS MQ
 subtitle: Collaborative and visual infrastructure as design for AWS MQ
 image: /extensions/models/aws-mq-controller/icons/color/aws-mq-controller-color.svg
+aliases: /extensibility/integrations/aws-mq-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-mq-controller
 description: 
 integrations-category: App Definition and Development
@@ -9,20 +10,20 @@ integrations-subcategory: Streaming & Messaging
 registrant: GitHub
 components: 
 - name: field-export
-  colorIcon: /extensions/models/aws-mq-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: /extensions/models/aws-mq-controller/components/field-export/icons/white/field-export-white.svg
+  colorIcon: content/en/extensions/models/aws-mq-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: content/en/extensions/models/aws-mq-controller/components/field-export/icons/white/field-export-white.svg
   description: 
 - name: adopted-resource
-  colorIcon: /extensions/models/aws-mq-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: /extensions/models/aws-mq-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  colorIcon: content/en/extensions/models/aws-mq-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: content/en/extensions/models/aws-mq-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 - name: broker
-  colorIcon: /extensions/models/aws-mq-controller/components/broker/icons/color/broker-color.svg
-  whiteIcon: /extensions/models/aws-mq-controller/components/broker/icons/white/broker-white.svg
+  colorIcon: content/en/extensions/models/aws-mq-controller/components/broker/icons/color/broker-color.svg
+  whiteIcon: content/en/extensions/models/aws-mq-controller/components/broker/icons/white/broker-white.svg
   description: 
 - name: iam-role-selector
-  colorIcon: /extensions/models/aws-mq-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
-  whiteIcon: /extensions/models/aws-mq-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  colorIcon: content/en/extensions/models/aws-mq-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: content/en/extensions/models/aws-mq-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
 components-count: 4
 relationships: 
@@ -44,6 +45,4 @@ featureList: [
 howItWorks: "Integrates with AWS MQ"
 howItWorksDetails: "Simplified message brokering for Kubernetes applications on AWS"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/aws-mq-controller
 ---

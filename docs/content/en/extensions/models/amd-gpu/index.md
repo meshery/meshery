@@ -2,6 +2,7 @@
 title: AMD GPU
 subtitle: Collaborative and visual infrastructure as design for AMD GPU
 image: /extensions/models/amd-gpu/icons/color/amd-gpu-color.svg
+aliases: /extensibility/integrations/amd-gpu
 docURL: https://docs.meshery.io/extensibility/integrations/amd-gpu
 description: 
 integrations-category: Provisioning
@@ -9,16 +10,16 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: node-feature
-  colorIcon: /extensions/models/amd-gpu/components/node-feature/icons/color/node-feature-color.svg
-  whiteIcon: /extensions/models/amd-gpu/components/node-feature/icons/white/node-feature-white.svg
+  colorIcon: content/en/extensions/models/amd-gpu/components/node-feature/icons/color/node-feature-color.svg
+  whiteIcon: content/en/extensions/models/amd-gpu/components/node-feature/icons/white/node-feature-white.svg
   description: 
 - name: node-feature-rule
-  colorIcon: /extensions/models/amd-gpu/components/node-feature-rule/icons/color/node-feature-rule-color.svg
-  whiteIcon: /extensions/models/amd-gpu/components/node-feature-rule/icons/white/node-feature-rule-white.svg
+  colorIcon: content/en/extensions/models/amd-gpu/components/node-feature-rule/icons/color/node-feature-rule-color.svg
+  whiteIcon: content/en/extensions/models/amd-gpu/components/node-feature-rule/icons/white/node-feature-rule-white.svg
   description: 
 - name: node-feature-group
-  colorIcon: /extensions/models/amd-gpu/components/node-feature-group/icons/color/node-feature-group-color.svg
-  whiteIcon: /extensions/models/amd-gpu/components/node-feature-group/icons/white/node-feature-group-white.svg
+  colorIcon: content/en/extensions/models/amd-gpu/components/node-feature-group/icons/color/node-feature-group-color.svg
+  whiteIcon: content/en/extensions/models/amd-gpu/components/node-feature-group/icons/white/node-feature-group-white.svg
   description: 
 components-count: 3
 relationships: 
@@ -31,6 +32,4 @@ featureList: [
 howItWorks: "Manages AMD GPU resources"
 howItWorksDetails: "Improved performance for GPU-accelerated workloads in Kubernetes"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/amd-gpu
 ---

@@ -2,6 +2,7 @@
 title: Azure Operational Insights
 subtitle: Collaborative and visual infrastructure as design for Azure Operational Insights
 image: /extensions/models/azure-operational-insights/icons/color/azure-operational-insights-color.svg
+aliases: /extensibility/integrations/azure-operational-insights
 docURL: https://docs.meshery.io/extensibility/integrations/azure-operational-insights
 description: 
 integrations-category: Observability and Analysis
@@ -9,8 +10,8 @@ integrations-subcategory: Metrics
 registrant: GitHub
 components: 
 - name: workspace
-  colorIcon: /extensions/models/azure-operational-insights/components/workspace/icons/color/workspace-color.svg
-  whiteIcon: /extensions/models/azure-operational-insights/components/workspace/icons/white/workspace-white.svg
+  colorIcon: content/en/extensions/models/azure-operational-insights/components/workspace/icons/color/workspace-color.svg
+  whiteIcon: content/en/extensions/models/azure-operational-insights/components/workspace/icons/white/workspace-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -23,6 +24,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/azure-operational-insights
 ---

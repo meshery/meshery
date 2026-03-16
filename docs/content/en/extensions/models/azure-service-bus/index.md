@@ -2,6 +2,7 @@
 title: Azure Service Bus
 subtitle: Collaborative and visual infrastructure as design for Azure Service Bus
 image: /extensions/models/azure-service-bus/icons/color/azure-service-bus-color.svg
+aliases: /extensibility/integrations/azure-service-bus
 docURL: https://docs.meshery.io/extensibility/integrations/azure-service-bus
 description: 
 integrations-category: Observability and Analysis
@@ -9,32 +10,32 @@ integrations-subcategory: Streaming & Messaging
 registrant: GitHub
 components: 
 - name: namespace
-  colorIcon: /extensions/models/azure-service-bus/components/namespace/icons/color/namespace-color.svg
-  whiteIcon: /extensions/models/azure-service-bus/components/namespace/icons/white/namespace-white.svg
+  colorIcon: content/en/extensions/models/azure-service-bus/components/namespace/icons/color/namespace-color.svg
+  whiteIcon: content/en/extensions/models/azure-service-bus/components/namespace/icons/white/namespace-white.svg
   description: 
 - name: namespaces-authorization-rule
-  colorIcon: /extensions/models/azure-service-bus/components/namespaces-authorization-rule/icons/color/namespaces-authorization-rule-color.svg
-  whiteIcon: /extensions/models/azure-service-bus/components/namespaces-authorization-rule/icons/white/namespaces-authorization-rule-white.svg
+  colorIcon: content/en/extensions/models/azure-service-bus/components/namespaces-authorization-rule/icons/color/namespaces-authorization-rule-color.svg
+  whiteIcon: content/en/extensions/models/azure-service-bus/components/namespaces-authorization-rule/icons/white/namespaces-authorization-rule-white.svg
   description: 
 - name: namespaces-queue
-  colorIcon: /extensions/models/azure-service-bus/components/namespaces-queue/icons/color/namespaces-queue-color.svg
-  whiteIcon: /extensions/models/azure-service-bus/components/namespaces-queue/icons/white/namespaces-queue-white.svg
+  colorIcon: content/en/extensions/models/azure-service-bus/components/namespaces-queue/icons/color/namespaces-queue-color.svg
+  whiteIcon: content/en/extensions/models/azure-service-bus/components/namespaces-queue/icons/white/namespaces-queue-white.svg
   description: 
 - name: namespaces-topic
-  colorIcon: /extensions/models/azure-service-bus/components/namespaces-topic/icons/color/namespaces-topic-color.svg
-  whiteIcon: /extensions/models/azure-service-bus/components/namespaces-topic/icons/white/namespaces-topic-white.svg
+  colorIcon: content/en/extensions/models/azure-service-bus/components/namespaces-topic/icons/color/namespaces-topic-color.svg
+  whiteIcon: content/en/extensions/models/azure-service-bus/components/namespaces-topic/icons/white/namespaces-topic-white.svg
   description: 
 - name: namespaces-topics-subscription
-  colorIcon: /extensions/models/azure-service-bus/components/namespaces-topics-subscription/icons/color/namespaces-topics-subscription-color.svg
-  whiteIcon: /extensions/models/azure-service-bus/components/namespaces-topics-subscription/icons/white/namespaces-topics-subscription-white.svg
+  colorIcon: content/en/extensions/models/azure-service-bus/components/namespaces-topics-subscription/icons/color/namespaces-topics-subscription-color.svg
+  whiteIcon: content/en/extensions/models/azure-service-bus/components/namespaces-topics-subscription/icons/white/namespaces-topics-subscription-white.svg
   description: 
 - name: namespaces-topics-subscriptions-rule
-  colorIcon: /extensions/models/azure-service-bus/components/namespaces-topics-subscriptions-rule/icons/color/namespaces-topics-subscriptions-rule-color.svg
-  whiteIcon: /extensions/models/azure-service-bus/components/namespaces-topics-subscriptions-rule/icons/white/namespaces-topics-subscriptions-rule-white.svg
+  colorIcon: content/en/extensions/models/azure-service-bus/components/namespaces-topics-subscriptions-rule/icons/color/namespaces-topics-subscriptions-rule-color.svg
+  whiteIcon: content/en/extensions/models/azure-service-bus/components/namespaces-topics-subscriptions-rule/icons/white/namespaces-topics-subscriptions-rule-white.svg
   description: 
 - name: topic-authorization-rule
-  colorIcon: /extensions/models/azure-service-bus/components/topic-authorization-rule/icons/color/topic-authorization-rule-color.svg
-  whiteIcon: /extensions/models/azure-service-bus/components/topic-authorization-rule/icons/white/topic-authorization-rule-white.svg
+  colorIcon: content/en/extensions/models/azure-service-bus/components/topic-authorization-rule/icons/color/topic-authorization-rule-color.svg
+  whiteIcon: content/en/extensions/models/azure-service-bus/components/topic-authorization-rule/icons/white/topic-authorization-rule-white.svg
   description: 
 components-count: 7
 relationships: 
@@ -65,6 +66,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/azure-service-bus
 ---

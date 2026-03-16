@@ -2,6 +2,7 @@
 title: Solr Operator
 subtitle: Collaborative and visual infrastructure as design for Solr Operator
 image: /extensions/models/solr-operator/icons/color/solr-operator-color.svg
+aliases: /extensibility/integrations/solr-operator
 docURL: https://docs.meshery.io/extensibility/integrations/solr-operator
 description: 
 integrations-category: Analytics
@@ -9,16 +10,16 @@ integrations-subcategory: Query
 registrant: Artifact Hub
 components: 
 - name: solr-backup
-  colorIcon: /extensions/models/solr-operator/components/solr-backup/icons/color/solr-backup-color.svg
-  whiteIcon: /extensions/models/solr-operator/components/solr-backup/icons/white/solr-backup-white.svg
+  colorIcon: content/en/extensions/models/solr-operator/components/solr-backup/icons/color/solr-backup-color.svg
+  whiteIcon: content/en/extensions/models/solr-operator/components/solr-backup/icons/white/solr-backup-white.svg
   description: 
 - name: solr-cloud
-  colorIcon: /extensions/models/solr-operator/components/solr-cloud/icons/color/solr-cloud-color.svg
-  whiteIcon: /extensions/models/solr-operator/components/solr-cloud/icons/white/solr-cloud-white.svg
+  colorIcon: content/en/extensions/models/solr-operator/components/solr-cloud/icons/color/solr-cloud-color.svg
+  whiteIcon: content/en/extensions/models/solr-operator/components/solr-cloud/icons/white/solr-cloud-white.svg
   description: 
 - name: solr-prometheus-exporter
-  colorIcon: /extensions/models/solr-operator/components/solr-prometheus-exporter/icons/color/solr-prometheus-exporter-color.svg
-  whiteIcon: /extensions/models/solr-operator/components/solr-prometheus-exporter/icons/white/solr-prometheus-exporter-white.svg
+  colorIcon: content/en/extensions/models/solr-operator/components/solr-prometheus-exporter/icons/color/solr-prometheus-exporter-color.svg
+  whiteIcon: content/en/extensions/models/solr-operator/components/solr-prometheus-exporter/icons/white/solr-prometheus-exporter-white.svg
   description: 
 components-count: 3
 relationships: 
@@ -31,6 +32,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/solr-operator
 ---

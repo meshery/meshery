@@ -2,6 +2,7 @@
 title: cdk8s For Kubernetes
 subtitle: Collaborative and visual infrastructure as design for cdk8s For Kubernetes
 image: /extensions/models/cdk8s/icons/color/cdk8s-color.svg
+aliases: /extensibility/integrations/cdk8s
 docURL: https://docs.meshery.io/extensibility/integrations/cdk8s
 description: 
 integrations-category: App Definition and Development
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Deploy through GitOps"
 howItWorksDetails: "cdk8s is an open-source software development framework for defining Kubernetes applications and reusable abstractions using familiar programming languages and rich object-oriented APIs. cdk8s apps synthesize into standard Kubernetes manifests which can be applied to any Kubernetes cluster."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/cdk8s
 ---

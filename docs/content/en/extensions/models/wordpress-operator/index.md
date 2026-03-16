@@ -2,6 +2,7 @@
 title: Wordpress Operator
 subtitle: Collaborative and visual infrastructure as design for Wordpress Operator
 image: /extensions/models/wordpress-operator/icons/color/wordpress-operator-color.svg
+aliases: /extensibility/integrations/wordpress-operator
 docURL: https://docs.meshery.io/extensibility/integrations/wordpress-operator
 description: 
 integrations-category: Tools
@@ -9,8 +10,8 @@ integrations-subcategory: Installable Platform
 registrant: Artifact Hub
 components: 
 - name: wordpress
-  colorIcon: /extensions/models/wordpress-operator/components/wordpress/icons/color/wordpress-color.svg
-  whiteIcon: /extensions/models/wordpress-operator/components/wordpress/icons/white/wordpress-white.svg
+  colorIcon: content/en/extensions/models/wordpress-operator/components/wordpress/icons/color/wordpress-color.svg
+  whiteIcon: content/en/extensions/models/wordpress-operator/components/wordpress/icons/white/wordpress-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -23,6 +24,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/wordpress-operator
 ---

@@ -2,6 +2,7 @@
 title: AWS EventBridge
 subtitle: Collaborative and visual infrastructure as design for AWS EventBridge
 image: /extensions/models/aws-eventbridge-controller/icons/color/aws-eventbridge-controller-color.svg
+aliases: /extensibility/integrations/aws-eventbridge-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-eventbridge-controller
 description: 
 integrations-category: App Definition and Development
@@ -9,32 +10,32 @@ integrations-subcategory: Streaming & Messaging
 registrant: GitHub
 components: 
 - name: archive
-  colorIcon: /extensions/models/aws-eventbridge-controller/components/archive/icons/color/archive-color.svg
-  whiteIcon: /extensions/models/aws-eventbridge-controller/components/archive/icons/white/archive-white.svg
+  colorIcon: content/en/extensions/models/aws-eventbridge-controller/components/archive/icons/color/archive-color.svg
+  whiteIcon: content/en/extensions/models/aws-eventbridge-controller/components/archive/icons/white/archive-white.svg
   description: 
 - name: endpoint
-  colorIcon: /extensions/models/aws-eventbridge-controller/components/endpoint/icons/color/endpoint-color.svg
-  whiteIcon: /extensions/models/aws-eventbridge-controller/components/endpoint/icons/white/endpoint-white.svg
+  colorIcon: content/en/extensions/models/aws-eventbridge-controller/components/endpoint/icons/color/endpoint-color.svg
+  whiteIcon: content/en/extensions/models/aws-eventbridge-controller/components/endpoint/icons/white/endpoint-white.svg
   description: 
 - name: event-bus
-  colorIcon: /extensions/models/aws-eventbridge-controller/components/event-bus/icons/color/event-bus-color.svg
-  whiteIcon: /extensions/models/aws-eventbridge-controller/components/event-bus/icons/white/event-bus-white.svg
+  colorIcon: content/en/extensions/models/aws-eventbridge-controller/components/event-bus/icons/color/event-bus-color.svg
+  whiteIcon: content/en/extensions/models/aws-eventbridge-controller/components/event-bus/icons/white/event-bus-white.svg
   description: 
 - name: field-export
-  colorIcon: /extensions/models/aws-eventbridge-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: /extensions/models/aws-eventbridge-controller/components/field-export/icons/white/field-export-white.svg
+  colorIcon: content/en/extensions/models/aws-eventbridge-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: content/en/extensions/models/aws-eventbridge-controller/components/field-export/icons/white/field-export-white.svg
   description: 
 - name: rule
-  colorIcon: /extensions/models/aws-eventbridge-controller/components/rule/icons/color/rule-color.svg
-  whiteIcon: /extensions/models/aws-eventbridge-controller/components/rule/icons/white/rule-white.svg
+  colorIcon: content/en/extensions/models/aws-eventbridge-controller/components/rule/icons/color/rule-color.svg
+  whiteIcon: content/en/extensions/models/aws-eventbridge-controller/components/rule/icons/white/rule-white.svg
   description: 
 - name: adopted-resource
-  colorIcon: /extensions/models/aws-eventbridge-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: /extensions/models/aws-eventbridge-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  colorIcon: content/en/extensions/models/aws-eventbridge-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: content/en/extensions/models/aws-eventbridge-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 - name: iam-role-selector
-  colorIcon: /extensions/models/aws-eventbridge-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
-  whiteIcon: /extensions/models/aws-eventbridge-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  colorIcon: content/en/extensions/models/aws-eventbridge-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: content/en/extensions/models/aws-eventbridge-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
 components-count: 7
 relationships: 
@@ -56,6 +57,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/aws-eventbridge-controller
 ---

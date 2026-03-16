@@ -2,6 +2,7 @@
 title: Kubedb Opscenter
 subtitle: Collaborative and visual infrastructure as design for Kubedb Opscenter
 image: /extensions/models/kubedb-opscenter/icons/color/kubedb-opscenter-color.svg
+aliases: /extensibility/integrations/kubedb-opscenter
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-opscenter
 description: 
 integrations-category: App Definition and Development
@@ -9,100 +10,100 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: elasticsearch
-  colorIcon: /extensions/models/kubedb-opscenter/components/elasticsearch/icons/color/elasticsearch-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/elasticsearch/icons/white/elasticsearch-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/elasticsearch/icons/color/elasticsearch-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/elasticsearch/icons/white/elasticsearch-white.svg
   description: 
 - name: etcd
-  colorIcon: /extensions/models/kubedb-opscenter/components/etcd/icons/color/etcd-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/etcd/icons/white/etcd-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/etcd/icons/color/etcd-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/etcd/icons/white/etcd-white.svg
   description: 
 - name: kafka
-  colorIcon: /extensions/models/kubedb-opscenter/components/kafka/icons/color/kafka-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/kafka/icons/white/kafka-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/kafka/icons/color/kafka-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/kafka/icons/white/kafka-white.svg
   description: 
 - name: maria-db
-  colorIcon: /extensions/models/kubedb-opscenter/components/maria-db/icons/color/maria-db-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/maria-db/icons/white/maria-db-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/maria-db/icons/color/maria-db-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/maria-db/icons/white/maria-db-white.svg
   description: 
 - name: memcached
-  colorIcon: /extensions/models/kubedb-opscenter/components/memcached/icons/color/memcached-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/memcached/icons/white/memcached-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/memcached/icons/color/memcached-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/memcached/icons/white/memcached-white.svg
   description: 
 - name: mongo-db
-  colorIcon: /extensions/models/kubedb-opscenter/components/mongo-db/icons/color/mongo-db-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/mongo-db/icons/white/mongo-db-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/mongo-db/icons/color/mongo-db-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/mongo-db/icons/white/mongo-db-white.svg
   description: 
 - name: my-sql
-  colorIcon: /extensions/models/kubedb-opscenter/components/my-sql/icons/color/my-sql-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/my-sql/icons/white/my-sql-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/my-sql/icons/color/my-sql-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/my-sql/icons/white/my-sql-white.svg
   description: 
 - name: percona-xtra-db
-  colorIcon: /extensions/models/kubedb-opscenter/components/percona-xtra-db/icons/color/percona-xtra-db-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/percona-xtra-db/icons/white/percona-xtra-db-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/percona-xtra-db/icons/color/percona-xtra-db-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/percona-xtra-db/icons/white/percona-xtra-db-white.svg
   description: 
 - name: pg-bouncer
-  colorIcon: /extensions/models/kubedb-opscenter/components/pg-bouncer/icons/color/pg-bouncer-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/pg-bouncer/icons/white/pg-bouncer-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/pg-bouncer/icons/color/pg-bouncer-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/pg-bouncer/icons/white/pg-bouncer-white.svg
   description: 
 - name: postgres
-  colorIcon: /extensions/models/kubedb-opscenter/components/postgres/icons/color/postgres-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/postgres/icons/white/postgres-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/postgres/icons/color/postgres-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/postgres/icons/white/postgres-white.svg
   description: 
 - name: proxy-sql
-  colorIcon: /extensions/models/kubedb-opscenter/components/proxy-sql/icons/color/proxy-sql-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/proxy-sql/icons/white/proxy-sql-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/proxy-sql/icons/color/proxy-sql-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/proxy-sql/icons/white/proxy-sql-white.svg
   description: 
 - name: redis
-  colorIcon: /extensions/models/kubedb-opscenter/components/redis/icons/color/redis-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/redis/icons/white/redis-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/redis/icons/color/redis-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/redis/icons/white/redis-white.svg
   description: 
 - name: redis-sentinel
-  colorIcon: /extensions/models/kubedb-opscenter/components/redis-sentinel/icons/color/redis-sentinel-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/redis-sentinel/icons/white/redis-sentinel-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/redis-sentinel/icons/color/redis-sentinel-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/redis-sentinel/icons/white/redis-sentinel-white.svg
   description: 
 - name: click-house
-  colorIcon: /extensions/models/kubedb-opscenter/components/click-house/icons/color/click-house-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/click-house/icons/white/click-house-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/click-house/icons/color/click-house-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/click-house/icons/white/click-house-white.svg
   description: 
 - name: druid
-  colorIcon: /extensions/models/kubedb-opscenter/components/druid/icons/color/druid-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/druid/icons/white/druid-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/druid/icons/color/druid-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/druid/icons/white/druid-white.svg
   description: 
 - name: ferret-db
-  colorIcon: /extensions/models/kubedb-opscenter/components/ferret-db/icons/color/ferret-db-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/ferret-db/icons/white/ferret-db-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/ferret-db/icons/color/ferret-db-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/ferret-db/icons/white/ferret-db-white.svg
   description: 
 - name: mssql-server
-  colorIcon: /extensions/models/kubedb-opscenter/components/mssql-server/icons/color/mssql-server-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/mssql-server/icons/white/mssql-server-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/mssql-server/icons/color/mssql-server-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/mssql-server/icons/white/mssql-server-white.svg
   description: 
 - name: pgpool
-  colorIcon: /extensions/models/kubedb-opscenter/components/pgpool/icons/color/pgpool-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/pgpool/icons/white/pgpool-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/pgpool/icons/color/pgpool-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/pgpool/icons/white/pgpool-white.svg
   description: 
 - name: rabbit-mq
-  colorIcon: /extensions/models/kubedb-opscenter/components/rabbit-mq/icons/color/rabbit-mq-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/rabbit-mq/icons/white/rabbit-mq-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/rabbit-mq/icons/color/rabbit-mq-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/rabbit-mq/icons/white/rabbit-mq-white.svg
   description: 
 - name: singlestore
-  colorIcon: /extensions/models/kubedb-opscenter/components/singlestore/icons/color/singlestore-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/singlestore/icons/white/singlestore-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/singlestore/icons/color/singlestore-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/singlestore/icons/white/singlestore-white.svg
   description: 
 - name: solr
-  colorIcon: /extensions/models/kubedb-opscenter/components/solr/icons/color/solr-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/solr/icons/white/solr-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/solr/icons/color/solr-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/solr/icons/white/solr-white.svg
   description: 
 - name: zoo-keeper
-  colorIcon: /extensions/models/kubedb-opscenter/components/zoo-keeper/icons/color/zoo-keeper-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/zoo-keeper/icons/white/zoo-keeper-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/zoo-keeper/icons/color/zoo-keeper-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/zoo-keeper/icons/white/zoo-keeper-white.svg
   description: 
 - name: grafana-dashboard
-  colorIcon: /extensions/models/kubedb-opscenter/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg
   description: 
 - name: metrics-configuration
-  colorIcon: /extensions/models/kubedb-opscenter/components/metrics-configuration/icons/color/metrics-configuration-color.svg
-  whiteIcon: /extensions/models/kubedb-opscenter/components/metrics-configuration/icons/white/metrics-configuration-white.svg
+  colorIcon: content/en/extensions/models/kubedb-opscenter/components/metrics-configuration/icons/color/metrics-configuration-color.svg
+  whiteIcon: content/en/extensions/models/kubedb-opscenter/components/metrics-configuration/icons/white/metrics-configuration-white.svg
   description: 
 components-count: 24
 relationships: 
@@ -115,6 +116,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/kubedb-opscenter
 ---

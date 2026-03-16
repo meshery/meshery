@@ -2,6 +2,7 @@
 title: Azure Kubernetes Service
 subtitle: Collaborative and visual infrastructure as design for Azure Kubernetes Service
 image: /extensions/models/azure-kubernetes-service/icons/color/azure-kubernetes-service-color.svg
+aliases: /extensibility/integrations/azure-kubernetes-service
 docURL: https://docs.meshery.io/extensibility/integrations/Azure Kubernetes Service
 description: 
 integrations-category: Orchestration & Management
@@ -9,20 +10,20 @@ integrations-subcategory: Scheduling & Orchestration
 registrant: Artifact Hub
 components: 
 - name: azure-application-gateway-rewrite
-  colorIcon: /extensions/models/azure-kubernetes-service/components/azure-application-gateway-rewrite/icons/color/azure-application-gateway-rewrite-color.svg
-  whiteIcon: /extensions/models/azure-kubernetes-service/components/azure-application-gateway-rewrite/icons/white/azure-application-gateway-rewrite-white.svg
+  colorIcon: content/en/extensions/models/azure-kubernetes-service/components/azure-application-gateway-rewrite/icons/color/azure-application-gateway-rewrite-color.svg
+  whiteIcon: content/en/extensions/models/azure-kubernetes-service/components/azure-application-gateway-rewrite/icons/white/azure-application-gateway-rewrite-white.svg
   description: 
 - name: azure-ingress-prohibited-target
-  colorIcon: /extensions/models/azure-kubernetes-service/components/azure-ingress-prohibited-target/icons/color/azure-ingress-prohibited-target-color.svg
-  whiteIcon: /extensions/models/azure-kubernetes-service/components/azure-ingress-prohibited-target/icons/white/azure-ingress-prohibited-target-white.svg
+  colorIcon: content/en/extensions/models/azure-kubernetes-service/components/azure-ingress-prohibited-target/icons/color/azure-ingress-prohibited-target-color.svg
+  whiteIcon: content/en/extensions/models/azure-kubernetes-service/components/azure-ingress-prohibited-target/icons/white/azure-ingress-prohibited-target-white.svg
   description: 
 - name: azure-application-gateway-rewrite
-  colorIcon: /extensions/models/azure-kubernetes-service/components/azure-application-gateway-rewrite/icons/color/azure-application-gateway-rewrite-color.svg
-  whiteIcon: /extensions/models/azure-kubernetes-service/components/azure-application-gateway-rewrite/icons/white/azure-application-gateway-rewrite-white.svg
+  colorIcon: content/en/extensions/models/azure-kubernetes-service/components/azure-application-gateway-rewrite/icons/color/azure-application-gateway-rewrite-color.svg
+  whiteIcon: content/en/extensions/models/azure-kubernetes-service/components/azure-application-gateway-rewrite/icons/white/azure-application-gateway-rewrite-white.svg
   description: 
 - name: azure-ingress-prohibited-target
-  colorIcon: /extensions/models/azure-kubernetes-service/components/azure-ingress-prohibited-target/icons/color/azure-ingress-prohibited-target-color.svg
-  whiteIcon: /extensions/models/azure-kubernetes-service/components/azure-ingress-prohibited-target/icons/white/azure-ingress-prohibited-target-white.svg
+  colorIcon: content/en/extensions/models/azure-kubernetes-service/components/azure-ingress-prohibited-target/icons/color/azure-ingress-prohibited-target-color.svg
+  whiteIcon: content/en/extensions/models/azure-kubernetes-service/components/azure-ingress-prohibited-target/icons/white/azure-ingress-prohibited-target-white.svg
   description: 
 components-count: 4
 relationships: 
@@ -35,6 +36,4 @@ featureList: [
 howItWorks: "Manages AKS clusters"
 howItWorksDetails: "Easy and scalable Kubernetes management on Azure"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/azure-kubernetes-service
 ---
