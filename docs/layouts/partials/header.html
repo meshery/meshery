@@ -9,7 +9,7 @@
 
 <header>
   <nav class="js-navbar-scroll navbar">
-    <a class="navbar-brand" href="{{ .Site.BaseURL }}{{ $linkUrlSelected }}">
+    <a class="navbar-brand" href="{{ .Site.BaseURL }}{{ strings.TrimPrefix "/" $linkUrlSelected }}">
       <div class="navbar-logo">
         {{ partial "svg/meshery-docs.html" . }}
       </div>
@@ -55,7 +55,7 @@
 
             <option
               {{ $selected }}
-              value="{{ $.Site.BaseURL }}{{ .url }}/"
+              value="{{ if .url }}{{ $.Site.BaseURL }}{{ .url }}/{{ else }}{{ $.Site.BaseURL }}{{ end }}"
               class="nav-item mr-4 mb-2 text-black">
               {{ .version }}
             </option>
