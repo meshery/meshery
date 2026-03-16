@@ -348,8 +348,7 @@ func printGenericAction(action pattern.Action) {
 
 // extractID returns the "id" string from an action's Value map.
 func extractID(value map[string]interface{}) string {
-	id, _ := value["id"].(string)
-	return id
+	return extractStringField(value, "id")
 }
 
 // extractStringField returns a named string field from the value map.
