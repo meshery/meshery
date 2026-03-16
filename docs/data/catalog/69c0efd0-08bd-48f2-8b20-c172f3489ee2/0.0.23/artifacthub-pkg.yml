@@ -1,0 +1,24 @@
+version: 0.0.23
+name: edge-annotation-relationship
+displayName: Edge-Annotation-relationship
+createdAt: "2024-09-27T14:43:57Z"
+description: Annotation Relationships refer to a visual representation used to indicate a relationship between two components without assigning any semantic meaning to that relationship. In this context, the relationship is depicted simply using an arrow to connect the components, signifying that they are related in some way, but not specifying the nature or significance of that relationship.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/69c0efd0-08bd-48f2-8b20-c172f3489ee2/0.0.23/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Ensure that the use of annotations clearly conveys the intended relationships between components. While annotations don’t have semantic meaning, their placement and direction should help viewers understand the context of the connection.\n\n2. Consider providing accompanying documentation or a legend that explains the purpose of the annotations. This helps viewers understand why certain components are annotated and what the relationships represent, even if they lack specific semantics. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/69c0efd0-08bd-48f2-8b20-c172f3489ee2-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/69c0efd0-08bd-48f2-8b20-c172f3489ee2-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

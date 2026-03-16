@@ -1,0 +1,55 @@
+.toc-pagination-wrapper {
+  display: flex;
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.toc-card {
+  border: 1px solid #7a848e;
+  border-radius: 0.4rem;
+  display: block;
+  height: 100%;
+  width: 100%;
+  line-height: 1.25;
+  padding: 1rem;
+  background: transparent;
+  text-decoration: none;
+  transition: border-color 200ms cubic-bezier(.08,.52,.52,1);
+
+  &:hover {
+    border-color: var(--brand-color-secondary);
+  }
+}
+
+.toc-label {
+  color: var(--color-white);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.toc-title {
+  color: var(--brand-color-secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  .fa-chevron-right::before, .fa-chevron-left::before {
+    color: var(--brand-color-secondary);
+    font-size: 1rem;
+  }
+  &:hover {
+    .fa-chevron-right::before, .fa-chevron-left::before {
+        color: var(--color-white);
+    }
+    color: var(--color-white);
+  }
+}
+
+.toc-card.next {
+  text-align: right;
+
+  .toc-title {
+    justify-content: flex-end;
+  }
+}

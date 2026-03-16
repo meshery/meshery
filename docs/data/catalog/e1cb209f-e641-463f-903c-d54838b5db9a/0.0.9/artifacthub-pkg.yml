@@ -1,0 +1,24 @@
+version: 0.0.9
+name: test-kkk-team
+displayName: test-kkk team
+createdAt: "2025-03-26T09:10:56Z"
+description: test
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e1cb209f-e641-463f-903c-d54838b5db9a/0.0.9/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "test \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 770db993-c2bb-4f9a-8539-978bc990bbcc
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e1cb209f-e641-463f-903c-d54838b5db9a-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e1cb209f-e641-463f-903c-d54838b5db9a-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

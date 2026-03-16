@@ -1,0 +1,29 @@
+version: 0.0.1
+name: run-daemonset-on-gke-autopilot
+displayName: Run DaemonSet on GKE Autopilot
+createdAt: "2024-03-07T06:12:21Z"
+description: |-
+    GKE uses the total size of your deployed workloads to determine the size of the nodes that Autopilot provisions for the cluster. If you add or resize a DaemonSet after Autopilot provisions a node, GKE won't resize existing nodes to accommodate the new total workload size. DaemonSets with resource requests larger than the allocatable capacity of existing nodes, after accounting for system pods, also won't get scheduled on those nodes.
+
+    Starting in GKE version 1.27.6-gke.1248000, clusters in Autopilot mode detect nodes that can't fit all DaemonSets and, over time, migrate workloads to larger nodes that can fit all DaemonSets. This process takes some time, especially if the nodes run system Pods, which need extra time to gracefully terminate so that there's no disruption to core cluster capabilities.
+
+    In GKE version 1.27.5-gke.200 or earlier, we recommend cordoning and draining nodes that can't accommodate DaemonSet Pods.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/0aa86dd0-415c-4bf8-ae76-832560470b74/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "For all GKE versions, we recommend the following best practices when deploying DaemonSets on Autopilot:\n\nDeploy DaemonSets before any other workloads.\nSet a higher PriorityClass on DaemonSets than regular Pods. The higher PriorityClass lets GKE evict lower-priority Pods to accommodate DaemonSet pods if the node can accommodate those pods. This helps to ensure that the DaemonSet is present on each node without triggering node recreation.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 62b081a5-1273-4c58-807f-b6be539275d0
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/0aa86dd0-415c-4bf8-ae76-832560470b74-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/0aa86dd0-415c-4bf8-ae76-832560470b74-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

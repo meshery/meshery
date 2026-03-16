@@ -32,3 +32,12 @@ docs
 
 # Include only the catalog folder in the docs directory
 !docs/catalog
+
+# Docs
+docs-new/*
+
+# Include only the catalog folder in the docs/data directory
+!docs-new/data/
+docs-new/data/*
+!docs-new/data/catalog/
+!docs-new/data/catalog/**
