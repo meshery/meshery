@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 15th 2026, 11:33:54 pm
+- Testing started at: March 16th 2026, 5:46:23 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 5 skipped
 
-⌛ _Duration: 5 minutes and 8 seconds_
+⌛ _Duration: 5 minutes and 4 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -175,20 +175,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Verify Meshery Adapter for Istio Section (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
 <summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
@@ -208,6 +194,20 @@ The following tests failed. Click on each to see the failure reason:
  [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
  [90m 10 |[39m     })[33m;[39m[0m
 ```
+
+</details>
+
+<details>
+<summary>❌ Verify Meshery Adapter for Istio Section (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
 
 </details>
 
