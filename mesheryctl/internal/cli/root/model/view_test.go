@@ -20,6 +20,7 @@ func TestViewModel(t *testing.T) {
 	}
 
 	const modelName = "model-test-0"
+	const nonExistentModelName = "non-existent-model"
 	const modelId = "00000000-0000-0000-0000-000000000000"
 
 	currDir := filepath.Dir(filename)
@@ -56,6 +57,17 @@ func TestViewModel(t *testing.T) {
 			HttpStatusCode:   200,
 			Fixture:          "list.model.api.response.golden",
 			ExpectedResponse: "view.model.output.golden",
+			ExpectError:      false,
+			IsOutputGolden:   true,
+		},
+		{
+			Name:             "given a non-existent model-name when model view then display not found message",
+			Args:             []string{"view", nonExistentModelName},
+			URL:              fmt.Sprintf("/api/meshmodels/models?page=0&pagesize=10&search=%s", url.QueryEscape(nonExistentModelName)),
+			HttpMethod:       "GET",
+			HttpStatusCode:   404,
+			Fixture:          "list.model.api.response.golden",
+			ExpectedResponse: "view.model.empty.output.golden",
 			ExpectError:      false,
 			IsOutputGolden:   true,
 		},
