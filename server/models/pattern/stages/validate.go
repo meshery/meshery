@@ -1,14 +1,13 @@
 package stages
 
 import (
-	"context"
-	"encoding/json"
+	"bytes"
 	"fmt"
 
 	"github.com/meshery/meshery/server/models/pattern/core"
-	"github.com/meshery/meshery/server/models/pattern/jsonschema"
 	"github.com/meshery/meshery/server/models/pattern/resource/selector"
 	"github.com/meshery/schemas/models/v1beta1/component"
+	jsonschema "github.com/santhosh-tekuri/jsonschema/v6"
 
 	"gopkg.in/yaml.v2"
 )
@@ -112,26 +111,26 @@ func validateWorkload(comp map[string]interface{}, wc component.ComponentDefinit
 	if wc.Component.Schema == "" && isAnnotation {
 		return nil
 	}
-	schemaByt := []byte(wc.Component.Schema)
-	// Create schema validator from the schema
-	rs := jsonschema.GlobalJSONSchema()
-	if err := json.Unmarshal(schemaByt, rs); err != nil {
-		return fmt.Errorf("failed to create schema: %s", err)
+
+	// Parse the schema document
+	schemaDoc, err := jsonschema.UnmarshalJSON(bytes.NewReader([]byte(wc.Component.Schema)))
+	if err != nil {
+		return fmt.Errorf("failed to parse schema: %s", err)
 	}
 
-	// Create json settings
-	jsonSettings, err := json.Marshal(comp)
+	// Compile the schema
+	c := jsonschema.NewCompiler()
+	if err := c.AddResource("schema.json", schemaDoc); err != nil {
+		return fmt.Errorf("failed to add schema resource: %s", err)
+	}
+	sch, err := c.Compile("schema.json")
 	if err != nil {
-		return fmt.Errorf("failed to generate schema from the PatternFile settings: %s", err)
+		return fmt.Errorf("failed to compile schema: %s", err)
 	}
 
-	// Validate the json against the schema
-	errs, err := rs.ValidateBytes(context.TODO(), jsonSettings)
-	if err != nil {
-		return fmt.Errorf("error occurred during schema validation: %s", err)
-	}
-	if len(errs) > 0 {
-		return fmt.Errorf("invalid settings: %s", errs)
+	// Validate the component configuration against the schema
+	if err := sch.Validate(comp); err != nil {
+		return fmt.Errorf("invalid settings: %s", err)
 	}
 
 	return nil

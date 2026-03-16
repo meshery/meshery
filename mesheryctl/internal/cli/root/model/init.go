@@ -1,17 +1,20 @@
 package model
 
 import (
-	"errors"
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas"
+	jsonschema "github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/spf13/cobra"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 	"gopkg.in/yaml.v3"
 )
 
@@ -302,66 +305,86 @@ func initModelReplacePlaceholders(input string, replacements map[string]string) 
 	return input
 }
 
-// TODO move it to more general package
 func initModelValidateDataOverSchema(schema []byte, data map[string]interface{}) error {
-	// version with full schema validation, like gojsonschema.Validate(schemaLoader, dataLoader),  is not working now,
-	// probably because of the external references and relative paths in schema
-	// it returns
-	// Error: Could not read schema from HTTP, response status is 404 Not Found
-	// --
-	// as we need only to validate the model name
-	// below we extract pattern for name property from schema json and validate manually string over pattern.
-	// TODO figure out how to do a proper validation over schema.
+	// Parse the YAML schema to extract per-property sub-schemas
+	var schemaMap map[string]interface{}
+	if err := yaml.Unmarshal(schema, &schemaMap); err != nil {
+		return fmt.Errorf("failed to parse schema YAML: %s", err)
+	}
 
-	validationErrors := []string{}
+	properties, _ := schemaMap["properties"].(map[string]interface{})
+	if properties == nil {
+		return nil
+	}
+
+	c := jsonschema.NewCompiler()
+
+	var validationErrors []string
 	for property, value := range data {
-		stringValue, ok := (value).(string)
+		propSchema, ok := properties[property].(map[string]interface{})
 		if !ok {
 			continue
 		}
-		pattern, _ := initModelGetPatternFromSchema(schema, property)
-		if pattern == "" {
-			// skip if not possible to extract pattern
+
+		// Build a minimal JSON Schema for this single property, excluding $ref
+		// to avoid unresolvable external references.
+		minimalSchema := make(map[string]interface{})
+		for k, v := range propSchema {
+			if k == "$ref" {
+				continue
+			}
+			minimalSchema[k] = v
+		}
+
+		schemaJSON, err := json.Marshal(minimalSchema)
+		if err != nil {
 			continue
 		}
 
-		re, err := regexp.Compile(pattern)
+		resourceName := property + ".json"
+		schemaDoc, err := jsonschema.UnmarshalJSON(bytes.NewReader(schemaJSON))
 		if err != nil {
-			// skip on invalid regexp
 			continue
 		}
-		if !re.MatchString(stringValue) {
-			validationErrors = append(
-				validationErrors,
-				fmt.Sprintf("%s must match pattern %s", property, pattern),
-			)
+		if err := c.AddResource(resourceName, schemaDoc); err != nil {
+			continue
+		}
+		sch, err := c.Compile(resourceName)
+		if err != nil {
+			continue
+		}
+
+		if err := sch.Validate(value); err != nil {
+			validationErr, ok := err.(*jsonschema.ValidationError)
+			if ok {
+				msgs := collectValidationErrors(validationErr)
+				for _, msg := range msgs {
+					validationErrors = append(validationErrors, fmt.Sprintf("%s %s", property, msg))
+				}
+			} else {
+				validationErrors = append(validationErrors, fmt.Sprintf("%s %s", property, err))
+			}
 		}
 	}
 
 	if len(validationErrors) > 0 {
-		return errors.New(strings.Join(validationErrors, ""))
+		return fmt.Errorf("%s", strings.Join(validationErrors, "; "))
 	}
 
 	return nil
 }
 
-func initModelGetPatternFromSchema(schema []byte, property string) (string, error) {
-	// Generic structure to decode Yaml
-	var schemaMap map[string]interface{}
+var englishPrinter = message.NewPrinter(language.English)
 
-	// Unmarshal Yaml schema into a map
-	if err := yaml.Unmarshal(schema, &schemaMap); err != nil {
-		return "", err
+// collectValidationErrors extracts leaf error messages from a ValidationError tree.
+func collectValidationErrors(ve *jsonschema.ValidationError) []string {
+	if len(ve.Causes) == 0 && ve.ErrorKind != nil {
+		return []string{ve.ErrorKind.LocalizedString(englishPrinter)}
 	}
-
-	// Navigate to "properties" -> propertyName -> "pattern"
-	if properties, ok := schemaMap["properties"].(map[string]interface{}); ok {
-		if propSchema, ok := properties[property].(map[string]interface{}); ok {
-			if pattern, ok := propSchema["pattern"].(string); ok {
-				return pattern, nil
-			}
-		}
+	var msgs []string
+	for _, cause := range ve.Causes {
+		msgs = append(msgs, collectValidationErrors(cause)...)
 	}
-
-	return "", fmt.Errorf("pattern not found for property: %s", property)
+	return msgs
 }
+

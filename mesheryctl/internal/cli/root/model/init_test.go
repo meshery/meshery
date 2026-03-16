@@ -265,7 +265,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInit(fmt.Errorf("invalid model name: name must match pattern ^[a-z0-9-]+$")),
+			ExpectedError:    ErrModelInit(fmt.Errorf("invalid model name: name 'test-case_aws-ec2-controller' does not match pattern '^[a-z0-9-]+$'")),
 		},
 	}
 
