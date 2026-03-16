@@ -4,7 +4,7 @@
   {{ $crumbs := split $url "/" }}
 
   {{ if ne $url "/" }}
-    <a href="{{ $root.Site.BaseURL }}">home</a>
+    <a href="{{ "/" | absURL }}">home</a>
   {{ end }}
 
   {{ range $index, $crumb := $crumbs }}
@@ -13,7 +13,7 @@
         / {{ lower $root.Page.Title }}
       {{ else }}
         {{ $path := delimit (first (add $index 1) $crumbs) "/" }}
-        / <a href="{{ $root.Site.BaseURL }}{{ $path }}/">{{ replace (replace (lower $crumb) "-" " ") ".html" "" }}</a>
+        / <a href="{{ $path | absURL }}/">{{ replace (replace (lower $crumb) "-" " ") ".html" "" }}</a>
       {{ end }}
     {{ end }}
   {{ end }}
