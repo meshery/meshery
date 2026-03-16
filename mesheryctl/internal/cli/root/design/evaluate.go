@@ -189,7 +189,7 @@ func saveEvaluatedDesign(design pattern.PatternFile, outputFile string, format s
 
 func printActionsOverview(evalResponse *pattern.EvaluationResponse) {
 	if len(evalResponse.Actions) == 0 {
-		utils.Log.Info("No evaluation actions were taken. The design is already up to date.")
+		utils.Log.Info("Evaluation completed. No changes were needed, the design is already up to date.")
 		return
 	}
 
