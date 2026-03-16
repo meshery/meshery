@@ -2,6 +2,7 @@
 title: Flagger
 subtitle: Collaborative and visual infrastructure as design for Flagger
 image: /extensions/models/flagger/icons/color/flagger-color.svg
+aliases: /extensibility/integrations/flagger
 docURL: https://docs.meshery.io/extensibility/integrations/flagger
 description: 
 integrations-category: App Definition and Development
@@ -9,16 +10,16 @@ integrations-subcategory: Continuous Integration & Delivery
 registrant: Artifact Hub
 components: 
 - name: canary
-  colorIcon: /extensions/models/flagger/components/canary/icons/color/canary-color.svg
-  whiteIcon: /extensions/models/flagger/components/canary/icons/white/canary-white.svg
+  colorIcon: content/en/extensions/models/flagger/components/canary/icons/color/canary-color.svg
+  whiteIcon: content/en/extensions/models/flagger/components/canary/icons/white/canary-white.svg
   description: 
 - name: metric-template
-  colorIcon: /extensions/models/flagger/components/metric-template/icons/color/metric-template-color.svg
-  whiteIcon: /extensions/models/flagger/components/metric-template/icons/white/metric-template-white.svg
+  colorIcon: content/en/extensions/models/flagger/components/metric-template/icons/color/metric-template-color.svg
+  whiteIcon: content/en/extensions/models/flagger/components/metric-template/icons/white/metric-template-white.svg
   description: 
 - name: alert-provider
-  colorIcon: /extensions/models/flagger/components/alert-provider/icons/color/alert-provider-color.svg
-  whiteIcon: /extensions/models/flagger/components/alert-provider/icons/white/alert-provider-white.svg
+  colorIcon: content/en/extensions/models/flagger/components/alert-provider/icons/color/alert-provider-color.svg
+  whiteIcon: content/en/extensions/models/flagger/components/alert-provider/icons/white/alert-provider-white.svg
   description: 
 components-count: 3
 relationships: 
@@ -31,6 +32,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/flagger
 ---

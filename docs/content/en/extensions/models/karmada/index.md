@@ -2,6 +2,7 @@
 title: Karmada
 subtitle: Collaborative and visual infrastructure as design for Karmada
 image: /extensions/models/karmada/icons/color/karmada-color.svg
+aliases: /extensibility/integrations/karmada
 docURL: https://docs.meshery.io/extensibility/integrations/karmada
 description: 
 integrations-category: Orchestration & Management
@@ -9,8 +10,8 @@ integrations-subcategory: Scheduling & Orchestration
 registrant: GitHub
 components: 
 - name: karmada
-  colorIcon: /extensions/models/karmada/components/karmada/icons/color/karmada-color.svg
-  whiteIcon: /extensions/models/karmada/components/karmada/icons/white/karmada-white.svg
+  colorIcon: content/en/extensions/models/karmada/components/karmada/icons/color/karmada-color.svg
+  whiteIcon: content/en/extensions/models/karmada/components/karmada/icons/white/karmada-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -23,6 +24,4 @@ featureList: [
 howItWorks: "Integrates Karmada clusters"
 howItWorksDetails: "Streamlined multi-cluster management and governance"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/karmada
 ---

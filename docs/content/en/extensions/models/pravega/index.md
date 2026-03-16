@@ -2,6 +2,7 @@
 title: Pravega
 subtitle: Collaborative and visual infrastructure as design for Pravega
 image: /extensions/models/pravega/icons/color/pravega-color.svg
+aliases: /extensibility/integrations/pravega
 docURL: https://docs.meshery.io/extensibility/integrations/pravega
 description: 
 integrations-category: Cloud Native Storage
@@ -9,8 +10,8 @@ integrations-subcategory: Streaming & Messaging
 registrant: Github
 components: 
 - name: zookeeper-cluster
-  colorIcon: /extensions/models/pravega/components/zookeeper-cluster/icons/color/zookeeper-cluster-color.svg
-  whiteIcon: /extensions/models/pravega/components/zookeeper-cluster/icons/white/zookeeper-cluster-white.svg
+  colorIcon: content/en/extensions/models/pravega/components/zookeeper-cluster/icons/color/zookeeper-cluster-color.svg
+  whiteIcon: content/en/extensions/models/pravega/components/zookeeper-cluster/icons/white/zookeeper-cluster-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -23,6 +24,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/pravega
 ---

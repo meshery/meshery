@@ -86,3 +86,4 @@ install/docker-extension/vm/vm
 ui/.env
 *.env
 */.env
+docs/hugo_stats.json

@@ -2,6 +2,7 @@
 title: Dragonfly
 subtitle: Collaborative and visual infrastructure as design for Dragonfly
 image: /extensions/models/dragonfly/icons/color/dragonfly-color.svg
+aliases: /extensibility/integrations/dragonfly
 docURL: https://docs.meshery.io/extensibility/integrations/dragonfly
 description: 
 integrations-category: Provisioning
@@ -9,8 +10,8 @@ integrations-subcategory: Container Registry
 registrant: GitHub
 components: 
 - name: dragonfly
-  colorIcon: /extensions/models/dragonfly/components/dragonfly/icons/color/dragonfly-color.svg
-  whiteIcon: /extensions/models/dragonfly/components/dragonfly/icons/white/dragonfly-white.svg
+  colorIcon: content/en/extensions/models/dragonfly/components/dragonfly/icons/color/dragonfly-color.svg
+  whiteIcon: content/en/extensions/models/dragonfly/components/dragonfly/icons/white/dragonfly-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -23,6 +24,4 @@ featureList: [
 howItWorks: "Integrates Dragonfly"
 howItWorksDetails: "Faster and more reliable image distribution in Kubernetes"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/dragonfly
 ---

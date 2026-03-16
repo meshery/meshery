@@ -2,6 +2,7 @@
 title: Artifact Hub
 subtitle: Collaborative and visual infrastructure as design for Artifact Hub
 image: /extensions/models/artifact-hub/icons/color/artifact-hub-color.svg
+aliases: /extensibility/integrations/artifact-hub
 docURL: https://docs.meshery.io/extensibility/integrations/artifact-hub
 description: 
 integrations-category: App Definition and Development
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/artifact-hub
 ---

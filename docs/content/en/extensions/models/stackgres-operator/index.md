@@ -2,6 +2,7 @@
 title: Stackgres Operator
 subtitle: Collaborative and visual infrastructure as design for Stackgres Operator
 image: /extensions/models/stackgres-operator/icons/color/stackgres-operator-color.svg
+aliases: /extensibility/integrations/stackgres-operator
 docURL: https://docs.meshery.io/extensibility/integrations/stackgres-operator
 description: 
 integrations-category: App Definition and Development
@@ -9,64 +10,64 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: sg-backup
-  colorIcon: /extensions/models/stackgres-operator/components/sg-backup/icons/color/sg-backup-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-backup/icons/white/sg-backup-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-backup/icons/color/sg-backup-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-backup/icons/white/sg-backup-white.svg
   description: 
 - name: sg-backup-config
-  colorIcon: /extensions/models/stackgres-operator/components/sg-backup-config/icons/color/sg-backup-config-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-backup-config/icons/white/sg-backup-config-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-backup-config/icons/color/sg-backup-config-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-backup-config/icons/white/sg-backup-config-white.svg
   description: 
 - name: sg-cluster
-  colorIcon: /extensions/models/stackgres-operator/components/sg-cluster/icons/color/sg-cluster-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-cluster/icons/white/sg-cluster-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-cluster/icons/color/sg-cluster-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-cluster/icons/white/sg-cluster-white.svg
   description: 
 - name: sg-distributed-logs
-  colorIcon: /extensions/models/stackgres-operator/components/sg-distributed-logs/icons/color/sg-distributed-logs-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-distributed-logs/icons/white/sg-distributed-logs-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-distributed-logs/icons/color/sg-distributed-logs-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-distributed-logs/icons/white/sg-distributed-logs-white.svg
   description: 
 - name: sg-instance-profile
-  colorIcon: /extensions/models/stackgres-operator/components/sg-instance-profile/icons/color/sg-instance-profile-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-instance-profile/icons/white/sg-instance-profile-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-instance-profile/icons/color/sg-instance-profile-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-instance-profile/icons/white/sg-instance-profile-white.svg
   description: 
 - name: sg-pooling-config
-  colorIcon: /extensions/models/stackgres-operator/components/sg-pooling-config/icons/color/sg-pooling-config-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-pooling-config/icons/white/sg-pooling-config-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-pooling-config/icons/color/sg-pooling-config-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-pooling-config/icons/white/sg-pooling-config-white.svg
   description: 
 - name: sg-postgres-config
-  colorIcon: /extensions/models/stackgres-operator/components/sg-postgres-config/icons/color/sg-postgres-config-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-postgres-config/icons/white/sg-postgres-config-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-postgres-config/icons/color/sg-postgres-config-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-postgres-config/icons/white/sg-postgres-config-white.svg
   description: 
 - name: sg-config
-  colorIcon: /extensions/models/stackgres-operator/components/sg-config/icons/color/sg-config-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-config/icons/white/sg-config-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-config/icons/color/sg-config-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-config/icons/white/sg-config-white.svg
   description: 
 - name: sg-sharded-cluster
-  colorIcon: /extensions/models/stackgres-operator/components/sg-sharded-cluster/icons/color/sg-sharded-cluster-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-sharded-cluster/icons/white/sg-sharded-cluster-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-sharded-cluster/icons/color/sg-sharded-cluster-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-sharded-cluster/icons/white/sg-sharded-cluster-white.svg
   description: 
 - name: sg-object-storage
-  colorIcon: /extensions/models/stackgres-operator/components/sg-object-storage/icons/color/sg-object-storage-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-object-storage/icons/white/sg-object-storage-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-object-storage/icons/color/sg-object-storage-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-object-storage/icons/white/sg-object-storage-white.svg
   description: 
 - name: sg-script
-  colorIcon: /extensions/models/stackgres-operator/components/sg-script/icons/color/sg-script-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-script/icons/white/sg-script-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-script/icons/color/sg-script-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-script/icons/white/sg-script-white.svg
   description: 
 - name: sg-sharded-backup
-  colorIcon: /extensions/models/stackgres-operator/components/sg-sharded-backup/icons/color/sg-sharded-backup-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-sharded-backup/icons/white/sg-sharded-backup-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-sharded-backup/icons/color/sg-sharded-backup-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-sharded-backup/icons/white/sg-sharded-backup-white.svg
   description: 
 - name: sgdb-ops
-  colorIcon: /extensions/models/stackgres-operator/components/sgdb-ops/icons/color/sgdb-ops-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sgdb-ops/icons/white/sgdb-ops-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sgdb-ops/icons/color/sgdb-ops-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sgdb-ops/icons/white/sgdb-ops-white.svg
   description: 
 - name: sg-sharded-db-ops
-  colorIcon: /extensions/models/stackgres-operator/components/sg-sharded-db-ops/icons/color/sg-sharded-db-ops-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-sharded-db-ops/icons/white/sg-sharded-db-ops-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-sharded-db-ops/icons/color/sg-sharded-db-ops-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-sharded-db-ops/icons/white/sg-sharded-db-ops-white.svg
   description: 
 - name: sg-stream
-  colorIcon: /extensions/models/stackgres-operator/components/sg-stream/icons/color/sg-stream-color.svg
-  whiteIcon: /extensions/models/stackgres-operator/components/sg-stream/icons/white/sg-stream-white.svg
+  colorIcon: content/en/extensions/models/stackgres-operator/components/sg-stream/icons/color/sg-stream-color.svg
+  whiteIcon: content/en/extensions/models/stackgres-operator/components/sg-stream/icons/white/sg-stream-white.svg
   description: 
 components-count: 15
 relationships: 
@@ -79,6 +80,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/stackgres-operator
 ---

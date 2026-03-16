@@ -2,6 +2,7 @@
 title: AWS VPC CNI
 subtitle: Collaborative and visual infrastructure as code for AWS VPC CNI
 image: /extensions/models/aws-vpc-cni/icons/color/aws-vpc-cni-color.svg
+aliases: /extensibility/integrations/aws-vpc-cni
 docURL: https://docs.meshery.io/extensibility/integrations/aws-vpc-cni
 description: 
 integrations-category: Cloud Native Network
@@ -9,12 +10,12 @@ integrations-subcategory: Networking Content Delivery
 registrant: Artifact Hub
 components: 
 - name: eni-config
-  colorIcon: /extensions/models/aws-vpc-cni/components/eni-config/icons/color/eni-config-color.svg
-  whiteIcon: /extensions/models/aws-vpc-cni/components/eni-config/icons/white/eni-config-white.svg
+  colorIcon: content/en/extensions/models/aws-vpc-cni/components/eni-config/icons/color/eni-config-color.svg
+  whiteIcon: content/en/extensions/models/aws-vpc-cni/components/eni-config/icons/white/eni-config-white.svg
   description: 
 - name: policy-endpoint
-  colorIcon: /extensions/models/aws-vpc-cni/components/policy-endpoint/icons/color/policy-endpoint-color.svg
-  whiteIcon: /extensions/models/aws-vpc-cni/components/policy-endpoint/icons/white/policy-endpoint-white.svg
+  colorIcon: content/en/extensions/models/aws-vpc-cni/components/policy-endpoint/icons/color/policy-endpoint-color.svg
+  whiteIcon: content/en/extensions/models/aws-vpc-cni/components/policy-endpoint/icons/white/policy-endpoint-white.svg
   description: 
 components-count: 2
 relationships: 
@@ -36,6 +37,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/aws-vpc-cni
 ---

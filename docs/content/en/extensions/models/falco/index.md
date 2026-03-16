@@ -2,6 +2,7 @@
 title: Falco
 subtitle: Collaborative and visual infrastructure as design for Falco
 image: /extensions/models/falco/icons/color/falco-color.svg
+aliases: /extensibility/integrations/falco
 docURL: https://docs.meshery.io/extensibility/integrations/falco
 description: 
 integrations-category: Provisioning
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Integrates Falco alerts"
 howItWorksDetails: "Enhanced security and threat detection for Kubernetes environments"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/falco
 ---

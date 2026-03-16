@@ -2,6 +2,7 @@
 title: Azure Container Instance
 subtitle: Collaborative and visual infrastructure as design for Azure Container Instance
 image: /extensions/models/azure-container-instance/icons/color/azure-container-instance-color.svg
+aliases: /extensibility/integrations/azure-container-instance
 docURL: https://docs.meshery.io/extensibility/integrations/azure-container-instance
 description: 
 integrations-category: Provisioning
@@ -9,8 +10,8 @@ integrations-subcategory: Container Runtime
 registrant: GitHub
 components: 
 - name: container-group
-  colorIcon: /extensions/models/azure-container-instance/components/container-group/icons/color/container-group-color.svg
-  whiteIcon: /extensions/models/azure-container-instance/components/container-group/icons/white/container-group-white.svg
+  colorIcon: content/en/extensions/models/azure-container-instance/components/container-group/icons/color/container-group-color.svg
+  whiteIcon: content/en/extensions/models/azure-container-instance/components/container-group/icons/white/container-group-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -23,6 +24,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/azure-container-instance
 ---

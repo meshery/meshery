@@ -50,9 +50,11 @@ mesheryctl exp workspace list --orgId [orgId] --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --count          total number of registered workspaces
-  -h, --help           help for list
-  -o, --orgId string   Organization ID
+      --count           total number of registered workspaces
+  -h, --help            help for list
+  -o, --orgId string    Organization ID
+      --page int        page number for paginated results. (default: 1) (default 1)
+      --page-size int   number of items to be displayed per page for paginated results. (default: 10, max limit: 100) (default 10)
 
 </div>
 </pre>

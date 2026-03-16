@@ -2,6 +2,7 @@
 title: Rook Ceph Cluster
 subtitle: Collaborative and visual infrastructure as design for Rook Ceph Cluster
 image: /extensions/models/rook-ceph-cluster/icons/color/rook-ceph-cluster-color.svg
+aliases: /extensibility/integrations/rook-ceph-cluster
 docURL: https://docs.meshery.io/extensibility/integrations/rook-ceph-cluster
 description: 
 integrations-category: Provisioning
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/rook-ceph-cluster
 ---

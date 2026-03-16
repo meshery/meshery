@@ -34,7 +34,7 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -d, --description string   Description of the workspace
+  -d, --description string   (Optional) Description of the workspace
   -h, --help                 help for create
   -n, --name string          Name of the workspace
   -o, --orgId string         Organization ID

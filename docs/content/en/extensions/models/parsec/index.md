@@ -2,6 +2,7 @@
 title: Parsec
 subtitle: Collaborative and visual infrastructure as design for Parsec
 image: /extensions/models/parsec/icons/color/parsec-color.svg
+aliases: /extensibility/integrations/parsec
 docURL: https://docs.meshery.io/extensibility/integrations/parsec
 description: 
 integrations-category: Security & Compliance
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "N/A (not directly integrated)"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/parsec
 ---

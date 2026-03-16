@@ -2,6 +2,7 @@
 title: Superedge
 subtitle: Collaborative and visual infrastructure as design for Superedge
 image: /extensions/models/superedge/icons/color/superedge-color.svg
+aliases: /extensibility/integrations/superedge
 docURL: https://docs.meshery.io/extensibility/integrations/superedge
 description: 
 integrations-category: Provisioning
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/superedge
 ---

@@ -2,6 +2,7 @@
 title: Postgres Controller
 subtitle: Collaborative and visual infrastructure as design for Postgres Controller
 image: /extensions/models/postgres-controller/icons/color/postgres-controller-color.svg
+aliases: /extensibility/integrations/postgres-controller
 docURL: https://docs.meshery.io/extensibility/integrations/postgres-controller
 description: 
 integrations-category: Database
@@ -9,8 +10,8 @@ integrations-subcategory: App Definition and Development
 registrant: Artifact Hub
 components: 
 - name: postgres-database
-  colorIcon: /extensions/models/postgres-controller/components/postgres-database/icons/color/postgres-database-color.svg
-  whiteIcon: /extensions/models/postgres-controller/components/postgres-database/icons/white/postgres-database-white.svg
+  colorIcon: content/en/extensions/models/postgres-controller/components/postgres-database/icons/color/postgres-database-color.svg
+  whiteIcon: content/en/extensions/models/postgres-controller/components/postgres-database/icons/white/postgres-database-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -23,6 +24,4 @@ featureList: [
 howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Simplified PostgreSQL management within Kubernetes"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/postgres-controller
 ---
