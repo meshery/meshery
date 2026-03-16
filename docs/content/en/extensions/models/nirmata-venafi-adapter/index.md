@@ -2,6 +2,7 @@
 title: Nirmata Venafi Adapter
 subtitle: Collaborative and visual infrastructure as design for Nirmata Venafi Adapter
 image: /extensions/models/nirmata-venafi-adapter/icons/color/nirmata-venafi-adapter-color.svg
+aliases: /extensibility/integrations/nirmata-venafi-adapter
 docURL: https://docs.meshery.io/extensibility/integrations/nirmata-venafi-adapter
 description: 
 integrations-category: Security & Compliance
@@ -9,8 +10,8 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 - name: image-key
-  colorIcon: /extensions/models/nirmata-venafi-adapter/components/image-key/icons/color/image-key-color.svg
-  whiteIcon: /extensions/models/nirmata-venafi-adapter/components/image-key/icons/white/image-key-white.svg
+  colorIcon: content/en/extensions/models/nirmata-venafi-adapter/components/image-key/icons/color/image-key-color.svg
+  whiteIcon: content/en/extensions/models/nirmata-venafi-adapter/components/image-key/icons/white/image-key-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -23,6 +24,4 @@ featureList: [
 howItWorks: "Manages certificates within Meshery"
 howItWorksDetails: "Streamlined certificate management and improved security in Kubernetes"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/nirmata-venafi-adapter
 ---

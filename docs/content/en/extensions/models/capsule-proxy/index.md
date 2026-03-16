@@ -2,6 +2,7 @@
 title: Capsule Proxy
 subtitle: Collaborative and visual infrastructure as design for Capsule Proxy
 image: /extensions/models/capsule-proxy/icons/color/capsule-proxy-color.svg
+aliases: /extensibility/integrations/capsule-proxy
 docURL: https://docs.meshery.io/extensibility/integrations/capsule-proxy
 description: 
 integrations-category: Provisioning
@@ -9,12 +10,12 @@ integrations-subcategory: Uncategorized
 registrant: Artifact Hub
 components: 
 - name: proxy-setting
-  colorIcon: /extensions/models/capsule-proxy/components/proxy-setting/icons/color/proxy-setting-color.svg
-  whiteIcon: /extensions/models/capsule-proxy/components/proxy-setting/icons/white/proxy-setting-white.svg
+  colorIcon: content/en/extensions/models/capsule-proxy/components/proxy-setting/icons/color/proxy-setting-color.svg
+  whiteIcon: content/en/extensions/models/capsule-proxy/components/proxy-setting/icons/white/proxy-setting-white.svg
   description: 
 - name: global-proxy-settings
-  colorIcon: /extensions/models/capsule-proxy/components/global-proxy-settings/icons/color/global-proxy-settings-color.svg
-  whiteIcon: /extensions/models/capsule-proxy/components/global-proxy-settings/icons/white/global-proxy-settings-white.svg
+  colorIcon: content/en/extensions/models/capsule-proxy/components/global-proxy-settings/icons/color/global-proxy-settings-color.svg
+  whiteIcon: content/en/extensions/models/capsule-proxy/components/global-proxy-settings/icons/white/global-proxy-settings-white.svg
   description: 
 components-count: 2
 relationships: 
@@ -27,6 +28,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/capsule-proxy
 ---

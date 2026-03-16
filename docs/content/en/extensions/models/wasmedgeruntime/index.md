@@ -2,6 +2,7 @@
 title: Wasmedge Runtime
 subtitle: Collaborative and visual infrastructure as design for Wasmedge Runtime
 image: /extensions/models/wasmedgeruntime/icons/color/wasmedgeruntime-color.svg
+aliases: /extensibility/integrations/wasmedgeruntime
 docURL: https://docs.meshery.io/extensibility/integrations/wasmedgeruntime
 description: 
 integrations-category: Runtime
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/wasmedgeruntime
 ---

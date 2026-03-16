@@ -2,6 +2,7 @@
 title: Emissary Ingress
 subtitle: Collaborative and visual infrastructure as design for Emissary Ingress
 image: /extensions/models/emissary-ingress/icons/color/emissary-ingress-color.svg
+aliases: /extensibility/integrations/emissary-ingress
 docURL: https://docs.meshery.io/extensibility/integrations/emissary-ingress
 description: 
 integrations-category: Cloud Native Network
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Manages Emissary Ingress configurations"
 howItWorksDetails: "Simplified API gateway management and enhanced traffic routing in Kubernetes"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/emissary-ingress
 ---

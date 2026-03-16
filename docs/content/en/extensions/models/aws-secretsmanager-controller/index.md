@@ -2,6 +2,7 @@
 title: AWS Secrets Manager
 subtitle: Collaborative and visual infrastructure as design for AWS Secrets Manager
 image: /extensions/models/aws-secretsmanager-controller/icons/color/aws-secretsmanager-controller-color.svg
+aliases: /extensibility/integrations/aws-secretsmanager-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-secretsmanager-controller
 description: 
 integrations-category: Security & Compliance
@@ -9,20 +10,20 @@ integrations-subcategory: Security Identity Compliance
 registrant: GitHub
 components: 
 - name: field-export
-  colorIcon: /extensions/models/aws-secretsmanager-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: /extensions/models/aws-secretsmanager-controller/components/field-export/icons/white/field-export-white.svg
+  colorIcon: content/en/extensions/models/aws-secretsmanager-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: content/en/extensions/models/aws-secretsmanager-controller/components/field-export/icons/white/field-export-white.svg
   description: 
 - name: adopted-resource
-  colorIcon: /extensions/models/aws-secretsmanager-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: /extensions/models/aws-secretsmanager-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  colorIcon: content/en/extensions/models/aws-secretsmanager-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: content/en/extensions/models/aws-secretsmanager-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 - name: secret
-  colorIcon: /extensions/models/aws-secretsmanager-controller/components/secret/icons/color/secret-color.svg
-  whiteIcon: /extensions/models/aws-secretsmanager-controller/components/secret/icons/white/secret-white.svg
+  colorIcon: content/en/extensions/models/aws-secretsmanager-controller/components/secret/icons/color/secret-color.svg
+  whiteIcon: content/en/extensions/models/aws-secretsmanager-controller/components/secret/icons/white/secret-white.svg
   description: 
 - name: iam-role-selector
-  colorIcon: /extensions/models/aws-secretsmanager-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
-  whiteIcon: /extensions/models/aws-secretsmanager-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  colorIcon: content/en/extensions/models/aws-secretsmanager-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: content/en/extensions/models/aws-secretsmanager-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
 components-count: 4
 relationships: 
@@ -50,6 +51,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/aws-secretsmanager-controller
 ---

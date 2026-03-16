@@ -2,6 +2,7 @@
 title: EDP Component Operator
 subtitle: Collaborative and visual infrastructure as design for EDP Component Operator
 image: /extensions/models/edp-component-operator/icons/color/edp-component-operator-color.svg
+aliases: /extensibility/integrations/edp-component-operator
 docURL: https://docs.meshery.io/extensibility/integrations/edp-component-operator
 description: 
 integrations-category: Provisioning
@@ -9,8 +10,8 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: edp-component
-  colorIcon: /extensions/models/edp-component-operator/components/edp-component/icons/color/edp-component-color.svg
-  whiteIcon: /extensions/models/edp-component-operator/components/edp-component/icons/white/edp-component-white.svg
+  colorIcon: content/en/extensions/models/edp-component-operator/components/edp-component/icons/color/edp-component-color.svg
+  whiteIcon: content/en/extensions/models/edp-component-operator/components/edp-component/icons/white/edp-component-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -23,6 +24,4 @@ featureList: [
 howItWorks: "Manages EDP components"
 howItWorksDetails: "Simplified management and orchestration of EDP components in Kubernetes"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/edp-component-operator
 ---

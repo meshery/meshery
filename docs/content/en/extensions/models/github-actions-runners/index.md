@@ -2,6 +2,7 @@
 title: Github Actions Runners
 subtitle: Collaborative and visual infrastructure as design for Github Actions Runners
 image: /extensions/models/github-actions-runners/icons/color/github-actions-runners-color.svg
+aliases: /extensibility/integrations/github-actions-runners
 docURL: https://docs.meshery.io/extensibility/integrations/github-actions-runners
 description: 
 integrations-category: App Definition and Development
@@ -9,24 +10,24 @@ integrations-subcategory: Source Version Control
 registrant: Artifact Hub
 components: 
 - name: horizontal-runner-autoscaler
-  colorIcon: /extensions/models/github-actions-runners/components/horizontal-runner-autoscaler/icons/color/horizontal-runner-autoscaler-color.svg
-  whiteIcon: /extensions/models/github-actions-runners/components/horizontal-runner-autoscaler/icons/white/horizontal-runner-autoscaler-white.svg
+  colorIcon: content/en/extensions/models/github-actions-runners/components/horizontal-runner-autoscaler/icons/color/horizontal-runner-autoscaler-color.svg
+  whiteIcon: content/en/extensions/models/github-actions-runners/components/horizontal-runner-autoscaler/icons/white/horizontal-runner-autoscaler-white.svg
   description: 
 - name: runner-deployment
-  colorIcon: /extensions/models/github-actions-runners/components/runner-deployment/icons/color/runner-deployment-color.svg
-  whiteIcon: /extensions/models/github-actions-runners/components/runner-deployment/icons/white/runner-deployment-white.svg
+  colorIcon: content/en/extensions/models/github-actions-runners/components/runner-deployment/icons/color/runner-deployment-color.svg
+  whiteIcon: content/en/extensions/models/github-actions-runners/components/runner-deployment/icons/white/runner-deployment-white.svg
   description: 
 - name: runner-replica-set
-  colorIcon: /extensions/models/github-actions-runners/components/runner-replica-set/icons/color/runner-replica-set-color.svg
-  whiteIcon: /extensions/models/github-actions-runners/components/runner-replica-set/icons/white/runner-replica-set-white.svg
+  colorIcon: content/en/extensions/models/github-actions-runners/components/runner-replica-set/icons/color/runner-replica-set-color.svg
+  whiteIcon: content/en/extensions/models/github-actions-runners/components/runner-replica-set/icons/white/runner-replica-set-white.svg
   description: 
 - name: runner
-  colorIcon: /extensions/models/github-actions-runners/components/runner/icons/color/runner-color.svg
-  whiteIcon: /extensions/models/github-actions-runners/components/runner/icons/white/runner-white.svg
+  colorIcon: content/en/extensions/models/github-actions-runners/components/runner/icons/color/runner-color.svg
+  whiteIcon: content/en/extensions/models/github-actions-runners/components/runner/icons/white/runner-white.svg
   description: 
 - name: runner-set
-  colorIcon: /extensions/models/github-actions-runners/components/runner-set/icons/color/runner-set-color.svg
-  whiteIcon: /extensions/models/github-actions-runners/components/runner-set/icons/white/runner-set-white.svg
+  colorIcon: content/en/extensions/models/github-actions-runners/components/runner-set/icons/color/runner-set-color.svg
+  whiteIcon: content/en/extensions/models/github-actions-runners/components/runner-set/icons/white/runner-set-white.svg
   description: 
 components-count: 5
 relationships: 
@@ -39,6 +40,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/github-actions-runners
 ---

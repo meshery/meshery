@@ -2,6 +2,7 @@
 title: AWS Load Balancer
 subtitle: Collaborative and visual infrastructure as design for AWS Load Balancer
 image: /extensions/models/aws-load-balancer-controller/icons/color/aws-load-balancer-controller-color.svg
+aliases: /extensibility/integrations/aws-load-balancer-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-load-balancer-controller
 description: 
 integrations-category: Cloud Native Network
@@ -9,8 +10,8 @@ integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
 - name: ingress-class-params
-  colorIcon: /extensions/models/aws-load-balancer-controller/components/ingress-class-params/icons/color/ingress-class-params-color.svg
-  whiteIcon: /extensions/models/aws-load-balancer-controller/components/ingress-class-params/icons/white/ingress-class-params-white.svg
+  colorIcon: content/en/extensions/models/aws-load-balancer-controller/components/ingress-class-params/icons/color/ingress-class-params-color.svg
+  whiteIcon: content/en/extensions/models/aws-load-balancer-controller/components/ingress-class-params/icons/white/ingress-class-params-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -23,6 +24,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs)."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/aws-load-balancer-controller
 ---

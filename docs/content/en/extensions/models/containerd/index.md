@@ -2,6 +2,7 @@
 title: Containerd
 subtitle: Collaborative and visual infrastructure as design for Containerd
 image: /extensions/models/containerd/icons/color/containerd-color.svg
+aliases: /extensibility/integrations/containerd
 docURL: https://docs.meshery.io/extensibility/integrations/containerd
 description: 
 integrations-category: Runtime
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/containerd
 ---

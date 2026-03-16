@@ -2,6 +2,7 @@
 title: Brigade
 subtitle: Collaborative and visual infrastructure as design for Brigade
 image: /extensions/models/brigade/icons/color/brigade-color.svg
+aliases: /extensibility/integrations/brigade
 docURL: https://docs.meshery.io/extensibility/integrations/brigade
 description: 
 integrations-category: App Definition and Development
@@ -19,6 +20,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/brigade
 ---

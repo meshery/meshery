@@ -2,6 +2,7 @@
 title: AWS Systems Manager
 subtitle: Collaborative and visual infrastructure as design for AWS Systems Manager
 image: /extensions/models/aws-ssm-controller/icons/color/aws-ssm-controller-color.svg
+aliases: /extensibility/integrations/aws-ssm-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ssm-controller
 description: 
 integrations-category: Orchestration & Management
@@ -9,34 +10,38 @@ integrations-subcategory: Management Governance
 registrant: GitHub
 components: 
 - name: field-export
-  colorIcon: /extensions/models/aws-ssm-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: /extensions/models/aws-ssm-controller/components/field-export/icons/white/field-export-white.svg
+  colorIcon: content/en/extensions/models/aws-ssm-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: content/en/extensions/models/aws-ssm-controller/components/field-export/icons/white/field-export-white.svg
   description: 
 - name: adopted-resource
-  colorIcon: /extensions/models/aws-ssm-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: /extensions/models/aws-ssm-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  colorIcon: content/en/extensions/models/aws-ssm-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: content/en/extensions/models/aws-ssm-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 - name: document
-  colorIcon: /extensions/models/aws-ssm-controller/components/document/icons/color/document-color.svg
-  whiteIcon: /extensions/models/aws-ssm-controller/components/document/icons/white/document-white.svg
+  colorIcon: content/en/extensions/models/aws-ssm-controller/components/document/icons/color/document-color.svg
+  whiteIcon: content/en/extensions/models/aws-ssm-controller/components/document/icons/white/document-white.svg
   description: 
 - name: patch-baseline
-  colorIcon: /extensions/models/aws-ssm-controller/components/patch-baseline/icons/color/patch-baseline-color.svg
-  whiteIcon: /extensions/models/aws-ssm-controller/components/patch-baseline/icons/white/patch-baseline-white.svg
+  colorIcon: content/en/extensions/models/aws-ssm-controller/components/patch-baseline/icons/color/patch-baseline-color.svg
+  whiteIcon: content/en/extensions/models/aws-ssm-controller/components/patch-baseline/icons/white/patch-baseline-white.svg
   description: 
 - name: resource-data-sync
-  colorIcon: /extensions/models/aws-ssm-controller/components/resource-data-sync/icons/color/resource-data-sync-color.svg
-  whiteIcon: /extensions/models/aws-ssm-controller/components/resource-data-sync/icons/white/resource-data-sync-white.svg
+  colorIcon: content/en/extensions/models/aws-ssm-controller/components/resource-data-sync/icons/color/resource-data-sync-color.svg
+  whiteIcon: content/en/extensions/models/aws-ssm-controller/components/resource-data-sync/icons/white/resource-data-sync-white.svg
   description: 
 - name: resource-data-sync
-  colorIcon: /extensions/models/aws-ssm-controller/components/resource-data-sync/icons/color/resource-data-sync-color.svg
-  whiteIcon: /extensions/models/aws-ssm-controller/components/resource-data-sync/icons/white/resource-data-sync-white.svg
+  colorIcon: content/en/extensions/models/aws-ssm-controller/components/resource-data-sync/icons/color/resource-data-sync-color.svg
+  whiteIcon: content/en/extensions/models/aws-ssm-controller/components/resource-data-sync/icons/white/resource-data-sync-white.svg
   description: 
 - name: iam-role-selector
-  colorIcon: /extensions/models/aws-ssm-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
-  whiteIcon: /extensions/models/aws-ssm-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  colorIcon: content/en/extensions/models/aws-ssm-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: content/en/extensions/models/aws-ssm-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
-components-count: 7
+- name: parameter
+  colorIcon: content/en/extensions/models/aws-ssm-controller/components/parameter/icons/color/parameter-color.svg
+  whiteIcon: content/en/extensions/models/aws-ssm-controller/components/parameter/icons/white/parameter-white.svg
+  description: 
+components-count: 8
 relationships: 
 - type: "non-binding"
   kind: "edge"
@@ -59,6 +64,4 @@ featureList: [
 howItWorks: "Integrates with AWS SSM"
 howItWorksDetails: "Streamlined AWS resource management and automation within Kubernetes"
 categories: [integrations]
-aliases:
-- /extensibility/integrations/aws-ssm-controller
 ---

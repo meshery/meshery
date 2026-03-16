@@ -2,6 +2,7 @@
 title: Apache ShardingSphere
 subtitle: Collaborative and visual infrastructure as design for Apache ShardingSphere
 image: /extensions/models/apache-shardingsphere-operator-charts/icons/color/apache-shardingsphere-operator-charts-color.svg
+aliases: /extensibility/integrations/apache-shardingsphere-operator-charts
 docURL: https://docs.meshery.io/extensibility/integrations/apache-shardingsphere-operator-charts
 description: 
 integrations-category: App Definition and Development
@@ -9,28 +10,28 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: compute-node
-  colorIcon: /extensions/models/apache-shardingsphere-operator-charts/components/compute-node/icons/color/compute-node-color.svg
-  whiteIcon: /extensions/models/apache-shardingsphere-operator-charts/components/compute-node/icons/white/compute-node-white.svg
+  colorIcon: content/en/extensions/models/apache-shardingsphere-operator-charts/components/compute-node/icons/color/compute-node-color.svg
+  whiteIcon: content/en/extensions/models/apache-shardingsphere-operator-charts/components/compute-node/icons/white/compute-node-white.svg
   description: 
 - name: sharding-sphere-proxy
-  colorIcon: /extensions/models/apache-shardingsphere-operator-charts/components/sharding-sphere-proxy/icons/color/sharding-sphere-proxy-color.svg
-  whiteIcon: /extensions/models/apache-shardingsphere-operator-charts/components/sharding-sphere-proxy/icons/white/sharding-sphere-proxy-white.svg
+  colorIcon: content/en/extensions/models/apache-shardingsphere-operator-charts/components/sharding-sphere-proxy/icons/color/sharding-sphere-proxy-color.svg
+  whiteIcon: content/en/extensions/models/apache-shardingsphere-operator-charts/components/sharding-sphere-proxy/icons/white/sharding-sphere-proxy-white.svg
   description: 
 - name: sharding-sphere-proxy-server-config
-  colorIcon: /extensions/models/apache-shardingsphere-operator-charts/components/sharding-sphere-proxy-server-config/icons/color/sharding-sphere-proxy-server-config-color.svg
-  whiteIcon: /extensions/models/apache-shardingsphere-operator-charts/components/sharding-sphere-proxy-server-config/icons/white/sharding-sphere-proxy-server-config-white.svg
+  colorIcon: content/en/extensions/models/apache-shardingsphere-operator-charts/components/sharding-sphere-proxy-server-config/icons/color/sharding-sphere-proxy-server-config-color.svg
+  whiteIcon: content/en/extensions/models/apache-shardingsphere-operator-charts/components/sharding-sphere-proxy-server-config/icons/white/sharding-sphere-proxy-server-config-white.svg
   description: 
 - name: chaos
-  colorIcon: /extensions/models/apache-shardingsphere-operator-charts/components/chaos/icons/color/chaos-color.svg
-  whiteIcon: /extensions/models/apache-shardingsphere-operator-charts/components/chaos/icons/white/chaos-white.svg
+  colorIcon: content/en/extensions/models/apache-shardingsphere-operator-charts/components/chaos/icons/color/chaos-color.svg
+  whiteIcon: content/en/extensions/models/apache-shardingsphere-operator-charts/components/chaos/icons/white/chaos-white.svg
   description: 
 - name: storage-node
-  colorIcon: /extensions/models/apache-shardingsphere-operator-charts/components/storage-node/icons/color/storage-node-color.svg
-  whiteIcon: /extensions/models/apache-shardingsphere-operator-charts/components/storage-node/icons/white/storage-node-white.svg
+  colorIcon: content/en/extensions/models/apache-shardingsphere-operator-charts/components/storage-node/icons/color/storage-node-color.svg
+  whiteIcon: content/en/extensions/models/apache-shardingsphere-operator-charts/components/storage-node/icons/white/storage-node-white.svg
   description: 
 - name: storage-provider
-  colorIcon: /extensions/models/apache-shardingsphere-operator-charts/components/storage-provider/icons/color/storage-provider-color.svg
-  whiteIcon: /extensions/models/apache-shardingsphere-operator-charts/components/storage-provider/icons/white/storage-provider-white.svg
+  colorIcon: content/en/extensions/models/apache-shardingsphere-operator-charts/components/storage-provider/icons/color/storage-provider-color.svg
+  whiteIcon: content/en/extensions/models/apache-shardingsphere-operator-charts/components/storage-provider/icons/white/storage-provider-white.svg
   description: 
 components-count: 6
 relationships: 
@@ -43,6 +44,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/apache-shardingsphere-operator-charts
 ---

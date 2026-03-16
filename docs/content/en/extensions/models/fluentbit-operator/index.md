@@ -2,6 +2,7 @@
 title: Fluentbit Operator
 subtitle: Collaborative and visual infrastructure as design for Fluentbit Operator
 image: /extensions/models/fluentbit-operator/icons/color/fluentbit-operator-color.svg
+aliases: /extensibility/integrations/fluentbit-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluentbit-operator
 description: 
 integrations-category: Observability and Analysis
@@ -9,28 +10,28 @@ integrations-subcategory: Logging
 registrant: Artifact Hub
 components: 
 - name: filter
-  colorIcon: /extensions/models/fluentbit-operator/components/filter/icons/color/filter-color.svg
-  whiteIcon: /extensions/models/fluentbit-operator/components/filter/icons/white/filter-white.svg
+  colorIcon: content/en/extensions/models/fluentbit-operator/components/filter/icons/color/filter-color.svg
+  whiteIcon: content/en/extensions/models/fluentbit-operator/components/filter/icons/white/filter-white.svg
   description: 
 - name: fluent-bit-config
-  colorIcon: /extensions/models/fluentbit-operator/components/fluent-bit-config/icons/color/fluent-bit-config-color.svg
-  whiteIcon: /extensions/models/fluentbit-operator/components/fluent-bit-config/icons/white/fluent-bit-config-white.svg
+  colorIcon: content/en/extensions/models/fluentbit-operator/components/fluent-bit-config/icons/color/fluent-bit-config-color.svg
+  whiteIcon: content/en/extensions/models/fluentbit-operator/components/fluent-bit-config/icons/white/fluent-bit-config-white.svg
   description: 
 - name: input
-  colorIcon: /extensions/models/fluentbit-operator/components/input/icons/color/input-color.svg
-  whiteIcon: /extensions/models/fluentbit-operator/components/input/icons/white/input-white.svg
+  colorIcon: content/en/extensions/models/fluentbit-operator/components/input/icons/color/input-color.svg
+  whiteIcon: content/en/extensions/models/fluentbit-operator/components/input/icons/white/input-white.svg
   description: 
 - name: output
-  colorIcon: /extensions/models/fluentbit-operator/components/output/icons/color/output-color.svg
-  whiteIcon: /extensions/models/fluentbit-operator/components/output/icons/white/output-white.svg
+  colorIcon: content/en/extensions/models/fluentbit-operator/components/output/icons/color/output-color.svg
+  whiteIcon: content/en/extensions/models/fluentbit-operator/components/output/icons/white/output-white.svg
   description: 
 - name: parser
-  colorIcon: /extensions/models/fluentbit-operator/components/parser/icons/color/parser-color.svg
-  whiteIcon: /extensions/models/fluentbit-operator/components/parser/icons/white/parser-white.svg
+  colorIcon: content/en/extensions/models/fluentbit-operator/components/parser/icons/color/parser-color.svg
+  whiteIcon: content/en/extensions/models/fluentbit-operator/components/parser/icons/white/parser-white.svg
   description: 
 - name: fluent-bit
-  colorIcon: /extensions/models/fluentbit-operator/components/fluent-bit/icons/color/fluent-bit-color.svg
-  whiteIcon: /extensions/models/fluentbit-operator/components/fluent-bit/icons/white/fluent-bit-white.svg
+  colorIcon: content/en/extensions/models/fluentbit-operator/components/fluent-bit/icons/color/fluent-bit-color.svg
+  whiteIcon: content/en/extensions/models/fluentbit-operator/components/fluent-bit/icons/white/fluent-bit-white.svg
   description: 
 components-count: 6
 relationships: 
@@ -50,6 +51,4 @@ Fluent Bit + Fluentd mode: If you also need to perform some advanced processing 
 Fluentd only mode: If you need to receive logs through networks like HTTP or Syslog and then process and send the log to the final sinks, you only need Fluentd.
 Fluent Operator includes CRDs and controllers for both Fluent Bit and Fluentd which allows you to config your log processing pipelines in the 3 modes mentioned above as you wish."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/fluentbit-operator
 ---

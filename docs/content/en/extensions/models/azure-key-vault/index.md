@@ -2,6 +2,7 @@
 title: Azure Key Vault
 subtitle: Collaborative and visual infrastructure as design for Azure Key Vault
 image: /extensions/models/azure-key-vault/icons/color/azure-key-vault-color.svg
+aliases: /extensibility/integrations/azure-key-vault
 docURL: https://docs.meshery.io/extensibility/integrations/azure-key-vault
 description: 
 integrations-category: Security & Compliance
@@ -9,8 +10,8 @@ integrations-subcategory: Secrets Management
 registrant: GitHub
 components: 
 - name: vault
-  colorIcon: /extensions/models/azure-key-vault/components/vault/icons/color/vault-color.svg
-  whiteIcon: /extensions/models/azure-key-vault/components/vault/icons/white/vault-white.svg
+  colorIcon: content/en/extensions/models/azure-key-vault/components/vault/icons/color/vault-color.svg
+  whiteIcon: content/en/extensions/models/azure-key-vault/components/vault/icons/white/vault-white.svg
   description: 
 components-count: 1
 relationships: 
@@ -23,6 +24,4 @@ featureList: [
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 categories: [integrations]
-aliases:
-- /extensibility/integrations/azure-key-vault
 ---
