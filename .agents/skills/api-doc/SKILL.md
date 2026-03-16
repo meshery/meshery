@@ -19,7 +19,7 @@ Invoke this skill with a target handler file or directory:
 
 For each endpoint, document:
 
-```markdown
+````markdown
 ### `METHOD /api/path`
 
 **Description**: Brief description of what the endpoint does.
@@ -56,7 +56,7 @@ For each endpoint, document:
 | 400 | Invalid request body |
 | 401 | Authentication required |
 | 404 | Resource not found |
-```
+````
 
 ### Guidelines
 
