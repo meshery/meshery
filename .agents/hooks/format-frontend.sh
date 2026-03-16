@@ -19,7 +19,7 @@ if [[ -z "$FILE" ]]; then
 fi
 
 # Only format frontend files in ui/
-if [[ "$FILE" != */ui/* ]]; then
+if [[ "$FILE" != ui/* && "$FILE" != */ui/* ]]; then
   exit 0
 fi
 
@@ -29,7 +29,7 @@ if [[ ! "$FILE" =~ \.(js|jsx|ts|tsx)$ ]]; then
 fi
 
 # Find the ui directory relative to the file
-UI_DIR="${FILE%%/ui/*}/ui"
+UI_DIR="${FILE%ui/*}ui"
 
 if [[ -d "$UI_DIR" ]] && [[ -f "$UI_DIR/node_modules/.bin/prettier" ]]; then
   "$UI_DIR/node_modules/.bin/prettier" --write "$FILE" 2>/dev/null || true
