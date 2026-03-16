@@ -109,7 +109,7 @@ RUN update-ca-certificates
 COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env
 COPY ./server/meshmodel /app/server/meshmodel
 COPY ./server/permissions /app/server/permissions/
-COPY ./docs/data/catalog /app/docs/catalog/
+COPY ./docs/data/catalog /app/docs/data/catalog/
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
