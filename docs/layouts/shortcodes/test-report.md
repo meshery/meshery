@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 16th 2026, 10:09:50 pm
+- Testing started at: March 16th 2026, 11:35:31 pm
 
 **📦 Test Result Summary**
 
-- ✅ 61 passed
-- ❌ 6 failed
+- ✅ 58 passed
+- ❌ 7 failed
 - ⚠️ 0 flaked
-- ⏩ 5 skipped
+- ⏩ 7 skipped
 
-⌛ _Duration: 5 minutes and 10 seconds_
+⌛ _Duration: 5 minutes and 5 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -67,9 +67,9 @@
 | 44 | None | chromium-local-provider | Create a Model |  | ✅ |
 | 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 46 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
-| 48 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
-| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
+| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 48 | None | chromium-local-provider | Import a Model via File Import |  | ❌ |
+| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 51 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 52 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
@@ -175,6 +175,20 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
+<summary>❌ Verify Meshery Adapter for Istio Section (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
 <summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
@@ -198,7 +212,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Verify Meshery Adapter for Istio Section (None - chromium-local-provider)</summary>
+<summary>❌ Import a Model via File Import (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
