@@ -32,7 +32,11 @@ func (p *MatchLabelsPolicy) IdentifyRelationship(relDef, designFile map[string]i
 }
 
 func (p *MatchLabelsPolicy) SideEffects(rel, designFile map[string]interface{}) []PolicyAction {
-	return nil // no side effects
+	return nil
+}
+
+func (p *MatchLabelsPolicy) IdentifyAdditions(relDef, designFile map[string]interface{}) []PolicyAction {
+	return nil
 }
 
 // matchLabelGroup represents a group of components sharing a label field+value.

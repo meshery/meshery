@@ -19,6 +19,9 @@ type RelationshipPolicy interface {
 
 	// SideEffects returns additional actions for a relationship (e.g., adding/removing components).
 	SideEffects(rel, designFile map[string]interface{}) []PolicyAction
+
+	// IdentifyAdditions returns actions for missing components based on a relationship definition.
+	IdentifyAdditions(relDef, designFile map[string]interface{}) []PolicyAction
 }
 
 // implicableRelationships filters relationships that belong to a specific policy.
@@ -50,6 +53,21 @@ func validateRelationshipsInDesign(designFile map[string]interface{}, policy Rel
 				},
 			})
 		}
+	}
+	return actions
+}
+
+// identifyAdditionsInDesign identifies missing components for a policy.
+func identifyAdditionsInDesign(
+	designFile map[string]interface{},
+	relationshipsInScope []map[string]interface{},
+	policy RelationshipPolicy,
+) []PolicyAction {
+	implicated := implicableRelationships(relationshipsInScope, policy)
+
+	var actions []PolicyAction
+	for _, relDef := range implicated {
+		actions = append(actions, policy.IdentifyAdditions(relDef, designFile)...)
 	}
 	return actions
 }

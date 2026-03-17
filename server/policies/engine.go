@@ -127,8 +127,8 @@ func (e *GoEngine) evaluate(designMap map[string]interface{}, relsInScope []map[
 
 	// Phase 1.5: Identify missing components (additions)
 	var additionActions []PolicyAction
-	for _, relDef := range relsInScope {
-		additionActions = append(additionActions, identifyAdditions(relDef, designWithValidatedRels)...)
+	for _, policy := range e.policies {
+		additionActions = append(additionActions, identifyAdditionsInDesign(designWithValidatedRels, relsInScope, policy)...)
 	}
 	if len(additionActions) > 0 {
 		allActions = append(allActions, additionActions...)

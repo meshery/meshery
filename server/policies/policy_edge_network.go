@@ -33,3 +33,7 @@ func (p *EdgeNonBindingPolicy) SideEffects(rel, designFile map[string]interface{
 	}
 	return patchMutatorsAction(rel, designFile)
 }
+
+func (p *EdgeNonBindingPolicy) IdentifyAdditions(relDef, designFile map[string]interface{}) []PolicyAction {
+	return nil
+}
