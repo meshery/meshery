@@ -1,15 +1,16 @@
 package router
 
-import (
-	"context"
-	"fmt"
-	"net/http"
-	"time"
+import import (
+    "context"
+    "fmt"
+    "net/http"
+    "time"
 
-	"github.com/go-openapi/runtime/middleware"
-	"github.com/gorilla/mux"
-	"github.com/meshery/meshery/server/models"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
+    "github.com/go-openapi/runtime/middleware"
+    "github.com/gorilla/mux"
+    "github.com/meshery/meshery/server/models"
+    "github.com/meshery/meshery/server/handlers"
+    "go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 )
 
 // Router represents Meshery router
@@ -28,6 +29,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.HandleFunc("/api/system/version", h.ServerVersionHandler).
 		Methods("GET")
+	gMux.HandleFunc("/api/system/ai/test", handlers.HandleAITest).Methods("POST")
 	gMux.Handle("/api/extension/version", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ExtensionsVersionHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/system/database", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetSystemDatabase), models.ProviderAuth))).
