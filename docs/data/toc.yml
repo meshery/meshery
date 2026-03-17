@@ -180,31 +180,31 @@
       url: guides/tutorials
       children:
         - title: Exploring Kubernetes CronJobs
-          url: guides/tutorials/exploring-kubernetes-cronjobs
+          url: guides/tutorials/kubernetes/exploring-kubernetes-cronjobs
         - title: Exploring Kubernetes Services
-          url: guides/tutorials/kubernetes-services
+          url: guides/tutorials/kubernetes/kubernetes-services
         - title: Using ConfigMaps & Secrets in Kubernetes
-          url: guides/tutorials/kubernetes-configmaps-secrets
+          url: guides/tutorials/kubernetes/kubernetes-configmaps-secrets
         - title: Exploring Kubernetes Pods
-          url: guides/tutorials/kubernetes-pods
+          url: guides/tutorials/kubernetes/kubernetes-pods
         - title: Deploying WordPress & MySQL with Persistent Volumes
-          url: guides/tutorials/wordpress-mysql-persistentvolume
+          url: guides/tutorials/kubernetes/wordpress-mysql-persistentvolume
         - title: Deploying PHP Guestbook with Redis
-          url: guides/tutorials/deploy-php-redis
+          url: guides/tutorials/kubernetes/deploy-php-redis
         - title: Deploying AWS EC2 Instances
-          url: guides/tutorials/deploy-aws-ec2-instances-with-meshery
+          url: guides/tutorials/aws/deploy-aws-ec2-instances-with-meshery
         - title: Deploying Azure Storage Account
-          url: guides/tutorials/deploy-azure-storage-account-with-meshery
+          url: guides/tutorials/azure/deploy-azure-storage-account-with-meshery/
         - title: Exploring Kubernetes Deployments
-          url: guides/tutorials/kubernetes-deployments
+          url: guides/tutorials/kubernetes/kubernetes-deployments
         - title: Deploying Apache Cassandra with StatefulSets
-          url: guides/tutorials/deploy-apache-cassandra-with-statefulset
+          url: guides/tutorials//kubernetes/deploy-apache-cassandra-with-statefulset
         - title: Embedding Meshery Designs in WordPress
-          url: guides/tutorials/embedding-meshery-design-in-wordpress
+          url: guides/tutorials/wordpress/embedding-meshery-design-in-wordpress
         - title: Publishing Designs to ArtifactHub
-          url: guides/tutorials/publish-to-artifacthub
+          url: guides/tutorials/artifacthub/publish-to-artifacthub
         - title: Kubernetes Request Flow – A Visual Guide
-          url: guides/tutorials/kubernetes-request-flow
+          url: guides/tutorials/kubernetes/kubernetes-request-flow
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
@@ -212,7 +212,7 @@
   url: "#"
   links:
     - title: Integrations
-      url: extensions/integrations
+      url: extensions/models
     - title: Extensions ↆ
       url: extensions
       children:

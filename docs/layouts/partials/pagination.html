@@ -9,21 +9,21 @@
   {{ end }}
 
   {{ with .links }}
-    {{ range . }}
+    {{ range sort . "title" }}
 
       {{ if .url }}
         {{ $pages = $pages | append (dict "title" .title "url" .url) }}
       {{ end }}
 
       {{ with .children }}
-        {{ range . }}
+        {{ range sort . "title" }}
 
           {{ if .url }}
             {{ $pages = $pages | append (dict "title" .title "url" .url) }}
           {{ end }}
 
           {{ with .grandchildren }}
-            {{ range . }}
+            {{ range sort . "title" }}
               {{ if .url }}
                 {{ $pages = $pages | append (dict "title" .title "url" .url) }}
               {{ end }}
