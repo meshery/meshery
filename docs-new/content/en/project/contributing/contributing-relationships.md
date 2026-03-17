@@ -366,3 +366,21 @@ Alternatively, if you would like to keep the relatioship definition private, you
 {{% /alert %}}
 
 For more information refer - [Model - Construct Models in Meshery](https://docs.google.com/document/d/16z5hA8qVfSq885of9LXFUVvfom-hQXr-6oTD_GgoFmk/edit)
+
+## Testing Your Relationship in Kanvas
+
+Testing your new relationship is important to visually confirm it connects components correctly. Without this testing guidance, contributors may submit PRs without visual proof, leading to additional review cycles. Here is how you can test your relationship visually using Kanvas.
+
+1. **Start Meshery Locally**: From the Meshery root directory, run `make ui-server`, or use the [Meshery Playground](https://playground.meshery.io) if you prefer not to run Meshery locally.
+
+2. **Open Kanvas**: Navigate to the Kanvas UI within Meshery.
+
+3. **Place Components**: Find the components involved in your new relationship from the component palette. Drag and drop them onto the canvas.
+
+4. **Create the Connection**: Hover over the first component on your canvas. You will see connection arrows appear around its border. Click and drag from one of these arrows to your target component.
+
+    > Note: Relationships are created manually through this drag-and-drop action. The edges between your components do **not** appear automatically just by placing them on the canvas.
+
+If you cannot run Meshery locally, you can use the [Meshery Playground](https://playground.meshery.io) to verify your relationship.
+
+**Before submitting your PR, you must take a screenshot of the Kanvas showing the relationship and include it in the PR description as proof.**
