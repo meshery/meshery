@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v2"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root"
@@ -121,7 +122,7 @@ func linkHandler(name string) string {
 // docs is a function to generate the markdown docs for mesheryctl
 func doc() {
 	markDownPath := "../../docs/content/en/reference/mesheryctl/" // Path for docs
-	//yamlPath := "./internal/cli/root/testDoc/"
+	yamlPath := "../../docs/data/mesheryctlcommands/cmds.yml"
 
 	fmt.Println("Scanning available commands...")
 	cmd := root.TreePath() // Takes entire tree of mesheryctl commands
@@ -137,7 +138,251 @@ func doc() {
 		log.Fatal(err)
 	}
 
+	err = GenerateCommandTracker(cmd, yamlPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	fmt.Println("Documentation generated at " + markDownPath)
+	fmt.Println("Command tracker generated at " + yamlPath)
+}
+
+func visibleCommands(cmd *cobra.Command) []*cobra.Command {
+	commands := make([]*cobra.Command, 0)
+	for _, child := range cmd.Commands() {
+		if !child.IsAvailableCommand() || child.IsAdditionalHelpTopicCommand() || child.Hidden {
+			continue
+		}
+		commands = append(commands, child)
+	}
+	return commands
+}
+
+func rootGlobalSubcommands(cmd *cobra.Command) []*cobra.Command {
+	ordered := []string{"version", "completion"}
+	children := visibleCommands(cmd)
+	lookup := make(map[string]*cobra.Command, len(children))
+	for _, child := range children {
+		lookup[child.Name()] = child
+	}
+	commands := make([]*cobra.Command, 0)
+	for _, name := range ordered {
+		if child, ok := lookup[name]; ok {
+			commands = append(commands, child)
+		}
+	}
+	return commands
+}
+
+func initCommandTree(cmd *cobra.Command) {
+	cmd.InitDefaultHelpCmd()
+	cmd.InitDefaultHelpFlag()
+	for _, child := range cmd.Commands() {
+		initCommandTree(child)
+	}
+}
+
+func topLevelCommands(rootCmd *cobra.Command) map[string]*cobra.Command {
+	commands := make(map[string]*cobra.Command)
+	for _, cmd := range visibleCommands(rootCmd) {
+		commands[cmd.Name()] = cmd
+	}
+	return commands
+}
+
+func legacyTopLevelOrder() []string {
+	return []string{
+		"system",
+		"perf",
+		"adapter",
+		"design",
+		"filter",
+		"registry",
+		"model",
+		"component",
+		"environment",
+		"connection",
+		"organization",
+		"relationship",
+		"exp",
+	}
+}
+
+func legacySystemAliasOrder() []string {
+	return []string{"channel", "context", "provider"}
+}
+
+func commandKey(cmd *cobra.Command) string {
+	if cmd.Parent() == nil {
+		return "global"
+	}
+	return cmd.Name()
+}
+
+func commandName(cmd *cobra.Command) string {
+	if cmd.Parent() == nil {
+		return cmd.CommandPath()
+	}
+	return cmd.Name()
+}
+
+func displayCommandName(cmd *cobra.Command, alias string) string {
+	if alias != "" {
+		return alias
+	}
+	return commandName(cmd)
+}
+
+func flagName(flag *pflag.Flag) string {
+	if flag.Shorthand == "" {
+		return fmt.Sprintf("--%s", flag.Name)
+	}
+	return fmt.Sprintf("--%s, -%s", flag.Name, flag.Shorthand)
+}
+
+func flagValueSuffix(flag *pflag.Flag) string {
+	if flag.Value == nil || flag.Value.Type() == "bool" || flag.NoOptDefVal != "" {
+		return ""
+	}
+	return " <value>"
+}
+
+func flagsMap(cmd *cobra.Command) yaml.MapSlice {
+	flags := yaml.MapSlice{}
+	cmd.NonInheritedFlags().VisitAll(func(flag *pflag.Flag) {
+		if flag.Hidden {
+			return
+		}
+		flagDoc := yaml.MapSlice{
+			{Key: "name", Value: flagName(flag)},
+			{Key: "description", Value: flag.Usage},
+			{Key: "usage", Value: fmt.Sprintf("%s --%s%s", cmd.CommandPath(), flag.Name, flagValueSuffix(flag))},
+		}
+		flags = append(flags, yaml.MapItem{Key: flag.Name, Value: flagDoc})
+	})
+	return flags
+}
+
+func commandDoc(cmd *cobra.Command, alias string, children []*cobra.Command) yaml.MapSlice {
+	entry := yaml.MapSlice{
+		{Key: "name", Value: displayCommandName(cmd, alias)},
+		{Key: "description", Value: cmd.Short},
+		{Key: "usage", Value: cmd.UseLine()},
+	}
+
+	if strings.TrimSpace(cmd.Example) != "" {
+		entry = append(entry, yaml.MapItem{Key: "example", Value: cmd.Example})
+	}
+
+	flags := flagsMap(cmd)
+	if len(flags) > 0 {
+		entry = append(entry, yaml.MapItem{Key: "flags", Value: flags})
+	}
+
+	if len(children) > 0 {
+		subcommands := yaml.MapSlice{}
+		for _, child := range children {
+			subcommands = append(subcommands, yaml.MapItem{Key: commandKey(child), Value: commandDoc(child, "", visibleCommands(child))})
+		}
+		entry = append(entry, yaml.MapItem{Key: "subcommands", Value: subcommands})
+	}
+
+	return entry
+}
+
+func systemCommandDoc(cmd *cobra.Command) yaml.MapSlice {
+	excluded := map[string]struct{}{
+		"channel":  {},
+		"context":  {},
+		"provider": {},
+	}
+	children := make([]*cobra.Command, 0)
+	for _, child := range visibleCommands(cmd) {
+		if _, ok := excluded[child.Name()]; ok {
+			continue
+		}
+		children = append(children, child)
+	}
+	return commandDoc(cmd, "", children)
+}
+
+func experimentalCommandDoc(cmd *cobra.Command) yaml.MapSlice {
+	entry := yaml.MapSlice{}
+	for _, child := range visibleCommands(cmd) {
+		entry = append(entry, yaml.MapItem{Key: child.Name(), Value: commandDoc(child, "", visibleCommands(child))})
+	}
+	return entry
+}
+
+func commandTrackerDoc(rootCmd *cobra.Command) yaml.MapSlice {
+	initCommandTree(rootCmd)
+	topLevel := topLevelCommands(rootCmd)
+	tracker := yaml.MapSlice{}
+	tracker = append(tracker, yaml.MapItem{Key: "global", Value: commandDoc(rootCmd, "", rootGlobalSubcommands(rootCmd))})
+
+	if systemCmd, ok := topLevel["system"]; ok {
+		tracker = append(tracker, yaml.MapItem{Key: "system", Value: systemCommandDoc(systemCmd)})
+		children := topLevelCommands(systemCmd)
+		for _, name := range legacySystemAliasOrder() {
+			if child, ok := children[name]; ok {
+				tracker = append(tracker, yaml.MapItem{Key: "system-" + name, Value: commandDoc(child, "system "+name, visibleCommands(child))})
+			}
+		}
+	}
+
+	for _, name := range legacyTopLevelOrder() {
+		cmd, ok := topLevel[name]
+		if !ok || name == "system" {
+			continue
+		}
+		if name == "exp" {
+			tracker = append(tracker, yaml.MapItem{Key: name, Value: experimentalCommandDoc(cmd)})
+			continue
+		}
+		tracker = append(tracker, yaml.MapItem{Key: commandKey(cmd), Value: commandDoc(cmd, "", visibleCommands(cmd))})
+	}
+
+	for _, cmd := range visibleCommands(rootCmd) {
+		if _, ok := topLevel[cmd.Name()]; !ok {
+			continue
+		}
+		if cmd.Name() == "system" || cmd.Name() == "exp" {
+			continue
+		}
+		found := false
+		for _, name := range legacyTopLevelOrder() {
+			if name == cmd.Name() {
+				found = true
+				break
+			}
+		}
+		if !found && cmd.Name() != "completion" && cmd.Name() != "version" {
+			tracker = append(tracker, yaml.MapItem{Key: commandKey(cmd), Value: commandDoc(cmd, "", visibleCommands(cmd))})
+		}
+	}
+	return tracker
+}
+
+func GenerateCommandTracker(rootCmd *cobra.Command, outputPath string) error {
+	if err := os.MkdirAll(filepath.Dir(outputPath), os.ModePerm); err != nil {
+		return err
+	}
+
+	content, err := yaml.Marshal(commandTrackerDoc(rootCmd))
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(outputPath, content, 0644)
+}
+
+func normalizeGeneratedOutput(content string) string {
+	homeDir, err := os.UserHomeDir()
+	if err != nil || homeDir == "" {
+		return content
+	}
+
+	return strings.ReplaceAll(content, homeDir, "/home/runner")
 }
 
 // printOptions prints the options for a command
@@ -145,16 +390,22 @@ func printOptions(buf *bytes.Buffer, cmd *cobra.Command) error {
 	flags := cmd.NonInheritedFlags()
 	flags.SetOutput(buf)
 	if flags.HasAvailableFlags() {
+		flagBuf := new(bytes.Buffer)
+		flags.SetOutput(flagBuf)
 		buf.WriteString("## Options\n\n<pre class='codeblock-pre'>\n<div class='codeblock'>\n")
 		flags.PrintDefaults()
+		buf.WriteString(normalizeGeneratedOutput(flagBuf.String()))
 		buf.WriteString("\n</div>\n</pre>\n\n")
 	}
 
 	parentFlags := cmd.InheritedFlags()
 	parentFlags.SetOutput(buf)
 	if parentFlags.HasAvailableFlags() {
+		parentFlagBuf := new(bytes.Buffer)
+		parentFlags.SetOutput(parentFlagBuf)
 		buf.WriteString("## Options inherited from parent commands\n\n<pre class='codeblock-pre'>\n<div class='codeblock'>\n")
 		parentFlags.PrintDefaults()
+		buf.WriteString(normalizeGeneratedOutput(parentFlagBuf.String()))
 		buf.WriteString("\n</div>\n</pre>\n\n")
 	}
 	return nil

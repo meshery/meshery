@@ -73,10 +73,16 @@ Annotations: linkDocPatternApply,
 
 ### Adding New/Removing Existing commands in the reference index
 
-Though the command page is generated automatically by the Cobra CLI library, there are chances where the command does not appear in the [reference index page](/reference/mesheryctl). In such cases, the command details must be manually added to the reference index YAML file. This is generally done by editing the below two files:
+The command page and command index data are generated automatically from the Cobra command tree. Run the CLI docs generator to refresh both the markdown command pages and command index YAML:
 
-- [cmds.yml](https://github.com/meshery/meshery/blob/master/docs/data/mesheryctlcommands/cmds.yml) - The YAML file containing the data about the commands
-- [_index.md](https://github.com/meshery/meshery/blob/master/docs/content/en/reference/mesheryctl/_index.md) - The markdown page of the command reference documentation
+- `make docs-mesheryctl`
+
+The generated files include:
+
+- [cmds.yml](https://github.com/meshery/meshery/blob/master/docs/data/mesheryctlcommands/cmds.yml) - Generated command reference data.
+- `docs/content/en/reference/mesheryctl/**` - Generated command reference pages.
+
+Update [_index.md](https://github.com/meshery/meshery/blob/master/docs/content/en/reference/mesheryctl/_index.md) only when you want to change category ordering or page content.
 
 ### Preserving Manually Added Documentation
 	
