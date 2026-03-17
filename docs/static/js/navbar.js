@@ -10,8 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.remove("dark-mode");
     }
 
-    updateLogos();
-
     const toggleBtn = document.getElementById("mode-toggle-btn");
     if (toggleBtn) {
         toggleBtn.addEventListener("click", setMode);
@@ -35,7 +33,6 @@ function updateLogos() {
         } else {
             logo.src = logo.dataset.logoForLight;
         }
-        logo.style.visibility = "visible";
     });
 }
 

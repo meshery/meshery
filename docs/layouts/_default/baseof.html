@@ -20,6 +20,14 @@
         } else {
           document.body.classList.add("dark-mode");
         }
+        // Update logos immediately
+        document.querySelectorAll(".logo-dark-light").forEach(logo => {
+          if (isLight) {
+            logo.src = logo.dataset.logoForLight;
+          } else {
+            logo.src = logo.dataset.logoForDark;
+          }
+        });
       })();
     </script>
 
