@@ -5,7 +5,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkit "github.com/meshery/meshkit/utils"
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
@@ -55,16 +54,7 @@ var generateCmd = &cobra.Command{
 mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Check if flag is set
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(relationshipGenerateFlag)
-		if err != nil {
-			return err
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &relationshipGenerateFlag)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		resp, err := fetchSheetValues(relationshipGenerateFlag.SpreadsheetID, relationshipGenerateFlag.SpreadsheetCred)
