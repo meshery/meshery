@@ -25,7 +25,7 @@ mesheryctl model import [flags]
 Import model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import -f [URI]
+mesheryctl model import --file [URI]
 
 </div>
 </pre> 
@@ -33,7 +33,7 @@ mesheryctl model import -f [URI]
 Import model from a URL to a meshery model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import -f [URL]
+mesheryctl model import --file [URL]
 
 </div>
 </pre> 
@@ -41,7 +41,7 @@ mesheryctl model import -f [URL]
 Import model from an OCI artifact
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import -f [OCI]
+mesheryctl model import --file [OCI]
 
 </div>
 </pre> 
@@ -49,7 +49,7 @@ mesheryctl model import -f [OCI]
 Import model from a tar.gz file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import -f [path-to-model.tar.gz]
+mesheryctl model import --file [path-to-model.tar.gz]
 
 </div>
 </pre> 
@@ -57,7 +57,7 @@ mesheryctl model import -f [path-to-model.tar.gz]
 Import model from a path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import -f [path-to-model]
+mesheryctl model import --file [path-to-model]
 
 </div>
 </pre> 
@@ -65,7 +65,7 @@ mesheryctl model import -f [path-to-model]
 Import model using CSV files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import -f [path-to-csv-directory]
+mesheryctl model import --file [path-to-csv-directory]
 
 </div>
 </pre> 
