@@ -33,6 +33,10 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
     "/api/system/ai/test",
     h.ProviderMiddleware(h.AuthMiddleware(h.HandleAITest)),
 ).Methods("POST")
+    gMux.Handle(
+	"/api/system/ai/config",
+	h.ProviderMiddleware(h.AuthMiddleware(h.HandleAIConfig)),
+).Methods("GET", "POST")
 	gMux.Handle("/api/extension/version", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ExtensionsVersionHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/system/database", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetSystemDatabase), models.ProviderAuth))).
