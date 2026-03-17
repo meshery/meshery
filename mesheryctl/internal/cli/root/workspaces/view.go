@@ -55,7 +55,7 @@ mesheryctl exp workspace view [workspace-id] --output-format json --save
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("please provide exactly one workspace name or ID\n\n%v", errMsg))
 		}
-		
+
 		// Validate orgId is provided when arg is not a UUID
 		if !utils.IsUUID(args[0]) && workspaceViewFlagsProvided.OrgID == "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("--orgId is required when searching by name\n\nUsage: mesheryctl exp workspace view [workspace-name] --orgId [orgId]"))
@@ -113,7 +113,7 @@ mesheryctl exp workspace view [workspace-id] --output-format json --save
 		if err != nil {
 			return err
 		}
-		
+
 		outputFormatter = outputFormatter.WithOutput(cmd.OutOrStdout())
 
 		err = outputFormatter.Display()
