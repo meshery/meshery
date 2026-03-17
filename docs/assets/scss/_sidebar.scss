@@ -142,22 +142,26 @@
 
 .sidebar-nav {
   padding: 0.25rem 0 1rem;
+  display: block;
 }
 
 .sidebar-nav__section {
   padding: 0.5rem 0 0;
+  display: block;
+  clear: both;
 }
 
 .sidebar-nav__section + .sidebar-nav__section {
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
   padding-top: 0.75rem;
   border-top: 1px solid var(--color-grey-medium);
 }
 
 .sidebar-nav__row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 2px;
+  width: 100%;
 }
 
 .sidebar-nav__section-title {
@@ -288,6 +292,11 @@
   list-style: none !important;
   padding: 0 !important;
   margin: 0 !important;
+  display: block;
+}
+
+.sidebar-nav__item + .sidebar-nav__item {
+  margin-top: 0.1rem !important;
 }
 
 .collapse:not(.show) {
