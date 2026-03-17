@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"os"
 	"path"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -280,10 +279,7 @@ func (h *Handler) DesignFileImportHandler(
 	if importDesignPayload.Name != "" {
 		design.Name = importDesignPayload.Name
 	} else if design.Name == "" {
-		name := fileToImport.FileName
-		name = strings.TrimSuffix(name, ".tar.gz")
-		name = strings.TrimSuffix(name, filepath.Ext(name))
-		if name != "" {
+		if name := pCore.DesignNameFromFileName(fileToImport.FileName); name != "" {
 			design.Name = name
 		}
 	}

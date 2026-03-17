@@ -328,11 +328,18 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, callback func(sv
 	return nil
 }
 
-func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bool, reg *registry.RegistryManager) (pattern.PatternFile, error) {
-	if fileName != "" {
-		fileName = strings.TrimSuffix(fileName, ".tar.gz")
-		fileName = strings.TrimSuffix(fileName, filepath.Ext(fileName))
+// DesignNameFromFileName strips archive and file extensions from a filename
+// to derive a clean design name. Returns empty string for empty input.
+func DesignNameFromFileName(fileName string) string {
+	if fileName == "" {
+		return ""
 	}
+	name := strings.TrimSuffix(fileName, ".tar.gz")
+	return strings.TrimSuffix(name, filepath.Ext(name))
+}
+
+func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bool, reg *registry.RegistryManager) (pattern.PatternFile, error) {
+	fileName = DesignNameFromFileName(fileName)
 
 	registryCache := &registry.RegistryEntityCache{}
 
