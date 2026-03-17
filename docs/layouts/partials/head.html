@@ -72,6 +72,17 @@
   />
 
   <title>{{ .Title | default .Site.Title }} | Meshery</title>
+
+  <script>
+  (function () {
+    const mode = localStorage.getItem("mode");
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (mode === "dark-mode" || (!mode && systemPrefersDark)) {
+      document.documentElement.setAttribute("data-theme", "dark");
+    }
+  })();
+</script>
+
   <meta property="og:title" content="{{ .Title | default .Site.Title }}" />
   <meta
     property="og:description"
