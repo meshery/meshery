@@ -4,6 +4,7 @@
   "kind": "hierarchical",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "line-color": "#00B39F",
       "line-style": "solid",
@@ -12,8 +13,7 @@
       "svgWhite": "",
       "target-arrow-color": "#00B39F",
       "target-arrow-shape": "triangle"
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
     "version": "",
@@ -35,7 +35,6 @@
           {
             "id": null,
             "kind": "*",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -56,7 +55,6 @@
           {
             "id": null,
             "kind": "Section",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",

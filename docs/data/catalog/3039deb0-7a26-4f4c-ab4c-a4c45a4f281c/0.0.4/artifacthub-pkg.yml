@@ -1,0 +1,24 @@
+version: 0.0.4
+name: -weather-forecasting-app
+displayName: "\tWeather Forecasting App"
+createdAt: "2025-07-17T09:54:59Z"
+description: A weather forecasting microservice application using Node.js backend, MongoDB database, and a React frontend served via Nginx.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3039deb0-7a26-4f4c-ab4c-a4c45a4f281c/0.0.4/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Frontend is served via Nginx using a placeholder image. Replace with your built React app image for production. MongoDB is deployed without persistent volumes. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: d574bd52-93e6-44b7-ad69-edf67c643b2c
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3039deb0-7a26-4f4c-ab4c-a4c45a4f281c-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3039deb0-7a26-4f4c-ab4c-a4c45a4f281c-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,0 +1,24 @@
+version: 0.0.1
+name: hierarchical-inventory-relationship
+displayName: Hierarchical Inventory Relationship
+createdAt: "2024-03-07T18:18:22Z"
+description: "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of child component. \nEg: The configuration of the Deployment (parent) component is patched with the configuration as received from ConfigMap (child) component. "
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/be8c9e9e-1a74-4c5a-b128-235364399410/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "NA  \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/be8c9e9e-1a74-4c5a-b128-235364399410-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/be8c9e9e-1a74-4c5a-b128-235364399410-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
