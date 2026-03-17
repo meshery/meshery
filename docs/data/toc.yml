@@ -198,7 +198,7 @@
         - title: Exploring Kubernetes Deployments
           url: guides/tutorials/kubernetes/kubernetes-deployments
         - title: Deploying Apache Cassandra with StatefulSets
-          url: guides/tutorials//kubernetes/deploy-apache-cassandra-with-statefulset
+          url: guides/tutorials/kubernetes/deploy-apache-cassandra-with-statefulset
         - title: Embedding Meshery Designs in WordPress
           url: guides/tutorials/wordpress/embedding-meshery-design-in-wordpress
         - title: Publishing Designs to ArtifactHub
