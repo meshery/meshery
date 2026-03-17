@@ -11,7 +11,7 @@ List registered models
 
 ## Synopsis
 
-List all registered models by pagingation (25 models per page)
+List all registered models by pagingation (10 models per page)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -33,7 +33,7 @@ mesheryctl model list
 List of models for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model list --page [page-number]
+mesheryctl model list --page [page-number] --pagesize [pagesize]
 
 </div>
 </pre> 
@@ -59,8 +59,8 @@ mesheryctl model list --count
 <div class='codeblock'>
   -c, --count          (optional) Get the number of models in total
   -h, --help           help for list
-  -p, --page int       (optional) List next set of models with --page (default = 0) (default 1)
-  -s, --pagesize int   (optional) List next set of models with --pagesize (default = 0)
+  -p, --page int       (optional) List next set of models with --page (default = 1) (default 1)
+  -s, --pagesize int   (optional) List next set of models with --pagesize (default = 10) (default 10)
 
 </div>
 </pre>
