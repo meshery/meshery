@@ -1,0 +1,24 @@
+version: 0.0.7
+name: understanding-relationships
+displayName: Understanding Relationships
+createdAt: "2025-10-24T13:20:24Z"
+description: "This design incorporates all the key relationships, including the following:\n\n1. Hierarchical-Parent-Inventory: This represents a parent-child relationship between components, where one component is a dependency of another.\n\n2. Hierarchical-Parent-Wallet: In a hierarchical-parent-wallet relationship, one component (the \"wallet\") serves as a container or host for another component, similar to a parent-child structure.\n\n3. Hierarchical-Sibling-MatchLabels: A Match-Labels Relationship in Meshery refers to the configuration where Kubernetes components are linked based on shared labels.\n\n4. Edge-Binding-Mount: An Edge-Mount Relationship in Meshery represents the assignment of persistent storage to Pods via PersistentVolumeClaims (PVC). \n\n5. Edge-Binding-Permission: The Edge-Binding-Permissions Relationship defines how components connect to establish access control and permissions in a system. In the Edge-Binding-Permissions relationship, the binding components, such as role bindings and cluster role bindings, act as essential links that establish and enforce permissions. \n\n6. Edge-Binding-Firewall: An Edge-Firewall Relationship in Meshery models a Kubernetes Network Policy that controls ingress and egress traffic between Pods.\n\n7.  Edge-Non-Binding-Network: An Edge-Network Relationship in Meshery represents the networking configuration between Kubernetes components, typically illustrated by a dashed arrow connecting a Service to a Deployment.\n\n8. Edge-Non-Binding-Annotation: Annotation Relationships refer to a visual representation used to indicate a relationship between two components without assigning any semantic meaning to that relationship."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/f4328c69-513c-4fa9-af37-27a2f1475cdf/0.0.7/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "For detailed considerations on each relationship type, refer to the corresponding individual published designs. These designs provide in-depth insights into best practices, configuration strategies, and potential impacts for each type of relationship. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: de7f1b67-5c6d-4c38-8c6c-fda919129ed0
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/f4328c69-513c-4fa9-af37-27a2f1475cdf-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/f4328c69-513c-4fa9-af37-27a2f1475cdf-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,0 +1,24 @@
+version: 0.0.1
+name: minio-deployment
+displayName: minIO Deployment
+createdAt: "2024-04-02T19:18:59Z"
+description: This configuration sets up a single MinIO instance with specific environment variables, health checks, and life cycle actions, utilising a PersistentVolumeClaim for data storage within a Kubernetes cluster. It ensures that MinIO is deployed and managed according to the specified parameters.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/d3481e21-5000-4c90-a999-f53050863dc3/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Replication and High Availability: The configuration specifies only one replica (replicas: For production environments requiring high availability and fault tolerance, consider increasing the number of replicas and configuring MinIO for distributed mode to ensure data redundancy and availability.\n\n2. Security Considerations: The provided configuration includes hard-coded access and secret keys (MINIO_ACCESS_KEY and MINIO_SECRET_KEY) within the YAML file. It is crucial to follow best practices for secret management in Kubernetes, such as using Kubernetes Secrets or external secret management solutions, to securely manage sensitive information.\n\n3. Resource Requirements: Resource requests and limits for CPU, memory, and storage are not defined in the configuration. Assess and adjust these resource specifications according to the expected workload and performance requirements to ensure optimal resource utilisation and avoid resource contention.\n\n4. Storage Provisioning: The configuration relies on a PersistentVolumeClaim (PVC) named minio to provide storage for MinIO. Ensure that the underlying storage provisioner and PersistentVolume (PV) configuration meet the performance, capacity, and durability requirements of the MinIO workload. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d3481e21-5000-4c90-a999-f53050863dc3-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d3481e21-5000-4c90-a999-f53050863dc3-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
