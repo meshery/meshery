@@ -77,7 +77,9 @@
   min-width: 300px;
   padding: 0 0.75rem 2rem;
 
-  &::-webkit-scrollbar { width: 3px; }
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
   &::-webkit-scrollbar-thumb {
     background: var(--color-grey-medium);
     border-radius: 99px;
@@ -108,9 +110,13 @@
   color: var(--color-secondary-medium);
   padding: 0.45rem 0.75rem;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 
-  &::placeholder { color: var(--color-grey-dark); }
+  &::placeholder {
+    color: var(--color-grey-dark);
+  }
 
   &:focus {
     border-color: var(--sidenav-hover);
@@ -191,7 +197,9 @@
   border-radius: 5px;
   line-height: 1.5;
   word-break: break-word;
-  transition: color 0.15s ease, background 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
   position: relative;
 
   &:hover {
@@ -223,7 +231,9 @@
   padding: 4px !important;
   cursor: pointer;
   color: var(--color-grey-dark);
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
     background: var(--color-grey-dark-alpha) !important;
@@ -252,13 +262,20 @@
   list-style: none !important;
   padding: 0 !important;
   margin: 0 !important;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.25s ease;
 }
 
-.sidebar-nav__list.is-open {
-  max-height: none;
+.sidebar-nav ul.sidebar-nav__list {
+  display: none !important;
+}
+
+.sidebar-nav ul.sidebar-nav__list.is-open {
+  display: block !important;
+}
+
+.sidebar-nav li:has(> a[href*="/installation/quick-start"]),
+.sidebar-nav li:has(> a[href*="/extensions"]) {
+  margin-left: 0 !important;
+  list-style-type: none !important;
 }
 
 .sidebar-nav .sidebar-nav__list--sub {
