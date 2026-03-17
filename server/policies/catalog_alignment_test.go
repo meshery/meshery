@@ -810,12 +810,9 @@ func TestCatalogAlignment(t *testing.T) {
 		diff := diffFingerprints(goFps, opaFps)
 
 		// Count-level match vs deep match
-		cat := catMatch
+		var cat divergenceCategory
 		if len(goFps) == len(opaFps) && len(diff.GoOnly) == 0 && len(diff.OPAOnly) == 0 {
 			cat = catDeepMatch
-		} else if len(goFps) == len(opaFps) {
-			// Same count but different content
-			cat = classifyFromDiff(goFps, opaFps, diff)
 		} else {
 			cat = classifyFromDiff(goFps, opaFps, diff)
 		}
