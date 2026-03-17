@@ -169,16 +169,21 @@ func patchMutatorsAction(rel, designFile map[string]interface{}) []PolicyAction 
 			continue
 		}
 
-		mutatorRefRaw := getMapSlice(fromPatch, "mutatorRef")
-		mutatedRefRaw := getMapSlice(toPatch, "mutatedRef")
-		if mutatorRefRaw == nil || mutatedRefRaw == nil {
-			continue
-		}
-
 		fromComp := componentDeclarationByID(designFile, getMapString(from, "id"))
 		toComp := componentDeclarationByID(designFile, getMapString(to, "id"))
 		if fromComp == nil || toComp == nil {
 			continue
+		}
+
+		mutatorRefRaw, mutatedRefRaw, mutatorComp, mutatedComp := resolveMutatorMutatedRefs(fromPatch, toPatch, fromComp, toComp)
+		if mutatorRefRaw == nil || mutatedRefRaw == nil {
+			continue
+		}
+
+		// Determine which component ID is the mutated target for the patch action.
+		mutatedID := getMapString(to, "id")
+		if getMapString(mutatedComp, "id") == getMapString(fromComp, "id") {
+			mutatedID = getMapString(from, "id")
 		}
 
 		count := len(mutatorRefRaw)
@@ -190,8 +195,8 @@ func patchMutatorsAction(rel, designFile map[string]interface{}) []PolicyAction 
 			mutatorRef := interfaceToStringSlice(mutatorRefRaw[i])
 			mutatedRef := interfaceToStringSlice(mutatedRefRaw[i])
 
-			mutatorValue := configurationForComponentAtPath(mutatorRef, fromComp, designFile)
-			oldValue := configurationForComponentAtPath(mutatedRef, toComp, designFile)
+			mutatorValue := configurationForComponentAtPath(mutatorRef, mutatorComp, designFile)
+			oldValue := configurationForComponentAtPath(mutatedRef, mutatedComp, designFile)
 
 			if deepEqual(mutatorValue, oldValue) {
 				continue
@@ -200,7 +205,7 @@ func patchMutatorsAction(rel, designFile map[string]interface{}) []PolicyAction 
 			actions = append(actions, PolicyAction{
 				Op: getComponentUpdateOp(mutatedRef),
 				Value: map[string]interface{}{
-					"id":    getMapString(to, "id"),
+					"id":    mutatedID,
 					"path":  mutatedRef,
 					"value": mutatorValue,
 				},
@@ -479,6 +484,31 @@ func identifyRelationshipsBasedOnMatchingMutatorAndMutatedFields(
 	return identified
 }
 
+// resolveMutatorMutatedRefs extracts mutatorRef/mutatedRef paths and the corresponding
+// components from the from/to patches. Handles both orientations:
+//   - FROM has mutatorRef, TO has mutatedRef (e.g. configmap reference)
+//   - FROM has mutatedRef, TO has mutatorRef (e.g. namespace inventory)
+func resolveMutatorMutatedRefs(
+	fromPatch, toPatch map[string]interface{},
+	compFrom, compTo map[string]interface{},
+) (mutatorRefs, mutatedRefs []interface{}, mutatorComp, mutatedComp map[string]interface{}) {
+	// Try: FROM=mutator, TO=mutated
+	mr := getMapSlice(fromPatch, "mutatorRef")
+	md := getMapSlice(toPatch, "mutatedRef")
+	if mr != nil && md != nil {
+		return mr, md, compFrom, compTo
+	}
+
+	// Try: FROM=mutated, TO=mutator (reversed orientation)
+	mr = getMapSlice(toPatch, "mutatorRef")
+	md = getMapSlice(fromPatch, "mutatedRef")
+	if mr != nil && md != nil {
+		return mr, md, compTo, compFrom
+	}
+
+	return nil, nil, nil, nil
+}
+
 // matchingMutators checks if the mutator/mutated refs of two components match.
 func matchingMutators(compFrom, compTo, fromClause, toClause, designFile map[string]interface{}) bool {
 	fromPatch := getMapMap(fromClause, "patch")
@@ -487,8 +517,7 @@ func matchingMutators(compFrom, compTo, fromClause, toClause, designFile map[str
 		return false
 	}
 
-	mutatorRefs := getMapSlice(fromPatch, "mutatorRef")
-	mutatedRefs := getMapSlice(toPatch, "mutatedRef")
+	mutatorRefs, mutatedRefs, mutatorComp, mutatedComp := resolveMutatorMutatedRefs(fromPatch, toPatch, compFrom, compTo)
 	if mutatorRefs == nil || mutatedRefs == nil {
 		return false
 	}
@@ -508,8 +537,8 @@ func matchingMutators(compFrom, compTo, fromClause, toClause, designFile map[str
 		mutatorPath := interfaceToStringSlice(mutatorRefs[i])
 		mutatedPath := interfaceToStringSlice(mutatedRefs[i])
 
-		mutatorValue := configurationForComponentAtPath(mutatorPath, compFrom, designFile)
-		mutatedValue := configurationForComponentAtPath(mutatedPath, compTo, designFile)
+		mutatorValue := configurationForComponentAtPath(mutatorPath, mutatorComp, designFile)
+		mutatedValue := configurationForComponentAtPath(mutatedPath, mutatedComp, designFile)
 
 		strategy := getStrategyForValueAt(strategies, i)
 
