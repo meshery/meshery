@@ -1,6 +1,6 @@
 package router
 
-import import (
+import (
     "context"
     "fmt"
     "net/http"
@@ -29,7 +29,10 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.HandleFunc("/api/system/version", h.ServerVersionHandler).
 		Methods("GET")
-	gMux.HandleFunc("/api/system/ai/test", handlers.HandleAITest).Methods("POST")
+	gMux.Handle(
+    "/api/system/ai/test",
+    h.ProviderMiddleware(h.AuthMiddleware(h.HandleAITest)),
+).Methods("POST")
 	gMux.Handle("/api/extension/version", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ExtensionsVersionHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/system/database", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetSystemDatabase), models.ProviderAuth))).
