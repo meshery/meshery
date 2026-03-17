@@ -78,7 +78,7 @@ The informer in MeshSync actively listens to changes in resources and updates th
 
 ### Synthetic Test of MeshSync
 
-_TODO: Include example of how to invoke this built-in check._
+You can invoke MeshSync's built-in health check using `mesheryctl system check --operator`.
 
 # Scalability and Performance
 
