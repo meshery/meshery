@@ -362,7 +362,7 @@ definitions:
             entityState:
                 description: EntityState State of the entity in which the capability is applicable.
                 items:
-                    $ref: '#/definitions/CapabiliyEntityState'
+                    $ref: '#/definitions/CapabilityEntityState'
                 type: array
                 x-go-name: EntityState
             key:
@@ -383,7 +383,7 @@ definitions:
                 type: string
                 x-go-name: SchemaVersion
             status:
-                $ref: '#/definitions/CapabiliyStatus'
+                $ref: '#/definitions/CapabilityStatus'
             subType:
                 description: SubType Most granular unit of capability classification. The combination of Kind, Type and SubType together uniquely identify a Capability.
                 type: string
@@ -396,15 +396,15 @@ definitions:
                 description: Version Version of the capability definition.
                 type: string
                 x-go-name: Version
-        title: Capabiliy Meshery manages entities in accordance with their specific capabilities. This field explicitly identifies those capabilities largely by what actions a given component supports; e.g. metric-scrape, sub-interface, and so on. This field is extensible. Entities may define a broad array of capabilities, which are in-turn dynamically interpretted by Meshery for full lifecycle management.
+        title: Capability Meshery manages entities in accordance with their specific capabilities. This field explicitly identifies those capabilities largely by what actions a given component supports; e.g. metric-scrape, sub-interface, and so on. This field is extensible. Entities may define a broad array of capabilities, which are in-turn dynamically interpretted by Meshery for full lifecycle management.
         type: object
         x-go-package: github.com/meshery/schemas/models/v1alpha1/capability
-    CapabiliyEntityState:
-        title: CapabiliyEntityState defines model for Capabiliy.EntityState.
+    CapabilityEntityState:
+        title: CapabilityEntityState A string starting with an alphanumeric character. Spaces and hyphens allowed.
         type: string
         x-go-package: github.com/meshery/schemas/models/v1alpha1/capability
-    CapabiliyStatus:
-        description: CapabiliyStatus Status of the capability
+    CapabilityStatus:
+        description: CapabilityStatus Status of the capability
         type: string
         x-go-package: github.com/meshery/schemas/models/v1alpha1/capability
     CapacityRange:
@@ -469,14 +469,20 @@ definitions:
         x-go-package: github.com/meshery/meshkit/models/catalog/v1alpha1
     CategoryDefinition:
         properties:
+            id:
+                $ref: '#/definitions/UUID'
             metadata:
                 additionalProperties: {}
                 type: object
                 x-go-name: Metadata
             name:
-                type: string
-                x-go-name: Name
+                $ref: '#/definitions/CategoryDefinitionName'
+        title: CategoryDefinition Category of the model.
         type: object
+        x-go-package: github.com/meshery/schemas/models/v1beta1/category
+    CategoryDefinitionName:
+        title: CategoryDefinitionName The category of the model that determines the main grouping.
+        type: string
         x-go-package: github.com/meshery/schemas/models/v1beta1/category
     ChangeType:
         description: |-
@@ -651,6 +657,7 @@ definitions:
         type: object
         x-go-package: github.com/grafana-tools/sdk
     Component:
+        description: Component data related to the third party capability that Component Defintion wraps , this is herematicaly sealed an
         properties:
             kind:
                 example: A Kubernetes Pod is of kind 'Pod'.
@@ -682,6 +689,11 @@ definitions:
                 description: Configuration The configuration of the component. The configuration is based on the schema defined within the component definition(component.schema).
                 type: object
                 x-go-name: Configuration
+            created_at:
+                description: CreatedAt Timestamp when the resource was created.
+                format: date-time
+                type: string
+                x-go-name: CreatedAt
             description:
                 description: Description A written representation of the purpose and characteristics of the component.
                 type: string
@@ -693,14 +705,13 @@ definitions:
             format:
                 $ref: '#/definitions/ComponentDefinitionFormat'
             id:
-                description: Id Uniquely identifies the entity (i.e. component) as defined in a declaration (i.e. design).
-                format: uuid
-                type: string
-                x-go-name: Id
+                $ref: '#/definitions/UUID'
             metadata:
                 $ref: '#/definitions/ComponentDefinition_Metadata'
             model:
                 $ref: '#/definitions/ModelDefinition'
+            modelReference:
+                $ref: '#/definitions/ModelReference'
             schemaVersion:
                 description: SchemaVersion Specifies the version of the schema to which the component definition conforms.
                 type: string
@@ -708,7 +719,12 @@ definitions:
             status:
                 $ref: '#/definitions/ComponentDefinitionStatus'
             styles:
-                $ref: '#/definitions/Styles'
+                $ref: '#/definitions/ComponentDefinition_Styles'
+            updated_at:
+                description: UpdatedAt Timestamp when the resource was updated.
+                format: date-time
+                type: string
+                x-go-name: UpdatedAt
             version:
                 description: Version Version of the component definition.
                 type: string
@@ -717,11 +733,18 @@ definitions:
         x-go-package: github.com/meshery/schemas/models/v1beta1/component
     ComponentDefinition_Metadata:
         properties:
+            configurationUISchema:
+                description: 'ConfigurationUISchema Defines the UI schema for rendering the component''s configuration. For more details, visit: https://rjsf-team.github.io/react-jsonschema-form/docs/api-reference/uiSchema/ .'
+                type: string
+                x-go-name: ConfigurationUISchema
             genealogy:
                 description: Genealogy Genealogy represents the various representational states of the component.
                 type: string
                 x-go-name: Genealogy
             instanceDetails:
+                additionalProperties: {}
+                description: InstanceDetails InstanceDetails contains information about the instance of the component.
+                type: object
                 x-go-name: InstanceDetails
             isAnnotation:
                 description: IsAnnotation Identifies whether the component is semantically meaningful or not; identifies whether the component should be treated as deployable entity or is for purposes of logical representation.
@@ -738,6 +761,279 @@ definitions:
         title: ComponentDefinition_Metadata Metadata contains additional information associated with the component.
         type: object
         x-go-package: github.com/meshery/schemas/models/v1beta1/component
+    ComponentDefinition_Styles:
+        properties:
+            active-bg-color:
+                description: ActiveBgColor The colour of the indicator shown when the background is grabbed by the user. Selector needs to be *core*. Colours may be specified by name (e.g. red), hex (e.g.
+                type: string
+                x-go-name: ActiveBgColor
+            active-bg-opacity:
+                description: ActiveBgOpacity The opacity of the active background indicator. Selector needs to be *core*.
+                type: string
+                x-go-name: ActiveBgOpacity
+            active-bg-size:
+                description: ActiveBgSize The opacity of the active background indicator. Selector needs to be *core*.
+                type: string
+                x-go-name: ActiveBgSize
+            animation:
+                additionalProperties: {}
+                description: Animation The animation to apply to the element. example ripple,bounce,etc
+                type: object
+                x-go-name: Animation
+            background-blacken:
+                description: BackgroundBlacken Blackens the node's body for values from 0 to 1; whitens the node's body for values from 0 to -1.
+                format: float
+                type: number
+                x-go-name: BackgroundBlacken
+            background-clip:
+                description: BackgroundClip How the background image is clipped to the node. Can be 'none', 'node', or 'node-border'.
+                type: string
+                x-go-name: BackgroundClip
+            background-color:
+                description: BackgroundColor The colour of the node's body. Colours may be specified by name (e.g. red), hex (e.g.
+                type: string
+                x-go-name: BackgroundColor
+            background-fit:
+                description: BackgroundFit How the background image is fit to the node. Can be 'none', 'contain', or 'cover'.
+                type: string
+                x-go-name: BackgroundFit
+            background-height-relative-to:
+                description: BackgroundHeightRelativeTo How the background image's height is determined. Can be 'none', 'inner', or 'outer'.
+                type: string
+                x-go-name: BackgroundHeightRelativeTo
+            background-image:
+                description: BackgroundImage The URL that points to the image to show in the node.
+                type: string
+                x-go-name: BackgroundImage
+            background-offset-x:
+                description: BackgroundOffsetX The x offset of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
+                type: string
+                x-go-name: BackgroundOffsetX
+            background-offset-y:
+                description: BackgroundOffsetY The y offset of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
+                type: string
+                x-go-name: BackgroundOffsetY
+            background-opacity:
+                description: BackgroundOpacity The opacity level of the node's background colour
+                format: float
+                type: number
+                x-go-name: BackgroundOpacity
+            background-position-x:
+                description: BackgroundPositionX The x position of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
+                type: string
+                x-go-name: BackgroundPositionX
+            background-position-y:
+                description: BackgroundPositionY The y position of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
+                type: string
+                x-go-name: BackgroundPositionY
+            background-width-relative-to:
+                description: BackgroundWidthRelativeTo How the background image's width is determined. Can be 'none', 'inner', or 'outer'.
+                type: string
+                x-go-name: BackgroundWidthRelativeTo
+            body-text:
+                description: BodyText The text to display for an element's body. Can give a path, e.g. data(id) will label with the elements id
+                type: string
+                x-go-name: BodyText
+            body-text-background-color:
+                description: BodyTextBackgroundColor The colour of the node's body text background. Colours may be specified by name (e.g. red), hex (e.g.
+                type: string
+                x-go-name: BodyTextBackgroundColor
+            body-text-color:
+                description: BodyTextColor The colour of the node's body text. Colours may be specified by name (e.g. red), hex (e.g.
+                type: string
+                x-go-name: BodyTextColor
+            body-text-decoration:
+                description: BodyTextDecoration A CSS text decoration to be applied to the node's body text.
+                type: string
+                x-go-name: BodyTextDecoration
+            body-text-font-size:
+                description: BodyTextFontSize The size of the node's body text.
+                format: float
+                type: number
+                x-go-name: BodyTextFontSize
+            body-text-font-weight:
+                description: BodyTextFontWeight A CSS font weight to be applied to the node's body text.
+                type: string
+                x-go-name: BodyTextFontWeight
+            body-text-horizontal-align:
+                description: BodyTextHorizontalAlign A CSS horizontal alignment to be applied to the node's body text.
+                type: string
+                x-go-name: BodyTextHorizontalAlign
+            body-text-max-width:
+                description: BodyTextMaxWidth The maximum width for wrapping text in the node.
+                type: string
+                x-go-name: BodyTextMaxWidth
+            body-text-opacity:
+                description: BodyTextOpacity The opacity of the node's body text, including its outline.
+                format: float
+                type: number
+                x-go-name: BodyTextOpacity
+            body-text-vertical-align:
+                description: BodyTextVerticalAlign A CSS vertical alignment to be applied to the node's body text.
+                type: string
+                x-go-name: BodyTextVerticalAlign
+            body-text-wrap:
+                description: BodyTextWrap How to wrap the text in the node. Can be 'none', 'wrap', or 'ellipsis'.
+                type: string
+                x-go-name: BodyTextWrap
+            border-color:
+                description: BorderColor The colour of the node's border. Colours may be specified by name (e.g. red), hex (e.g.
+                type: string
+                x-go-name: BorderColor
+            border-opacity:
+                description: BorderOpacity The opacity of the node's border
+                format: float
+                type: number
+                x-go-name: BorderOpacity
+            border-style:
+                $ref: '#/definitions/ComponentDefinitionStylesBorderStyle'
+            border-width:
+                description: BorderWidth The size of the node's border.
+                format: float
+                type: number
+                x-go-name: BorderWidth
+            color:
+                description: Color The color of the element's label. Colours may be specified by name (e.g. red), hex (e.g.
+                type: string
+                x-go-name: Color
+            font-family:
+                description: FontFamily A comma-separated list of font names to use on the label text.
+                type: string
+                x-go-name: FontFamily
+            font-size:
+                description: FontSize The size of the label text.
+                type: string
+                x-go-name: FontSize
+            font-style:
+                description: FontStyle A CSS font style to be applied to the label text.
+                type: string
+                x-go-name: FontStyle
+            font-weight:
+                description: FontWeight A CSS font weight to be applied to the label text.
+                type: string
+                x-go-name: FontWeight
+            ghost:
+                $ref: '#/definitions/ComponentDefinitionStylesGhost'
+            height:
+                description: Height The height of the node's body
+                format: float
+                type: number
+                x-go-name: Height
+            label:
+                description: Label The text to display for an element's label. Can give a path, e.g. data(id) will label with the elements id
+                type: string
+                x-go-name: Label
+            menu-background-color:
+                description: MenuBackgroundColor The colour of the background of the component menu. Colours may be specified by name (e.g. red), hex (e.g.
+                type: string
+                x-go-name: MenuBackgroundColor
+            menu-background-opacity:
+                description: MenuBackgroundOpacity The opacity of the background of the component menu.
+                format: float
+                type: number
+                x-go-name: MenuBackgroundOpacity
+            menu-forground-color:
+                description: MenuForgroundColor The colour of the text or icons in the component menu. Colours may be specified by name (e.g. red), hex (e.g.
+                type: string
+                x-go-name: MenuForgroundColor
+            opacity:
+                description: Opacity The opacity of the element, ranging from 0 to 1. Note that the opacity of a compound node parent affects the effective opacity of its children.
+                format: float
+                type: number
+                x-go-name: Opacity
+            outside-texture-bg-color:
+                description: OutsideTextureBgColor The colour of the area outside the viewport texture when initOptions.textureOnViewport === true. Selector needs to be *core*. Colours may be specified by name (e.g. red), hex (e.g.
+                type: string
+                x-go-name: OutsideTextureBgColor
+            outside-texture-bg-opacity:
+                description: OutsideTextureBgOpacity The opacity of the area outside the viewport texture. Selector needs to be *core*
+                format: float
+                type: number
+                x-go-name: OutsideTextureBgOpacity
+            padding:
+                description: Padding The amount of padding around all sides of the node.
+                format: float
+                type: number
+                x-go-name: Padding
+            position:
+                description: Position The position of the node. If the position is set, the node is drawn at that position in the given dimensions. If the position is not set, the node is drawn at a random position.
+                properties:
+                    x:
+                        description: X The x-coordinate of the node.
+                        format: double
+                        type: number
+                        x-go-name: X
+                    "y":
+                        description: Y The y-coordinate of the node.
+                        format: double
+                        type: number
+                        x-go-name: "Y"
+                type: object
+                x-go-name: Position
+            primaryColor:
+                description: PrimaryColor Primary color of the component used for UI representation.
+                type: string
+                x-go-name: PrimaryColor
+            secondaryColor:
+                description: SecondaryColor Secondary color of the entity used for UI representation.
+                type: string
+                x-go-name: SecondaryColor
+            selection-box-border-width:
+                description: SelectionBoxBorderWidth The size of the border on the selection box. Selector needs to be *core*
+                format: float
+                type: number
+                x-go-name: SelectionBoxBorderWidth
+            selection-box-color:
+                description: SelectionBoxColor The background colour of the selection box used for drag selection. Selector needs to be *core*. Colours may be specified by name (e.g. red), hex (e.g.
+                type: string
+                x-go-name: SelectionBoxColor
+            selection-box-opacity:
+                description: SelectionBoxOpacity The opacity of the selection box. Selector needs to be *core*
+                format: float
+                type: number
+                x-go-name: SelectionBoxOpacity
+            shape:
+                $ref: '#/definitions/ComponentDefinitionStylesShape'
+            shape-polygon-points:
+                description: ShapePolygonPoints An array (or a space-separated string) of numbers ranging on [-1, 1], representing alternating x and y values (i.e. x1 y1 x2 y2, x3 y3 ...). This represents the points in the polygon for the node's shape. The bounding box of the node is given by (-1, -1), (1, -1), (1, 1), (-1, 1). The node's position is the origin (0, 0 )
+                type: string
+                x-go-name: ShapePolygonPoints
+            svgColor:
+                description: SvgColor Colored SVG of the entity used for UI representation on light background.
+                type: string
+                x-go-name: SvgColor
+            svgComplete:
+                description: SvgComplete Complete SVG of the entity used for UI representation, often inclusive of background.
+                type: string
+                x-go-name: SvgComplete
+            svgWhite:
+                description: SvgWhite White SVG of the entity used for UI representation on dark background.
+                type: string
+                x-go-name: SvgWhite
+            text-halign:
+                $ref: '#/definitions/ComponentDefinitionStylesTextHalign'
+            text-opacity:
+                description: TextOpacity The opacity of the label text, including its outline.
+                format: float
+                type: number
+                x-go-name: TextOpacity
+            text-transform:
+                $ref: '#/definitions/ComponentDefinitionStylesTextTransform'
+            text-valign:
+                $ref: '#/definitions/ComponentDefinitionStylesTextValign'
+            width:
+                description: Width The width of the node's body or the width of an edge's line.
+                format: float
+                type: number
+                x-go-name: Width
+            z-index:
+                description: ZIndex An integer value that affects the relative draw order of elements. In general, an element with a higher z-index will be drawn on top of an element with a lower z-index. Note that edges are under nodes despite z-index.
+                format: int64
+                type: integer
+                x-go-name: ZIndex
+        title: ComponentDefinition_Styles defines model for ComponentDefinition.Styles.
+        type: object
+        x-go-package: github.com/meshery/schemas/models/v1beta1/component
     ComponentDefinitionFormat:
         title: ComponentDefinitionFormat Format specifies the format used in the `component.schema` field. JSON is the default.
         type: string
@@ -752,7 +1048,7 @@ definitions:
         type: string
         x-go-package: github.com/meshery/schemas/models/v1beta1/component
     ComponentDefinitionStylesBorderStyle:
-        description: ComponentDefinitionStylesBorderStyle The style of the node’s border
+        description: ComponentDefinitionStylesBorderStyle The style of the node's border
         type: string
         x-go-package: github.com/meshery/schemas/models/v1beta1/component
     ComponentDefinitionStylesGhost:
@@ -760,11 +1056,11 @@ definitions:
         type: string
         x-go-package: github.com/meshery/schemas/models/v1beta1/component
     ComponentDefinitionStylesShape:
-        description: ComponentDefinitionStylesShape The shape of the node’s body. Note that each shape fits within the specified width and height, and so you may have to adjust width and height if you desire an equilateral shape (i.e. width !== height for several equilateral shapes)
+        description: ComponentDefinitionStylesShape The shape of the node's body. Note that each shape fits within the specified width and height, and so you may have to adjust width and height if you desire an equilateral shape (i.e. width !== height for several equilateral shapes)
         type: string
         x-go-package: github.com/meshery/schemas/models/v1beta1/component
     ComponentDefinitionStylesTextHalign:
-        description: ComponentDefinitionStylesTextHalign The horizontal alignment of a node’s label
+        description: ComponentDefinitionStylesTextHalign The horizontal alignment of a node's label
         type: string
         x-go-package: github.com/meshery/schemas/models/v1beta1/component
     ComponentDefinitionStylesTextTransform:
@@ -772,7 +1068,7 @@ definitions:
         type: string
         x-go-package: github.com/meshery/schemas/models/v1beta1/component
     ComponentDefinitionStylesTextValign:
-        description: ComponentDefinitionStylesTextValign The vertical alignment of a node’s label
+        description: ComponentDefinitionStylesTextValign The vertical alignment of a node's label
         type: string
         x-go-package: github.com/meshery/schemas/models/v1beta1/component
     Condition:
@@ -792,15 +1088,7 @@ definitions:
             }
         properties:
             lastTransitionTime:
-                description: |-
-                    lastTransitionTime is the last time the condition transitioned from one status to another.
-                    This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
-                    +required
-                    +kubebuilder:validation:Required
-                    +kubebuilder:validation:Type=string
-                    +kubebuilder:validation:Format=date-time
-                type: string
-                x-go-name: LastTransitionTime
+                $ref: '#/definitions/Time'
             message:
                 description: |-
                     message is a human readable message indicating details about the transition.
@@ -869,71 +1157,9 @@ definitions:
         type: object
         x-go-package: github.com/meshery/meshery/server/models
     Connection:
-        properties:
-            created_at:
-                format: date-time
-                type: string
-                x-go-name: CreatedAt
-            credential_id:
-                format: uuid
-                type: string
-                x-go-name: CredentialID
-            deleted_at:
-                $ref: '#/definitions/NullTime'
-            environments:
-                items:
-                    $ref: '#/definitions/EnvironmentData'
-                type: array
-                x-go-name: Environments
-            id:
-                format: uuid
-                type: string
-                x-go-name: ID
-            kind:
-                type: string
-                x-go-name: Kind
-            metadata:
-                $ref: '#/definitions/JSONMap'
-            name:
-                type: string
-                x-go-name: Name
-            status:
-                $ref: '#/definitions/ConnectionStatus'
-            sub_type:
-                type: string
-                x-go-name: SubType
-            type:
-                type: string
-                x-go-name: Type
-            updated_at:
-                format: date-time
-                type: string
-                x-go-name: UpdatedAt
-            user_id:
-                format: uuid
-                type: string
-                x-go-name: UserID
         type: object
         x-go-package: github.com/meshery/meshery/server/models/connections
     ConnectionPage:
-        properties:
-            connections:
-                items:
-                    $ref: '#/definitions/Connection'
-                type: array
-                x-go-name: Connections
-            page:
-                format: int64
-                type: integer
-                x-go-name: Page
-            page_size:
-                format: int64
-                type: integer
-                x-go-name: PageSize
-            total_count:
-                format: int64
-                type: integer
-                x-go-name: TotalCount
         type: object
         x-go-package: github.com/meshery/meshery/server/models/connections
     ConnectionStatus:
@@ -959,40 +1185,6 @@ definitions:
                 x-go-name: ConnectionsStatus
         type: object
         x-go-package: github.com/meshery/meshery/server/models/connections
-    ContainerTopOKBody:
-        description: ContainerTopOKBody OK response to ContainerTop operation
-        properties:
-            Processes:
-                description: |-
-                    Each process running in the container, where each is process
-                    is an array of values corresponding to the titles.
-                items:
-                    items:
-                        type: string
-                    type: array
-                type: array
-            Titles:
-                description: The ps column titles
-                items:
-                    type: string
-                type: array
-        required:
-            - Processes
-            - Titles
-        type: object
-        x-go-package: github.com/docker/docker/api/types/container
-    ContainerUpdateOKBody:
-        description: ContainerUpdateOKBody OK response to ContainerUpdate operation
-        properties:
-            Warnings:
-                description: warnings
-                items:
-                    type: string
-                type: array
-        required:
-            - Warnings
-        type: object
-        x-go-package: github.com/docker/docker/api/types/container
     ContentClass:
         type: string
         x-go-package: github.com/meshery/meshkit/models/catalog/v1alpha1
@@ -1052,6 +1244,15 @@ definitions:
         title: CreateResponse ContainerCreateResponse
         type: object
         x-go-package: github.com/docker/docker/api/types/container
+    CreatedAt:
+        title: CreatedAt Timestamp when the resource was created.
+        type: object
+        x-go-package: github.com/meshery/meshkit/models/events
+    DashboardPrefs:
+        additionalProperties: {}
+        description: DashboardPrefs Preferences specific to dashboard behavior
+        type: object
+        x-go-package: github.com/meshery/schemas/models/v1beta1/organization
     DatabaseSummary:
         properties:
             page:
@@ -1088,6 +1289,20 @@ definitions:
                 type: string
         type: object
         x-go-package: github.com/docker/docker/api/types/image
+    DeletedAt:
+        title: DeletedAt Timestamp when the resource was deleted.
+        type: object
+        x-go-package: github.com/meshery/meshkit/models/events
+    DesignPreferences:
+        description: DesignPreferences Design-level preferences
+        properties:
+            layers:
+                additionalProperties: {}
+                description: Layers Map of available layers, where keys are layer names.
+                type: object
+                x-go-name: Layers
+        type: object
+        x-go-package: github.com/meshery/schemas/models/v1beta1/pattern
     DesignerComponents:
         properties:
             application:
@@ -1147,6 +1362,28 @@ definitions:
                 x-go-name: Time
         type: object
         x-go-package: github.com/meshery/meshery/server/models
+    DriverData:
+        description: |-
+            DriverData Information about the storage driver used to store the container's and
+            image's filesystem.
+        properties:
+            Data:
+                additionalProperties:
+                    type: string
+                description: |-
+                    Low-level storage metadata, provided as key/value pairs.
+
+                    This information is driver-specific, and depends on the storage-driver
+                    in use, and should be used for informational purposes only.
+                type: object
+            Name:
+                description: Name of the storage driver.
+                type: string
+        required:
+            - Data
+            - Name
+        type: object
+        x-go-package: github.com/docker/docker/api/types/storage
     DuplicateResponseComponent:
         properties:
             capabilities:
@@ -1162,6 +1399,11 @@ definitions:
                 description: Configuration The configuration of the component. The configuration is based on the schema defined within the component definition(component.schema).
                 type: object
                 x-go-name: Configuration
+            created_at:
+                description: CreatedAt Timestamp when the resource was created.
+                format: date-time
+                type: string
+                x-go-name: CreatedAt
             description:
                 description: Description A written representation of the purpose and characteristics of the component.
                 type: string
@@ -1177,14 +1419,13 @@ definitions:
             format:
                 $ref: '#/definitions/ComponentDefinitionFormat'
             id:
-                description: Id Uniquely identifies the entity (i.e. component) as defined in a declaration (i.e. design).
-                format: uuid
-                type: string
-                x-go-name: Id
+                $ref: '#/definitions/UUID'
             metadata:
                 $ref: '#/definitions/ComponentDefinition_Metadata'
             model:
                 $ref: '#/definitions/ModelDefinition'
+            modelReference:
+                $ref: '#/definitions/ModelReference'
             schemaVersion:
                 description: SchemaVersion Specifies the version of the schema to which the component definition conforms.
                 type: string
@@ -1192,7 +1433,12 @@ definitions:
             status:
                 $ref: '#/definitions/ComponentDefinitionStatus'
             styles:
-                $ref: '#/definitions/Styles'
+                $ref: '#/definitions/ComponentDefinition_Styles'
+            updated_at:
+                description: UpdatedAt Timestamp when the resource was updated.
+                format: date-time
+                type: string
+                x-go-name: UpdatedAt
             version:
                 description: Version Version of the component definition.
                 type: string
@@ -1206,16 +1452,17 @@ definitions:
             components:
                 x-go-name: Components
             components_count:
-                description: |-
-                    Total number of components in a model
-                    Edited on purpose
+                description: ComponentsCount Number of components associated with the model.
                 format: int64
                 type: integer
                 x-go-name: ComponentsCount
             connection_id:
-                format: uuid
+                $ref: '#/definitions/UUID'
+            created_at:
+                description: CreatedAt Timestamp when the resource was created.
+                format: date-time
                 type: string
-                x-go-name: RegistrantId
+                x-go-name: CreatedAt
             description:
                 description: Description Description of the model.
                 type: string
@@ -1229,14 +1476,13 @@ definitions:
                 type: integer
                 x-go-name: Duplicates
             id:
-                description: Id Uniquely identifies the entity (i.e. component) as defined in a declaration (i.e. design).
-                format: uuid
-                type: string
-                x-go-name: Id
+                $ref: '#/definitions/UUID'
             metadata:
                 $ref: '#/definitions/ModelDefinition_Metadata'
             model:
-                $ref: '#/definitions/Model'
+                description: Model Registrant-defined data associated with the model. Properties pertain to the software being managed (e.g. Kubernetes v1.31).
+                type: object
+                x-go-name: Model
             name:
                 description: Name The unique name for the model within the scope of a registrant.
                 type: string
@@ -1244,14 +1490,9 @@ definitions:
             registrant:
                 $ref: '#/definitions/Connection'
             relationships:
-                description: |-
-                    To prevent cyclic error, the type is changed to interface, it doesn't affect registration
-                    Edited on purpose
                 x-go-name: Relationships
             relationships_count:
-                description: |-
-                    Total number of relationships in a model
-                    Edited on purpose
+                description: RelationshipsCount Number of relationships associated with the model.
                 format: int64
                 type: integer
                 x-go-name: RelationshipsCount
@@ -1262,11 +1503,14 @@ definitions:
             status:
                 $ref: '#/definitions/ModelDefinitionStatus'
             subCategory:
-                description: SubCategory Sub-category of the model.
+                $ref: '#/definitions/SubCategoryDefinition'
+            updated_at:
+                description: UpdatedAt Timestamp when the resource was updated.
+                format: date-time
                 type: string
-                x-go-name: SubCategory
+                x-go-name: UpdatedAt
             version:
-                description: Version Version of the model definition.
+                description: Version A valid semantic version string between 5 and 256 characters. The pattern allows for a major.minor.patch version followed by an optional pre-release tag like '-alpha' or '-beta.2' and an optional build metadata tag like '+build.1.
                 type: string
                 x-go-name: Version
         type: object
@@ -1276,8 +1520,7 @@ definitions:
             GetEntityDetail:
                 type: string
             GetID:
-                format: uuid
-                type: string
+                $ref: '#/definitions/UUID'
             Type:
                 $ref: '#/definitions/EntityType'
         type: object
@@ -1305,7 +1548,8 @@ definitions:
     EntityType:
         type: string
         x-go-package: github.com/meshery/meshkit/models/meshmodel/entity
-    EnvironmentData:
+    Environment:
+        description: Environment Meshery Environments allow you to logically group related Connections and their associated Credentials.. Learn more at https://docs.meshery.io/concepts/logical/environments
         properties:
             created_at:
                 format: date-time
@@ -1314,47 +1558,31 @@ definitions:
             deleted_at:
                 $ref: '#/definitions/NullTime'
             description:
+                description: Description Environment description
                 type: string
                 x-go-name: Description
             id:
-                format: uuid
-                type: string
-                x-go-name: ID
+                $ref: '#/definitions/UUID'
+            metadata:
+                $ref: '#/definitions/Map'
             name:
+                description: Name Environment name
                 type: string
                 x-go-name: Name
-            org_id:
-                format: uuid
-                type: string
-                x-go-name: OrganizationID
+            organization_id:
+                $ref: '#/definitions/UUID'
             owner:
-                type: string
-                x-go-name: Owner
+                $ref: '#/definitions/UUID'
             updated_at:
                 format: date-time
                 type: string
                 x-go-name: UpdatedAt
         type: object
+        x-go-package: github.com/meshery/schemas/models/v1beta1/environment
+    EnvironmentData:
+        type: object
         x-go-package: github.com/meshery/meshery/server/models/environments
     EnvironmentPage:
-        properties:
-            environments:
-                items:
-                    $ref: '#/definitions/EnvironmentData'
-                type: array
-                x-go-name: Environments
-            page:
-                format: int64
-                type: integer
-                x-go-name: Page
-            page_size:
-                format: int64
-                type: integer
-                x-go-name: PageSize
-            total_count:
-                format: int64
-                type: integer
-                x-go-name: TotalCount
         type: object
         x-go-package: github.com/meshery/meshery/server/models/environments
     ErrorResponse:
@@ -1372,10 +1600,7 @@ definitions:
         description: Event Defines model for event_trackers
         properties:
             acted_upon:
-                description: ActedUpon UUID of the entity on which the event was performed.
-                format: uuid
-                type: string
-                x-go-name: ActedUpon
+                $ref: '#/definitions/UUID'
             action:
                 description: Action Action taken on the resource.
                 type: string
@@ -1385,23 +1610,15 @@ definitions:
                 type: string
                 x-go-name: Category
             created_at:
-                description: CreatedAt Timestamp when the resource was created.
-                format: date-time
-                type: string
-                x-go-name: CreatedAt
+                $ref: '#/definitions/CreatedAt'
             deleted_at:
-                description: DeletedAt Timestamp when the resource was deleted.
-                format: date-time
-                type: string
-                x-go-name: DeletedAt
+                $ref: '#/definitions/DeletedAt'
             description:
                 description: Description A summary/receipt of event that occurred.
                 type: string
                 x-go-name: Description
             id:
-                format: uuid
-                type: string
-                x-go-name: ID
+                $ref: '#/definitions/ID'
             metadata:
                 additionalProperties: {}
                 description: |-
@@ -1410,26 +1627,17 @@ definitions:
                 type: object
                 x-go-name: Metadata
             operation_id:
-                format: uuid
-                type: string
-                x-go-name: OperationID
+                $ref: '#/definitions/OperationID'
             severity:
                 $ref: '#/definitions/EventSeverity'
             status:
                 $ref: '#/definitions/EventStatus'
             system_id:
-                format: uuid
-                type: string
-                x-go-name: SystemID
+                $ref: '#/definitions/SystemID'
             updated_at:
-                description: UpdatedAt Timestamp when the resource was updated.
-                format: date-time
-                type: string
-                x-go-name: UpdatedAt
+                $ref: '#/definitions/UpdatedAt'
             user_id:
-                format: uuid
-                type: string
-                x-go-name: UserID
+                $ref: '#/definitions/UserID'
         type: object
         x-go-package: github.com/meshery/meshkit/models/events
     EventSeverity:
@@ -1460,6 +1668,10 @@ definitions:
                 format: int64
                 type: integer
                 x-go-name: PageSize
+            read_count:
+                format: int64
+                type: integer
+                x-go-name: ReadCount
             total_count:
                 format: int64
                 type: integer
@@ -1480,10 +1692,6 @@ definitions:
             user_prefs:
                 $ref: '#/definitions/UserPrefsExtensions'
         type: object
-        x-go-package: github.com/meshery/meshery/server/models
-    Feature:
-        description: Feature is a type to store the features of the provider
-        type: string
         x-go-package: github.com/meshery/meshery/server/models
     FieldConfig:
         properties:
@@ -1803,28 +2011,6 @@ definitions:
                 x-go-name: Value
         type: object
         x-go-package: github.com/meshery/meshery/server/models
-    GraphDriverData:
-        description: |-
-            GraphDriverData Information about the storage driver used to store the container's and
-            image's filesystem.
-        properties:
-            Data:
-                additionalProperties:
-                    type: string
-                description: |-
-                    Low-level storage metadata, provided as key/value pairs.
-
-                    This information is driver-specific, and depends on the storage-driver
-                    in use, and should be used for informational purposes only.
-                type: object
-            Name:
-                description: Name of the storage driver.
-                type: string
-        required:
-            - Data
-            - Name
-        type: object
-        x-go-package: github.com/docker/docker/api/types
     GraphQLExtension:
         description: GraphQLExtension describes the graphql server extension point in the backend
         properties:
@@ -1907,6 +2093,24 @@ definitions:
                 x-go-name: URI
         type: object
         x-go-package: github.com/meshery/meshery/server/models
+    ID:
+        items:
+            format: uint8
+            type: integer
+        title: ID defines model for id.
+        type: array
+        x-go-package: github.com/meshery/meshkit/models/events
+    IDResponse:
+        description: IDResponse Response to an API call that returns just an Id
+        properties:
+            Id:
+                description: The id of the newly created object.
+                type: string
+                x-go-name: ID
+        required:
+            - Id
+        type: object
+        x-go-package: github.com/docker/docker/api/types/common
     IPFamily:
         description: |-
             IPFamily represents the IP Family (IPv4 or IPv6). This type is used
@@ -1920,18 +2124,6 @@ definitions:
             +enum
         type: string
         x-go-package: k8s.io/api/core/v1
-    IdResponse:
-        description: IDResponse Response to an API call that returns just an Id
-        properties:
-            Id:
-                description: The id of the newly created object.
-                type: string
-                x-go-name: ID
-        required:
-            - Id
-        type: object
-        x-go-name: IDResponse
-        x-go-package: github.com/docker/docker/api/types
     Info:
         description: |-
             Info contains information about the Volume as a whole as provided by
@@ -1971,6 +2163,7 @@ definitions:
             +protobuf=true
             +protobuf.options.(gogoproto.goproto_stringer)=false
             +k8s:openapi-gen=true
+            +k8s:openapi-model-package=io.k8s.apimachinery.pkg.util.intstr
         properties:
             IntVal:
                 format: int32
@@ -1997,10 +2190,6 @@ definitions:
         title: 'IntString represents special type for json values that could be strings or ints: 100 or "100"'
         type: object
         x-go-package: github.com/grafana-tools/sdk
-    JSONMap:
-        additionalProperties: {}
-        type: object
-        x-go-package: github.com/meshery/meshery/server/helpers/utils
     K8sContext:
         properties:
             auth:
@@ -2015,9 +2204,7 @@ definitions:
                 type: string
                 x-go-name: CreatedAt
             created_by:
-                format: uuid
-                type: string
-                x-go-name: CreatedBy
+                $ref: '#/definitions/UUID'
             deployment_type:
                 type: string
                 x-go-name: DeploymentType
@@ -2025,20 +2212,14 @@ definitions:
                 type: string
                 x-go-name: ID
             kubernetes_server_id:
-                format: uuid
-                type: string
-                x-go-name: KubernetesServerID
+                $ref: '#/definitions/UUID'
             meshery_instance_id:
-                format: uuid
-                type: string
-                x-go-name: MesheryInstanceID
+                $ref: '#/definitions/UUID'
             name:
                 type: string
                 x-go-name: Name
             owner:
-                format: uuid
-                type: string
-                x-go-name: Owner
+                $ref: '#/definitions/UUID'
             server:
                 type: string
                 x-go-name: Server
@@ -2104,9 +2285,7 @@ definitions:
                 type: string
                 x-go-name: Model
             pattern_resource:
-                format: uuid
-                type: string
-                x-go-name: PatternResource
+                $ref: '#/definitions/UUID'
             spec:
                 $ref: '#/definitions/KubernetesResourceSpec'
             status:
@@ -2400,6 +2579,30 @@ definitions:
                 x-go-name: Duration
         type: object
         x-go-package: github.com/meshery/meshery/server/models
+    Location:
+        properties:
+            location:
+                type: string
+                x-go-name: Location
+            svg:
+                type: string
+                x-go-name: Svg
+        title: Location defines model for Location.
+        type: object
+        x-go-package: github.com/meshery/schemas/models/v1beta1/organization
+    Logo:
+        properties:
+            dark_desktop_view:
+                $ref: '#/definitions/Location'
+            dark_mobile_view:
+                $ref: '#/definitions/Location'
+            desktop_view:
+                $ref: '#/definitions/Location'
+            mobile_view:
+                $ref: '#/definitions/Location'
+        title: Logo defines model for Logo.
+        type: object
+        x-go-package: github.com/meshery/schemas/models/v1beta1/organization
     ManagedFieldsEntry:
         description: |-
             ManagedFieldsEntry is a workflow-id, a FieldSet and the group version of the resource
@@ -2439,15 +2642,7 @@ definitions:
                 type: string
                 x-go-name: Subresource
             time:
-                description: |-
-                    Time is the timestamp of when the ManagedFields entry was added. The
-                    timestamp will also be updated if a field is added, the manager
-                    changes any of the owned fields value or removes a field. The
-                    timestamp does not update when a field is removed from the entry
-                    because another manager took it over.
-                    +optional
-                type: string
-                x-go-name: Time
+                $ref: '#/definitions/Time'
         type: object
         x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
     ManagedFieldsOperationType:
@@ -2474,52 +2669,6 @@ definitions:
                 x-go-name: Value
         type: object
         x-go-package: github.com/grafana-tools/sdk
-    MatchSelector:
-        properties:
-            from:
-                items:
-                    $ref: '#/definitions/MatchSelectorItem'
-                type: array
-                x-go-name: From
-            refs:
-                items:
-                    items:
-                        type: string
-                    type: array
-                type: array
-                x-go-name: Refs
-            to:
-                items:
-                    $ref: '#/definitions/MatchSelectorItem'
-                type: array
-                x-go-name: To
-        type: object
-        x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
-    MatchSelectorItem:
-        properties:
-            id:
-                format: uuid
-                type: string
-                x-go-name: Id
-            kind:
-                type: string
-                x-go-name: Kind
-            mutatedRef:
-                items:
-                    items:
-                        type: string
-                    type: array
-                type: array
-                x-go-name: MutatedRef
-            mutatorRef:
-                items:
-                    items:
-                        type: string
-                    type: array
-                type: array
-                x-go-name: MutatorRef
-        type: object
-        x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     MeshMapComponentSet:
         properties:
             designer:
@@ -2536,41 +2685,41 @@ definitions:
                 type: string
                 x-go-name: CreatedAt
             credential_id:
-                description: CredentialId Credential ID
-                format: uuid
-                type: string
-                x-go-name: CredentialId
+                $ref: '#/definitions/UUID'
             deleted_at:
-                format: date-time
-                type: string
-                x-go-name: DeletedAt
+                $ref: '#/definitions/NullTime'
+            environments:
+                description: Environments Associated environments for this connection
+                items:
+                    $ref: '#/definitions/Environment'
+                type: array
+                x-go-name: Environments
             id:
-                description: Id ID
-                format: uuid
-                type: string
-                x-go-name: Id
+                $ref: '#/definitions/UUID'
             kind:
-                description: Kind Connection Kind
+                description: Kind Connection Kind (meshery, kubernetes, prometheus, grafana, gke, aws, azure, slack, github)
                 type: string
                 x-go-name: Kind
             metadata:
-                additionalProperties: {}
-                type: object
-                x-go-name: Metadata
+                $ref: '#/definitions/Map'
             name:
                 description: Name Connection Name
                 type: string
                 x-go-name: Name
+            schemaVersion:
+                description: SchemaVersion Specifies the version of the schema used for the definition.
+                type: string
+                x-go-name: SchemaVersion
             status:
                 $ref: '#/definitions/ConnectionStatus'
             sub_type:
-                description: SubType Connection Subtype
+                description: SubType Connection Subtype (cloud, identity, metrics, chat, git, orchestration)
                 type: string
                 x-go-name: SubType
             summary:
                 $ref: '#/definitions/EntitySummary'
             type:
-                description: Type Connection Type
+                description: Type Connection Type (platform, telemetry, collaboration)
                 type: string
                 x-go-name: Type
             updated_at:
@@ -2578,10 +2727,7 @@ definitions:
                 type: string
                 x-go-name: UpdatedAt
             user_id:
-                description: UserID A Universally Unique Identifier used to uniquely identify entites in Meshery. The UUID core defintion is used across different schemas.
-                format: uuid
-                type: string
-                x-go-name: UserID
+                $ref: '#/definitions/UUID'
         type: object
         x-go-package: github.com/meshery/meshkit/models/meshmodel/core/v1beta1
     MeshSyncResourcesAPIResponse:
@@ -2645,9 +2791,7 @@ definitions:
                 type: string
                 x-go-name: CreatedAt
             id:
-                format: uuid
-                type: string
-                x-go-name: ID
+                $ref: '#/definitions/UUID'
             location:
                 $ref: '#/definitions/Map'
             name:
@@ -2692,9 +2836,7 @@ definitions:
                 type: string
                 x-go-name: FilterResource
             id:
-                format: uuid
-                type: string
-                x-go-name: ID
+                $ref: '#/definitions/UUID'
             location:
                 $ref: '#/definitions/Map'
             name:
@@ -2759,14 +2901,14 @@ definitions:
                 type: integer
                 x-go-name: DownloadCount
             id:
-                format: uuid
-                type: string
-                x-go-name: ID
+                $ref: '#/definitions/UUID'
             location:
                 $ref: '#/definitions/Map'
             name:
                 type: string
                 x-go-name: Name
+            org_id:
+                $ref: '#/definitions/UUID'
             pattern_file:
                 type: string
                 x-go-name: PatternFile
@@ -2799,6 +2941,8 @@ definitions:
             visibility:
                 type: string
                 x-go-name: Visibility
+            workspace_id:
+                $ref: '#/definitions/UUID'
         type: object
         x-go-package: github.com/meshery/meshery/server/models
     MesheryUICapabilities:
@@ -2997,32 +3141,24 @@ definitions:
         title: Meta is a base object inherited by most of the other once.
         type: object
         x-go-package: github.com/docker/docker/api/types/swarm
-    Model:
-        properties:
-            version:
-                description: Version Version of the model as defined by the registrant.
-                type: string
-                x-go-name: Version
-        type: object
-        x-go-package: github.com/meshery/schemas/models/v1beta1/model
     ModelDefinition:
-        description: ModelDefinition Meshery Models serve as a portable unit of packaging to define managed entities, their relationships, and capabilities.
         properties:
             category:
                 $ref: '#/definitions/CategoryDefinition'
             components:
                 x-go-name: Components
             components_count:
-                description: |-
-                    Total number of components in a model
-                    Edited on purpose
+                description: ComponentsCount Number of components associated with the model.
                 format: int64
                 type: integer
                 x-go-name: ComponentsCount
             connection_id:
-                format: uuid
+                $ref: '#/definitions/UUID'
+            created_at:
+                description: CreatedAt Timestamp when the resource was created.
+                format: date-time
                 type: string
-                x-go-name: RegistrantId
+                x-go-name: CreatedAt
             description:
                 description: Description Description of the model.
                 type: string
@@ -3032,14 +3168,18 @@ definitions:
                 type: string
                 x-go-name: DisplayName
             id:
-                description: Id Uniquely identifies the entity (i.e. component) as defined in a declaration (i.e. design).
-                format: uuid
-                type: string
-                x-go-name: Id
+                $ref: '#/definitions/UUID'
             metadata:
                 $ref: '#/definitions/ModelDefinition_Metadata'
             model:
-                $ref: '#/definitions/Model'
+                description: Model Registrant-defined data associated with the model. Properties pertain to the software being managed (e.g. Kubernetes v1.31).
+                properties:
+                    version:
+                        description: Version Version of the model as defined by the registrant.
+                        type: string
+                        x-go-name: Version
+                type: object
+                x-go-name: Model
             name:
                 description: Name The unique name for the model within the scope of a registrant.
                 type: string
@@ -3047,14 +3187,9 @@ definitions:
             registrant:
                 $ref: '#/definitions/Connection'
             relationships:
-                description: |-
-                    To prevent cyclic error, the type is changed to interface, it doesn't affect registration
-                    Edited on purpose
                 x-go-name: Relationships
             relationships_count:
-                description: |-
-                    Total number of relationships in a model
-                    Edited on purpose
+                description: RelationshipsCount Number of relationships associated with the model.
                 format: int64
                 type: integer
                 x-go-name: RelationshipsCount
@@ -3065,11 +3200,14 @@ definitions:
             status:
                 $ref: '#/definitions/ModelDefinitionStatus'
             subCategory:
-                description: SubCategory Sub-category of the model.
+                $ref: '#/definitions/SubCategoryDefinition'
+            updated_at:
+                description: UpdatedAt Timestamp when the resource was updated.
+                format: date-time
                 type: string
-                x-go-name: SubCategory
+                x-go-name: UpdatedAt
             version:
-                description: Version Version of the model definition.
+                description: Version A valid semantic version string between 5 and 256 characters. The pattern allows for a major.minor.patch version followed by an optional pre-release tag like '-alpha' or '-beta.2' and an optional build metadata tag like '+build.1.
                 type: string
                 x-go-name: Version
         title: ModelDefinition Meshery Models serve as a portable unit of packaging to define managed entities, their relationships, and capabilities.
@@ -3078,7 +3216,7 @@ definitions:
     ModelDefinition_Metadata:
         properties:
             capabilities:
-                description: Capabilities Meshery manages entities in accordance with their specific capabilities. This field explicitly identifies those capabilities largely by what actions a given component supports; e.g. metric-scrape, sub-interface, and so on. This field is extensible. Entities may define a broad array of capabilities, which are in-turn dynamically interpretted by Meshery for full lifecycle management.
+                description: Capabilities Capabilities associated with the model
                 items:
                     $ref: '#/definitions/Capability'
                 type: array
@@ -3095,6 +3233,8 @@ definitions:
                 description: SecondaryColor Secondary color associated with the model.
                 type: string
                 x-go-name: SecondaryColor
+            shape:
+                $ref: '#/definitions/ModelDefinitionMetadataShape'
             svgColor:
                 description: SvgColor SVG representation of the model in colored format.
                 type: string
@@ -3110,6 +3250,10 @@ definitions:
         title: ModelDefinition_Metadata Metadata containing additional information associated with the model.
         type: object
         x-go-package: github.com/meshery/schemas/models/v1beta1/model
+    ModelDefinitionMetadataShape:
+        description: ModelDefinitionMetadataShape The shape of the node's body. Note that each shape fits within the specified width and height, and so you may have to adjust width and height if you desire an equilateral shape (i.e. width !== height for several equilateral shapes)
+        type: string
+        x-go-package: github.com/meshery/schemas/models/v1beta1/model
     ModelDefinitionStatus:
         description: |-
             duplicate: this component is a duplicate of another. The component that is to be the canonical reference and that is duplicated by other components should not be assigned the 'duplicate' status.
@@ -3118,6 +3262,36 @@ definitions:
             ignored: model is unavailable for use for all users of this Meshery Server.
         title: 'ModelDefinitionStatus Status of model, including:'
         type: string
+        x-go-package: github.com/meshery/schemas/models/v1beta1/model
+    ModelReference:
+        description: ModelReference Reference to the specific registered model to which the component belongs and from which model version, category, and other properties may be referenced. Learn more at https://docs.meshery.io/concepts/models
+        properties:
+            displayName:
+                description: DisplayName Human-readable name for the model.
+                type: string
+                x-go-name: DisplayName
+            id:
+                $ref: '#/definitions/UUID'
+            model:
+                description: Model Registrant-defined data associated with the model. Properties pertain to the software being managed (e.g. Kubernetes v1.31).
+                properties:
+                    version:
+                        description: Version Version of the model as defined by the registrant.
+                        type: string
+                        x-go-name: Version
+                type: object
+                x-go-name: Model
+            name:
+                description: Name The unique name for the model within the scope of a registrant.
+                type: string
+                x-go-name: Name
+            registrant:
+                $ref: '#/definitions/RegistrantReference'
+            version:
+                description: Version A valid semantic version string between 5 and 256 characters. The pattern allows for a major.minor.patch version followed by an optional pre-release tag like '-alpha' or '-beta.2' and an optional build metadata tag like '+build.1.
+                type: string
+                x-go-name: Version
+        type: object
         x-go-package: github.com/meshery/schemas/models/v1beta1/model
     NavigatorComponents:
         properties:
@@ -3225,6 +3399,13 @@ definitions:
         format: int32
         type: integer
         x-go-package: github.com/meshery/meshery/server/meshes
+    OperationID:
+        items:
+            format: uint8
+            type: integer
+        title: OperationID defines model for operation_id.
+        type: array
+        x-go-package: github.com/meshery/meshkit/models/events
     Options:
         properties:
             colorMode:
@@ -3268,6 +3449,13 @@ definitions:
                 x-go-name: TextMode
         type: object
         x-go-package: github.com/grafana-tools/sdk
+    OrgMetadata:
+        properties:
+            preferences:
+                $ref: '#/definitions/Preferences'
+        title: OrgMetadata defines model for OrgMetadata.
+        type: object
+        x-go-package: github.com/meshery/schemas/models/v1beta1/organization
     Organization:
         properties:
             country:
@@ -3282,18 +3470,18 @@ definitions:
             description:
                 type: string
                 x-go-name: Description
-            id:
-                description: Unique identifier
-                format: uuid
+            domain:
                 type: string
-                x-go-name: ID
+                x-go-name: Domain
+            id:
+                $ref: '#/definitions/UUID'
+            metadata:
+                $ref: '#/definitions/OrgMetadata'
             name:
                 type: string
                 x-go-name: Name
             owner:
-                format: uuid
-                type: string
-                x-go-name: Owner
+                $ref: '#/definitions/UUID'
             region:
                 type: string
                 x-go-name: Region
@@ -3301,9 +3489,11 @@ definitions:
                 format: date-time
                 type: string
                 x-go-name: UpdatedAt
+        title: Organization defines model for Organization.
         type: object
-        x-go-package: github.com/meshery/meshery/server/models
+        x-go-package: github.com/meshery/schemas/models/v1beta1/organization
     OrganizationsPage:
+        description: 'TODO: Move to schemas'
         properties:
             organizations:
                 items:
@@ -3852,31 +4042,21 @@ definitions:
     PatternFile:
         properties:
             components:
-                description: Components List of component declarations
+                description: Components A list of one or more component declarations.
                 items:
                     $ref: '#/definitions/ComponentDefinition'
                 type: array
                 x-go-name: Components
             id:
-                format: uuid
-                type: string
-                x-go-name: Id
+                $ref: '#/definitions/UUID'
             metadata:
-                $ref: '#/definitions/PatternFileMetadata'
+                $ref: '#/definitions/PatternFile_Metadata'
             name:
                 description: Name Name of the design; a descriptive, but concise title for the design document.
                 type: string
                 x-go-name: Name
             preferences:
-                description: Preferences Design-level preferences
-                properties:
-                    layers:
-                        additionalProperties: {}
-                        description: Layers List of available layers
-                        type: object
-                        x-go-name: Layers
-                type: object
-                x-go-name: Preferences
+                $ref: '#/definitions/DesignPreferences'
             relationships:
                 description: Relationships List of relationships between components
                 items:
@@ -3891,15 +4071,18 @@ definitions:
                 description: Version Revision of the design as expressed by an auto-incremented, SemVer-compliant version number. May be manually set by a user or third-party system, but will always be required to be of version number higher than the previously defined version number.
                 type: string
                 x-go-name: Version
+        title: PatternFile Designs are your primary tool for collaborative authorship of your infrastructure, workflow, and processes.
         type: object
         x-go-package: github.com/meshery/schemas/models/v1beta1/pattern
-    PatternFileMetadata:
+    PatternFile_Metadata:
         properties:
             resolvedAliases:
                 additionalProperties:
                     $ref: '#/definitions/ResolvedAlias'
+                description: ResolvedAliases Map of resolved aliases present in the design
                 type: object
                 x-go-name: ResolvedAliases
+        title: PatternFile_Metadata defines model for PatternFile.Metadata.
         type: object
         x-go-package: github.com/meshery/schemas/models/v1beta1/pattern
     PatternsAPIResponse:
@@ -3937,20 +4120,16 @@ definitions:
                 type: string
                 x-go-name: ContentType
             created_at:
-                type: string
-                x-go-name: CreatedAt
+                $ref: '#/definitions/Time'
             duration:
                 type: string
                 x-go-name: Duration
             endpoints:
                 $ref: '#/definitions/StringArray'
             id:
-                format: uuid
-                type: string
-                x-go-name: ID
+                $ref: '#/definitions/UUID'
             last_run:
-                type: string
-                x-go-name: LastRun
+                $ref: '#/definitions/Time'
             load_generators:
                 $ref: '#/definitions/StringArray'
             metadata:
@@ -3972,9 +4151,7 @@ definitions:
                 type: string
                 x-go-name: RequestHeaders
             schedule:
-                format: uuid
-                type: string
-                x-go-name: Schedule
+                $ref: '#/definitions/UUID'
             service_mesh:
                 type: string
                 x-go-name: ServiceMesh
@@ -3983,8 +4160,7 @@ definitions:
                 type: integer
                 x-go-name: TotalResults
             updated_at:
-                type: string
-                x-go-name: UpdatedAt
+                $ref: '#/definitions/Time'
         type: object
         x-go-package: github.com/meshery/meshery/server/models
     PerformanceProfileParameters:
@@ -4055,30 +4231,24 @@ definitions:
                 type: string
                 x-go-name: Mesh
             meshery_id:
-                format: uuid
-                type: string
-                x-go-name: MesheryID
+                $ref: '#/definitions/UUID'
             name:
                 type: string
                 x-go-name: Name
             performance_profile:
-                format: uuid
-                type: string
-                x-go-name: PerformanceProfile
+                $ref: '#/definitions/UUID'
             runner_results:
                 $ref: '#/definitions/RunnerResults'
             server_board_config:
                 x-go-name: ServerBoardConfig
             server_metrics:
-                x-go-name: ServerMatrics
+                x-go-name: ServerMetrics
             test_start_time:
                 format: date-time
                 type: string
                 x-go-name: TestStartTime
             user_id:
-                format: uuid
-                type: string
-                x-go-name: UserID
+                $ref: '#/definitions/UUID'
         type: object
         x-go-package: github.com/meshery/meshery/server/models
     PerformanceResultsAPIResponse:
@@ -4104,7 +4274,7 @@ definitions:
         type: object
         x-go-package: github.com/meshery/meshery/server/models
     PerformanceSpec:
-        description: PerformanceSpec - represents SMP, see here https://github.com/service-mesh-performance/service-mesh-performance-specification
+        description: PerformanceSpec - represents SMP, see here https://github.com/service-mesh-performance-specification/service-mesh-performance-specification
         properties:
             ActualQPS:
                 format: double
@@ -4157,7 +4327,7 @@ definitions:
                 type: string
                 x-go-name: SmpVersion
         type: object
-        x-go-package: github.com/service-mesh-performance/service-mesh-performance/spec
+        x-go-package: github.com/layer5io/service-mesh-performance/spec
     PerformanceTestConfig_Client:
         properties:
             additional_options:
@@ -4204,11 +4374,11 @@ definitions:
                 type: string
                 x-go-name: SslCertificate
         type: object
-        x-go-package: github.com/service-mesh-performance/service-mesh-performance/spec
+        x-go-package: github.com/layer5io/service-mesh-performance/spec
     PerformanceTestConfig_Client_Protocol:
         format: int32
         type: integer
-        x-go-package: github.com/service-mesh-performance/service-mesh-performance/spec
+        x-go-package: github.com/layer5io/service-mesh-performance/spec
     PerformanceTestParameters:
         description: PerformanceTestParameters contains parameters to run a performance test
         properties:
@@ -4289,7 +4459,12 @@ definitions:
                 description: description
                 type: string
             DockerVersion:
-                description: Docker Version used to create the plugin
+                description: |-
+                    Docker Version used to create the plugin.
+
+                    Depending on how the plugin was created, this field may be empty or omitted.
+
+                    Deprecated: this field is no longer set, and will be removed in the next API version.
                 type: string
             Documentation:
                 description: documentation
@@ -4608,7 +4783,7 @@ definitions:
             - PrivatePort
             - Type
         type: object
-        x-go-package: github.com/docker/docker/api/types
+        x-go-package: github.com/docker/docker/api/types/container
     PortStatus:
         description: PortStatus represents the error condition of a service port
         properties:
@@ -4646,6 +4821,10 @@ definitions:
             anonymousUsageStats:
                 type: boolean
                 x-go-name: AnonymousUsageStats
+            dashboardPreferences:
+                additionalProperties: {}
+                type: object
+                x-go-name: DashboardPreferences
             grafana:
                 $ref: '#/definitions/Grafana'
             loadTestPrefs:
@@ -4661,6 +4840,14 @@ definitions:
                 additionalProperties: {}
                 type: object
                 x-go-name: RemoteProviderPreferences
+            selectedOrganizationID:
+                type: string
+                x-go-name: SelectedOrganizationID
+            selectedWorkspaceForOrganizations:
+                additionalProperties:
+                    type: string
+                type: object
+                x-go-name: SelectedWorkspaceForOrganizations
             updated_at:
                 format: date-time
                 type: string
@@ -4682,6 +4869,15 @@ definitions:
                 x-go-name: AnonymousUsageStats
         type: object
         x-go-package: github.com/meshery/meshery/server/models
+    Preferences:
+        properties:
+            dashboard:
+                $ref: '#/definitions/DashboardPrefs'
+            theme:
+                $ref: '#/definitions/Theme'
+        title: Preferences defines model for Preferences.
+        type: object
+        x-go-package: github.com/meshery/schemas/models/v1beta1/organization
     Prometheus:
         description: Prometheus represents the prometheus session config
         properties:
@@ -4726,6 +4922,11 @@ definitions:
             provider_url:
                 type: string
                 x-go-name: ProviderURL
+            redirects:
+                additionalProperties:
+                    type: string
+                type: object
+                x-go-name: Redirects
             restrictedAccess:
                 $ref: '#/definitions/RestrictedAccess'
         type: object
@@ -4772,6 +4973,14 @@ definitions:
                 x-go-name: To
         type: object
         x-go-package: github.com/grafana-tools/sdk
+    RegistrantReference:
+        properties:
+            kind:
+                type: string
+                x-go-name: Kind
+        title: RegistrantReference defines model for RegistrantReference.
+        type: object
+        x-go-package: github.com/meshery/schemas/models/v1beta1/model
     Relationship_Metadata:
         properties:
             description:
@@ -4779,10 +4988,12 @@ definitions:
                 type: string
                 x-go-name: Description
             isAnnotation:
+                description: IsAnnotation Indicates whether the relationship should be treated as a logical representation only
                 type: boolean
                 x-go-name: IsAnnotation
             styles:
                 $ref: '#/definitions/RelationshipDefinitionMetadataStyles'
+        title: Relationship_Metadata Metadata contains additional information associated with the Relationship.
         type: object
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     RelationshipDefinition:
@@ -4798,16 +5009,13 @@ definitions:
                 type: string
                 x-go-name: EvaluationQuery
             id:
-                description: Id Uniquely identifies the entity
-                format: uuid
-                type: string
-                x-go-name: Id
+                $ref: '#/definitions/UUID'
             kind:
                 $ref: '#/definitions/RelationshipDefinitionKind'
             metadata:
                 $ref: '#/definitions/Relationship_Metadata'
             model:
-                $ref: '#/definitions/ModelDefinition'
+                $ref: '#/definitions/ModelReference'
             schemaVersion:
                 description: SchemaVersion Specifies the version of the schema used for the relationship definition.
                 type: string
@@ -4821,7 +5029,7 @@ definitions:
                 type: string
                 x-go-name: SubType
             type:
-                description: Type Classification of relationships. Used to group relationships similar in nature.
+                description: RelationshipType Classification of relationships. Used to group relationships similar in nature.
                 type: string
                 x-go-name: RelationshipType
             version:
@@ -4831,32 +5039,12 @@ definitions:
         title: RelationshipDefinition Relationships define the nature of interaction between interconnected components in Meshery. The combination of relationship properties kind, type, and subtype characterize various genealogical relations among and between components. Relationships have selectors, selector sets, metadata, and optional parameters. Learn more at https://docs.meshery.io/concepts/logical/relationships.
         type: object
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
-    RelationshipDefinition_Selectors_Patch:
-        properties:
-            mutatedRef:
-                items:
-                    items:
-                        type: string
-                    type: array
-                type: array
-                x-go-name: MutatedRef
-            mutatorRef:
-                items:
-                    items:
-                        type: string
-                    type: array
-                type: array
-                x-go-name: MutatorRef
-            patchStrategy:
-                $ref: '#/definitions/RelationshipDefinitionSelectorsPatchStrategy'
-        title: RelationshipDefinition_Selectors_Patch defines model for RelationshipDefinition.Selectors.Allow.To.Patch.
-        type: object
-        x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     RelationshipDefinitionKind:
         title: RelationshipDefinitionKind Kind of the Relationship. Learn more about relationships - https://docs.meshery.io/concepts/logical/relationships.
         type: string
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     RelationshipDefinitionMetadataStyles:
+        description: RelationshipDefinitionMetadataStyles Visualization styles for a relationship
         properties:
             arrow-scale:
                 description: ArrowScale Scaling for the arrow size.
@@ -4864,7 +5052,7 @@ definitions:
                 type: number
                 x-go-name: ArrowScale
             color:
-                description: 'Color The color of the element''s label. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
+                description: Color The color of the element's label. Colours may be specified by name (e.g. red), hex (e.g.
                 type: string
                 x-go-name: Color
             curve-style:
@@ -4890,24 +5078,24 @@ definitions:
                 type: string
                 x-go-name: FontWeight
             label:
-                description: Label The text to display for an element’s label. Can give a path, e.g. data(id) will label with the elements id
+                description: Label The text to display for an element's label. Can give a path, e.g. data(id) will label with the elements id
                 type: string
                 x-go-name: Label
             line-cap:
                 $ref: '#/definitions/RelationshipDefinitionMetadataStylesLineCap'
             line-color:
-                description: 'LineColor The colour of the edge’s line. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
+                description: LineColor The colour of the edge's line. Colours may be specified by name (e.g. red), hex (e.g.
                 type: string
                 x-go-name: LineColor
             line-opacity:
-                description: LineOpacity The opacity of the edge’s line and arrow. Useful if you wish to have a separate opacity for the edge label versus the edge line. Note that the opacity value of the edge element affects the effective opacity of its line and label subcomponents.
+                description: LineOpacity The opacity of the edge's line and arrow. Useful if you wish to have a separate opacity for the edge label versus the edge line. Note that the opacity value of the edge element affects the effective opacity of its line and label subcomponents.
                 format: float
                 type: number
                 x-go-name: LineOpacity
             line-style:
                 $ref: '#/definitions/RelationshipDefinitionMetadataStylesLineStyle'
             mid-target-arrow-color:
-                description: 'MidTargetArrowColor The colour of the edge’s source arrow. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
+                description: MidTargetArrowColor The colour of the edge's source arrow. Colours may be specified by name (e.g. red), hex (e.g.
                 type: string
                 x-go-name: MidTargetArrowColor
             mid-target-arrow-fill:
@@ -4928,7 +5116,7 @@ definitions:
                 type: string
                 x-go-name: SecondaryColor
             source-label:
-                description: SourceLabel The text to display for an edge’s source label. Can give a path, e.g. data(id) will label with the elements id
+                description: SourceLabel The text to display for an edge's source label. Can give a path, e.g. data(id) will label with the elements id
                 type: string
                 x-go-name: SourceLabel
             svgColor:
@@ -4944,15 +5132,15 @@ definitions:
                 type: string
                 x-go-name: SvgWhite
             target-arrow-color:
-                description: 'TargetArrowColor The colour of the edge’s source arrow. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
+                description: TargetArrowColor The colour of the edge's source arrow. Colours may be specified by name (e.g. red), hex (e.g.
                 type: string
                 x-go-name: TargetArrowColor
             target-arrow-fill:
-                $ref: '#/definitions/RelationshipDefinitionMetadataStyles0TargetArrowFill'
+                $ref: '#/definitions/RelationshipDefinitionMetadataStylesTargetArrowFill'
             target-arrow-shape:
                 $ref: '#/definitions/RelationshipDefinitionMetadataStylesTargetArrowShape'
             target-label:
-                description: TargetLabel The text to display for an edge’s target label. Can give a path, e.g. data(id) will label with the elements id
+                description: TargetLabel The text to display for an edge's target label. Can give a path, e.g. data(id) will label with the elements id
                 type: string
                 x-go-name: TargetLabel
             text-opacity:
@@ -4967,86 +5155,67 @@ definitions:
                 format: int64
                 type: integer
                 x-go-name: ZIndex
-        title: RelationshipDefinitionMetadataStyles0 defines model for .
         type: object
-        x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
-    RelationshipDefinitionMetadataStyles0TargetArrowFill:
-        type: string
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     RelationshipDefinitionMetadataStylesCurveStyle:
         title: RelationshipDefinitionMetadataStylesCurveStyle The curving method used to separate two or more edges between two nodes; may be haystack (very fast, bundled straight edges for which loops and compounds are unsupported), straight (straight edges with all arrows supported), bezier (bundled curved edges), unbundled-bezier (curved edges for use with manual control points), segments (a series of straight lines), taxi (right-angled lines, hierarchically bundled). Note that haystack edges work best with ellipse, rectangle, or similar nodes. Smaller node shapes, like triangle, will not be as aesthetically pleasing. Also note that edge endpoint arrows are unsupported for haystack edges.
         type: string
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     RelationshipDefinitionMetadataStylesLineCap:
-        title: RelationshipDefinitionMetadataStylesLineCap The cap style of the edge’s line; may be butt (default), round, or square. The cap may or may not be visible, depending on the shape of the node and the relative size of the node and edge. Caps other than butt extend beyond the specified endpoint of the edge.
+        title: RelationshipDefinitionMetadataStylesLineCap The cap style of the edge's line; may be butt (default), round, or square. The cap may or may not be visible, depending on the shape of the node and the relative size of the node and edge. Caps other than butt extend beyond the specified endpoint of the edge.
         type: string
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     RelationshipDefinitionMetadataStylesLineStyle:
+        title: RelationshipDefinitionMetadataStylesLineStyle The style of the edge's line.
         type: string
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     RelationshipDefinitionMetadataStylesMidTargetArrowFill:
+        description: RelationshipDefinitionMetadataStylesMidTargetArrowFill The fill state of the edge's source arrow
         type: string
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     RelationshipDefinitionMetadataStylesMidTargetArrowShape:
+        description: RelationshipDefinitionMetadataStylesMidTargetArrowShape The shape of the edge's source arrow
+        type: string
+        x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
+    RelationshipDefinitionMetadataStylesTargetArrowFill:
+        description: RelationshipDefinitionMetadataStylesTargetArrowFill The fill state of the edge's source arrow
         type: string
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     RelationshipDefinitionMetadataStylesTargetArrowShape:
-        description: RelationshipDefinitionMetadataStylesTargetArrowShape The shape of the edge’s source arrow
+        description: RelationshipDefinitionMetadataStylesTargetArrowShape The shape of the edge's source arrow
         type: string
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     RelationshipDefinitionMetadataStylesTextTransform:
         description: RelationshipDefinitionMetadataStylesTextTransform A transformation to apply to the label text
         type: string
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
-    RelationshipDefinitionSelectorsPatchStrategy:
-        description: |-
-            add: Inserts a value into an array or adds a member to an object.
-            replace: Replaces a value.
-            merge: Combines the values of the target location with the values from the patch. If the target location doesn't exist, it is created.
-            strategic:specific to Kubernetes and understands the structure of Kubernetes objects. It can handle complex changes like updating lists and maps, as well as preserving default values. However, it's not supported for custom resources. For custom resources, only JSON Patch and Merge Patch are typically supported.
-            remove: Removes a value.
-            copy: Copies a value from one location to another.
-            move: Moves a value from one location to another.
-            test: Tests that a value at the target location is equal to a specified value.
-        title: RelationshipDefinitionSelectorsPatchStrategy patchStrategy allows you to make specific changes to a resource using a standard JSON Patch format (RFC 6902).
-        type: string
-        x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     RelationshipDefinitionStatus:
-        title: Status of the relationship.
+        title: RelationshipDefinitionStatus Status of the relationship.
         type: string
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     ResolvedAlias:
-        description: resolvedAlias are aware of there immediate parents and completely resolved parents also
         properties:
             alias_component_id:
-                format: uuid
-                type: string
-                x-go-name: AliasComponentId
+                $ref: '#/definitions/UUID'
             immediate_parent_id:
-                format: uuid
-                type: string
-                x-go-name: ImmediateParentId
+                $ref: '#/definitions/UUID'
             immediate_ref_field_path:
                 items:
                     type: string
                 type: array
                 x-go-name: ImmediateRefFieldPath
             relationship_id:
-                format: uuid
-                type: string
-                x-go-name: RelationshipId
+                $ref: '#/definitions/UUID'
             resolved_parent_id:
-                format: uuid
-                type: string
-                x-go-name: ResolvedParentId
+                $ref: '#/definitions/UUID'
             resolved_ref_field_path:
                 items:
                     type: string
                 type: array
                 x-go-name: ResolvedRefFieldPath
-        title: An resolved alias is an component that acts as an ref/pointer to a field in another component,
+        title: ResolvedAlias defines model for ResolvedAlias.
         type: object
-        x-go-package: github.com/meshery/schemas/models/v1beta1/pattern
+        x-go-package: github.com/meshery/schemas/models/v1alpha1/core
     RestrictedAccess:
         properties:
             allowedComponents:
@@ -5109,9 +5278,7 @@ definitions:
                 type: string
                 x-go-name: CronExpression
             id:
-                format: uuid
-                type: string
-                x-go-name: ID
+                $ref: '#/definitions/UUID'
         type: object
         x-go-package: github.com/meshery/meshery/server/models
     SchedulesAPIResponse:
@@ -5176,48 +5343,569 @@ definitions:
                 x-go-name: SelectedTemplateVars
         type: object
         x-go-package: github.com/meshery/meshery/server/models
-    Selector:
-        properties:
-            from:
-                description: From Describes the component(s) which are involved in the relationship along with a set of actions to perform upon selection match.
-                items:
-                    $ref: '#/definitions/SelectorItem'
-                type: array
-                x-go-name: From
-            to:
-                description: To Describes the component(s) which are involved in the relationship along with a set of actions to perform upon selection match.
-                items:
-                    $ref: '#/definitions/SelectorItem'
-                type: array
-                x-go-name: To
-        type: object
-        x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
-    SelectorItem:
-        properties:
-            id:
-                description: Id A Universally Unique Identifier used to uniquely identify entites in Meshery. The UUID core defintion is used across different schemas.
-                format: uuid
-                type: string
-                x-go-name: Id
-            kind:
-                type: string
-                x-go-name: Kind
-            match:
-                $ref: '#/definitions/MatchSelector'
-            model:
-                $ref: '#/definitions/ModelDefinition'
-            patch:
-                $ref: '#/definitions/RelationshipDefinition_Selectors_Patch'
-        type: object
-        x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     SelectorSet:
         items:
             properties:
                 allow:
-                    $ref: '#/definitions/Selector'
+                    description: Allow Selectors used to define relationships which are allowed.
+                    properties:
+                        from:
+                            description: From Describes the component(s) which are involved in the relationship along with a set of actions to perform upon selection match.
+                            items:
+                                properties:
+                                    id:
+                                        description: Id A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is used across different schemas.
+                                        items:
+                                            format: uint8
+                                            type: integer
+                                        type: array
+                                        x-go-name: Id
+                                    kind:
+                                        type: string
+                                        x-go-name: Kind
+                                    match:
+                                        description: Match Match configuration for selector
+                                        properties:
+                                            from:
+                                                items:
+                                                    properties:
+                                                        id:
+                                                            description: Id A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is used across different schemas.
+                                                            items:
+                                                                format: uint8
+                                                                type: integer
+                                                            type: array
+                                                            x-go-name: Id
+                                                        kind:
+                                                            type: string
+                                                            x-go-name: Kind
+                                                        mutatedRef:
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatedRef
+                                                        mutatorRef:
+                                                            description: MutatorRef JSON ref to value from where patch should be applied.
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatorRef
+                                                    type: object
+                                                type: array
+                                                x-go-name: From
+                                            refs:
+                                                items:
+                                                    items:
+                                                        type: string
+                                                    type: array
+                                                type: array
+                                                x-go-name: Refs
+                                            to:
+                                                items:
+                                                    properties:
+                                                        id:
+                                                            description: Id A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is used across different schemas.
+                                                            items:
+                                                                format: uint8
+                                                                type: integer
+                                                            type: array
+                                                            x-go-name: Id
+                                                        kind:
+                                                            type: string
+                                                            x-go-name: Kind
+                                                        mutatedRef:
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatedRef
+                                                        mutatorRef:
+                                                            description: MutatorRef JSON ref to value from where patch should be applied.
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatorRef
+                                                    type: object
+                                                type: array
+                                                x-go-name: To
+                                        type: object
+                                        x-go-name: Match
+                                    match_strategy_matrix:
+                                        description: MatchStrategyMatrix Match strategy matrix for the selector
+                                        items:
+                                            items:
+                                                type: string
+                                            type: array
+                                        type: array
+                                        x-go-name: MatchStrategyMatrix
+                                    model:
+                                        description: Model Name of the model implicated by this selector. Learn more at https://docs.meshery.io/concepts/models
+                                        type: object
+                                        x-go-name: Model
+                                    patch:
+                                        description: Patch Patch configuration for the selector
+                                        properties:
+                                            mutatedRef:
+                                                items:
+                                                    items:
+                                                        type: string
+                                                    type: array
+                                                type: array
+                                                x-go-name: MutatedRef
+                                            mutatorRef:
+                                                description: MutatorRef JSON ref to value from where patch should be applied.
+                                                items:
+                                                    items:
+                                                        type: string
+                                                    type: array
+                                                type: array
+                                                x-go-name: MutatorRef
+                                            patchStrategy:
+                                                description: |-
+                                                    PatchStrategy patchStrategy allows you to make specific changes to a resource using a standard JSON Patch format (RFC 6902).
+
+                                                    add: Inserts a value into an array or adds a member to an object.
+                                                    replace: Replaces a value.
+                                                    merge: Combines the values of the target location with the values from the patch. If the target location doesn't exist, it is created.
+                                                    strategic: specific to Kubernetes and understands the structure of Kubernetes objects.
+                                                    remove: Removes a value.
+                                                    copy: Copies a value from one location to another.
+                                                    move: Moves a value from one location to another.
+                                                    test: Tests that a value at the target location is equal to a specified value.
+                                                type: string
+                                                x-go-name: PatchStrategy
+                                        type: object
+                                        x-go-name: Patch
+                                type: object
+                            type: array
+                            x-go-name: From
+                        to:
+                            description: To Describes the component(s) which are involved in the relationship along with a set of actions to perform upon selection match.
+                            items:
+                                properties:
+                                    id:
+                                        description: Id A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is used across different schemas.
+                                        items:
+                                            format: uint8
+                                            type: integer
+                                        type: array
+                                        x-go-name: Id
+                                    kind:
+                                        type: string
+                                        x-go-name: Kind
+                                    match:
+                                        description: Match Match configuration for selector
+                                        properties:
+                                            from:
+                                                items:
+                                                    properties:
+                                                        id:
+                                                            description: Id A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is used across different schemas.
+                                                            items:
+                                                                format: uint8
+                                                                type: integer
+                                                            type: array
+                                                            x-go-name: Id
+                                                        kind:
+                                                            type: string
+                                                            x-go-name: Kind
+                                                        mutatedRef:
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatedRef
+                                                        mutatorRef:
+                                                            description: MutatorRef JSON ref to value from where patch should be applied.
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatorRef
+                                                    type: object
+                                                type: array
+                                                x-go-name: From
+                                            refs:
+                                                items:
+                                                    items:
+                                                        type: string
+                                                    type: array
+                                                type: array
+                                                x-go-name: Refs
+                                            to:
+                                                items:
+                                                    properties:
+                                                        id:
+                                                            description: Id A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is used across different schemas.
+                                                            items:
+                                                                format: uint8
+                                                                type: integer
+                                                            type: array
+                                                            x-go-name: Id
+                                                        kind:
+                                                            type: string
+                                                            x-go-name: Kind
+                                                        mutatedRef:
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatedRef
+                                                        mutatorRef:
+                                                            description: MutatorRef JSON ref to value from where patch should be applied.
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatorRef
+                                                    type: object
+                                                type: array
+                                                x-go-name: To
+                                        type: object
+                                        x-go-name: Match
+                                    match_strategy_matrix:
+                                        description: MatchStrategyMatrix Match strategy matrix for the selector
+                                        items:
+                                            items:
+                                                type: string
+                                            type: array
+                                        type: array
+                                        x-go-name: MatchStrategyMatrix
+                                    model:
+                                        description: Model Name of the model implicated by this selector. Learn more at https://docs.meshery.io/concepts/models
+                                        type: object
+                                        x-go-name: Model
+                                    patch:
+                                        description: Patch Patch configuration for the selector
+                                        properties:
+                                            mutatedRef:
+                                                items:
+                                                    items:
+                                                        type: string
+                                                    type: array
+                                                type: array
+                                                x-go-name: MutatedRef
+                                            mutatorRef:
+                                                description: MutatorRef JSON ref to value from where patch should be applied.
+                                                items:
+                                                    items:
+                                                        type: string
+                                                    type: array
+                                                type: array
+                                                x-go-name: MutatorRef
+                                            patchStrategy:
+                                                description: |-
+                                                    PatchStrategy patchStrategy allows you to make specific changes to a resource using a standard JSON Patch format (RFC 6902).
+
+                                                    add: Inserts a value into an array or adds a member to an object.
+                                                    replace: Replaces a value.
+                                                    merge: Combines the values of the target location with the values from the patch. If the target location doesn't exist, it is created.
+                                                    strategic: specific to Kubernetes and understands the structure of Kubernetes objects.
+                                                    remove: Removes a value.
+                                                    copy: Copies a value from one location to another.
+                                                    move: Moves a value from one location to another.
+                                                    test: Tests that a value at the target location is equal to a specified value.
+                                                type: string
+                                                x-go-name: PatchStrategy
+                                        type: object
+                                        x-go-name: Patch
+                                type: object
+                            type: array
+                            x-go-name: To
+                    type: object
+                    x-go-name: Allow
                 deny:
-                    $ref: '#/definitions/Selector'
+                    description: Deny Optional selectors used to define relationships which should not be created / is restricted.
+                    properties:
+                        from:
+                            description: From Describes the component(s) which are involved in the relationship along with a set of actions to perform upon selection match.
+                            items:
+                                properties:
+                                    id:
+                                        description: Id A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is used across different schemas.
+                                        items:
+                                            format: uint8
+                                            type: integer
+                                        type: array
+                                        x-go-name: Id
+                                    kind:
+                                        type: string
+                                        x-go-name: Kind
+                                    match:
+                                        description: Match Match configuration for selector
+                                        properties:
+                                            from:
+                                                items:
+                                                    properties:
+                                                        id:
+                                                            description: Id A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is used across different schemas.
+                                                            items:
+                                                                format: uint8
+                                                                type: integer
+                                                            type: array
+                                                            x-go-name: Id
+                                                        kind:
+                                                            type: string
+                                                            x-go-name: Kind
+                                                        mutatedRef:
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatedRef
+                                                        mutatorRef:
+                                                            description: MutatorRef JSON ref to value from where patch should be applied.
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatorRef
+                                                    type: object
+                                                type: array
+                                                x-go-name: From
+                                            refs:
+                                                items:
+                                                    items:
+                                                        type: string
+                                                    type: array
+                                                type: array
+                                                x-go-name: Refs
+                                            to:
+                                                items:
+                                                    properties:
+                                                        id:
+                                                            description: Id A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is used across different schemas.
+                                                            items:
+                                                                format: uint8
+                                                                type: integer
+                                                            type: array
+                                                            x-go-name: Id
+                                                        kind:
+                                                            type: string
+                                                            x-go-name: Kind
+                                                        mutatedRef:
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatedRef
+                                                        mutatorRef:
+                                                            description: MutatorRef JSON ref to value from where patch should be applied.
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatorRef
+                                                    type: object
+                                                type: array
+                                                x-go-name: To
+                                        type: object
+                                        x-go-name: Match
+                                    match_strategy_matrix:
+                                        description: MatchStrategyMatrix Match strategy matrix for the selector
+                                        items:
+                                            items:
+                                                type: string
+                                            type: array
+                                        type: array
+                                        x-go-name: MatchStrategyMatrix
+                                    model:
+                                        description: Model Name of the model implicated by this selector. Learn more at https://docs.meshery.io/concepts/models
+                                        type: object
+                                        x-go-name: Model
+                                    patch:
+                                        description: Patch Patch configuration for the selector
+                                        properties:
+                                            mutatedRef:
+                                                items:
+                                                    items:
+                                                        type: string
+                                                    type: array
+                                                type: array
+                                                x-go-name: MutatedRef
+                                            mutatorRef:
+                                                description: MutatorRef JSON ref to value from where patch should be applied.
+                                                items:
+                                                    items:
+                                                        type: string
+                                                    type: array
+                                                type: array
+                                                x-go-name: MutatorRef
+                                            patchStrategy:
+                                                description: |-
+                                                    PatchStrategy patchStrategy allows you to make specific changes to a resource using a standard JSON Patch format (RFC 6902).
+
+                                                    add: Inserts a value into an array or adds a member to an object.
+                                                    replace: Replaces a value.
+                                                    merge: Combines the values of the target location with the values from the patch. If the target location doesn't exist, it is created.
+                                                    strategic: specific to Kubernetes and understands the structure of Kubernetes objects.
+                                                    remove: Removes a value.
+                                                    copy: Copies a value from one location to another.
+                                                    move: Moves a value from one location to another.
+                                                    test: Tests that a value at the target location is equal to a specified value.
+                                                type: string
+                                                x-go-name: PatchStrategy
+                                        type: object
+                                        x-go-name: Patch
+                                type: object
+                            type: array
+                            x-go-name: From
+                        to:
+                            description: To Describes the component(s) which are involved in the relationship along with a set of actions to perform upon selection match.
+                            items:
+                                properties:
+                                    id:
+                                        description: Id A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is used across different schemas.
+                                        items:
+                                            format: uint8
+                                            type: integer
+                                        type: array
+                                        x-go-name: Id
+                                    kind:
+                                        type: string
+                                        x-go-name: Kind
+                                    match:
+                                        description: Match Match configuration for selector
+                                        properties:
+                                            from:
+                                                items:
+                                                    properties:
+                                                        id:
+                                                            description: Id A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is used across different schemas.
+                                                            items:
+                                                                format: uint8
+                                                                type: integer
+                                                            type: array
+                                                            x-go-name: Id
+                                                        kind:
+                                                            type: string
+                                                            x-go-name: Kind
+                                                        mutatedRef:
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatedRef
+                                                        mutatorRef:
+                                                            description: MutatorRef JSON ref to value from where patch should be applied.
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatorRef
+                                                    type: object
+                                                type: array
+                                                x-go-name: From
+                                            refs:
+                                                items:
+                                                    items:
+                                                        type: string
+                                                    type: array
+                                                type: array
+                                                x-go-name: Refs
+                                            to:
+                                                items:
+                                                    properties:
+                                                        id:
+                                                            description: Id A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is used across different schemas.
+                                                            items:
+                                                                format: uint8
+                                                                type: integer
+                                                            type: array
+                                                            x-go-name: Id
+                                                        kind:
+                                                            type: string
+                                                            x-go-name: Kind
+                                                        mutatedRef:
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatedRef
+                                                        mutatorRef:
+                                                            description: MutatorRef JSON ref to value from where patch should be applied.
+                                                            items:
+                                                                items:
+                                                                    type: string
+                                                                type: array
+                                                            type: array
+                                                            x-go-name: MutatorRef
+                                                    type: object
+                                                type: array
+                                                x-go-name: To
+                                        type: object
+                                        x-go-name: Match
+                                    match_strategy_matrix:
+                                        description: MatchStrategyMatrix Match strategy matrix for the selector
+                                        items:
+                                            items:
+                                                type: string
+                                            type: array
+                                        type: array
+                                        x-go-name: MatchStrategyMatrix
+                                    model:
+                                        description: Model Name of the model implicated by this selector. Learn more at https://docs.meshery.io/concepts/models
+                                        type: object
+                                        x-go-name: Model
+                                    patch:
+                                        description: Patch Patch configuration for the selector
+                                        properties:
+                                            mutatedRef:
+                                                items:
+                                                    items:
+                                                        type: string
+                                                    type: array
+                                                type: array
+                                                x-go-name: MutatedRef
+                                            mutatorRef:
+                                                description: MutatorRef JSON ref to value from where patch should be applied.
+                                                items:
+                                                    items:
+                                                        type: string
+                                                    type: array
+                                                type: array
+                                                x-go-name: MutatorRef
+                                            patchStrategy:
+                                                description: |-
+                                                    PatchStrategy patchStrategy allows you to make specific changes to a resource using a standard JSON Patch format (RFC 6902).
+
+                                                    add: Inserts a value into an array or adds a member to an object.
+                                                    replace: Replaces a value.
+                                                    merge: Combines the values of the target location with the values from the patch. If the target location doesn't exist, it is created.
+                                                    strategic: specific to Kubernetes and understands the structure of Kubernetes objects.
+                                                    remove: Removes a value.
+                                                    copy: Copies a value from one location to another.
+                                                    move: Moves a value from one location to another.
+                                                    test: Tests that a value at the target location is equal to a specified value.
+                                                type: string
+                                                x-go-name: PatchStrategy
+                                        type: object
+                                        x-go-name: Patch
+                                type: object
+                            type: array
+                            x-go-name: To
+                    type: object
+                    x-go-name: Deny
             type: object
+        title: SelectorSet Selectors are organized as an array, with each item containing a distinct set of selectors that share a common functionality. This structure allows for flexibility in defining relationships, even when different components are involved.
         type: array
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     SeriesOverride:
@@ -5297,18 +5985,7 @@ definitions:
                 type: string
                 x-go-name: APIVersion
             creationTimestamp:
-                description: |-
-                    CreationTimestamp is a timestamp representing the server time when this object was
-                    created. It is not guaranteed to be set in happens-before order across separate operations.
-                    Clients may not set this value. It is represented in RFC3339 form and is in UTC.
-
-                    Populated by the system.
-                    Read-only.
-                    Null for lists.
-                    More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-                    +optional
-                type: string
-                x-go-name: CreationTimestamp
+                $ref: '#/definitions/Time'
             deletionGracePeriodSeconds:
                 description: |-
                     Number of seconds allowed for this object to gracefully terminate before
@@ -5320,28 +5997,7 @@ definitions:
                 type: integer
                 x-go-name: DeletionGracePeriodSeconds
             deletionTimestamp:
-                description: |-
-                    DeletionTimestamp is RFC 3339 date and time at which this resource will be deleted. This
-                    field is set by the server when a graceful deletion is requested by the user, and is not
-                    directly settable by a client. The resource is expected to be deleted (no longer visible
-                    from resource lists, and not reachable by name) after the time in this field, once the
-                    finalizers list is empty. As long as the finalizers list contains items, deletion is blocked.
-                    Once the deletionTimestamp is set, this value may not be unset or be set further into the
-                    future, although it may be shortened or the resource may be deleted prior to this time.
-                    For example, a user may request that a pod is deleted in 30 seconds. The Kubelet will react
-                    by sending a graceful termination signal to the containers in the pod. After that 30 seconds,
-                    the Kubelet will send a hard termination signal (SIGKILL) to the container and after cleanup,
-                    remove the pod from the API. In the presence of network partitions, this object may still
-                    exist after this timestamp, until an administrator or automated process can determine the
-                    resource is fully terminated.
-                    If not set, graceful deletion of the object has not been requested.
-
-                    Populated by the system when a graceful deletion is requested.
-                    Read-only.
-                    More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-                    +optional
-                type: string
-                x-go-name: DeletionTimestamp
+                $ref: '#/definitions/Time'
             finalizers:
                 description: |-
                     Must be empty before the object is deleted from the registry. Each entry
@@ -5810,14 +6466,12 @@ definitions:
                 $ref: '#/definitions/SessionAffinityConfig'
             trafficDistribution:
                 description: |-
-                    TrafficDistribution offers a way to express preferences for how traffic is
-                    distributed to Service endpoints. Implementations can use this field as a
-                    hint, but are not required to guarantee strict adherence. If the field is
-                    not set, the implementation will apply its default routing strategy. If set
-                    to "PreferClose", implementations should prioritize endpoints that are
-                    topologically close (e.g., same zone).
-                    This is a beta field and requires enabling ServiceTrafficDistribution feature.
-                    +featureGate=ServiceTrafficDistribution
+                    TrafficDistribution offers a way to express preferences for how traffic
+                    is distributed to Service endpoints. Implementations can use this field
+                    as a hint, but are not required to guarantee strict adherence. If the
+                    field is not set, the implementation will apply its default routing
+                    strategy. If set to "PreferClose", implementations should prioritize
+                    endpoints that are in the same zone.
                     +optional
                 type: string
                 x-go-name: TrafficDistribution
@@ -5899,8 +6553,7 @@ definitions:
     SmiResultWithID:
         properties:
             ID:
-                format: uuid
-                type: string
+                $ref: '#/definitions/UUID'
             cases_passed:
                 type: string
                 x-go-name: CasesPassed
@@ -5908,9 +6561,7 @@ definitions:
                 type: string
                 x-go-name: Date
             id:
-                format: uuid
-                type: string
-                x-go-name: ID
+                $ref: '#/definitions/UUID'
             mesh_name:
                 type: string
                 x-go-name: MeshName
@@ -6031,278 +6682,10 @@ definitions:
         title: StringArray represents a one-dimensional array of the PostgreSQL character types.
         type: array
         x-go-package: github.com/lib/pq
-    Styles:
-        properties:
-            active-bg-color:
-                description: 'ActiveBgColor The colour of the indicator shown when the background is grabbed by the user. Selector needs to be *core*. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
-                type: string
-                x-go-name: ActiveBgColor
-            active-bg-opacity:
-                description: ActiveBgOpacity  The opacity of the active background indicator. Selector needs to be *core*.
-                type: string
-                x-go-name: ActiveBgOpacity
-            active-bg-size:
-                description: ActiveBgSize  The opacity of the active background indicator. Selector needs to be *core*.
-                type: string
-                x-go-name: ActiveBgSize
-            animation:
-                additionalProperties: {}
-                description: Animation The animation to apply to the element. example ripple,bounce,etc
-                type: object
-                x-go-name: Animation
-            background-blacken:
-                description: BackgroundBlacken Blackens the node’s body for values from 0 to 1; whitens the node’s body for values from 0 to -1.
-                format: float
-                type: number
-                x-go-name: BackgroundBlacken
-            background-clip:
-                description: BackgroundClip How the background image is clipped to the node. Can be 'none', 'node', or 'node-border'.
-                type: string
-                x-go-name: BackgroundClip
-            background-color:
-                description: 'BackgroundColor The colour of the node’s body. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
-                type: string
-                x-go-name: BackgroundColor
-            background-fit:
-                description: BackgroundFit How the background image is fit to the node. Can be 'none', 'contain', or 'cover'.
-                type: string
-                x-go-name: BackgroundFit
-            background-height-relative-to:
-                description: BackgroundHeightRelativeTo How the background image’s height is determined. Can be 'none', 'inner', or 'outer'.
-                type: string
-                x-go-name: BackgroundHeightRelativeTo
-            background-image:
-                description: BackgroundImage The URL that points to the image to show in the node.
-                type: string
-                x-go-name: BackgroundImage
-            background-offset-x:
-                description: BackgroundOffsetX The x offset of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
-                type: string
-                x-go-name: BackgroundOffsetX
-            background-offset-y:
-                description: BackgroundOffsetY The y offset of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
-                type: string
-                x-go-name: BackgroundOffsetY
-            background-opacity:
-                description: BackgroundOpacity The opacity level of the node’s background colour
-                format: float
-                type: number
-                x-go-name: BackgroundOpacity
-            background-position-x:
-                description: BackgroundPositionX The x position of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
-                type: string
-                x-go-name: BackgroundPositionX
-            background-position-y:
-                description: BackgroundPositionY The y position of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
-                type: string
-                x-go-name: BackgroundPositionY
-            background-width-relative-to:
-                description: BackgroundWidthRelativeTo How the background image’s width is determined. Can be 'none', 'inner', or 'outer'.
-                type: string
-                x-go-name: BackgroundWidthRelativeTo
-            body-text:
-                description: BodyText The text to display for an element’s body. Can give a path, e.g. data(id) will label with the elements id
-                type: string
-                x-go-name: BodyText
-            body-text-background-color:
-                description: 'BodyTextBackgroundColor The colour of the node’s body text background. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
-                type: string
-                x-go-name: BodyTextBackgroundColor
-            body-text-color:
-                description: 'BodyTextColor The colour of the node’s body text. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
-                type: string
-                x-go-name: BodyTextColor
-            body-text-decoration:
-                description: BodyTextDecoration A CSS text decoration to be applied to the node’s body text.
-                type: string
-                x-go-name: BodyTextDecoration
-            body-text-font-size:
-                description: BodyTextFontSize The size of the node’s body text.
-                format: float
-                type: number
-                x-go-name: BodyTextFontSize
-            body-text-font-weight:
-                description: BodyTextFontWeight A CSS font weight to be applied to the node’s body text.
-                type: string
-                x-go-name: BodyTextFontWeight
-            body-text-horizontal-align:
-                description: BodyTextHorizontalAlign A CSS horizontal alignment to be applied to the node’s body text.
-                type: string
-                x-go-name: BodyTextHorizontalAlign
-            body-text-max-width:
-                description: BodyTextMaxWidth The maximum width for wrapping text in the node.
-                type: string
-                x-go-name: BodyTextMaxWidth
-            body-text-opacity:
-                description: BodyTextOpacity The opacity of the node’s body text, including its outline.
-                format: float
-                type: number
-                x-go-name: BodyTextOpacity
-            body-text-vertical-align:
-                description: BodyTextVerticalAlign A CSS vertical alignment to be applied to the node’s body text.
-                type: string
-                x-go-name: BodyTextVerticalAlign
-            body-text-wrap:
-                description: BodyTextWrap How to wrap the text in the node. Can be 'none', 'wrap', or 'ellipsis'.
-                type: string
-                x-go-name: BodyTextWrap
-            border-color:
-                description: 'BorderColor The colour of the node’s border. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
-                type: string
-                x-go-name: BorderColor
-            border-opacity:
-                description: BorderOpacity The opacity of the node’s border
-                format: float
-                type: number
-                x-go-name: BorderOpacity
-            border-style:
-                $ref: '#/definitions/ComponentDefinitionStylesBorderStyle'
-            border-width:
-                description: BorderWidth The size of the node’s border.
-                format: float
-                type: number
-                x-go-name: BorderWidth
-            color:
-                description: 'Color The color of the element''s label. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
-                type: string
-                x-go-name: Color
-            font-family:
-                description: FontFamily A comma-separated list of font names to use on the label text.
-                type: string
-                x-go-name: FontFamily
-            font-size:
-                description: FontSize The size of the label text.
-                type: string
-                x-go-name: FontSize
-            font-style:
-                description: FontStyle A CSS font style to be applied to the label text.
-                type: string
-                x-go-name: FontStyle
-            font-weight:
-                description: FontWeight A CSS font weight to be applied to the label text.
-                type: string
-                x-go-name: FontWeight
-            ghost:
-                $ref: '#/definitions/ComponentDefinitionStylesGhost'
-            height:
-                description: Height The height of the node’s body
-                format: float
-                type: number
-                x-go-name: Height
-            label:
-                description: Label The text to display for an element’s label. Can give a path, e.g. data(id) will label with the elements id
-                type: string
-                x-go-name: Label
-            menu-background-color:
-                description: 'MenuBackgroundColor The colour of the background of the component menu. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
-                type: string
-                x-go-name: MenuBackgroundColor
-            menu-background-opacity:
-                description: MenuBackgroundOpacity The opacity of the background of the component menu.
-                format: float
-                type: number
-                x-go-name: MenuBackgroundOpacity
-            menu-forground-color:
-                description: 'MenuForgroundColor The colour of the text or icons in the component menu. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
-                type: string
-                x-go-name: MenuForgroundColor
-            opacity:
-                description: Opacity The opacity of the element, ranging from 0 to 1. Note that the opacity of a compound node parent affects the effective opacity of its children.See https://js.cytoscape.org/#style/visibility
-                format: float
-                type: number
-                x-go-name: Opacity
-            outside-texture-bg-color:
-                description: 'OutsideTextureBgColor The colour of the area outside the viewport texture when initOptions.textureOnViewport === true.  Selector needs to be *core*. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
-                type: string
-                x-go-name: OutsideTextureBgColor
-            outside-texture-bg-opacity:
-                description: OutsideTextureBgOpacity The opacity of the area outside the viewport texture. Selector needs to be *core*
-                format: float
-                type: number
-                x-go-name: OutsideTextureBgOpacity
-            padding:
-                description: Padding The amount of padding around all sides of the node.
-                format: float
-                type: number
-                x-go-name: Padding
-            position:
-                description: Position The position of the node. If the position is set, the node is drawn at that position in the given dimensions. If the position is not set, the node is drawn at a random position.
-                properties:
-                    x:
-                        description: X The x-coordinate of the node.
-                        format: double
-                        type: number
-                        x-go-name: X
-                    "y":
-                        description: Y The y-coordinate of the node.
-                        format: double
-                        type: number
-                        x-go-name: "Y"
-                type: object
-                x-go-name: Position
-            primaryColor:
-                description: PrimaryColor Primary color of the component used for UI representation.
-                type: string
-                x-go-name: PrimaryColor
-            secondaryColor:
-                description: SecondaryColor Secondary color of the entity used for UI representation.
-                type: string
-                x-go-name: SecondaryColor
-            selection-box-border-width:
-                description: SelectionBoxBorderWidth The size of the border on the selection box. Selector needs to be *core*
-                format: float
-                type: number
-                x-go-name: SelectionBoxBorderWidth
-            selection-box-color:
-                description: 'SelectionBoxColor The background colour of the selection box used for drag selection. Selector needs to be *core*. Colours may be specified by name (e.g. red), hex (e.g. #ff0000 or #f00), RGB (e.g. rgb(255, 0, 0)), or HSL (e.g. hsl(0, 100%, 50%)).'
-                type: string
-                x-go-name: SelectionBoxColor
-            selection-box-opacity:
-                description: SelectionBoxOpacity The opacity of the selection box.  Selector needs to be *core*
-                format: float
-                type: number
-                x-go-name: SelectionBoxOpacity
-            shape:
-                $ref: '#/definitions/ComponentDefinitionStylesShape'
-            shape-polygon-points:
-                description: ShapePolygonPoints An array (or a space-separated string) of numbers ranging on [-1, 1], representing alternating x and y values (i.e. x1 y1 x2 y2, x3 y3 ...). This represents the points in the polygon for the node’s shape. The bounding box of the node is given by (-1, -1), (1, -1), (1, 1), (-1, 1). The node’s position is the origin (0, 0 )
-                type: string
-                x-go-name: ShapePolygonPoints
-            svgColor:
-                description: SvgColor Colored SVG of the entity used for UI representation on light background.
-                type: string
-                x-go-name: SvgColor
-            svgComplete:
-                description: SvgComplete Complete SVG of the entity used for UI representation, often inclusive of background.
-                type: string
-                x-go-name: SvgComplete
-            svgWhite:
-                description: SvgWhite White SVG of the entity used for UI representation on dark background.
-                type: string
-                x-go-name: SvgWhite
-            text-halign:
-                $ref: '#/definitions/ComponentDefinitionStylesTextHalign'
-            text-opacity:
-                description: TextOpacity The opacity of the label text, including its outline.
-                format: float
-                type: number
-                x-go-name: TextOpacity
-            text-transform:
-                $ref: '#/definitions/ComponentDefinitionStylesTextTransform'
-            text-valign:
-                $ref: '#/definitions/ComponentDefinitionStylesTextValign'
-            width:
-                description: Width The width of the node’s body or the width of an edge’s line.
-                format: float
-                type: number
-                x-go-name: Width
-            z-index:
-                description: ZIndex An integer value that affects the relative draw order of elements. In general, an element with a higher z-index will be drawn on top of an element with a lower z-index. Note that edges are under nodes despite z-index.
-                format: int64
-                type: integer
-                x-go-name: ZIndex
-        type: object
-        x-go-package: github.com/meshery/schemas/models/v1beta1/component
+    SubCategoryDefinition:
+        title: SubCategoryDefinition Sub category of the model determines the secondary grouping.
+        type: string
+        x-go-package: github.com/meshery/schemas/models/v1beta1/subcategory
     SupportedOperation:
         properties:
             category:
@@ -6315,6 +6698,13 @@ definitions:
                 x-go-name: Value
         type: object
         x-go-package: github.com/meshery/meshery/server/meshes
+    SystemID:
+        items:
+            format: uint8
+            type: integer
+        title: SystemID defines model for system_id.
+        type: array
+        x-go-package: github.com/meshery/meshkit/models/events
     Target:
         description: for an any panel
         properties:
@@ -6567,6 +6957,20 @@ definitions:
                 x-go-name: Where
         type: object
         x-go-package: github.com/grafana-tools/sdk
+    Theme:
+        properties:
+            id:
+                type: string
+                x-go-name: Id
+            logo:
+                $ref: '#/definitions/Logo'
+            vars:
+                additionalProperties: {}
+                type: object
+                x-go-name: Vars
+        title: Theme defines model for Theme.
+        type: object
+        x-go-package: github.com/meshery/schemas/models/v1beta1/organization
     Threshold:
         properties:
             colorMode:
@@ -6627,6 +7031,17 @@ definitions:
                 x-go-name: Steps
         type: object
         x-go-package: github.com/grafana-tools/sdk
+    Time:
+        description: |-
+            +protobuf.options.marshal=false
+            +protobuf.as=Timestamp
+            +protobuf.options.(gogoproto.goproto_stringer)=false
+        title: |-
+            Time is a wrapper around time.Time which supports correct
+            marshaling to YAML and JSON.  Wrappers are provided for many
+            of the factory methods that the time package offers.
+        type: object
+        x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
     TimeseriesLegendOptions:
         properties:
             calcs:
@@ -6674,6 +7089,26 @@ definitions:
                 x-go-name: ValueType
         type: object
         x-go-package: github.com/grafana-tools/sdk
+    TopResponse:
+        description: Container "top" response.
+        properties:
+            Processes:
+                description: |-
+                    Each process running in the container, where each process
+                    is an array of values corresponding to the titles.
+                items:
+                    items:
+                        type: string
+                    type: array
+                type: array
+            Titles:
+                description: The ps column titles
+                items:
+                    type: string
+                type: array
+        title: TopResponse ContainerTopResponse
+        type: object
+        x-go-package: github.com/docker/docker/api/types/container
     Topology:
         description: |-
             This description is taken verbatim from the CSI Spec:
@@ -6898,6 +7333,28 @@ definitions:
             intent and helps make sure that UIDs and names do not get conflated.
         type: string
         x-go-package: k8s.io/apimachinery/pkg/types
+    UUID:
+        items:
+            format: uint8
+            type: integer
+        title: UUID is an array type to represent the value of a UUID, as defined in RFC-4122.
+        type: array
+        x-go-package: github.com/gofrs/uuid
+    UpdateResponse:
+        description: Response for a successful container-update.
+        properties:
+            Warnings:
+                description: Warnings encountered when updating the container.
+                items:
+                    type: string
+                type: array
+        title: UpdateResponse ContainerUpdateResponse
+        type: object
+        x-go-package: github.com/docker/docker/api/types/container
+    UpdatedAt:
+        title: UpdatedAt Timestamp when the resource was updated.
+        type: object
+        x-go-package: github.com/meshery/meshkit/models/events
     UsageData:
         description: |-
             UsageData Usage details about the volume. This information is used by the
@@ -6924,41 +7381,15 @@ definitions:
         x-go-package: github.com/docker/docker/api/types/volume
     User:
         description: User - represents a user in Meshery
-        properties:
-            avatar_url:
-                type: string
-                x-go-name: AvatarURL
-            bio:
-                type: string
-                x-go-name: Bio
-            email:
-                type: string
-                x-go-name: Email
-            first_name:
-                type: string
-                x-go-name: FirstName
-            id:
-                type: string
-                x-go-name: ID
-            last_name:
-                type: string
-                x-go-name: LastName
-            provider:
-                type: string
-                x-go-name: Provider
-            role_names:
-                items:
-                    type: string
-                type: array
-                x-go-name: RoleNames
-            status:
-                type: string
-                x-go-name: Status
-            user_id:
-                type: string
-                x-go-name: UserID
         type: object
         x-go-package: github.com/meshery/meshery/server/models
+    UserID:
+        items:
+            format: uint8
+            type: integer
+        title: UserID defines model for user_uuid.
+        type: array
+        x-go-package: github.com/meshery/meshkit/models/events
     UserKeys:
         properties:
             category:
@@ -7116,16 +7547,12 @@ definitions:
                 type: string
                 x-go-name: Description
             id:
-                format: uuid
-                type: string
-                x-go-name: ID
+                $ref: '#/definitions/UUID'
             name:
                 type: string
                 x-go-name: Name
             organization_id:
-                format: uuid
-                type: string
-                x-go-name: OrganizationID
+                $ref: '#/definitions/UUID'
             updated_at:
                 format: date-time
                 type: string
@@ -7156,8 +7583,7 @@ definitions:
     WorkspacesDesignsMapping:
         properties:
             ID:
-                format: uuid
-                type: string
+                $ref: '#/definitions/UUID'
             created_at:
                 format: date-time
                 type: string
@@ -7165,24 +7591,19 @@ definitions:
             deleted_at:
                 $ref: '#/definitions/NullTime'
             design_id:
-                format: uuid
-                type: string
-                x-go-name: DesignId
+                $ref: '#/definitions/UUID'
             updated_at:
                 format: date-time
                 type: string
                 x-go-name: UpdatedAt
             workspace_id:
-                format: uuid
-                type: string
-                x-go-name: WorkspaceId
+                $ref: '#/definitions/UUID'
         type: object
         x-go-package: github.com/meshery/meshery/server/models
     WorkspacesEnvironmentsMapping:
         properties:
             ID:
-                format: uuid
-                type: string
+                $ref: '#/definitions/UUID'
             created_at:
                 format: date-time
                 type: string
@@ -7190,17 +7611,13 @@ definitions:
             deleted_at:
                 $ref: '#/definitions/NullTime'
             environment_id:
-                format: uuid
-                type: string
-                x-go-name: EnvironmentId
+                $ref: '#/definitions/UUID'
             updated_at:
                 format: date-time
                 type: string
                 x-go-name: UpdatedAt
             workspace_id:
-                format: uuid
-                type: string
-                x-go-name: WorkspaceId
+                $ref: '#/definitions/UUID'
         type: object
         x-go-package: github.com/meshery/meshery/server/models
 info:
@@ -7728,6 +8145,10 @@ paths:
                 ```?status={status}``` Status takes array as param to filter connections based on status, eg /api/integrations/connections?status=["connected", "deleted"]
 
                 ```?kind={kind}``` Kind takes array as param to filter connections based on kind, eg /api/integrations/connections?kind=["meshery", "kubernetes"]
+
+                ```?type={type}``` Type takes array as param to filter connections based on type, eg /api/integrations/connections?type=["platform", "observability"]
+
+                ```?name={name}``` Name filters connections by name (partial match), eg /api/integrations/connections?name=my-cluster
             operationId: idGetConnections
             responses:
                 "200":
@@ -7754,6 +8175,15 @@ paths:
             summary: Handle DELETE request for deleting an existing connection by connection ID
             tags:
                 - DeleteConnection
+        get:
+            description: Fetches a single connection by its ID
+            operationId: idGetConnectionById
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryConnectionResponseWrapper'
+            summary: Handle GET request for getting a single connection by its ID
+            tags:
+                - GetConnectionById
         put:
             description: Updates existing connection using ID
             operationId: idPutConnectionById
@@ -7763,42 +8193,6 @@ paths:
             summary: Handle PUT request for updating an existing connection by connection ID
             tags:
                 - PutConnectionById
-    /api/integrations/connections/{connectionKind}:
-        get:
-            description: |-
-                ```?order={field}``` orders on the passed field
-
-                ```?search={}``` If search is non empty then a greedy search is performed
-
-                ```?page={page-number}``` Default page number is 0
-
-                ```?pagesize={pagesize}``` Default pagesize is 10
-            operationId: idGetConnectionsByKind
-            responses:
-                "200":
-                    $ref: '#/responses/ConnectionPage'
-            summary: Handle GET request for getting all connections for a given kind.
-            tags:
-                - GetConnectionsByKind
-        put:
-            description: Updates existing connection
-            operationId: idPutConnection
-            responses:
-                "200":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle PUT request for updating an existing connection
-            tags:
-                - PutConnection
-    /api/integrations/connections/status:
-        get:
-            description: Get all connections status
-            operationId: idGetConnectionsStatus
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryConnectionsStatusPage'
-            summary: Handle GET request for getting all connections status
-            tags:
-                - GetConnectionsStatus
     /api/meshmodel/components/register:
         post:
             description: Validate the given value with the given schema
@@ -8058,6 +8452,8 @@ paths:
 
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 
+                ```?id={id}``` If id is non empty then only the component with the given id is returned
+
                 ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
             operationId: idGetAllMeshmodelComponents
             responses:
@@ -8108,7 +8504,7 @@ paths:
             operationId: idExportModel
             responses:
                 "200":
-                    $ref: '#/responses/byte'
+                    $ref: '#/responses/noContentWrapper'
             summary: Handle GET request for exporting a model.
             tags:
                 - ExportModel
@@ -8135,6 +8531,16 @@ paths:
             summary: Handle GET request for getting all meshmodel models
             tags:
                 - GetMeshmodelModels
+    /api/meshmodels/models/{id}:
+        delete:
+            description: Deletes a model and its associated registry entries from the database.
+            operationId: idDeleteModel
+            responses:
+                "204":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE request for a model by ID
+            tags:
+                - MeshmodelAPI
     /api/meshmodels/models/{model}:
         get:
             description: |-
@@ -9004,6 +9410,8 @@ paths:
 
                 ```?spec={spec}``` spec is a boolean value. If true then spec is returned
 
+                ```?model={[model]}``` model is an array of string values to filter the resources
+
                 ```?status={status}``` status is a boolean value. If true then status is returned
 
                 ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
@@ -9016,6 +9424,15 @@ paths:
             summary: Handle GET request for meshsync discovered resources
             tags:
                 - GetMeshSyncResources
+    /api/system/meshsync/resources/{id}:
+        get:
+            description: Handle GET request for meshsync discovered resource by ID ( returns the resource in v1beta1 component format )
+            operationId: idGetMeshSyncResourceByID
+            responses:
+                "200":
+                    $ref: '#/responses/meshsyncResourceByIDResponseWrapper'
+            tags:
+                - GetMeshSyncResourceByID
     /api/system/meshsync/resources/summary:
         get:
             description: '```?clusterId={clusterId}``` clusterId is id of the cluster to get resources for ( multiple supported)'
@@ -9239,16 +9656,6 @@ paths:
             summary: Handle GET request for Prometheus static board
             tags:
                 - PrometheusAPI
-    /api/user/login:
-        get:
-            description: Redirects user for auth or issues session
-            operationId: idGetUserLogin
-            responses:
-                "200":
-                    description: ""
-            summary: Handlers GET request for User login
-            tags:
-                - UserAPI
     /api/user/logout:
         get:
             description: Redirects user for auth or issues session
@@ -9545,25 +9952,6 @@ paths:
             summary: Handle POST request for tokens
             tags:
                 - UserAPI
-    /api/v2/events:
-        get:
-            description: |-
-                ```search={description}``` If search is non empty then a search is performed on event description
-                ```?category=[eventcategory] Returns event belonging to provided categories ```
-                ```?action=[eventaction] Returns events belonging to provided actions ```
-                ```?status={[read/unread]}``` Return events filtered on event status Default is unread````
-                ```?severity=[eventseverity] Returns events belonging to provided severities ```
-                ```?sort={field} order the records based on passed field, defaults to updated_at```
-                ```?order={[asc/desc]}``` Default behavior is desc
-                ```?page={page-number}``` Default page number is 0
-                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-            operationId: idGetEventStreamer
-            responses:
-                "200":
-                    $ref: '#/responses/eventsResponseWrapper'
-            summary: Handle GET request for events.
-            tags:
-                - EventsAPI
     /api/workspaces:
         get:
             description: |4-
@@ -9645,15 +10033,6 @@ paths:
             tags:
                 - WorkspacesAPI
     /api/workspaces/{id}/designs/{designID}:
-        delete:
-            description: Removes a meshery design from a workspace
-            operationId: idRemoveMesheryDesignFromWorkspace
-            responses:
-                "201":
-                    $ref: '#/responses/workspaceDesignsMappingResponseWrapper'
-            summary: Handle DELETE request for removing a meshery design from a workspace
-            tags:
-                - WorkspacesAPI
         post:
             description: Adds a meshery design to a workspace
             operationId: idAddMesheryDesignToWorkspace
@@ -9713,64 +10092,19 @@ paths:
             summary: Handle GET request to provider UI
             tags:
                 - ProvidersAPI
+    /user/login:
+        get:
+            description: Redirects user for auth or issues session
+            operationId: idGetUserLogin
+            responses:
+                "200":
+                    description: ""
+            summary: Handlers GET request for User login
+            tags:
+                - UserAPI
 produces:
     - application/json
 responses:
-    Connection:
-        description: ""
-        headers:
-            created_at:
-                format: date-time
-                type: string
-            credential_id:
-                format: uuid
-                type: string
-            deleted_at: {}
-            environments:
-                items:
-                    $ref: '#/definitions/EnvironmentData'
-                type: array
-            id:
-                format: uuid
-                type: string
-            kind:
-                type: string
-            metadata: {}
-            name:
-                type: string
-            status: {}
-            sub_type:
-                type: string
-            type:
-                type: string
-            updated_at:
-                format: date-time
-                type: string
-            user_id:
-                format: uuid
-                type: string
-        schema:
-            $ref: '#/definitions/NullTime'
-    ConnectionPage:
-        description: ""
-        headers:
-            connections:
-                items:
-                    $ref: '#/definitions/Connection'
-                type: array
-            page:
-                format: int64
-                type: integer
-            page_size:
-                format: int64
-                type: integer
-            total_count:
-                format: int64
-                type: integer
-    ConnectionStatus:
-        description: ""
-        schema:
-            type: string
     ConnectionsStatusPage:
         description: ""
         headers:
@@ -9793,6 +10127,9 @@ responses:
                 format: int64
                 type: integer
             page_size:
+                format: int64
+                type: integer
+            read_count:
                 format: int64
                 type: integer
             total_count:
@@ -9989,6 +10326,10 @@ responses:
         description: Returns meshmodel relationships
         schema:
             $ref: '#/definitions/MeshmodelRelationshipsAPIResponse'
+    meshsyncResourceByIDResponseWrapper:
+        description: Returns meshsync discovered resource by ID
+        schema:
+            $ref: '#/definitions/ComponentDefinition'
     meshsyncResourcesResponseWrapper:
         description: Returns MeshSync resources
         schema:
