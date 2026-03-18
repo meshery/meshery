@@ -1,4 +1,4 @@
-name: Meshery UI and Server
+name: Meshery UI and Server PR Build
 on:
   workflow_dispatch:
 
