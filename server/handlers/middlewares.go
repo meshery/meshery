@@ -192,8 +192,13 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			return
 		}
 		prefObj, err := provider.ReadFromPersister(user.UserId)
-		if err != nil || prefObj == nil {
-			h.log.Warn(ErrReadSessionPersistor)
+		if err != nil {
+			// log underlying error from persister along with high-level context
+			h.log.Warn(ErrReadSessionPersistor, err, fmt.Sprintf("userID=%s", user.UserId))
+			prefObj = models.NewDefaultPreference()
+		} else if prefObj == nil {
+			// persister unexpectedly returned a nil preference without error
+			h.log.Warn(fmt.Sprintf("persister returned nil preference without error for userID=%s", user.UserId))
 			prefObj = models.NewDefaultPreference()
 		}
 
