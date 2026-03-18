@@ -35,10 +35,6 @@ func (p *MatchLabelsPolicy) SideEffects(rel, designFile map[string]interface{}) 
 	return nil
 }
 
-func (p *MatchLabelsPolicy) IdentifyAdditions(relDef, designFile map[string]interface{}) []PolicyAction {
-	return nil
-}
-
 // matchLabelGroup represents a group of components sharing a label field+value.
 type matchLabelGroup struct {
 	Field      string

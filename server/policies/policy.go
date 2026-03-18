@@ -19,9 +19,6 @@ type RelationshipPolicy interface {
 
 	// SideEffects returns additional actions for a relationship (e.g., adding/removing components).
 	SideEffects(rel, designFile map[string]interface{}) []PolicyAction
-
-	// IdentifyAdditions returns actions for missing components based on a relationship definition.
-	IdentifyAdditions(relDef, designFile map[string]interface{}) []PolicyAction
 }
 
 // implicableRelationships filters relationships that belong to a specific policy.
@@ -57,22 +54,8 @@ func validateRelationshipsInDesign(designFile map[string]interface{}, policy Rel
 	return actions
 }
 
-// identifyAdditionsInDesign identifies missing components for a policy.
-func identifyAdditionsInDesign(
-	designFile map[string]interface{},
-	relationshipsInScope []map[string]interface{},
-	policy RelationshipPolicy,
-) []PolicyAction {
-	implicated := implicableRelationships(relationshipsInScope, policy)
-
-	var actions []PolicyAction
-	for _, relDef := range implicated {
-		actions = append(actions, policy.IdentifyAdditions(relDef, designFile)...)
-	}
-	return actions
-}
-
 // identifyRelationshipsInDesign identifies new relationships in the design for a policy.
+// It also handles inventory additions (missing components) within the same phase.
 func identifyRelationshipsInDesign(
 	designFile map[string]interface{},
 	relationshipsInScope []map[string]interface{},
@@ -80,11 +63,22 @@ func identifyRelationshipsInDesign(
 ) []PolicyAction {
 	implicated := implicableRelationships(relationshipsInScope, policy)
 
+	// Identify and apply any missing component additions before relationship identification.
+	var additionActions []PolicyAction
+	for _, relDef := range implicated {
+		additionActions = append(additionActions, identifyAdditions(relDef, designFile)...)
+	}
+	workingDesign := designFile
+	if len(additionActions) > 0 {
+		workingDesign = applyAllActionsToDesign(designFile, additionActions)
+	}
+
 	var actions []PolicyAction
+	actions = append(actions, additionActions...)
 	seen := make(map[string]bool)
 
 	for _, relDef := range implicated {
-		identified := policy.IdentifyRelationship(relDef, designFile)
+		identified := policy.IdentifyRelationship(relDef, workingDesign)
 
 		for _, rel := range identified {
 			// Check generic duplicate

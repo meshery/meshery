@@ -30,10 +30,6 @@ func (p *EdgeBindingPolicy) SideEffects(rel, designFile map[string]interface{}) 
 	return nil
 }
 
-func (p *EdgeBindingPolicy) IdentifyAdditions(relDef, designFile map[string]interface{}) []PolicyAction {
-	return nil
-}
-
 // identifyBindingRelationships identifies 3-party binding relationships.
 // For each (from, binding, to) triple, validates that from-binding and binding-to match
 // via the selector's match field, then creates an identified relationship.

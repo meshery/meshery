@@ -71,6 +71,3 @@ func (p *HierarchicalParentChildPolicy) SideEffects(rel, designFile map[string]i
 	return patchMutatorsAction(rel, designFile)
 }
 
-func (p *HierarchicalParentChildPolicy) IdentifyAdditions(relDef, designFile map[string]interface{}) []PolicyAction {
-	return identifyAdditions(relDef, designFile)
-}

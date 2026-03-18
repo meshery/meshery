@@ -42,10 +42,6 @@ func (p *AliasPolicy) IdentifyRelationship(relDef, designFile map[string]interfa
 	return allIdentified
 }
 
-func (p *AliasPolicy) IdentifyAdditions(relDef, designFile map[string]interface{}) []PolicyAction {
-	return nil
-}
-
 func (p *AliasPolicy) SideEffects(rel, designFile map[string]interface{}) []PolicyAction {
 	status := getMapString(rel, "status")
 

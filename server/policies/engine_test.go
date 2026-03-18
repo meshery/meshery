@@ -3,6 +3,7 @@ package policies
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/meshery/meshkit/logger"
 )
@@ -944,6 +945,7 @@ func TestStaticUUIDDeterminism(t *testing.T) {
 func TestNewUUIDNonDeterminism(t *testing.T) {
 	seed := "test-seed"
 	u1 := newUUID(seed)
+	time.Sleep(time.Millisecond) // ensure UnixNano changes between calls
 	u2 := newUUID(seed)
 	// UUIDs should differ because newUUID incorporates time
 	if u1 == u2 {
@@ -1009,10 +1011,10 @@ func TestAliasIsInvalidStatusMatrix(t *testing.T) {
 		status   string
 		expected bool // IsInvalid returns true when invalid
 	}{
-		{"pending", false},   // pending is valid
-		{"approved", false},  // approved with existing components is valid
-		{"deleted", true},    // deleted is invalid
-		{"malformed", true},  // unknown status is invalid
+		{"pending", false},  // pending is valid
+		{"approved", false}, // approved with existing components is valid
+		{"deleted", true},   // deleted is invalid
+		{"malformed", true}, // unknown status is invalid
 	}
 
 	for _, tt := range tests {

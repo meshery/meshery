@@ -751,8 +751,9 @@ func TestCatalogAlignment(t *testing.T) {
 
 		goFps := fingerprintDesignRels(goDesign)
 
-		// --- OPA engine (with per-design timeout to prevent hangs) ---
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		// --- OPA engine ---
+		// Run eval in a goroutine so a hung OPA goroutine (e.g. ast.Compare
+		// infinite recursion on cyclic data) doesn't block the whole test.
 		opaData := map[string]any{"relationships": getMapSlice(design, "relationships")}
 		store := inmem.NewFromObject(opaData)
 		opts := append(opaModules,
@@ -761,25 +762,51 @@ func TestCatalogAlignment(t *testing.T) {
 			rego.Store(store),
 		)
 
+		type opaEval struct {
+			rs  rego.ResultSet
+			err error
+		}
+
 		opaStart := time.Now()
 		r := rego.New(opts...)
-		rs, err := r.Eval(ctx)
-		opaTime := time.Since(opaStart)
-		cancel()
+		opaEvalCh := make(chan opaEval, 1)
+		go func() {
+			rs, err := r.Eval(context.Background())
+			opaEvalCh <- opaEval{rs, err}
+		}()
+
+		const opaTimeout = 10 * time.Second
+		var rs rego.ResultSet
+		var opaErr error
+		var opaTime time.Duration
+
+		select {
+		case result := <-opaEvalCh:
+			rs = result.rs
+			opaErr = result.err
+			opaTime = time.Since(opaStart)
+		case <-time.After(opaTimeout):
+			// OPA goroutine is stuck (ast.Compare infinite loop). Leak it and move on.
+			opaTime = opaTimeout
+			totalOPATime += opaTime
+			results = append(results, designResult{
+				name: cd.name, comps: comps, rels: rels,
+				category: catOPATimeout, goRels: len(goFps), goFps: goFps,
+				goActions: goActions, goTime: goTime, opaTime: opaTime,
+				opaErr: "OPA hung (ast.Compare infinite loop)",
+			})
+			continue
+		}
 		totalOPATime += opaTime
 
-		if err != nil {
-			shortErr := err.Error()
+		if opaErr != nil {
+			shortErr := opaErr.Error()
 			if len(shortErr) > 80 {
 				shortErr = shortErr[:80]
 			}
-			cat := catOPACrash
-			if ctx.Err() != nil {
-				cat = catOPATimeout
-			}
 			results = append(results, designResult{
 				name: cd.name, comps: comps, rels: rels,
-				category: cat, goRels: len(goFps), goFps: goFps,
+				category: catOPACrash, goRels: len(goFps), goFps: goFps,
 				goActions: goActions, goTime: goTime, opaTime: opaTime,
 				opaErr: shortErr,
 			})

@@ -6,10 +6,10 @@ import "github.com/meshery/meshkit/errors"
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrConvertDesignCode  = "meshery-server-1378"
-	ErrConvertResultCode  = "meshery-server-1375"
-	ErrApplyPatchCode     = "meshery-server-1376"
-	ErrParsePayloadCode   = "meshery-server-1377"
+	ErrConvertDesignCode = "meshery-server-1378"
+	ErrConvertResultCode = "meshery-server-1375"
+	ErrApplyPatchCode    = "meshery-server-1376"
+	ErrParsePayloadCode  = "meshery-server-1377"
 )
 
 func ErrConvertDesign(err error) error {
