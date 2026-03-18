@@ -192,8 +192,9 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			return
 		}
 		prefObj, err := provider.ReadFromPersister(user.UserId)
-		if err != nil {
+		if err != nil || prefObj == nil {
 			h.log.Warn(ErrReadSessionPersistor)
+			prefObj = models.NewDefaultPreference()
 		}
 
 		token := provider.UpdateToken(w, req)
