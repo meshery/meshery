@@ -53,7 +53,9 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 		// Read and close response body before reusing request
 		// https://github.com/golang/go/issues/19653#issuecomment-341540384
 		_, _ = io.ReadAll(resp.Body)
-		resp.Body.Close()
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
 		l.Log.Warn(ErrTokenRetry)
 		newToken, err := l.refreshToken(tokenString)
 		if err != nil {
@@ -89,7 +91,7 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 		return "", err
 	}
 	if r.StatusCode == http.StatusInternalServerError {
-		return "", ErrTokenRefresh(fmt.Errorf("failed to refresh token. Status code 500."))
+		return "", ErrTokenRefresh(fmt.Errorf("failed to refresh token. Status code 500"))
 	}
 
 	defer SafeClose(r.Body, l.Log)
@@ -137,7 +139,8 @@ func (l *RemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, 
 	// logrus.Debugf("Token string %s", tokenStringB64)
 	tokenString, err := base64.RawStdEncoding.DecodeString(tokenStringB64)
 	if err != nil {
-		return nil, err
+		// Some providers set raw access tokens in cookies instead of base64-encoded payloads.
+		return &oauth2.Token{AccessToken: tokenStringB64}, nil
 	}
 	err = json.Unmarshal(tokenString, &token)
 	if err != nil {
@@ -256,7 +259,7 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	_, ok := jtk["exp"]
 	if ok {
 		exp := int64(jtk["exp"].(float64))
-		if time.Now().Unix()  > exp {
+		if time.Now().Unix() > exp {
 			return nil, ErrTokenExpired
 		}
 	}
@@ -271,19 +274,22 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	}
 
 	// Verifies the signature
-tokenParser := jwt.NewParser()
-	token, err := tokenParser.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	claims := jwt.MapClaims{}
+	tokenParser := jwt.NewParser()
+	token, err := tokenParser.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
 
 	if err != nil {
 		return nil, ErrTokenPrase(err)
 	}
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil, ErrTokenClaims
+	if tokenClaims, ok := token.Claims.(jwt.MapClaims); ok {
+		return &tokenClaims, nil
 	}
-	return &claims, nil
+	if tokenClaims, ok := token.Claims.(*jwt.MapClaims); ok {
+		return tokenClaims, nil
+	}
+	return nil, ErrTokenClaims
 }
 
 func (l *RemoteProvider) revokeToken(tokenString string) error {

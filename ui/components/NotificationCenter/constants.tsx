@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NOTIFICATIONCOLORS } from '../../themes';
 import AlertIcon from '../../assets/icons/AlertIcon';
-import ErrorIcon from '../../assets/icons/ErrorIcon.js';
+import ErrorIcon from '../../assets/icons/ErrorIcon';
 import { Colors } from '../../themes/app';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import { InfoIcon } from '@sistent/sistent';

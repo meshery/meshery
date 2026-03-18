@@ -69,7 +69,9 @@ func (h *Handler) PatternFileHandler(
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 
 		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		if _, writeErr := fmt.Fprintf(rw, "failed to read request body: %s", err); writeErr != nil {
+			h.log.Error(writeErr)
+		}
 		return
 	}
 
@@ -78,7 +80,9 @@ func (h *Handler) PatternFileHandler(
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 
 		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to unmarshal request body: %s", err)
+		if _, writeErr := fmt.Fprintf(rw, "failed to unmarshal request body: %s", err); writeErr != nil {
+			h.log.Error(writeErr)
+		}
 		return
 	}
 
@@ -233,7 +237,7 @@ func _processPattern(opts *core.ProcessPatternOptions) (map[string]interface{}, 
 	// Get the kubehandler from the context
 	k8scontexts, ok := opts.Context.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8scontexts) == 0 {
-		return nil, ErrInvalidKubeHandler(fmt.Errorf("Meshery server failed to interact with the Kubernetes cluster due to the cluster not being available."), opts.Pattern.Name)
+		return nil, ErrInvalidKubeHandler(fmt.Errorf("meshery server failed to interact with the Kubernetes cluster due to the cluster not being available"), opts.Pattern.Name)
 	}
 
 	var ctxToconfig = make(map[string]string)
@@ -268,7 +272,6 @@ func _processPattern(opts *core.ProcessPatternOptions) (map[string]interface{}, 
 			opIsDelete:             opts.IsDelete,
 			patternName:            strings.ToLower(opts.Pattern.Name),
 		}
-		fmt.Println("line 244 reached")
 
 		chain := stages.CreateChain()
 		chain.

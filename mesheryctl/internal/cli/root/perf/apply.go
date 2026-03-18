@@ -54,7 +54,7 @@ var (
 )
 
 var linkDocPerfApply = map[string]string{
-	"link":    "![perf-apply-usage](/assets/img/mesheryctl/perf-apply.png)",
+	"link":    "![perf-apply-usage](/reference/images/perf-apply.png)",
 	"caption": "Usage of mesheryctl perf apply",
 }
 
@@ -108,7 +108,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		userResponse := false
 
 		// setting up for error formatting
-		cmdUsed = "apply"
+		cmdUsed = cmd.Name()
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

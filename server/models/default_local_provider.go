@@ -20,6 +20,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
@@ -29,8 +30,10 @@ import (
 	"github.com/meshery/meshkit/utils/walker"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/organization"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
+	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -130,25 +133,56 @@ func (l *DefaultLocalProvider) SetJWTCookie(_ http.ResponseWriter, _ string) {
 func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
 }
 
-// GetProviderCapabilities returns all of the provider properties
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request, _ string) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
-		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
+		obj := "provider capabilities"
+		errObj := ErrEncoding(err, obj)
+		l.Log.Error(errObj)
+		http.Error(w, errObj.Error(), http.StatusInternalServerError)
 	}
 }
 
-// InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Request, _ bool) {
-	// l.issueSession(w, r, fromMiddleWare)
+// InitiateLogin - initiates login flow and redirects to home for local provider.
+// When called from AuthMiddleware (fromMiddleWare=true), it's a no-op since the
+// local provider doesn't require authentication — the middleware will allow the
+// request to proceed. When called from the /user/login route (fromMiddleWare=false),
+// it redirects to / or to the deep-link target from the ref query param.
+func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+	if fromMiddleWare {
+		return
+	}
+	redirectURL := "/"
+	if ref := r.URL.Query().Get("ref"); ref != "" {
+		if decoded, err := core.DecodeRefURL(ref); err == nil && isSafeRedirect(decoded) {
+			redirectURL = decoded
+		}
+	}
+	http.Redirect(w, r, redirectURL, http.StatusFound)
+}
+
+// isSafeRedirect validates that a decoded ref URL is a relative in-app path
+// to prevent open redirects. It rejects absolute URLs (with scheme/host) and
+// protocol-relative URLs (starting with //).
+func isSafeRedirect(rawURL string) bool {
+	if rawURL == "" || strings.HasPrefix(rawURL, "//") {
+		return false
+	}
+	parsed, err := url.Parse(rawURL)
+	if err != nil {
+		return false
+	}
+	return parsed.Scheme == "" && parsed.Host == ""
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
 	avatarUrl := ""
+	localEmail := types.Email("meshery@meshery.local")
 	return &User{
 		UserId:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
+		Email:     localEmail,
 		AvatarUrl: &avatarUrl,
 	}
 }
@@ -540,11 +574,11 @@ func (l *DefaultLocalProvider) PublishEventToProvider(_ string, _ events.Event) 
 	return nil
 }
 
-// PublishMetrics - publishes metrics to the provider backend asyncronously
+// PublishMetrics - publishes metrics to the provider backend asynchronously
 func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
 	data, err := json.Marshal(result)
 	if err != nil {
-		return ErrMarshal(err, "Meshery Matrics for shipping")
+		return ErrMarshal(err, "Meshery Metrics for shipping")
 	}
 
 	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
@@ -559,13 +593,15 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		l.Log.Warn(ErrDoRequest(err, cReq.Method, remoteProviderURL.String()))
 		return nil
 	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Warn(fmt.Errorf("error closing response body: %w", err))
+		}
+	}()
 	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("metrics published to remote provider")
 		return nil
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
 	_, err = io.ReadAll(resp.Body)
 	if err != nil {
 		l.Log.Warn(ErrDataRead(err, "body"))
@@ -577,7 +613,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 
 // RecordPreferences - records the user preference
 func (l *DefaultLocalProvider) RecordPreferences(_ *http.Request, userID string, data *Preference) error {
-	return l.MapPreferencePersister.WriteToPersister(userID, data)
+	return l.WriteToPersister(userID, data)
 }
 
 // UpdateToken - specific to remote auth
@@ -1165,8 +1201,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 }
 
 func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
-	connection := connections.Connection{ID: connectionID}
-	return l.ConnectionPersister.DeleteConnection(&connection)
+	return l.ConnectionPersister.DeleteConnectionById(connectionID)
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
@@ -1282,8 +1317,8 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	// Seed default organization
 	go func() {
 		id, _ := uuid.NewV4()
-		org := &Organization{
-			ID:          &id,
+		org := &organization.Organization{
+			Id:          id,
 			Name:        "My Org",
 			Country:     "",
 			Region:      "",
@@ -1515,7 +1550,7 @@ func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationId s
 }
 
 // SaveOrganization saves given organization with the provider
-func (l *DefaultLocalProvider) SaveOrganization(_ string, organization *Organization) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveOrganization(_ string, organization *organization.Organization) ([]byte, error) {
 	return l.OrganizationPersister.SaveOrganization(organization)
 }
 
@@ -1753,12 +1788,22 @@ func downloadContent(comp string, downloadpath string) error {
 			if err != nil {
 				return err
 			}
-			defer file.Close()
 			content, err := base64.StdEncoding.DecodeString(gca.Content)
 			if err != nil {
+				if closeErr := file.Close(); closeErr != nil {
+					return fmt.Errorf("%w (close error: %v)", err, closeErr)
+				}
 				return err
 			}
-			fmt.Fprintf(file, "%s", content)
+			if _, err := fmt.Fprintf(file, "%s", content); err != nil {
+				if closeErr := file.Close(); closeErr != nil {
+					return fmt.Errorf("%w (close error: %v)", err, closeErr)
+				}
+				return err
+			}
+			if err := file.Close(); err != nil {
+				return err
+			}
 			return nil
 		}).Walk()
 	case "Filter":
@@ -1806,9 +1851,14 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 					return err
 				}
 				if _, err := io.Copy(outFile, tarReader); err != nil {
+					if closeErr := outFile.Close(); closeErr != nil {
+						return fmt.Errorf("%w (close error: %v)", err, closeErr)
+					}
 					return err
 				}
-				outFile.Close()
+				if err := outFile.Close(); err != nil {
+					return err
+				}
 			}
 		}
 	}

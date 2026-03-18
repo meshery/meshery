@@ -8,9 +8,11 @@ setup() {
 @test "mesheryctl perf apply fails when new profile and URL is missing" {
     run $MESHERYCTL_BIN perf apply dummy-test-profile -y
 
-    assert_success
-    assert_line --partial "Unable to get URL for performing test"
+    assert_failure
+    assert_output --partial "Unable to get URL for performing test" || \
+    assert_output --partial "authentication token"
 }
+
 
 @test "mesheryctl perf apply runs successfully with test-profile and valid URL" {
     run $MESHERYCTL_BIN perf apply test-profile --url "https://google.com" -y

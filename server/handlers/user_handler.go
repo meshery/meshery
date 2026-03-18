@@ -46,7 +46,9 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/identity/users UserAPI idGetAllUsersHandler
@@ -83,7 +85,9 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs
@@ -197,7 +201,9 @@ func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, "Design shared")
+	if _, err := fmt.Fprint(w, "Design shared"); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route POST /api/content/filter/share ShareContent idPostShareContent
@@ -217,5 +223,7 @@ func (h *Handler) ShareFilterHandler(w http.ResponseWriter, r *http.Request, _ *
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, "Filter shared")
+	if _, err := fmt.Fprint(w, "Filter shared"); err != nil {
+		h.log.Error(err)
+	}
 }

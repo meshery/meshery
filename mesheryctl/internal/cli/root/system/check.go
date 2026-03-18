@@ -100,7 +100,7 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 		return nil, ErrGetCurrentContext(err)
 	}
 	if utils.PlatformFlag != "" {
-		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
+		if utils.PlatformFlag == platformDocker || utils.PlatformFlag == platformKubernetes {
 			currCtx.SetPlatform(utils.PlatformFlag)
 		} else {
 			return nil, ErrUnsupportedPlatform(utils.PlatformFlag, utils.CfgFile)
@@ -114,7 +114,7 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 }
 
 var linkDocCheck = map[string]string{
-	"link":    "![check-usage](/assets/img/mesheryctl/check.png)",
+	"link":    "![check-usage](/reference/images/check.png)",
 	"caption": "Usage of mesheryctl system check",
 }
 
@@ -189,9 +189,9 @@ mesheryctl system check --operator
 
 		hc.Options.RunComponentChecks = true
 		// if platform is docker only then run docker checks
-		hc.Options.RunDockerChecks = currPlatform == "docker"
+		hc.Options.RunDockerChecks = currPlatform == platformDocker
 		// if platform is kubernetes only then run kubernetes checks
-		hc.Options.RunKubernetesChecks = currPlatform == "kubernetes"
+		hc.Options.RunKubernetesChecks = currPlatform == platformKubernetes
 		hc.Options.RunVersionChecks = true
 		hc.Options.RunOperatorChecks = true
 		return hc.Run()
@@ -238,7 +238,7 @@ func (hc *HealthChecker) Run() error {
 func (hc *HealthChecker) RunPreflightHealthChecks() error {
 	// Docker healthchecks are only invoked when it's not a PreRunExecution
 	// or it's a PreRunExecution and current platform is docker
-	if !hc.Options.IsPreRunE || (hc.Options.IsPreRunE && hc.context.Platform == "docker") {
+	if !hc.Options.IsPreRunE || (hc.Options.IsPreRunE && hc.context.Platform == platformDocker) {
 		//Run docker healthchecks
 		if err := hc.runDockerHealthChecks(); err != nil {
 			return err
@@ -247,7 +247,7 @@ func (hc *HealthChecker) RunPreflightHealthChecks() error {
 	// Kubernetes healthchecks are only
 	// invoked when it's not a PreRunExecution
 	// or it's a PreRunExecution and current platform is kubernetes
-	if !hc.Options.IsPreRunE || (hc.Options.IsPreRunE && hc.context.Platform == "kubernetes") {
+	if !hc.Options.IsPreRunE || (hc.Options.IsPreRunE && hc.context.Platform == platformKubernetes) {
 		if err := hc.runKubernetesHealthChecks(); err != nil {
 			return err
 		}
@@ -285,7 +285,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		} else { // else we're supposed to grab errors
 			return err
 		}
-		if hc.context.Platform == "docker" {
+		if hc.context.Platform == platformDocker {
 			failure++
 		}
 	} else {
@@ -309,7 +309,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 			} else { // else we're supposed to grab errors
 				return err
 			}
-			if hc.context.Platform == "docker" {
+			if hc.context.Platform == platformDocker {
 				failure++
 			}
 		} else { // if not error we check if we are supposed to print logs
@@ -337,7 +337,7 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 	//Check whether k8s client can be initialized
 	client, err := meshkitkube.New([]byte(""))
 	if err != nil {
-		if hc.context.Platform == "kubernetes" { // increase failure count
+		if hc.context.Platform == platformKubernetes { // increase failure count
 			failure++
 		}
 		if hc.Options.PrintLogs { // print logs if we're supposed to
@@ -359,7 +359,7 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 	podInterface := client.KubeClient.CoreV1().Pods("")
 	_, err = podInterface.List(context.TODO(), v1.ListOptions{})
 	if err != nil {
-		if hc.context.Platform == "kubernetes" { // increase failure count
+		if hc.context.Platform == platformKubernetes { // increase failure count
 			failure++
 		}
 		if hc.Options.PrintLogs { // log incase we're supposed to
@@ -386,7 +386,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 	var kubeVersion *k8sVersion.Info
 	kubeVersion, err := utils.GetK8sVersionInfo()
 	if err != nil {
-		if hc.context.Platform == "kubernetes" { // increase failure count
+		if hc.context.Platform == platformKubernetes { // increase failure count
 			failure++
 		}
 		// probably kubernetes isn't running
@@ -399,7 +399,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 		// kubernetes is running so check the version
 		err = utils.CheckK8sVersion(kubeVersion)
 		if err != nil {
-			if hc.context.Platform == "kubernetes" { // increase failure count
+			if hc.context.Platform == platformKubernetes { // increase failure count
 				failure++
 			}
 			if hc.Options.PrintLogs { // log if we're supposed to
@@ -416,7 +416,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 
 	err = utils.CheckKubectlVersion()
 	if err != nil {
-		if hc.context.Platform == "kubernetes" { // increase failure count
+		if hc.context.Platform == platformKubernetes { // increase failure count
 			failure++
 		}
 		if hc.Options.PrintLogs { // log if we're supposed to

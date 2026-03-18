@@ -19,6 +19,7 @@ import {
   enumOptionsValueForIndex,
   labelValue,
 } from '@rjsf/utils';
+import { safeDisplayValue } from '../helper';
 import { Checkbox } from '@sistent/sistent';
 
 export default function CustomSelectWidget({
@@ -62,11 +63,15 @@ export default function CustomSelectWidget({
     onFocus(id, enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
   const selectedIndexes = enumOptionsIndexForValue(value, enumOptions, multiple);
   const theme = useTheme();
+
+  const labelContent = labelValue(label, hideLabel || !label, false);
+  const safeLabel = safeDisplayValue(labelContent);
+
   return (
     <>
       {xRjsfGridArea && (
         <InputLabel required={required} htmlFor={id}>
-          {labelValue(label, hideLabel || !label, false)}
+          {safeLabel}
         </InputLabel>
       )}
       <TextField
@@ -77,7 +82,7 @@ export default function CustomSelectWidget({
         disabled={disabled || readonly}
         autoFocus={autofocus}
         placeholder={placeholder}
-        label={xRjsfGridArea ? '' : labelValue(label, hideLabel || !label, false)}
+        label={xRjsfGridArea ? '' : safeLabel}
         error={rawErrors?.length > 0}
         onChange={_onChange}
         onBlur={_onBlur}
@@ -104,10 +109,10 @@ export default function CustomSelectWidget({
                   </IconButton>
                 </CustomTextTooltip>
               )}
-              {schema?.description && (
+              {typeof schema?.description === 'string' && schema.description && (
                 <CustomTextTooltip
                   flag={formContext?.overrideFlag}
-                  title={schema?.description}
+                  title={schema.description}
                   interactive={true}
                 >
                   <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
@@ -132,10 +137,11 @@ export default function CustomSelectWidget({
         SelectProps={{
           ...textFieldProps.SelectProps,
           renderValue: (selected) => {
-            if (multiple) {
-              return selected.map((index) => enumOptions[index].label).join(', ');
+            if (multiple && Array.isArray(selected)) {
+              return selected.map((i) => safeDisplayValue(enumOptions?.[i]?.label)).join(', ');
             }
-            return enumOptions[selected].label;
+            const idx = selected as number;
+            return safeDisplayValue(enumOptions?.[idx]?.label);
           },
           multiple,
           MenuProps: {
@@ -163,7 +169,7 @@ export default function CustomSelectWidget({
             return (
               <MenuItem key={i} value={String(i)} disabled={disabled}>
                 {multiple && <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />}
-                <ListItemText primary={label} />
+                <ListItemText primary={safeDisplayValue(label)} />
               </MenuItem>
             );
           })}

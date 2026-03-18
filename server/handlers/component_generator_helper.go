@@ -171,11 +171,14 @@ func incrementCountersOnErr(mu *sync.Mutex, entityType entity.EntityType, respon
 	mu.Lock()
 	defer mu.Unlock()
 	response.EntityCount.TotalErrCount++
-	if entityType == entity.ComponentDefinition {
+	switch entityType {
+	case entity.ComponentDefinition:
 		response.EntityCount.ErrCompCount++
-	} else if entityType == entity.RelationshipDefinition {
+
+	case entity.RelationshipDefinition:
 		response.EntityCount.ErrRelCount++
-	} else if entityType == entity.Model {
+
+	case entity.Model:
 		response.EntityCount.ErrModelCount++
 	}
 }
@@ -183,11 +186,14 @@ func incrementCountersOnErr(mu *sync.Mutex, entityType entity.EntityType, respon
 func incrementCountersOnSuccess(mu *sync.Mutex, entityType entity.EntityType, compCount *int, relCount *int, modelCount *int) {
 	mu.Lock()
 	defer mu.Unlock()
-	if entityType == entity.ComponentDefinition {
+	switch entityType {
+	case entity.ComponentDefinition:
 		*compCount++
-	} else if entityType == entity.RelationshipDefinition {
+
+	case entity.RelationshipDefinition:
 		*relCount++
-	} else if entityType == entity.Model {
+
+	case entity.Model:
 		*modelCount++
 	}
 }

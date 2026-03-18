@@ -1,0 +1,29 @@
+version: 0.0.3
+name: hierarchical-parent-wallet-relationship
+displayName: Hierarchical-Parent-Wallet-Relationship
+createdAt: "2024-10-11T09:30:07Z"
+description: |-
+    In a hierarchical-parent-wallet relationship, one component (the "wallet") serves as a container or host for another component, similar to a parent-child structure. In this example, the WASM plugin acts as the parent (or wallet) that "contains" the WASM filter, representing the idea that the filter operates within the scope and capabilities provided by the plugin.
+
+    For instance, in a service mesh like Istio, a WASM plugin is deployed into an Envoy proxy and serves as the runtime environment for a WASM filter. A custom WASM filter may be designed to modify HTTP requests (e.g., by adding a security header), but it relies on the plugin to intercept network traffic and integrate with the proxy’s pipeline. The plugin manages the lifecycle of the filter, ensuring it is executed whenever relevant traffic is processed. Without the plugin, the filter would not be able to apply its logic, emphasizing how the plugin enables the filter’s operation.
+
+    This wallet nature highlights the idea that the plugin acts as a container that securely "holds" the filter, providing it with the necessary infrastructure and environment to function. Just as a wallet holds its contents, the plugin ensures the filter operates properly within the boundaries and resources it provides, without which the filter would not function independently.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e76bb526-8e8a-4f15-9dfe-df369bef344d/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Understand that the child component (e.g., the filter) is dependent on the parent component (e.g., the plugin). If the parent (wallet) is not correctly configured or functional, the child component will not work as expected. Ensure the parent component is properly configured. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e76bb526-8e8a-4f15-9dfe-df369bef344d-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e76bb526-8e8a-4f15-9dfe-df369bef344d-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

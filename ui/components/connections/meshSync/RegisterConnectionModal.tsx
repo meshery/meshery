@@ -2,10 +2,10 @@ import React from 'react';
 import { Modal, ModalBody } from '@sistent/sistent';
 import CustomizedSteppers from './Stepper';
 
-import { useCancelConnectionRegisterMutation } from '@/rtk-query/connection.js';
-import { useDeleteMeshsyncResourceMutation } from '@/rtk-query/meshsync.js';
-import { useNotification } from '@/utils/hooks/useNotification.js';
-import { EVENT_TYPES } from 'lib/event-types.js';
+import { useCancelConnectionRegisterMutation } from '@/rtk-query/connection';
+import { useDeleteMeshsyncResourceMutation } from '@/rtk-query/meshsync';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
 
 const RegisterConnectionModal = ({
   openRegistrationModal,

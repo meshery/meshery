@@ -18,7 +18,7 @@ WORKDIR /ui
 COPY ui/package.json ui/package-lock.json ./
 ARG TARGETARCH
 RUN --mount=type=cache,target=/root/.npm \
-  npm ci
+  npm ci --legacy-peer-deps
 # install
 COPY ui /ui
 RUN npm run build

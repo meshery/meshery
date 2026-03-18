@@ -1,0 +1,24 @@
+version: 0.0.1
+name: elk-stack
+displayName: ELK stack
+createdAt: "2024-03-07T11:54:06Z"
+description: ELK stack in kubernetes deployed with simple python  app  using logstash ,kibana , filebeat ,elastic search.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/6036b918-a3c7-4b16-9da1-8727909ab2be/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "here technologies included are kubernetes , elastic search ,log stash ,log stash ,kibana ,python etc \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6036b918-a3c7-4b16-9da1-8727909ab2be-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6036b918-a3c7-4b16-9da1-8727909ab2be-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
