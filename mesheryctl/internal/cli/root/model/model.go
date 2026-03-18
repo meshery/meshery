@@ -35,10 +35,8 @@ type cmdModelFlags struct {
 
 var modelFlags cmdModelFlags
 
-var (
-	// Available model subcommands
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, deleteModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
-)
+// Available model subcommands
+var availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, deleteModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
 
 // ModelCmd represents the mesheryctl model command
 var ModelCmd = &cobra.Command{
@@ -95,7 +93,6 @@ mesheryctl model build [model-name]/[model-version]
 		countFlag, _ := cmd.Flags().GetBool("count")
 		if countFlag {
 			models, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s?page=1", modelsApiPath))
-
 			if err != nil {
 				return err
 			}
@@ -123,7 +120,7 @@ mesheryctl model build [model-name]/[model-version]
 
 func init() {
 	ModelCmd.AddCommand(availableSubcommands...)
-	ModelCmd.Flags().BoolVarP(&modelFlags.Count, "count", "", false, "(optional) Get the number of models in total")
+	ModelCmd.Flags().BoolVarP(&modelFlags.Count, "count", "c", false, "(optional) Get the number of models in total")
 }
 
 func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([][]string, int64) {

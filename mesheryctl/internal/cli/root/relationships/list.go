@@ -84,6 +84,6 @@ func init() {
 	})
 
 	listCmd.Flags().IntVarP(&relationshipListFlags.Page, "page", "p", 1, "(optional) List next set of relationships with --page (default = 1)")
-	listCmd.Flags().IntVar(&relationshipListFlags.PageSize, "pagesize", 10, "(optional) Number of results per page (default = 10)")
+	listCmd.Flags().IntVarP(&relationshipListFlags.PageSize, "pagesize", "s", 10, "(optional) Number of results per page (default = 10)")
 	listCmd.Flags().BoolVarP(&relationshipListFlags.Count, "count", "c", false, "(optional) Display the total count of relationships only")
 }
