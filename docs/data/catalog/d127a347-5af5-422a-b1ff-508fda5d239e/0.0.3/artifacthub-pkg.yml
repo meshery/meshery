@@ -1,0 +1,39 @@
+version: 0.0.3
+name: uptime-kuma
+displayName: uptime-kuma
+createdAt: "2024-07-04T11:09:50Z"
+description: |
+    Uptime Kuma is an easy-to-use self-hosted monitoring tool.
+
+    Features-
+
+    Monitoring uptime for HTTP(s) / TCP / HTTP(s) Keyword / HTTP(s) Json Query / Ping / DNS Record / Push / Steam Game Server / Docker Containers
+    Fancy, Reactive, Fast UI/UX
+    Notifications via Telegram, Discord, Gotify, Slack, Pushover, Email (SMTP), and 90+ notification services, click here for the full list
+    20-second intervals
+    Multi Languages
+    Multiple status pages
+    Map status pages to specific domains
+    Ping chart
+    Certificate info
+    Proxy support
+    2FA support
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/d127a347-5af5-422a-b1ff-508fda5d239e/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "To try live demo  of uptime kuma . use this link to try out  https://demo.kuma.pet/start-demo\nIt is a temporary live demo, all data will be deleted after 10 minutes.\n\nfor Caveats And Considerations check out this github repo  https://github.com/louislam/uptime-kuma \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d127a347-5af5-422a-b1ff-508fda5d239e-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d127a347-5af5-422a-b1ff-508fda5d239e-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

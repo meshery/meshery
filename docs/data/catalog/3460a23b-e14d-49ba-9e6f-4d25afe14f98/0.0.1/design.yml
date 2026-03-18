@@ -1,0 +1,169 @@
+name: Postgres Deployment
+services:
+  postgres-config:
+    name: postgres-config
+    type: ConfigMap.K8s
+    apiVersion: core.oam.dev/v1alpha1
+    namespace: default
+    version: v1.25.2
+    model: kubernetes
+    labels:
+      app: postgres
+    dependsOn:
+    - postgres-rbiln
+    settings:
+      data:
+        POSTGRES_DB: postgresdb
+        POSTGRES_PASSWORD: psltest
+        POSTGRES_USER: admin
+    traits:
+      meshmap:
+        edges: []
+        id: 9753aef5-59b7-44d3-893e-c4e7cf1eb0bb
+        label: postgres-config
+        parent: ce6a1faf-4a96-4e95-bb20-1a9be448e5a3
+        position:
+          posX: 318.93243967929607
+          posY: 99.55886740392805
+  postgres-daczz:
+    name: postgres-daczz
+    type: Service.K8s
+    apiVersion: core.oam.dev/v1alpha1
+    namespace: default
+    version: v1.25.2
+    model: kubernetes
+    labels:
+      app: postgres
+    dependsOn:
+    - postgres-rbiln
+    settings:
+      spec:
+        ports:
+        - port: 5432
+        selector:
+          app: postgres
+        type: NodePort
+    traits:
+      meshmap:
+        edges: []
+        id: 596b9abf-4f46-4471-89d8-4c126cb2fe50
+        label: postgres
+        parent: ce6a1faf-4a96-4e95-bb20-1a9be448e5a3
+        position:
+          posX: 321.31247189605676
+          posY: 158.21140604789235
+  postgres-jbsxd:
+    name: postgres-jbsxd
+    type: Deployment.K8s
+    apiVersion: core.oam.dev/v1alpha1
+    namespace: default
+    version: v1.25.2
+    model: kubernetes
+    dependsOn:
+    - postgres-rbiln
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: postgres
+        template:
+          metadata:
+            labels:
+              app: postgres
+          spec:
+            containers:
+            - env From:
+              - config Map Ref:
+                  name: postgres-config
+              image: postgres:10.1
+              image Pull Policy: IfNotPresent
+              name: postgres
+              ports:
+              - container Port: 5432
+              volume Mounts:
+              - mount Path: /var/lib/postgresql/data
+                name: postgredb
+            volumes:
+            - name: postgredb
+              persistent Volume Claim:
+                claim Name: postgres-pv-claim
+    traits:
+      meshmap:
+        edges: []
+        id: 34e44f90-d37e-4a68-9b23-0588c667a43e
+        label: postgres
+        parent: ce6a1faf-4a96-4e95-bb20-1a9be448e5a3
+        position:
+          posX: 396.8582260097248
+          posY: 98.50701686680969
+  postgres-pv-claim:
+    name: postgres-pv-claim
+    type: PersistentVolumeClaim.K8s
+    apiVersion: core.oam.dev/v1alpha1
+    namespace: default
+    version: v1.25.2
+    model: kubernetes
+    labels:
+      app: postgres
+    dependsOn:
+    - postgres-rbiln
+    settings:
+      spec:
+        access Modes:
+        - ReadWriteMany
+        resources:
+          requests:
+            storage: 5Gi
+        storage Class Name: manual
+    traits:
+      meshmap:
+        edges: []
+        id: 3fe78dd4-85bb-4b68-8ca4-3af46c70c4aa
+        label: postgres-pv-claim
+        parent: ce6a1faf-4a96-4e95-bb20-1a9be448e5a3
+        position:
+          posX: 387.4657289730162
+          posY: 160.90286652245047
+  postgres-pv-volume:
+    name: postgres-pv-volume
+    type: PersistentVolume.K8s
+    apiVersion: core.oam.dev/v1alpha1
+    namespace: postgres
+    version: v1.25.2
+    model: kubernetes
+    labels:
+      app: postgres
+      type: local
+    settings:
+      spec:
+        access Modes:
+        - ReadWriteMany
+        capacity:
+          storage: 5Gi
+        host Path:
+          path: /mnt/data
+        storage Class Name: manual
+    traits:
+      meshmap:
+        edges: []
+        id: 0a29c03b-b3d3-4ddf-8bac-f0949ac530f3
+        label: postgres-pv-volume
+        position:
+          posX: 484.57453081003484
+          posY: 123.45272135465552
+  postgres-rbiln:
+    name: postgres-rbiln
+    type: Namespace.K8s
+    apiVersion: core.oam.dev/v1alpha1
+    namespace: default
+    version: v1.25.2
+    model: kubernetes
+    traits:
+      meshmap:
+        edges: []
+        id: ce6a1faf-4a96-4e95-bb20-1a9be448e5a3
+        label: postgres
+        position:
+          posX: 358.19908432615614
+          posY: 139.70494169463007
