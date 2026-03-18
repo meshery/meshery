@@ -17,7 +17,6 @@ package system
 import (
 	"fmt"
 
-	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -68,7 +67,7 @@ func resetMesheryConfig() error {
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		mesheryctllogger.Log.Error(err)
+		utils.Log.Error(err)
 		return nil
 	}
 	// get the platform, channel and the version of the current context

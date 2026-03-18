@@ -23,7 +23,6 @@ import (
 	"os/signal"
 	"time"
 
-	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitutils "github.com/meshery/meshkit/utils"
@@ -84,21 +83,21 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		// check if meshery is running or not
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			mesheryctllogger.Log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
+			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
 		running, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if err != nil {
-			mesheryctllogger.Log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 		if !running {
-			mesheryctllogger.Log.Error(utils.ErrMesheryServerNotRunning(currCtx.GetPlatform()))
+			utils.Log.Error(utils.ErrMesheryServerNotRunning(currCtx.GetPlatform()))
 			return nil
 		}
 
@@ -107,12 +106,12 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			mesheryctllogger.Log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
+			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
 		log.Debug("Fetching Meshery-UI endpoint")
@@ -146,7 +145,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 					false,
 				)
 				if err != nil {
-					mesheryctllogger.Log.Error(ErrInitPortForward(err))
+					utils.Log.Error(ErrInitPortForward(err))
 					return nil
 
 				}
@@ -188,7 +187,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			var mesheryEndpoint string
 			endpoint, err := utils.GetMesheryEndpoint(context.TODO(), client)
 			if err != nil {
-				mesheryctllogger.Log.Error(err) //the func return a meshkit error
+				utils.Log.Error(err) //the func return a meshkit error
 				return nil
 			}
 
@@ -217,7 +216,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			if err == nil {
 				err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 				if err != nil {
-					mesheryctllogger.Log.Error(err)
+					utils.Log.Error(err)
 					return nil
 				}
 			}

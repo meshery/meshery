@@ -10,7 +10,6 @@ import (
 
 	"github.com/pkg/errors"
 
-	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"gopkg.in/yaml.v3"
 )
@@ -101,7 +100,7 @@ func NewJSONOutputFormatter[T any](data T) OutputFormatter[T] {
 }
 
 func (j *JSONOutputFormatterSaver[T]) WithFilePath(filePath string) OutputFormatterSaver[T] {
-	mesheryctllogger.Log.Debugf("Setting file path for JSON output formatter saver: %s", filePath)
+	utils.Log.Debugf("Setting file path for JSON output formatter saver: %s", filePath)
 	j.FilePath = filePath
 	return j
 }
@@ -114,7 +113,7 @@ func NewJSONOutputFormatterSaver[T any](outputFormatter JSONOutputFormatter[T]) 
 }
 
 func (j *JSONOutputFormatter[T]) WithOutput(out io.Writer) OutputFormatter[T] {
-	mesheryctllogger.Log.Debug("Setting output writer for JSON output formatter")
+	utils.Log.Debug("Setting output writer for JSON output formatter")
 	j.Out = out
 	return j
 }
@@ -125,7 +124,7 @@ func (j *JSONOutputFormatter[T]) WithEncoderSettings(settings JsonEncoderSetting
 }
 
 func (j *JSONOutputFormatter[T]) Display() error {
-	mesheryctllogger.Log.Debug("\nDebug: Displaying data using JSON output formatter\n")
+	utils.Log.Debug("\nDebug: Displaying data using JSON output formatter\n")
 	if j.Out == nil {
 		j.Out = os.Stdout
 	}
@@ -221,7 +220,7 @@ func (y *YAMLOutputFormatter[T]) WithOutput(out io.Writer) OutputFormatter[T] {
 }
 
 func (y *YAMLOutputFormatter[T]) Display() error {
-	mesheryctllogger.Log.Debug("\nDebug: Displaying data using YAML output formatter\n")
+	utils.Log.Debug("\nDebug: Displaying data using YAML output formatter\n")
 	if y.Out == nil {
 		y.Out = os.Stdout
 	}

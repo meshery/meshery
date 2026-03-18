@@ -22,7 +22,6 @@ import (
 	"os/exec"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
-	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 
@@ -40,7 +39,7 @@ func getContexts(configFile string) ([]string, error) {
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		mesheryctllogger.Log.Error(err)
+		utils.Log.Error(err)
 		return nil, nil
 	}
 
@@ -98,7 +97,7 @@ func setContext(configFile, cname string) error {
 	}
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		mesheryctllogger.Log.Error(err)
+		utils.Log.Error(err)
 		return nil
 	}
 

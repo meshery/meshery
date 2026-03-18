@@ -17,7 +17,6 @@ package system
 import (
 	"fmt"
 
-	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
 	c "github.com/meshery/meshery/mesheryctl/pkg/constants"
@@ -56,7 +55,7 @@ mesheryctl system update --skip-reset
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			mesheryctllogger.Log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 		return hc.RunPreflightHealthChecks()
@@ -69,7 +68,7 @@ mesheryctl system update --skip-reset
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			mesheryctllogger.Log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 		// get the platform, channel and the version of the current context
@@ -77,13 +76,13 @@ mesheryctl system update --skip-reset
 		if tempContext != "" {
 			err = mctlCfg.SetCurrentContext(tempContext)
 			if err != nil {
-				mesheryctllogger.Log.Error(ErrSetCurrentContext(err))
+				utils.Log.Error(ErrSetCurrentContext(err))
 				return nil
 			}
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			mesheryctllogger.Log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 		err = currCtx.ValidateVersion()
@@ -149,7 +148,7 @@ mesheryctl system update --skip-reset
 			}
 			hc, err := NewHealthChecker(hcOptions)
 			if err != nil {
-				mesheryctllogger.Log.Error(err)
+				utils.Log.Error(err)
 				return nil
 			}
 			// If k8s is available in case of platform docker than we deploy operator
@@ -159,7 +158,7 @@ mesheryctl system update --skip-reset
 
 			running, err := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 			if err != nil {
-				mesheryctllogger.Log.Error(err)
+				utils.Log.Error(err)
 				return nil
 			}
 			if !running {

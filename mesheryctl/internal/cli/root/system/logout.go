@@ -17,8 +17,8 @@ package system
 import (
 	"os"
 
-	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -41,13 +41,13 @@ mesheryctl system logout
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			mesheryctllogger.Log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
-			mesheryctllogger.Log.Error(ErrGetCurrentContext(errors.Wrap(err, "failed to find token path for the current context")))
+			utils.Log.Error(ErrGetCurrentContext(errors.Wrap(err, "failed to find token path for the current context")))
 			return nil
 		}
 

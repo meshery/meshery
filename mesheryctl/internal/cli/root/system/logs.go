@@ -24,7 +24,6 @@ import (
 
 	"github.com/pkg/errors"
 
-	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
@@ -49,7 +48,7 @@ func printLogs(logs string, podName string) {
 	for _, logMsg := range strings.Split(logs, "\n") {
 		logStr := fmt.Sprintf("%s\t|\t%s", podName, logMsg)
 
-		mesheryctllogger.Log.Info(logStr)
+		utils.Log.Info(logStr)
 	}
 }
 
@@ -84,7 +83,7 @@ mesheryctl system logs meshery-istio
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			mesheryctllogger.Log.Error(err)
+			utils.Log.Error(err)
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
@@ -99,7 +98,7 @@ mesheryctl system logs meshery-istio
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			mesheryctllogger.Log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 		// get the platform, channel and the version of the current context
@@ -107,14 +106,14 @@ mesheryctl system logs meshery-istio
 		if tempContext != "" {
 			err = mctlCfg.SetCurrentContext(tempContext)
 			if err != nil {
-				mesheryctllogger.Log.Error(ErrSetCurrentContext(err))
+				utils.Log.Error(ErrSetCurrentContext(err))
 				return nil
 			}
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			mesheryctllogger.Log.Error(ErrGetCurrentContext(err))
+			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
 
@@ -125,18 +124,18 @@ mesheryctl system logs meshery-istio
 		case platformDocker:
 			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
-				mesheryctllogger.Log.Error(err)
+				utils.Log.Error(err)
 				return nil
 			}
 			if !ok {
-				mesheryctllogger.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
+				utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
 				return nil
 			}
-			mesheryctllogger.Log.Info("Starting Meshery logging...")
+			utils.Log.Info("Starting Meshery logging...")
 
 			if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
-				mesheryctllogger.Log.Errorf("%s does not exists", utils.DockerComposeFile)
-				mesheryctllogger.Log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
+				utils.Log.Errorf("%s does not exists", utils.DockerComposeFile)
+				utils.Log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
 				return nil
 			}
 
@@ -155,11 +154,11 @@ mesheryctl system logs meshery-istio
 
 			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
-				mesheryctllogger.Log.Error(err)
+				utils.Log.Error(err)
 				return nil
 			}
 			if !ok {
-				mesheryctllogger.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
+				utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
 				return nil
 			}
 
@@ -173,9 +172,9 @@ mesheryctl system logs meshery-istio
 			// Get and display current context
 			currentContext, err := utils.GetCurrentK8sContext(client)
 			if err != nil {
-				mesheryctllogger.Log.Warn(err)
+				utils.Log.Warn(err)
 			} else {
-				mesheryctllogger.Log.Info("Using Kubernetes context: ", currentContext)
+				utils.Log.Info("Using Kubernetes context: ", currentContext)
 			}
 
 			// List the pods in the MesheryNamespace
@@ -198,7 +197,7 @@ mesheryctl system logs meshery-istio
 				}
 			}
 
-			mesheryctllogger.Log.Info("Starting Meshery logging...")
+			utils.Log.Info("Starting Meshery logging...")
 			wg := &sync.WaitGroup{}
 
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
@@ -253,7 +252,7 @@ mesheryctl system logs meshery-istio
 									break
 								}
 								if err != nil {
-									mesheryctllogger.Log.Errorf("error occurred while processing logs %v", err)
+									utils.Log.Errorf("error occurred while processing logs %v", err)
 									break
 								}
 								logBuf = buf[0:numBytes]
