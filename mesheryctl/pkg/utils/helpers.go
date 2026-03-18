@@ -35,6 +35,7 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
@@ -260,7 +261,7 @@ var (
 	// TokenFlag sets token location passed by user with --token
 	TokenFlag = "Not Set"
 	// global logger variable
-	Log *mesheryctllogger.MesheryctlLogger
+	Log = mesheryctllogger.GetMeshkitLogger(logrus.InfoLevel)
 	// Color for the whiteboard printer
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 	// global logger error variable
