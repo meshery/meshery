@@ -12,9 +12,11 @@ func ResyncResources(ctx context.Context, sm *machines.StateMachine) error {
 	mashineCtx, err := GetMachineCtx(sm.Context, nil)
 	if err != nil {
 		return ErrResyncK8SResources(
+			// Return error if machine context cannot be retrieved
 			fmt.Errorf(
-				"can not receive machine context for machine %v",
+				"failed to get machine context for machine %v: %v",
 				sm.ID,
+				err,
 			),
 		)
 	}
