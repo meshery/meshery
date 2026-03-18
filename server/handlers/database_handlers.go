@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/models"
@@ -66,9 +67,30 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	tableFinder.Find(&tables)
 
-	for _, table := range tables {
-		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
-		recordCount += int(table.Count)
+	// Fetch row counts for all tables in a single UNION ALL query instead of
+	// one COUNT query per table (avoids N+1 query problem).
+	if len(tables) > 0 {
+		type tableCount struct {
+			Name string
+			Cnt  int64
+		}
+
+		parts := make([]string, 0, len(tables))
+		for _, table := range tables {
+			parts = append(parts, fmt.Sprintf(`SELECT '%s' AS name, COUNT(*) AS cnt FROM "%s"`, table.Name, table.Name))
+		}
+
+		var counts []tableCount
+		h.dbHandler.DB.Raw(strings.Join(parts, " UNION ALL ")).Scan(&counts)
+
+		countMap := make(map[string]int64, len(counts))
+		for _, c := range counts {
+			countMap[c.Name] = c.Cnt
+			recordCount += int(c.Cnt)
+		}
+		for _, table := range tables {
+			table.Count = countMap[table.Name]
+		}
 	}
 
 	databaseSummary := &models.DatabaseSummary{
