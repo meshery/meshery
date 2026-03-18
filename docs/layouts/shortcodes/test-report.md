@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 16th 2026, 1:36:34 pm
+- Testing started at: March 18th 2026, 3:55:03 am
 
 **📦 Test Result Summary**
 
-- ✅ 64 passed
-- ❌ 5 failed
+- ✅ 63 passed
+- ❌ 6 failed
 - ⚠️ 0 flaked
 - ⏩ 3 skipped
 
-⌛ _Duration: 5 minutes and 6 seconds_
+⌛ _Duration: 5 minutes and 22 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -44,7 +44,7 @@
 | 21 | Meshery | chromium-meshery-provider | should identify relationships for meshery-design | relationship | ✅ |
 | 22 | Meshery | chromium-meshery-provider | should identify relationships for pv-pvc-edge-non-binding-reference-relationship | relationship | ✅ |
 | 23 | Meshery | chromium-meshery-provider | should identify relationships for Service-To-Deployment-Network | relationship | ✅ |
-| 24 | Meshery | chromium-meshery-provider | should verify Design Configurator page elements |  | ✅ |
+| 24 | Meshery | chromium-meshery-provider | should verify Design Configurator page elements |  | ❌ |
 | 25 | Meshery | chromium-meshery-provider | Test if Left Navigation Panel is displayed |  | ✅ |
 | 26 | Meshery | chromium-meshery-provider | Test if Notification button is displayed |  | ✅ |
 | 27 | Meshery | chromium-meshery-provider | Test if Profile button is displayed |  | ✅ |
@@ -110,7 +110,44 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
+<summary>❌ should verify Design Configurator page elements (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
+ [90m  6 |[39m
+[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
+ [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
+ [90m 10 |[39m     })[33m;[39m[0m
+```
+
+</details>
+
+<details>
 <summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ Verify Meshery Adapter for Istio Section (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -147,34 +184,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Verify Meshery Adapter for Istio Section (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ Verify Meshery Adapter for Istio Section (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
 <summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
@@ -194,6 +203,20 @@ The following tests failed. Click on each to see the failure reason:
  [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
  [90m 10 |[39m     })[33m;[39m[0m
 ```
+
+</details>
+
+<details>
+<summary>❌ Verify Meshery Adapter for Istio Section (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
 
 </details>
 

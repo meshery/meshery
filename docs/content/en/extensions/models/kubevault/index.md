@@ -129,7 +129,11 @@ components:
   colorIcon: content/en/extensions/models/kubevault/components/issuer/icons/color/issuer-color.svg
   whiteIcon: content/en/extensions/models/kubevault/components/issuer/icons/white/issuer-white.svg
   description: 
-components-count: 30
+- name: issuer
+  colorIcon: content/en/extensions/models/kubevault/components/issuer/icons/color/issuer-color.svg
+  whiteIcon: content/en/extensions/models/kubevault/components/issuer/icons/white/issuer-white.svg
+  description: 
+components-count: 31
 relationships: 
 relationship-count: 0
 featureList: [
