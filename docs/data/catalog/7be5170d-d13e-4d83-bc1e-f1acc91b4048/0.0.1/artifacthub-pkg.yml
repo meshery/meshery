@@ -1,0 +1,24 @@
+version: 0.0.1
+name: nginx-ingress-
+displayName: 'nginx ingress '
+createdAt: "2024-04-02T08:32:18Z"
+description: Creates a Kubernetes deployment with two replicas running NGINX containers and a service to expose these pods internally within the Kubernetes cluster. The NGINX containers are configured to listen on port 80, and the service routes traffic to these containers.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7be5170d-d13e-4d83-bc1e-f1acc91b4048/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "ImagePullPolicy: In the Deployment spec, the imagePullPolicy is set to Never. This means that Kubernetes will never attempt to pull the NGINX image from a container registry, assuming it's already present on the node where the pod is scheduled. This can be problematic if the image is not present or if you need to update to a newer version. Consider setting the imagePullPolicy to Always or IfNotPresent depending on your deployment requirements.\n\nResource Allocation: The provided manifest doesn't specify resource requests and limits for the NGINX container. Without resource limits, the container can consume excessive resources, impacting other workloads on the same node. It's recommended to define resource requests and limits based on the expected workload characteristics to ensure stability and resource efficiency. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7be5170d-d13e-4d83-bc1e-f1acc91b4048-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7be5170d-d13e-4d83-bc1e-f1acc91b4048-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
