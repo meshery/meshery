@@ -29,7 +29,7 @@ const MesheryArrayFieldItemTemplate = (props) => {
           expandIcon={<ExpandMoreIcon style={iconSmall} fill="gray" />}
           aria-controls={`panel-${itemKey}-content`}
           id={`panel-${itemKey}-header`}
-          style={{ backgroundColor: 'F7F7F7' }}
+          style={{ backgroundColor: '#F7F7F7' }}
         >
           <Typography
             style={{
