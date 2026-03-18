@@ -77,11 +77,18 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 		parts := make([]string, 0, len(tables))
 		for _, table := range tables {
-			parts = append(parts, fmt.Sprintf(`SELECT '%s' AS name, COUNT(*) AS cnt FROM "%s"`, table.Name, table.Name))
+			// Escape double quotes in the identifier to prevent SQL injection
+			// (e.g. a table named `foo"bar` becomes `"foo""bar"`).
+			safeName := strings.ReplaceAll(table.Name, `"`, `""`)
+			parts = append(parts, fmt.Sprintf(`SELECT '%s' AS name, COUNT(*) AS cnt FROM "%s"`, table.Name, safeName))
 		}
 
 		var counts []tableCount
-		h.dbHandler.DB.Raw(strings.Join(parts, " UNION ALL ")).Scan(&counts)
+		if err := h.dbHandler.DB.Raw(strings.Join(parts, " UNION ALL ")).Scan(&counts).Error; err != nil {
+			h.log.Error(fmt.Errorf("could not fetch table counts: %w", err))
+			http.Error(w, "error fetching database summary", http.StatusInternalServerError)
+			return
+		}
 
 		countMap := make(map[string]int64, len(counts))
 		for _, c := range counts {
