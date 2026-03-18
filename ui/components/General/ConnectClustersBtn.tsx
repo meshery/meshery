@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { iconMedium } from '../../css/icons.styles';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
-import { Button, useTheme } from '@sistent/sistent';
+
+import { Add, Button, useTheme } from '@sistent/sistent';
 
 function ConnectClustersBtn() {
   const theme = useTheme();
@@ -15,7 +15,7 @@ function ConnectClustersBtn() {
         size="large"
         style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
       >
-        <AddIcon
+        <Add
           style={{
             width: theme.spacing(2.5),
             paddingRight: theme.spacing(0.5),

@@ -1,7 +1,9 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import {
+  ArrowBack,
   Button,
+  GetApp,
   Typography,
   MenuItem,
   IconButton,
@@ -22,7 +24,6 @@ import {
   AccordionSummary,
 } from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
-import GetAppIcon from '@mui/icons-material/GetApp';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
@@ -43,7 +44,6 @@ import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/Custom
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useGetMeshQuery } from '@/rtk-query/mesh';
-import { ArrowBack } from '@mui/icons-material';
 import {
   CenterTimer,
   ExpansionPanelComponent,
@@ -829,7 +829,7 @@ const MesheryPerformanceComponent_ = (props) => {
             // onClick={() => self.props.closeSnackbar(key) }
             href={`/api/perf/profile/result/${encodeURIComponent(testResult.meshery_id)}`}
           >
-            <GetAppIcon style={iconMedium} />
+            <GetApp style={iconMedium} />
           </IconButton>
         </Box>
         <div style={chartStyle}>

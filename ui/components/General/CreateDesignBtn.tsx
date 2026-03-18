@@ -1,7 +1,6 @@
 import React from 'react';
-import { Button } from '@sistent/sistent';
+import { Add, Button } from '@sistent/sistent';
 import Link from 'next/link';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
 import { iconMedium } from 'css/icons.styles';
 
 function CreateDesignBtn() {
@@ -14,7 +13,7 @@ function CreateDesignBtn() {
         size="large"
         style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
       >
-        <AddIcon style={{ marginRight: '0.5rem', ...iconMedium }} />
+        <Add style={{ marginRight: '0.5rem', ...iconMedium }} />
         Create Design
       </Button>
     </Link>

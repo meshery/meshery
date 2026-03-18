@@ -10,6 +10,7 @@ import {
   ListItemText,
   MenuItem,
   Select,
+  Settings,
   TextField,
   Typography,
   Grid2,
@@ -33,7 +34,6 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useImportPatternMutation } from '@/rtk-query/design';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import { useAssignDesignToWorkspaceMutation } from '@/rtk-query/workspace';
@@ -412,7 +412,7 @@ export const AssignDesignViewButton = ({ type, handleAssign, disabled }) => {
         minWidth: 'fit-content',
         padding: '0.85rem',
       }}
-      startIcon={<SettingsIcon />}
+      startIcon={<Settings />}
     >
       {type === RESOURCE_TYPE.DESIGN ? 'Manage Designs' : 'Manage Views'}
     </Button>

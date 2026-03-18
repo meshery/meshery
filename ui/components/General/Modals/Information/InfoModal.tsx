@@ -8,24 +8,26 @@ import {
   Avatar,
   Box,
   Button,
+  Close,
   CircularProgress,
   CustomTooltip,
   getFormatDate,
   Grid,
   IconButton,
+  Lock,
   Link,
   Modal,
   ModalBody,
   ModalButtonPrimary,
   ModalButtonSecondary,
   ModalFooter,
+  Public,
   publishCatalogItemSchema,
   publishCatalogItemUiSchema,
   Skeleton,
   Typography,
   VisibilityChipMenu,
 } from '@sistent/sistent';
-import CloseIcon from '@mui/icons-material/Close';
 import yaml from 'js-yaml';
 import _ from 'lodash';
 import { useSnackbar } from 'notistack';
@@ -46,7 +48,6 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { getMeshModels } from '@/api/meshmodel';
 import { useSelector } from 'react-redux';
-import { Lock, Public } from '@mui/icons-material';
 import RJSFWrapper from '@/components/MesheryMeshInterface/PatternService/RJSF_wrapper';
 
 export const VIEW_VISIBILITY = {
@@ -114,7 +115,7 @@ const InfoModal_ = React.memo((props) => {
       variant: 'info',
       action: (key) => (
         <IconButton aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-          <CloseIcon style={iconMedium} />
+          <Close style={iconMedium} />
         </IconButton>
       ),
     });

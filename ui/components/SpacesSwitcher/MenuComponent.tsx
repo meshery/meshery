@@ -1,6 +1,12 @@
-import { DARK_BLUE_GRAY, IconButton } from '@sistent/sistent';
-import { CustomTooltip, styled, Menu, MenuItem } from '@sistent/sistent';
-import { MoreVert } from '@mui/icons-material';
+import {
+  CustomTooltip,
+  DARK_BLUE_GRAY,
+  IconButton,
+  Menu,
+  MenuItem,
+  MoreVert,
+  styled,
+} from '@sistent/sistent';
 import { useMediaQuery, useTheme } from '@mui/material';
 import { iconMedium } from 'css/icons.styles';
 import React from 'react';

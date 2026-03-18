@@ -27,6 +27,7 @@ const nextConfig = {
     '@uiw/react-markdown-preview',
     '@uiw/react-codemirror',
     'billboard.js',
+    '@sistent/sistent',
   ],
 
   // SWC Compiler Configuration (SWC is the default in Next.js 15)

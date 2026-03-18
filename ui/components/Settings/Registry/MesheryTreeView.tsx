@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   IconButton,
+  InfoOutlined,
   FormControlLabel,
   Switch,
   CircularProgress,
@@ -12,7 +13,6 @@ import debounce from '@/utils/debounce';
 import { useWindowDimensions } from '@/utils/dimension';
 import { getFilteredDataForDetailsComponent } from './helper';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import _ from 'lodash';
 import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';
@@ -280,7 +280,7 @@ const MesheryTreeView = React.memo(
                     sx={{ margin: '0rem', padding: '0rem' }}
                   >
                     <IconButton>
-                      <InfoOutlinedIcon height={20} width={20} />
+                      <InfoOutlined height={20} width={20} />
                     </IconButton>
                   </CustomTextTooltip>
                 </>

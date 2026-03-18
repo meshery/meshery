@@ -3,14 +3,18 @@ import { DetailsContainer, Segment, FullWidth } from '@/assets/styles/general/to
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '@/components/DataFormatter';
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Download,
   FormControl,
+  styled,
   Select,
   MenuItem,
   CircularProgress,
   useTheme,
   Button,
 } from '@sistent/sistent';
-import DownloadIcon from '@mui/icons-material/Download';
 import { REGISTRY_ITEM_STATES } from '@/utils/Enum';
 // import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 // import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
@@ -23,7 +27,6 @@ import _ from 'lodash';
 import { JustifyAndAlignCenter } from './MeshModel.style';
 import { reactJsonTheme } from './helper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, styled } from '@sistent/sistent';
 import dynamic from 'next/dynamic';
 
 import {
@@ -217,7 +220,7 @@ const ModelContents = ({ modelDef }: { modelDef: any }) => {
               size="small"
               data-testid="export-model-button"
             >
-              <DownloadIcon style={iconSmall} />
+              <Download style={iconSmall} />
               Export
             </Button>
           ) : null}

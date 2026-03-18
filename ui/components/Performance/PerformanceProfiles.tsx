@@ -2,12 +2,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
-import EditIcon from '@mui/icons-material/Edit';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
+  Add,
   CustomColumnVisibilityControl,
+  Edit,
   Modal,
+  PlayArrow,
   PROMPT_VARIANTS,
   ResponsiveDataTable,
   SearchBar,
@@ -321,7 +321,7 @@ function PerformanceProfile({ handleDelete }) {
                       !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
                     }
                   >
-                    <EditIcon
+                    <Edit
                       style={{
                         fill: theme.palette.icon.secondary,
                         ...iconMedium,
@@ -342,7 +342,7 @@ function PerformanceProfile({ handleDelete }) {
                     aria-label="run"
                     disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
                   >
-                    <PlayArrowIcon
+                    <PlayArrow
                       style={{
                         fill: theme.palette.icon.secondary,
                         ...iconMedium,
@@ -488,7 +488,7 @@ function PerformanceProfile({ handleDelete }) {
                       )
                     }
                   >
-                    <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
+                    <Add style={{ paddingRight: '0.5', ...iconMedium }} />
                     <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
                   </Button>
                 </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
-import PublicIcon from '@mui/icons-material/Public';
+import { Public } from '@sistent/sistent';
 import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';
 import { modifyRJSFSchema } from '../../utils/utils';
@@ -46,7 +46,7 @@ export default function PublishModal(props) {
       handleClose={handleClose}
       handleSubmit={handleSubmit}
       submitBtnText="Submit for Approval"
-      submitBtnIcon={<PublicIcon data-cy="import-button" />}
+      submitBtnIcon={<Public data-cy="import-button" />}
       showInfoIcon={{
         text: 'Upon submitting your catalog item, an approval flow will be initiated.',
         link: 'https://docs.meshery.io/concepts/catalog',

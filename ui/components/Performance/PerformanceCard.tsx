@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import {
   CustomTooltip,
+  Delete,
+  Edit,
   Typography,
   Avatar,
   Button,
@@ -301,7 +301,7 @@ function PerformanceCard({
                     !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
                   }
                 >
-                  <EditIcon style={iconMedium} />
+                  <Edit style={iconMedium} />
                 </IconButton>
               </CustomTooltip>
               <CustomTooltip title="Delete">
@@ -312,7 +312,7 @@ function PerformanceCard({
                     !CAN(keys.DELETE_PERFORMANCE_TEST.action, keys.DELETE_PERFORMANCE_TEST.subject)
                   }
                 >
-                  <DeleteIcon style={iconMedium} />
+                  <Delete style={iconMedium} />
                 </IconButton>
               </CustomTooltip>
             </div>

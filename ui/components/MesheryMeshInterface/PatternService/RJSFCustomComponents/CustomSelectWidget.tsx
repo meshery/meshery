@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  ErrorOutline,
   IconButton,
   InputAdornment,
   ListItemText,
@@ -9,7 +10,6 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import { CustomTextTooltip } from '../CustomTextTooltip';
@@ -100,7 +100,7 @@ export default function CustomSelectWidget({
                   interactive={true}
                 >
                   <IconButton component="span" size="small">
-                    <ErrorOutlineIcon
+                    <ErrorOutline
                       width="14px"
                       height="14px"
                       fill={ERROR_COLOR}

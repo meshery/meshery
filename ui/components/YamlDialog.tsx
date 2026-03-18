@@ -1,16 +1,16 @@
 import {
+  Delete,
   Dialog,
   DialogActions,
   DialogContent,
   Divider,
+  Fullscreen,
   IconButton,
+  Save,
   Tooltip,
 } from '@sistent/sistent';
 import { UnControlled as CodeMirror } from './CodeMirror';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import SaveIcon from '@mui/icons-material/Save';
 import { YamlDialogTitleText, StyledDialog } from './MesheryPatterns/style';
 import { StyledCodeMirrorWrapper } from './MesheryPatterns/Cards.styles';
 
@@ -36,7 +36,7 @@ const YAMLDialog = ({
         <YamlDialogTitleText variant="h6">{name}</YamlDialogTitleText>
         <Tooltip title="Exit Fullscreen" arrow placement="bottom">
           <IconButton onClick={toggleFullScreen} size="large">
-            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            {fullScreen ? <FullscreenExitIcon /> : <Fullscreen />}
           </IconButton>
         </Tooltip>
       </StyledDialog>
@@ -63,12 +63,12 @@ const YAMLDialog = ({
         <DialogActions>
           <Tooltip title="Update Pattern">
             <IconButton aria-label="Update" color="primary" onClick={updateHandler} size="large">
-              <SaveIcon />
+              <Save />
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete Filter">
             <IconButton aria-label="Delete" color="primary" onClick={deleteHandler} size="large">
-              <DeleteIcon />
+              <Delete />
             </IconButton>
           </Tooltip>
         </DialogActions>

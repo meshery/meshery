@@ -1,11 +1,13 @@
 // @ts-nocheck
 import React, { useState, useRef, useEffect } from 'react';
 import {
+  Add,
   Box,
   Card,
   CardActions,
   CardHeader,
   Chip,
+  Delete,
   Dialog,
   DialogActions,
   DialogContent,
@@ -29,8 +31,6 @@ import {
   NoSsr,
   TableHead,
 } from '@sistent/sistent';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
 import PlayIcon from '@mui/icons-material/PlayArrow';
 import MUIDataTable from '@sistent/mui-datatables';
 import { useRouter } from 'next/router';
@@ -700,7 +700,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
         <DialogActions>
           <IconButton aria-label="Apply" onClick={handleSubmit(cat, 'custom', isDelete)}>
             {!isDelete && <PlayIcon style={iconMedium} />}
-            {isDelete && <DeleteIcon style={iconMedium} />}
+            {isDelete && <Delete style={iconMedium} />}
           </IconButton>
         </DialogActions>
       </Dialog>
@@ -1081,7 +1081,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
             onClick={addDelHandleClick(cat, false)}
             disabled={!CAN(permission.action, permission.subject)}
           >
-            {cat !== 4 ? <AddIcon style={iconMedium} /> : <PlayIcon style={iconMedium} />}
+            {cat !== 4 ? <Add style={iconMedium} /> : <PlayIcon style={iconMedium} />}
           </IconButton>
           {cat !== 4 && generateMenu(cat, false, selectedAdapterOps)}
           {cat === 4 && generateYAMLEditor(cat, false)}
@@ -1094,7 +1094,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
                 onClick={addDelHandleClick(cat, true)}
                 disabled={!CAN(permission.action, permission.subject)}
               >
-                <DeleteIcon style={iconMedium} />
+                <Delete style={iconMedium} />
               </IconButton>
               {cat !== 4 && generateMenu(cat, true, selectedAdapterOps)}
               {cat === 4 && generateYAMLEditor(cat, true)}

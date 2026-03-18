@@ -1,8 +1,8 @@
 // @ts-nocheck
 import React, { useState } from 'react';
-import { ArrowBack } from '@mui/icons-material';
 import { TooltipIconButton } from '../../utils/TooltipButton';
 import {
+  ArrowBack,
   Box,
   ErrorBoundary,
   OperatorDataFormatter,
