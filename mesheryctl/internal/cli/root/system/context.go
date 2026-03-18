@@ -98,7 +98,7 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 			return err
 		}
 
-		utils.Log.Infof("Added `%s` context", args[0])
+		utils.Log.Infof("Added `%s` context", contextName)
 		return nil
 	},
 }
@@ -182,7 +182,7 @@ mesheryctl system context delete [context name]
 		}
 		delete(configuration.Contexts, contextName)
 		viper.Set("contexts", configuration.Contexts)
-		utils.Log.Infof("deleted context %s", args[0])
+		utils.Log.Infof("deleted context %s", contextName)
 		err = viper.WriteConfig()
 		return err
 	},
@@ -399,7 +399,7 @@ mesheryctl system context create `
 
 		configuration.CurrentContext = contextName
 		viper.Set("current-context", configuration.CurrentContext)
-		utils.Log.Infof("switched to context '%s'", args[0])
+		utils.Log.Infof("switched to context '%s'", contextName)
 		err = viper.WriteConfig()
 
 		return err
