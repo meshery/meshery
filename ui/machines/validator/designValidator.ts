@@ -153,22 +153,34 @@ const dryRunValidatorMachine = dataValidatorMachine.provide({
 
 const getAllComponentsDefsInDesign = async (design) => {
   const { components } = processDesign(design);
-  const componentDefs = (
-    await Promise.allSettled(
-      components.map(async (component) =>
-        getComponentDefinition(component.component.kind, component.modelReference.name, {
-          apiVersion: component.component.version,
-          annotations: 'include',
-        }),
-      ),
-    )
-  )
+  if (!components || components.length === 0) {
+    return {};
+  }
+
+  const settledResults = await Promise.allSettled(
+    components.map(async (component) => {
+      const modelName = component.modelReference?.name || component.model?.name;
+      if (!modelName) {
+        return undefined;
+      }
+      return getComponentDefinition(component.component.kind, modelName, {
+        apiVersion: component.component.version,
+        annotations: 'include',
+      });
+    }),
+  );
+
+  const componentDefs = settledResults
     .filter((result) => result.status === 'fulfilled' && result.value)
     .map((result) => result.value);
 
   const componentStore = componentDefs.reduce((acc, componentDef) => {
-    const key = componentKey(componentDef);
-    acc[key] = componentDef;
+    try {
+      const key = componentKey(componentDef);
+      acc[key] = componentDef;
+    } catch (e) {
+      console.warn('Failed to create component key for', componentDef?.displayName, e);
+    }
     return acc;
   }, {});
 

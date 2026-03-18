@@ -10,20 +10,22 @@ const WrapIfAdditionalTemplate = ({
   disabled,
   id,
   label,
-  onDropPropertyClick,
-  onKeyChange,
+  onRemoveProperty,
+  onKeyRename,
+  onKeyRenameBlur,
   readonly,
   required,
   schema,
 }) => {
-  const value = label.startsWith('newKey') ? '' : label; // removing the default value i.e newKey.
+  const value = label.startsWith('newKey') ? '' : label;
   const keyLabel = `Key`;
   const additional = ADDITIONAL_PROPERTY_FLAG in schema;
 
   if (!additional) {
     return <div className={classNames}>{children}</div>;
   }
-  const handleChange = ({ target }) => onKeyChange(target.value);
+  const handleBlur = onKeyRenameBlur;
+  const handleChange = ({ target }) => onKeyRename(target.value);
 
   return (
     <Grid2
@@ -44,6 +46,7 @@ const WrapIfAdditionalTemplate = ({
             id={`${id}-key`}
             name={`${id}-key`}
             onChange={!readonly ? handleChange : undefined}
+            onBlur={!readonly ? handleBlur : undefined}
             type="text"
           />
         </FormControl>
@@ -53,11 +56,7 @@ const WrapIfAdditionalTemplate = ({
       </Grid2>
       <Grid2 size={{ xs: 12 }}>{children}</Grid2>
       <Grid2>
-        <IconButton
-          component="span"
-          disabled={disabled || readonly}
-          onClick={onDropPropertyClick(label)}
-        >
+        <IconButton component="span" disabled={disabled || readonly} onClick={onRemoveProperty}>
           <DeleteIcon style={iconMedium} />
         </IconButton>
       </Grid2>

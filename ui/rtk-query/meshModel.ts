@@ -184,7 +184,7 @@ export const getComponentDefinition = async (component, model, params = {}) => {
   const res = await initiateQuery(meshModelApi.endpoints.getComponentsByModelAndKind, {
     component,
     model,
-    params: _.omit({ params, annotations: 'include' }, ['apiVersion']),
+    params: _.omit({ ...params, annotations: 'include' }, ['apiVersion']),
   });
 
   if (params.apiVersion) {

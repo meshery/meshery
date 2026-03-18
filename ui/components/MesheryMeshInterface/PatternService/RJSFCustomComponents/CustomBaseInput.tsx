@@ -14,7 +14,9 @@ import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import { safeDisplayValue } from '../helper';
 
-const CustomTextField = styled(TextField)<{ overrideFlag?: boolean }>(({ theme, overrideFlag }) => {
+const CustomTextField = styled(TextField, {
+  shouldForwardProp: (prop) => prop !== 'overrideFlag',
+})<{ overrideFlag?: boolean }>(({ theme, overrideFlag }) => {
   return {
     '& div': {
       backgroundColor: overrideFlag ? (theme.palette.mode === 'dark' ? '#303030' : '#fff') : '',
@@ -51,7 +53,8 @@ const BaseInput = (props) => {
     return {};
   };
 
-  const overrideFlag = props?.formContext?.overrideFlag;
+  const formContext = props?.formContext || props?.registry?.formContext;
+  const overrideFlag = formContext?.overrideFlag;
   const errorTitle = safeDisplayValue(
     Array.isArray(props.rawErrors) ? props.rawErrors.join('  ') : props.rawErrors,
   );
@@ -99,50 +102,52 @@ const BaseInput = (props) => {
                       : e.target.value,
                 )
           }
-          InputLabelProps={{
-            style: getInputLabelStyle(),
-          }}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          InputProps={{
-            style: { padding: props.multiline ? '10.5px 0px 10.5px 14px' : '0px' },
-            endAdornment: (
-              <InputAdornment position="start">
-                {props.rawErrors?.length > 0 && (
-                  <CustomTextTooltip
-                    bgColor={ERROR_COLOR}
-                    flag={overrideFlag}
-                    title={errorTitle}
-                    interactive={true}
-                  >
-                    <IconButton component="span" size="small" tabIndex={-1}>
-                      <ErrorOutlineIcon
-                        width="14px"
-                        height="14px"
-                        fill="#B32700"
-                        style={{ verticalAlign: 'middle', ...iconSmall }}
-                      />
-                    </IconButton>
-                  </CustomTextTooltip>
-                )}
-                {descriptionTitle && (
-                  <CustomTextTooltip
-                    flag={overrideFlag}
-                    title={descriptionTitle}
-                    interactive={true}
-                  >
-                    <IconButton component="span" size="small" tabIndex={-1}>
-                      <HelpOutlineIcon
-                        width="14px"
-                        height="14px"
-                        fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
-                        style={{ verticalAlign: 'middle', ...iconSmall }}
-                      />
-                    </IconButton>
-                  </CustomTextTooltip>
-                )}
-              </InputAdornment>
-            ),
+          slotProps={{
+            inputLabel: {
+              style: getInputLabelStyle(),
+            },
+            input: {
+              style: { padding: props.multiline ? '10.5px 0px 10.5px 14px' : '0px' },
+              endAdornment: (
+                <InputAdornment position="start">
+                  {props.rawErrors?.length > 0 && (
+                    <CustomTextTooltip
+                      bgColor={ERROR_COLOR}
+                      flag={overrideFlag}
+                      title={errorTitle}
+                      interactive={true}
+                    >
+                      <IconButton component="span" size="small" tabIndex={-1}>
+                        <ErrorOutlineIcon
+                          width="14px"
+                          height="14px"
+                          fill="#B32700"
+                          style={{ verticalAlign: 'middle', ...iconSmall }}
+                        />
+                      </IconButton>
+                    </CustomTextTooltip>
+                  )}
+                  {descriptionTitle && (
+                    <CustomTextTooltip
+                      flag={overrideFlag}
+                      title={descriptionTitle}
+                      interactive={true}
+                    >
+                      <IconButton component="span" size="small" tabIndex={-1}>
+                        <HelpOutlineIcon
+                          width="14px"
+                          height="14px"
+                          fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
+                          style={{ verticalAlign: 'middle', ...iconSmall }}
+                        />
+                      </IconButton>
+                    </CustomTextTooltip>
+                  )}
+                </InputAdornment>
+              ),
+            },
           }}
         />
       </div>

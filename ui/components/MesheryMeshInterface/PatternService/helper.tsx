@@ -231,27 +231,31 @@ export const getSchema = (type) => {
 export const calculateGrid = (element) => {
   let type = element.type;
   let __additional_property = element.__additional_property;
-  if (!type) {
-    // handle anyOf, oneOf, allOf
-    const schema = element?.content?.props?.schema;
+  const schema = element?.content?.props?.schema;
+
+  if (!type && schema) {
     userPromptKeys.forEach((key) => {
-      if (schema[key]) {
+      if (schema?.[key]?.[0]?.type) {
         type = schema[key][0].type;
       }
     });
   }
+
   const grid = {
     xs: 12,
-    md: 12,
+    md: 6,
     lg: 6,
   };
 
   if (type === 'object' || type === 'array' || __additional_property) {
+    grid.md = 12;
     grid.lg = 12;
   }
 
-  // if fields have custom annotations to grid them differently
-  grid.lg = element.content.props.schema['x-rjsf-grid-area'] || grid.lg;
+  if (schema?.['x-rjsf-grid-area']) {
+    grid.lg = schema['x-rjsf-grid-area'];
+    grid.md = schema['x-rjsf-grid-area'];
+  }
 
   return grid;
 };

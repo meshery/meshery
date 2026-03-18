@@ -6,7 +6,8 @@ import { customizeValidator } from '@rjsf/validator-ajv8';
 const ajv = new Ajv({
   allErrors: true,
   strict: false,
-  validateFormats: true,
+  validateSchema: false,
+  validateFormats: false,
 });
 
 // Add standard formats (date-time, email, etc.)

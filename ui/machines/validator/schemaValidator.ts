@@ -7,7 +7,9 @@ import { dataValidatorMachine } from '@sistent/sistent';
 
 const ajv = new Ajv({
   allErrors: true,
-  strict: false, // allow additional properties like x-kubernetes-attributes ( this is safe the schema is sourced from the component definition and is not ours)
+  strict: false,
+  validateSchema: false, // Kubernetes/OpenAPI component schemas use extensions (x-kubernetes-*, non-standard format values) that fail AJV's meta-schema validation
+  validateFormats: false, // OpenAPI schemas use format values (e.g. "int-or-string") as hints, not strict validators
 });
 
 // Add standard formats (date-time, email, etc.)
@@ -40,29 +42,48 @@ ajv.addFormat('int-or-string', {
 
 // dynamically add schemas to ajv to avoid recompiling the same schema and cache it
 const validateSchema = (schema, data, id) => {
-  let validate = ajv.getSchema(id);
-  if (!validate) {
-    ajv.addSchema(schema, id);
-    validate = ajv.getSchema(id);
+  try {
+    let validate = ajv.getSchema(id);
+    if (!validate) {
+      ajv.addSchema(schema, id);
+      validate = ajv.getSchema(id);
+    }
+    if (!validate) {
+      return { isValid: true, errors: [] };
+    }
+    const valid = validate(data);
+    return {
+      isValid: valid,
+      errors: validate.errors || [],
+    };
+  } catch (e) {
+    console.warn(`Schema validation setup failed for "${id}":`, e.message);
+    return { isValid: true, errors: [] };
   }
-  const valid = validate(data);
-
-  return {
-    isValid: valid,
-    errors: validate.errors,
-  };
 };
 
 const validateComponent = (component, validateAnnotations = false, componentDef) => {
   if (!componentDef || (componentDef?.metadata?.isAnnotation && !validateAnnotations)) {
-    // skip validation for annotations
     return {
       errors: [],
       componentDefinition: componentDef,
       component,
     };
   }
-  const schema = JSON.parse(componentDef.component.schema);
+
+  const rawSchema = componentDef.component?.schema;
+  if (!rawSchema) {
+    return { errors: [], componentDefinition: componentDef, component };
+  }
+
+  let schema;
+  try {
+    schema = typeof rawSchema === 'string' ? JSON.parse(rawSchema) : rawSchema;
+  } catch (e) {
+    console.warn('Failed to parse component schema', componentDef.displayName, e);
+    return { errors: [], componentDefinition: componentDef, component };
+  }
+
   const results = validateSchema(schema, component.configuration || {}, componentDef.id);
 
   const validationResults = {
@@ -72,16 +93,19 @@ const validateComponent = (component, validateAnnotations = false, componentDef)
   return validationResults;
 };
 
-export const componentKey = (component) =>
-  `${component.component.kind}-${component.modelReference.name}-${component.component.version}`;
+export const componentKey = (component) => {
+  const modelName = component.modelReference?.name || component.model?.name || '';
+  return `${component.component.kind}-${modelName}-${component.component.version}`;
+};
 
 const validateDesign = (design, componentDefsStore) => {
-  const configurableComponents = design.components;
+  const configurableComponents = design?.components || [];
   const validationResults = {};
 
   for (const configurableComponent of configurableComponents) {
     try {
-      const componentDef = componentDefsStore?.[componentKey(configurableComponent)];
+      const key = componentKey(configurableComponent);
+      const componentDef = componentDefsStore?.[key];
       const componentValidationResults = validateComponent(
         configurableComponent,
         false,
@@ -89,7 +113,11 @@ const validateDesign = (design, componentDefsStore) => {
       );
       validationResults[configurableComponent.id] = componentValidationResults;
     } catch (error) {
-      console.log('Error validating component', error, design, componentDefsStore);
+      console.error('Error validating component', error, configurableComponent);
+      validationResults[configurableComponent.id] = {
+        errors: [],
+        component: configurableComponent,
+      };
     }
   }
 
