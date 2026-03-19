@@ -147,7 +147,7 @@ func doc() {
 	fmt.Println("Command tracker generated at " + yamlPath)
 }
 
-func visibleCommands(cmd *cobra.Command) []*cobra.Command {
+func getVisibleCommands(cmd *cobra.Command) []*cobra.Command {
 	commands := make([]*cobra.Command, 0)
 	for _, child := range cmd.Commands() {
 		if !child.IsAvailableCommand() || child.IsAdditionalHelpTopicCommand() || child.Hidden {
