@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 19th 2026, 1:13:29 am
+- Testing started at: March 19th 2026, 5:03:02 am
 
 **📦 Test Result Summary**
 
-- ✅ 61 passed
-- ❌ 6 failed
+- ✅ 58 passed
+- ❌ 7 failed
 - ⚠️ 0 flaked
-- ⏩ 5 skipped
+- ⏩ 7 skipped
 
-⌛ _Duration: 5 minutes and 25 seconds_
+⌛ _Duration: 5 minutes and 3 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -30,9 +30,9 @@
 | 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
 | 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
-| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
-| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
+| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
+| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
+| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
@@ -124,6 +124,34 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
+<summary>❌ Import a Model via File Import (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ Verify Meshery Adapter for Istio Section (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
 <summary>❌ should verify Design Configurator page elements (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
@@ -143,20 +171,6 @@ The following tests failed. Click on each to see the failure reason:
  [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
  [90m 10 |[39m     })[33m;[39m[0m
 ```
-
-</details>
-
-<details>
-<summary>❌ Verify Meshery Adapter for Istio Section (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
 
 </details>
 
