@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 16th 2026, 11:35:31 pm
+- Testing started at: March 19th 2026, 5:13:20 am
 
 **📦 Test Result Summary**
 
-- ✅ 58 passed
-- ❌ 7 failed
+- ✅ 67 passed
+- ❌ 1 failed
 - ⚠️ 0 flaked
-- ⏩ 7 skipped
+- ⏩ 4 skipped
 
-⌛ _Duration: 5 minutes and 5 seconds_
+⌛ _Duration: 4 minutes and 27 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -28,11 +28,11 @@
 | 5 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 6 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
-| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
+| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
-| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
+| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
+| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
+| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
@@ -52,7 +52,7 @@
 | 29 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ✅ |
 | 30 | Meshery | chromium-meshery-provider | Verify Kanvas Details |  | ❌ |
 | 31 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
-| 32 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ❌ |
+| 32 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
 | 33 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ✅ |
 | 34 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ✅ |
 | 35 | Meshery | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ✅ |
@@ -67,13 +67,13 @@
 | 44 | None | chromium-local-provider | Create a Model |  | ✅ |
 | 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 46 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
-| 48 | None | chromium-local-provider | Import a Model via File Import |  | ❌ |
-| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
+| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
+| 48 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
+| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 51 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 52 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
-| 53 | None | chromium-local-provider | should edit design in Design Configurator |  | ❌ |
+| 53 | None | chromium-local-provider | should edit design in Design Configurator |  | ✅ |
 | 54 | None | chromium-local-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 55 | None | chromium-local-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 56 | None | chromium-local-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
@@ -81,7 +81,7 @@
 | 58 | None | chromium-local-provider | should identify relationships for meshery-design | relationship | ✅ |
 | 59 | None | chromium-local-provider | should identify relationships for pv-pvc-edge-non-binding-reference-relationship | relationship | ✅ |
 | 60 | None | chromium-local-provider | should identify relationships for Service-To-Deployment-Network | relationship | ✅ |
-| 61 | None | chromium-local-provider | should verify Design Configurator page elements |  | ❌ |
+| 61 | None | chromium-local-provider | should verify Design Configurator page elements |  | ✅ |
 | 62 | None | chromium-local-provider | Test if Left Navigation Panel is displayed |  | ✅ |
 | 63 | None | chromium-local-provider | Test if Notification button is displayed |  | ✅ |
 | 64 | None | chromium-local-provider | Test if Profile button is displayed |  | ✅ |
@@ -89,7 +89,7 @@
 | 66 | None | chromium-local-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ✅ |
 | 67 | None | chromium-local-provider | Verify Kanvas Details |  | ✅ |
 | 68 | None | chromium-local-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
-| 69 | None | chromium-local-provider | Verify Meshery Adapter for Istio Section |  | ❌ |
+| 69 | None | chromium-local-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
 | 70 | None | chromium-local-provider | Verify Meshery Catalog Section Details |  | ✅ |
 | 71 | None | chromium-local-provider | Verify Meshery Design Embed Details |  | ✅ |
 | 72 | None | chromium-local-provider | Verify Meshery Docker Extension Details |  | ✅ |
@@ -111,108 +111,6 @@ The following tests failed. Click on each to see the failure reason:
 
 <details>
 <summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ Import a Model via File Import (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ should verify Design Configurator page elements (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
- [90m  6 |[39m
-[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
- [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
- [90m 10 |[39m     })[33m;[39m[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Verify Meshery Adapter for Istio Section (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ Verify Meshery Adapter for Istio Section (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
- [90m  6 |[39m
-[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
- [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
- [90m 10 |[39m     })[33m;[39m[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Import a Model via File Import (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
