@@ -104,7 +104,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 							From: []relationship.SelectorItem{
 								{
 									ID: &fromID,
-									Patch: &relationship.RelationshipDefinition_Selectors_Patch{
+									Patch: &relationship.RelationshipDefinitionSelectorsPatch{
 										MutatedRef: nil,
 									},
 								},
@@ -130,7 +130,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 							From: []relationship.SelectorItem{
 								{
 									ID: &fromID,
-									Patch: &relationship.RelationshipDefinition_Selectors_Patch{
+									Patch: &relationship.RelationshipDefinitionSelectorsPatch{
 										MutatedRef: &emptyRefs,
 									},
 								},
@@ -156,7 +156,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 							From: []relationship.SelectorItem{
 								{
 									ID: &fromID,
-									Patch: &relationship.RelationshipDefinition_Selectors_Patch{
+									Patch: &relationship.RelationshipDefinitionSelectorsPatch{
 										MutatedRef: &refs,
 									},
 								},
@@ -182,7 +182,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 							From: []relationship.SelectorItem{
 								{
 									ID: nil,
-									Patch: &relationship.RelationshipDefinition_Selectors_Patch{
+									Patch: &relationship.RelationshipDefinitionSelectorsPatch{
 										MutatedRef: &refs,
 									},
 								},
@@ -208,7 +208,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 							From: []relationship.SelectorItem{
 								{
 									ID: &fromID,
-									Patch: &relationship.RelationshipDefinition_Selectors_Patch{
+									Patch: &relationship.RelationshipDefinitionSelectorsPatch{
 										MutatedRef: &refs,
 									},
 								},
