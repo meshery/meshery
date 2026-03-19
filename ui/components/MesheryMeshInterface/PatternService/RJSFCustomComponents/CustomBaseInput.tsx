@@ -64,14 +64,8 @@ const BaseInput = (props) => {
       <div key={props.id} style={xRjsfGridArea ? {} : style}>
         {xRjsfGridArea && (
           <InputLabel htmlFor={props.id} required={isRequired}>
-            {prettifiedName} {Object.keys(props.schema || {}).join(',')}
+            {prettifiedName}
           </InputLabel>
-        )}
-        {!xRjsfGridArea && (
-          <span style={{ fontSize: '10px', color: 'red' }}>
-            {' '}
-            Keys: {Object.keys(props.schema || {}).join(', ')}{' '}
-          </span>
         )}
         <CustomTextField
           variant={additional ? 'standard' : 'outlined'}
