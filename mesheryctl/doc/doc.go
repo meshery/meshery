@@ -369,6 +369,7 @@ func commandTrackerDoc(rootCmd *cobra.Command) yaml.MapSlice {
 	return tracker
 }
 
+// GenerateCommandTracker generates a YAML file containing command metadata.
 func GenerateCommandTracker(rootCmd *cobra.Command, outputPath string) error {
 	if err := os.MkdirAll(filepath.Dir(outputPath), os.ModePerm); err != nil {
 		return err
