@@ -36,13 +36,15 @@ const ObjectFieldTemplate = ({
   readonly,
   uiSchema,
   idSchema,
+  fieldPathId,
   schema,
   formData,
   onAddClick,
 
   errorSchema,
+  registry,
 }) => {
-  const safeId = idSchema?.$id ?? 'object-field';
+  const safeId = fieldPathId?.$id ?? idSchema?.$id ?? 'object-field';
   const additional = schema?.__additional_property; // check if the object is additional
   const theme = useTheme();
   const rawErrors = getRawErrors(errorSchema);
@@ -56,9 +58,13 @@ const ObjectFieldTemplate = ({
         schema.properties[property.name]?.__additional_property || false;
     }
   });
-  const safeTitleStr = safeStringTitle(additional ? 'Value' : (uiSchema['ui:title'] ?? title));
+  const retrievedSchema = registry?.schemaUtils?.retrieveSchema(schema) ?? schema;
+  const fieldTitle = uiSchema?.['ui:title'] ?? retrievedSchema?.title ?? title;
+  const safeTitleStr = safeStringTitle(additional ? 'Value' : fieldTitle);
+  const rawDescription =
+    uiSchema?.['ui:description'] ?? retrievedSchema?.description ?? description;
   const safeDescriptionStr =
-    description != null && typeof description === 'string' ? description : '';
+    rawDescription != null && typeof rawDescription === 'string' ? rawDescription : '';
 
   const CustomTitleField = ({ title: titleProp, id, description: descProp, properties }) => {
     const titleStr = safeStringTitle(titleProp ?? safeTitleStr);
@@ -182,8 +188,6 @@ const ObjectFieldTemplate = ({
       })}
     </Grid2>
   );
-
-  const fieldTitle = uiSchema['ui:title'] || title;
 
   return (
     <>

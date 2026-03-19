@@ -1,43 +1,37 @@
-import Ajv from 'ajv';
-import addFormats from 'ajv-formats';
 import { customizeValidator } from '@rjsf/validator-ajv8';
 
-// Create a custom ajv instance with OpenAPI/Kubernetes format support
-const ajv = new Ajv({
-  allErrors: true,
-  strict: false,
-  validateFormats: true,
-});
-
-// Add standard formats (date-time, email, etc.)
-addFormats(ajv);
-
-// Add custom format validators for OpenAPI/Kubernetes specific formats
-ajv.addFormat('int32', {
-  type: 'number',
-  validate: (value) => {
-    return Number.isInteger(value) && value >= -2147483648 && value <= 2147483647;
+// Create a custom validator using the RJSF v6 customizeValidator API.
+// Custom formats and Ajv options are passed via the options object.
+const customValidator = customizeValidator({
+  ajvOptionsOverrides: {
+    allErrors: true,
+    strict: false,
+    validateFormats: true,
+  },
+  // Enable standard formats (date-time, email, uri, etc.) from ajv-formats
+  ajvFormatOptions: {},
+  // Add custom format validators for OpenAPI/Kubernetes specific formats
+  customFormats: {
+    int32: {
+      type: 'number',
+      validate: (value: number) => {
+        return Number.isInteger(value) && value >= -2147483648 && value <= 2147483647;
+      },
+    },
+    int64: {
+      type: 'number',
+      validate: (value: number) => {
+        return (
+          Number.isInteger(value) &&
+          value >= Number.MIN_SAFE_INTEGER &&
+          value <= Number.MAX_SAFE_INTEGER
+        );
+      },
+    },
+    'int-or-string': (value: string) => {
+      return typeof value === 'string' || Number.isInteger(Number(value));
+    },
   },
 });
-
-ajv.addFormat('int64', {
-  type: 'number',
-  validate: (value) => {
-    return (
-      Number.isInteger(value) &&
-      value >= Number.MIN_SAFE_INTEGER &&
-      value <= Number.MAX_SAFE_INTEGER
-    );
-  },
-});
-
-ajv.addFormat('int-or-string', {
-  validate: (value) => {
-    return typeof value === 'string' || Number.isInteger(value);
-  },
-});
-
-// Create a custom validator using the configured ajv instance
-const customValidator = customizeValidator({}, ajv);
 
 export default customValidator;

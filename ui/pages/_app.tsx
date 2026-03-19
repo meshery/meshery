@@ -33,6 +33,7 @@ import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 import uiConfig from '../ui.config';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
+import { DefaultSnackbarAction } from '../utils/hooks/useNotification';
 import { getMeshModelComponentByName } from '../api/meshmodel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
 import CAN, { ability } from '../utils/can';
@@ -634,6 +635,9 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                               vertical: 'bottom',
                               horizontal: 'right',
                             }}
+                            action={(snackbarKey) => (
+                              <DefaultSnackbarAction snackbarKey={snackbarKey} />
+                            )}
                             iconVariant={{
                               success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
                               error: <Error style={{ marginRight: '0.5rem' }} />,

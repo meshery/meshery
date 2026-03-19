@@ -32,7 +32,7 @@ export const useNotification = () => {
    * @param {string} eventId - The ID of the event to be opened.
    */
   const openEvent = (eventId) => {
-    rtkStore.dispatch(toggleNotificationCenter());
+    rtkStore.dispatch(toggleNotificationCenter({}));
   };
 
   /**
@@ -169,4 +169,35 @@ export const useNotificationHandlers = () => {
   );
 
   return { handleSuccess, handleError, handleInfo, handleWarn };
+};
+
+export const DefaultSnackbarAction = ({ snackbarKey }) => {
+  const { closeSnackbar } = useSnackbar();
+
+  const openEvent = () => {
+    rtkStore.dispatch(toggleNotificationCenter({}));
+  };
+
+  return (
+    <ToggleButtonGroup data-testid="default-notify-action">
+      <AddClassRecursively className={NOTIFICATION_CENTER_TOGGLE_CLASS}>
+        <IconButton
+          key={`openevent-${snackbarKey}`}
+          aria-label="Open"
+          color="inherit"
+          onClick={openEvent}
+        >
+          <BellIcon {...iconMedium} />
+        </IconButton>
+      </AddClassRecursively>
+      <IconButton
+        key={`closeevent-${snackbarKey}`}
+        aria-label="Close"
+        color="inherit"
+        onClick={() => closeSnackbar(snackbarKey)}
+      >
+        <CloseIcon style={iconMedium} />
+      </IconButton>
+    </ToggleButtonGroup>
+  );
 };
