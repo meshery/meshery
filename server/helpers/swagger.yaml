@@ -4831,7 +4831,7 @@ definitions:
         title: RelationshipDefinition Relationships define the nature of interaction between interconnected components in Meshery. The combination of relationship properties kind, type, and subtype characterize various genealogical relations among and between components. Relationships have selectors, selector sets, metadata, and optional parameters. Learn more at https://docs.meshery.io/concepts/logical/relationships.
         type: object
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
-    RelationshipDefinition_Selectors_Patch:
+    RelationshipDefinitionSelectorsPatch:
         properties:
             mutatedRef:
                 items:
@@ -4849,7 +4849,7 @@ definitions:
                 x-go-name: MutatorRef
             patchStrategy:
                 $ref: '#/definitions/RelationshipDefinitionSelectorsPatchStrategy'
-        title: RelationshipDefinition_Selectors_Patch defines model for RelationshipDefinition.Selectors.Allow.To.Patch.
+        title: RelationshipDefinitionSelectorsPatch defines model for RelationshipDefinition.Selectors.Allow.To.Patch.
         type: object
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     RelationshipDefinitionKind:
@@ -5207,7 +5207,7 @@ definitions:
             model:
                 $ref: '#/definitions/ModelDefinition'
             patch:
-                $ref: '#/definitions/RelationshipDefinition_Selectors_Patch'
+                $ref: '#/definitions/RelationshipDefinitionSelectorsPatch'
         type: object
         x-go-package: github.com/meshery/schemas/models/v1alpha3/relationship
     SelectorSet:
