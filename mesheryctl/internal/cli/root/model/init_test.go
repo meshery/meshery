@@ -69,11 +69,10 @@ func TestModelInit(t *testing.T) {
 	utils.SetupContextEnv(t)
 
 	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
+	_, _, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
-	currDir := filepath.Dir(filename)
 	tests := []struct {
 		Name               string
 		Args               []string

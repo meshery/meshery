@@ -152,4 +152,3 @@ func TestProfileCmd(t *testing.T) {
 	// Run tests in logger format
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, loggerTests, currDir, "perf", resetVariables)
 }
-

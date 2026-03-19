@@ -50,12 +50,12 @@ func TestView(t *testing.T) {
 			ExpectError:      true,
 		},
 		{
-			Name:             "View registered relationship",
-			Args:             []string{"view", "kubernetes"},
-			URL:              testContext.BaseURL + "/api/meshmodels/models/kubernetes/relationships?pagesize=all",
-			Fixture:          "view.relationship.api.response.golden",
-			Token:            utils.GetToken(t),
-			ExpectError:      false,
+			Name:        "View registered relationship",
+			Args:        []string{"view", "kubernetes"},
+			URL:         testContext.BaseURL + "/api/meshmodels/models/kubernetes/relationships?pagesize=all",
+			Fixture:     "view.relationship.api.response.golden",
+			Token:       utils.GetToken(t),
+			ExpectError: false,
 		},
 	}
 

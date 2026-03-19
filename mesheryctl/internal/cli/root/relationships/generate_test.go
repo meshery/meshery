@@ -89,21 +89,21 @@ func TestGenerate(t *testing.T) {
 		ExpectError         bool
 	}{
 		{
-			Name:             "Generate registered relationships without spreadsheet id",
-			Args:             []string{"generate", "--spreadsheet-cred", "$CRED"},
+			Name:                "Generate registered relationships without spreadsheet id",
+			Args:                []string{"generate", "--spreadsheet-cred", "$CRED"},
 			ExpectedErrContains: []string{"[ Spreadsheet ID | Spreadsheet Credentials ] aren't specified"},
 			ExpectError:         true,
 		},
 		{
-			Name:             "Generate registered relationships without spreadsheet creadentials",
-			Args:             []string{"generate", "--spreadsheet-id", "1"},
+			Name:                "Generate registered relationships without spreadsheet creadentials",
+			Args:                []string{"generate", "--spreadsheet-id", "1"},
 			ExpectedErrContains: []string{"[ Spreadsheet ID | Spreadsheet Credentials ] aren't specified"},
 			ExpectError:         true,
 		},
 		{
-			Name:             "Generate registered relationships",
-			Args:             []string{"generate", "--spreadsheet-cred", "$CRED", "--spreadsheet-id", "1"},
-			ExpectError:      false,
+			Name:        "Generate registered relationships",
+			Args:        []string{"generate", "--spreadsheet-cred", "$CRED", "--spreadsheet-id", "1"},
+			ExpectError: false,
 		},
 	}
 

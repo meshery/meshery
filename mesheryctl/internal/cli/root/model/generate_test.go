@@ -29,15 +29,15 @@ func TestModelGenerate(t *testing.T) {
 	apiURL := "/api/meshmodels/register"
 
 	type tc struct {
-		Name                 string
-		Args                 []string
-		URL                  string
-		Fixture              string
-		ExpectedContains     []string
-		ExpectedErrContains  []string
-		ExpectHelp           bool
-		ExpectErr            bool
-		HttpCode             int
+		Name                string
+		Args                []string
+		URL                 string
+		Fixture             string
+		ExpectedContains    []string
+		ExpectedErrContains []string
+		ExpectHelp          bool
+		ExpectErr           bool
+		HttpCode            int
 	}
 
 	tests := []tc{
@@ -62,8 +62,8 @@ func TestModelGenerate(t *testing.T) {
 			HttpCode: 200,
 		},
 		{
-			Name: "model generate: from URL with template",
-			Args: []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--register=true"},
+			Name:     "model generate: from URL with template",
+			Args:     []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--register=true"},
 			URL:      apiURL,
 			Fixture:  "generate.api.ok.response.golden",
 			HttpCode: 200,

@@ -12,22 +12,22 @@ import (
 
 func TestOrganization(t *testing.T) {
 	tests := []struct {
-		Name             string
-		Args             []string
-		ExpectError      bool
-		ExpectedError    error `default:"nil"`
+		Name          string
+		Args          []string
+		ExpectError   bool
+		ExpectedError error `default:"nil"`
 	}{
 		{
-			Name:             "Launch organization without args",
-			Args:             []string{},
-			ExpectError:      true,
-			ExpectedError:    utils.ErrInvalidArgument(goerrors.New("please provide a subcommand with the command")),
+			Name:          "Launch organization without args",
+			Args:          []string{},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(goerrors.New("please provide a subcommand with the command")),
 		},
 		{
-			Name:             "Launch organization with invalid subcommand name",
-			Args:             []string{"test-invalid-subcommand"},
-			ExpectError:      true,
-			ExpectedError:    utils.ErrInvalidArgument(goerrors.New("'test-invalid-subcommand' is an invalid command. Use 'mesheryctl organization --help' to display usage guide")),
+			Name:          "Launch organization with invalid subcommand name",
+			Args:          []string{"test-invalid-subcommand"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(goerrors.New("'test-invalid-subcommand' is an invalid command. Use 'mesheryctl organization --help' to display usage guide")),
 		},
 	}
 

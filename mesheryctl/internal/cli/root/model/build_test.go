@@ -48,11 +48,10 @@ func TestModelBuild(t *testing.T) {
 	utils.SetupContextEnv(t)
 
 	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
+	_, _, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
-	currDir := filepath.Dir(filename)
 
 	// Helper function to create a fresh ModelCmd with all original properties
 	createFreshModelCmd := func() *cobra.Command {
@@ -124,9 +123,9 @@ func TestModelBuild(t *testing.T) {
 		ExpectedError    error `default:"nil"`
 	}{
 		{
-			Name:             "model build from model name and version",
-			Args:             []string{"build", "test-case-model-build-aws-lambda-controller/v0.1.0"},
-			ExpectError:      false,
+			Name:        "model build from model name and version",
+			Args:        []string{"build", "test-case-model-build-aws-lambda-controller/v0.1.0"},
+			ExpectError: false,
 			ExpectedContains: []string{
 				"Building meshery model from path test-case-model-build-aws-lambda-controller/v0.1.0",
 				"Saving OCI artifact as test-case-model-build-aws-lambda-controller-v0-1-0.tar",
@@ -145,9 +144,9 @@ func TestModelBuild(t *testing.T) {
 			},
 		},
 		{
-			Name:             "model build from model name only (no version)",
-			Args:             []string{"build", buildTestDynamoController},
-			ExpectError:      false,
+			Name:        "model build from model name only (no version)",
+			Args:        []string{"build", buildTestDynamoController},
+			ExpectError: false,
 			ExpectedContains: []string{
 				"Building meshery model from path test-case-model-build-aws-dynamodb-controller",
 				"Saving OCI artifact as test-case-model-build-aws-dynamodb-controller.tar",
@@ -166,9 +165,9 @@ func TestModelBuild(t *testing.T) {
 			},
 		},
 		{
-			Name:             "model build from model name only (no version) with slash in the end",
-			Args:             []string{"build", buildTestDynamoController + "/"},
-			ExpectError:      false,
+			Name:        "model build from model name only (no version) with slash in the end",
+			Args:        []string{"build", buildTestDynamoController + "/"},
+			ExpectError: false,
 			ExpectedContains: []string{
 				"Building meshery model from path test-case-model-build-aws-dynamodb-controller",
 				"Saving OCI artifact as test-case-model-build-aws-dynamodb-controller.tar",
@@ -187,21 +186,21 @@ func TestModelBuild(t *testing.T) {
 			},
 		},
 		{
-			Name:             "model build no params",
-			Args:             []string{"build"},
-			ExpectError:      true,
-			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
+			Name:          "model build no params",
+			Args:          []string{"build"},
+			ExpectError:   true,
+			ExpectedError: ErrModelBuildFromStrings(errBuildUsage),
 		},
 		{
-			Name:             "model build wrong input param format",
-			Args:             []string{"build", buildTestEC2Controller + "/" + buildTestVersion + "/smthelse"},
-			ExpectError:      true,
-			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
+			Name:          "model build wrong input param format",
+			Args:          []string{"build", buildTestEC2Controller + "/" + buildTestVersion + "/smthelse"},
+			ExpectError:   true,
+			ExpectedError: ErrModelBuildFromStrings(errBuildUsage),
 		},
 		{
-			Name:             "model build from model name only (no version) not supporting multiple versions",
-			Args:             []string{"build", buildTestDynamoControllerGbx},
-			ExpectError:      true,
+			Name:        "model build from model name only (no version) not supporting multiple versions",
+			Args:        []string{"build", buildTestDynamoControllerGbx},
+			ExpectError: true,
 			SetupHooks: []func(){
 				setupHookModelInit("init", buildTestDynamoControllerGbx, "--version", buildTestVersion),
 				setupHookModelInit("init", buildTestDynamoControllerGbx, "--version", "v0.1.1"),
@@ -212,13 +211,13 @@ func TestModelBuild(t *testing.T) {
 					buildTestDynamoControllerGbx,
 				),
 			},
-			ExpectedError:  ErrModelBuildFromStrings(errBuildUsage, errBuildMultiVersionNotSupported),
+			ExpectedError: ErrModelBuildFromStrings(errBuildUsage, errBuildMultiVersionNotSupported),
 		},
 		{
-			Name:             "model build folder does not exist",
-			Args:             []string{"build", buildTestEC2Controller + "/" + buildTestVersion, "--path", "./" + buildTestNonExistentFolder},
-			ExpectError:      true,
-			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage, fmt.Sprintf(errBuildFolderNotFound, filepath.Join(buildTestNonExistentFolder, buildTestEC2Controller, buildTestVersion))),
+			Name:          "model build folder does not exist",
+			Args:          []string{"build", buildTestEC2Controller + "/" + buildTestVersion, "--path", "./" + buildTestNonExistentFolder},
+			ExpectError:   true,
+			ExpectedError: ErrModelBuildFromStrings(errBuildUsage, fmt.Sprintf(errBuildFolderNotFound, filepath.Join(buildTestNonExistentFolder, buildTestEC2Controller, buildTestVersion))),
 		},
 	}
 	for _, tc := range tests {
