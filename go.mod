@@ -70,6 +70,7 @@ require (
 	github.com/vektah/gqlparser/v2 v2.5.31
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.64.0
+	golang.org/x/mod v0.31.0
 	golang.org/x/oauth2 v0.34.0
 	golang.org/x/text v0.32.0
 	gonum.org/v1/gonum v0.16.0
