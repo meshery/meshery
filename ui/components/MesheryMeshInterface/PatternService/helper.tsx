@@ -242,11 +242,13 @@ export const calculateGrid = (element) => {
   }
   const grid = {
     xs: 12,
-    md: 12,
+    sm: 6,
+    md: 16,
     lg: 6,
   };
 
   if (type === 'object' || type === 'array' || __additional_property) {
+    grid.sm = 12;
     grid.lg = 12;
   }
 

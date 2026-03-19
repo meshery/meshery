@@ -19,13 +19,19 @@ function getTitleForItem(props) {
 
 function getTitle(props) {
   if (!props) return 'Unknown';
-  return safeStringTitle(props.uiSchema['ui:title'] ?? props.title) || 'Unknown';
+  return (
+    safeStringTitle(props.uiSchema?.['ui:title'] ?? props.schema?.title ?? props.title) || 'Unknown'
+  );
 }
 
 const ArrayFieldTemplate = (props) => {
   const { schema, registry = getDefaultFormState(), classes } = props;
-  const safeId = props.idSchema?.$id ?? 'array-field';
-  const safeProps = { ...props, idSchema: props.idSchema ?? { $id: safeId } };
+  const safeId = props.fieldPathId?.$id ?? props.idSchema?.$id ?? 'array-field';
+  const safeProps = {
+    ...props,
+    idSchema: props.idSchema ?? { $id: safeId },
+    fieldPathId: props.fieldPathId ?? { $id: safeId, path: [] },
+  };
   // TODO: update types so we don't have to cast registry as any
   if (isMultiSelect(schema, registry.rootSchema)) {
     return <DefaultFixedArrayFieldTemplate {...safeProps} />;
@@ -101,7 +107,7 @@ const DefaultArrayItem = (props) => {
 
 const DefaultFixedArrayFieldTemplate = (props) => {
   const { classes } = props;
-  const safeId = props.idSchema?.$id ?? 'array-field';
+  const safeId = props.fieldPathId?.$id ?? props.idSchema?.$id ?? 'array-field';
 
   return (
     <fieldset className={props.className}>
@@ -124,11 +130,17 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         classes={classes}
       />
 
-      {(props.uiSchema['ui:description'] ?? props.schema?.description) != null && (
-        <div className="field-description" key={`field-description-${safeId}`}>
-          {safeDisplayValue(props.uiSchema['ui:description'] ?? props.schema?.description)}
-        </div>
-      )}
+      {(() => {
+        const retSchema = props.registry?.schemaUtils?.retrieveSchema(props.schema) ?? props.schema;
+        const desc = props.uiSchema?.['ui:description'] ?? retSchema?.description;
+        return (
+          desc != null && (
+            <div className="field-description" key={`field-description-${safeId}`}>
+              {safeDisplayValue(desc)}
+            </div>
+          )
+        );
+      })()}
 
       <div className="row array-item-list" key={`array-item-list-${safeId}`}>
         {props.items &&
@@ -149,7 +161,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 const DefaultNormalArrayFieldTemplate = (props) => {
   const theme = useTheme();
   const { classes } = props;
-  const safeId = props.idSchema?.$id ?? 'array-field';
+  const safeId = props.fieldPathId?.$id ?? props.idSchema?.$id ?? 'array-field';
 
   return (
     <Paper elevation={0}>
@@ -170,22 +182,24 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               classes={classes}
             />
 
-            {(props.uiSchema['ui:description'] ?? props.schema?.description) != null && (
-              <CustomTextTooltip
-                title={safeStringTitle(
-                  props.uiSchema['ui:description'] ?? props.schema?.description,
-                )}
-              >
-                <IconButton disableTouchRipple="true" disableRipple="true">
-                  <HelpOutlineIcon
-                    width="14px"
-                    height="14px"
-                    fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
-                    style={{ marginLeft: '4px', ...iconSmall }}
-                  />
-                </IconButton>
-              </CustomTextTooltip>
-            )}
+            {(() => {
+              const retSchema =
+                props.registry?.schemaUtils?.retrieveSchema(props.schema) ?? props.schema;
+              const desc = props.uiSchema?.['ui:description'] ?? retSchema?.description;
+              if (desc == null) return null;
+              return (
+                <CustomTextTooltip title={safeStringTitle(desc)}>
+                  <IconButton disableTouchRipple="true" disableRipple="true">
+                    <HelpOutlineIcon
+                      width="14px"
+                      height="14px"
+                      fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
+                      style={{ marginLeft: '4px', ...iconSmall }}
+                    />
+                  </IconButton>
+                </CustomTextTooltip>
+              );
+            })()}
             {props.rawErrors?.length > 0 && (
               <CustomTextTooltip
                 bgColor={ERROR_COLOR}

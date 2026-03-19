@@ -55,15 +55,23 @@ const BaseInput = (props) => {
   const errorTitle = safeDisplayValue(
     Array.isArray(props.rawErrors) ? props.rawErrors.join('  ') : props.rawErrors,
   );
-  const descriptionTitle = safeDisplayValue(props.schema?.description);
+  const descriptionTitle = safeDisplayValue(
+    props.uiSchema?.['ui:description'] ?? props.uiSchema?.['ui:help'] ?? props.schema?.description,
+  );
 
   return (
     <>
       <div key={props.id} style={xRjsfGridArea ? {} : style}>
         {xRjsfGridArea && (
           <InputLabel htmlFor={props.id} required={isRequired}>
-            {prettifiedName}
+            {prettifiedName} {Object.keys(props.schema || {}).join(',')}
           </InputLabel>
+        )}
+        {!xRjsfGridArea && (
+          <span style={{ fontSize: '10px', color: 'red' }}>
+            {' '}
+            Keys: {Object.keys(props.schema || {}).join(', ')}{' '}
+          </span>
         )}
         <CustomTextField
           variant={additional ? 'standard' : 'outlined'}
