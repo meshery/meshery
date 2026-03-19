@@ -68,13 +68,15 @@ export class ExtensionsPage {
     const href = await locator.getAttribute('href');
 
     if (href) {
-      await expect(locator).toHaveAttribute('href', href);
+      expect(href).not.toBe('');
       expect(this.normalizeUrl(href)).toBe(this.normalizeUrl(expectedUrl));
       return;
     }
 
     await this.page.evaluate(() => {
       window.__mesheryOpenedUrl = null;
+      // Save original window.open so it can be restored after the check.
+      window.__mesheryOriginalOpen = window.open;
       window.open = (...args) => {
         window.__mesheryOpenedUrl = args[0] ?? null;
         return null;
@@ -83,11 +85,20 @@ export class ExtensionsPage {
 
     await locator.click();
 
-    await expect
-      .poll(async () => {
-        const openedUrl = await this.page.evaluate(() => window.__mesheryOpenedUrl);
-        return openedUrl ? this.normalizeUrl(openedUrl) : null;
-      })
-      .toBe(this.normalizeUrl(expectedUrl));
+    try {
+      await expect
+        .poll(async () => {
+          const openedUrl = await this.page.evaluate(() => window.__mesheryOpenedUrl);
+          return openedUrl ? this.normalizeUrl(openedUrl) : null;
+        })
+        .toBe(this.normalizeUrl(expectedUrl));
+    } finally {
+      await this.page.evaluate(() => {
+        if (window.__mesheryOriginalOpen) {
+          window.open = window.__mesheryOriginalOpen;
+          delete window.__mesheryOriginalOpen;
+        }
+      });
+    }
   }
 }

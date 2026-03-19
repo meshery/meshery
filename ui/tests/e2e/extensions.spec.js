@@ -11,7 +11,7 @@ const URLS = {
   },
   MESHERY: {
     CATALOG: 'https://meshery.io/catalog',
-    ADATPER_DOCS: 'https://docs.meshery.io/concepts/architecture/adapters',
+    ADAPTER_DOCS: 'https://docs.meshery.io/concepts/architecture/adapters',
   },
 };
 
@@ -61,7 +61,7 @@ test.describe('Extensions Section Tests', () => {
   test('Verify Meshery Adapter for Istio Section', async () => {
     await extensionsPage.verifyNewTab(
       extensionsPage.adapterDocsIstioLink,
-      URLS.MESHERY.ADATPER_DOCS,
+      URLS.MESHERY.ADAPTER_DOCS,
     );
   });
 });
