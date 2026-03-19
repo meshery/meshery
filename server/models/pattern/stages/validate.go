@@ -97,7 +97,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate boo
 			}
 
 			// Store the corresponding definition
-			data.DeclartionToDefinitionMapping[component.ID] = wc
+			data.DeclartionToDefinitionMapping[component.Id] = wc
 		}
 
 		if next != nil {

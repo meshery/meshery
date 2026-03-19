@@ -49,7 +49,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 		_ = plan.Execute(func(name string, component component.ComponentDefinition) bool {
 			ccp := CompConfigPair{}
 
-			err := orchestration.EnrichComponentWithMesheryMetadata(&component, data.Pattern.ID.String(), data.Pattern.Version)
+			err := orchestration.EnrichComponentWithMesheryMetadata(&component, data.Pattern.Id.String(), data.Pattern.Version)
 
 			if err != nil {
 				fmt.Println("Err while assigning labels", err)
@@ -59,7 +59,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 			// Generate hosts list
 			ccp.Hosts = generateHosts(
-				data.DeclartionToDefinitionMapping[component.ID],
+				data.DeclartionToDefinitionMapping[component.Id],
 				act.GetRegistry(),
 			)
 

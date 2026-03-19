@@ -97,13 +97,13 @@ func HandleError(c connection.Connection, en entity.Entity, err error, isModelEr
 			LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].mu.Lock()
 			if entityCount, ok := LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.GetID()]; ok {
 				entityCount.Attempt++
-				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.GetID()] = entityCount
+				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.Id] = entityCount
 			} else {
-				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.GetID()] = EntityErrorCount{Attempt: 1, Error: err}
+				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.Id] = EntityErrorCount{Attempt: 1, Error: err}
 			}
 			LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].mu.Unlock()
 
-			if LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.GetID()].Attempt == 1 {
+			if LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.Id].Attempt == 1 {
 				currentValue := LogHandler.NonImportModel[meshmodel.HostnameToPascalCase(c.Kind)]
 				currentValue.Relationships++
 				LogHandler.NonImportModel[meshmodel.HostnameToPascalCase(c.Kind)] = currentValue

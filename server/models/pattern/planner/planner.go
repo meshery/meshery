@@ -32,7 +32,7 @@ func CreatePlan(pattern pattern.PatternFile, invert bool) (*Plan, error) {
 	g := NewGraph()
 
 	for _, component := range pattern.Components {
-		g.AddNode(component.ID.String(), *component)
+		g.AddNode(component.Id.String(), *component)
 	}
 
 	for _, component := range pattern.Components {
