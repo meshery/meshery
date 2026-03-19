@@ -98,7 +98,6 @@ func HandleError(c connection.Connection, en entity.Entity, err error, isModelEr
 			if entityCount, ok := LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.GetID()]; ok {
 				entityCount.Attempt++
 				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.GetID()] = entityCount
-
 			} else {
 				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.GetID()] = EntityErrorCount{Attempt: 1, Error: err}
 			}

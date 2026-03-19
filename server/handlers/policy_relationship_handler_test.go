@@ -104,7 +104,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 							From: []relationship.SelectorItem{
 								{
 									ID: &fromID,
-									Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+									Patch: &relationship.RelationshipDefinition_Selectors_Patch{
 										MutatedRef: nil,
 									},
 								},
@@ -130,7 +130,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 							From: []relationship.SelectorItem{
 								{
 									ID: &fromID,
-									Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+									Patch: &relationship.RelationshipDefinition_Selectors_Patch{
 										MutatedRef: &emptyRefs,
 									},
 								},
@@ -147,7 +147,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 			wantOk: false,
 		},
 		{
-			name: "nil to.Id returns false",
+			name: "nil to.ID returns false",
 			input: func() relationship.RelationshipDefinition {
 				refs := [][]string{{"configuration", "spec", "containers"}}
 				ss := relationship.SelectorSet{
@@ -156,7 +156,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 							From: []relationship.SelectorItem{
 								{
 									ID: &fromID,
-									Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+									Patch: &relationship.RelationshipDefinition_Selectors_Patch{
 										MutatedRef: &refs,
 									},
 								},
@@ -173,7 +173,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 			wantOk: false,
 		},
 		{
-			name: "nil from.Id returns false",
+			name: "nil from.ID returns false",
 			input: func() relationship.RelationshipDefinition {
 				refs := [][]string{{"configuration", "spec", "containers"}}
 				ss := relationship.SelectorSet{
@@ -182,7 +182,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 							From: []relationship.SelectorItem{
 								{
 									ID: nil,
-									Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+									Patch: &relationship.RelationshipDefinition_Selectors_Patch{
 										MutatedRef: &refs,
 									},
 								},
@@ -208,7 +208,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 							From: []relationship.SelectorItem{
 								{
 									ID: &fromID,
-									Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+									Patch: &relationship.RelationshipDefinition_Selectors_Patch{
 										MutatedRef: &refs,
 									},
 								},
@@ -234,8 +234,8 @@ func TestParseRelationshipToAlias(t *testing.T) {
 			assert.Equal(t, tt.wantOk, ok, "parseRelationshipToAlias() ok mismatch")
 
 			if tt.wantOk {
-				assert.Equal(t, toID, alias.ImmediateParentId, "ImmediateParentId should match to.Id")
-				assert.Equal(t, fromID, alias.AliasComponentId, "AliasComponentId should match from.Id")
+				assert.Equal(t, toID, alias.ImmediateParentId, "ImmediateParentId should match to.ID")
+				assert.Equal(t, fromID, alias.AliasComponentId, "AliasComponentId should match from.ID")
 				assert.Equal(t, relID, alias.RelationshipId, "RelationshipId should match the relationship's Id")
 				assert.Equal(t, []string{"configuration", "spec", "containers"}, alias.ImmediateRefFieldPath, "ImmediateRefFieldPath should match first mutatedRef entry")
 			}
