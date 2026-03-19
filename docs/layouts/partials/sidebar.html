@@ -26,20 +26,27 @@
           )
     -}}
     {{- $sectionChildren := where (union $section.Pages $section.Sections).ByWeight ".Params.toc_hide" "!=" true -}}
+    {{- $sectionTitle := or $section.LinkTitle $section.Title $section.Params.tag -}}
+    {{- with $section.File -}}
+      {{- $sectionTitle = or $sectionTitle .TranslationBaseName -}}
+    {{- end -}}
+    {{- if eq (trim $sectionTitle " \t\r\n") "" -}}
+      {{- continue -}}
+    {{- end -}}
     <div class="sidebar-nav__section">
 
       <div class="sidebar-nav__row">
         <a
           href="{{ $sectionLink }}"
           class="sidebar-nav__section-title"
-        >{{ $section.LinkTitle }}</a>
+        >{{ $sectionTitle }}</a>
         {{- if $sectionChildren }}
         <button
           class="sidebar-nav__chevron-btn"
           data-target="s{{ $si }}"
           type="button"
           aria-expanded="false"
-          aria-label="Expand {{ $section.LinkTitle }}"
+          aria-label="Expand {{ $sectionTitle }}"
         ><svg class="sidebar-nav__chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></button>
         {{- end }}
       </div>
@@ -179,20 +186,27 @@
           $n.RelPermalink
         )
   -}}
+  {{- $nodeTitle := or $n.LinkTitle $n.Title $n.Params.tag $n.Params.manualLinkTitle -}}
+  {{- with $n.File -}}
+    {{- $nodeTitle = or $nodeTitle .TranslationBaseName -}}
+  {{- end -}}
+  {{- if eq (trim $nodeTitle " \t\r\n") "" -}}
+    {{- return -}}
+  {{- end -}}
   {{- $children := where (union $n.Pages $n.Sections).ByWeight ".Params.toc_hide" "!=" true -}}
   <li class="sidebar-nav__item">
     <div class="sidebar-nav__row">
       <a
         href="{{ $nodeLink }}"
         class="{{ if eq $level 1 }}sidebar-nav__link{{ else }}sidebar-nav__link sidebar-nav__link--sub{{ end }}"
-      >{{ $n.LinkTitle }}</a>
+      >{{ $nodeTitle }}</a>
       {{- if $children }}
       <button
         class="sidebar-nav__chevron-btn"
         data-target="{{ $nodeID }}"
         type="button"
         aria-expanded="false"
-        aria-label="Expand {{ $n.LinkTitle }}"
+        aria-label="Expand {{ $nodeTitle }}"
       ><svg class="sidebar-nav__chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></button>
       {{- end }}
     </div>
