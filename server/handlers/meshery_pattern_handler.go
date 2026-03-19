@@ -654,7 +654,6 @@ func (h *Handler) DeleteMesheryPatternHandler(
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": errPatternDelete,
 		}).WithDescription("Error: Could not delete design.").Build()
-		http.Error(rw, errPatternDelete.Error(), http.StatusInternalServerError)
 		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
