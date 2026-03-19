@@ -3,13 +3,13 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "",
-    "isAnnotation": false,
+    "description": "A hierarchical inventory relationship in which ManagedClustersAgentPool (child) belongs to a ManagedCluster (parent).",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    }
+    },
+    "isAnnotation": false
   },
   "model": {
     "version": "",
@@ -20,7 +20,7 @@
       "kind": ""
     },
     "model": {
-      "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+      "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
     }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
@@ -30,7 +30,8 @@
         "from": [
           {
             "id": null,
-            "kind": "MaintenanceConfiguration",
+            "kind": "ManagedClustersAgentPool",
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -45,6 +46,7 @@
               }
             },
             "patch": {
+              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
@@ -52,8 +54,7 @@
                   "owner",
                   "name"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
@@ -61,6 +62,7 @@
           {
             "id": null,
             "kind": "ManagedCluster",
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -75,12 +77,12 @@
               }
             },
             "patch": {
+              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "displayName"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ]
