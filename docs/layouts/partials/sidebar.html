@@ -11,85 +11,43 @@
     >
   </form>
 
+  {{- $topSections := where .Site.Home.Sections.ByWeight ".Params.toc_hide" "!=" true -}}
+
   <nav class="sidebar-nav" id="td-section-nav" aria-label="Documentation navigation">
-    {{- range $si, $section := .Site.Data.toc }}
+    {{- range $si, $section := $topSections }}
+    {{- $sectionLink :=
+        cond
+          (isset $section.Params "manuallink")
+          $section.Params.manualLink
+          (cond
+            (isset $section.Params "manuallinkrelref")
+            (relref $section $section.Params.manualLinkRelref)
+            $section.RelPermalink
+          )
+    -}}
+    {{- $sectionChildren := where (union $section.Pages $section.Sections).ByWeight ".Params.toc_hide" "!=" true -}}
     <div class="sidebar-nav__section">
 
       <div class="sidebar-nav__row">
         <a
-          href="{{ if $section.url }}{{ $section.url | relURL }}{{ else }}{{ $section.external_url }}{{ end }}"
+          href="{{ $sectionLink }}"
           class="sidebar-nav__section-title"
-        >{{ $section.title }}</a>
-        {{- if $section.links }}
+        >{{ $section.LinkTitle }}</a>
+        {{- if $sectionChildren }}
         <button
           class="sidebar-nav__chevron-btn"
           data-target="s{{ $si }}"
           type="button"
           aria-expanded="false"
-          aria-label="Expand {{ $section.title }}"
+          aria-label="Expand {{ $section.LinkTitle }}"
         ><svg class="sidebar-nav__chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></button>
         {{- end }}
       </div>
 
-      {{- if $section.links }}
+      {{- if $sectionChildren }}
       <ul class="sidebar-nav__list" id="s{{ $si }}">
-        {{- range $ei, $entry := sort $section.links "title" }}
-        {{- $entryTitle := $entry.title | replaceRE `\s*ↆ\s*$` "" }}
-        <li class="sidebar-nav__item">
-          <div class="sidebar-nav__row">
-            <a
-              href="{{ if $entry.url }}{{ $entry.url | relURL }}{{ else }}{{ $entry.external_url }}{{ end }}"
-              class="sidebar-nav__link"
-            >{{ $entryTitle }}</a>
-            {{- if $entry.children }}
-            <button
-              class="sidebar-nav__chevron-btn"
-              data-target="s{{ $si }}-e{{ $ei }}"
-              type="button"
-              aria-expanded="false"
-              aria-label="Expand {{ $entryTitle }}"
-            ><svg class="sidebar-nav__chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></button>
-            {{- end }}
-          </div>
-
-          {{- if $entry.children }}
-          <ul class="sidebar-nav__list sidebar-nav__list--sub" id="s{{ $si }}-e{{ $ei }}">
-            {{- range $ci, $child := sort $entry.children "title" }}
-            {{- $childTitle := $child.title | replaceRE `\s*ↆ\s*$` "" }}
-            <li class="sidebar-nav__item">
-              <div class="sidebar-nav__row">
-                <a
-                  href="{{ if $child.url }}{{ $child.url | relURL }}{{ else }}{{ $child.external_url }}{{ end }}"
-                  class="sidebar-nav__link sidebar-nav__link--sub"
-                >{{ $childTitle }}</a>
-                {{- if $child.grandchildren }}
-                <button
-                  class="sidebar-nav__chevron-btn"
-                  data-target="s{{ $si }}-e{{ $ei }}-c{{ $ci }}"
-                  type="button"
-                  aria-expanded="false"
-                  aria-label="Expand {{ $childTitle }}"
-                ><svg class="sidebar-nav__chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></button>
-                {{- end }}
-              </div>
-
-              {{- if $child.grandchildren }}
-              <ul class="sidebar-nav__list sidebar-nav__list--sub" id="s{{ $si }}-e{{ $ei }}-c{{ $ci }}">
-                {{- range sort $child.grandchildren "title" }}
-                <li class="sidebar-nav__item">
-                  <a
-                    href="{{ if .url }}{{ .url | relURL }}{{ else }}{{ .external_url }}{{ end }}"
-                    class="sidebar-nav__link sidebar-nav__link--sub"
-                  >{{ .title | replaceRE `\s*ↆ\s*$` "" }}</a>
-                </li>
-                {{- end }}
-              </ul>
-              {{- end }}
-            </li>
-            {{- end }}
-          </ul>
-          {{- end }}
-        </li>
+        {{- range $ei, $entry := $sectionChildren }}
+        {{- template "meshery-sidebar-node" (dict "node" $entry "nodeID" (printf "s%d-e%d" $si $ei) "level" 1) -}}
         {{- end }}
       </ul>
       {{- end }}
@@ -165,7 +123,6 @@
     var linkBtn = row.querySelector('.sidebar-nav__chevron-btn');
     if (!linkBtn) return;
 
-    e.preventDefault();
     var linkTarget = linkBtn.getAttribute('data-target');
     if (!linkTarget || !lists[linkTarget]) return;
     if (lists[linkTarget].classList.contains('is-open')) {
@@ -185,7 +142,6 @@
   var active = null;
 
   nav.querySelectorAll('a.sidebar-nav__link, a.sidebar-nav__section-title').forEach(function (a) {
-    if (a.classList.contains('sidebar-nav__section-title')) return;
     var href = (a.getAttribute('href') || '').trim();
     if (!href || href.charAt(0) === '#') return;
     if (norm(href) === here) {
@@ -208,3 +164,45 @@
   }
 }());
 </script>
+
+{{- define "meshery-sidebar-node" -}}
+  {{- $n := .node -}}
+  {{- $nodeID := .nodeID -}}
+  {{- $level := .level -}}
+  {{- $nodeLink :=
+      cond
+        (isset $n.Params "manuallink")
+        $n.Params.manualLink
+        (cond
+          (isset $n.Params "manuallinkrelref")
+          (relref $n $n.Params.manualLinkRelref)
+          $n.RelPermalink
+        )
+  -}}
+  {{- $children := where (union $n.Pages $n.Sections).ByWeight ".Params.toc_hide" "!=" true -}}
+  <li class="sidebar-nav__item">
+    <div class="sidebar-nav__row">
+      <a
+        href="{{ $nodeLink }}"
+        class="{{ if eq $level 1 }}sidebar-nav__link{{ else }}sidebar-nav__link sidebar-nav__link--sub{{ end }}"
+      >{{ $n.LinkTitle }}</a>
+      {{- if $children }}
+      <button
+        class="sidebar-nav__chevron-btn"
+        data-target="{{ $nodeID }}"
+        type="button"
+        aria-expanded="false"
+        aria-label="Expand {{ $n.LinkTitle }}"
+      ><svg class="sidebar-nav__chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></button>
+      {{- end }}
+    </div>
+
+    {{- if $children }}
+    <ul class="sidebar-nav__list sidebar-nav__list--sub" id="{{ $nodeID }}">
+      {{- range $ci, $child := $children }}
+      {{- template "meshery-sidebar-node" (dict "node" $child "nodeID" (printf "%s-c%d" $nodeID $ci) "level" (add $level 1)) -}}
+      {{- end }}
+    </ul>
+    {{- end }}
+  </li>
+{{- end -}}

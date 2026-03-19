@@ -27,7 +27,7 @@
 
   @media (max-width: 75em) {
     margin-top: 0;
-    transform: translateX(-100%);
+    transform: translateX(calc(-100% + 3rem));
     position: fixed;
     display: flex;
     width: 300px;
@@ -102,7 +102,7 @@
 .sidebar__search-input {
   display: block;
   width: 100%;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-family: inherit;
   border: 1px solid var(--color-grey-medium);
   border-radius: 8px;
@@ -168,7 +168,7 @@
   display: block;
   flex: 1;
   min-width: 0;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -195,7 +195,7 @@
   display: block;
   flex: 1;
   min-width: 0;
-  font-size: 0.925rem;
+  font-size: 1.05rem;
   color: var(--color-secondary-medium);
   text-decoration: none;
   padding: 0.375rem 0.5rem;
@@ -222,7 +222,7 @@
 }
 
 .sidebar-nav__link--sub {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: rgba(214, 224, 235, 0.9);
 }
 
