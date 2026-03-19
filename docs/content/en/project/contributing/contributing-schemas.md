@@ -169,7 +169,7 @@ schemas/
 ├── dist/                               # Built distribution (do NOT commit)
 │   ├── index.js, index.d.ts
 │   ├── cloudApi.js, mesheryApi.js
-│   └── constructs/<version>/<package>/<Package>Schema.js
+│   └── generated/<version>/<package>/<Package>Schema.js
 │
 └── _openapi_build/                     # Bundled OpenAPI specs (do NOT commit)
     ├── merged_openapi.yml
@@ -233,7 +233,7 @@ components:
 |------|---------|
 | `api.yml` | **Index file** - aggregates all subschemas via `$ref` and defines API endpoints for the construct |
 | `<construct>.yaml` | **Subschema** - defines the main data model (noun) for the construct |
-| `<other-subschemas>.yml` | **Subschema** - defines core/shared types used by the main schema |
+| `<construct>_core.yml` | **Subschema** - defines core/shared types used by the main schema |
 | `templates/*.json` | **Templates** - example instances with default values |
 
 ---
@@ -726,7 +726,7 @@ import {
 } from "@meshery/schemas";
 
 // Direct import
-import ModelSchema from "@meshery/schemas/dist/constructs/v1beta1/model/ModelSchema";
+import ModelSchema from "@meshery/schemas/dist/generated/v1beta1/model/ModelSchema";
 ```
 
 ### Maintaining `typescript/index.ts`
@@ -1052,7 +1052,7 @@ make golang-generate
 ## Getting Help
 - [GitHub Issues](https://github.com/meshery/schemas/issues) - Report bugs or request features
 - [Community Slack](https://slack.meshery.io) - Real-time discussions with maintainers
-- [Weekly Meetings](https://meshery.io/calendar) - Join our community calls
+- [Weekly Meetings](https://meshery.io/community/calendar) - Join our community calls
 
 ---
 > **Community Resources**
