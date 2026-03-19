@@ -103,8 +103,8 @@ func processCompToAdd(
 		"model":     mutatorSel["model"],
 	}
 
-	// Check feasibility between mutated component and the new component.
-	if feasibleRelationshipSelectorBetween(component, mutatedComp, relDef) == nil {
+	// Check feasibility between mutated component (from) and the new component (to).
+	if feasibleRelationshipSelectorBetween(mutatedComp, component, relDef) == nil {
 		return nil
 	}
 
@@ -114,7 +114,7 @@ func processCompToAdd(
 		setNestedValue(component, path, mutatedValues[i])
 	}
 
-	component["id"] = newUUID(component).String()
+	component["id"] = staticUUID(component).String()
 	return component
 }
 

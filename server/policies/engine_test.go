@@ -603,6 +603,8 @@ func TestHierarchicalSideEffects(t *testing.T) {
 
 func TestIdentifyAdditions(t *testing.T) {
 	// A deployment references namespace "default" but no Namespace component exists.
+	// Real registry structure: from=* (mutatedRef, the namespaced component),
+	// to=Namespace (mutatorRef, the namespace component to auto-add).
 	design := map[string]interface{}{
 		"components": []interface{}{
 			map[string]interface{}{
@@ -628,22 +630,22 @@ func TestIdentifyAdditions(t *testing.T) {
 				"allow": map[string]interface{}{
 					"from": []interface{}{
 						map[string]interface{}{
-							"kind":  "Namespace",
-							"model": map[string]interface{}{"name": "kubernetes"},
+							"kind":  "*",
+							"model": map[string]interface{}{"name": "*"},
 							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{
-									[]interface{}{"configuration", "name"},
+								"mutatedRef": []interface{}{
+									[]interface{}{"configuration", "namespace"},
 								},
 							},
 						},
 					},
 					"to": []interface{}{
 						map[string]interface{}{
-							"kind":  "Deployment",
+							"kind":  "Namespace",
 							"model": map[string]interface{}{"name": "kubernetes"},
 							"patch": map[string]interface{}{
-								"mutatedRef": []interface{}{
-									[]interface{}{"configuration", "namespace"},
+								"mutatorRef": []interface{}{
+									[]interface{}{"displayName"},
 								},
 							},
 						},
@@ -675,10 +677,10 @@ func TestIdentifyAdditionsNoAction(t *testing.T) {
 	design := map[string]interface{}{
 		"components": []interface{}{
 			map[string]interface{}{
-				"id":            "ns-1",
-				"component":     map[string]interface{}{"kind": "Namespace"},
-				"model":         map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{"name": "default"},
+				"id":          "ns-1",
+				"component":   map[string]interface{}{"kind": "Namespace"},
+				"model":       map[string]interface{}{"name": "kubernetes"},
+				"displayName": "default",
 			},
 			map[string]interface{}{
 				"id":        "deploy-1",
@@ -703,22 +705,22 @@ func TestIdentifyAdditionsNoAction(t *testing.T) {
 				"allow": map[string]interface{}{
 					"from": []interface{}{
 						map[string]interface{}{
-							"kind":  "Namespace",
-							"model": map[string]interface{}{"name": "kubernetes"},
+							"kind":  "*",
+							"model": map[string]interface{}{"name": "*"},
 							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{
-									[]interface{}{"configuration", "name"},
+								"mutatedRef": []interface{}{
+									[]interface{}{"configuration", "namespace"},
 								},
 							},
 						},
 					},
 					"to": []interface{}{
 						map[string]interface{}{
-							"kind":  "Deployment",
+							"kind":  "Namespace",
 							"model": map[string]interface{}{"name": "kubernetes"},
 							"patch": map[string]interface{}{
-								"mutatedRef": []interface{}{
-									[]interface{}{"configuration", "namespace"},
+								"mutatorRef": []interface{}{
+									[]interface{}{"displayName"},
 								},
 							},
 						},

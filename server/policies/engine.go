@@ -101,7 +101,7 @@ func applyConfigurationPatches(log logger.Handler, resp *pattern.EvaluationRespo
 	for _, comp := range resp.Design.Components {
 		var patches []patching.Patch
 		for _, up := range updates {
-			if up.ID == comp.Id.String() {
+			if up.ID == comp.ID.String() {
 				patches = append(patches, patching.Patch{Path: up.Path[1:], Value: up.Value})
 			}
 		}
@@ -326,7 +326,6 @@ func buildTrace(actions []PolicyAction, originalDesign, finalDesign map[string]i
 			}
 
 		case DeleteRelationshipOp:
-			// The relationship map may be stored directly in the action value.
 			rel := getMapMap(action.Value, "relationship")
 			if rel == nil {
 				id := getMapString(action.Value, "id")

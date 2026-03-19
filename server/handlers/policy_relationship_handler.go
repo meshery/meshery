@@ -149,6 +149,103 @@ func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.Resolved
 
 }
 
+// mergeTraceUnique appends trace entries from src into dst, skipping duplicates by ID.
+func mergeTraceUnique(dst, src *pattern.Trace) {
+	compSeen := make(map[uuid.UUID]bool)
+	for _, c := range dst.ComponentsAdded {
+		compSeen[c.ID] = true
+	}
+	for _, c := range dst.ComponentsUpdated {
+		compSeen[c.ID] = true
+	}
+	for _, c := range dst.ComponentsRemoved {
+		compSeen[c.ID] = true
+	}
+	relSeen := make(map[uuid.UUID]bool)
+	for _, r := range dst.RelationshipsAdded {
+		relSeen[r.ID] = true
+	}
+	for _, r := range dst.RelationshipsUpdated {
+		relSeen[r.ID] = true
+	}
+	for _, r := range dst.RelationshipsRemoved {
+		relSeen[r.ID] = true
+	}
+
+	for _, c := range src.ComponentsAdded {
+		if !compSeen[c.ID] {
+			compSeen[c.ID] = true
+			dst.ComponentsAdded = append(dst.ComponentsAdded, c)
+		}
+	}
+	for _, c := range src.ComponentsRemoved {
+		if !compSeen[c.ID] {
+			compSeen[c.ID] = true
+			dst.ComponentsRemoved = append(dst.ComponentsRemoved, c)
+		}
+	}
+	for _, c := range src.ComponentsUpdated {
+		if !compSeen[c.ID] {
+			compSeen[c.ID] = true
+			dst.ComponentsUpdated = append(dst.ComponentsUpdated, c)
+		}
+	}
+	for _, r := range src.RelationshipsAdded {
+		if !relSeen[r.ID] {
+			relSeen[r.ID] = true
+			dst.RelationshipsAdded = append(dst.RelationshipsAdded, r)
+		}
+	}
+	for _, r := range src.RelationshipsRemoved {
+		if !relSeen[r.ID] {
+			relSeen[r.ID] = true
+			dst.RelationshipsRemoved = append(dst.RelationshipsRemoved, r)
+		}
+	}
+	for _, r := range src.RelationshipsUpdated {
+		if !relSeen[r.ID] {
+			relSeen[r.ID] = true
+			dst.RelationshipsUpdated = append(dst.RelationshipsUpdated, r)
+		}
+	}
+}
+
+// deduplicateActions removes duplicate actions by (op, id) key.
+func deduplicateActions(actions []pattern.Action) []pattern.Action {
+	type key struct {
+		op string
+		id string
+	}
+	seen := make(map[key]bool)
+	var result []pattern.Action
+	for _, a := range actions {
+		id := ""
+		if a.Value != nil {
+			if v, ok := a.Value["id"]; ok {
+				if s, ok := v.(string); ok {
+					id = s
+				}
+			}
+			// For add_component/add_relationship, the id is inside "item"
+			if id == "" {
+				if item, ok := a.Value["item"].(map[string]interface{}); ok {
+					if v, ok := item["id"]; ok {
+						if s, ok := v.(string); ok {
+							id = s
+						}
+					}
+				}
+			}
+		}
+		k := key{op: a.Op, id: id}
+		if !seen[k] {
+			seen[k] = true
+			result = append(result, a)
+		}
+	}
+	return result
+}
+
 func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 
 	for _, action := range response.Actions {
@@ -229,6 +326,7 @@ func (h *Handler) EvaluateDesign(
 
 		lastEvaluationResponse.Design = evaluationResponse.Design
 		lastEvaluationResponse.Actions = append(lastEvaluationResponse.Actions, evaluationResponse.Actions...)
+		mergeTraceUnique(&lastEvaluationResponse.Trace, &evaluationResponse.Trace)
 
 		if evalIterations == i+1 || doesntNeedReeval(evaluationResponse) {
 			h.log.Info("Evaluation completed in iteration ", i+1)
@@ -243,6 +341,9 @@ func (h *Handler) EvaluateDesign(
 
 	currentTime := time.Now()
 	lastEvaluationResponse.Timestamp = &currentTime
+
+	// Deduplicate actions by (op, id) to avoid duplicates from re-evaluation iterations.
+	lastEvaluationResponse.Actions = deduplicateActions(lastEvaluationResponse.Actions)
 
 	// dehydrate the design file components to remove unnecessary details
 	patternHelpers.DehydratePattern(&lastEvaluationResponse.Design)
