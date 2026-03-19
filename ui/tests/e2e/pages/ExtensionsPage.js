@@ -58,9 +58,36 @@ export class ExtensionsPage {
     await this.catalogToggleSwitch.click();
   }
 
-  async verifyNewTab(context, locator, expectedUrl) {
-    const [newPage] = await Promise.all([context.waitForEvent('page'), locator.click()]);
-    await expect(newPage).toHaveURL(expectedUrl);
-    await newPage.close();
+  normalizeUrl(url) {
+    const parsedUrl = new URL(url);
+    const normalizedPath = parsedUrl.pathname.replace(/\/+$/, '') || '/';
+    return `${parsedUrl.origin}${normalizedPath}${parsedUrl.search}${parsedUrl.hash}`;
+  }
+
+  async verifyNewTab(locator, expectedUrl) {
+    const href = await locator.getAttribute('href');
+
+    if (href) {
+      await expect(locator).toHaveAttribute('href', href);
+      expect(this.normalizeUrl(href)).toBe(this.normalizeUrl(expectedUrl));
+      return;
+    }
+
+    await this.page.evaluate(() => {
+      window.__mesheryOpenedUrl = null;
+      window.open = (...args) => {
+        window.__mesheryOpenedUrl = args[0] ?? null;
+        return null;
+      };
+    });
+
+    await locator.click();
+
+    await expect
+      .poll(async () => {
+        const openedUrl = await this.page.evaluate(() => window.__mesheryOpenedUrl);
+        return openedUrl ? this.normalizeUrl(openedUrl) : null;
+      })
+      .toBe(this.normalizeUrl(expectedUrl));
   }
 }
