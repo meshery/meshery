@@ -38,10 +38,7 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	data := &Preference{
-		AnonymousUsageStats:  true,
-		AnonymousPerfResults: true,
-	}
+	data := NewDefaultPreference()
 
 	if s.db == nil {
 		return nil, ErrDBConnection
@@ -81,10 +78,7 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preferenc
 		return ErrNilConfigData
 	}
 	data.UpdatedAt = time.Now()
-	newSess := &Preference{
-		AnonymousUsageStats:  true,
-		AnonymousPerfResults: true,
-	}
+	newSess := NewDefaultPreference()
 	if err := copier.Copy(newSess, data); err != nil {
 		return ErrSessionCopy(err)
 	}
