@@ -26,6 +26,9 @@
           )
     -}}
     {{- $sectionChildren := where (union $section.Pages $section.Sections).ByWeight ".Params.toc_hide" "!=" true -}}
+    {{- if $section.Params.sidebar_nav_hide_children -}}
+      {{- $sectionChildren = slice -}}
+    {{- end -}}
     {{- $sectionTitle := or $section.LinkTitle $section.Title $section.Params.tag -}}
     {{- with $section.File -}}
       {{- $sectionTitle = or $sectionTitle .TranslationBaseName -}}
@@ -194,6 +197,9 @@
     {{- return -}}
   {{- end -}}
   {{- $children := where (union $n.Pages $n.Sections).ByWeight ".Params.toc_hide" "!=" true -}}
+  {{- if $n.Params.sidebar_nav_hide_children -}}
+    {{- $children = slice -}}
+  {{- end -}}
   <li class="sidebar-nav__item">
     <div class="sidebar-nav__row">
       <a
