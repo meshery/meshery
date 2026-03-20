@@ -1,0 +1,424 @@
+name: BookInfo App w/o Kubernetes
+version: 0.0.11
+services:
+  bookinfo-vs:
+    annotations: {}
+    apiVersion: ""
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: istio
+    name: bookinfo-vs
+    namespace: default
+    settings:
+      gateways:
+      - sample-app-gateway
+      hosts:
+      - book
+      http:
+      - cors Policy:
+          allow Credentials: false
+        fault:
+          delay:
+            fixedDelay: 7s
+            percentage:
+              value: 100
+        match:
+        - ignore Uri Case: false
+          uri:
+            exact: /productpage
+        - ignore Uri Case: false
+          uri:
+            prefix: /static
+        - ignore Uri Case: false
+          uri:
+            exact: /login
+        - ignore Uri Case: false
+          uri:
+            exact: /logout
+        - ignore Uri Case: false
+          uri:
+            prefix: /api/v1/products
+        retries:
+          attempts: 2
+          retry Remote Localities: false
+        route:
+        - destination:
+            host: productpage
+            port:
+              number: 9080
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 6e352f2e-bdbb-4f45-a77f-ace2629eda50
+            meatadata:
+              port: 80
+              protocol: TCP
+            source: bookinfo-vs
+            target: productpage
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: bookinfo-vs
+        label: bookinfo-vs
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 6
+        position:
+          posX: 150
+          posY: 330
+        whiteboardData:
+          style: {}
+    type: VirtualService
+    version: ""
+  details:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: details
+    namespace: ""
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            deploy: istio
+        template:
+          metadata:
+            labels:
+              deploy: istio-book-info-details
+              version: v1
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-details-v1:1.16.4
+              name: details
+              ports:
+              - container Port: 9080
+                host Port: 9080
+                protocol: TCP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: details
+        label: details
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 7
+        position:
+          posX: 450
+          posY: 430
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  productpage:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: productpage
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            deploy: istio
+        template:
+          metadata:
+            labels:
+              deploy: istio-book-info-productpage
+              version: v1
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-productpage-v1:1.16.4
+              name: productpage
+              ports:
+              - container Port: 9080
+                host Port: 9080
+                protocol: TCP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 6e352f2e-bdbb-4f45-a77f-ace2629eda50
+            meatadata:
+              port: 80
+              protocol: TCP
+            source: bookinfo-vs
+            target: productpage
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: productpage
+        label: productpage
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 3
+        position:
+          posX: 230
+          posY: 330
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  ratings:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: ratings
+    namespace: ""
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            deploy: istio
+        template:
+          metadata:
+            labels:
+              deploy: istio-book-info-ratings
+              version: v1
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-ratings-v1:1.16.4
+              name: ratings
+              ports:
+              - container Port: 9080
+                host Port: 9080
+                protocol: TCP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: ratings
+        label: ratings
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 4
+        position:
+          posX: 730
+          posY: 470
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  reviews-v1:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: reviews-v1
+    namespace: ""
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            deploy: istio
+        template:
+          metadata:
+            labels:
+              custom.app: reviews
+              deploy: istio-book-info-reviews-v1
+              version: v1
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-reviews-v1:1.16.4
+              name: reviews-v1
+              ports:
+              - container Port: 9080
+                host Port: 9080
+                protocol: TCP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: reviews-v1
+        label: reviews-v1
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 8
+        parent: 7207724b-9e0f-4ee1-95aa-de844edd2941
+        position:
+          posX: 630
+          posY: 250
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  reviews-v2:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: reviews-v2
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            deploy: istio
+        template:
+          metadata:
+            labels:
+              custom.app: reviews
+              deploy: istio-book-info-reviews-v2
+              version: v2
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-reviews-v2:1.16.4
+              name: reviews-v2
+              ports:
+              - container Port: 9080
+                host Port: 9080
+                protocol: TCP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: reviews-v2
+        label: reviews-v2
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 9
+        parent: 7207724b-9e0f-4ee1-95aa-de844edd2941
+        position:
+          posX: 650
+          posY: 310
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  reviews-v3:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: reviews-v3
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            deploy: istio
+        template:
+          metadata:
+            labels:
+              custom.app: reviews
+              deploy: istio-book-info-reviews-v3
+              version: v3
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-reviews-v3:1.16.4
+              name: reviews-v3
+              ports:
+              - container Port: 9080
+                host Port: 9080
+                protocol: TCP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: reviews-v3
+        label: reviews-v3
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 10
+        parent: 7207724b-9e0f-4ee1-95aa-de844edd2941
+        position:
+          posX: 650
+          posY: 370
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  sample-app-gateway:
+    annotations: {}
+    apiVersion: ""
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: istio
+    name: sample-app-gateway
+    namespace: default
+    settings:
+      selector:
+        istio: ingressgateway
+      servers:
+      - hosts:
+        - bookinfo.meshery.io
+        port:
+          name: http
+          number: 80
+          protocol: HTTP
+        tls:
+          https Redirect: false
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: sample-app-gateway
+        label: sample-app-gateway
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 11
+        position:
+          posX: 50
+          posY: 330
+        whiteboardData:
+          style: {}
+    type: Gateway
+    version: ""

@@ -56,8 +56,8 @@ type CmdTestInput struct {
 	ExpectedResponseYaml string
 	ExpectError          bool
 	ErrorStringContains  []string
-	ExpectedError        error `default:"nil"`
-	IsOutputGolden       bool  `default:"true"`
+	ExpectedError        error
+	IsOutputGolden       bool
 }
 
 type GoldenFile struct {
@@ -73,6 +73,7 @@ func NewGoldenFile(t *testing.T, name string, directory string) *GoldenFile {
 func InitTestEnvironment(t *testing.T) *TestHelper {
 	SetupContextEnv(t)
 	StartMockery(t)
+	viper.Set("LOG_LEVEL", int(logrus.InfoLevel))
 	testContext := NewTestHelper(t)
 	return testContext
 }
@@ -351,8 +352,8 @@ type MesheryListCommandTest struct {
 	Fixture          string
 	ExpectedResponse string
 	ExpectError      bool
-	ExpectedError    error `default:"nil"`
-	IsOutputGolden   bool  `default:"true"`
+	ExpectedError    error
+	IsOutputGolden   bool
 }
 
 func GetToken(t *testing.T) string {
@@ -397,9 +398,8 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			}()
 
 			_ = SetupMeshkitLoggerTesting(t, false)
-
 			cmd.SetArgs(tt.Args)
-			cmd.SetOut(originalStdout)
+			cmd.SetOut(w)
 			err := cmd.Execute()
 
 			// Close write end before reading
@@ -461,8 +461,8 @@ type MesheryCommandTest struct {
 	Fixture          string
 	ExpectedResponse string
 	ExpectError      bool
-	IsOutputGolden   bool  `default:"true"`
-	ExpectedError    error `default:"nil"`
+	IsOutputGolden   bool
+	ExpectedError    error
 }
 
 func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommandTest, commandDir string, commandName string) {
@@ -499,7 +499,7 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			originalStdout := os.Stdout
-			b := SetupMeshkitLoggerTesting(t, false)
+			b := SetupMeshkitLoggerTesting(t, true)
 			defer func() {
 				os.Stdout = originalStdout
 			}()
@@ -558,8 +558,8 @@ type MesheryMultiURLCommamdTest struct {
 	ExpectedResponse string
 	Token            string
 	ExpectError      bool
-	IsOutputGolden   bool  `default:"true"`
-	ExpectedError    error `default:"nil"`
+	IsOutputGolden   bool
+	ExpectedError    error
 }
 
 func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryMultiURLCommamdTest, commandDir string, commandName string, resetVariables func()) {
@@ -598,7 +598,7 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 				os.Stdout = originalStdout
 			}()
 
-			Log = SetupMeshkitLogger("mesheryctl", false, w)
+			Log = SetupMeshkitLogger("mesheryctl", true, w)
 
 			cmd.SetArgs(tt.Args)
 			cmd.SetOut(w)
@@ -705,7 +705,7 @@ func RunMesheryctlMultipleURLsListTests(t *testing.T, updateGoldenFile *bool, cm
 			err := cmd.Execute()
 
 			// Close write end before reading
-			w.Close()
+			assert.NoError(t, w.Close())
 
 			if err != nil {
 				// if we're supposed to get an error

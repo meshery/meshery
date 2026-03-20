@@ -1,0 +1,31 @@
+version: 0.0.1
+name: autoscaling-based-on-metrics-in-gke
+displayName: Autoscaling based on Metrics in GKE
+createdAt: "2024-04-13T07:24:41Z"
+description: |-
+    This design demonstrates how to automatically scale your Google Kubernetes Engine (GKE)
+    workloads based on Prometheus-style metrics emitted by your application.  It uses the [GKE workload
+    metrics](https://cloud.google.com/stackdriver/docs/solutions/gke/managing-metrics#workload-metrics)
+    pipeline to collect the metrics emitted from the example application and send them to
+    [Cloud Monitoring](https://cloud.google.com/monitoring), and then uses the
+    [HorizontalPodAutoscaler](https://cloud.google.com/kubernetes-engine/docs/concepts/horizontalpodautoscaler)
+    along with the [Custom Metrics Adapter](https://github.com/GoogleCloudPlatform/k8s-stackdriver/tree/master/custom-metrics-stackdriver-adapter) to scale the application.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/35ecff6c-41f5-400b-92c4-f959dd23ee15/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Add your own custom prometheus to GKE  for better scaling  of workloads  \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/35ecff6c-41f5-400b-92c4-f959dd23ee15-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/35ecff6c-41f5-400b-92c4-f959dd23ee15-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

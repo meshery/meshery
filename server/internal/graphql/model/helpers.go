@@ -295,17 +295,20 @@ func GetMesheryBrokerEventTypes(event MeshSyncEventType) broker.EventType {
 }
 
 // SelectivelyFetchNamespaces fetches the an array of namespaces from DB based on ClusterIDs (or KubernetesServerIDs) passed as param
-func SelectivelyFetchNamespaces(cids []string, provider models.Provider) ([]string, error) {
-	namespaces := make([]string, 0)
+func SelectivelyFetchNamespaces(cids []string, provider models.Provider) (namespaces []string, err error) {
+	namespaces = make([]string, 0)
 	var rows *sql.Rows
-	var err error
 	rows, err = provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom ON kr.id = rom.id WHERE kr.kind = 'Namespace' AND kr.cluster_id IN ?", cids).Rows()
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer rows.Close()
+	defer func() {
+		if closeErr := rows.Close(); err == nil && closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	for rows.Next() {
 		var name string

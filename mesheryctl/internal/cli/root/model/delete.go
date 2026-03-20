@@ -24,33 +24,54 @@ import (
 )
 
 var deleteModelCmd = &cobra.Command{
-	Use:   "delete [model-id]",
+	Use:   "delete [model-id | model-name]",
 	Short: "Delete a model",
-	Long: `Delete a model by ID
+	Long: `Delete a model by ID or Name
 Find more information at https://docs.meshery.io/reference/mesheryctl/model/delete`,
 	Example: `
 // Delete a model by ID
 mesheryctl model delete [model-id]
+
+// Delete a model by name
+mesheryctl model delete [model-name]
 `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			const errMsg = "[ model-id ] is required\n\nUsage: mesheryctl model delete [model-id]\nRun 'mesheryctl model delete --help' to see detailed help message"
-			return utils.ErrInvalidArgument(errors.New(errMsg))
+			return utils.ErrInvalidArgument(errors.New(errDeleteInvalidArg))
 		}
-
-		if !utils.IsUUID(args[0]) {
-			return utils.ErrInvalidUUID(fmt.Errorf("invalid model ID: %q", args[0]))
-		}
-
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, args[0]))
-		if err != nil {
-			return ErrDeleteModel(err, args[0])
+		modelArg := args[0]
+
+		// Delete model by ID
+		if utils.IsUUID(modelArg) {
+			_, err := api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, modelArg))
+			if err != nil {
+				return ErrDeleteModel(err, modelArg)
+			}
+			utils.Log.Infof("Model with ID %s has been deleted", modelArg)
+			return nil
 		}
 
-		utils.Log.Infof("Model with ID %s has been deleted", args[0])
+		// Delete model by name, for multiple matches use pagination selection prompt
+		selectedModel, err := promptModelSelection(modelArg, modelsApiPath)
+		if err != nil {
+			return err
+		}
+
+		if selectedModel == nil {
+			utils.Log.Infof("No model(s) found with the name: %s", modelArg)
+			return nil
+		}
+
+		// Delete the selected model by its UUID
+		_, err = api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, selectedModel.ID.String()))
+		if err != nil {
+			return ErrDeleteModel(err, modelArg)
+		}
+		utils.Log.Infof("Model '%s' (ID: %s) has been deleted", selectedModel.DisplayName, selectedModel.ID.String())
+
 		return nil
 	},
 }

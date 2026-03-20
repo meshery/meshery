@@ -18,7 +18,7 @@ import (
 	"fmt"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
@@ -29,8 +29,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+type cmdModelFlags struct {
+	Count bool `json:"count" validate:"boolean"`
+}
+
+var modelFlags cmdModelFlags
+
 var (
-	modelsApiPath = "api/meshmodels/models"
 	// Available model subcommands
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, deleteModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
 )
@@ -73,6 +78,9 @@ mesheryctl model init [model-name]
 mesheryctl model build [model-name]
 mesheryctl model build [model-name]/[model-version]
 `,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelFlags)
+	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
 		if len(args) == 0 && !count {
@@ -115,36 +123,7 @@ mesheryctl model build [model-name]/[model-version]
 
 func init() {
 	ModelCmd.AddCommand(availableSubcommands...)
-	ModelCmd.Flags().BoolP("count", "", false, "(optional) Get the number of models in total")
-}
-
-func displayModels(modelsResponse *models.MeshmodelsAPIResponse, cmd *cobra.Command) error {
-	header := []string{"Model", "Category", "Version"}
-	rows := [][]string{}
-
-	for _, model := range modelsResponse.Models {
-		if len(model.DisplayName) > 0 {
-			rows = append(rows, []string{model.Name, string(model.Category.Name), model.Version})
-		}
-	}
-
-	count, _ := cmd.Flags().GetBool("count")
-
-	dataToDisplay := display.DisplayedData{
-		DataType:         "model",
-		Header:           header,
-		Rows:             rows,
-		Count:            int64(modelsResponse.Count),
-		DisplayCountOnly: count,
-		IsPage:           cmd.Flags().Changed("page"),
-	}
-
-	err := display.List(dataToDisplay)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	ModelCmd.Flags().BoolVarP(&modelFlags.Count, "count", "", false, "(optional) Get the number of models in total")
 }
 
 func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([][]string, int64) {
@@ -155,7 +134,7 @@ func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([
 		if modelName == "" {
 			modelName = "N/A"
 		}
-		rows = append(rows, []string{model.Id.String(), modelName, string(model.Category.Name), model.Version})
+		rows = append(rows, []string{model.ID.String(), modelName, string(model.Category.Name), model.Version})
 	}
 
 	return rows, int64(modelsResponse.Count)

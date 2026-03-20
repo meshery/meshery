@@ -26,7 +26,7 @@ func TestDeleteCmd(t *testing.T) {
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:             "Delete Design",
+			Name:             "given valid file when design delete then design is deleted",
 			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "delete.output.golden",
 			URLs: []utils.MockURL{
@@ -37,21 +37,19 @@ func TestDeleteCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
-			Name:             "Delete design with invalid file path",
+			Name:             "given invalid file path when design delete then error is thrown",
 			Args:             []string{"delete", "-f", invalidFilePath},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
-			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, invalidFilePath)),
 		},
 		{
-			Name:             "Delete design by ID with API error",
+			Name:             "given nonexistent design ID when design delete then error is thrown",
 			Args:             []string{"delete", nonExistentID},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
@@ -68,7 +66,6 @@ func TestDeleteCmd(t *testing.T) {
 					ResponseCode: 404,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound(nonExistentID),

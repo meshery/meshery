@@ -31,6 +31,15 @@ var (
 	// token path
 )
 
+const (
+	platformDocker     = "docker"
+	platformKubernetes = "kubernetes"
+)
+
+func unsupportedPlatformError(platform string) error {
+	return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\n%s\n%s\nPlease check %s/config.yaml file", platform, platformDocker, platformKubernetes, utils.MesheryFolder)
+}
+
 // SystemCmd represents Meshery Lifecycle Management cli commands
 var SystemCmd = &cobra.Command{
 	Use:   "system",

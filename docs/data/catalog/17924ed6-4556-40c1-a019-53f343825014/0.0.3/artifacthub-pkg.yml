@@ -1,0 +1,24 @@
+version: 0.0.3
+name: ms-filestorage-worker-design
+displayName: ms-filestorage-worker-design
+createdAt: "2025-10-06T16:56:30Z"
+description: ms-filestorage-worker-design(Hacktober)
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/17924ed6-4556-40c1-a019-53f343825014/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 25304b14-6c70-42cd-b6cc-a86b829f90e9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/17924ed6-4556-40c1-a019-53f343825014-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/17924ed6-4556-40c1-a019-53f343825014-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
