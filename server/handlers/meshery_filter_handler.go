@@ -658,7 +658,7 @@ func (h *Handler) generateFilterComponent(config string) (string, error) {
 		if ok {
 			filterID, _ := uuid.NewV4()
 			filterSvc := component.ComponentDefinition{
-				Id:          filterID,
+				ID:          filterID,
 				DisplayName: strings.ToLower(filterCompDef.Component.Kind) + utils.GetRandomAlphabetsOfDigit(5),
 				Component: component.Component{
 					Kind:    filterCompDef.Component.Kind,
