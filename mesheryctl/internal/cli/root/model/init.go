@@ -6,23 +6,28 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"slices"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"golang.org/x/mod/semver"
 	"gopkg.in/yaml.v3"
 )
+
+type cmdModelInitFlags struct {
+	Path         string `json:"path" validate:"omitempty,relabspath"`
+	Version      string `json:"version" validate:"semver"`
+	OutputFormat string `json:"output-format" validate:"oneof=json yaml"`
+}
+
+var modelInitFlags cmdModelInitFlags
 
 var initModelCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Generates scaffolding for convenient model creation",
 	Long: `Generates a folder structure and guides user on model creation
-Documentation for models init can be found at https://docs.meshery.io/reference/mesheryctl/model/init`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/init`,
 	Example: `
 // generates a folder structure
 mesheryctl model init [model-name]
@@ -37,72 +42,41 @@ mesheryctl model init [model-name] --path [path-to-location] (default is current
 mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		{
-			// validate model name
-			if len(args) != 1 {
-				return ErrModelInitFromString(errInitOneArg)
-			}
-			modelName := args[0]
-			input := map[string]any{"name": modelName}
-			schema, err := initModelReadTemplate(initModelModelSchema)
-			if err != nil {
-				return ErrModelInit(err)
-			}
-			if err := initModelValidateDataOverSchema(schema, input); err != nil {
-				return ErrModelInit(
-					fmt.Errorf("invalid model name: %v", err),
-				)
-			}
-		}
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelInitFlags)
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
 
-		{
-			// validate format
-			format, _ := cmd.Flags().GetString("output-format")
-			getValidOutputFormatSlices := initModelGetValidOutputFormat()
-			if !slices.Contains(getValidOutputFormatSlices, format) {
-				validFormatsString := strings.Join(initModelGetValidOutputFormat(), ", ")
-				return ErrModelUnsupportedOutputFormat(
-					fmt.Sprintf(
-						errInitUnsupportedFormat,
-						validFormatsString,
-					),
-				)
-			}
+		// validate model name
+		if len(args) != 1 {
+			return ErrModelInitFromString(errInitOneArg)
 		}
-
-		{
-			// validate version
-			version, _ := cmd.Flags().GetString("version")
-			if !semver.IsValid(version) {
-				return ErrModelUnsupportedVersion(
-					errInitInvalidVersion,
-				)
-			}
+		modelName := args[0]
+		input := map[string]any{"name": modelName}
+		schema, err := initModelReadTemplate(initModelModelSchema)
+		if err != nil {
+			return ErrModelInit(err)
+		}
+		if err := initModelValidateDataOverSchema(schema, input); err != nil {
+			return ErrModelInit(
+				fmt.Errorf("invalid model name: %v", err),
+			)
 		}
 
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return ErrModelInit(err)
-		}
-
 		// validation done above that args contains exactly one argument
 		modelName := args[0]
-		path, _ := cmd.Flags().GetString("path")
+		path := modelInitFlags.Path
 		// immediately remove trailing folder separator
 		path = strings.TrimRight(path, string(os.PathSeparator))
 		// this will make it in one format
 		path = filepath.Join(path)
 
-		version, _ := cmd.Flags().GetString("version")
-		outputFormat, _ := cmd.Flags().GetString("output-format")
-
 		utils.Log.Infof("Creating new Meshery model: %s", modelName)
 
 		modelFolder := filepath.Join(path, modelName)
-		modelVersionFolder := filepath.Join(modelFolder, version)
+		modelVersionFolder := filepath.Join(modelFolder, modelInitFlags.Version)
 
 		{
 			// if model/version folder already exists return with error
@@ -143,7 +117,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 					}
 				}
 				for name, templatePath := range item.files {
-					content, err := getTemplateInOutputFormat(templatePath, outputFormat)
+					content, err := getTemplateInOutputFormat(templatePath, modelInitFlags.OutputFormat)
 					if err != nil {
 						return ErrModelInit(err)
 					}
@@ -151,7 +125,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 						itemFolderPath,
 						strings.Join(
-							[]string{name, outputFormat},
+							[]string{name, modelInitFlags.OutputFormat},
 							".",
 						),
 					)
@@ -175,9 +149,9 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 					map[string]string{
 						"{path}":               path,
 						"{modelName}":          modelName,
-						"{modelVersion}":       version,
+						"{modelVersion}":       modelInitFlags.Version,
 						"{modelFolder}":        modelFolder,
-						"{outputFormat}":       outputFormat,
+						"{outputFormat}":       modelInitFlags.OutputFormat,
 						"{modelVersionFolder}": modelVersionFolder,
 					},
 				),
@@ -204,15 +178,9 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 }
 
 func init() {
-	initModelCmd.Flags().StringP("path", "p", ".", "(optional) target directory (default: current dir)")
-	initModelCmd.Flags().StringP("version", "", "v0.1.0", "(optional) model version (default: v0.1.0)")
-	initModelCmd.Flags().StringP("output-format", "o", "json", "(optional) format to display in [json|yaml]")
-}
-
-func initModelGetValidOutputFormat() []string {
-	return []string{"json", "yaml"}
-	// TODO implement csv
-	// return []string{"json", "yaml", "csv"}
+	initModelCmd.Flags().StringVarP(&modelInitFlags.Path, "path", "p", ".", "(optional) target directory (default: current dir)")
+	initModelCmd.Flags().StringVarP(&modelInitFlags.Version, "version", "", "v0.1.0", "(optional) model version (default: v0.1.0)")
+	initModelCmd.Flags().StringVarP(&modelInitFlags.OutputFormat, "output-format", "o", "json", "(optional) format to display in [json|yaml]")
 }
 
 const (
@@ -231,7 +199,7 @@ const (
 // if csv output is not directory based
 // should it have different text for csv output format?
 const initModelNextStepsText = `Next steps:
-1. cd {modelFolder}
+1. cd {modelVersionFolder}
 2. Edit model.{outputFormat} to customize your model configuration
 3. Add your components in the components/ directory
 4. Define relationships in relationships/ directory

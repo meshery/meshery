@@ -1,0 +1,22 @@
+version: 0.0.1
+name: guestbook-app-(all-in-one)
+displayName: Guestbook App (All-in-One)
+createdAt: "2023-12-18T23:43:00Z"
+description: This is a sample guestbook app to demonstrate distributed systems
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/c288c409-3ca4-4b20-86a2-c9a28c58f986/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Ensure networking is setup properly.\n2. Ensure enough disk space is available \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a550f4d6-d3bd-44f1-9b4c-167114452062
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c288c409-3ca4-4b20-86a2-c9a28c58f986.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

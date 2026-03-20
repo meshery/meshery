@@ -18,7 +18,7 @@ func (kp *KeyPersister) GetUsersKeys(search, order, updatedAfter string) ([]byte
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "function", "category", "subcategory"})
 
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	count := int64(0)

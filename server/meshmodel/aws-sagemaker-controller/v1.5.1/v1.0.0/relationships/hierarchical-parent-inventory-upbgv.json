@@ -4,24 +4,24 @@
   "kind": "hierarchical",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
-    "version": "",
-    "name": "aws-sagemaker-controller",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.5.1"
+    },
+    "name": "aws-sagemaker-controller",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "v1.5.1"
-    }
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -34,24 +34,24 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "aws-sagemaker-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-sagemaker-controller",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "displayName"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -62,26 +62,26 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "aws-sagemaker-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-sagemaker-controller",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
                   "spec",
                   "modelPackageGroupName"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]

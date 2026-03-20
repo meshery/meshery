@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{listWorkspaceCmd, createWorkspaceCmd}
+	availableSubcommands = []*cobra.Command{listWorkspaceCmd, createWorkspaceCmd, viewWorkspaceCmd}
 	workspacesApiPath    = "api/workspaces"
 )
 
@@ -31,7 +31,7 @@ var WorkSpaceCmd = &cobra.Command{
 	Use:   "workspace",
 	Short: "Managge workspaces under an organization",
 	Long: `Create, list of workspaces under an organization
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/exp/workspace`,
 	Example: `
 
 // To view a list workspaces

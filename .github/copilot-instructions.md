@@ -9,7 +9,7 @@ Meshery is a cloud native manager that enables the design and management of Kube
 - **`/server`** - Meshery Server (Go/Golang backend)
 - **`/ui`** - Meshery UI (React/Next.js frontend)
 - **`/mesheryctl`** - Meshery CLI (Go/Golang command-line tool using Cobra framework)
-- **`/docs`** - Documentation (Jekyll-based static site)
+- **`/docs`** - Documentation (Hugo-based static site)
 - **`/install`** - Installation scripts and Docker configurations
 
 ## Tech Stack

@@ -24,7 +24,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -294,7 +293,6 @@ func getContexts(configFile string) ([]string, error) {
 }
 
 func setContext(configFile, cname string) error {
-	client := &http.Client{}
 	contextParams := map[string]string{
 		"contextName": cname,
 	}
@@ -310,9 +308,9 @@ func setContext(configFile, cname string) error {
 	if err != nil {
 		return utils.ErrUploadFileWithParams(err, configFile)
 	}
-	res, err := client.Do(req)
+	res, err := utils.MakeRequest(req)
 	if err != nil {
-		return utils.ErrRequestResponse(err)
+		return err
 	}
 	defer func() { _ = res.Body.Close() }()
 
@@ -320,7 +318,6 @@ func setContext(configFile, cname string) error {
 	if err != nil {
 		return utils.ErrReadResponseBody(err)
 	}
-	// TODO: Pretty print the output
 	utils.Log.Debugf("Set context API response: %s", string(body))
 	return nil
 }
@@ -340,23 +337,11 @@ func setToken() error {
 
 	chosenCtx := contexts[0]
 	if len(contexts) > 1 {
-		fmt.Println("List of available contexts: ")
-
-		prompt := promptui.Select{
-			Label: "Select context for the connection",
-			Items: contexts,
+		i, err := utils.RunSelectPrompt("Select context for the connection", contexts)
+		if err != nil {
+			return err
 		}
-
-		for {
-			i, _, err := prompt.Run()
-			if err != nil {
-				continue
-			}
-
-			chosenCtx = contexts[i]
-			break
-		}
-
+		chosenCtx = contexts[i]
 	}
 	utils.Log.Debugf("Chosen context : %s out of the %d available contexts", chosenCtx, len(contexts))
 

@@ -1,0 +1,20 @@
+version: 0.0.1
+name: limit-range
+displayName: Limit Range
+createdAt: "2024-01-14T09:39:28Z"
+description: "Kubernetes policies for resource allocation and usage limits within Pods and containers. It provides guidelines on setting constraints such as CPU and memory limits, ensuring efficient resource management across clusters. \n\nThis design supports enforcing resource quotas at the namespace level, promoting fair resource distribution and preventing resource contention. It emphasizes Kubernetes' flexibility in defining and enforcing resource limits based on application requirements and cluster capacity."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/d6d78cdd-6bc8-4cb9-8ed3-c392e6152576/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " Careful consideration is required when setting resource limits to avoid underprovisioning or overprovisioning resources, which can affect application performance and cluster efficiency. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

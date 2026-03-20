@@ -40,7 +40,7 @@ var viewEnvironmentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View registered environmnents",
 	Long: `View details of an environment registered in Meshery Server for a specific organization
-Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/view`,
 	Example: `
 // View details of a specific environment
 mesheryctl environment view --orgID [orgID]
@@ -73,7 +73,10 @@ mesheryctl environment view --orgID [orgID]
 		case 1:
 			selectedEnvironment = environmentResponse.Environments[0] // Update the type of selectedModel
 		default:
-			selectedEnvironment = selectEnvironmentPrompt(environmentResponse.Environments)
+			selectedEnvironment, err = selectEnvironmentPrompt(environmentResponse.Environments)
+			if err != nil {
+				return err
+			}
 		}
 
 		outputFormat := strings.ToLower(environmentViewFlagsProvided.outputFormat)
