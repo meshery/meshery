@@ -53,6 +53,9 @@ mesheryctl component list
 // Search for component(s)
 mesheryctl component search [component-name]
 
+// Search components filtered by model name
+mesheryctl component search --model [model-name]
+
 // View a specific component
 mesheryctl component view [component-name | component-id]
 	`,
