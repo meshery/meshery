@@ -1,6 +1,7 @@
 package root
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 	"testing"
@@ -83,13 +84,17 @@ func TestInitConfigUseCases(t *testing.T) {
 			origMesheryFolder := utils.MesheryFolder
 			origDefaultConfigPath := utils.DefaultConfigPath
 			origCfgFile := cfgFile
+			origLog := utils.Log
 
 			// Restore after each test
 			t.Cleanup(func() {
 				utils.MesheryFolder = origMesheryFolder
 				utils.DefaultConfigPath = origDefaultConfigPath
 				cfgFile = origCfgFile
+				utils.Log = origLog
 			})
+
+			utils.Log = utils.SetupMeshkitLogger("mesheryctl", false, io.Discard)
 
 			tt.setup(t)
 

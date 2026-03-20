@@ -1,0 +1,154 @@
+// FLEX /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+.flex {
+  display: grid;
+  // justify-content: space-evenly;
+  gap: var(--col-gap);
+  grid-template-columns: 1fr 1fr;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+  
+}
+
+// BUTTONS /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+.btn-primary {
+  padding: .8rem 1.4rem;
+  // background: var(--section-button);
+  position: relative;
+  border-radius: 11px;
+  color: white;
+  text-align: center;
+  font-size: 1.4rem;
+  -webkit-transition: background-color 0.9s ease-out;
+  -moz-transition: background-color 0.9s ease-out;
+  -o-transition: background-color 2.9s ease-out;
+  transition: background-color 0.9s ease-out;
+  overflow: hidden;
+  margin-bottom: 1rem;
+
+  &::after,
+  &::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: -1;
+    transition: all 0.3s;
+  }
+  &::after {
+    left: 0;
+    background: var(--section-button);
+  }
+  &::before {
+    left: 100%;
+    background: var(--section-button-hover);
+    
+  }
+
+  &:hover {
+    &::after {
+      left: -100%;
+      background: var(--section-button);
+    }
+    &::before {
+      left: 0%;
+      background: var(--section-button-hover);
+    }
+  }
+}
+
+// SVG's ///////////////////////////////////////////////////////////////////////////////////////////
+.svg-lg {
+  & svg {
+    width: calc(100% / 2.5);
+  }
+}
+
+// Embeds
+.iframe-container {
+  position: relative;
+  overflow: hidden;
+  padding-top: 56.25%;
+}
+
+.iframe-container iframe
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+iframe.container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+// SUMMARY AND DETAILS //////////////////////////////////////////
+details {
+  width: 100%;
+  margin: 0 auto ;
+  background-color: var( --color-details-background);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 .1rem 1rem -.5rem rgba(0,0,0,.4);
+  border-radius: 5px;
+  overflow: hidden;
+  font-size: 1rem;
+  padding: 0rem 1.5rem 0rem 1.5rem;
+  & > h6 { color: var(--color-primary-blonde)};
+  & > p { color: var(--color-secondary-dark)};
+}
+
+summary {
+  padding: .25rem 0rem;
+  margin-right: -1.5rem;
+  margin-left: -1.5rem;
+  display: block;
+  background-color: var(--color-summary-background);
+  color: var(--color-secondary-medium);
+  padding-left: 2.2rem;
+  position: relative;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: normal;
+}
+
+summary:before {
+  content: '';
+  border-width: .4rem;
+  border-style: solid;
+  border-color: transparent transparent transparent var( --color-secondary-dark);
+  position: absolute;
+  left: 1rem;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  height: .02rem;
+  margin: auto;
+  transform: rotate(0);
+  transform-origin: .2rem 50%;
+  transition: .25s transform ease;
+}
+
+/* THE MAGIC 🧙‍♀️ */
+details[open] > summary:before {
+  transform: rotate(90deg);
+}
+
+details summary::-webkit-details-marker {
+  display:none;
+}
+
+details > ul {
+  padding: 1rem auto;
+  margin-bottom: 0;
+}

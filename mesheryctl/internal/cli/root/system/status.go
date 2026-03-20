@@ -26,7 +26,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -34,7 +33,7 @@ import (
 var verboseStatus bool
 
 var linkDocStatus = map[string]string{
-	"link":    "![status-usage](/assets/img/mesheryctl/status.png)",
+	"link":    "![status-usage](/reference/images/status.png)",
 	"caption": "Usage of mesheryctl system status",
 }
 
@@ -52,7 +51,7 @@ mesheryctl system status --verbose
 	`,
 	Annotations: linkDocStatus,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
+		// Check prerequisite
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
 			PrintLogs:  false,
@@ -110,7 +109,7 @@ mesheryctl system status --verbose
 		}
 
 		switch currPlatform {
-		case "docker":
+		case platformDocker:
 			// List the running Meshery containers using compose library
 			composeClient, err := utils.NewComposeClient()
 			if err != nil {
@@ -123,7 +122,7 @@ mesheryctl system status --verbose
 			}
 
 			if strings.Contains(outputString, "meshery") {
-				log.Info(outputString)
+				utils.Log.Info(outputString)
 			}
 
 			hcOptions := &HealthCheckOptions{
@@ -143,20 +142,18 @@ mesheryctl system status --verbose
 			}
 
 			fallthrough
-		case "kubernetes":
+		case platformKubernetes:
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
 
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))
-
 			if err != nil {
 				return err
 			}
 
 			// List the pods in the MesheryNamespace
 			podList, err := utils.GetPodList(client, utils.MesheryNamespace)
-
 			if err != nil {
 				return err
 			}
@@ -208,7 +205,24 @@ mesheryctl system status --verbose
 			// Print the data to a table for readability
 			utils.PrintToTable(columnNames, data, nil)
 
-			log.Info("\nMeshery endpoint is " + currCtx.GetEndpoint())
+			configuredEndpoint := currCtx.GetEndpoint()
+			displayEndpoint := configuredEndpoint
+
+			if currPlatform == "kubernetes" {
+				endpoint, err := utils.GetMesheryEndpoint(cmd.Context(), client)
+				if err != nil && verboseStatus {
+					utils.Log.Warnf("Could not discover Meshery service endpoint: %v", err)
+				}
+				if err == nil && endpoint.External != nil && endpoint.External.Address != "" && endpoint.External.Address != "localhost" {
+					displayEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port)
+				}
+			}
+
+			utils.Log.Info(fmt.Sprintf("\nMeshery endpoint is %s", displayEndpoint))
+			if displayEndpoint != configuredEndpoint {
+				utils.Log.Info(fmt.Sprintf("Note: Your configured endpoint (%s) differs from the discovered endpoint.", configuredEndpoint))
+				utils.Log.Info("Run 'mesheryctl system dashboard' to update your configuration.")
+			}
 		}
 		return nil
 	},

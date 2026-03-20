@@ -166,7 +166,7 @@ func NewK8sContextWithServerID(
 	if err != nil {
 		return nil, err
 	}
-	uid := ksns.ObjectMeta.GetUID()
+	uid := ksns.GetUID()
 	ksUUID := uuid.FromStringOrNil(string(uid))
 
 	ctx.KubernetesServerID = &ksUUID
@@ -419,7 +419,7 @@ func (kc *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
 }
 
 func (kc *K8sContext) AssignVersion(handler *kubernetes.Client) error {
-	res, err := handler.KubeClient.DiscoveryClient.ServerVersion()
+	res, err := handler.KubeClient.ServerVersion()
 	if err != nil {
 		return ErrUnreachableKubeAPI(err, kc.Server)
 	}
@@ -452,7 +452,7 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 	if err != nil {
 		return ErrUnreachableKubeAPI(err, kc.Server)
 	}
-	uid := ksns.ObjectMeta.GetUID()
+	uid := ksns.GetUID()
 	ksUUID := uuid.FromStringOrNil(string(uid))
 
 	kc.KubernetesServerID = &ksUUID

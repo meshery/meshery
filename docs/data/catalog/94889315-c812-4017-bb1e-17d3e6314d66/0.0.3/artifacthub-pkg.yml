@@ -1,0 +1,24 @@
+version: 0.0.3
+name: logstash-8.5.1
+displayName: logstash-8.5.1
+createdAt: "2025-10-06T13:59:54Z"
+description: Logstash is an open source data processing engine. It ingests data from multiple sources, processes it, and sends the output to final destination in real-time. It is a core component of the ELK stack.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/94889315-c812-4017-bb1e-17d3e6314d66/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "When it comes to running the Elastic on Kubernetes infrastructure, it is recommended (ECK) as the best way to run and manage the Elastic Stack. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 30f6e17a-7492-45f9-a317-947d8fa6a6f5
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/94889315-c812-4017-bb1e-17d3e6314d66-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/94889315-c812-4017-bb1e-17d3e6314d66-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

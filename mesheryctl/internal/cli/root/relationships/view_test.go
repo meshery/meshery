@@ -1,14 +1,19 @@
 package relationships
 
 import (
+	"errors"
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestView(t *testing.T) {
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -19,22 +24,32 @@ func TestView(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
-			Name:             "View relationship without model name",
+			Name:             "given no model name provided when running relationship view then throw error",
 			Args:             []string{"view"},
-			URL:              "/api/meshmodels/models/kubernetes/relationships?pagesize=all",
-			Fixture:          "view.relationship.api.response.golden",
+			URL:              "/api/meshmodels/models/kubernetes/relationships",
+			Fixture:          "view.relationship.empty.response.golden",
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
 			ExpectError:      true,
-			ExpectedError:    utils.ErrInvalidArgument(errNoModelNameProvided),
+			ExpectedError:    utils.ErrInvalidArgument(errors.New(errInvalidArg)),
 		},
 		{
-			Name:             "View registered relationship",
+			Name:             "given model name provided when running relationship view then display registered relationship",
 			Args:             []string{"view", "kubernetes"},
-			URL:              "/api/meshmodels/models/kubernetes/relationships?pagesize=all",
+			URL:              "/api/meshmodels/models/kubernetes/relationships?page=0&pagesize=10",
 			Fixture:          "view.relationship.api.response.golden",
 			ExpectedResponse: "view.relationship.output.golden",
 			ExpectError:      false,
+		},
+		{
+			Name:             "given non existing model name provided when running relationship view then display no relationship found",
+			Args:             []string{"view", "nonexistent"},
+			URL:              "/api/meshmodels/models/nonexistent/relationships?page=0&pagesize=10",
+			Fixture:          "view.relationship.empty.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrNotFound(fmt.Errorf("No relationship(s) found for the model with name: %s", "nonexistent")),
 		},
 	}
 

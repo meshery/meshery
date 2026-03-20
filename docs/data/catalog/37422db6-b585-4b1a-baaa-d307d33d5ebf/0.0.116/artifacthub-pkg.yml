@@ -1,0 +1,24 @@
+version: 0.0.116
+name: edge-mount-relationship
+displayName: Edge-mount-relationship
+createdAt: "2024-09-26T19:50:45Z"
+description: 'An Edge-Mount Relationship in Meshery represents the assignment of persistent storage to Pods via PersistentVolumeClaims (PVC). This relationship models how Pods claim storage from PersistentVolumes (PV) for data persistence, ensuring that workloads have access to the required storage resources. '
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/37422db6-b585-4b1a-baaa-d307d33d5ebf/0.0.116/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Ensure the correct StorageClass is configured for your PersistentVolume.\n\n2. Verify that the requested storage size in the PersistentVolumeClaim matches the actual storage needs of your application.\n\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/37422db6-b585-4b1a-baaa-d307d33d5ebf-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/37422db6-b585-4b1a-baaa-d307d33d5ebf-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
