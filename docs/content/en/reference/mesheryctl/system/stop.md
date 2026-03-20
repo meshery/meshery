@@ -77,6 +77,11 @@ mesheryctl system stop --force
 </div>
 </pre>
 
+## Terminal Sessions
+
+Demonstration of `mesheryctl system stop`:
+{{< asciinema src="891567" rows="30" >}}
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

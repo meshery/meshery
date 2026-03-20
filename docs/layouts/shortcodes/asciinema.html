@@ -1,0 +1,9 @@
+{{- $src := .Get "src" -}}
+{{- $rows := .Get "rows" | default "24" -}}
+{{- $cols := .Get "cols" | default "220" -}}
+{{- $speed := .Get "speed" | default "1" -}}
+{{- $theme := .Get "theme" | default "asciinema" -}}
+
+<div class="asciinema-container">
+  <script src="https://asciinema.org/a/{{ $src }}.js" id="asciicast-{{ $src }}" async data-rows="{{ $rows }}" data-cols="{{ $cols }}" data-speed="{{ $speed }}" data-theme="{{ $theme }}"></script>
+</div>
