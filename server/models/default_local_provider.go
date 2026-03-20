@@ -1318,7 +1318,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	go func() {
 		id, _ := uuid.NewV4()
 		org := &organization.Organization{
-			Id:          id,
+			ID:          id,
 			Name:        "My Org",
 			Country:     "",
 			Region:      "",
@@ -1488,12 +1488,12 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID stri
 }
 
 func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	orgId := workspacePayload.OrganizationID
 	workspace := &workspace.Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationId: orgId,
+		OrganizationID: &orgId,
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}
@@ -1502,13 +1502,13 @@ func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *
 
 func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
 	id, _ := uuid.FromString(workspaceID)
-	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	orgId := workspacePayload.OrganizationID
 	workspace := &workspace.Workspace{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationId: orgId,
+		OrganizationID: &orgId,
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}

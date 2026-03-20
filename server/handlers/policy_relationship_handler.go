@@ -72,13 +72,13 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 		return alias, false
 	}
 
-	if to.Id == nil || from.Id == nil {
+	if to.ID == nil || from.ID == nil {
 		return alias, false
 	}
 
-	alias.ImmediateParentId = *to.Id
-	alias.AliasComponentId = *from.Id
-	alias.RelationshipId = relationshipDeclaration.Id
+	alias.ImmediateParentId = *to.ID
+	alias.AliasComponentId = *from.ID
+	alias.RelationshipId = relationshipDeclaration.ID
 	alias.ImmediateRefFieldPath = mutatedRefs[0]
 
 	return alias, true
@@ -93,7 +93,7 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 			continue
 		}
 
-		if alias.AliasComponentId == component.Id {
+		if alias.AliasComponentId == component.ID {
 			return alias, true
 		}
 	}
@@ -104,7 +104,7 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 // getComponentById retrieves a component from the design by its ID
 func getComponentById(design pattern.PatternFile, id uuid.UUID) *component.ComponentDefinition {
 	for _, comp := range design.Components {
-		if comp.Id == id {
+		if comp.ID == id {
 			return comp
 		}
 	}
@@ -274,7 +274,7 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 		}
 		_component, _ := entities[0].(*component.ComponentDefinition)
 
-		_component.Id = _c.Id
+		_component.ID = _c.ID
 		if _c.DisplayName != "" {
 			_component.DisplayName = _c.DisplayName
 		} else {
@@ -330,7 +330,7 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 		_c := cmp
 
 		for _, c := range cmps {
-			if c.Id == _c.Id {
+			if c.ID == _c.ID {
 				_c = &c
 				break
 			}
@@ -380,7 +380,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 	}
 	// decode the pattern file
-	patternUUID := relationshipPolicyEvalPayload.Design.Id
+	patternUUID := relationshipPolicyEvalPayload.Design.ID
 	eventBuilder.ActedUpon(patternUUID)
 
 	evalRespChan := make(chan pattern.EvaluationResponse)
