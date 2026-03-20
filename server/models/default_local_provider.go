@@ -1489,7 +1489,7 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID stri
 
 func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
 	orgId := workspacePayload.OrganizationID
-	workspace := &workspace.Workspace{
+	ws := &Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
@@ -1497,13 +1497,13 @@ func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}
-	return l.WorkspacePersister.SaveWorkspace(workspace)
+	return l.WorkspacePersister.SaveWorkspace(ws)
 }
 
-func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
+func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*Workspace, error) {
 	id, _ := uuid.FromString(workspaceID)
 	orgId := workspacePayload.OrganizationID
-	workspace := &workspace.Workspace{
+	ws := &Workspace{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
@@ -1512,7 +1512,7 @@ func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}
-	return l.WorkspacePersister.UpdateWorkspaceByID(workspace)
+	return l.WorkspacePersister.UpdateWorkspaceByID(ws)
 }
 
 func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {

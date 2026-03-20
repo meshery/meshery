@@ -5704,11 +5704,11 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 	return nil, ErrFetch(fmt.Errorf("failed to delete workspace"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
+func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.WorkspacePayload, workspaceID string) (*Workspace, error) {
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvailable)
 
-		return &workspace.Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
+		return &Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
@@ -5743,11 +5743,11 @@ func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.Works
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var workspace workspace.Workspace
-		if err = json.Unmarshal(bdr, &workspace); err != nil {
+		var ws Workspace
+		if err = json.Unmarshal(bdr, &ws); err != nil {
 			return nil, err
 		}
-		return &workspace, nil
+		return &ws, nil
 	}
 
 	return nil, ErrFetch(fmt.Errorf("failed to update the workspace"), "Workspace", resp.StatusCode)
