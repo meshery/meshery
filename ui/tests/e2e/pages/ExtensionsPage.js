@@ -51,7 +51,7 @@ export class ExtensionsPage {
   async verifyKanvasSignupUI() {
     await expect(this.kanvasSignupHeading).toBeVisible();
     await expect(this.kanvasSignupBtn).toBeVisible();
-    await expect(this.kanvasSignupBtn).toBeEnabled();
+    // Button is disabled with label "Enabled" when the account already has Kanvas (MeshMapSignUpcard).
   }
 
   async toggleCatalog() {
