@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 20th 2026, 4:45:47 am
+- Testing started at: March 20th 2026, 4:04:03 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 7 skipped
 
-⌛ _Duration: 4 minutes and 11 seconds_
+⌛ _Duration: 4 minutes and 20 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -110,20 +110,6 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
-<summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
 <summary>❌ should identify relationships for All Relationships (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/relationship_evaluation.spec.js`
@@ -145,6 +131,20 @@ Received: [31mfalse[39m
  [90m 62 |[39m
  [90m 63 |[39m       [36mconst[39m actualRelationships [33m=[39m responseBody[33m.[39mdesign[33m.[39mrelationships [33m||[39m [][33m;[39m[0m
 ```
+
+</details>
+
+<details>
+<summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
 
 </details>
 
