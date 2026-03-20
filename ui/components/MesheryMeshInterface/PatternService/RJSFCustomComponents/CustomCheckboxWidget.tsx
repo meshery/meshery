@@ -49,7 +49,7 @@ export const CustomCheckboxWidget = (props) => {
             {safeLabel}
             {descriptionStr && (
               <CustomTextTooltip
-                flag={props?.formContext?.overrideFlag}
+                flag={(props?.formContext || props?.registry?.formContext)?.overrideFlag}
                 title={descriptionStr}
                 interactive={true}
               >

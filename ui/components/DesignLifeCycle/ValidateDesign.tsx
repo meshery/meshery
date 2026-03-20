@@ -77,7 +77,7 @@ const ValidationResults_ = (props) => {
   } = props;
 
   const componentsWithErrors = Object.values(validationResults).filter(
-    (result) => result.errors?.length && !result?.component?.metatadata?.isAnnotation,
+    (result) => result.errors?.length && !result?.component?.metadata?.isAnnotation,
   );
 
   const isCurrentComponent = (err) => err.component.id == currentNodeId;

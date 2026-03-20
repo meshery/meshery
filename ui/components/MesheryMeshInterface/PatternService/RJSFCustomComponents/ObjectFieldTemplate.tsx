@@ -36,13 +36,15 @@ const ObjectFieldTemplate = ({
   readonly,
   uiSchema,
   idSchema,
+  fieldPathId,
   schema,
   formData,
   onAddClick,
+  onAddProperty,
 
   errorSchema,
 }) => {
-  const safeId = idSchema?.$id ?? 'object-field';
+  const safeId = fieldPathId?.$id ?? idSchema?.$id ?? 'object-field';
   const additional = schema?.__additional_property; // check if the object is additional
   const theme = useTheme();
   const rawErrors = getRawErrors(errorSchema);
@@ -50,7 +52,7 @@ const ObjectFieldTemplate = ({
   // If the parent type is an `array`, then expand the current object.
   const [show, setShow] = React.useState(uiSchema['ui:options']?.expand || false);
   properties.forEach((property, index) => {
-    if (schema.properties[property.name].type) {
+    if (schema.properties?.[property.name]?.type) {
       properties[index].type = schema.properties[property.name].type;
       properties[index].__additional_property =
         schema.properties[property.name]?.__additional_property || false;
@@ -59,6 +61,9 @@ const ObjectFieldTemplate = ({
   const safeTitleStr = safeStringTitle(additional ? 'Value' : (uiSchema['ui:title'] ?? title));
   const safeDescriptionStr =
     description != null && typeof description === 'string' ? description : '';
+
+  const handleAddProperty =
+    onAddProperty || (typeof onAddClick === 'function' ? onAddClick(schema) : undefined);
 
   const CustomTitleField = ({ title: titleProp, id, description: descProp, properties }) => {
     const titleStr = safeStringTitle(titleProp ?? safeTitleStr);
@@ -74,7 +79,7 @@ const ObjectFieldTemplate = ({
             >
               <IconButton
                 className="object-property-expand"
-                onClick={typeof onAddClick === 'function' ? onAddClick(schema) : undefined}
+                onClick={handleAddProperty}
                 disabled={disabled || readonly}
               >
                 <AddIcon

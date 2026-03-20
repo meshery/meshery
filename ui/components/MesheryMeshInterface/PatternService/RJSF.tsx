@@ -7,6 +7,7 @@ import darkRjsfTheme from '../../../themes/rjsf';
 import { createTheme, useTheme, ThemeProvider } from '@sistent/sistent';
 import { CustomTextTooltip } from './CustomTextTooltip';
 import MesheryArrayFieldTemplate from './RJSFCustomComponents/ArrayFieldTemlate';
+import MesheryArrayFieldItemTemplate from './RJSFCustomComponents/ArrayFieldItemTemplate';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
 import { CustomFieldTemplate } from './RJSFCustomComponents/FieldTemplate';
@@ -111,10 +112,11 @@ function RJSFForm_({
           validator={validator || customValidator}
           templates={{
             ArrayFieldTemplate,
+            ArrayFieldItemTemplate: MesheryArrayFieldItemTemplate,
             ObjectFieldTemplate,
             WrapIfAdditionalTemplate,
             BaseInputTemplate,
-            FieldTemplate: CustomFieldTemplate, // applying field template universally to every field type.
+            FieldTemplate: CustomFieldTemplate,
             ...fieldTemplates,
           }}
           formContext={{ overrideFlag: override, CustomTextTooltip: CustomTextTooltip }}

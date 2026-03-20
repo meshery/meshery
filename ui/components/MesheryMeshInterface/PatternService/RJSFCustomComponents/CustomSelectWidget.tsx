@@ -39,10 +39,10 @@ export default function CustomSelectWidget({
   onBlur,
   onFocus,
   rawErrors,
-  // registry,
+  registry,
   // uiSchema,
   // hideError,
-  formContext,
+  formContext: formContextProp,
   ...textFieldProps
 }) {
   const { enumOptions, enumDisabled, emptyValue: optEmptyVal } = options;
@@ -62,6 +62,7 @@ export default function CustomSelectWidget({
   const _onFocus = ({ target: { value } }) =>
     onFocus(id, enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
   const selectedIndexes = enumOptionsIndexForValue(value, enumOptions, multiple);
+  const formContext = formContextProp || registry?.formContext;
   const theme = useTheme();
 
   const labelContent = labelValue(label, hideLabel || !label, false);
@@ -88,51 +89,53 @@ export default function CustomSelectWidget({
         onBlur={_onBlur}
         onFocus={_onFocus}
         size="small"
-        InputProps={{
-          style: { paddingRight: '0px' },
-          endAdornment: (
-            <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
-              {rawErrors?.length > 0 && (
-                <CustomTextTooltip
-                  bgColor={ERROR_COLOR}
-                  flag={formContext?.overrideFlag}
-                  title={rawErrors?.join('  ')}
-                  interactive={true}
-                >
-                  <IconButton component="span" size="small">
-                    <ErrorOutlineIcon
-                      width="14px"
-                      height="14px"
-                      fill={ERROR_COLOR}
-                      style={{ verticalAlign: 'middle', ...iconSmall }}
-                    />
-                  </IconButton>
-                </CustomTextTooltip>
-              )}
-              {typeof schema?.description === 'string' && schema.description && (
-                <CustomTextTooltip
-                  flag={formContext?.overrideFlag}
-                  title={schema.description}
-                  interactive={true}
-                >
-                  <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
-                    <HelpOutlineIcon
-                      width="14px"
-                      height="14px"
-                      fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
-                      style={{ verticalAlign: 'middle', ...iconSmall }}
-                    />
-                  </IconButton>
-                </CustomTextTooltip>
-              )}
-            </InputAdornment>
-          ),
-        }}
         {...textFieldProps}
         select
-        InputLabelProps={{
-          ...textFieldProps.InputLabelProps,
-          shrink: !isEmpty,
+        slotProps={{
+          input: {
+            style: { paddingRight: '0px' },
+            endAdornment: (
+              <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
+                {rawErrors?.length > 0 && (
+                  <CustomTextTooltip
+                    bgColor={ERROR_COLOR}
+                    flag={formContext?.overrideFlag}
+                    title={rawErrors?.join('  ')}
+                    interactive={true}
+                  >
+                    <IconButton component="span" size="small">
+                      <ErrorOutlineIcon
+                        width="14px"
+                        height="14px"
+                        fill={ERROR_COLOR}
+                        style={{ verticalAlign: 'middle', ...iconSmall }}
+                      />
+                    </IconButton>
+                  </CustomTextTooltip>
+                )}
+                {typeof schema?.description === 'string' && schema.description && (
+                  <CustomTextTooltip
+                    flag={formContext?.overrideFlag}
+                    title={schema.description}
+                    interactive={true}
+                  >
+                    <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
+                      <HelpOutlineIcon
+                        width="14px"
+                        height="14px"
+                        fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
+                        style={{ verticalAlign: 'middle', ...iconSmall }}
+                      />
+                    </IconButton>
+                  </CustomTextTooltip>
+                )}
+              </InputAdornment>
+            ),
+          },
+          inputLabel: {
+            ...textFieldProps.InputLabelProps,
+            shrink: !isEmpty,
+          },
         }}
         SelectProps={{
           ...textFieldProps.SelectProps,
