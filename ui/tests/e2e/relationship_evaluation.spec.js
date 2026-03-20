@@ -2,6 +2,10 @@ import { test, expect } from '@playwright/test';
 import { ENV } from './env';
 import _ from 'lodash';
 
+// Large design + CPU-heavy evaluation; default API request timeout is too low for CI.
+const ALL_RELATIONSHIPS_DESIGN_ID = 'a674263f-2e62-49e5-a986-2585b13c6591';
+const LARGE_EVALUATE_TIMEOUT_MS = 5 * 60 * 1000;
+
 const DESIGNS_TO_TEST = [
   {
     id: '13e803b7-596c-4620-bdc4-4d3a28a027a2',
@@ -36,8 +40,12 @@ const DESIGNS_TO_TEST = [
 test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
   for (const { id, name } of DESIGNS_TO_TEST) {
     test(`should identify relationships for ${name}`, async ({ request }, testInfo) => {
+      const longRequest =
+        id === ALL_RELATIONSHIPS_DESIGN_ID ? { timeout: LARGE_EVALUATE_TIMEOUT_MS } : {};
+
       const designResponse = await request.get(
         `${ENV.REMOTE_PROVIDER_URL}/api/content/patterns/${id}`,
+        longRequest,
       );
       const responseJson = await designResponse.json();
       const design = JSON.parse(responseJson.pattern_file);
@@ -47,6 +55,7 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
       const response = await request.post(
         `${ENV.MESHERY_SERVER_URL}/api/meshmodels/relationships/evaluate`,
         {
+          ...longRequest,
           data: {
             design: designToTest,
             options: {
