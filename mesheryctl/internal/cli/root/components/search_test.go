@@ -30,7 +30,7 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%v\n%v", errInvalidArg, searchUsageMsg)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("at least one of [query-text] or [--model] is required\n\n%v", searchUsageMsg)),
 		},
 		{
 			Name:             "given multiple argument provided when component search then throw error",
