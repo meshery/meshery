@@ -30,10 +30,18 @@ mesheryctl model view [model-name]
 </div>
 </pre> 
 
-View a specific model from current provider in JSON format
+View a specific model in specifed format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model view [model-name] --output-format json
+mesheryctl model view [model-name] --output-format [json|yaml]
+
+</div>
+</pre> 
+
+View a specific model in specified format and save it as a file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model view [model-name] --output-format [json|yaml] --save
 
 </div>
 </pre> 
@@ -44,6 +52,7 @@ mesheryctl model view [model-name] --output-format json
 <div class='codeblock'>
   -h, --help                   help for view
   -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
+  -s, --save                   (optional) save output as a JSON/YAML file
 
 </div>
 </pre>

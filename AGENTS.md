@@ -406,6 +406,37 @@ directly with Meshery Server APIs and can manage local Docker containers or Kube
 - **Pre-commit**: Husky hooks in `ui/.husky/` run linting before commits.
 - **Makefile Targets**: Extend `Makefile` or `install/Makefile.core.mk` for custom build steps.
 
+## Coding Agents
+
+Reusable agent definitions live in `.agents/`. These are LLM-agnostic — any coding assistant can use them.
+
+| Agent | File | Purpose |
+|-------|------|---------|
+| Code Reviewer | `.agents/code-reviewer.md` | Parallel code review across Go + frontend |
+| Security Reviewer | `.agents/security-reviewer.md` | Security audit for infrastructure-managing code |
+| Meshery Code Contributor | `.agents/meshery-code-contributor.md` | Full-stack code contributions (Go, React, CLI) |
+| Meshery Docs Contributor | `.agents/meshery-docs-contributor.md` | Hugo-based documentation contributions |
+| GitHub Actions Engineer | `.agents/github-actions-engineer.md` | CI/CD workflow design and debugging |
+| Relationship Fixture Agent | `.agents/relationship-fixture-agent.md` | Create relationship test fixture designs |
+
+## Skills
+
+Packaged, repeatable workflows live in `.agents/skills/`. Each skill has a `SKILL.md` with instructions.
+
+| Skill | Directory | Invocation | Purpose |
+|-------|-----------|------------|---------|
+| gen-test | `.agents/skills/gen-test/` | User-invoked | Generate idiomatic Go tests |
+| api-doc | `.agents/skills/api-doc/` | User or agent | Document REST/GraphQL endpoints |
+
+## Automation Hooks
+
+Standalone hook scripts in `.agents/hooks/` can be wired into any coding agent's hook system or run manually:
+
+| Hook | Script | Trigger | Purpose |
+|------|--------|---------|---------|
+| Format Frontend | `.agents/hooks/format-frontend.sh` | Post-edit | Auto-format JS/TS files with Prettier |
+| Block Lock Files | `.agents/hooks/block-lockfiles.sh` | Pre-edit | Prevent direct edits to lock files |
+
 ## Further Reading
 
 - [Contributing Guide](./CONTRIBUTING.md) – Start here for onboarding.
