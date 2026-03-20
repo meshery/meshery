@@ -37,7 +37,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		order = defaultOrderUpdatedAtDesc
 	}
 
-	query := wp.DB.Model(&workspace.Workspace{})
+	query := wp.DB.Model(&Workspace{})
 
 	// Filter by organization ID
 	if orgID != "" {
@@ -65,7 +65,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	count := int64(0)
 	query.Table("workspaces").Count(&count)
 
-	workspacesFetched := []workspace.Workspace{}
+	workspacesFetched := []Workspace{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
@@ -84,12 +84,19 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&workspacesFetched)
 	}
 
+	// Convert to schema workspace types for the response
+	schemaWorkspaces := make([]workspace.Workspace, len(workspacesFetched))
+	for i, w := range workspacesFetched {
+		sw := w.ToSchemaWorkspace()
+		schemaWorkspaces[i] = *sw
+	}
+
 	// Prepare the response
 	workspacesPage := &workspace.WorkspacePage{
 		Page:       int(pageUint),
 		PageSize:   len(workspacesFetched),
 		TotalCount: int(count),
-		Workspaces: workspacesFetched,
+		Workspaces: schemaWorkspaces,
 	}
 
 	// Marshal the response to JSON
@@ -101,20 +108,21 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) SaveWorkspace(workspace *workspace.Workspace) ([]byte, error) {
-	if workspace.ID == uuid.Nil {
+func (wp *WorkspacePersister) SaveWorkspace(ws *workspace.Workspace) ([]byte, error) {
+	if ws.ID == uuid.Nil {
 		id, err := uuid.NewV4()
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
 		}
-		workspace.ID = id
+		ws.ID = id
 	}
 
-	if err := wp.DB.Create(workspace).Error; err != nil {
+	dbWs := WorkspaceFromSchema(ws)
+	if err := wp.DB.Create(dbWs).Error; err != nil {
 		return nil, ErrDBCreate(err)
 	}
 
-	wsJSON, err := json.Marshal(workspace)
+	wsJSON, err := json.Marshal(ws)
 	if err != nil {
 		return nil, err
 	}
@@ -122,20 +130,21 @@ func (wp *WorkspacePersister) SaveWorkspace(workspace *workspace.Workspace) ([]b
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([]byte, error) {
-	err := wp.DB.Model(&workspace).Find(&workspace).Error
+func (wp *WorkspacePersister) DeleteWorkspace(ws *workspace.Workspace) ([]byte, error) {
+	dbWs := WorkspaceFromSchema(ws)
+	err := wp.DB.Model(dbWs).Find(dbWs).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, ErrResultNotFound(err)
 		}
 	}
-	err = wp.DB.Delete(workspace).Error
+	err = wp.DB.Delete(dbWs).Error
 	if err != nil {
 		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
 	}
 
 	// Marshal the workspace to JSON
-	wsJSON, err := json.Marshal(workspace)
+	wsJSON, err := json.Marshal(ws)
 	if err != nil {
 		return nil, err
 	}
@@ -144,25 +153,29 @@ func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([
 }
 
 func (wp *WorkspacePersister) UpdateWorkspaceByID(selectedWorkspace *workspace.Workspace) (*workspace.Workspace, error) {
-	err := wp.DB.Save(selectedWorkspace).Error
+	dbWs := WorkspaceFromSchema(selectedWorkspace)
+	err := wp.DB.Save(dbWs).Error
 	if err != nil {
 		return nil, ErrDBPut(err)
 	}
 
-	updatedWorkspace := workspace.Workspace{}
-	err = wp.DB.Model(&updatedWorkspace).Where("id = ?", selectedWorkspace.ID).First(&updatedWorkspace).Error
+	updatedDbWs := Workspace{}
+	err = wp.DB.Model(&updatedDbWs).Where("id = ?", selectedWorkspace.ID).First(&updatedDbWs).Error
 	if err != nil {
 		return nil, ErrDBRead(err)
 	}
-	return selectedWorkspace, nil
+	return updatedDbWs.ToSchemaWorkspace(), nil
 }
 
 // Get workspace by ID
 func (wp *WorkspacePersister) GetWorkspace(id uuid.UUID) (*workspace.Workspace, error) {
-	workspace := workspace.Workspace{}
+	dbWs := Workspace{}
 	query := wp.DB.Where("id = ?", id)
-	err := query.First(&workspace).Error
-	return &workspace, err
+	err := query.First(&dbWs).Error
+	if err != nil {
+		return nil, err
+	}
+	return dbWs.ToSchemaWorkspace(), nil
 }
 
 // GetWorkspaceByID returns a single workspace by ID

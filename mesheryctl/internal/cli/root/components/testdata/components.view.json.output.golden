@@ -23,7 +23,10 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "2025-03-30T19:59:46.350667005Z",
       "updated_at": "2025-03-30T19:59:46.350667005Z",
-      "deleted_at": {"Time": "0001-01-01T00:00:00Z", "Valid": false},
+      "deleted_at": {
+        "Time": "0001-01-01T00:00:00Z",
+        "Valid": false
+      },
       "schemaVersion": ""
     },
     "connection_id": "fd01c4e7-14ae-4435-8236-adfb9cea0395",
@@ -53,16 +56,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#ff9900",
