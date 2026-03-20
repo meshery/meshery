@@ -2,7 +2,7 @@
 name: 📄 Documentation issue
 about: Issues related to documentation.
 title: '[Docs]'
-labels: 'area/docs, framework/jekyll, language/markdown, help wanted'
+labels: 'area/docs, framework/hugo, language/markdown, help wanted'
 assignees: ''
 ---
 ### Current State

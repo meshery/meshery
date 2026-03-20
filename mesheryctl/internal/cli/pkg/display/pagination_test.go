@@ -222,8 +222,8 @@ func TestPromptAsyncPagination(t *testing.T) {
 		Items []testItem `json:"items"`
 	}
 
-	extractItems := func(data *promptAPIResponse) []testItem {
-		return data.Items
+	extractItems := func(data *promptAPIResponse) ([]testItem, int64) {
+		return data.Items, int64(len(data.Items))
 	}
 
 	formatLabel := func(rows []testItem) []string {
@@ -235,23 +235,25 @@ func TestPromptAsyncPagination(t *testing.T) {
 	}
 
 	tests := []struct {
-		name          string
-		searchTerm    string
-		apiItems      []testItem
-		apiStatusCode int
-		hasToken      bool
-		expectError   bool
-		expectItem    *testItem
-		errContains   string
+		name           string
+		searchTerm     string
+		errNotFoundMsg string
+		apiItems       []testItem
+		apiStatusCode  int
+		hasToken       bool
+		expectError    bool
+		expectItem     *testItem
+		errContains    string
 	}{
 		{
-			name:          "Given_Zero_Results_When_PromptAsyncPagination_Then_ErrNotFound",
-			searchTerm:    "nonexistent",
-			apiItems:      []testItem{},
-			apiStatusCode: 200,
-			hasToken:      true,
-			expectError:   true,
-			errContains:   "no results for nonexistent",
+			name:           "Given_Zero_Results_When_PromptAsyncPagination_Then_ErrNotFound",
+			searchTerm:     "nonexistent",
+			errNotFoundMsg: "No model with name 'nonexistent' found",
+			apiItems:       []testItem{},
+			apiStatusCode:  200,
+			hasToken:       true,
+			expectError:    true,
+			errContains:    "No model with name 'nonexistent' found",
 		},
 		{
 			name:       "Given_Single_Result_When_PromptAsyncPagination_Then_AutoSelect",
@@ -311,8 +313,9 @@ func TestPromptAsyncPagination(t *testing.T) {
 			var result testItem
 			err = PromptAsyncPagination(
 				DisplayDataAsync{
-					UrlPath:    "test",
-					SearchTerm: tt.searchTerm,
+					UrlPath:        "test",
+					SearchTerm:     tt.searchTerm,
+					ErrNotFoundMsg: tt.errNotFoundMsg,
 				},
 				formatLabel,
 				extractItems,

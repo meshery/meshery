@@ -4,12 +4,19 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
+
+type cmdModelSearchFlags struct {
+	Page     int `json:"page" validate:"min=1"`
+	PageSize int `json:"pagesize" validate:"min=1"`
+}
+
+var modelSearchFlags cmdModelSearchFlags
 
 var searchModelCmd = &cobra.Command{
 	Use:   "search",
@@ -19,7 +26,16 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/model/sea
 	Example: `
 // Search model from current provider
 mesheryctl model search [query-text]
+
+// Search list of models for a specified page
+mesheryctl model search [query-text] --page [page-number]
+
+// Search list of models for a specified pagesize
+mesheryctl model search [query-text] --pagesize [pagesize-number]
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelSearchFlags)
+	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return utils.ErrInvalidArgument(errors.New(errSearchModelName))
@@ -27,12 +43,23 @@ mesheryctl model search [query-text]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		queryText := args[0]
-		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s?search=%s&pagesize=all", modelsApiPath, url.QueryEscape(queryText)))
-		if err != nil {
-			return err
+
+		page, _ := cmd.Flags().GetInt("page")
+		pageSize, _ := cmd.Flags().GetInt("pagesize")
+		modelData := display.DisplayDataAsync{
+			UrlPath:  fmt.Sprintf("%s?search=%s", modelsApiPath, url.QueryEscape(args[0])),
+			DataType: "model",
+			Header:   []string{"ID", "Model", "Category", "Version"},
+			Page:     page,
+			PageSize: pageSize,
+			IsPage:   cmd.Flags().Changed("page"),
 		}
 
-		return displayModels(modelsResponse, cmd)
+		return display.ListAsyncPagination(modelData, generateModelDataToDisplay)
 	},
+}
+
+func init() {
+	searchModelCmd.Flags().IntVarP(&modelSearchFlags.Page, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	searchModelCmd.Flags().IntVarP(&modelSearchFlags.PageSize, "pagesize", "s", 10, "(optional) List next set of models with --pagesize (default = 10)")
 }

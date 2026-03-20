@@ -4,6 +4,7 @@
   "kind": "hierarchical",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "line-color": "#00B39F",
       "line-style": "solid",
@@ -12,20 +13,19 @@
       "svgWhite": "",
       "target-arrow-color": "#00B39F",
       "target-arrow-shape": "triangle"
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
-    "version": "",
-    "name": "meshery-shapes",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "0.7.2"
+    },
+    "name": "meshery-shapes",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "0.7.2"
-    }
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -35,19 +35,18 @@
           {
             "id": null,
             "kind": "*",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "*",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "*",
               "registrant": {
                 "kind": ""
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": null
           }
@@ -56,19 +55,18 @@
           {
             "id": null,
             "kind": "Section",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "meshery-core",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "meshery-core",
               "registrant": {
                 "kind": ""
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": null
           }

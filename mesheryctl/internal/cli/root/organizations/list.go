@@ -24,17 +24,17 @@ var listOrgCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered organizations",
 	Long: `List all registered organizations with their id, name and date of creation. Organization will be returned based on provider you logged in.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/exp/organizations/list
+Find more information at: https://docs.meshery.io/reference/mesheryctl/organizations/list
 	`,
 	Example: `
 // list all organizations
-mesheryctl exp organization list
+mesheryctl organization list
 
 // list organizations for a specified page
-mesheryctl exp organization list --page [page-number]
+mesheryctl organization list --page [page-number]
 
-// list organizations for a specified page
-mesheryctl exp organization list --count
+// Display number of available organizations
+mesheryctl organization list --count
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		page, _ := cmd.Flags().GetInt("page")
@@ -58,7 +58,7 @@ func processOrgData(orgs *models.OrganizationsPage) ([][]string, int64) {
 	var rows [][]string
 	for _, org := range orgs.Organizations {
 		rows = append(rows, []string{
-			org.Id.String(),
+			org.ID.String(),
 			org.Name,
 			org.CreatedAt.Format("01-02-2006"),
 		})
