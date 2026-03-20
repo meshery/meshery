@@ -71,6 +71,14 @@ func setNewDBInstance() {
 		err = ErrInitializeDBHandler(err)
 		log.Error(err)
 	}
+	sqlDB, err := dbHandler.DB.DB()
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	sqlDB.SetMaxOpenConns(1)
+	sqlDB.SetMaxIdleConns(1)
+	sqlDB.SetConnMaxLifetime(0)
 }
 
 func GetNewDBInstance() *database.Handler {
