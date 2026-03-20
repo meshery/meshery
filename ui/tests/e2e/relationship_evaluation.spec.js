@@ -30,15 +30,17 @@ const DESIGNS_TO_TEST = [
   {
     id: 'a674263f-2e62-49e5-a986-2585b13c6591',
     name: 'All Relationships',
+    evaluateTimeoutMs: 300_000,
   },
 ];
 
 test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
-  for (const { id, name } of DESIGNS_TO_TEST) {
-    test(`should identify relationships for ${name}`, async ({ request }, testInfo) => {
-      // Large designs (e.g. "All Relationships") can exceed the default 30s API timeout.
-      const apiTimeout = 120_000;
-      const designResponse = await request.get(
+  for (const { id, name, evaluateTimeoutMs } of DESIGNS_TO_TEST) {
+    // Use page.request (not the isolated request fixture) so the Meshery session
+    // cookies from storageState are sent to /api/meshmodels/relationships/evaluate.
+    test(`should identify relationships for ${name}`, async ({ page }, testInfo) => {
+      const apiTimeout = evaluateTimeoutMs ?? 120_000;
+      const designResponse = await page.request.get(
         `${ENV.REMOTE_PROVIDER_URL}/api/content/patterns/${id}`,
         { timeout: apiTimeout },
       );
@@ -48,7 +50,7 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
 
       const designToTest = { ...design, relationships: [] };
 
-      const response = await request.post(
+      const response = await page.request.post(
         `${ENV.MESHERY_SERVER_URL}/api/meshmodels/relationships/evaluate`,
         {
           data: {
@@ -62,7 +64,12 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
         },
       );
 
-      expect(response.ok()).toBeTruthy();
+      if (!response.ok()) {
+        const errText = await response.text();
+        throw new Error(
+          `POST /api/meshmodels/relationships/evaluate failed: ${response.status()} ${response.statusText()} — ${errText.slice(0, 800)}`,
+        );
+      }
       const responseBody = await response.json();
 
       const actualRelationships = responseBody.design.relationships || [];
