@@ -355,6 +355,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	user *models.User,
 	provider models.Provider,
 ) {
+	evalCtx := r.Context()
+
 	userUUID := user.ID
 	defer func() {
 		_ = r.Body.Close()
@@ -424,6 +426,9 @@ func (h *Handler) EvaluateRelationshipPolicy(
 			http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
 			return
 		}
+	case <-evalCtx.Done():
+		h.log.Info("Evaluation terminated: request context closed")
+		return
 	}
 }
 
