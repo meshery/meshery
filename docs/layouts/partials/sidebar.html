@@ -19,7 +19,10 @@
             e.preventDefault();
             e.stopPropagation();
             let targetEl = document.querySelector(this.getAttribute("data-target"));
-            if (targetEl) targetEl.classList.toggle("show");
+            if (targetEl) {
+              targetEl.classList.toggle("show");
+              this.setAttribute("aria-expanded", targetEl.classList.contains("show"));
+            }
           });
         });
         document.querySelectorAll(".sidebar-nav a").forEach(function (link) {
@@ -31,6 +34,10 @@
           while (el) {
             if (el.classList.contains("collapse")) {
               el.classList.add("show");
+              let toggle = document.querySelector(`[data-target="#${el.id}"]`);
+              if (toggle) {
+                toggle.setAttribute("aria-expanded", "true");
+              }
             }
             el = el.parentElement ? el.parentElement.closest("ul") : null;
           }
