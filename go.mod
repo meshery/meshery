@@ -52,7 +52,7 @@ require (
 	github.com/meshery/meshery-operator v0.8.11
 	github.com/meshery/meshkit v0.8.70
 	github.com/meshery/meshsync v0.8.26
-	github.com/meshery/schemas v0.8.129
+	github.com/meshery/schemas v0.8.134-0.20260320164845-206750ca08ff
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.2.0
 	github.com/olekukonko/tablewriter v1.1.0

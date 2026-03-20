@@ -11,11 +11,15 @@ registrant:
     type: registry
     sub_type: ""
     kind: artifacthub
+    metadata: {}
     status: registered
     user_id: 00000000-0000-0000-0000-000000000000
     created_at: 2025-03-28T02:49:44.256856778Z
     updated_at: 2025-03-28T02:49:44.256856778Z
-    deleted_at: "0001-01-01T00:00:00Z"
+    deleted_at:
+        time: 0001-01-01T00:00:00Z
+        valid: false
+    environments: []
     schemaVersion: ""
 connection_id: 00000000-0000-0000-0000-000000000000
 category:
