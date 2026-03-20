@@ -9,7 +9,8 @@ export const test = base.extend({
   // Define an option and provide a default value.
   // We can later override it in the config.
   provider: ['None', { option: true }],
-  clusterMetaData: async (_fixtures, use, testInfo) => {
+  // eslint-disable-next-line no-empty-pattern
+  clusterMetaData: async ({}, use, testInfo) => {
     const kubeConfigPath = `${os.homedir()}/.kube/config`;
     if (!fs.existsSync(kubeConfigPath)) {
       testInfo.skip(
