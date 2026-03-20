@@ -2,52 +2,16 @@ package models
 
 import (
 	"database/sql"
-	"database/sql/driver"
-	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
 )
 
-// MapObject is a GORM-compatible map[string]string type that serializes as JSON text.
-type MapObject map[string]string
-
-func (m *MapObject) Scan(src interface{}) error {
-	if src == nil {
-		*m = MapObject{}
-		return nil
-	}
-	var b []byte
-	switch t := src.(type) {
-	case []byte:
-		b = t
-	case string:
-		b = []byte(t)
-	default:
-		return fmt.Errorf("scan source was not []byte nor string but %T", src)
-	}
-	return json.Unmarshal(b, m)
-}
-
-func (m MapObject) Value() (driver.Value, error) {
-	if m == nil {
-		return "{}", nil
-	}
-	b, err := json.Marshal(m)
-	if err != nil {
-		return nil, err
-	}
-	return string(b), nil
-}
-
 type Workspace struct {
 	ID             uuid.UUID    `json:"id,omitempty" db:"id"`
 	Name           string       `json:"name,omitempty" db:"name"`
-	OrganizationID *uuid.UUID   `json:"organization_id,omitempty" db:"organization_id"`
+	OrganizationID uuid.UUID    `json:"organization_id,omitempty" db:"organization_id"`
 	Description    string       `json:"description,omitempty" db:"description"`
-	Owner          string       `json:"owner,omitempty" db:"owner"`
-	Metadata       MapObject    `json:"metadata,omitempty" db:"metadata" gorm:"type:text"`
 	CreatedAt      time.Time    `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt      time.Time    `json:"updated_at,omitempty" db:"updated_at"`
 	DeletedAt      sql.NullTime `json:"deleted_at,omitempty" db:"deleted_at"`
