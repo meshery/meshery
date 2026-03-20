@@ -145,10 +145,10 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	if patternID == uuid.Nil {
-		patternID = patternFile.Id
+		patternID = patternFile.ID
 	}
 
-	patternFile.Id = patternID
+	patternFile.ID = patternID
 	// Generate the pattern file object
 	description := fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
 
@@ -393,7 +393,7 @@ func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 						sap.log.Error(err)
 						sap.Terminate(err)
 					}
-					dependsOnSlice = append(dependsOnSlice, comp.Id.String())
+					dependsOnSlice = append(dependsOnSlice, comp.ID.String())
 					comp.Metadata.AdditionalProperties["dependsOn"] = dependsOnSlice
 				}
 			}

@@ -1318,7 +1318,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	go func() {
 		id, _ := uuid.NewV4()
 		org := &organization.Organization{
-			Id:          id,
+			ID:          id,
 			Name:        "My Org",
 			Country:     "",
 			Region:      "",
