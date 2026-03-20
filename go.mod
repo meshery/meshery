@@ -47,14 +47,14 @@ require (
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/nighthawk-go v1.0.8
 	github.com/layer5io/service-mesh-performance v0.6.1
-	github.com/lib/pq v1.11.1
+	github.com/lib/pq v1.11.2
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
-	github.com/meshery/meshkit v0.8.68
+	github.com/meshery/meshkit v0.8.70
 	github.com/meshery/meshsync v0.8.26
-	github.com/meshery/schemas v0.8.126
+	github.com/meshery/schemas v0.8.129
 	github.com/nsf/termbox-go v1.1.1
-	github.com/oapi-codegen/runtime v1.1.2
+	github.com/oapi-codegen/runtime v1.2.0
 	github.com/olekukonko/tablewriter v1.1.0
 	github.com/open-policy-agent/opa v1.11.0
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
@@ -145,7 +145,7 @@ require (
 	github.com/bsm/redislock v0.7.2 // indirect
 	github.com/bufbuild/protocompile v0.14.1 // indirect
 	github.com/buger/goterm v1.0.4 // indirect
-	github.com/buger/jsonparser v1.1.1 // indirect
+	github.com/buger/jsonparser v1.1.2 // indirect
 	github.com/capnm/sysinfo v0.0.0-20130621111458-5909a53897f3 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
