@@ -36,9 +36,13 @@ const DESIGNS_TO_TEST = [
 test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
   for (const { id, name } of DESIGNS_TO_TEST) {
     test(`should identify relationships for ${name}`, async ({ request }, testInfo) => {
+      // Large designs (e.g. "All Relationships") can exceed the default 30s API timeout.
+      const apiTimeout = 120_000;
       const designResponse = await request.get(
         `${ENV.REMOTE_PROVIDER_URL}/api/content/patterns/${id}`,
+        { timeout: apiTimeout },
       );
+      expect(designResponse.ok()).toBeTruthy();
       const responseJson = await designResponse.json();
       const design = JSON.parse(responseJson.pattern_file);
 
@@ -54,6 +58,7 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
               trace: false,
             },
           },
+          timeout: apiTimeout,
         },
       );
 

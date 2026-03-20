@@ -51,7 +51,7 @@ export class ExtensionsPage {
   async verifyKanvasSignupUI() {
     await expect(this.kanvasSignupHeading).toBeVisible();
     await expect(this.kanvasSignupBtn).toBeVisible();
-    await expect(this.kanvasSignupBtn).toBeEnabled();
+    // When the user already has Kanvas access, the CTA is disabled and shows "Enabled" (see MeshMapSignUpcard).
   }
 
   async toggleCatalog() {

@@ -33,7 +33,11 @@ test.describe('Extensions Section Tests', () => {
 
   test('Verify Kanvas Details', async () => {
     await extensionsPage.verifyKanvasSignupUI();
-    await extensionsPage.verifyNewTab(extensionsPage.kanvasSignupBtn, URLS.KANVAS.DOCS);
+    if (await extensionsPage.kanvasSignupBtn.isEnabled()) {
+      await extensionsPage.verifyNewTab(extensionsPage.kanvasSignupBtn, URLS.KANVAS.DOCS);
+    } else {
+      await expect(extensionsPage.kanvasSignupBtn).toHaveText('Enabled');
+    }
   });
 
   test('Verify Meshery Docker Extension Details', async () => {

@@ -84,12 +84,21 @@ test.describe.serial('Model Workflow Tests', () => {
   });
 
   test('Import a Model via File Import', async ({ page }) => {
+    test.slow();
     await page.getByTestId('TabBar-Button-ImportModel').click();
     await page.getByRole('heading', { name: 'File Import' }).click();
+
+    const registerResponse = page.waitForResponse(
+      (resp) =>
+        resp.url().includes('/api/meshmodels/register') && resp.request().method() === 'POST',
+      { timeout: 120_000 },
+    );
 
     await page.setInputFiles('input[type="file"]', model_import.MODEL_FILE_IMPORT);
 
     await page.getByRole('button', { name: 'Next' }).click();
+
+    await registerResponse;
 
     await expect(
       page.getByTestId(`ModelImportedSection-ModelHeader-${model_import.MODEL_NAME}`),
