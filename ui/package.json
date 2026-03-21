@@ -120,5 +120,8 @@
   },
   "engines": {
     "node": "^18 || ^20"
+  },
+  "overrides": {
+    "lodash.get": "npm:lodash@^4.17.21"
   }
 }
