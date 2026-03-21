@@ -6,6 +6,7 @@ import {
   Box,
   Checkbox,
   Stack,
+  Edit,
   Typography,
   useTheme,
   styled,
@@ -26,7 +27,6 @@ import {
 } from '@/store/slices/globalEnvironmentContext';
 import { Button } from '@sistent/sistent';
 import { AddIcon } from '@sistent/sistent';
-import { Edit } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const DeploymentTargetContext = createContext({

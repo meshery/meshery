@@ -8,6 +8,7 @@ import {
   ResponsiveDataTable,
   PROMPT_VARIANTS,
   MenuItem,
+  MoreVert,
   Box,
   IconButton,
   Typography,
@@ -32,7 +33,6 @@ import LoadingScreen from '../LoadingComponents/LoadingComponent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { iconMedium } from '../../css/icons.styles';
@@ -1004,7 +1004,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
                   aria-haspopup="true"
                   onClick={(e) => handleActionMenuOpen(e, tableMeta)}
                 >
-                  <MoreVertIcon style={iconMedium} />
+                  <MoreVert style={iconMedium} />
                 </IconButton>
               ) : (
                 '-'
