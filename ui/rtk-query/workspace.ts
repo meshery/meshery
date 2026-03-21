@@ -9,10 +9,18 @@ const TAGS = {
   ENVIRONMENTS: 'workspaces_environments',
   VIEWS: 'workspaces_views',
   TEAMS: 'workspaces_teams',
+  EVENTS: 'workspaces_events',
 };
 const workspacesApi = api
   .enhanceEndpoints({
-    addTagTypes: [TAGS.WORKSPACES, TAGS.DESIGNS, TAGS.ENVIRONMENTS, TAGS.VIEWS, TAGS.TEAMS],
+    addTagTypes: [
+      TAGS.WORKSPACES,
+      TAGS.DESIGNS,
+      TAGS.ENVIRONMENTS,
+      TAGS.VIEWS,
+      TAGS.TEAMS,
+      TAGS.EVENTS,
+    ],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
@@ -264,7 +272,6 @@ const workspacesApi = api
           return !_.eq(currentArg, previousArg);
         },
         providesTags: () => [{ type: TAGS.VIEWS }],
-        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
       assignViewToWorkspace: builder.mutation({
         query: (queryArg) => ({
@@ -321,7 +328,7 @@ const workspacesApi = api
             order: queryArg.order,
           },
         }),
-        invalidatesTags: () => [{ type: TAGS.TEAMS }],
+        providesTags: () => [{ type: TAGS.EVENTS }],
       }),
     }),
   });
