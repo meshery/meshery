@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"sort"
+	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/models"
@@ -38,7 +40,8 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	var tables []*models.SqliteSchema
 	var recordCount int
 	var totalTables int64
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	countOrder := false
+	page, offset, limit, search, order, sortDir, _ := getPaginationParams(r)
 
 	tableFinder := h.dbHandler.DB.Table("sqlite_schema").
 		Where("type = ?", "table")
@@ -49,28 +52,72 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	tableFinder.Count(&totalTables)
 
-	if limit != 0 {
-		tableFinder = tableFinder.Limit(limit)
-	}
-	if offset != 0 {
-		tableFinder = tableFinder.Offset(offset)
-	}
+	orderBycount := models.SanitizeOrderInput(order, []string{"count"})
 	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order != "" {
-		if sort == "desc" {
+		if sortDir == "desc" {
 			tableFinder = tableFinder.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
 		} else {
 			tableFinder = tableFinder.Order(order)
 		}
+	} else if orderBycount != "" {
+		countOrder = true
 	}
 
-	tableFinder.Find(&tables)
-
-	for _, table := range tables {
-		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
-		recordCount += int(table.Count)
+	readTables := func() {
+		tableFinder.Find(&tables)
+		for _, table := range tables {
+			h.dbHandler.DB.Table(table.Name).Count(&table.Count)
+		}
 	}
 
+	if !countOrder {
+		if limit != 0 {
+			tableFinder = tableFinder.Limit(limit)
+		}
+		if offset != 0 {
+			tableFinder = tableFinder.Offset(offset)
+		}
+
+		readTables()
+		for _, table := range tables {
+			recordCount += int(table.Count)
+		}
+	} else {
+		readTables()
+		desc := strings.Contains(strings.ToLower(orderBycount), "desc")
+
+		sort.Slice(tables, func(i, j int) bool {
+			if desc {
+				return tables[i].Count > tables[j].Count
+			}
+			return tables[i].Count < tables[j].Count
+		})
+
+		// Apply pagination after sorting by count to ensure consistent ordering.
+		if limit != 0 {
+			start := offset
+			if start < 0 {
+				start = 0
+			}
+
+			if start >= len(tables) {
+				tables = []*models.SqliteSchema{}
+			} else {
+				end := start + limit
+				if end > len(tables) {
+					end = len(tables)
+				}
+				tables = tables[start:end]
+			}
+		}
+
+		// Recalculate recordCount for the paginated result set.
+		recordCount = 0
+		for _, table := range tables {
+			recordCount += int(table.Count)
+		}
+	}
 	databaseSummary := &models.DatabaseSummary{
 		Page:        page,
 		PageSize:    limit,
