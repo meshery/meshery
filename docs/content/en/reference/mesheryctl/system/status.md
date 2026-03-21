@@ -63,6 +63,11 @@ mesheryctl system status --verbose
 Usage of mesheryctl system status
 ![status-usage](/reference/images/status.png)
 
+## Terminal Sessions
+
+Demonstration of `mesheryctl system status`:
+{{< asciinema src="891568" rows="30" >}}
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
