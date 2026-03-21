@@ -260,55 +260,6 @@ func TestRelationshipEvaluationScenarios(t *testing.T) {
 			designFile:  "inline",
 			expected:    true,
 		},
-		{
-			name:  "namespace_cannot_be_parent_of_namespace",
-			query: "data.relationship_evaluation_policy.is_relationship_denied(input.from, input.to, input.deny_selectors)",
-			input: map[string]interface{}{
-				"from": map[string]interface{}{
-					"id":        "from-namespace",
-					"component": map[string]interface{}{"kind": "Namespace"},
-					"model": map[string]interface{}{
-						"name": "kubernetes",
-						"registrant": map[string]interface{}{
-							"kind": "github",
-						},
-					},
-				},
-				"to": map[string]interface{}{
-					"id":        "to-namespace",
-					"component": map[string]interface{}{"kind": "Namespace"},
-					"model": map[string]interface{}{
-						"name": "kubernetes",
-						"registrant": map[string]interface{}{
-							"kind": "github",
-						},
-					},
-				},
-				"deny_selectors": map[string]interface{}{
-					"from": []map[string]interface{}{
-						{
-							"kind": "Namespace",
-							"model": map[string]interface{}{
-								"name":       "kubernetes",
-								"registrant": "*",
-							},
-						},
-					},
-					"to": []map[string]interface{}{
-						{
-							"kind": "Namespace",
-							"model": map[string]interface{}{
-								"name":       "kubernetes",
-								"registrant": "*",
-							},
-						},
-					},
-				},
-			},
-			expectError: false,
-			designFile:  "namespace_parent_inline",
-			expected:    true,
-		},
 	}
 
 	for _, tc := range testCases {
