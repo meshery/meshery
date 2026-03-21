@@ -23,7 +23,7 @@ import {
 
 const ComponentErrorList = ({ component, errors, validatorActor, canTapErrors }) => {
   const onErrorTap = (error) => {
-    if (!canTapErrors) {
+    if (!canTapErrors || !validatorActor?.send) {
       return;
     }
 
@@ -182,8 +182,15 @@ export const ValidateDesign = ({ design, currentNodeId, validationMachine }) => 
   );
 
   useEffect(() => {
+    if (!validationMachine?.send) {
+      return;
+    }
     validationMachine.send(designValidatorCommands.validateDesignSchema({ design }));
-  }, []);
+  }, [design, validationMachine]);
+
+  if (!validationMachine?.send) {
+    return <Loading message="Initializing validation" />;
+  }
 
   if (isValidating || !validationResults) {
     return <Loading message={isValidating ? 'Validating Design' : 'Loading validation form'} />;

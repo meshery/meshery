@@ -33,6 +33,7 @@ import ImportModelModal from './Settings/Registry/ImportModelModal';
 import { ViewInfoModal } from './ViewInfoModal';
 import { selectK8sConfig, selectSelectedK8sClusters } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
+import { useActorRef } from '@xstate/react';
 import { store } from '../store';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
@@ -49,6 +50,7 @@ function NavigatorExtension({ url }) {
   const { organization: currentOrganization } = useSelector((state) => state.ui);
   const { openModalWithDefault, onLoadResource } = useContext(WorkspaceModalContext);
   const registryModal = useRegistryModal();
+  const designValidationActorRef = useActorRef(designValidationMachine);
   if (err != null) {
     return (
       <div role="alert">
@@ -116,6 +118,7 @@ function NavigatorExtension({ url }) {
           DeployStepper,
           UnDeployStepper,
           designValidationMachine,
+          designValidationActorRef,
           mesheryEventBus: mesheryEventBus,
           ThemeTogglerCore,
           RJSForm: RJSFForm,
