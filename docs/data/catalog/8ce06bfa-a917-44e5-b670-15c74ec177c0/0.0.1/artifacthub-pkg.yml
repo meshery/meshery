@@ -1,0 +1,31 @@
+version: 0.0.1
+name: marblerun
+displayName: marblerun
+createdAt: "2024-06-05T18:36:48Z"
+description: |-
+    MarbleRun  -The control plane for confidential computing.
+
+    MarbleRun is a framework for deploying distributed confidential computing applications. MarbleRun acts as a confidential operator for your deployment. Think of a trusted party in the control plane.
+
+    Build your confidential microservices with EGo, Gramine, or similar runtimes, orchestrate them with Kubernetes on an SGX-enabled cluster, and let MarbleRun take care of the rest. Deploy end-to-end secure and verifiable AI pipelines or crunch on sensitive big data in the cloud. Confidential computing at scale has never been easier.
+
+    MarbleRun simplifies the process by handling much of the groundwork. It ensures that your app's topology adheres to your specified manifest. It verifies the identity and integrity of all your services, bootstraps them, and establishes secure, encrypted communication channels. As your app needs to scale, MarbleRun manages the addition of new instances, ensuring their secure verification.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8ce06bfa-a917-44e5-b670-15c74ec177c0/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "A working SGX DCAP environment is required for MarbleRun. For ease of exploring and testing, we provide a simulation mode with --simulation that runs without SGX hardware. Depending on your setup, you may follow the quickstart for SGX-enabled clusters. Alternatively, if your setup doesn't support SGX, you can follow the quickstart in simulation mode by selecting the respective tabs.\n\nFor getting more context on consideration and caveats ,get into this docs of https://docs.edgeless.systems/marblerun/getting-started/quickstart \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8ce06bfa-a917-44e5-b670-15c74ec177c0-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8ce06bfa-a917-44e5-b670-15c74ec177c0-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
