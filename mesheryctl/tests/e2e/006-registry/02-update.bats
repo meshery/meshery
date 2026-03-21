@@ -52,16 +52,12 @@ require_spreadsheet_credentials() {
     require_spreadsheet_credentials
     run $MESHERYCTL_BIN registry update --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED" --model "kubernetes"
     assert_success
-    assert_output --partial "Updated"
-    assert_output --partial "models"
-    assert_output --partial "components"
+    assert_output --regexp "Updated [1-9][0-9]* models? and [0-9]+ components?"
 }
 
 @test "given valid spreadsheet credentials when running mesheryctl registry update then models are updated successfully" {
     require_spreadsheet_credentials
     run $MESHERYCTL_BIN registry update --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED"
     assert_success
-    assert_output --partial "Updated"
-    assert_output --partial "models"
-    assert_output --partial "components"
+    assert_output --regexp "Updated [1-9][0-9]* models? and [0-9]+ components?"
 }
