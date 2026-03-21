@@ -15,7 +15,9 @@ import (
 	"github.com/meshery/meshkit/models/events"
 )
 
+// ─────────────────────────────────────────────────────────────────────────────
 // Request / Response types
+// ─────────────────────────────────────────────────────────────────────────────
 
 // AIGenerateRequest is the payload sent to POST /api/ai/generate.
 type AIGenerateRequest struct {
@@ -33,7 +35,9 @@ type AIGenerateResponse struct {
 	PatternID   string `json:"pattern_id,omitempty"` // saved pattern ID — open in canvas at /api/pattern/{id}
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
 // LLM provider abstraction  (BYOM — Bring Your Own Model)
+// ─────────────────────────────────────────────────────────────────────────────
 
 // llmProvider is the single interface every backend must satisfy.
 // Adding a new LLM means implementing two methods — nothing else changes.
@@ -42,7 +46,7 @@ type llmProvider interface {
 	name() string
 }
 
-// ── Ollama (local, private, no API key needed) 
+// ── Ollama (local, private, no API key needed) ────────────────────────────────
 
 type ollamaProvider struct {
 	endpoint string
@@ -89,7 +93,7 @@ func (o *ollamaProvider) generate(ctx context.Context, prompt string) (string, e
 	return result.Response, nil
 }
 
-// ── OpenAI 
+// ── OpenAI ────────────────────────────────────────────────────────────────────
 
 type openAIProvider struct {
 	apiKey string
@@ -141,7 +145,7 @@ func (o *openAIProvider) generate(ctx context.Context, prompt string) (string, e
 	return result.Choices[0].Message.Content, nil
 }
 
-// ── Anthropic 
+// ── Anthropic ─────────────────────────────────────────────────────────────────
 
 type anthropicProvider struct {
 	apiKey string
@@ -191,7 +195,9 @@ func (a *anthropicProvider) generate(ctx context.Context, prompt string) (string
 	return result.Content[0].Text, nil
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
 // System prompt  (context-window management — referenced in issue #17097)
+// ─────────────────────────────────────────────────────────────────────────────
 
 const mesherySystemPrompt = `You are Meshery's AI assistant for cloud-native infrastructure.
 
@@ -202,7 +208,9 @@ DESIGN:
 
 Always include apiVersion, kind, metadata, and spec. No extra prose.`
 
+// ─────────────────────────────────────────────────────────────────────────────
 // Provider factory
+// ─────────────────────────────────────────────────────────────────────────────
 
 // providerFactory is a package-level var so tests can swap it out without
 // spinning up real network services.
@@ -301,7 +309,11 @@ func (h *Handler) AIGenerateDesignHandler(
 
 	// ── save as Meshery pattern so it renders on the canvas ───────────────────
 	// Satisfies acceptance test: "natural language queries result in a rendered design"
-	patternID := saveAsPattern(h, r, provider, user, req.Prompt, design)
+	// Only attempt to save if a real provider is available (skipped in unit tests)
+	var patternID string
+	if provider != nil {
+		patternID = saveAsPattern(h, r, provider, user, req.Prompt, design)
+	}
 
 	// ── publish success event ─────────────────────────────────────────────────
 	successEvent := events.NewEvent().
@@ -394,7 +406,8 @@ func saveAsPattern(
 	user *models.User,
 	prompt, yamlDesign string,
 ) string {
-	if strings.TrimSpace(yamlDesign) == "" {
+	// Guard against nil provider or empty design — non-fatal, just skip saving
+	if provider == nil || strings.TrimSpace(yamlDesign) == "" {
 		return ""
 	}
 
