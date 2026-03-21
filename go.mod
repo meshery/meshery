@@ -15,7 +15,7 @@ replace github.com/compose-spec/compose-go/v2 => github.com/compose-spec/compose
 // replace github.com/meshery/meshsync v0.8.26 => ../meshsync
 
 require (
-	cuelang.org/go v0.15.1
+	cuelang.org/go v0.15.3
 	fortio.org/fortio v1.73.0
 	github.com/99designs/gqlgen v0.17.85
 	github.com/Masterminds/semver/v3 v3.4.0
