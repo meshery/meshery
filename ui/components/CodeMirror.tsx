@@ -120,7 +120,7 @@ const CodeMirror = ({
     }
 
     return editorExtensions;
-  }, [options.lineWrapping, options.lint, options.mode, options.readOnly]);
+  }, [options.lineWrapping, options.lint, options.mode]);
 
   return (
     <ReactCodeMirror
