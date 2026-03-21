@@ -67,10 +67,10 @@
             <ul style="margin-bottom: 0;">
               {{ range $childIndex, $child := sort $entry.children "title" }}
               {{ $childUrl := cond (isset $child "url") (printf "%s%s" $currentPage.Site.BaseURL $child.url) $child.external_url }}
-              {{ $childTitle := replace $childUrl "/" "" }}
+              {{ $childTitle := replace $child.url "/" "" }}
               <li id="{{ anchorize $child.title }}">
                 <a
-                  class="sidebar-nav__section-link {{ if in $pageUrl $childTitle }}active{{ end }}"
+                  class="sidebar-nav__section-link {{ if eq $pageUrl $childTitle }}active{{ end }}"
                   id="m-{{ anchorize $section.title }}-{{ anchorize $entry.title }}-{{ anchorize $child.title }}"
                   href="{{ $childUrl }}"
                 >{{ $child.title }}</a>
@@ -79,10 +79,10 @@
               <ul style="margin-bottom: 0;">
                 {{ range $grandchildIndex, $grandchild := sort $child.grandchildren "title" }}
                 {{ $grandchildUrl := cond (isset $grandchild "url") (printf "%s%s" $currentPage.Site.BaseURL $grandchild.url) $grandchild.external_url }}
-                {{ $grandchildTitle := replace $grandchildUrl "/" "" }}
+                {{ $grandchildTitle := replace $grandchild.url "/" "" }}
                 <li id="{{ anchorize $grandchild.title }}">
                   <a
-                    class="sidebar-nav__section-link {{ if in $pageUrl $grandchildTitle }}active{{ end }}"
+                    class="sidebar-nav__section-link {{ if eq $pageUrl $grandchildTitle }}active{{ end }}"
                     id="m-{{ anchorize $section.title }}-{{ anchorize $entry.title }}-{{ anchorize $grandchild.title }}"
                     href="{{ $grandchildUrl }}"
                     style="font-weight: normal;"
