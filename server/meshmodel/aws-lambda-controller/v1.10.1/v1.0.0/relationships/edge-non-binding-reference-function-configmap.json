@@ -1,0 +1,112 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "reference",
+  "metadata": {
+    "description": "AWS Lambda Function ARN can be stored in Kubernetes ConfigMaps for centralized configuration management. Pods can reference the ConfigMap to retrieve the Lambda Function ARN for invocation via AWS SDK/CLI.",
+    "capabilities": {
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": false,
+          "label": true
+        }
+      }
+    }
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-lambda-controller",
+    "registrant": {
+      "kind": "github"
+    },
+    "model": {
+      "version": "v1.10.1"
+    }
+  },
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Function",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-lambda-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
+                ],
+                [
+                  "displayName"
+                ]
+              ],
+              "description": "Lambda Function ARN is read from the ACK resource status and can be stored in ConfigMaps for centralized configuration."
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "ConfigMap",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "data",
+                  "LAMBDA_FUNCTION_ARN"
+                ],
+                [
+                  "displayName"
+                ]
+              ],
+              "description": "ConfigMap data can store the Lambda Function ARN, which Pods can reference via configMapKeyRef."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
