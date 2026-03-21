@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Grid2, Paper, Button, IconButton, Typography, useTheme } from '@sistent/sistent';
-import AddIcon from '@mui/icons-material/Add';
+import { Add, Box, Grid2, Paper, Button, IconButton, Typography, useTheme } from '@sistent/sistent';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
@@ -222,7 +221,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                       }
                       disabled={props.disabled || props.readonly}
                     >
-                      <AddIcon width="18px" height="18px" fill="gray" />
+                      <Add width="18px" height="18px" fill="gray" />
                     </IconButton>
                   </Box>
                 </Grid2>
