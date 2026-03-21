@@ -1,8 +1,7 @@
-{{ $lang := .Get "lang" | default "bash" }}
 {{ $code := .Get "code" }}
 
 <pre class="codeblock-pre">
 	<div class="codeblock">
-		<code class="clipboardjs language-{{ $lang }}">{{ $code | html }}</code>
+		<code class="clipboardjs">{{ $code | html }}</code>
 	</div>
 </pre>

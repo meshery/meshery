@@ -47,15 +47,15 @@ This approach is very quick to build, but also dependent on your operating syste
 
 - Install & Build the NextJS application for both the UI and UI Provider
 
-{{< code lang="bash" code=`make ui-build` >}}
+{{< code code=`make ui-build` >}}
 
 - Compile the Golang into binary file for Meshery Server
 
-{{< code lang="bash" code=`make build-server` >}}
+{{< code code=`make build-server` >}}
 
 - Run the Meshery Server on localhost port 9081
 
-{{< code lang="bash" code=`make server-binary` >}}
+{{< code code=`make server-binary` >}}
 
 ### Meshery CLI
 
@@ -67,11 +67,11 @@ Alternatively, a Docker-based setup can be utilized, simplifying the process, an
 
 - Build the docker container locally:
 
-{{< code lang="bash" code=`make docker-testing-env-build` >}}
+{{< code code=`make docker-testing-env-build` >}}
 
 - Run the docker container on port 9081
 
-{{< code lang="bash" code=`make docker-testing-env` >}}
+{{< code code=`make docker-testing-env` >}}
 
 ## Setup Playwright
 
@@ -81,17 +81,17 @@ For Playwrights, always try to use a native OS whenever possible. The Docker-bas
 
 Setup playwright:
 
-{{< code lang="bash" code=`make ui-test-setup` >}}
+{{< code code=`make ui-test-setup` >}}
 
 Run the all project and test cases:
 
-{{< code lang="bash" code=`make ui-test` >}}
+{{< code code=`make ui-test` >}}
 
 ### Playwright server on docker based image
 
 The first step is to pull the docker image from [Azure Container Registry](https://mcr.microsoft.com/en-us/product/playwright/tags) where the playwright stores their image using this command:
 
-{{< code lang="bash" code=`docker pull mcr.microsoft.com/playwright:<version>-<base-image>` >}}
+{{< code code=`docker pull mcr.microsoft.com/playwright:<version>-<base-image>` >}}
 
 {{% alert color="warning" title="Playwright Versioning" %}}
 Make sure the version you are using matches the version of `@playwright/test` in the `package.json` dev dependencies
@@ -99,34 +99,34 @@ Make sure the version you are using matches the version of `@playwright/test` in
 
 Here is the example of pulling playwright v1.44.0 with Ubuntu 22.04 LTS
 
-{{< code lang="bash" code=`docker pull mcr.microsoft.com/playwright:v1.44.0-jammy` >}}
+{{< code code=`docker pull mcr.microsoft.com/playwright:v1.44.0-jammy` >}}
 
 Starting up playwright docker server:
 
-{{< code lang="bash" code=`docker run --rm --network host --init -it mcr.microsoft.com/playwright:v1.44.0-jammy /bin/sh -c "cd /home/pwuser && npx -y playwright@1.44.0 run-server --port 8080"` >}}
+{{< code code=`docker run --rm --network host --init -it mcr.microsoft.com/playwright:v1.44.0-jammy /bin/sh -c "cd /home/pwuser && npx -y playwright@1.44.0 run-server --port 8080"` >}}
 
 {{% alert color="warning" title="Unsafe Environment" %}}
 Keep in mind this is just for development purposes inside your local system and don't try to expose your container network to the host system using --network host on production or CI
 {{% /alert %}}
 
 In the last step go to ui folder, 
-{{< code lang="bash" code=`cd ui;` >}}
+{{< code code=`cd ui;` >}}
 
 ## Run the test cases with Playwright CLI
 
 There are several options we can use to run the test cases, in CLI:
 
 To run playwright UI mode using the browser, you can add `--ui` in the cli, for example:
-{{< code lang="bash" code=`npx playwright test --ui` >}}
+{{< code code=`npx playwright test --ui` >}}
 
 If you are using playwright from docker, you can use `--ui-port=<playwright-docker-server>`, for example:
-{{< code lang="bash" code=`npx playwright test --ui-port=8080` >}}
+{{< code code=`npx playwright test --ui-port=8080` >}}
 
 To run playwright for specific project only, for example meshery-provider, you can run this command:
-{{< code lang="bash" code=`npx playwright test --ui --project=chromium-meshery-provider` >}}
+{{< code code=`npx playwright test --ui --project=chromium-meshery-provider` >}}
 
 To run specific test, you can add the test file location, for example:
-{{< code lang="bash" code=`npx playwright test --ui --project=chromium-meshery-provider tests/e2e/service-mesh-performance.spec.js` >}}
+{{< code code=`npx playwright test --ui --project=chromium-meshery-provider tests/e2e/service-mesh-performance.spec.js` >}}
 
 For more detail, you can read the [Playwright Cli docs](https://playwright.dev/docs/test-cli)
 
@@ -139,7 +139,7 @@ By default our test cases is running against both Meshery and Local Provider, we
 - Project: After the setup completes, it will run the project-based test depending on which storage state for the Local Provider and one for the Meshery Provider
 - Test Parameterize:  In the Local provider we are limiting some features to test against. For the missing features, we leverage this playwright feature to check or even skip the test. If it is not possible to run then you need to specify the `provider` directly from the test, and make sure the test is wrapped using:
 
-{{< code lang="javascript" code=`import { expect, test } from './fixtures/project';
+{{< code code=`import { expect, test } from './fixtures/project';
 
 test('Random test', async ({ provider }) => {
   if (provider === "Meshery") {
@@ -157,7 +157,7 @@ After merging a pull request, ensuring test stability across CI/CD runs is cruci
 
 After merging into the master branch, monitor the GitHub workflow that executes the new test case and assess its stability. If the test fails, raise another PR to mark it as @unstable and communicate this to the team. For example:
 
-{{< code lang="javascript" code=`import { expect, test } from './fixtures/project';
+{{< code code=`import { expect, test } from './fixtures/project';
 
 test('Random test',  { tag: '@unstable' }, async ({ provider }) => {
   // Test cases here
