@@ -102,9 +102,8 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/system/ch
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Please provide either 'stable' or 'edge' release channel. Usage: mesheryctl system channel set [stable|stable-version|edge|edge-version]`
 		if len(args) != 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("Only one release channel can be specified as an argument\n\n%v", errMsg))
+			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", "set")))
 		}
 		return nil
 	},
@@ -193,9 +192,8 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		return hc.RunPreflightHealthChecks()
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Please provide either 'stable' or 'edge' release channel. Usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]`
 		if len(args) != 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("Only one release channel can be specified as an argument\n\n%v", errMsg))
+			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", "switch")))
 		}
 		return nil
 	},
