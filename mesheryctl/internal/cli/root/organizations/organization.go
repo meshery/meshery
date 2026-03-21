@@ -17,7 +17,6 @@ var (
 )
 
 var OrgCmd = &cobra.Command{
-
 	Use:   "organization",
 	Short: "Interact with registered organizations",
 	Long: `Interact with registered organizations to display detailed information
@@ -58,7 +57,6 @@ mesheryctl organization list
 }
 
 func init() {
-	OrgCmd.Flags().BoolP("count", "", false, "total number of registered organizations")
+	OrgCmd.Flags().BoolP("count", "c", false, "total number of registered organizations")
 	OrgCmd.AddCommand(availableSubcommands...)
-
 }
