@@ -430,6 +430,11 @@ export const HelpButton = styled(IconButton, {
   ...(!isCollapsed && {
     transform: 'translateX(0.5px)',
   }),
+  '&:hover': {
+  borderRadius: '50%',
+  width: '32px',
+  height: '32px',
+},
 }));
 
 export const FixedSidebarFooter = styled('div')({
