@@ -1,0 +1,83 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "hierarchical",
+  "metadata": {
+    "description": "A Route is logically contained within a parent API.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "name": "aws-apigatewayv2-controller",
+    "version": "v1.2.1",
+    "displayName": "AWS API Gateway v2",
+    "category": {
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Service Proxy"
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Route",
+            "model": {
+              "name": "aws-apigatewayv2-controller"
+            },
+            "match": {
+              "from": [
+                {
+                  "kind": "Route"
+                }
+              ],
+              "to": [
+                {
+                  "kind": "API"
+                }
+              ]
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "apiRef",
+                  "from",
+                  "name"
+                ]
+              ],
+              "description": "Target the apiRef field in the Route"
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "API",
+            "model": {
+              "name": "aws-apigatewayv2-controller"
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ]
+              ],
+              "description": "Source the Kubernetes object name from the API"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "subType": "inventory",
+  "status": "enabled",
+  "type": "parent",
+  "version": "v1.0.0"
+}
