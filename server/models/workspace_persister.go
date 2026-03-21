@@ -189,7 +189,8 @@ func (wp *WorkspacePersister) UpdateWorkspace(workspaceID uuid.UUID, payload *wo
 
 	ws.Name = payload.Name
 	ws.Description = payload.Description
-	ws.OrganizationId = uuid.FromStringOrNil(payload.OrganizationID)
+	organizationID := payload.OrganizationID
+	ws.OrganizationID = &organizationID
 
 	return wp.UpdateWorkspaceByID(ws)
 }
