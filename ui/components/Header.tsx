@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
-import { Search } from '@mui/icons-material';
 import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
@@ -19,6 +18,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import RegistryModal from './Registry/RegistryModal';
 
 import {
+  Search,
   Checkbox,
   Box,
   CustomTooltip,
