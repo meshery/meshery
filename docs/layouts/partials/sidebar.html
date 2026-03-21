@@ -1,228 +1,39 @@
-<div class="sidebar-menu">
-  <form class="sidebar__search-form" action="{{ "search" | relURL }}" method="GET">
-    <input
-      type="search"
-      name="q"
-      id="sidebar-search-input"
-      class="sidebar__search-input"
-      placeholder="Search..."
-      aria-label="Search documentation"
-      autocomplete="off"
-    >
-  </form>
+{{/*
+Meshery override of Docsy sidebar:
+- Keep Docsy sidebar tree generation.
+- Use a stable, global docs root (Site.Home) instead of FirstSection-rooted navigation.
+*/ -}}
 
-  {{- $topSections := where .Site.Home.Sections.ByWeight ".Params.toc_hide" "!=" true -}}
+{{ $sidebarCacheLimit := .Site.Params.ui.sidebar_cache_limit | default 2000 -}}
+{{ $cacheSidebar := ge (len .Site.Pages) $sidebarCacheLimit -}}
 
-  <nav class="sidebar-nav" id="td-section-nav" aria-label="Documentation navigation">
-    {{- range $si, $section := $topSections }}
-    {{- $sectionLink :=
-        cond
-          (isset $section.Params "manuallink")
-          $section.Params.manualLink
-          (cond
-            (isset $section.Params "manuallinkrelref")
-            (relref $section $section.Params.manualLinkRelref)
-            $section.RelPermalink
-          )
-    -}}
-    {{- $sectionChildren := where (union $section.Pages $section.Sections).ByWeight ".Params.toc_hide" "!=" true -}}
-    {{- if $section.Params.sidebar_nav_hide_children -}}
-      {{- $sectionChildren = slice -}}
-    {{- end -}}
-    {{- $sectionTitle := or $section.LinkTitle $section.Title $section.Params.tag -}}
-    {{- with $section.File -}}
-      {{- $sectionTitle = or $sectionTitle .TranslationBaseName -}}
-    {{- end -}}
-    {{- if eq (trim $sectionTitle " \t\r\n") "" -}}
-      {{- continue -}}
-    {{- end -}}
-    <div class="sidebar-nav__section">
+{{/* Stable global root for Meshery docs: always root from Home. */ -}}
+{{ $sidebarRoot := .Site.Home -}}
+{{ $sidebarRootID := $sidebarRoot.RelPermalink -}}
 
-      <div class="sidebar-nav__row">
-        <a
-          href="{{ $sectionLink }}"
-          class="sidebar-nav__section-title"
-        >{{ $sectionTitle }}</a>
-        {{- if $sectionChildren }}
-        <button
-          class="sidebar-nav__chevron-btn"
-          data-target="s{{ $si }}"
-          type="button"
-          aria-expanded="false"
-          aria-label="Expand {{ $sectionTitle }}"
-        ><svg class="sidebar-nav__chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></button>
-        {{- end }}
-      </div>
+{{ $args := dict
+    "context" .
+    "cacheSidebar" $cacheSidebar
+    "sidebarRoot" $sidebarRoot
+    "sidebarRootID" $sidebarRootID
+-}}
 
-      {{- if $sectionChildren }}
-      <ul class="sidebar-nav__list" id="s{{ $si }}">
-        {{- range $ei, $entry := $sectionChildren }}
-        {{- template "meshery-sidebar-node" (dict "node" $entry "nodeID" (printf "s%d-e%d" $si $ei) "level" 1) -}}
-        {{- end }}
-      </ul>
-      {{- end }}
-
-    </div>
-    {{- end }}
-  </nav>
-</div>
-
-<script>
-(function () {
-  const nav = document.getElementById('td-section-nav');
-  if (!nav) return;
-
-  var lists = {};
-  nav.querySelectorAll('.sidebar-nav__list[id]').forEach(function (el) {
-    lists[el.id] = el;
-  });
-
-  function open(id) {
-    var el = lists[id];
-    if (!el) return;
-    el.classList.add('is-open');
-    el.style.display = 'block';
-    var btn = nav.querySelector('[data-target="' + id + '"]');
-    if (btn) btn.setAttribute('aria-expanded', 'true');
-  }
-
-  function close(id) {
-    var el = lists[id];
-    if (!el) return;
-    el.classList.remove('is-open');
-    el.style.display = 'none';
-    var btn = nav.querySelector('[data-target="' + id + '"]');
-    if (btn) btn.setAttribute('aria-expanded', 'false');
-  }
-
-  function saveState() {
-    var openIds = Object.keys(lists).filter(function (id) {
-      return lists[id].classList.contains('is-open');
+{{ if $cacheSidebar -}}
+  {{ $mid := printf "m-%s" (.RelPermalink | anchorize) }}
+  <script>
+    $(function() {
+      $("#td-section-nav a").removeClass("active");
+      $("#td-section-nav #{{ $mid }}").addClass("active");
+      $("#td-section-nav #{{ $mid }}-li span").addClass("td-sidebar-nav-active-item");
+      $("#td-section-nav #{{ $mid }}").parents("li").addClass("active-path");
+      $("#td-section-nav li.active-path").addClass("show");
+      $("#td-section-nav li.active-path").children("input").prop('checked', true);
+      $("#td-section-nav #{{ $mid }}-li").siblings("li").addClass("show");
+      $("#td-section-nav #{{ $mid }}-li").children("ul").children("li").addClass("show");
+      $("#td-sidebar-menu").toggleClass("d-none");
     });
-    try { sessionStorage.setItem('sidebar-open', JSON.stringify(openIds)); } catch (e) {}
-  }
-
-  function restoreState() {
-    try {
-      var saved = JSON.parse(sessionStorage.getItem('sidebar-open') || '[]');
-      saved.forEach(function (id) { if (lists[id]) open(id); });
-    } catch (e) {}
-  }
-
-  nav.addEventListener('click', function (e) {
-    var btn = e.target.closest('.sidebar-nav__chevron-btn');
-    if (btn && nav.contains(btn)) {
-      e.preventDefault();
-      var id = btn.getAttribute('data-target');
-      if (!id || !lists[id]) return;
-      if (lists[id].classList.contains('is-open')) {
-        close(id);
-      } else {
-        open(id);
-      }
-      saveState();
-      return;
-    }
-
-    var link = e.target.closest('a.sidebar-nav__section-title, a.sidebar-nav__link');
-    if (!link || !nav.contains(link)) return;
-    if (e.detail === 0 || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-
-    var row = link.closest('.sidebar-nav__row');
-    if (!row) return;
-    var linkBtn = row.querySelector('.sidebar-nav__chevron-btn');
-    if (!linkBtn) return;
-
-    var linkTarget = linkBtn.getAttribute('data-target');
-    if (!linkTarget || !lists[linkTarget]) return;
-    if (lists[linkTarget].classList.contains('is-open')) {
-      close(linkTarget);
-    } else {
-      open(linkTarget);
-    }
-    saveState();
-  });
-
-  function norm(p) {
-    p = (p || '').split('?')[0].split('#')[0];
-    return p && !p.endsWith('/') ? p + '/' : p;
-  }
-
-  var here = norm(window.location.pathname);
-  var active = null;
-
-  nav.querySelectorAll('a.sidebar-nav__link, a.sidebar-nav__section-title').forEach(function (a) {
-    var href = (a.getAttribute('href') || '').trim();
-    if (!href || href.charAt(0) === '#') return;
-    if (norm(href) === here) {
-      a.classList.add('is-active');
-      if (!active) active = a;
-    }
-  });
-
-  Object.keys(lists).forEach(function (id) { close(id); });
-  restoreState();
-
-  if (active) {
-    var node = active.parentElement;
-    while (node && node !== nav) {
-      if (node.classList.contains('sidebar-nav__list') && node.id) open(node.id);
-      node = node.parentElement;
-    }
-    saveState();
-    active.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-}());
-</script>
-
-{{- define "meshery-sidebar-node" -}}
-  {{- $n := .node -}}
-  {{- $nodeID := .nodeID -}}
-  {{- $level := .level -}}
-  {{- $nodeLink :=
-      cond
-        (isset $n.Params "manuallink")
-        $n.Params.manualLink
-        (cond
-          (isset $n.Params "manuallinkrelref")
-          (relref $n $n.Params.manualLinkRelref)
-          $n.RelPermalink
-        )
-  -}}
-  {{- $nodeTitle := or $n.LinkTitle $n.Title $n.Params.tag $n.Params.manualLinkTitle -}}
-  {{- with $n.File -}}
-    {{- $nodeTitle = or $nodeTitle .TranslationBaseName -}}
-  {{- end -}}
-  {{- if eq (trim $nodeTitle " \t\r\n") "" -}}
-    {{- return -}}
-  {{- end -}}
-  {{- $children := where (union $n.Pages $n.Sections).ByWeight ".Params.toc_hide" "!=" true -}}
-  {{- if $n.Params.sidebar_nav_hide_children -}}
-    {{- $children = slice -}}
-  {{- end -}}
-  <li class="sidebar-nav__item">
-    <div class="sidebar-nav__row">
-      <a
-        href="{{ $nodeLink }}"
-        class="{{ if eq $level 1 }}sidebar-nav__link{{ else }}sidebar-nav__link sidebar-nav__link--sub{{ end }}"
-      >{{ $nodeTitle }}</a>
-      {{- if $children }}
-      <button
-        class="sidebar-nav__chevron-btn"
-        data-target="{{ $nodeID }}"
-        type="button"
-        aria-expanded="false"
-        aria-label="Expand {{ $nodeTitle }}"
-      ><svg class="sidebar-nav__chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></button>
-      {{- end }}
-    </div>
-
-    {{- if $children }}
-    <ul class="sidebar-nav__list sidebar-nav__list--sub" id="{{ $nodeID }}">
-      {{- range $ci, $child := $children }}
-      {{- template "meshery-sidebar-node" (dict "node" $child "nodeID" (printf "%s-c%d" $nodeID $ci) "level" (add $level 1)) -}}
-      {{- end }}
-    </ul>
-    {{- end }}
-  </li>
-{{- end -}}
+  </script>
+  {{ partialCached "sidebar-tree.html" $args $sidebarRootID }}
+{{ else -}}
+  {{ partial "sidebar-tree.html" $args }}
+{{- end }}

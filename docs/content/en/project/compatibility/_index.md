@@ -2,7 +2,9 @@
 title: Compatibility Matrix
 hide_homepage: true
 manualLink: /installation/compatibility-matrix/
-sidebar_nav_hide_children: true
 cascade: 
+  - _target:
+      kind: page
     hide_summary: true
+    toc_hide: true
 ---

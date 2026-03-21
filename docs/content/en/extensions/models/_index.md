@@ -6,8 +6,11 @@ aliases:
 - /extensions/integrations
 suggested_reading: false
 type: models
-cascade: 
+cascade:
+  - _target:
+      kind: page
     type: models
+    toc_hide: true
 ---
 
 Meshery provides {{< model-count >}} built-in integrations which refer to the supported connections and interactions between Meshery and various cloud native platforms, tools, and technologies. Meshery's approach is Kubernetes-native which means you can easily incorporate Meshery into your existing workflow without additional setup or integration effort.
@@ -16,4 +19,3 @@ Meshery provides {{< model-count >}} built-in integrations which refer to the su
 ### All Integrations by Name ({{< model-count >}})
 
 Optionally, you can [navigate all integrations visually](https://meshery.io/integrations).
-

@@ -122,3 +122,121 @@ document.addEventListener("click", (event) => {
         }
     }
 })
+
+window.addEventListener("load", () => {
+    const docsSidebar = document.getElementById("td-section-nav");
+    if (!docsSidebar) {
+        return;
+    }
+
+    const stateKey = "meshery-docs-sidebar-fold-state-v1";
+    const scrollKey = "meshery-docs-sidebar-scroll-v1";
+    const sidebarScroller = document.querySelector(".sidebar-container");
+    const foldInputs = Array.from(
+        docsSidebar.querySelectorAll("li.with-child > input[type='checkbox'][id]")
+    );
+
+    const readStoredState = () => {
+        try {
+            return JSON.parse(sessionStorage.getItem(stateKey) || "{}");
+        } catch (error) {
+            return {};
+        }
+    };
+
+    const persistState = () => {
+        const nextState = {};
+        foldInputs.forEach((input) => {
+            nextState[input.id] = input.checked;
+        });
+        sessionStorage.setItem(stateKey, JSON.stringify(nextState));
+    };
+
+    const storedState = readStoredState();
+    foldInputs.forEach((input) => {
+        if (typeof storedState[input.id] === "boolean") {
+            input.checked = storedState[input.id];
+        }
+    });
+
+    docsSidebar
+        .querySelectorAll("li.active-path > input[type='checkbox']")
+        .forEach((input) => {
+            input.checked = true;
+        });
+
+    const toggleInputState = (input) => {
+        if (!input) {
+            return;
+        }
+        input.checked = !input.checked;
+        persistState();
+    };
+
+    docsSidebar.addEventListener("click", (event) => {
+        const branchLabel = event.target.closest("li.with-child > label");
+        if (branchLabel) {
+            const branch = branchLabel.closest("li.with-child");
+            const branchInput = branch ? branch.querySelector(":scope > input[type='checkbox']") : null;
+            const rect = branchLabel.getBoundingClientRect();
+            const chevronZone = 34;
+            const clickedChevronZone = (rect.right - event.clientX) <= chevronZone;
+
+            if (clickedChevronZone) {
+                event.preventDefault();
+                event.stopPropagation();
+                toggleInputState(branchInput);
+                return;
+            }
+        }
+
+        const link = event.target.closest("label > a.td-sidebar-link");
+        if (!link) {
+            return;
+        }
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+        }
+
+        const href = link.getAttribute("href");
+        if (!href || href.startsWith("#")) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        if (sidebarScroller) {
+            sessionStorage.setItem(scrollKey, String(sidebarScroller.scrollTop));
+        }
+        window.location.assign(href);
+    });
+
+    foldInputs.forEach((input) => {
+        input.addEventListener("change", persistState);
+    });
+
+    if (sidebarScroller) {
+        const savedScroll = Number(sessionStorage.getItem(scrollKey) || "0");
+        if (!Number.isNaN(savedScroll) && savedScroll > 0) {
+            requestAnimationFrame(() => {
+                sidebarScroller.scrollTop = savedScroll;
+            });
+        }
+
+        let scrollRafId = null;
+        const saveScroll = () => {
+            if (scrollRafId) {
+                return;
+            }
+            scrollRafId = window.requestAnimationFrame(() => {
+                sessionStorage.setItem(scrollKey, String(sidebarScroller.scrollTop));
+                scrollRafId = null;
+            });
+        };
+
+        sidebarScroller.addEventListener("scroll", saveScroll, { passive: true });
+        window.addEventListener("beforeunload", () => {
+            sessionStorage.setItem(scrollKey, String(sidebarScroller.scrollTop));
+        });
+    }
+});
