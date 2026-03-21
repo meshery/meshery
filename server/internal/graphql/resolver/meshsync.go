@@ -187,8 +187,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	}
 
 	if actions.ReSync == "true" {
-		// Skip resync when hard reset removes Kubernetes context
-		if actions.HardReset == "true" && k8scontextID == "" {
+		if actions.HardReset == "true" {
 			r.Log.Info("Skipping resync after hard reset due to missing Kubernetes context")
 			return model.StatusProcessing, nil
 		}
