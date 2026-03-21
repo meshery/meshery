@@ -72,7 +72,14 @@ const coreSlice = createSlice({
       state.capabilitiesRegistry = action.payload.capabilitiesRegistry;
     },
     setConnectionMetadata: (state, action) => {
-      state.connectionMetadataState = action.payload.connectionMetadataState;
+      try {
+        state.connectionMetadataState = JSON.parse(
+          JSON.stringify(action.payload.connectionMetadataState),
+        );
+      } catch (e) {
+        console.error('Failed to serialize connectionMetadataState:', e);
+        state.connectionMetadataState = {};
+      }
     },
     setOrganization: (state, action) => {
       state.organization = action.payload.organization;
@@ -126,6 +133,7 @@ export const setK8sContexts = (payload) => (dispatch) => {
 export const updateProgress = (progressData) => {
   store.dispatch(updateProgressAction(progressData));
 };
+
 // Core middleware configuration
 export const coreMiddleware = (getDefaultMiddleware) =>
   getDefaultMiddleware({
@@ -133,14 +141,9 @@ export const coreMiddleware = (getDefaultMiddleware) =>
       // Ignore these action types
       ignoredActions: ['core/updateGrafanaConfig', 'core/updatePrometheusConfig'],
       // Ignore these field paths in all actions
-      ignoredActionPaths: ['payload.grafana.ts', 'payload.prometheus.ts'],
+      ignoredActionPaths: ['payload.grafana', 'payload.prometheus'],
       // Ignore these paths in the state
-      ignoredPaths: [
-        'core.grafana.ts',
-        'core.prometheus.ts',
-        'core.loadTestPref.ts',
-        'core.meshAdaptersts',
-      ],
+      ignoredPaths: ['core.grafana', 'core.prometheus', 'core.loadTestPref', 'core.meshAdapters'],
     },
   });
 
