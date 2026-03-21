@@ -1,0 +1,15 @@
+{
+  "name": "upload-artifacts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@octokit/rest": "^19.0.11",
+    "octokit": "^2.0.19"
+  }
+}

@@ -1,0 +1,36 @@
+name: Update Kanvas Snapshot template
+on:
+  release:
+    types: [released]
+
+jobs:
+  update-action-template:
+    name: Kanvas Snapshot Template update
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/') == true
+    steps:
+      - name: Checkout kanvas-snapshot code
+        uses: actions/checkout@v4
+        with:
+          repository: layer5labs/kanvas-snapshot
+          fetch-depth: 1
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+      - name: Update templates
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          repository: layer5labs/kanvas-snapshot
+          branch: master
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          commitChange: true
+          message: Updated meshery-cloud version to ${{inputs.release-version}}
+          commitUserName: l5io
+          commitUserEmail: l5io@layer5.io
+          changes: |
+            {
+              "workflow-templates/file-uploadTemplate.yaml": {
+                "jobs.KanvasScreenshot.steps[3].uses": "layer5labs/kanvas-snapshot@${{github.event.release.tag_name}}"
+              },
+              "workflow-templates/url-uploadTemplate.yaml": {
+                "jobs.KanvasScreenshot.steps[3].uses": "layer5labs/kanvas-snapshot@${{github.event.release.tag_name}}"
+              }
+            }

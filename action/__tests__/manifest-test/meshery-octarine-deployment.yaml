@@ -1,0 +1,34 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yaml
+    kompose.version: 1.17.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: meshery-octarine
+  name: meshery-octarine
+spec:
+  selector:
+    matchLabels:
+      io.kompose.service: meshery-octarine
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: meshery-octarine
+    spec:
+      serviceAccount: meshery-server
+      containers:
+        - image: layer5/meshery-octarine:stable-latest
+          imagePullPolicy: Always
+          name: meshery-octarine
+          ports:
+            - containerPort: 10003
+          resources: {}
+      restartPolicy: Always
+status: {}
+

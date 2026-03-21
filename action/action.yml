@@ -1,0 +1,183 @@
+name: "Kanvas Snapshot"
+description: "Returns a visual rendering of your infrastructure as code (helm, k8s, docker) as a Meshery Design."
+author: Layer5 Authors
+inputs:
+  designID:
+    description: "The design uuid, example: 3c116d0a-49ea-4294-addc-d9ab34210662"
+    required: false
+  applicationId: #deprecated
+    description: "Meshery design ID. Example: 3c116d0a-49ea-4294-addc-d9ab34210662"
+    required: false
+  githubToken:
+    description: "Github Personal Access Token"
+    required: true
+  mesheryToken:
+    description: "Layer5 Cloud API Token"
+    required: true
+  prNumber:
+    description: "GitHub pull request on which to comment."
+    required: false
+    default: "0"
+  filePath:
+    description: "URI of the infrastructure as code manifest(s) to be rendered."
+    required: false
+  application_type:
+    description: 'Design type. Specific one of the following three types: 1) "Kubernetes Manifest", 2) "Docker Compose", or 3) "Helm Chart"'
+    required: true
+  application_url:
+    description: "Design's source URI; location of the original manifests"
+    required: false
+  skipComment:
+    default: "false"
+    description: "Skip the step of commenting on the PR when the action is invoked not for any specific PR or commit but dispatched manually for eg: as part of publishing catalog."
+  assetLocation:
+    required: false
+    description: Remote location where the generated asset (screenshot) for the design will be stored.
+  email:
+    required: false
+    description: email address where the snapshot will be sent
+outputs:
+  mardownResult: # id of output
+    description: "The markdown result"
+  resource_url:
+    description: "The URL of the generated resource."
+    value: ${{ steps.outputurl.outputs.RESOURCE_URL }}
+runs:
+  using: "composite"
+  steps:
+    - name: ping playground
+      id: ping-playground
+      run: |
+        echo "IS_PLAYGROUND_RUNNING=$( echo $(./action/playground-ping.sh))" >> "$GITHUB_OUTPUT"
+      shell: bash
+    - run: echo $IS_PLAYGROUND_RUNNING
+      shell: bash
+    - name: set active cluster URL as playground
+      if: ${{ steps.ping-playground.outputs.IS_PLAYGROUND_RUNNING }}
+      run: echo "MESHERY_URL=https://playground.meshery.io" >> $GITHUB_ENV
+      shell: bash
+    - name: set active cluster URL as localhost:9081
+      if: ${{ !steps.ping-playground.outputs.IS_PLAYGROUND_RUNNING }}
+      run: echo "MESHERY_URL=http://127.0.0.1:9081" >> $GITHUB_ENV
+      shell: bash
+    - name: Create k8s KinD Cluster
+      if: ${{ !steps.ping-playground.outputs.IS_PLAYGROUND_RUNNING }}
+      uses: helm/kind-action@v1.10.0
+      with:
+        cluster_name: "kind-cluster"
+    - run: echo ${{ steps.ping-playground.outputs.IS_PLAYGROUND_RUNNING }}
+      shell: bash
+    - run:
+      working-directory: action/cypress-action/
+      if: ${{ !steps.ping-playground.outputs.IS_PLAYGROUND_RUNNING }}
+      shell: bash
+    - run: |
+        FILE_PATH=${{ inputs.filePath }} ./action/manifest-merger.sh # creates file in root dir
+        cat "__intermediate_file.yml" # debug
+      if: ${{ inputs.filePath }}
+      shell: bash
+    - run: |
+        echo "Uploading using application file"
+        AppId=$(MESHERY_SERVER_BASE_URL="https://playground.meshery.io" UPLOAD_TYPE="${{inputs.application_type}}" MESHERY_TOKEN=${{ inputs.mesheryToken }}  ./action/uploadApplicationFile.sh)
+        AppId=$(echo "$AppId" | sed 's/"//g')
+        echo "APPLICATION_ID=$AppId" >> $GITHUB_ENV
+      if: ${{ inputs.filePath && !inputs.designID }}
+      shell: bash
+    - run: |
+        echo "Uploading using application url"
+        AppId=$(MESHERY_SERVER_BASE_URL="https://playground.meshery.io" UPLOAD_TYPE="${{inputs.application_type}}" MESHERY_TOKEN=${{ inputs.mesheryToken }} UPLOAD_URL=${{ inputs.application_url }}  ./action/uploadApplicationUrl.sh)
+        AppId=$(echo "$AppId" | sed 's/"//g')
+        echo "APPLICATION_ID=$AppId" >> $GITHUB_ENV
+      if: ${{ inputs.application_url && !inputs.designID }}
+      shell: bash
+    - run: |
+        echo "Uploading using design id"
+        echo ${{ inputs.designID }}
+        echo "APPLICATION_ID=${{ inputs.designID }}" >> $GITHUB_ENV
+      if: ${{ inputs.designID }}
+      shell: bash
+    - run: echo $APPLICATION_ID && echo ${{env.APPLICATION_ID}}
+      shell: bash
+    - name: Cypress run
+      uses: cypress-io/github-action@v4
+      with:
+        working-directory: action/cypress-action
+        spec: cypress/e2e/e2e/**/*
+        browser: chrome
+        # record: true
+      env:
+        GITHUB_TOKEN: ${{ inputs.githubToken }}
+        CYPRESS_token: ${{ inputs.mesheryToken }}
+        CYPRESS_releasetag: ${{env.tag}}
+        CYPRESS_applicationId: ${{ env.APPLICATION_ID }}
+        # CYPRESS_RECORD_KEY: ${{ inputs.cypressRecordKey }}
+    - run: ls
+      shell: bash
+    - run: tree . -L 2me
+      shell: bash
+
+    - run: tree action -L 2me
+      shell: bash
+
+    - name: Upload log.txt
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: meshery-log
+        path: action/log.txt
+
+    - name: Upload log1.txt
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: meshery-log1
+        path: log.txt
+    
+    - name: Upload Cypress artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cypress-video
+        path: action/cypress-action/cypress/videos
+    - name: Upload Cypress artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cypress-screenshots
+        path: action/cypress-action/cypress/screenshots
+    - run: node --version
+      shell: bash
+    - run: npm ci
+      working-directory: action/node-file-upload
+      shell: bash
+    - id: outputurl
+      run: |
+        MESHERY_TOKEN=${{inputs.mesheryToken}} assetLocation=${{ inputs.assetLocation }} node node-file-upload/index.js > __fileResponse.txt  
+        outputstr=$(head -n 1  __fileResponse.txt)
+        required_string="https"
+        echo $outputstr
+        echo ${{inputs.prNumber}}
+        if [[ "$outputstr" == "$required_string"* ]]; then
+            echo "RESOURCE_URL=$outputstr" >> $GITHUB_ENV
+            echo "RESOURCE_URL=$outputstr" >> $GITHUB_OUTPUT
+        else
+            echo "RESOURCE_URL=false" >> $GITHUB_ENV
+        fi
+      working-directory: action/
+      shell: bash
+    - name: Send Snapshot Email
+      if: ${{ inputs.email && inputs.assetLocation }}
+      run: |
+        MESHERY_CLOUD_API_URL="https://cloud.layer5.io" MESHERY_TOKEN="${{ inputs.mesheryToken }}" EMAIL="${{ inputs.email }}" IMAGE_URI="${{ inputs.assetLocation }}" bash ./action/sendSnapshotEmail.sh
+      shell: bash  
+    - name: Comment Success Status
+      if: ${{ success() && inputs.skipComment == 'false' && inputs.prNumber != '0' && env.RESOURCE_URL != false }}
+      uses: hasura/comment-progress@v2.3.0
+      with:
+        github-token: ${{ inputs.githubToken }}
+        repository: ${{github.repository}}
+        number: ${{ inputs.prNumber }}
+        id: meshmap-snapshot
+        message: '[<img src="${{env.RESOURCE_URL}}">](${{env.RESOURCE_URL}})
+          _[View in catalog](https://cloud.layer5.io/catalog/content/design/${{ env.APPLICATION_ID }}), [Edit in playground](https://playground.meshery.io/extension/meshmap?mode=design&design=${{ env.APPLICATION_ID }}) or learn how to [interpret Meshery Designs](https://cloud.layer5.io/academy/learning-paths/d011fd20-a3f5-4480-883b-dfb34321d168/mastering-meshery/introduction-to-meshery/interpreting-meshery-designs/)_'
+        append: false

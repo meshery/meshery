@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yaml
+    kompose.version: 1.17.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: meshery-istio
+  name: meshery-istio
+spec:
+  selector:
+    matchLabels:
+      io.kompose.service: meshery-istio
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: meshery-istio
+    spec:
+      serviceAccount: meshery-server
+      containers:
+      - image: layer5/meshery-istio:stable-latest
+        imagePullPolicy: Always
+        name: meshery-istio
+        ports:
+        - containerPort: 10000
+        resources: {}
+      restartPolicy: Always
+status: {}
