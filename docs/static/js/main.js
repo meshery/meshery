@@ -49,45 +49,96 @@ function HideToggleFunction() {
   }
 
 /*clipboard*/
+function copyTextToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+    }
+    return new Promise((resolve, reject) => {
+        var textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'absolute';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            var successful = document.execCommand('copy');
+            document.body.removeChild(textArea);
+            if (successful) {
+                resolve();
+                return;
+            }
+            reject(new Error('Copy command was not successful'));
+        } catch (error) {
+            document.body.removeChild(textArea);
+            reject(error);
+        }
+    });
+}
 
-var getcodeelement = $('.clipboardjs'); /*create custom id*/
+function updateCopyButton(button, state) {
+    button.setAttribute('data-copy-state', state);
+    if (state === 'copied') {
+        button.innerHTML = '<span>Copied!</span>';
+        return;
+    }
+    if (state === 'error') {
+        button.innerHTML = '<span>Press Ctrl+C</span>';
+        return;
+    }
+    button.innerHTML = '<i class="far fa-copy" aria-hidden="true"></i>';
+}
 
-getcodeelement.each(function(i) {  
-    /*target*/
-    var currentId = 'codeblock' + (i + 1);
-    $(this).attr('id', currentId);
+function getCodeBlockText(preElement) {
+    var clipboardElement = preElement.querySelector('.clipboardjs');
+    if (clipboardElement) {
+        return clipboardElement.textContent;
+    }
+    var codeElement = preElement.querySelector('code');
+    if (codeElement) {
+        return codeElement.textContent;
+    }
+    return preElement.textContent;
+}
 
-    /*trigger*/
-    var text = $(this).text();
-    text = text.replace(/\$ /gi, '')
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/'/g, "&#39;")
-    .replace(/"/g, "&quot;");
-    var clipButton = '<div class="btn-copy-wrap"><button class="clipbtn" data-clipboard-text="' + text + '" data-clipboard-target="#' + currentId + '"><i class="far fa-copy"></i></button></div>';
-       $(this).after(clipButton);
-});
+function addCopyButtonsToCodeBlocks() {
+    var codeBlocks = document.querySelectorAll('.td-content pre');
+    codeBlocks.forEach(function(preElement) {
+        if (preElement.dataset.copyButtonAttached === 'true') {
+            return;
+        }
+        var codeText = getCodeBlockText(preElement);
+        if (!codeText || !codeText.trim()) {
+            return;
+        }
+        var buttonWrapper = document.createElement('div');
+        buttonWrapper.className = 'btn-copy-wrap';
+        var button = document.createElement('button');
+        button.className = 'clipbtn';
+        button.type = 'button';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        updateCopyButton(button, 'default');
+        button.addEventListener('click', function() {
+            var textToCopy = getCodeBlockText(preElement);
 
-var clipboard = new Clipboard('.clipbtn');
-
-/* Change copy icon to text when successfully copied*/
-clipboard.on("success", (e)=>{
-    console.info(e.trigger);
-    console.info(e.trigger.childNodes[0]);
-    let originalIcon = e.trigger.childNodes[0];
-
-    var icon = e.trigger.childNodes[0];
-    var text = document.createElement('span');
-    text.textContent = "Copied!";
-    text.style.color = "white";
-
-    e.trigger.replaceChild(text, icon);
-
-    setTimeout(()=>{
-        e.trigger.replaceChild(originalIcon, text);
-    },2000)
-})
+            copyTextToClipboard(textToCopy).then(function() {
+                updateCopyButton(button, 'copied');
+                setTimeout(function() {
+                    updateCopyButton(button, 'default');
+                }, 2000);
+            }).catch(function() {
+                updateCopyButton(button, 'error');
+                setTimeout(function() {
+                    updateCopyButton(button, 'default');
+                }, 2000);
+            });
+        });
+        buttonWrapper.appendChild(button);
+        preElement.appendChild(buttonWrapper);
+        preElement.dataset.copyButtonAttached = 'true';
+    });
+}
+document.addEventListener('DOMContentLoaded', addCopyButtonsToCodeBlocks);
 
 const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
 

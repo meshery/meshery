@@ -59,9 +59,11 @@ pre.codeblock-pre {
 }
 
 .btn-copy-wrap {
-  align-content: flex-end;
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  transform: translateY(-50%);
   z-index: auto;
-  position: relative;
   text-align: right;
 }
 
@@ -69,7 +71,10 @@ pre.codeblock-pre {
   right: 0;
   margin: 5px;
   border: 0px;
-  background-color: transparent;
+  border-radius: 0;
+  background: transparent;
+  color: #fff;
+  padding: 0;
   font-size: 1.05rem;
   & i::before {
     color: #f1f3f5 !important;
@@ -81,7 +86,25 @@ pre.codeblock-pre {
   cursor: pointer;
 }
 
+.clipbtn:focus-visible {
+  outline: 2px solid var(--brand-color-secondary);
+  outline-offset: 2px;
+}
+
+.clipbtn[data-copy-state="copied"],
+.clipbtn[data-copy-state="error"] {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: #fff;
+}
+
 .clipbtn:active{
   background-color: #495057;
   transform: scale(0.75);
+}
+
+.td-content pre,
+pre.codeblock-pre {
+  position: relative;
 }
