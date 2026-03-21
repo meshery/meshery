@@ -77,6 +77,8 @@ module.exports = {
     'js-yaml': require('js-yaml'),
     rxjs: require('rxjs'),
     xstate: require('xstate'),
+    // axios is kept for backward compatibility with external remote components
+    // that may depend on it. Meshery's internal code uses RTK Query instead.
     axios: require('axios'),
     '@reduxjs/toolkit': require('@reduxjs/toolkit'),
     'react-redux': require('react-redux'),
