@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "A Flux HelmRelease that references a GitRepository as its chart source."
+  },
+  "model": {
+    "name": "flux"
+  },
+  "id": "00000000-0000-0000-0000-000000000000",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "HelmRelease",
+            "model": "flux",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["configuration", "spec", "chart", "spec", "sourceRef", "name"]],
+              "description": "HelmRelease references the GitRepository as its chart source."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "GitRepository",
+            "model": "flux",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["displayName"]],
+              "description": "GitRepository is the source for the HelmRelease."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ]
+}
