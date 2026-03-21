@@ -54,8 +54,8 @@ const (
 	ErrUnmarshallConfigCode               = "mesheryctl-1088"
 	ErrUploadFileParamsCode               = "mesheryctl-1089"
 	ErrContextNotExistsCode               = "mesheryctl-1196"
-	ErrSystemSetInvalidReleaseChannelCode = "replace_me"
-	ErrSystemSetInvalidEdgeReleaseCode    = "replace_me"
+	ErrSystemSetInvalidReleaseChannelCode = "mesheryctl-1205"
+	ErrSystemSetInvalidEdgeReleaseCode    = "mesheryctl-1206"
 )
 
 var (
