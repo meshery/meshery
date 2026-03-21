@@ -37,7 +37,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		order = defaultOrderUpdatedAtDesc
 	}
 
-	query := wp.DB.Model(&workspace.Workspace{})
+	query := wp.DB.Model(&WorkspaceDBModel{})
 
 	// Filter by organization ID
 	if orgID != "" {
@@ -65,7 +65,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	count := int64(0)
 	query.Table("workspaces").Count(&count)
 
-	workspacesFetched := []workspace.Workspace{}
+	workspacesFetched := []WorkspaceDBModel{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
@@ -89,7 +89,11 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		Page:       int(pageUint),
 		PageSize:   len(workspacesFetched),
 		TotalCount: int(count),
-		Workspaces: workspacesFetched,
+		Workspaces: make([]workspace.Workspace, 0, len(workspacesFetched)),
+	}
+
+	for _, fetchedWorkspace := range workspacesFetched {
+		workspacesPage.Workspaces = append(workspacesPage.Workspaces, workspaceSchemaModelFromDBModel(fetchedWorkspace))
 	}
 
 	// Marshal the response to JSON
@@ -110,7 +114,8 @@ func (wp *WorkspacePersister) SaveWorkspace(workspace *workspace.Workspace) ([]b
 		workspace.ID = id
 	}
 
-	if err := wp.DB.Create(workspace).Error; err != nil {
+	dbWorkspace := workspaceDBModelFromSchemaModel(workspace)
+	if err := wp.DB.Create(&dbWorkspace).Error; err != nil {
 		return nil, ErrDBCreate(err)
 	}
 
@@ -123,16 +128,19 @@ func (wp *WorkspacePersister) SaveWorkspace(workspace *workspace.Workspace) ([]b
 }
 
 func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([]byte, error) {
-	err := wp.DB.Model(&workspace).Find(&workspace).Error
+	dbWorkspace := workspaceDBModelFromSchemaModel(workspace)
+	err := wp.DB.Model(&dbWorkspace).Find(&dbWorkspace).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, ErrResultNotFound(err)
 		}
 	}
-	err = wp.DB.Delete(workspace).Error
+	err = wp.DB.Delete(&dbWorkspace).Error
 	if err != nil {
 		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
 	}
+
+	*workspace = workspaceSchemaModelFromDBModel(dbWorkspace)
 
 	// Marshal the workspace to JSON
 	wsJSON, err := json.Marshal(workspace)
@@ -144,24 +152,28 @@ func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([
 }
 
 func (wp *WorkspacePersister) UpdateWorkspaceByID(selectedWorkspace *workspace.Workspace) (*workspace.Workspace, error) {
-	err := wp.DB.Save(selectedWorkspace).Error
+	dbWorkspace := workspaceDBModelFromSchemaModel(selectedWorkspace)
+	err := wp.DB.Save(&dbWorkspace).Error
 	if err != nil {
 		return nil, ErrDBPut(err)
 	}
 
-	updatedWorkspace := workspace.Workspace{}
+	updatedWorkspace := WorkspaceDBModel{}
 	err = wp.DB.Model(&updatedWorkspace).Where("id = ?", selectedWorkspace.ID).First(&updatedWorkspace).Error
 	if err != nil {
 		return nil, ErrDBRead(err)
 	}
+
+	*selectedWorkspace = workspaceSchemaModelFromDBModel(updatedWorkspace)
 	return selectedWorkspace, nil
 }
 
 // Get workspace by ID
 func (wp *WorkspacePersister) GetWorkspace(id uuid.UUID) (*workspace.Workspace, error) {
-	workspace := workspace.Workspace{}
+	dbWorkspace := WorkspaceDBModel{}
 	query := wp.DB.Where("id = ?", id)
-	err := query.First(&workspace).Error
+	err := query.First(&dbWorkspace).Error
+	workspace := workspaceSchemaModelFromDBModel(dbWorkspace)
 	return &workspace, err
 }
 
