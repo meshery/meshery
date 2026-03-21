@@ -210,7 +210,6 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		focusedContext := tempContext
