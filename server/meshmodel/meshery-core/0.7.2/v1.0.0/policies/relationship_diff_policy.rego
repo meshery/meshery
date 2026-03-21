@@ -79,9 +79,10 @@ is_same_selector(existing_rel, new_rel) if {
 	# is relationship between same components or different
 	ex_from_selector.id == from_selector.id
 	ex_to_selector.id == to_selector.id
+
 	# check if the relationship includes binding component.
 	# If present, verify the binding component for the existing and the identified relationship are same or different.
-
+	is_same_binding(ex_from_selector, from_selector, ex_to_selector, to_selector)
 }
 
 is_same_binding(ex_from_selector, from_selector, ex_to_selector, to_selector) if {
