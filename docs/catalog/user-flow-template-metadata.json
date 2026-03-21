@@ -1,0 +1,55 @@
+{
+  "name": "User Flow Template for Kanvas",
+  "description": "A starter template to help new users create User Flow diagrams in Kanvas. Includes annotated examples and step-by-step guidance.",
+  "type": "design",
+  "category": "templates",
+  "tags": [
+    "user-flow",
+    "template",
+    "beginner",
+    "tutorial",
+    "kanvas",
+    "starter"
+  ],
+  "version": "1.0.0",
+  "author": {
+    "name": "Community Contributor",
+    "github": "Sahitya0805"
+  },
+  "compatibility": {
+    "meshery_version": ">=0.7.0",
+    "kanvas_version": ">=0.7.0"
+  },
+  "use_cases": [
+    "Planning new application features",
+    "Documenting user interactions",
+    "Designing user experiences",
+    "Teaching flow diagram concepts",
+    "Prototyping application workflows"
+  ],
+  "features": [
+    "Pre-configured flow components",
+    "Detailed annotations for each component type",
+    "Step-by-step creation guide",
+    "Best practices and tips",
+    "Example use cases included",
+    "Beginner-friendly explanations"
+  ],
+  "components_included": [
+    "Start Node",
+    "User Action",
+    "Decision Point",
+    "System Response",
+    "End State"
+  ],
+  "learning_outcomes": [
+    "Understanding User Flow diagrams",
+    "Using Kanvas components effectively",
+    "Creating clear and readable flows",
+    "Adding helpful annotations",
+    "Organizing complex workflows"
+  ],
+  "difficulty": "beginner",
+  "estimated_time": "15-30 minutes",
+  "related_issue": "https://github.com/meshery/meshery/issues/12456"
+}
