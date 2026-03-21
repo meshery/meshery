@@ -46,6 +46,7 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 	var msgsMx sync.Mutex
 
 	var errs []error
+	var errsMx sync.Mutex
 	var kclis []*kubernetes.Client
 	for _, config := range kconfigs {
 		cli, err := kubernetes.New([]byte(config))
@@ -79,7 +80,11 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					deploymentMsg.Message = result
 					if err != nil {
 						deploymentMsg.Success = false
-						errs = append(errs, err)
+						func() {
+							errsMx.Lock()
+							defer errsMx.Unlock()
+							errs = append(errs, err)
+						}()
 						deploymentMsg.Error = err
 					}
 					msgsPerComp = append(msgsPerComp, deploymentMsg)
