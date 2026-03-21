@@ -239,6 +239,9 @@ type HandlerInterface interface {
 	K8sHealthzHandler(w http.ResponseWriter, r *http.Request)
 
 	ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string)
+	// AI Adapter — natural language to infrastructure design (BYOM)
+	AIGenerateDesignHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	AIGetProvidersHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods

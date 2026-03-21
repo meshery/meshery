@@ -425,6 +425,13 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	// Kubernetes Health Probes
 	gMux.HandleFunc("/healthz/live", h.K8sHealthzHandler).Methods("GET")
 	gMux.HandleFunc("/healthz/ready", h.K8sHealthzHandler).Methods("GET")
+	// AI Adapter — natural language to infrastructure design
+	gMux.Handle("/api/ai/generate",
+		h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AIGenerateDesignHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/ai/providers",
+		h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AIGetProvidersHandler), models.ProviderAuth))).
+		Methods("GET")
 
 	// Swagger Interactive Playground
 	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
