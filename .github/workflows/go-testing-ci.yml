@@ -27,7 +27,7 @@ jobs:
       matrix:
         go: [1.25]
         os: [ubuntu-24.04]
-    name: golangci-lint
+    name: golangci-lint-server
     if: github.repository == 'meshery/meshery'
     runs-on: ${{ matrix.os }}
     steps:
@@ -60,7 +60,7 @@ jobs:
       matrix:
         go: [1.25]
         os: [ubuntu-24.04]
-    name: golangci-lint
+    name: golangci-lint-cli
     if: github.repository == 'meshery/meshery'
     runs-on: ${{ matrix.os }}
     steps:
