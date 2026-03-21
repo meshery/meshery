@@ -37,16 +37,16 @@ var listWorkspaceCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered workspaces",
 	Long: `List name of all registered workspaces
-Find more information at: https://docs.meshery.io/reference/mesheryctl/exp/workspace/list`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace/list`,
 	Example: `
 // List of workspace under a specific organization
-mesheryctl exp workspace list --orgId [orgId]
+mesheryctl workspace list --orgId [orgId]
 
 // List of workspace under a specific organization for a specified page
-mesheryctl exp workspace list --orgId [orgId] --page [page-number]
+mesheryctl workspace list --orgId [orgId] --page [page-number]
 
 // Display number of available  workspace under a specific organization
-mesheryctl exp workspace list --orgId [orgId] --count
+mesheryctl workspace list --orgId [orgId] --count
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceListFlags)
