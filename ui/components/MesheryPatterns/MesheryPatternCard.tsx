@@ -1,12 +1,25 @@
 // @ts-nocheck
 import React, { useState } from 'react';
-import { Avatar, Divider, Grid2, IconButton, Typography, Link, useTheme } from '@sistent/sistent';
-import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Save from '@mui/icons-material/Save';
-import Fullscreen from '@mui/icons-material/Fullscreen';
+import {
+  Avatar,
+  CustomTooltip,
+  Delete,
+  GetApp,
+  Public,
+  Edit,
+  Lock,
+  Save,
+  InfoOutlined,
+  Fullscreen,
+  VisibilityChipMenu,
+  Divider,
+  Grid2,
+  IconButton,
+  Typography,
+  Link,
+  useTheme,
+} from '@sistent/sistent';
 import Moment from 'react-moment';
-import GetAppIcon from '@mui/icons-material/GetApp';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from '../CodeMirror';
 import FullscreenExit from '@mui/icons-material/FullscreenExit';
@@ -24,12 +37,9 @@ import {
   StyledCodeMirrorWrapper,
 } from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
-import PublicIcon from '@mui/icons-material/Public';
 import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import { Edit, Lock, Public } from '@mui/icons-material';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import CAN from '@/utils/can';
@@ -196,7 +206,7 @@ function MesheryPatternCard_({
                   disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
                   data-testid="pattern-btn-unpublish"
                 >
-                  <PublicIcon style={iconMedium} />
+                  <Public style={iconMedium} />
                   <GridBtnText> Unpublish </GridBtnText>
                 </TooltipButton>
               )}
@@ -245,10 +255,7 @@ function MesheryPatternCard_({
                 }}
                 data-testid="pattern-btn-download"
               >
-                <GetAppIcon
-                  fill={theme.palette.background.constant.white}
-                  data-cy="download-button"
-                />
+                <GetApp fill={theme.palette.background.constant.white} data-cy="download-button" />
                 <GridBtnText> Download </GridBtnText>
               </TooltipButton>
               {visibility === VISIBILITY.PRIVATE && userCanEdit ? (
@@ -315,7 +322,7 @@ function MesheryPatternCard_({
                 disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
                 data-testid="pattern-btn-info"
               >
-                <InfoOutlinedIcon
+                <InfoOutlined
                   style={{ fill: theme.palette.background.constant.white, ...iconMedium }}
                 />
                 <GridBtnText> Info </GridBtnText>
@@ -426,7 +433,7 @@ function MesheryPatternCard_({
                       onClick={(ev) => genericClickHandler(ev, deleteHandler)}
                       data-testid="pattern-btn-delete"
                     >
-                      <DeleteIcon fill={theme.palette.background.constant.white} />
+                      <Delete fill={theme.palette.background.constant.white} />
                     </IconButton>
                   </CustomTooltip>
                 </UpdateDeleteButtons>

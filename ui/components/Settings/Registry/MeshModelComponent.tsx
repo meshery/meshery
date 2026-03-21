@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import UploadIcon from '@mui/icons-material/Upload';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
 import LinkIcon from '@mui/icons-material/Link';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constants/navigator';
 import {
@@ -23,7 +22,7 @@ import {
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
-import { Button, NoSsr } from '@sistent/sistent';
+import { Add, Button, NoSsr } from '@sistent/sistent';
 import { iconSmall } from 'css/icons.styles';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
 import ImportModelModal from './ImportModelModal';
@@ -487,7 +486,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
               onClick={openCreateModal}
               style={{ display: 'flex' }}
               disabled={false} //TODO: Need to make key for this component
-              startIcon={<AddIcon style={iconSmall} />}
+              startIcon={<Add style={iconSmall} />}
               data-testid="TabBar-Button-CreateModel"
             >
               Create Model
