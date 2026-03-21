@@ -25,35 +25,37 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrHealthCheckFailedCode             = "mesheryctl-1060"
-	ErrStopMesheryCode                   = "mesheryctl-1062"
-	ErrResetMeshconfigCode               = "mesheryctl-1063"
-	ErrApplyManifestCode                 = "mesheryctl-1064"
-	ErrApplyOperatorManifestCode         = "mesheryctl-1065"
-	ErrCreateDirCode                     = "mesheryctl-1066"
-	ErrUnsupportedPlatformCode           = "mesheryctl-1067"
-	ErrRetrievingCurrentContextCode      = "mesheryctl-1068"
-	ErrSettingDefaultContextToConfigCode = "mesheryctl-1069"
-	ErrSettingTemporaryContextCode       = "mesheryctl-1070"
-	ErrRestartMesheryCode                = "mesheryctl-1072"
-	ErrK8sQueryCode                      = "mesheryctl-1073"
-	ErrK8sConfigCode                     = "mesheryctl-1074"
-	ErrInitPortForwardCode               = "mesheryctl-1075"
-	ErrRunPortForwardCode                = "mesheryctl-1076"
-	ErrFailedGetEphemeralPortCode        = "mesheryctl-1077"
-	ErrUnmarshalDockerComposeCode        = "mesheryctl-1078"
-	ErrCreatingDockerClientCode          = "mesheryctl-1079"
-	ErrWriteConfigCode                   = "mesheryctl-1080"
-	ErrContextContentCode                = "mesheryctl-1081"
-	ErrSwitchChannelResponseCode         = "mesheryctl-1082"
-	ErrGetCurrentContextCode             = "mesheryctl-1083"
-	ErrSetCurrentContextCode             = "mesheryctl-1084"
-	ErrTokenContextCode                  = "mesheryctl-1085"
-	ErrProviderInfoCode                  = "mesheryctl-1086"
-	ErrValidProviderCode                 = "mesheryctl-1087"
-	ErrUnmarshallConfigCode              = "mesheryctl-1088"
-	ErrUploadFileParamsCode              = "mesheryctl-1089"
-	ErrContextNotExistsCode              = "mesheryctl-1196"
+	ErrHealthCheckFailedCode              = "mesheryctl-1060"
+	ErrStopMesheryCode                    = "mesheryctl-1062"
+	ErrResetMeshconfigCode                = "mesheryctl-1063"
+	ErrApplyManifestCode                  = "mesheryctl-1064"
+	ErrApplyOperatorManifestCode          = "mesheryctl-1065"
+	ErrCreateDirCode                      = "mesheryctl-1066"
+	ErrUnsupportedPlatformCode            = "mesheryctl-1067"
+	ErrRetrievingCurrentContextCode       = "mesheryctl-1068"
+	ErrSettingDefaultContextToConfigCode  = "mesheryctl-1069"
+	ErrSettingTemporaryContextCode        = "mesheryctl-1070"
+	ErrRestartMesheryCode                 = "mesheryctl-1072"
+	ErrK8sQueryCode                       = "mesheryctl-1073"
+	ErrK8sConfigCode                      = "mesheryctl-1074"
+	ErrInitPortForwardCode                = "mesheryctl-1075"
+	ErrRunPortForwardCode                 = "mesheryctl-1076"
+	ErrFailedGetEphemeralPortCode         = "mesheryctl-1077"
+	ErrUnmarshalDockerComposeCode         = "mesheryctl-1078"
+	ErrCreatingDockerClientCode           = "mesheryctl-1079"
+	ErrWriteConfigCode                    = "mesheryctl-1080"
+	ErrContextContentCode                 = "mesheryctl-1081"
+	ErrSwitchChannelResponseCode          = "mesheryctl-1082"
+	ErrGetCurrentContextCode              = "mesheryctl-1083"
+	ErrSetCurrentContextCode              = "mesheryctl-1084"
+	ErrTokenContextCode                   = "mesheryctl-1085"
+	ErrProviderInfoCode                   = "mesheryctl-1086"
+	ErrValidProviderCode                  = "mesheryctl-1087"
+	ErrUnmarshallConfigCode               = "mesheryctl-1088"
+	ErrUploadFileParamsCode               = "mesheryctl-1089"
+	ErrContextNotExistsCode               = "mesheryctl-1196"
+	ErrSystemSetInvalidReleaseChannelCode = "mesheryctl-1205"
+	ErrSystemSetInvalidEdgeReleaseCode    = "mesheryctl-1206"
 )
 
 var (
@@ -339,4 +341,24 @@ func ErrUploadFileParams(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to upload parameters from config file with provided context"},
 		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
+}
+
+func ErrSystemSetInvalidReleaseChannel(channel string) error {
+	return errors.New(
+		ErrSystemSetInvalidReleaseChannelCode,
+		errors.Fatal,
+		[]string{"Invalid release channel"},
+		[]string{fmt.Sprintf("Unable to set release channel to %s", channel)},
+		[]string{"A wrong release channel was specified"},
+		[]string{"Specify a valid release channel. Valid channels are 'stable' and 'edge'. "})
+}
+
+func ErrSystemSetInvalidEdgeRelease(channel string) error {
+	return errors.New(
+		ErrSystemSetInvalidEdgeReleaseCode,
+		errors.Fatal,
+		[]string{"Invalid edge release version"},
+		[]string{fmt.Sprintf("Unable to set edge release channel to %s", channel)},
+		[]string{"A wrong edge release version was specified"},
+		[]string{"The edge release channel only supports 'latest' as version argument. "})
 }
