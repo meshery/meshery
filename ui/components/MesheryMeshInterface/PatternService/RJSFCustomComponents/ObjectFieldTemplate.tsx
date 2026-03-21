@@ -175,7 +175,7 @@ const ObjectFieldTemplate = ({
         return element.hidden ? (
           element.content
         ) : (
-          <Grid2 size={calculateGrid(element)} key={index}>
+          <Grid2 {...calculateGrid(element)} key={index}>
             {element.content}
           </Grid2>
         );
