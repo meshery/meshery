@@ -5,12 +5,24 @@ import (
 )
 
 var (
-	ErrEmptySheetDataCode = "mesheryctl-1204"
+	ErrEmptySheetDataCode        = "mesheryctl-1204"
+	ErrValidateRelationshipCode  = "mesheryctl-1206"
 )
 
 const (
 	errInvalidArg = "only one argument must be provided and needs to be enclosed by double quotes if it contains spaces (eg. \"model name\", modelName)"
 )
+
+func ErrValidateRelationship(err error) error {
+	return errors.New(
+		ErrValidateRelationshipCode,
+		errors.Alert,
+		[]string{"Error validating relationship"},
+		[]string{err.Error()},
+		[]string{"The relationship definition file may be malformed or contain invalid data"},
+		[]string{"Ensure the file contains a valid relationship definition with all required fields including schemaVersion, kind, type, subType, and version"},
+	)
+}
 
 func ErrEmptySheetData(err error) error {
 	return errors.New(
