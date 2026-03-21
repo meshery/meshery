@@ -3,6 +3,7 @@ import { api } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
 import { initiateQuery } from './utils';
 import _ from 'lodash';
+import { useImportDesignMutation } from '@meshery/schemas/dist/mesheryApi';
 
 const TAGS = {
   DESIGNS: 'designs',
@@ -199,3 +200,5 @@ export const {
   useDeletePatternFileMutation,
   useDownloadPatternFileQuery,
 } = designsApi;
+
+export { useImportDesignMutation };

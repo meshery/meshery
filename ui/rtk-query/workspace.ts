@@ -2,6 +2,13 @@ import { urlEncodeParams } from '@/utils/utils';
 import { api } from './index';
 import { userApi } from './user';
 import _ from 'lodash';
+import {
+  useGetApiWorkspacesQuery,
+  usePostApiWorkspacesMutation,
+  useGetApiWorkspacesByIdQuery,
+  usePutApiWorkspacesByIdMutation,
+  useDeleteApiWorkspacesByIdMutation,
+} from '@meshery/schemas/dist/mesheryApi';
 
 const TAGS = {
   WORKSPACES: 'workspaces',
@@ -346,3 +353,11 @@ export const {
   useUnassignTeamFromWorkspaceMutation,
   useGetEventsOfWorkspaceQuery,
 } = workspacesApi;
+
+export {
+  useGetApiWorkspacesQuery,
+  usePostApiWorkspacesMutation,
+  useGetApiWorkspacesByIdQuery,
+  usePutApiWorkspacesByIdMutation,
+  useDeleteApiWorkspacesByIdMutation,
+};

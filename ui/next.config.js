@@ -5,6 +5,9 @@ const isPlaygroundBuild = process.env.PLAYGROUND === 'true';
 
 const nextConfig = {
   reactStrictMode: true,
+  env: {
+    RTK_MESHERY_ENDPOINT_PREFIX: process.env.RTK_MESHERY_ENDPOINT_PREFIX || '',
+  },
 
   env: {
     NEXT_PUBLIC_PLAYGROUND_BUILD: isPlaygroundBuild ? 'true' : 'false',
