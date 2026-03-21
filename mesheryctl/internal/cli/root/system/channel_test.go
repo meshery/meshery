@@ -70,14 +70,16 @@ func TestViewCmd(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc(t)
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+			SystemCmd.SetOut(buf)
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
 
-			actualResponse := b.String()
+			actualResponse := buf.String()
 			expectedResponse := tt.ExpectedResponse
 			assert.Equal(t, expectedResponse, actualResponse)
 			BreakupFunc()
@@ -101,13 +103,15 @@ func TestSetCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc(t)
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+			SystemCmd.SetOut(buf)
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
-			actualResponse := b.String()
+			actualResponse := buf.String()
 			expectedResponse := tt.ExpectedResponse
 			assert.Equal(t, expectedResponse, actualResponse)
 			BreakupFunc()
