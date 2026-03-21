@@ -193,7 +193,11 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 	}
 	var crds []crdResponse
 	for _, content := range contents {
-		crds = append(crds, getCRDsFromManifest(string(content), arrAPIResources)...)
+		extractedCRDs, err := getCRDsFromManifest(string(content), arrAPIResources)
+		if err != nil {
+			return nil, err
+		}
+		crds = append(crds, extractedCRDs...)
 	}
 	components := make([]component.ComponentDefinition, 0)
 	for _, crd := range crds {
@@ -241,11 +245,11 @@ const namespacedKey = "isNamespaced"
 func getResolvedManifest(manifest string) (string, error) {
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
-	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
-	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	if err != nil {
 		return "", err
 	}
+	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
+	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	resol := manifests.ResolveOpenApiRefs{}
 	cache := make(map[string][]byte)
 	resolved, err := resol.ResolveReferences([]byte(manifest), definitions, cache)
@@ -263,21 +267,22 @@ type crdResponse struct {
 	schema     string
 }
 
-func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdResponse {
+func getCRDsFromManifest(manifest string, arrAPIResources []string) ([]crdResponse, error) {
 	var err error
 	res := make([]crdResponse, 0)
 	manifest, err = getResolvedManifest(manifest)
 	if err != nil {
-		fmt.Printf("%v", err)
-		return nil
+		return nil, err
 	}
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
+	if err != nil {
+		return nil, err
+	}
+
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
 	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
-	if err != nil {
-		return nil
-	}
+
 	for _, name := range arrAPIResources {
 		resource := strings.ToLower(name)
 		fields, err := definitions.Fields()
@@ -336,7 +341,7 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 			}
 		}
 	}
-	return res
+	return res, nil
 }
 
 // TODO: To be moved in meshkit
