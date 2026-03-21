@@ -9,6 +9,13 @@ Broker is a custom Kubernetes controller that provides data streaming across ind
 
 [![Meshery Log Viewer](./images/meshery-log-viewer.svg
 )](./images/meshery-log-viewer.svg)
+### NATS Topics
+
+Meshery Broker uses NATS to route data between Meshery Server and MeshSync. Here are the main topics:
+
+- **`meshery.meshsync.core`**: MeshSync publishes discovered Kubernetes cluster data here.
+- **`meshery-server.meshsync.store`**: Meshery Server listens here for store updates from MeshSync to persist to the database.
+- **`meshery.meshsync.request`**: Meshery Server publishes requests and commands here for MeshSync to handle.
 
 ### Broker FAQs
 
