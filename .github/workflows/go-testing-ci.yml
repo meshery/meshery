@@ -117,7 +117,7 @@ jobs:
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-24.04
-    needs: [golangci, build-mesheryctl]
+    needs: build-mesheryctl
     strategy:
       fail-fast: false # ensure all matrix combinations run even if one fails
       matrix:
