@@ -93,7 +93,9 @@ jobs:
   build-mesheryctl:
     name: Build Meshery Binaries
     runs-on: ubuntu-24.04
-    needs: golangci
+    needs: 
+      - golangci-cli
+      - golangci-server
     steps:
       - uses: actions/checkout@v6
         with:
