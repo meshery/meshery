@@ -1,17 +1,32 @@
-import { useEffect } from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ping from "web-pingjs"
 
 export const usePingServer = () => {
   const [isServerAvailable, setIsServerAvailable] = useState(false)
+
   useEffect(() => {
-    setInterval(() => {
+    let isMounted = true
+
+    const checkServerAvailability = () => {
       ping("http://127.0.0.1:9081/api/system/version").then((res) => {
-        setIsServerAvailable(true)
+        if (isMounted) {
+          setIsServerAvailable(true)
+        }
       }).catch(() => {
-        setIsServerAvailable(false)
+        if (isMounted) {
+          setIsServerAvailable(false)
+        }
       })
-    }, 2000)
+    }
+
+    checkServerAvailability()
+    const intervalId = setInterval(checkServerAvailability, 2000)
+
+    return () => {
+      isMounted = false
+      clearInterval(intervalId)
+    }
   }, [])
+
   return isServerAvailable
 }
