@@ -1235,7 +1235,7 @@ workspace:
       usage: mesheryctl workspace list [flags]
       flags:
         org:
-          name: -o, -orgId
+          name: -o, --orgId
           description: organization id
     view:
       name: view

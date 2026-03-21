@@ -29,7 +29,7 @@ var (
 
 var WorkSpaceCmd = &cobra.Command{
 	Use:   "workspace",
-	Short: "Managge workspaces under an organization",
+	Short: "Manage workspaces under an organization",
 	Long: `Create, list of workspaces under an organization
 Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace`,
 	Example: `
