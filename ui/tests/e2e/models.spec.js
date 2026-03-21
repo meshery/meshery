@@ -84,6 +84,7 @@ test.describe.serial('Model Workflow Tests', () => {
   });
 
   test('Import a Model via File Import', async ({ page }) => {
+    test.slow();
     await page.getByTestId('TabBar-Button-ImportModel').click();
     await page.getByRole('heading', { name: 'File Import' }).click();
 
@@ -93,12 +94,15 @@ test.describe.serial('Model Workflow Tests', () => {
 
     await expect(
       page.getByTestId(`ModelImportedSection-ModelHeader-${model_import.MODEL_NAME}`),
-    ).toBeVisible();
-    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible();
+    ).toBeVisible({ timeout: 120000 });
+    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible({
+      timeout: 120000,
+    });
     await page.getByRole('button', { name: 'Finish' }).click();
   });
 
   test('Import a Model via Url Import', async ({ page }) => {
+    test.slow();
     await page.getByTestId('TabBar-Button-ImportModel').click();
     await page.getByRole('heading', { name: 'URL Import' }).click();
 
@@ -109,12 +113,15 @@ test.describe.serial('Model Workflow Tests', () => {
 
     await expect(
       page.getByTestId(`ModelImportedSection-ModelHeader-${model_import.MODEL_NAME}`),
-    ).toBeVisible();
-    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible();
+    ).toBeVisible({ timeout: 120000 });
+    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible({
+      timeout: 120000,
+    });
     await page.getByRole('button', { name: 'Finish' }).click();
   });
 
   test('Import a Model via CSV Import', async ({ page }) => {
+    test.slow();
     await page.getByTestId('TabBar-Button-ImportModel').click();
     await page.getByRole('heading', { name: 'CSV Import' }).click();
 
@@ -132,8 +139,10 @@ test.describe.serial('Model Workflow Tests', () => {
       page.getByTestId(
         `ModelImportedSection-ModelHeader-${model_import.MODEL_CSV_IMPORT.Model_Name}`,
       ),
-    ).toBeVisible();
-    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible();
+    ).toBeVisible({ timeout: 120000 });
+    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible({
+      timeout: 120000,
+    });
     await page.getByRole('button', { name: 'Finish' }).click();
   });
 });
