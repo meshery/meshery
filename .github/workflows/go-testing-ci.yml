@@ -22,7 +22,7 @@ on:
         default: "warning"
 
 jobs:
-  golangci:
+  golangci-server:
     strategy:
       matrix:
         go: [1.25]
@@ -39,11 +39,12 @@ jobs:
         uses: golangci/golangci-lint-action@v9
         with:
           version: v2.7
-          args: --config=.github/.golangci.yml --timeout=10m
+          args: --config=../.github/.golangci.yml --timeout=10m
+          working-directory: ./server
   unit-tests-server:
     name: server Unit tests
     runs-on: ubuntu-24.04
-    needs: golangci
+    needs: golangci-server
     steps:
       - uses: actions/checkout@v6
         with:
@@ -54,10 +55,29 @@ jobs:
           go-version: "1.25"
       - name: Run coverage
         run: go test --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic
+  golangci-cli:
+    strategy:
+      matrix:
+        go: [1.25]
+        os: [ubuntu-24.04]
+    name: golangci-lint
+    if: github.repository == 'meshery/meshery'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go }}
+      - uses: actions/checkout@v6
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.7
+          args: --config=../.github/.golangci.yml --timeout=10m
+          working-directory: ./mesheryctl
   unit-tests-cli:
     name: mesheryctl Unit tests
     runs-on: ubuntu-24.04
-    needs: golangci
+    needs: golangci-cli
     steps:
       - uses: actions/checkout@v6
         with:
