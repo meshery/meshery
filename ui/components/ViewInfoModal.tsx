@@ -9,6 +9,8 @@ import {
   getFullFormattedTime,
   styled,
   useTheme,
+  LockIcon,
+  PublicIcon,
 } from '@sistent/sistent';
 import React, { useState } from 'react';
 import _ from 'lodash';
@@ -25,7 +27,7 @@ import { ModalButtonSecondary } from '@sistent/sistent';
 import { handleUpdateViewVisibility, viewPath } from './SpacesSwitcher/hooks';
 import { ModalButtonPrimary } from '@sistent/sistent';
 import rehypeSanitize from 'rehype-sanitize';
-import { Lock, Public } from '@mui/icons-material';
+// import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '@/utils/Enum';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
@@ -229,8 +231,8 @@ const ViewVisibilityMenu = ({ view }) => {
       }
       enabled={view?.user_id === userData?.id}
       options={[
-        [VIEW_VISIBILITY.PUBLIC, Public],
-        [VIEW_VISIBILITY.PRIVATE, Lock],
+        [VIEW_VISIBILITY.PUBLIC, PublicIcon],
+        [VIEW_VISIBILITY.PRIVATE, LockIcon],
       ]}
     />
   );
