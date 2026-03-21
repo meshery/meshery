@@ -7,19 +7,29 @@ import {
   MenuItem,
   MenuList,
   ClickAwayListener,
+  CustomTooltip,
+  Box,
 } from '@sistent/sistent';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-export default function ActionButton({ defaultActionClick, options }) {
+export default function ActionButton({ options }) {
   const [open, setOpen] = React.useState(false);
+  const [interactiveMode, setInteractiveMode] = React.useState(true);
   const anchorRef = React.useRef(null);
 
-  const handleMenuItemClick = () => {
+  const handleMenuItemClick = (_event) => {
     setOpen(false);
   };
 
-  const handleToggle = (event) => {
+  const handleActionButtonClick = (event) => {
     event.stopPropagation();
+    setInteractiveMode(true);
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleArrowClick = (event) => {
+    event.stopPropagation();
+    setInteractiveMode(false);
     setOpen((prevOpen) => !prevOpen);
   };
 
@@ -39,28 +49,32 @@ export default function ActionButton({ defaultActionClick, options }) {
         ref={anchorRef}
         aria-label="Button group with a nested menu"
       >
-        <Button
-          sx={{
-            padding: '6px 9px',
-            borderRadius: '8px',
-          }}
-          onClick={defaultActionClick}
-          variant="outlined"
-        >
-          Action
-        </Button>
-        <Button
-          sx={{
-            padding: '6px 9px',
-            borderRadius: '8px',
-          }}
-          size="small"
-          onClick={handleToggle}
-          variant="outlined"
-          data-testid="action-btn-toggle"
-        >
-          <ArrowDropDownIcon />
-        </Button>
+        <CustomTooltip title="Invoke actions interactively" placement="top">
+          <Button
+            sx={{
+              padding: '6px 9px',
+              borderRadius: '8px',
+            }}
+            onClick={handleActionButtonClick}
+            variant="outlined"
+          >
+            Action
+          </Button>
+        </CustomTooltip>
+        <CustomTooltip title="Invoke actions in single click" placement="top">
+          <Button
+            sx={{
+              padding: '6px 9px',
+              borderRadius: '8px',
+            }}
+            size="small"
+            onClick={handleArrowClick}
+            variant="outlined"
+            data-testid="action-btn-toggle"
+          >
+            <ArrowDropDownIcon />
+          </Button>
+        </CustomTooltip>
       </ButtonGroup>
       <Popper
         sx={{
@@ -68,30 +82,37 @@ export default function ActionButton({ defaultActionClick, options }) {
         }}
         open={open}
         anchorEl={anchorRef.current}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
+        placement="bottom-end"
       >
         <Paper>
           <ClickAwayListener onClickAway={handleClose}>
             <MenuList id="split-button-menu" autoFocusItem>
               {options.map((option, index) => (
                 <MenuItem
+                  key={index}
                   data-testid={`action-btn-option-${option.label}`}
                   disabled={option.disabled}
-                  key={option}
                   onClick={(event) => {
                     handleMenuItemClick(event);
-                    option.onClick(event, index);
+                    if (interactiveMode) {
+                      option.onClick(event, index);
+                    } else if (option.onDirectClick) {
+                      option.onDirectClick(event, index);
+                    } else {
+                      option.onClick(event, index);
+                    }
                   }}
                 >
-                  <div style={{ marginRight: '0.5rem' }}>{option.icon}</div>
-                  {option.label}
+                  <CustomTooltip
+                    title={option.label}
+                    placement="left"
+                    disableHoverListener={interactiveMode}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                      <Box sx={{ marginRight: '0.5rem' }}>{option.icon}</Box>
+                      {interactiveMode && option.label}
+                    </Box>
+                  </CustomTooltip>
                 </MenuItem>
               ))}
             </MenuList>
