@@ -13,16 +13,18 @@ export default function AnimatedMeshSync(props) {
   const [isActive, setIsActive] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timerId = setTimeout(() => {
       setIsActive(false);
     }, 100);
+    return () => clearTimeout(timerId);
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsActive(!isActive);
+    const intervalId = setInterval(() => {
+      setIsActive((prevIsActive) => !prevIsActive);
     }, 2000);
-  }, [isActive]);
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <div>
