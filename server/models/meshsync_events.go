@@ -310,6 +310,14 @@ func (mh *MeshsyncDataHandler) Resync() error {
 }
 
 func (mh *MeshsyncDataHandler) Stop() {
+	// Close broker connection first - this closes subscription channels
+	// and unblocks goroutines waiting on them in subscribeToMeshsyncEvents()
+	// and subsribeToStoreUpdates(), preventing goroutine leaks
+	if mh.broker != nil {
+		mh.broker.CloseConnection()
+	}
+
+	// Then call StopFunc if present (for embedded mode libmeshsync cleanup)
 	if mh.StopFunc != nil {
 		mh.StopFunc()
 	}
