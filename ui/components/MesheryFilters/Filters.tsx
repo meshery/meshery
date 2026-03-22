@@ -1,24 +1,15 @@
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
-import { NoSsr } from '@sistent/sistent';
 import { UnControlled as CodeMirror } from '../CodeMirror';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
-import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
 import _PromptComponent from '../PromptComponent';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../../utils/Enum';
 import ViewSwitch from '../ViewSwitch';
 import FiltersGrid from './FiltersGrid';
 import { trueRandom } from '../../lib/trueRandom';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import PublicIcon from '@mui/icons-material/Public';
-import PublishIcon from '@mui/icons-material/Publish';
 import downloadContent from '../../utils/fileDownloader';
 import CloneIcon from '../../public/static/img/CloneIcon';
-import SaveIcon from '@mui/icons-material/Save';
 import ConfigurationSubscription from '../graphql/subscriptions/ConfigurationSubscription';
 import fetchCatalogFilter from '../graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
@@ -30,9 +21,19 @@ import _ from 'lodash';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import {
+  Close,
   CustomColumnVisibilityControl,
   CustomTooltip,
+  Delete,
+  Edit,
+  Fullscreen,
+  GetApp,
+  InfoOutlined,
+  NoSsr,
+  Public,
+  Publish,
   ResponsiveDataTable,
+  Save,
   SearchBar,
   UniversalFilter,
   importFilterSchema,
@@ -53,7 +54,6 @@ import {
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../General/Modals/Information/InfoModal';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { DefaultTableCell, SortableTableCell } from '../connections/common/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -189,11 +189,11 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
             {fullScreen ? (
               <FullscreenExitIcon style={iconMedium} />
             ) : (
-              <FullscreenIcon style={iconMedium} />
+              <Fullscreen style={iconMedium} />
             )}
           </TooltipIcon>
           <TooltipIcon title="Exit" onClick={onClose}>
-            <CloseIcon style={iconMedium} />
+            <Close style={iconMedium} />
           </TooltipIcon>
         </DialogTitle>
       </YmlDialogTitle>
@@ -228,7 +228,7 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
               })
             }
           >
-            <SaveIcon style={iconMedium} />
+            <Save style={iconMedium} />
           </IconButton>
         </CustomTooltip>
         <CustomTooltip title="Delete Filter">
@@ -245,7 +245,7 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
               })
             }
           >
-            <DeleteIcon style={iconMedium} />
+            <Delete style={iconMedium} />
           </IconButton>
         </CustomTooltip>
       </DialogActions>
@@ -877,7 +877,7 @@ function MesheryFilters() {
                   }}
                   disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
                 >
-                  <EditIcon aria-label="config" color="inherit" style={iconMedium} />
+                  <Edit aria-label="config" color="inherit" style={iconMedium} />
                 </TooltipIcon>
               )}
               <TooltipIcon
@@ -887,7 +887,7 @@ function MesheryFilters() {
                   !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
                 }
               >
-                <GetAppIcon data-cy="download-button" />
+                <GetApp data-cy="download-button" />
               </TooltipIcon>
               <TooltipIcon
                 title="Filter Information"
@@ -896,7 +896,7 @@ function MesheryFilters() {
                   !CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject)
                 }
               >
-                <InfoOutlinedIcon data-cy="information-button" />
+                <InfoOutlined data-cy="information-button" />
               </TooltipIcon>
               {canPublishFilter && visibility !== VISIBILITY.PUBLISHED ? (
                 <TooltipIcon
@@ -904,7 +904,7 @@ function MesheryFilters() {
                   onClick={(ev) => handlePublishModal(ev, rowData)}
                   disabled={!CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject)}
                 >
-                  <PublicIcon fill="#F91313" data-cy="publish-button" />
+                  <Public fill="#F91313" data-cy="publish-button" />
                 </TooltipIcon>
               ) : (
                 <TooltipIcon
@@ -914,7 +914,7 @@ function MesheryFilters() {
                     !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
                   }
                 >
-                  <PublicIcon fill="#F91313" data-cy="unpublish-button" />
+                  <Public fill="#F91313" data-cy="unpublish-button" />
                 </TooltipIcon>
               )}
             </ActionsBox>
@@ -1191,7 +1191,7 @@ function MesheryFilters() {
                           onClick={handleUploadImport}
                           disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
                         >
-                          <PublishIcon style={iconMedium} data-cy="import-button" />
+                          <Publish style={iconMedium} data-cy="import-button" />
                           <BtnText> Import Filters </BtnText>
                         </Button>
                       </CreateButton>

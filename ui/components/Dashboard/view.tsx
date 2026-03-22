@@ -1,6 +1,5 @@
 // @ts-nocheck
 import React, { useState } from 'react';
-import { ArrowBack } from '@mui/icons-material';
 import { TooltipIconButton } from '../../utils/TooltipButton';
 import {
   Box,
@@ -9,6 +8,7 @@ import {
   useResourceCleanData,
   Paper,
   Typography,
+  ArrowBack,
 } from '@sistent/sistent';
 import { ALL_VIEW } from './resources/config';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';

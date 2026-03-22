@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import RemoveIcon from '@mui/icons-material/Remove';
 import Link from 'next/link';
-import HelpIcon from '@mui/icons-material/Help';
+import { Remove, Help } from '@sistent/sistent';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ExtensionIcon from '../public/static/img/drawer-icons/extensions_svg';
@@ -546,7 +545,7 @@ const Navigator_ = () => {
       }
       children.push({
         id: adapter.adapter_location,
-        icon: <RemoveIcon />,
+        icon: <Remove />,
         href: `/management?adapter=${adapter.adapter_location}`,
         title: `Management - ${adapter.adapter_location}`,
         link: true,
@@ -1038,7 +1037,7 @@ const Navigator_ = () => {
         <ListItem style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
           <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
             <HelpButton isCollapsed={isDrawerCollapsed} onClick={toggleSpacing}>
-              <HelpIcon
+              <Help
                 style={{
                   fontSize: '1.45rem',
                   ...iconSmall,

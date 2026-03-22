@@ -1,18 +1,18 @@
 // @ts-nocheck
 import {
+  AccessTimeFilled,
   CustomTooltip,
   EditIcon,
+  GroupAdd,
   IconButton,
   useWindowDimensions,
   Menu,
   MenuItem,
+  MoreVert,
   useTheme,
   DeleteIcon,
   ListItemIcon,
 } from '@sistent/sistent';
-import { GroupAdd } from '@mui/icons-material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import { useState } from 'react';
 import { TableIconsContainer, IconWrapper } from './styles';
 import { iconMedium } from 'css/icons.styles';
@@ -58,7 +58,7 @@ const WorkspaceActionList = ({
     {
       key: 'recent-activity',
       label: 'Recent Activity',
-      icon: <AccessTimeFilledIcon style={{ color: theme.palette.icon.default, ...iconMedium }} />,
+      icon: <AccessTimeFilled style={{ color: theme.palette.icon.default, ...iconMedium }} />,
       onClick: (e) => handleActivityModalOpen(e, workspaceId, workspaceName),
     },
     {
@@ -83,7 +83,7 @@ const WorkspaceActionList = ({
         {isMobile ? (
           <>
             <IconButton aria-label="more" onClick={handleClick}>
-              <MoreVertIcon />
+              <MoreVert />
             </IconButton>
             <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
               {actionItems.map(({ key, label, icon, onClick, disabled }) => (

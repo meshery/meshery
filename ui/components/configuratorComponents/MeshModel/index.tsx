@@ -1,7 +1,9 @@
 import {
+  ArrowBack,
   Avatar,
   AvatarGroup,
   CircularProgress,
+  Delete,
   FormControl,
   Grid2,
   IconButton,
@@ -9,12 +11,11 @@ import {
   TextField,
   Toolbar,
   CustomTooltip,
+  Save,
   styled,
 } from '@sistent/sistent';
 import React, { useEffect, useRef, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SaveIcon from '@mui/icons-material/Save';
 import { NoSsr } from '@sistent/sistent';
 import { iconMedium } from '../../../css/icons.styles';
 import { useMeshModelComponents } from '../../../utils/hooks/useMeshModelComponents';
@@ -23,7 +24,6 @@ import CodeEditor from '../CodeEditor';
 import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
 import { useRouter } from 'next/router';
-import { ArrowBack } from '@mui/icons-material';
 import TooltipButton from '../../../utils/TooltipButton';
 import { SaveAs as SaveAsIcon } from '@mui/icons-material';
 import CAN from '@/utils/can';
@@ -212,7 +212,7 @@ export default function DesignConfigurator() {
                     onClick={designUpdate}
                     disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                   >
-                    <SaveIcon style={iconMedium} />
+                    <Save style={iconMedium} />
                   </IconButton>
                 </div>
               </CustomTooltip>
@@ -226,7 +226,7 @@ export default function DesignConfigurator() {
                     onClick={designDelete}
                     disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
                   >
-                    <DeleteIcon style={iconMedium} />
+                    <Delete style={iconMedium} />
                   </IconButton>
                 </div>
               </CustomTooltip>

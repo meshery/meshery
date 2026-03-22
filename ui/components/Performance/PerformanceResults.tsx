@@ -6,10 +6,8 @@ import MesheryChart from '../MesheryChart';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import GenericModal from '../General/Modals/GenericModal';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import InfoIcon from '@mui/icons-material/Info';
 import fetchPerformanceResults from '../graphql/queries/PerformanceResultQuery';
 import NodeDetails from './NodeDetails';
-import ReplyIcon from '@mui/icons-material/Reply';
 import FacebookIcon from './assets/facebookIcon';
 import LinkedinIcon from './assets/linkedinIcon';
 import TwitterIcon from './assets/twitterIcon';
@@ -19,6 +17,8 @@ import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceRe
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import {
+  Info,
+  Reply,
   Tab,
   Tabs,
   IconButton,
@@ -232,7 +232,7 @@ function generateColumnsForDisplay(
               color="inherit"
               onClick={() => setSelectedProfileIdxForNodeDetails(tableMeta.rowIndex)}
             >
-              <InfoIcon style={iconMedium} /> {/* can change it to large */}
+              <Info style={iconMedium} /> {/* can change it to large */}
             </IconButton>
           );
         },
@@ -255,7 +255,7 @@ function generateColumnsForDisplay(
                 aria-label="Share"
                 onClick={(e) => handleSocialExpandClick(e, tableMeta)}
               >
-                <ReplyIcon
+                <Reply
                   style={{
                     transform: 'scaleX(-1)',
                     color: theme.palette.icon.default,
