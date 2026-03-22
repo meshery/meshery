@@ -1,6 +1,7 @@
 import { useHandleFeedbackFormSubmissionMutation } from '@/rtk-query/user';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { FeedbackButton, styled } from '@sistent/sistent';
+import { GlobalStyles } from '@mui/material';
 import { EVENT_TYPES } from 'lib/event-types';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
@@ -58,6 +59,17 @@ export const StickyFeedbackButton = ({ defaultMessage, defaultOpen, containerSty
 
   return (
     <FeedbackWrapper>
+      <GlobalStyles
+        styles={(theme) => ({
+          '.MuiDrawer-root .MuiToggleButton-root.Mui-selected': {
+            color: `${theme.palette.text.primary} !important`,
+            backgroundColor: `${theme.palette.background.default} !important`,
+          },
+          '.MuiDrawer-root .MuiButtonBase-root:active': {
+            color: `${theme.palette.text.primary} !important`,
+          },
+        })}
+      />
       <FeedbackButton
         defaultMessage={defaultMessage}
         containerStyles={containerStyles}
