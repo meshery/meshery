@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/jarcoal/httpmock"
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshkit/errors"
@@ -186,7 +187,14 @@ func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 // setup meshkit logger for testing and return the buffer in which commands output is to be set.
 func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
-	Log = SetupMeshkitLogger("mesheryctl", verbose, b)
+	logLevel := logrus.InfoLevel
+	if verbose {
+		logLevel = logrus.DebugLevel
+	}
+	logger := mesheryctllogger.GetMeshkitLogger(logLevel)
+	logger.SetLevel(logLevel)
+	logger.UpdateLogOutput(b)
+	Log = logger
 	return b
 }
 
@@ -499,7 +507,7 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			originalStdout := os.Stdout
-			b := SetupMeshkitLoggerTesting(t, true)
+			b := SetupMeshkitLoggerTesting(t, false)
 			defer func() {
 				os.Stdout = originalStdout
 			}()
@@ -588,24 +596,11 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 			testdataDir := filepath.Join(commandDir, "testdata")
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// Properly save and restore stdout using defer
-			originalStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-
-			// Ensure stdout is always restored
-			defer func() {
-				os.Stdout = originalStdout
-			}()
-
-			Log = SetupMeshkitLogger("mesheryctl", true, w)
+			buf := SetupMeshkitLoggerTesting(t, false)
 
 			cmd.SetArgs(tt.Args)
-			cmd.SetOut(w)
+			cmd.SetOut(buf)
 			err := cmd.Execute()
-
-			// Close write end before reading
-			_ = w.Close()
 
 			if err != nil {
 				// if we're supposed to get an error
@@ -626,16 +621,6 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 				}
 				// Unexpected error - fail immediately
 				t.Fatalf("unexpected error: %v", err)
-			}
-
-			if tt.ExpectError {
-				t.Fatalf("expected an error but command succeeded")
-			}
-
-			var buf bytes.Buffer
-			_, errCopy := io.Copy(&buf, r)
-			if errCopy != nil {
-				t.Fatal(errCopy)
 			}
 
 			if tt.ExpectError {

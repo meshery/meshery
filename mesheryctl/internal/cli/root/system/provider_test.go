@@ -21,7 +21,7 @@ func TestViewProviderCmd(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc()
+			SetupFunc(t)
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
@@ -39,7 +39,7 @@ func TestViewProviderCmd(t *testing.T) {
 	}
 }
 func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
-	SetupFunc()
+	SetupFunc(t)
 	SystemCmd.SetArgs([]string{"provider"})
 	err = SystemCmd.Execute()
 
