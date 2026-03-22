@@ -67,7 +67,7 @@ const ExpandableComponentErrors = ({
   const currentComponentErrorRef = useRef(null);
 
   const onErrorTap = (error) => {
-    if (!validationMachine) {
+    if (!validationMachine?.send) {
       return;
     }
 
@@ -256,6 +256,9 @@ const DryRunComponent = (props) => {
   const { configurableComponents, annotationComponents } = processDesign(design);
 
   useEffect(() => {
+    if (!validationMachine?.send) {
+      return;
+    }
     const dryRunCommand =
       deployment_type == DEPLOYMENT_TYPE.DEPLOY
         ? designValidatorCommands.dryRunDesignDeployment
@@ -267,7 +270,11 @@ const DryRunComponent = (props) => {
         includeDependencies,
       }),
     );
-  }, [includeDependencies]);
+  }, [includeDependencies, validationMachine, design, selectedK8sContexts, deployment_type]);
+
+  if (!validationMachine?.send) {
+    return <Loading message="Initializing dry run" />;
+  }
 
   if (isLoading) {
     return <Loading message="Performing a dry run" />;

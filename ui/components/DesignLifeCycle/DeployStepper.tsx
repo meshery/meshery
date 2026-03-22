@@ -76,6 +76,9 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
   }, []);
 
   useEffect(() => {
+    if (!operationsCenterActorRef?.on) {
+      return undefined;
+    }
     const subscription = operationsCenterActorRef.on(
       OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
       (event) => {
@@ -96,7 +99,7 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
     );
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [operationsCenterActorRef, deployment_type, autoOpenView]);
 
   const progressMessage = `${capitalize(deployment_type)}ing  design`;
 
@@ -200,6 +203,7 @@ export const UpdateDeploymentStepper = ({
   const dryRunErrors = useDryRunValidationResults(validationMachine);
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
   const isDryRunning = useIsValidatingDryRun(validationMachine);
+  const validationActorReady = typeof validationMachine?.send === 'function';
   const theme = useTheme();
 
   const selectedK8sConnections = useSelector(selectAllSelectedK8sConnections);
@@ -314,7 +318,8 @@ export const UpdateDeploymentStepper = ({
       nextAction: () => deployStepper.handleNext(),
     },
     2: {
-      canGoNext: () => !isDryRunning & (totalDryRunErrors == 0 || bypassDryRun),
+      canGoNext: () =>
+        validationActorReady && !isDryRunning && (totalDryRunErrors === 0 || bypassDryRun),
       nextButtonText: 'Next',
       nextAction: () => deployStepper.handleNext(),
     },

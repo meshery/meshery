@@ -301,7 +301,8 @@ export const designValidationMachine = createMachine({
 
 export const selectValidator = (state, validator) => {
   try {
-    return state.context?.[validator] || null;
+    // `state` can be undefined briefly (e.g. before the actor snapshot exists); optional-chain `state`.
+    return state?.context?.[validator] ?? null;
   } catch (error) {
     console.warn('Error accessing validator from state context:', error);
     return null;
@@ -310,9 +311,8 @@ export const selectValidator = (state, validator) => {
 
 const useSelectValidator = (validationMachine, validatorName, selector) => {
   const validator = useSelector(validationMachine, (s) => selectValidator(s, validatorName));
-  const data = useSelector(validator, (state) => {
-    // If validator is null/undefined, return null instead of crashing
-    if (!validator || !state) return null;
+  return useSelector(validator, (state) => {
+    if (!validator || state == null) return null;
     try {
       return selector(state);
     } catch (error) {
@@ -320,9 +320,6 @@ const useSelectValidator = (validationMachine, validatorName, selector) => {
       return null;
     }
   });
-
-  // Return data only if validator exists
-  return validator ? data : null;
 };
 
 export const useDesignSchemaValidationResults = (validationMachine) =>
@@ -367,9 +364,8 @@ export const selectComponentDryRunResults = (state, componentName) => {
 
 export const useIsValidatingDesign = (validationMachine, validatorName) => {
   const validator = useSelector(validationMachine, (s) => selectValidator(s, validatorName));
-  const isValidating = useSelector(validator, (state) => {
-    // If validator is null/undefined, return false instead of crashing
-    if (!validator || !state) return false;
+  return useSelector(validator, (state) => {
+    if (!validator || state == null) return false;
     try {
       return selectIsValidating(state);
     } catch (error) {
@@ -377,9 +373,6 @@ export const useIsValidatingDesign = (validationMachine, validatorName) => {
       return false;
     }
   });
-
-  // Return isValidating only if validator exists, otherwise false
-  return validator ? isValidating : false;
 };
 
 export const useIsValidatingDesignSchema = (validationMachine) =>
