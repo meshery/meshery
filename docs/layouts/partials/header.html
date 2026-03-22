@@ -9,7 +9,7 @@
 
 <header>
   <nav class="js-navbar-scroll navbar">
-    <a class="navbar-brand" href="{{ .Site.BaseURL }}{{ $linkUrlSelected }}">
+    <a class="navbar-brand" href="{{ printf "%s%s" .Site.BaseURL $linkUrlSelected | replace "//" "/" }}">
       <div class="navbar-logo">
         {{ partial "svg/meshery-docs.html" . }}
       </div>
