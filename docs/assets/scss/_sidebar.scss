@@ -28,7 +28,7 @@
 
   @media (max-width: 75em) {
     margin-top: 0;
-    transform: translateX(calc(-100% + 3rem));
+    transform: translateX(calc(-100% + 0.85rem));
     position: fixed;
     display: flex;
     width: 300px;
@@ -38,7 +38,7 @@
 
   @media (max-width: 37.5em) {
     width: min(88vw, 320px);
-    transform: translateX(calc(-100% + 2.5rem));
+    transform: translateX(calc(-100% + 0.75rem));
     top: calc(var(--navbar-height) - 10px);
     height: 100vh;
   }
@@ -66,7 +66,7 @@
 
   @media (max-width: 37.5em) {
     height: 3.6rem;
-    width: 1.65rem;
+    width: 1.35rem;
   }
 }
 
