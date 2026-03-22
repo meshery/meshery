@@ -1,5 +1,6 @@
 ---
 title: Extensions
+linkTitle: "🛠️ Integrations & Extensions"
 description: Extensions are additional plugins or add-ons that provide extra functionalities beyond the core features of the Meshery.
 aliases: 
 - /extensibility/extensions
