@@ -257,8 +257,8 @@ func isValidBinding(comp1, comp2, selector map[string]interface{}) bool {
 		resolvedFrom := resolvePath(fromPath, mutatorDecl)
 		resolvedTo := resolvePath(toPath, mutatedDecl)
 
-		val1 := objectGetNested(mutatorDecl, resolvedFrom, nil)
-		val2 := objectGetNested(mutatedDecl, resolvedTo, nil)
+		val1 := objectGetNestedWithSpecFallback(mutatorDecl, resolvedFrom)
+		val2 := objectGetNestedWithSpecFallback(mutatedDecl, resolvedTo)
 
 		if !deepEqual(val1, val2) {
 			return false

@@ -218,6 +218,9 @@ func patchMutatorsAction(rel, designFile map[string]interface{}) []PolicyAction 
 
 // configurationForComponentAtPath gets the value at a path in a component,
 // handling the "configuration" prefix and alias resolution.
+// If the path includes "spec" (e.g., ["configuration", "spec", "roleRef", "name"])
+// but the component stores it without "spec" (e.g., configuration.roleRef.name),
+// it falls back to the path without "spec".
 func configurationForComponentAtPath(path []string, component, design map[string]interface{}) interface{} {
 	if len(path) == 0 {
 		return nil
@@ -225,7 +228,15 @@ func configurationForComponentAtPath(path []string, component, design map[string
 
 	if path[0] == "configuration" {
 		config := getComponentConfiguration(component, design)
-		return objectGetNested(config, popFirst(path), nil)
+		rest := popFirst(path)
+		val := objectGetNested(config, rest, nil)
+		// Fallback: if path has "spec" as first segment and value is nil,
+		// try without "spec" (handles relDefs that include "spec" but
+		// components that store fields directly under configuration).
+		if val == nil && len(rest) > 1 && rest[0] == "spec" {
+			val = objectGetNested(config, rest[1:], nil)
+		}
+		return val
 	}
 
 	return objectGetNested(component, path, nil)

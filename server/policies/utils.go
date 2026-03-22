@@ -12,6 +12,22 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+// objectGetNestedWithSpecFallback tries objectGetNested with the full path,
+// and if nil, retries by skipping "spec" after "configuration".
+// This handles relationship definitions that include "spec" in paths
+// but components that store fields directly under "configuration".
+func objectGetNestedWithSpecFallback(obj interface{}, path []string) interface{} {
+	val := objectGetNested(obj, path, nil)
+	if val != nil {
+		return val
+	}
+	// Try skipping "spec" if path is like ["configuration", "spec", ...]
+	if len(path) > 2 && path[0] == "configuration" && path[1] == "spec" {
+		return objectGetNested(obj, append([]string{path[0]}, path[2:]...), nil)
+	}
+	return nil
+}
+
 // objectGetNested traverses a nested map following the given path segments.
 // Returns defaultValue if any segment is missing or the path is invalid.
 func objectGetNested(obj interface{}, path []string, defaultValue interface{}) interface{} {
