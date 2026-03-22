@@ -39,6 +39,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -446,6 +447,13 @@ type meshsyncResourcesResponseWrapper struct {
 	Body *models.MeshSyncResourcesAPIResponse
 }
 
+// Returns meshsync discovered resource by ID
+// swagger:response meshsyncResourceByIDResponseWrapper
+type meshsyncResourceByIDResponseWrapper struct {
+	// in: body
+	Body *component.ComponentDefinition
+}
+
 // Returns meshmodel relationships
 // swagger:response meshmodelRelationshipsResponseWrapper
 type meshmodelRelationshipsResponseWrapper struct {
@@ -693,5 +701,6 @@ var (
 	_ orgsResponseWrapper
 	_ mesheryPatternSourceContentResponseWrapper
 	_ meshsyncResourcesSummaryResponseWrapper
+	_ meshsyncResourceByIDResponseWrapper
 	_ mesheryPatternFileDeployPayloadWrapper
 )

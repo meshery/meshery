@@ -24,11 +24,11 @@ jobs:
       - name: swagger-spec
         run: swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
       - name: swagger-docs
-        run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models; swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+        run: swagger generate spec -o ./docs/data/swagger.yml --scan-models; swagger flatten ./docs/data/swagger.yml -o ./docs/data/swagger.yml --with-expand --format=yaml
       - name: Install dependencies
         run: npm install -g @redocly/openapi-cli
       - name: Generate documentation
-        run: npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml'
+        run: npx @redocly/cli build-docs ./docs/data/swagger.yml --config='redocly.yaml'
 
       - name: Pull changes from remote
         run: git pull origin master

@@ -1610,7 +1610,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 //
 // responses:
 //
-//	200: []byte
+//	200: noContentWrapper
 
 func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelId := r.URL.Query().Get("id")

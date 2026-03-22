@@ -480,7 +480,7 @@ swagger: swagger-build
 ## Build Meshery REST API documentation
 swagger-docs-build:
 	swagger generate spec -o ./docs/data/swagger.yml --scan-models; \
-	swagger flatten ./docs/data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+	swagger flatten ./docs/data/swagger.yml -o ./docs/data/swagger.yml --with-expand --format=yaml
 
 
 ## Building Meshery docs with redocly
