@@ -26,6 +26,7 @@ import (
 	"github.com/pkg/errors"
 
 	dockerclient "github.com/docker/docker/client"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
 	c "github.com/meshery/meshery/mesheryctl/pkg/constants"
@@ -44,14 +45,19 @@ import (
 )
 
 var (
-	preflight      bool
-	pre            bool
-	componentsFlag bool
-	adaptersFlag   bool
-	operatorsFlag  bool
-	adapter        string
-	failure        int
+	failure int
 )
+
+type cmdSystemCheckFlags struct {
+	Preflight      bool   `json:"preflight" validate:"boolean"`
+	Pre            bool   `json:"pre" validate:"boolean"`
+	ComponentsFlag bool   `json:"componentsFlag" validate:"boolean"`
+	AdaptersFlag   bool   `json:"adaptersFlag" validate:"boolean"`
+	OperatorsFlag  bool   `json:"operatorsFlag" validate:"boolean"`
+	Adapter        string `json:"adapter" validate:"omitempty"`
+}
+
+var systemCheckFlags cmdSystemCheckFlags
 
 type HealthCheckOptions struct {
 	// PrintLogs to keep incheck to print logs during a healthcheck
@@ -142,6 +148,9 @@ mesheryctl system check --adapter meshery-istio
 mesheryctl system check --operator
 	`,
 	Annotations: linkDocCheck,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &systemCheckFlags)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		hco := &HealthCheckOptions{
 			PrintLogs:  true,
@@ -154,7 +163,7 @@ mesheryctl system check --operator
 		}
 
 		// if --pre or --preflight has been passed we run preflight checks
-		if pre || preflight {
+		if systemCheckFlags.Pre || systemCheckFlags.Preflight {
 			// Run preflight checks
 			err := hc.RunPreflightHealthChecks()
 			if err != nil {
@@ -167,16 +176,15 @@ mesheryctl system check --operator
 				utils.Log.Info("\n--------------\n--------------\n!! Meshery prerequisites not met")
 			}
 			return nil
-		} else if componentsFlag { // if --components has been passed we run checks related to components
+		} else if systemCheckFlags.ComponentsFlag { // if --components has been passed we run checks related to components
 			return hc.runComponentsHealthChecks()
-		} else if adapter != "" {
-			return hc.runAdapterHealthChecks(adapter)
-		} else if adaptersFlag {
+		} else if systemCheckFlags.Adapter != "" {
+			return hc.runAdapterHealthChecks(systemCheckFlags.Adapter)
+		} else if systemCheckFlags.AdaptersFlag {
 			return hc.runAdapterHealthChecks("")
-		} else if operatorsFlag {
+		} else if systemCheckFlags.OperatorsFlag {
 			return hc.runOperatorHealthChecks()
 		}
-
 		currContext, err := hc.mctlCfg.GetCurrentContext()
 		if err != nil {
 			return ErrGetCurrentContext(err)
@@ -520,7 +528,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		}
 	} else { // else we grab the error
 		if latest != version {
-			return errors.New("!! CLI is not up-to-date")
+			return ErrSystemCheckInvalidCliVersion(version)
 		}
 	}
 
@@ -542,7 +550,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 	}
 	clientMesh, err := meshkitkube.New([]byte(""))
 	if err != nil {
-		return err
+		return ErrK8sConfig(err)
 	}
 
 	// List the pods in the `meshery` Namespace
@@ -651,7 +659,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 	var adapters []*models.Adapter
 	prefs, err := utils.GetSessionData(hc.mctlCfg)
 	if err != nil {
-		return fmt.Errorf("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
+		return utils.ErrInvalidToken()
 	}
 	for _, adapter := range prefs.MeshAdapters {
 		if adapterName != "" {
@@ -681,7 +689,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 				utils.Log.Infof("!! failed to connect to Meshery Adapter for %s ", name)
 				skipAdapter = true
 			} else { // or we're supposed to grab the errors
-				return fmt.Errorf("!! failed to connect to Meshery Adapter for%s adapter: %s", name, err)
+				return utils.ErrFailedToConnectAdapter(name, err)
 			}
 			continue
 		}
@@ -692,7 +700,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 				if hc.Options.PrintLogs { // incase we're printing logs
 					utils.Log.Infof("!! Meshery Adapter for %s is running but not reachable", name)
 				} else { // or we're supposed to grab the errors
-					return fmt.Errorf("!! Meshery Adapter for %s is running, but not reachable", name)
+					return utils.ErrAdapterNotReachable(name)
 				}
 			} else { // if status == 200 we check if we are supposed to print logs
 				if hc.Options.PrintLogs { // incase we're printing logs
@@ -708,7 +716,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 func mesheryReadinessHealthCheck() (bool, error) {
 	kubeClient, err := meshkitkube.New([]byte(""))
 	if err != nil {
-		return false, err
+		return false, ErrK8sConfig(err)
 	}
 	if err := utils.WaitForPodRunning(kubeClient, "meshery", utils.MesheryNamespace, 300); err != nil {
 		return false, err
@@ -718,10 +726,10 @@ func mesheryReadinessHealthCheck() (bool, error) {
 }
 
 func init() {
-	checkCmd.Flags().BoolVarP(&preflight, "preflight", "", false, "Verify environment readiness to deploy Meshery")
-	checkCmd.Flags().BoolVarP(&pre, "pre", "", false, "Verify environment readiness to deploy Meshery")
-	checkCmd.Flags().BoolVarP(&componentsFlag, "components", "", false, "Check status of Meshery components")
-	checkCmd.Flags().BoolVarP(&adaptersFlag, "adapters", "", false, "Check status of meshery adapters")
-	checkCmd.Flags().StringVarP(&adapter, "adapter", "", "", "Check status of specified meshery adapter")
-	checkCmd.Flags().BoolVarP(&operatorsFlag, "operator", "", false, "Verify the health of Meshery Operator's deployment with MeshSync and Broker")
+	checkCmd.Flags().BoolVarP(&systemCheckFlags.Preflight, "preflight", "", false, "Verify environment readiness to deploy Meshery")
+	checkCmd.Flags().BoolVarP(&systemCheckFlags.Pre, "pre", "", false, "Verify environment readiness to deploy Meshery")
+	checkCmd.Flags().BoolVarP(&systemCheckFlags.ComponentsFlag, "components", "", false, "Check status of Meshery components")
+	checkCmd.Flags().BoolVarP(&systemCheckFlags.AdaptersFlag, "adapters", "", false, "Check status of meshery adapters")
+	checkCmd.Flags().StringVarP(&systemCheckFlags.Adapter, "adapter", "", "", "Check status of specified meshery adapter")
+	checkCmd.Flags().BoolVarP(&systemCheckFlags.OperatorsFlag, "operator", "", false, "Verify the health of Meshery Operator's deployment with MeshSync and Broker")
 }
