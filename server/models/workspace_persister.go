@@ -93,9 +93,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		Workspaces: make([]workspace.Workspace, 0, len(workspacesFetched)),
 	}
 
-	for _, fetchedWorkspace := range workspacesFetched {
-		workspacesPage.Workspaces = append(workspacesPage.Workspaces, fetchedWorkspace)
-	}
+	workspacesPage.Workspaces = append(workspacesPage.Workspaces, workspacesFetched...)
 
 	// Marshal the response to JSON
 	wsJSON, err := json.Marshal(workspacesPage)
