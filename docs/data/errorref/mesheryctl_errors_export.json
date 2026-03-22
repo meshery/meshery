@@ -1676,6 +1676,24 @@
         "short_description": "Invalid or empty spreadsheet provided",
         "probable_cause": "The spreadsheet must contain valid relationship entries with the required headers.",
         "suggested_remediation": "Ensure the spreadsheet contains at least two headers and corresponding values for it's headers. Refer to the Meshery relationship csv for the expected spreadsheet format \\\"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\\"
+      },
+      "1205": {
+        "name": "ErrSystemSetInvalidReleaseChannelCode",
+        "code": "1205",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Invalid release channel",
+        "probable_cause": "A wrong release channel was specified",
+        "suggested_remediation": "Specify a valid release channel. Valid channels are 'stable' and 'edge'. "
+      },
+      "1206": {
+        "name": "ErrSystemSetInvalidEdgeReleaseCode",
+        "code": "1206",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Invalid edge release version",
+        "probable_cause": "A wrong edge release version was specified",
+        "suggested_remediation": "The edge release channel only supports 'latest' as version argument. "
       }
     }
   }
