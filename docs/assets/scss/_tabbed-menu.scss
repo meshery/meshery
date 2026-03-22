@@ -27,7 +27,7 @@ section[class*="tabbed"] {
 }
 
 /* Tab label styling - applies to all levels */
-label {
+[class*="tab-container"] label {
   display: inline-flex;
   align-items: center;
   padding: 15px 25px 15px 15px;
@@ -40,13 +40,13 @@ label {
 }
 
 /* Hover state for all labels */
-label:hover {
+[class*="tab-container"] label:hover {
   color: #888;
   background-color: var(--brand-color-secondary-50);
 }
 
 /* Icon styling using pseudo-element */
-label:before {
+[class*="tab-container"] label:before {
   font-family: 'FontAwesome';
   content: attr(data-icon);
   display: inline-block;
@@ -55,7 +55,7 @@ label:before {
 
 
 /* Active tab styling for all levels */
-input:checked + label {
+[class*="tab-container"] input:checked + label {
   color: var(--color-secondary-dark);
   border: 1px solid #ddd;
   border-top: 2px solid var(--brand-color);
@@ -66,7 +66,7 @@ input:checked + label {
 }
 
 /* Show content for active tabs at any level */
-input:checked + label + section[class*="tabbed"] {
+[class*="tab-container"] input:checked + label + section[class*="tabbed"] {
   display: block;
 }
 
@@ -87,11 +87,11 @@ section[class*="tabbed"] section[class*="tabbed"] {
 
 /* Mobile responsiveness */
 @media screen and (max-width: 650px) {
-  label {
+  [class*="tab-container"] label {
     font-size: 0;
   }
   
-  label i {
+  [class*="tab-container"] label i {
     font-size: 18px;
     margin: 0;
   }
