@@ -11,6 +11,7 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	patternv1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"gorm.io/gorm"
 )
@@ -37,7 +38,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		order = defaultOrderUpdatedAtDesc
 	}
 
-	query := wp.DB.Model(&WorkspaceDBModel{})
+	query := wp.DB.Model(&workspace.Workspace{})
 
 	// Filter by organization ID
 	if orgID != "" {
@@ -65,7 +66,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	count := int64(0)
 	query.Table("workspaces").Count(&count)
 
-	workspacesFetched := []WorkspaceDBModel{}
+	workspacesFetched := []workspace.Workspace{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
@@ -93,7 +94,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	}
 
 	for _, fetchedWorkspace := range workspacesFetched {
-		workspacesPage.Workspaces = append(workspacesPage.Workspaces, workspaceSchemaModelFromDBModel(fetchedWorkspace))
+		workspacesPage.Workspaces = append(workspacesPage.Workspaces, fetchedWorkspace)
 	}
 
 	// Marshal the response to JSON
@@ -114,8 +115,7 @@ func (wp *WorkspacePersister) SaveWorkspace(workspace *workspace.Workspace) ([]b
 		workspace.ID = id
 	}
 
-	dbWorkspace := workspaceDBModelFromSchemaModel(workspace)
-	if err := wp.DB.Create(&dbWorkspace).Error; err != nil {
+	if err := wp.DB.Create(workspace).Error; err != nil {
 		return nil, ErrDBCreate(err)
 	}
 
@@ -128,19 +128,16 @@ func (wp *WorkspacePersister) SaveWorkspace(workspace *workspace.Workspace) ([]b
 }
 
 func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([]byte, error) {
-	dbWorkspace := workspaceDBModelFromSchemaModel(workspace)
-	err := wp.DB.Model(&dbWorkspace).Find(&dbWorkspace).Error
+	err := wp.DB.Model(&workspace).Find(&workspace).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, ErrResultNotFound(err)
 		}
 	}
-	err = wp.DB.Delete(&dbWorkspace).Error
+	err = wp.DB.Delete(workspace).Error
 	if err != nil {
 		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
 	}
-
-	*workspace = workspaceSchemaModelFromDBModel(dbWorkspace)
 
 	// Marshal the workspace to JSON
 	wsJSON, err := json.Marshal(workspace)
@@ -152,28 +149,26 @@ func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([
 }
 
 func (wp *WorkspacePersister) UpdateWorkspaceByID(selectedWorkspace *workspace.Workspace) (*workspace.Workspace, error) {
-	dbWorkspace := workspaceDBModelFromSchemaModel(selectedWorkspace)
-	err := wp.DB.Save(&dbWorkspace).Error
+	err := wp.DB.Save(selectedWorkspace).Error
 	if err != nil {
 		return nil, ErrDBPut(err)
 	}
 
-	updatedWorkspace := WorkspaceDBModel{}
+	updatedWorkspace := workspace.Workspace{}
 	err = wp.DB.Model(&updatedWorkspace).Where("id = ?", selectedWorkspace.ID).First(&updatedWorkspace).Error
 	if err != nil {
 		return nil, ErrDBRead(err)
 	}
 
-	*selectedWorkspace = workspaceSchemaModelFromDBModel(updatedWorkspace)
+	*selectedWorkspace = updatedWorkspace
 	return selectedWorkspace, nil
 }
 
 // Get workspace by ID
 func (wp *WorkspacePersister) GetWorkspace(id uuid.UUID) (*workspace.Workspace, error) {
-	dbWorkspace := WorkspaceDBModel{}
+	workspace := workspace.Workspace{}
 	query := wp.DB.Where("id = ?", id)
-	err := query.First(&dbWorkspace).Error
-	workspace := workspaceSchemaModelFromDBModel(dbWorkspace)
+	err := query.First(&workspace).Error
 	return &workspace, err
 }
 
@@ -492,11 +487,16 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search,
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&designsFetched)
 	}
 
-	designsPage := &MesheryDesignPage{
+	schemaDesigns, err := schemaMesheryPatterns(designsFetched)
+	if err != nil {
+		return nil, err
+	}
+
+	designsPage := &workspace.MesheryDesignPage{
 		Page:       int(pageUint),
 		PageSize:   len(designsFetched),
 		TotalCount: int(count),
-		Designs:    designsFetched,
+		Designs:    schemaDesigns,
 	}
 
 	designsJSON, err := json.Marshal(designsPage)
@@ -505,4 +505,18 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search,
 	}
 
 	return designsJSON, nil
+}
+
+func schemaMesheryPatterns(patterns []*MesheryPattern) ([]patternv1beta1.MesheryPattern, error) {
+	encoded, err := json.Marshal(patterns)
+	if err != nil {
+		return nil, err
+	}
+
+	decoded := []patternv1beta1.MesheryPattern{}
+	if err := json.Unmarshal(encoded, &decoded); err != nil {
+		return nil, err
+	}
+
+	return decoded, nil
 }
