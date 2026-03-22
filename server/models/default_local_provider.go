@@ -1503,12 +1503,12 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID stri
 }
 
 func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	orgID := workspacePayload.OrganizationID
 	workspace := &workspace.Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationId: orgId,
+		OrganizationID: &orgID,
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}
@@ -1516,17 +1516,14 @@ func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *
 }
 
 func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
-	id, err := validateUUID(workspaceID, "workspace ID")
-	if err != nil {
-		return nil, err
-	}
-	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	id, _ := uuid.FromString(workspaceID)
+	orgID := workspacePayload.OrganizationID
 	workspace := &workspace.Workspace{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationId: orgId,
+		OrganizationID: &orgID,
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}
