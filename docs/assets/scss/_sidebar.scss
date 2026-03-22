@@ -395,7 +395,7 @@
 .td-sidebar__search input[type="search"] {
   display: block;
   width: 100%;
-  font-size: 1.02rem;
+  font-size: 1.08rem;
   border: 1px solid var(--color-grey-medium);
   border-radius: 8px;
   background: var(--color-primary-light);
@@ -433,7 +433,7 @@
   display: block;
   text-decoration: none;
   border-radius: 8px;
-  line-height: 1.35;
+  line-height: 1.42;
   padding: 0.32rem 0.52rem;
   font-size: 0.95rem;
   transition:
@@ -453,10 +453,10 @@
   --sidebar-level-gap: 0.38rem;
   --sidebar-line-color: rgba(184, 194, 204, 0.2);
   --sidebar-line-color-nested: rgba(184, 194, 204, 0.14);
-  --sidebar-size-l1: 1rem;
-  --sidebar-size-l2: 0.97rem;
-  --sidebar-size-l3: 0.95rem;
-  --sidebar-size-l4: 0.94rem;
+  --sidebar-size-l1: 1.08rem;
+  --sidebar-size-l2: 1.04rem;
+  --sidebar-size-l3: 1.01rem;
+  --sidebar-size-l4: 0.99rem;
 }
 
 .left-container .sidebar-container .td-sidebar-nav .td-sidebar-link__section {
