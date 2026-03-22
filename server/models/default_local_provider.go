@@ -205,12 +205,18 @@ func (l *DefaultLocalProvider) GetEnvironments(_, page, pageSize, search, order,
 }
 
 func (l *DefaultLocalProvider) GetEnvironmentByID(_ *http.Request, environmentID string, _ string) ([]byte, error) {
-	id := uuid.FromStringOrNil(environmentID)
+	id, err := validateUUID(environmentID, "environment ID")
+	if err != nil {
+		return nil, err
+	}
 	return l.EnvironmentPersister.GetEnvironmentByID(id)
 }
 
 func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID string) ([]byte, error) {
-	id := uuid.FromStringOrNil(environmentID)
+	id, err := validateUUID(environmentID, "environment ID")
+	if err != nil {
+		return nil, err
+	}
 	return l.EnvironmentPersister.DeleteEnvironmentByID(id)
 }
 
@@ -228,7 +234,10 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 }
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
-	id, _ := uuid.FromString(environmentID)
+	id, err := validateUUID(environmentID, "environment ID")
+	if err != nil {
+		return nil, err
+	}
 	orgId, _ := uuid.FromString(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		ID:             id,
@@ -1478,12 +1487,18 @@ func (l *DefaultLocalProvider) GetWorkspaces(_, page, pageSize, search, order, f
 }
 
 func (l *DefaultLocalProvider) GetWorkspaceByID(_ *http.Request, workspaceID string, _ string) ([]byte, error) {
-	id := uuid.FromStringOrNil(workspaceID)
+	id, err := validateUUID(workspaceID, "workspace ID")
+	if err != nil {
+		return nil, err
+	}
 	return l.WorkspacePersister.GetWorkspaceByID(id)
 }
 
 func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID string) ([]byte, error) {
-	id := uuid.FromStringOrNil(workspaceID)
+	id, err := validateUUID(workspaceID, "workspace ID")
+	if err != nil {
+		return nil, err
+	}
 	return l.WorkspacePersister.DeleteWorkspaceByID(id)
 }
 
@@ -1501,7 +1516,10 @@ func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *
 }
 
 func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
-	id, _ := uuid.FromString(workspaceID)
+	id, err := validateUUID(workspaceID, "workspace ID")
+	if err != nil {
+		return nil, err
+	}
 	orgID := workspacePayload.OrganizationID
 	workspace := &workspace.Workspace{
 		ID:             id,

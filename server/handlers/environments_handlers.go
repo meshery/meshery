@@ -64,11 +64,12 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 
 func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	environmentID := mux.Vars(r)["id"]
+
 	q := r.URL.Query()
 	resp, err := provider.GetEnvironmentByID(r, environmentID, q.Get("orgID"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		http.Error(w, ErrGetResult(err).Error(), providerErrStatusCode(err, http.StatusNotFound))
 		return
 	}
 
@@ -127,10 +128,11 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 
 func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	environmentID := mux.Vars(r)["id"]
+
 	resp, err := provider.DeleteEnvironment(r, environmentID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		http.Error(w, ErrGetResult(err).Error(), providerErrStatusCode(err, http.StatusNotFound))
 		return
 	}
 
@@ -149,6 +151,7 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 //	200: environmentResponseWrapper
 func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	environmentID := mux.Vars(req)["id"]
+
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
@@ -169,7 +172,7 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	resp, err := provider.UpdateEnvironment(req, &environment, environmentID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		http.Error(w, ErrGetResult(err).Error(), providerErrStatusCode(err, http.StatusNotFound))
 		return
 	}
 

@@ -5144,6 +5144,10 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
+	if _, err := validateUUID(environmentID, "environment ID"); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID)
 	q := remoteProviderURL.Query()
@@ -5237,6 +5241,10 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
+	if _, err := validateUUID(environmentID, "environment ID"); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID)
@@ -5276,6 +5284,10 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *environment.E
 		l.Log.Warn(ErrOperationNotAvailable)
 
 		return &environment.Environment{}, ErrInvalidCapability("Environment", l.ProviderName)
+	}
+
+	if _, err := validateUUID(environmentID, "environment ID"); err != nil {
+		return nil, err
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
@@ -5577,6 +5589,10 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
+	if _, err := validateUUID(workspaceID, "workspace ID"); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID)
 	q := remoteProviderURL.Query()
@@ -5670,6 +5686,10 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
+	if _, err := validateUUID(workspaceID, "workspace ID"); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID)
@@ -5709,6 +5729,10 @@ func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.Works
 		l.Log.Warn(ErrOperationNotAvailable)
 
 		return &workspace.Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	if _, err := validateUUID(workspaceID, "workspace ID"); err != nil {
+		return nil, err
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)

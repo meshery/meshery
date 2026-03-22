@@ -63,11 +63,12 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 
 func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(r)["id"]
+
 	q := r.URL.Query()
 	resp, err := provider.GetWorkspaceByID(r, workspaceID, q.Get("orgID"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		http.Error(w, ErrGetResult(err).Error(), providerErrStatusCode(err, http.StatusNotFound))
 		return
 	}
 
@@ -126,10 +127,11 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 // 201: workspaceResponseWrapper
 func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(r)["id"]
+
 	resp, err := provider.DeleteWorkspace(r, workspaceID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		http.Error(w, ErrGetResult(err).Error(), providerErrStatusCode(err, http.StatusNotFound))
 		return
 	}
 
@@ -148,6 +150,7 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 //	200: workspaceResponseWrapper
 func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
@@ -168,7 +171,7 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	resp, err := provider.UpdateWorkspace(req, &workspace, workspaceID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		http.Error(w, ErrGetResult(err).Error(), providerErrStatusCode(err, http.StatusNotFound))
 		return
 	}
 
