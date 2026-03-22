@@ -16,7 +16,7 @@ const URLS = {
 };
 
 test.describe('Extensions Section Tests', () => {
-  let extensionsPage;
+  let extensionsPage: ExtensionsPage;
 
   test.beforeEach(async ({ page }) => {
     extensionsPage = new ExtensionsPage(page);
