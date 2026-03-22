@@ -2,6 +2,7 @@ package policies
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/utils"
@@ -31,18 +32,8 @@ func NewGoEngine(log logger.Handler) *GoEngine {
 	}
 }
 
-// EvaluateDesign evaluates a design file using the Go policy engine.
-func (e *GoEngine) EvaluateDesign(
-	design pattern.PatternFile,
-	registeredRelationships []interface{},
-) (pattern.EvaluationResponse, error) {
-	var resp pattern.EvaluationResponse
-
-	designMap, err := toGenericMap(design)
-	if err != nil {
-		return resp, ErrConvertDesign(err)
-	}
-
+// ConvertRelationships converts entity interfaces to generic maps once for reuse across iterations.
+func ConvertRelationships(registeredRelationships []interface{}) []map[string]interface{} {
 	var relMaps []map[string]interface{}
 	for _, r := range registeredRelationships {
 		rm, err := toGenericMapFromInterface(r)
@@ -51,15 +42,35 @@ func (e *GoEngine) EvaluateDesign(
 		}
 		relMaps = append(relMaps, rm)
 	}
+	return relMaps
+}
+
+// EvaluateDesign evaluates a design file using the Go policy engine.
+func (e *GoEngine) EvaluateDesign(
+	design pattern.PatternFile,
+	relMaps []map[string]interface{},
+) (pattern.EvaluationResponse, error) {
+	var resp pattern.EvaluationResponse
+
+	t0 := time.Now()
+	designMap, err := toGenericMap(design)
+	if err != nil {
+		return resp, ErrConvertDesign(err)
+	}
+	e.log.Info("toGenericMap: ", time.Since(t0))
 
 	modelsInDesign := getModelsInDesign(designMap)
+	t1 := time.Now()
 	relsInScope := filterRelationshipsInScope(relMaps, modelsInDesign, designMap)
+	e.log.Info("filter: ", time.Since(t1), ", models: ", len(modelsInDesign), ", rels: ", len(relMaps), ", scope: ", len(relsInScope))
 
-	e.log.Info("models in design: ", len(modelsInDesign), ", registered rels: ", len(relMaps), ", rels in scope: ", len(relsInScope))
-
+	t2 := time.Now()
 	resultDesign, allActions := e.evaluate(designMap, relsInScope)
+	e.log.Info("evaluate: ", time.Since(t2))
 
+	t3 := time.Now()
 	resp, err = fromGenericMap(resultDesign)
+	e.log.Info("fromGenericMap: ", time.Since(t3))
 	if err != nil {
 		return resp, ErrConvertResult(err)
 	}
@@ -73,8 +84,6 @@ func (e *GoEngine) EvaluateDesign(
 
 	resp.Trace = buildTrace(allActions, designMap, resultDesign)
 
-	applyConfigurationPatches(e.log, &resp)
-
 	return resp, nil
 }
 
@@ -84,8 +93,8 @@ type componentUpdatePayload struct {
 	Path  []string    `json:"path"`
 }
 
-// applyConfigurationPatches applies component configuration update patches to the response.
-func applyConfigurationPatches(log logger.Handler, resp *pattern.EvaluationResponse) {
+// ApplyConfigurationPatches applies component configuration update patches to the response.
+func ApplyConfigurationPatches(log logger.Handler, resp *pattern.EvaluationResponse) {
 	var updates []componentUpdatePayload
 	for _, action := range resp.Actions {
 		if action.Op == UpdateComponentConfigurationOp {

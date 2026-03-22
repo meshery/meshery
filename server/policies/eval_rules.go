@@ -471,7 +471,7 @@ func identifyRelationshipsBasedOnMatchingMutatorAndMutatedFields(
 
 						decl := deepCopyMap(relDef)
 						decl["selectors"] = []interface{}{selectorDecl}
-						decl["id"] = newUUID(selectorDecl).String()
+						decl["id"] = staticUUID(selectorDecl).String()
 						decl["status"] = "identified"
 
 						identified = append(identified, decl)

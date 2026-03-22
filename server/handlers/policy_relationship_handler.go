@@ -12,6 +12,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1alpha1/capability"
 	"github.com/meshery/schemas/models/v1alpha1/core"
@@ -279,26 +280,27 @@ func (h *Handler) EvaluateDesign(
 
 	useGoEngine := viper.GetBool("USE_GO_POLICY_ENGINE")
 
+	// Pre-fetch and convert registered relationships once, outside the re-evaluation loop.
+	var relMaps []map[string]interface{}
+	if useGoEngine && h.GoEngine != nil {
+		registeredRels, _, _, relErr := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
+		if relErr != nil {
+			return lastEvaluationResponse, fmt.Errorf("failed to get relationships for Go engine: %w", relErr)
+		}
+		relInterfaces := make([]interface{}, len(registeredRels))
+		for idx, r := range registeredRels {
+			relInterfaces[idx] = r
+		}
+		relMaps = gopolicies.ConvertRelationships(relInterfaces)
+	}
+
 	for i := range MAX_RE_EVALUATION_DEPTH {
 
 		var evaluationResponse pattern.EvaluationResponse
 		var err error
 
 		if useGoEngine && h.GoEngine != nil {
-			// Use native Go policy engine
-			// GetEntities returns (entities, totalCount, uniqueCount, error); counts are unused here.
-			registeredRels, _, _, relErr := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
-			if relErr != nil {
-				return lastEvaluationResponse, fmt.Errorf("failed to get relationships for Go engine: %w", relErr)
-			}
-
-			// Convert entity.Entity slice to []interface{} for the Go engine
-			relInterfaces := make([]interface{}, len(registeredRels))
-			for idx, r := range registeredRels {
-				relInterfaces[idx] = r
-			}
-
-			evaluationResponse, err = h.GoEngine.EvaluateDesign(lastEvaluationResponse.Design, relInterfaces)
+			evaluationResponse, err = h.GoEngine.EvaluateDesign(lastEvaluationResponse.Design, relMaps)
 		} else {
 			// Use OPA/Rego policy engine (default)
 			evaluationResponse, err = h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,
@@ -314,7 +316,19 @@ func (h *Handler) EvaluateDesign(
 
 		// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
 		now := time.Now()
+
+		// Save trace before processEvaluationResponse, which does slow registry
+		// lookups for trace.ComponentsAdded. Restore it after to avoid the cost.
+		savedTrace := evaluationResponse.Trace
+		evaluationResponse.Trace = pattern.Trace{}
 		_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
+		evaluationResponse.Trace = savedTrace
+
+		// Apply configuration patches after processEvaluationResponse to prevent
+		// trace-based component replacement from overwriting the patched config.
+		if useGoEngine {
+			gopolicies.ApplyConfigurationPatches(h.log, &evaluationResponse)
+		}
 
 		evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
 		if evaluationResponse.Design.Metadata == nil {

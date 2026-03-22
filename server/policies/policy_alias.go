@@ -176,7 +176,7 @@ func identifyAliasRelationships(component, relDef, designFile map[string]interfa
 						"mutatedRef":    []interface{}{stringSliceToInterface(path)},
 					}
 
-					compID := newUUID(map[string]interface{}{"c": component, "s": selectorPatchDecl}).String()
+					compID := staticUUID(map[string]interface{}{"c": component, "s": selectorPatchDecl}).String()
 
 					newFrom := deepCopyMap(from)
 					newFrom["id"] = compID
@@ -196,7 +196,7 @@ func identifyAliasRelationships(component, relDef, designFile map[string]interfa
 
 					rel := deepCopyMap(relDef)
 					rel["selectors"] = []interface{}{selectorDecl}
-					rel["id"] = newUUID(selectorDecl).String()
+					rel["id"] = staticUUID(selectorDecl).String()
 					rel["status"] = "identified"
 
 					identified = append(identified, rel)

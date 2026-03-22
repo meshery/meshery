@@ -137,7 +137,7 @@ func identifyBindingRelationships(relDef, designFile map[string]interface{}) []m
 						}
 
 						rel := deepCopyMap(relDef)
-						rel["id"] = newUUID(seed).String()
+						rel["id"] = staticUUID(seed).String()
 						rel["selectors"] = []interface{}{selectorDecl}
 						rel["status"] = "approved"
 
