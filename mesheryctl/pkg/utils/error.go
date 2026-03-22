@@ -73,6 +73,8 @@ var (
 	ErrListMesheryPodsCode            = "replace_me"
 	ErrNoMesheryPodsCode              = "replace_me"
 	ErrMissingMesheryPodCode          = "replace_me"
+	ErrK8sVersionInfoCode             = "replace_me"
+	ErrK8sInvalidVersionFormatCode    = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -875,5 +877,27 @@ func ErrMissingMesheryPod(podName string) error {
 		[]string{fmt.Sprintf("Unable to find pod with name %s", podName)},
 		[]string{"The specified pod name may be incorrect or the pod may not be running"},
 		[]string{"Verify the pod name and ensure that the Meshery pod is deployed and running"},
+	)
+}
+
+func Errk8sVersionInfo(err error) error {
+	return errors.New(
+		ErrK8sVersionInfoCode,
+		errors.Alert,
+		[]string{"Failed to get Kubernetes version information"},
+		[]string{err.Error()},
+		[]string{"Unable to retrieve Kubernetes version information from the cluster"},
+		[]string{"Ensure your Kubernetes cluster is running and accessible, and that you have the necessary permissions to query version information"},
+	)
+}
+
+func ErrK8sInvalidVersionFormat(err error) error {
+	return errors.New(
+		ErrK8sInvalidVersionFormatCode,
+		errors.Alert,
+		[]string{"Invalid Kubernetes version format"},
+		[]string{err.Error()},
+		[]string{"The Kubernetes version information retrieved is in an unexpected format"},
+		[]string{"Check the Kubernetes cluster for any issues and ensure it is running a supported version"},
 	)
 }

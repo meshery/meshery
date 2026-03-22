@@ -34,7 +34,13 @@ func GetK8sVersionInfo() (*version.Info, error) {
 	if err != nil {
 		return nil, err
 	}
-	return client.KubeClient.Discovery().ServerVersion()
+
+	version, err := client.KubeClient.Discovery().ServerVersion()
+	if err != nil {
+		return nil, Errk8sVersionInfo(err)
+	}
+
+	return version, nil
 }
 
 func CheckK8sVersion(versionInfo *version.Info) error {
@@ -61,13 +67,13 @@ func getK8sVersion(versionString string) ([3]int, error) {
 	split := strings.Split(justTheMajorMinorRevisionNumbers, ".")
 
 	if len(split) < 3 {
-		return version, fmt.Errorf("unknown version string format [%s]", versionString)
+		return version, ErrK8sInvalidVersionFormat(fmt.Errorf("unknown version string format [%s]", versionString))
 	}
 
 	for i, segment := range split {
 		v, err := strconv.Atoi(strings.TrimSpace(segment))
 		if err != nil {
-			return version, fmt.Errorf("unknown version string format [%s]", versionString)
+			return version, ErrK8sInvalidVersionFormat(fmt.Errorf("unknown version string format [%s]", versionString))
 		}
 		version[i] = v
 	}

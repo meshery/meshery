@@ -5,7 +5,7 @@ import (
 )
 
 func TestViewProviderCmd(t *testing.T) {
-	SetupContextEnv(t)
+	setupContextTestEnv(t)
 	tests := []CmdTestInput{
 		{
 			Name:             "view with context override",
@@ -28,7 +28,7 @@ func TestViewProviderCmd(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc(t)
+			setupSystemOutCmdTest(t)
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
@@ -46,7 +46,7 @@ func TestViewProviderCmd(t *testing.T) {
 	}
 }
 func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
-	SetupFunc(t)
+	setupSystemOutCmdTest(t)
 	SystemCmd.SetArgs([]string{"provider"})
 	err = SystemCmd.Execute()
 

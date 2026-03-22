@@ -1,43 +1,13 @@
 package system
 
 import (
-	"bytes"
-	"os"
 	"strings"
 	"testing"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
-
-var b *bytes.Buffer
-
-func SetupContextEnv(t *testing.T) {
-	path, err := os.Getwd()
-	if err != nil {
-		t.Error("unable to locate meshery directory")
-	}
-	viper.Reset()
-	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
-	//fmt.Println(viper.ConfigFileUsed())
-	err = viper.ReadInConfig()
-	if err != nil {
-		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
-	}
-
-	mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		t.Error("error processing config", err)
-	}
-}
-
-func SetupFunc(t *testing.T) {
-	b = utils.SetupMeshkitLoggerTesting(t, true)
-	SystemCmd.SetOut(b)
-}
 
 func BreakupFunc() {
 	viewCmd.Flags().VisitAll(setFlagValueAsUndefined)
@@ -61,7 +31,7 @@ type CmdTestInput struct {
 }
 
 func TestViewCmd(t *testing.T) {
-	SetupContextEnv(t)
+	setupContextTestEnv(t)
 	tests := []CmdTestInput{
 		{
 			Name:             "view with context override",
@@ -112,7 +82,7 @@ func TestViewCmd(t *testing.T) {
 }
 
 func TestSetCmd(t *testing.T) {
-	SetupContextEnv(t)
+	setupContextTestEnv(t)
 	tests := []CmdTestInput{
 		{
 			Name:             "Set Docker Platform  Channel",
@@ -127,9 +97,11 @@ func TestSetCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			buf := utils.SetupMeshkitLoggerTesting(t, false)
-			defer buf.Reset()
-			SystemCmd.SetOut(buf)
+			buf := setupSystemOutCmdTest(t)
+			defer func() {
+				buf.Reset()
+				resetCmdFlags(SystemCmd, t)
+			}()
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
