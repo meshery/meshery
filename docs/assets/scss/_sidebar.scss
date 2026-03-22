@@ -561,17 +561,12 @@
 
 .td-sidebar-nav .ul-1 {
   margin: 0.14rem 0 0.38rem 0.04rem;
-  padding-left: 0.22rem;
-  border-left: 1px solid rgba(184, 194, 204, 0.2);
+  padding-left: 0;
+  border-left: 0;
 }
 
 .td-sidebar-nav .ul-1 > li::before {
-  content: "";
-  position: absolute;
-  left: -0.24rem;
-  top: 0.98rem;
-  width: 0.24rem;
-  border-top: 1px solid rgba(184, 194, 204, 0.2);
+  content: none;
 }
 
 body.td-home .td-sidebar-nav .ul-1,

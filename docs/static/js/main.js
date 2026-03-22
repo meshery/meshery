@@ -128,7 +128,6 @@ window.addEventListener("load", () => {
     if (!docsSidebar) {
         return;
     }
-
     const stateKey = "meshery-docs-sidebar-fold-state-v1";
     const scrollKey = "meshery-docs-sidebar-scroll-v1";
     const sidebarScroller = document.querySelector(".sidebar-container");
@@ -153,23 +152,37 @@ window.addEventListener("load", () => {
     };
 
     const storedState = readStoredState();
-    foldInputs.forEach((input) => {
-        if (typeof storedState[input.id] === "boolean") {
-            input.checked = storedState[input.id];
+    const setBranchVisibility = (input, isOpen) => {
+        const branch = input ? input.closest("li.with-child") : null;
+        const childList = branch ? branch.querySelector(":scope > ul") : null;
+        if (!childList) {
+            return;
         }
-    });
+        childList.style.removeProperty("display");
+    };
 
-    docsSidebar
-        .querySelectorAll("li.active-path > input[type='checkbox']")
-        .forEach((input) => {
-            input.checked = true;
+    const restoreSidebarState = () => {
+        foldInputs.forEach((input) => {
+            if (typeof storedState[input.id] === "boolean") {
+                input.checked = storedState[input.id];
+            }
         });
+
+        docsSidebar
+            .querySelectorAll("li.active-path > input[type='checkbox']")
+            .forEach((input) => {
+                input.checked = true;
+            });
+    };
+
+    restoreSidebarState();
 
     const toggleInputState = (input) => {
         if (!input) {
             return;
         }
         input.checked = !input.checked;
+        setBranchVisibility(input, input.checked);
         persistState();
     };
 
@@ -237,6 +250,28 @@ window.addEventListener("load", () => {
         sidebarScroller.addEventListener("scroll", saveScroll, { passive: true });
         window.addEventListener("beforeunload", () => {
             sessionStorage.setItem(scrollKey, String(sidebarScroller.scrollTop));
+        });
+    }
+
+    const sidebarSearchInput = document.querySelector(
+        ".td-sidebar__search input[type='search'], .td-sidebar__search .td-search-input, #sidebar-search-input"
+    );
+    if (sidebarSearchInput && !sidebarSearchInput.id) {
+        sidebarSearchInput.id = "sidebar-search-input";
+    }
+
+    const sidebarSearchForm = document.querySelector(".td-sidebar__search");
+    if (sidebarSearchForm && sidebarSearchInput) {
+        sidebarSearchForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const query = sidebarSearchInput.value.trim();
+            const baseHref = sidebarSearchInput.getAttribute("data-offline-search-base-href") || "/";
+            const normalizedBase = baseHref.endsWith("/") ? baseHref : `${baseHref}/`;
+            const searchUrl = new URL(`${normalizedBase}search/`, window.location.origin);
+            if (query) {
+                searchUrl.searchParams.set("q", query);
+            }
+            window.location.assign(searchUrl.toString());
         });
     }
 });
