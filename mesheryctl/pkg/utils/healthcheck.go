@@ -319,7 +319,7 @@ func WaitForPodRunning(c *meshkitkube.Client, desiredPod, namespace string, time
 		return err
 	}
 	if len(podList.Items) == 0 {
-		return fmt.Errorf("no pods in %s", namespace)
+		return ErrNoMesheryPodsFound(namespace)
 	}
 	var desiredPodName string
 	for _, pod := range podList.Items {
@@ -330,7 +330,7 @@ func WaitForPodRunning(c *meshkitkube.Client, desiredPod, namespace string, time
 	}
 
 	if desiredPodName == "" {
-		return fmt.Errorf("`%s` pod not found", desiredPod)
+		return ErrMissingMesheryPod(desiredPod)
 	}
 
 	return pollForPodRunning(c, namespace, desiredPodName, time.Duration(timeout)*time.Second)

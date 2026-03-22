@@ -56,6 +56,7 @@ const (
 	ErrContextNotExistsCode               = "mesheryctl-1196"
 	ErrSystemSetInvalidReleaseChannelCode = "mesheryctl-1205"
 	ErrSystemSetInvalidEdgeReleaseCode    = "mesheryctl-1206"
+	ErrSystemCheckInvalidCliVersionCode   = "replace_me"
 )
 
 var (
@@ -361,4 +362,14 @@ func ErrSystemSetInvalidEdgeRelease(channel string) error {
 		[]string{fmt.Sprintf("Unable to set edge release channel to %s", channel)},
 		[]string{"A wrong edge release version was specified"},
 		[]string{"The edge release channel only supports 'latest' as version argument. "})
+}
+
+func ErrSystemCheckInvalidCliVersion(version string) error {
+	return errors.New(
+		ErrSystemCheckInvalidCliVersionCode,
+		errors.Fatal,
+		[]string{"Invalid CLI version"},
+		[]string{fmt.Sprintf("The CLI version %s is not supported", version)},
+		[]string{"The CLI version is incompatible with the Meshery Server version"},
+		[]string{"Please upgrade your CLI to the latest version or to a version compatible with your Meshery Server. "})
 }

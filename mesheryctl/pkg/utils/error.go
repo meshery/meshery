@@ -68,6 +68,11 @@ var (
 	ErrCommandContextMissingCode      = "mesheryctl-1201"
 	ErrPromptCancelledCode            = "mesheryctl-1202"
 	ErrMesheryServerInternalErrorCode = "mesheryctl-1203"
+	ErrFailedToConnectAdapterCode     = "replace_me"
+	ErrAdapterNotReachableCode        = "replace_me"
+	ErrListMesheryPodsCode            = "replace_me"
+	ErrNoMesheryPodsCode              = "replace_me"
+	ErrMissingMesheryPodCode          = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -815,5 +820,60 @@ func ErrMesheryServerInternalError(err error) error {
 		[]string{err.Error()},
 		[]string{"An unexpected error occurred on the server side"},
 		[]string{"Check the server logs using 'mesheryctl system logs' for more details and try again later"},
+	)
+}
+
+func ErrFailedToConnectAdapter(name string, err error) error {
+	return errors.New(
+		ErrFailedToConnectAdapterCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("!! Failed to connect to Meshery Adapter for %s adapter", name)},
+		[]string{err.Error()},
+		[]string{"The connection to the Meshery Adapter failed"},
+		[]string{"Ensure that the Meshery Adapter is running and accessible, and try again"},
+	)
+}
+
+func ErrAdapterNotReachable(name string) error {
+	return errors.New(
+		ErrAdapterNotReachableCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("!! Meshery Adapter for %s is not reachable", name)},
+		[]string{"The Meshery Adapter is not responding to requests"},
+		[]string{"The adapter may be down or there may be network issues"},
+		[]string{"Check the status of the adapter and your network connection, and try again"},
+	)
+}
+
+func ErrListMesheryPods(err error) error {
+	return errors.New(
+		ErrListMesheryPodsCode,
+		errors.Alert,
+		[]string{"Failed to list Meshery pods"},
+		[]string{err.Error()},
+		[]string{"Unable to retrieve the list of Meshery pods from the Kubernetes cluster"},
+		[]string{"Ensure your Kubernetes cluster is running and accessible, and that you have the necessary permissions to list pods"},
+	)
+}
+
+func ErrNoMesheryPodsFound(namespace string) error {
+	return errors.New(
+		ErrNoMesheryPodsCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("No Meshery pods found in namespace %s", namespace)},
+		[]string{fmt.Sprintf("Unable to find any Meshery pods in %s namespace", namespace)},
+		[]string{fmt.Sprintf("The namespace %s may be incorrect or there may be no Meshery pods running", namespace)},
+		[]string{"Verify the namespace and ensure that Meshery pods are deployed and running"},
+	)
+}
+
+func ErrMissingMesheryPod(podName string) error {
+	return errors.New(
+		ErrMissingMesheryPodCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("pod with name %s not found", podName)},
+		[]string{fmt.Sprintf("Unable to find pod with name %s", podName)},
+		[]string{"The specified pod name may be incorrect or the pod may not be running"},
+		[]string{"Verify the pod name and ensure that the Meshery pod is deployed and running"},
 	)
 }

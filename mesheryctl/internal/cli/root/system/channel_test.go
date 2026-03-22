@@ -3,6 +3,7 @@ package system
 import (
 	"bytes"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -68,16 +69,26 @@ func TestViewCmd(t *testing.T) {
 			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
 		},
 		{
-			Name:             "view without any parameter",
+			Name:             "given no argument when view then display current context channel and version",
 			Args:             []string{"channel", "view"},
 			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n\n",
 		},
 		{
-			Name: "view with all flag",
+			Name:             "given context override when view then display specified context channel and version",
+			Args:             []string{"channel", "view", "-c", "gke"},
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+		},
+		{
+			Name: "given --all flag when view then display all contexts channel and version",
 			Args: []string{"channel", "view", "--all"},
-			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n" +
-				PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n\n" +
-				"Current Context: local\n",
+			ExpectedResponse: func() string {
+				output := strings.Builder{}
+				for contextName, context := range mctlCfg.Contexts {
+					output.WriteString(PrintChannelAndVersionToStdout(context, contextName) + "\n\n")
+				}
+				output.WriteString("Current Context: local\n")
+				return output.String()
+			}(),
 		},
 	}
 
