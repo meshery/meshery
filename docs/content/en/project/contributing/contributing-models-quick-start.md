@@ -1,31 +1,30 @@
 ---
-title: Contributing to Models Quick Start
-description: A no-fluff guide to creating your own Meshery Models quickly.
-categories: [contributing]
+title: "Contributing to Models Quick Start"
+description: "A no-fluff guide to creating your own Meshery Models quickly."
+type: "project"
+layout: "project"
 ---
 
-**Models follow Meshery's schema-driven development approach.** Model, Component, and Relationship definitions are validated against schemas in [`Model schema`](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model). See [Contributing to Schemas](/project/contributing/contributing-schemas) for details.
+**Models follow Meshery's schema-driven development approach.** Model, Component, and Relationship definitions are validated against schemas in the [Meshery Schemas repository](https://github.com/meshery/schemas).
 
-[Meshery Models](/concepts/logical/models) are a way to represent the architecture of a system or application. Models are defined in JSON and can be used to visualize the components and relationships between them. This guide will walk you through the process of creating a new model.
-
-[Meshery Components](/concepts/logical/components) are the building blocks of a model. Each component represents a different part of the system or application. Components can be anything from a database to a microservice to a server. Relationships define how components interact with each other. For example, a database component might have a relationship with a microservice component that represents the microservice's dependency on the database.
+[Meshery Models](/concepts/logical/models) are the primary way to represent cloud-native infrastructure. They are defined in JSON and used by Kanvas for visual orchestration.
 
 ### Creating your first Meshery Model
 
-To get started quickly, check out the [Creating Models](/guides/configuration-management/creating-models)  guide for step-by-step instructions.
+To get started quickly, you can generate models directly from existing Kubernetes CRDs or Helm charts using `mesheryctl`.
 
 ### Contributing a Model Definition
 
-1. Fork the [meshery/meshery.io](https://github.com/meshery/meshery.io) repository.
-1. Create a new branch in your fork of the meshery/meshery.io repository.
-1. Add your model definition to the `collections/_models` directory.
-1. Create a pull request to the meshery/meshery.io repository.
-1. Once your pull request is merged, your model will be available in the next Meshery release.
+1. **Fork and Clone:** Fork the [meshery/meshery](https://github.com/meshery/meshery) repository.
+2. **Generate Definitions:** Use the Meshery Registry tool or `mesheryctl model import` to generate your model's JSON definitions.
+3. **Organize:** Place your new model metadata and component definitions in the `install/kubernetes/bootstrap/models` directory.
+4. **Validate:** Ensure your definitions pass the [v1beta1 schema validation](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model).
+5. **Submit PR:** Create a pull request to the `master` branch of the `meshery/meshery` repository.
 
 ### Next Steps
 
-To learn more about how to contribute and customize your models, check out the full [Contributing to Models](/project/contributing/contributing-models/) documentation. We encourage you to get involved in the development of Meshery Models and to share your feedback!
+Once merged, your model will be automatically registered and available for use in the **Kanvas Designer** and **Meshery Catalog**.
 
 {{% alert color="info" title="Meshery Models are Extensible" %}}
-Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community.
+Meshery Models are designed to be extensible. If you have an idea for a new component or a complex relationship (like ACR-to-AKS), please share it with the community in #meshery-mentorship!
 {{% /alert %}}
