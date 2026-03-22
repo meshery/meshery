@@ -276,7 +276,13 @@ func (h *Handler) DesignFileImportHandler(
 		return
 	}
 
-	design.Name = importDesignPayload.Name
+	if importDesignPayload.Name != "" {
+		design.Name = importDesignPayload.Name
+	} else if design.Name == "" {
+		if name := pCore.DesignNameFromFileName(fileToImport.FileName); name != "" {
+			design.Name = name
+		}
+	}
 	patternFile, err := encoding.Marshal(design)
 
 	if err != nil {
