@@ -19,20 +19,6 @@ Meshery override of Docsy sidebar:
 -}}
 
 {{ if $cacheSidebar -}}
-  {{ $mid := printf "m-%s" (.RelPermalink | anchorize) }}
-  <script>
-    $(function() {
-      $("#td-section-nav a").removeClass("active");
-      $("#td-section-nav #{{ $mid }}").addClass("active");
-      $("#td-section-nav #{{ $mid }}-li span").addClass("td-sidebar-nav-active-item");
-      $("#td-section-nav #{{ $mid }}").parents("li").addClass("active-path");
-      $("#td-section-nav li.active-path").addClass("show");
-      $("#td-section-nav li.active-path").children("input").prop('checked', true);
-      $("#td-section-nav #{{ $mid }}-li").siblings("li").addClass("show");
-      $("#td-section-nav #{{ $mid }}-li").children("ul").children("li").addClass("show");
-      $("#td-sidebar-menu").toggleClass("d-none");
-    });
-  </script>
   {{ partialCached "sidebar-tree.html" $args $sidebarRootID }}
 {{ else -}}
   {{ partial "sidebar-tree.html" $args }}

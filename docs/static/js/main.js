@@ -128,6 +128,10 @@ window.addEventListener("load", () => {
     if (!docsSidebar) {
         return;
     }
+    const sidebarMenu = document.getElementById("td-sidebar-menu");
+    if (sidebarMenu) {
+        sidebarMenu.classList.remove("d-none");
+    }
     const stateKey = "meshery-docs-sidebar-fold-state-v1";
     const scrollKey = "meshery-docs-sidebar-scroll-v1";
     const sidebarScroller = document.querySelector(".sidebar-container");
@@ -151,8 +155,18 @@ window.addEventListener("load", () => {
         sessionStorage.setItem(stateKey, JSON.stringify(nextState));
     };
 
-    const storedState = readStoredState();
-    const setBranchVisibility = (input, isOpen) => {
+    const normalizePath = (value) => {
+        try {
+            const parsedUrl = new URL(value, window.location.origin);
+            let path = parsedUrl.pathname || "/";
+            path = path.replace(/\/{2,}/g, "/");
+            return path.endsWith("/") ? path : `${path}/`;
+        } catch (error) {
+            return "/";
+        }
+    };
+
+    const setBranchVisibility = (input) => {
         const branch = input ? input.closest("li.with-child") : null;
         const childList = branch ? branch.querySelector(":scope > ul") : null;
         if (!childList) {
@@ -161,20 +175,98 @@ window.addEventListener("load", () => {
         childList.style.removeProperty("display");
     };
 
+    const clearActiveState = () => {
+        docsSidebar.querySelectorAll("a.td-sidebar-link.active").forEach((node) => node.classList.remove("active"));
+        docsSidebar.querySelectorAll(".td-sidebar-nav-active-item").forEach((node) =>
+            node.classList.remove("td-sidebar-nav-active-item")
+        );
+        docsSidebar.querySelectorAll("li.active-path").forEach((node) => node.classList.remove("active-path"));
+    };
+
+    const applyCurrentPathState = () => {
+        const currentPath = normalizePath(window.location.pathname);
+        const links = Array.from(docsSidebar.querySelectorAll("a.td-sidebar-link[href]")).filter((link) => {
+            const hrefPath = normalizePath(link.getAttribute("href") || "");
+            return hrefPath !== "/search/";
+        });
+        let bestLink = null;
+        let bestScore = -1;
+        links.forEach((link) => {
+            const hrefPath = normalizePath(link.getAttribute("href") || "");
+            let score = -1;
+            if (hrefPath === currentPath) {
+                score = 10000 + hrefPath.length;
+            } else if (hrefPath !== "/" && currentPath.startsWith(hrefPath)) {
+                score = hrefPath.length;
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                bestLink = link;
+            }
+        });
+        clearActiveState();
+        if (!bestLink) {
+            return;
+        }
+        bestLink.classList.add("active");
+        const activeSpan = bestLink.querySelector("span");
+        if (activeSpan) {
+            activeSpan.classList.add("td-sidebar-nav-active-item");
+        }
+        let parentNode = bestLink.closest("li");
+        while (parentNode) {
+            parentNode.classList.add("active-path");
+            parentNode = parentNode.parentElement ? parentNode.parentElement.closest("li") : null;
+        }
+    };
+
+    const setToggleButtonState = (input) => {
+        const branch = input ? input.closest("li.with-child") : null;
+        const label = branch ? branch.querySelector(":scope > label") : null;
+        const toggleButton = label ? label.querySelector(".sidebar-branch-toggle") : null;
+        if (toggleButton) {
+            toggleButton.setAttribute("aria-expanded", input.checked ? "true" : "false");
+        }
+    };
+
+    const ensureToggleButtons = () => {
+        foldInputs.forEach((input) => {
+            const branch = input.closest("li.with-child");
+            const label = branch ? branch.querySelector(":scope > label") : null;
+            if (!label || label.querySelector(".sidebar-branch-toggle")) {
+                setToggleButtonState(input);
+                return;
+            }
+            const toggleButton = document.createElement("button");
+            toggleButton.type = "button";
+            toggleButton.className = "sidebar-branch-toggle";
+            toggleButton.setAttribute("aria-label", "Toggle section");
+            label.appendChild(toggleButton);
+            setToggleButtonState(input);
+        });
+    };
+
+    const storedState = readStoredState();
     const restoreSidebarState = () => {
         foldInputs.forEach((input) => {
             if (typeof storedState[input.id] === "boolean") {
                 input.checked = storedState[input.id];
             }
+            setBranchVisibility(input);
+            setToggleButtonState(input);
         });
 
         docsSidebar
             .querySelectorAll("li.active-path > input[type='checkbox']")
             .forEach((input) => {
                 input.checked = true;
+                setBranchVisibility(input);
+                setToggleButtonState(input);
             });
     };
 
+    applyCurrentPathState();
+    ensureToggleButtons();
     restoreSidebarState();
 
     const toggleInputState = (input) => {
@@ -182,25 +274,20 @@ window.addEventListener("load", () => {
             return;
         }
         input.checked = !input.checked;
-        setBranchVisibility(input, input.checked);
+        setBranchVisibility(input);
+        setToggleButtonState(input);
         persistState();
     };
 
     docsSidebar.addEventListener("click", (event) => {
-        const branchLabel = event.target.closest("li.with-child > label");
-        if (branchLabel) {
-            const branch = branchLabel.closest("li.with-child");
+        const toggleButton = event.target.closest("button.sidebar-branch-toggle");
+        if (toggleButton) {
+            event.preventDefault();
+            event.stopPropagation();
+            const branch = toggleButton.closest("li.with-child");
             const branchInput = branch ? branch.querySelector(":scope > input[type='checkbox']") : null;
-            const rect = branchLabel.getBoundingClientRect();
-            const chevronZone = 34;
-            const clickedChevronZone = (rect.right - event.clientX) <= chevronZone;
-
-            if (clickedChevronZone) {
-                event.preventDefault();
-                event.stopPropagation();
-                toggleInputState(branchInput);
-                return;
-            }
+            toggleInputState(branchInput);
+            return;
         }
 
         const link = event.target.closest("label > a.td-sidebar-link");
@@ -225,7 +312,11 @@ window.addEventListener("load", () => {
     });
 
     foldInputs.forEach((input) => {
-        input.addEventListener("change", persistState);
+        input.addEventListener("change", () => {
+            setBranchVisibility(input);
+            setToggleButtonState(input);
+            persistState();
+        });
     });
 
     if (sidebarScroller) {
@@ -262,16 +353,10 @@ window.addEventListener("load", () => {
 
     const sidebarSearchForm = document.querySelector(".td-sidebar__search");
     if (sidebarSearchForm && sidebarSearchInput) {
-        sidebarSearchForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            const query = sidebarSearchInput.value.trim();
-            const baseHref = sidebarSearchInput.getAttribute("data-offline-search-base-href") || "/";
-            const normalizedBase = baseHref.endsWith("/") ? baseHref : `${baseHref}/`;
-            const searchUrl = new URL(`${normalizedBase}search/`, window.location.origin);
-            if (query) {
-                searchUrl.searchParams.set("q", query);
-            }
-            window.location.assign(searchUrl.toString());
-        });
+        const baseHref = sidebarSearchInput.getAttribute("data-offline-search-base-href") || "/";
+        const normalizedBase = baseHref.endsWith("/") ? baseHref : `${baseHref}/`;
+        sidebarSearchForm.setAttribute("action", `${normalizedBase}search/`);
+        sidebarSearchForm.setAttribute("method", "get");
+        sidebarSearchInput.setAttribute("name", "q");
     }
 });
