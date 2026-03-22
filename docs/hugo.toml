@@ -173,6 +173,8 @@ sidebar_menu_compact = true
 sidebar_search_disable = false
 # Enable to show toggle arrows
 sidebar_menu_foldable = false
+# Limit how many entries Docsy will include per section before truncating
+sidebar_menu_truncate = 1500
 # Limit the number of levels deep the menu displays
 # ul_show=1
 
