@@ -1,5 +1,6 @@
 ---
 title: Installation
+linkTitle: "🗺️ Overview & Installation"
 description: Installation procedures for deploying Meshery with mesheryctl.
 aliases: 
 - /platforms

@@ -1,5 +1,6 @@
 ---
 title: Guides
+linkTitle: "📚 Guides & Tutorials"
 aliases: 
 - /guides/
 - /tasks
