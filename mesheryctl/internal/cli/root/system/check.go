@@ -38,7 +38,6 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	k8sVersion "k8s.io/apimachinery/pkg/version"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -162,42 +161,54 @@ mesheryctl system check --operator
 			return ErrHealthCheckFailed(err)
 		}
 
-		// if --pre or --preflight has been passed we run preflight checks
-		if systemCheckFlags.Pre || systemCheckFlags.Preflight {
-			// Run preflight checks
+		runPreflightCheck := systemCheckFlags.Pre || systemCheckFlags.Preflight
+		if runPreflightCheck {
 			err := hc.RunPreflightHealthChecks()
 			if err != nil {
 				return err
 			}
-			// Print End
-			if failure == 0 {
-				utils.Log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
-			} else {
-				utils.Log.Info("\n--------------\n--------------\n!! Meshery prerequisites not met")
+
+			prefix := "✓✓"
+			suffix := "Meshery prerequisites met"
+			output := "\n--------------\n--------------\n%s Meshery prerequisites %s"
+			if failure > 0 {
+				prefix = "!!"
+				suffix = "not met"
 			}
+			utils.Log.Info(fmt.Sprintf(output, prefix, suffix))
 			return nil
-		} else if systemCheckFlags.ComponentsFlag { // if --components has been passed we run checks related to components
+		}
+
+		if systemCheckFlags.ComponentsFlag {
 			return hc.runComponentsHealthChecks()
-		} else if systemCheckFlags.Adapter != "" {
+		}
+
+		if systemCheckFlags.Adapter != "" {
 			return hc.runAdapterHealthChecks(systemCheckFlags.Adapter)
-		} else if systemCheckFlags.AdaptersFlag {
+		}
+		if systemCheckFlags.AdaptersFlag {
 			return hc.runAdapterHealthChecks("")
-		} else if systemCheckFlags.OperatorsFlag {
+		}
+
+		if systemCheckFlags.OperatorsFlag {
 			return hc.runOperatorHealthChecks()
 		}
+
 		currContext, err := hc.mctlCfg.GetCurrentContext()
 		if err != nil {
 			return ErrGetCurrentContext(err)
 		}
+
 		currPlatform := currContext.GetPlatform()
 
 		hc.Options.RunComponentChecks = true
 		// if platform is docker only then run docker checks
 		hc.Options.RunDockerChecks = currPlatform == platformDocker
+		hc.Options.RunVersionChecks = true
 		// if platform is kubernetes only then run kubernetes checks
 		hc.Options.RunKubernetesChecks = currPlatform == platformKubernetes
-		hc.Options.RunVersionChecks = true
-		hc.Options.RunOperatorChecks = true
+		// if platform is kubernetes only then run operator checks as well since operator is only supported on kubernetes
+		hc.Options.RunOperatorChecks = currPlatform == platformKubernetes
 		return hc.Run()
 	},
 }
@@ -260,6 +271,18 @@ func (hc *HealthChecker) RunPreflightHealthChecks() error {
 	return nil
 }
 
+func wrapDockerContextError(err error, hc *HealthChecker) error {
+	return ErrDockerContext(errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint()))
+}
+
+func wrapDockerNotRunningError(err error, hc *HealthChecker) error {
+	return ErrDockerNotRunning(errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started ", hc.Options.Subcommand))
+}
+
+func wrapDockerStartError(err error) error {
+	return ErrDockerStart(errors.Wrapf(err, "failed to start Docker "))
+}
+
 // Run healthchecks to verify if docker is running and active
 func (hc *HealthChecker) runDockerHealthChecks() error {
 	if hc.Options.PrintLogs {
@@ -271,23 +294,23 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	dockerCli, err := dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())
 	if err != nil {
 		if endpointParts[1] != "//localhost" {
-			return errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint())
+			return wrapDockerContextError(err, hc)
 		}
 		if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
 			utils.Log.Warn(fmt.Errorf("!! Docker is not running"))
 			//If preRunExecution and the current platform is docker then we trigger docker installation
 			//No auto installation of docker for windows
 			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started ", hc.Options.Subcommand)
+				return wrapDockerNotRunningError(err, hc)
 			}
 			err = utils.Startdockerdaemon(hc.Options.Subcommand)
 			if err != nil {
-				return errors.Wrapf(err, "failed to start Docker ")
+				return wrapDockerStartError(err)
 			}
 		} else if hc.Options.PrintLogs { // warn incase of printing logs
 			utils.Log.Warn(fmt.Errorf("!! Docker is not running"))
 		} else { // else we're supposed to grab errors
-			return err
+			return ErrDockerUnknown(err)
 		}
 		if hc.context.Platform == platformDocker {
 			failure++
@@ -297,21 +320,21 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		_, err = dockerCli.Ping(context.Background())
 		if err != nil {
 			if endpointParts[1] != "//localhost" {
-				return errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint())
+				return wrapDockerContextError(err, hc)
 			}
 			if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
 				utils.Log.Warn(fmt.Errorf("!! Docker is not running"))
 				if runtime.GOOS == "windows" {
-					return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started ", hc.Options.Subcommand)
+					return wrapDockerNotRunningError(err, hc)
 				}
 				err = utils.Startdockerdaemon(hc.Options.Subcommand)
 				if err != nil {
-					return errors.Wrapf(err, "failed to start Docker ")
+					return wrapDockerStartError(err)
 				}
 			} else if hc.Options.PrintLogs { // warn incase of printing logs
 				utils.Log.Warn(fmt.Errorf("!! Docker is not running"))
 			} else { // else we're supposed to grab errors
-				return err
+				return ErrDockerUnknown(err)
 			}
 			if hc.context.Platform == platformDocker {
 				failure++
@@ -324,10 +347,9 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		}
 	}
 
-	// Since we now use docker compose library, we don't need to check for docker-compose binary
-	// The compose functionality is provided by the library itself
+	// Since we now use docker compose sdk, we don't need to check for docker-compose  binary
 	if hc.Options.PrintLogs {
-		utils.Log.Info("✓ docker-compose is available (via library)")
+		utils.Log.Info("✓ docker-compose is available")
 	}
 
 	return nil
@@ -387,7 +409,6 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 		utils.Log.Info("\nKubernetes Version \n--------------")
 	}
 	//Check whether system has minimum supported versions of kubernetes and kubectl
-	var kubeVersion *k8sVersion.Info
 	kubeVersion, err := utils.GetK8sVersionInfo()
 	if err != nil {
 		if hc.context.Platform == platformKubernetes { // increase failure count
@@ -550,7 +571,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 	}
 	clientMesh, err := meshkitkube.New([]byte(""))
 	if err != nil {
-		return ErrK8sConfig(err)
+		return err
 	}
 
 	// List the pods in the `meshery` Namespace
@@ -716,7 +737,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 func mesheryReadinessHealthCheck() (bool, error) {
 	kubeClient, err := meshkitkube.New([]byte(""))
 	if err != nil {
-		return false, ErrK8sConfig(err)
+		return false, err
 	}
 	if err := utils.WaitForPodRunning(kubeClient, "meshery", utils.MesheryNamespace, 300); err != nil {
 		return false, err
