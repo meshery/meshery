@@ -55,14 +55,17 @@ mesheryctl system provider view
 			utils.Log.Error(err)
 			return nil
 		}
-		focusedContext := tempContext
-		if focusedContext == "" {
-			focusedContext = mctlCfg.CurrentContext
-		}
+		focusedContext := focusedSystemContext(cmd, mctlCfg.CurrentContext)
 
 		if showProviderForAllContext {
-			for k, v := range mctlCfg.Contexts {
-				utils.Log.Infof("%s\n", PrintProviderToStdout(v, k))
+			keys := make([]string, 0, len(mctlCfg.Contexts))
+			for contextName := range mctlCfg.Contexts {
+				keys = append(keys, contextName)
+			}
+			sort.Strings(keys)
+
+			for _, contextName := range keys {
+				utils.Log.Infof("%s\n", PrintProviderToStdout(mctlCfg.Contexts[contextName], contextName))
 			}
 			utils.Log.Infof("Current Context: %v", focusedContext)
 			return nil

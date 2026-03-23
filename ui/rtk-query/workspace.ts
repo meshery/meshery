@@ -1,6 +1,6 @@
 import { urlEncodeParams } from '@/utils/utils';
+import { mesheryApi } from '@meshery/schemas/dist/mesheryApi';
 import { api } from './index';
-import { userApi } from './user';
 import _ from 'lodash';
 
 const TAGS = {
@@ -87,35 +87,6 @@ const workspacesApi = api
         providesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
 
-      createWorkspace: builder.mutation({
-        query: (queryArg) => ({
-          url: `workspaces`,
-          method: 'POST',
-          body: queryArg.workspacePayload,
-        }),
-
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
-      }),
-
-      updateWorkspace: builder.mutation({
-        query: (queryArg) => ({
-          url: `workspaces/${queryArg.workspaceId}`,
-          method: 'PUT',
-          body: queryArg.workspacePayload,
-        }),
-
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
-      }),
-
-      deleteWorkspace: builder.mutation({
-        query: (queryArg) => ({
-          url: `workspaces/${queryArg.workspaceId}`,
-          method: 'DELETE',
-        }),
-
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
-      }),
-
       getEnvironmentsOfWorkspace: builder.query({
         query: (queryArg) => ({
           url: `workspaces/${queryArg.workspaceId}/environments`,
@@ -160,7 +131,9 @@ const workspacesApi = api
           });
           if (expandUser && designs.data && !designs.error) {
             const withUsersPromises = designs.data.designs.map(async (design) => {
-              const user = await dispatch(userApi.endpoints.getUserById.initiate(design.user_id));
+              const user = await dispatch(
+                mesheryApi.endpoints.getUserProfileById.initiate({ id: design.user_id }),
+              );
               return {
                 ...design,
                 first_name: user.data?.first_name || '[deleted]',
@@ -229,7 +202,9 @@ const workspacesApi = api
           });
           if (expandUser && views.data && !views.error) {
             const withUsersPromises = views.data.views.map(async (view) => {
-              const user = await dispatch(userApi.endpoints.getUserById.initiate(view.user_id));
+              const user = await dispatch(
+                mesheryApi.endpoints.getUserProfileById.initiate({ id: view.user_id }),
+              );
               return {
                 ...view,
                 first_name: user.data?.first_name || '[deleted]',
@@ -336,9 +311,6 @@ const workspacesApi = api
 export const {
   useGetWorkspacesQuery,
   useLazyGetWorkspacesQuery,
-  useCreateWorkspaceMutation,
-  useUpdateWorkspaceMutation,
-  useDeleteWorkspaceMutation,
   useGetEnvironmentsOfWorkspaceQuery,
   useAssignEnvironmentToWorkspaceMutation,
   useUnassignEnvironmentFromWorkspaceMutation,
@@ -353,3 +325,45 @@ export const {
   useUnassignTeamFromWorkspaceMutation,
   useGetEventsOfWorkspaceQuery,
 } = workspacesApi;
+
+export const useCreateWorkspaceMutation = () => {
+  const [trigger, result] = mesheryApi.endpoints.postApiWorkspaces.useMutation();
+
+  const wrappedTrigger = (queryArg) =>
+    trigger({
+      body: {
+        name: queryArg.workspacePayload?.name,
+        description: queryArg.workspacePayload?.description,
+        organization_id: queryArg.workspacePayload?.organization_id,
+      },
+    });
+
+  return [wrappedTrigger, result] as const;
+};
+
+export const useUpdateWorkspaceMutation = () => {
+  const [trigger, result] = mesheryApi.endpoints.putApiWorkspacesById.useMutation();
+
+  const wrappedTrigger = (queryArg) =>
+    trigger({
+      id: queryArg.workspaceId,
+      body: {
+        name: queryArg.workspacePayload?.name,
+        description: queryArg.workspacePayload?.description,
+        organization_id: queryArg.workspacePayload?.organization_id,
+      },
+    });
+
+  return [wrappedTrigger, result] as const;
+};
+
+export const useDeleteWorkspaceMutation = () => {
+  const [trigger, result] = mesheryApi.endpoints.deleteApiWorkspacesById.useMutation();
+
+  const wrappedTrigger = (queryArg) =>
+    trigger({
+      id: queryArg.workspaceId,
+    });
+
+  return [wrappedTrigger, result] as const;
+};

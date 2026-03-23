@@ -16,6 +16,7 @@ package system
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -65,14 +66,17 @@ mesheryctl system channel view --all
 			return err
 		}
 
-		focusedContext := tempContext
-		if focusedContext == "" {
-			focusedContext = mctlCfg.CurrentContext
-		}
+		focusedContext := focusedSystemContext(cmd, mctlCfg.CurrentContext)
 
 		if showForAllContext {
-			for k, v := range mctlCfg.Contexts {
-				utils.Log.Infof("%s\n", PrintChannelAndVersionToStdout(v, k))
+			keys := make([]string, 0, len(mctlCfg.Contexts))
+			for contextName := range mctlCfg.Contexts {
+				keys = append(keys, contextName)
+			}
+			sort.Strings(keys)
+
+			for _, contextName := range keys {
+				utils.Log.Infof("%s\n", PrintChannelAndVersionToStdout(mctlCfg.Contexts[contextName], contextName))
 			}
 			utils.Log.Infof("Current Context: %v", focusedContext)
 			return nil
