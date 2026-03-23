@@ -59,19 +59,7 @@ func TestMapPreferencePersisterReadFromPersisterReturnsPersistedPreference(t *te
 		t.Fatal("expected persisted preference, got nil")
 	}
 
-	if got.AnonymousUsageStats != want.AnonymousUsageStats {
-		t.Errorf("got AnonymousUsageStats=%v, want %v", got.AnonymousUsageStats, want.AnonymousUsageStats)
-	}
-
-	if got.AnonymousPerfResults != want.AnonymousPerfResults {
-		t.Errorf("got AnonymousPerfResults=%v, want %v", got.AnonymousPerfResults, want.AnonymousPerfResults)
-	}
-
-	if got.SelectedOrganizationID != want.SelectedOrganizationID {
-		t.Errorf("got SelectedOrganizationID=%q, want %q", got.SelectedOrganizationID, want.SelectedOrganizationID)
-	}
-
-	if got.DashboardPreferences["theme"] != want.DashboardPreferences["theme"] {
-		t.Errorf("got DashboardPreferences[theme]=%v, want %v", got.DashboardPreferences["theme"], want.DashboardPreferences["theme"])
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("ReadFromPersister() got = %+v, want %+v", got, want)
 	}
 }
