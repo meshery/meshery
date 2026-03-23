@@ -7,8 +7,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -38,12 +36,12 @@ func setupSystemOutCmdTest(t *testing.T) *bytes.Buffer {
 	return buf
 }
 
-func resetCmdFlags(cmd *cobra.Command, t *testing.T) {
-	cmd.Flags().VisitAll(func(f *pflag.Flag) {
-		f.Changed = false
-		f.Value.Set(f.DefValue) // Reset to default
-	})
-	for _, child := range cmd.Commands() {
-		resetCmdFlags(child, t) // Recursive call
-	}
-}
+// func resetCmdFlags(cmd *cobra.Command, t *testing.T) {
+// 	cmd.Flags().VisitAll(func(f *pflag.Flag) {
+// 		f.Changed = false
+// 		f.Value.Set(f.DefValue) // Reset to default
+// 	})
+// 	for _, child := range cmd.Commands() {
+// 		resetCmdFlags(child, t) // Recursive call
+// 	}
+// }
