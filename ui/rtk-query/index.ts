@@ -20,8 +20,6 @@ const normalizeMesheryRequest = (request) => {
     requestUrl.startsWith('api/') ||
     requestUrl === '/api' ||
     requestUrl.startsWith('/api/') ||
-    requestUrl.startsWith('extensions/api/') ||
-    requestUrl.startsWith('/extensions/api/') ||
     requestUrl.startsWith('/user/login') ||
     requestUrl.startsWith('/user/logout') ||
     requestUrl.startsWith('/provider')

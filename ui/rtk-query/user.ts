@@ -43,17 +43,17 @@ export const userApi = api
       }),
       getLoggedInUser: builder.query({
         query: () => ({
-          url: 'identity/users/profile',
+          url: 'user',
         }),
       }),
       getUserById: builder.query({
         query: (id) => ({
-          url: `identity/users/profile/${id}`,
+          url: `user/profile/${id}`,
         }),
       }),
       getUsersForOrg: builder.query({
         query: (queryArg) => ({
-          url: `identity/orgs/${queryArg.orgId}/users`,
+          url: `extensions/api/identity/orgs/${queryArg.orgId}/users`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -67,7 +67,7 @@ export const userApi = api
       }),
       getTeams: builder.query({
         query: (queryArg) => ({
-          url: `identity/orgs/${queryArg.orgId}/teams`,
+          url: `extensions/api/identity/orgs/${queryArg.orgId}/teams`,
           params: {
             search: queryArg.search,
             order: queryArg.order,

@@ -123,7 +123,7 @@ const workspacesApi = api
           if (expandUser && designs.data && !designs.error) {
             const withUsersPromises = designs.data.designs.map(async (design) => {
               const user = await baseQuery({
-                url: `identity/users/profile/${design.user_id}`,
+                url: `user/profile/${design.user_id}`,
                 method: 'GET',
               });
               return {
@@ -195,7 +195,7 @@ const workspacesApi = api
           if (expandUser && views.data && !views.error) {
             const withUsersPromises = views.data.views.map(async (view) => {
               const user = await baseQuery({
-                url: `identity/users/profile/${view.user_id}`,
+                url: `user/profile/${view.user_id}`,
                 method: 'GET',
               });
               return {
