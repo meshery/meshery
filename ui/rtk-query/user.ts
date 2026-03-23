@@ -1,4 +1,4 @@
-import { ctxUrl } from '@/utils/multi-ctx';
+import { ctxUrl } from '../utils/multi-ctx';
 import {
   mesheryApi,
   useGetTeamsQuery as useSchemasGetTeamsQuery,
@@ -45,17 +45,17 @@ export const userApi = api
         invalidatesTags: [Tags.LOAD_TEST_PREF],
       }),
       getToken: builder.query({
-        query: () => `token`,
+        query: () => `/api/user/token`,
         method: 'GET',
       }),
       getUserPref: builder.query({
-        query: () => 'user/prefs',
+        query: () => '/api/user/prefs',
         method: 'GET',
         providesTags: [Tags.USER_PREF],
       }),
       updateUserPref: builder.mutation({
         query: (queryArg) => ({
-          url: 'user/prefs',
+          url: '/api/user/prefs',
           method: 'POST',
           body: queryArg,
           credentials: 'include',
@@ -64,7 +64,7 @@ export const userApi = api
       }),
       getUserPrefWithContext: builder.query({
         query: (selectedK8sContexts) => ({
-          url: ctxUrl('user/prefs', selectedK8sContexts),
+          url: ctxUrl('/api/user/prefs', selectedK8sContexts),
           method: 'GET',
           credentials: 'same-origin',
         }),
@@ -72,7 +72,7 @@ export const userApi = api
       }),
       updateUserPrefWithContext: builder.mutation({
         query: (queryArg) => ({
-          url: ctxUrl('/user/prefs', queryArg.selectedK8sContexts),
+          url: ctxUrl('/api/user/prefs', queryArg.selectedK8sContexts),
           method: 'POST',
           headers: {
             'Content-Type': 'application/json;charset=UTF-8',
@@ -98,7 +98,7 @@ export const userApi = api
         },
       }),
       getProviderCapabilities: builder.query({
-        query: () => 'provider/capabilities',
+        query: () => '/api/provider/capabilities',
         method: 'GET',
       }),
       getUserProfileSummaryById: builder.query({
@@ -119,7 +119,7 @@ export const userApi = api
       }),
       getExtensionsByType: builder.query({
         query: () => ({
-          url: 'provider/capabilities',
+          url: '/api/provider/capabilities',
           method: 'GET',
           credentials: 'include',
         }),
@@ -143,7 +143,7 @@ export const userApi = api
       }),
       getFullPageExtensions: builder.query({
         query: () => ({
-          url: 'provider/capabilities',
+          url: '/api/provider/capabilities',
           method: 'GET',
           credentials: 'include',
         }),
@@ -173,7 +173,7 @@ export const userApi = api
         providesTags: [Tags.PROVIDER_CAP],
       }),
       getSystemVersion: builder.query({
-        query: () => 'system/version',
+        query: () => '/api/system/version',
         method: 'GET',
       }),
       handleFeedbackFormSubmission: builder.mutation({
@@ -186,7 +186,7 @@ export const userApi = api
       }),
       getAllUsers: builder.query({
         query: (queryArg) => ({
-          url: `identity/users`,
+          url: `/api/identity/users`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -214,7 +214,7 @@ export const userApi = api
       }),
       getAccessToken: builder.query({
         query: () => ({
-          url: `/token`,
+          url: `/api/user/token`,
         }),
         transformResponse: (response) => {
           return response?.token;
