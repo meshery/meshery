@@ -19,7 +19,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 
 	"github.com/spf13/cobra"
 )
@@ -87,7 +87,7 @@ func init() {
 	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlags.PageSize, "page-size", "", 10, "number of items to be displayed per page for paginated results. (default: 10, max limit: 100)")
 }
 
-func processDataToDisplay(workspaceResponse *models.WorkspacePage) ([][]string, int64) {
+func processDataToDisplay(workspaceResponse *workspace.WorkspacePage) ([][]string, int64) {
 	rows := [][]string{}
 
 	for _, workspace := range workspaceResponse.Workspaces {
