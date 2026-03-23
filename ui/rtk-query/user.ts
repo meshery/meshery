@@ -8,11 +8,13 @@ const Tags = {
   USER_PREF: 'userPref',
   LOAD_TEST_PREF: 'loadTestPref',
   PROVIDER_CAP: 'provider_capabilities',
+  USERS: 'users',
+  TEAMS: 'teams',
 };
 
 export const userApi = api
   .enhanceEndpoints({
-    addTagTypes: [Tags.USER_PREF, Tags.LOAD_TEST_PREF, Tags.PROVIDER_CAP],
+    addTagTypes: [Tags.USER_PREF, Tags.LOAD_TEST_PREF, Tags.PROVIDER_CAP, Tags.USERS, Tags.TEAMS],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
@@ -63,7 +65,7 @@ export const userApi = api
             teamID: queryArg.teamId,
           },
         }),
-        providesTags: ['users'],
+        providesTags: [Tags.USERS],
       }),
       getTeams: builder.query({
         query: (queryArg) => ({
@@ -75,7 +77,7 @@ export const userApi = api
             pagesize: queryArg.pagesize,
           },
         }),
-        providesTags: ['teams'],
+        providesTags: [Tags.TEAMS],
       }),
       getUserPref: builder.query({
         query: () => 'user/prefs',
@@ -211,7 +213,7 @@ export const userApi = api
           method: 'POST',
           body: queryArg.userFeedbackRequestBody,
         }),
-        invalidatesTags: ['users'],
+        invalidatesTags: [Tags.USERS],
       }),
       getAllUsers: builder.query({
         query: (queryArg) => ({
@@ -224,14 +226,14 @@ export const userApi = api
             filter: queryArg.filter,
           },
         }),
-        providesTags: ['users'],
+        providesTags: [Tags.USERS],
       }),
       removeUserFromTeam: builder.mutation({
         query: (queryArg) => ({
           url: `extensions/api/identity/orgs/${queryArg.orgId}/teams/${queryArg.teamId}/users/${queryArg.userId}`,
           method: 'DELETE',
         }),
-        invalidatesTags: ['teams'],
+        invalidatesTags: [Tags.TEAMS],
       }),
       handleUserInvite: builder.mutation({
         query: (queryArg) => ({
@@ -239,7 +241,7 @@ export const userApi = api
           method: 'POST',
           body: queryArg.userInvite,
         }),
-        invalidatesTags: ['users'],
+        invalidatesTags: [Tags.USERS],
       }),
       getAccessToken: builder.query({
         query: () => ({

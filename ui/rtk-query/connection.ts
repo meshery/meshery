@@ -5,107 +5,111 @@ const TAGS = {
   CREDENTIALS: 'credentials',
 };
 
-const connectionsApi = api.injectEndpoints({
-  overrideExisting: true,
-  endpoints: (builder) => ({
-    getConnections: builder.query({
-      query: (queryArg = {}) => ({
-        url: 'integrations/connections',
-        params: {
-          page: queryArg.page,
-          pagesize: queryArg.pagesize,
-          search: queryArg.search,
-          order: queryArg.order,
-          filter: queryArg.filter,
-          kind: queryArg.kind,
-          status: queryArg.status,
-          type: queryArg.type,
-          name: queryArg.name,
-        },
+const connectionsApi = api
+  .enhanceEndpoints({
+    addTagTypes: [TAGS.CONNECTIONS, TAGS.CREDENTIALS],
+  })
+  .injectEndpoints({
+    overrideExisting: true,
+    endpoints: (builder) => ({
+      getConnections: builder.query({
+        query: (queryArg = {}) => ({
+          url: 'integrations/connections',
+          params: {
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+            search: queryArg.search,
+            order: queryArg.order,
+            filter: queryArg.filter,
+            kind: queryArg.kind,
+            status: queryArg.status,
+            type: queryArg.type,
+            name: queryArg.name,
+          },
+        }),
+        providesTags: [TAGS.CONNECTIONS],
       }),
-      providesTags: [TAGS.CONNECTIONS],
-    }),
 
-    getCredentials: builder.query({
-      query: () => ({
-        url: 'integrations/credentials',
-        method: 'GET',
+      getCredentials: builder.query({
+        query: () => ({
+          url: 'integrations/credentials',
+          method: 'GET',
+        }),
+        providesTags: [TAGS.CREDENTIALS],
       }),
-      providesTags: [TAGS.CREDENTIALS],
-    }),
 
-    verifyAndRegisterConnection: builder.mutation({
-      query: (queryArg) => ({
-        url: 'integrations/connections/register',
-        method: 'POST',
-        body: queryArg.body,
+      verifyAndRegisterConnection: builder.mutation({
+        query: (queryArg) => ({
+          url: 'integrations/connections/register',
+          method: 'POST',
+          body: queryArg.body,
+        }),
+        invalidatesTags: [TAGS.CONNECTIONS],
       }),
-      invalidatesTags: [TAGS.CONNECTIONS],
-    }),
 
-    connectToConnection: builder.mutation({
-      query: (queryArg) => ({
-        url: 'integrations/connections/register',
-        method: 'POST',
-        body: queryArg.body,
+      connectToConnection: builder.mutation({
+        query: (queryArg) => ({
+          url: 'integrations/connections/register',
+          method: 'POST',
+          body: queryArg.body,
+        }),
+        invalidatesTags: [TAGS.CONNECTIONS],
       }),
-      invalidatesTags: [TAGS.CONNECTIONS],
-    }),
-    getConnectionDetails: builder.query({
-      query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionKind}/details`,
-        params: { id: queryArg.repoURL },
+      getConnectionDetails: builder.query({
+        query: (queryArg) => ({
+          url: `integrations/connections/${queryArg.connectionKind}/details`,
+          params: { id: queryArg.repoURL },
+        }),
+      }),
+      verifyConnectionURL: builder.mutation({
+        query: (queryArg) => ({
+          url: `integrations/connections/${queryArg.connectionKind}/verify`,
+          method: 'POST',
+          params: { id: queryArg.repoURL },
+        }),
+      }),
+      connectionMetaData: builder.mutation({
+        query: (queryArg) => ({
+          url: `integrations/connections/${queryArg.connectionKind}/metadata`,
+          method: 'POST',
+          body: queryArg.body,
+        }),
+      }),
+      configureConnection: builder.mutation({
+        query: (queryArg) => ({
+          url: `integrations/connections/${queryArg.connectionKind}/configure`,
+          method: 'POST',
+          body: queryArg.body,
+        }),
+      }),
+      updateConnectionById: builder.mutation({
+        query: (queryArg) => ({
+          url: `integrations/connections/${queryArg.connectionId}`,
+          method: 'PUT',
+          body: {
+            status: queryArg.body?.status,
+            metadata: queryArg.body?.metadata,
+          },
+        }),
+        invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
+      }),
+      cancelConnectionRegister: builder.mutation({
+        query: (queryArg) => ({
+          url: `integrations/connections/register`,
+          method: 'DELETE',
+          body: queryArg.body,
+        }),
+      }),
+      addKubernetesConfig: builder.mutation({
+        query: (queryArg) => ({
+          url: `system/kubernetes`,
+          method: 'POST',
+          body: queryArg.body,
+        }),
+        invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
       }),
     }),
-    verifyConnectionURL: builder.mutation({
-      query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionKind}/verify`,
-        method: 'POST',
-        params: { id: queryArg.repoURL },
-      }),
-    }),
-    connectionMetaData: builder.mutation({
-      query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionKind}/metadata`,
-        method: 'POST',
-        body: queryArg.body,
-      }),
-    }),
-    configureConnection: builder.mutation({
-      query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionKind}/configure`,
-        method: 'POST',
-        body: queryArg.body,
-      }),
-    }),
-    updateConnectionById: builder.mutation({
-      query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionId}`,
-        method: 'PUT',
-        body: {
-          status: queryArg.body?.status,
-          metadata: queryArg.body?.metadata,
-        },
-      }),
-      invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
-    }),
-    cancelConnectionRegister: builder.mutation({
-      query: (queryArg) => ({
-        url: `integrations/connections/register`,
-        method: 'DELETE',
-        body: queryArg.body,
-      }),
-    }),
-    addKubernetesConfig: builder.mutation({
-      query: (queryArg) => ({
-        url: `system/kubernetes`,
-        method: 'POST',
-        body: queryArg.body,
-      }),
-      invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
-    }),
-  }),
-});
+  });
 
 export const {
   useGetConnectionsQuery,
