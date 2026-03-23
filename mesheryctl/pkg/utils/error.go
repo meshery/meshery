@@ -68,13 +68,13 @@ var (
 	ErrCommandContextMissingCode      = "mesheryctl-1201"
 	ErrPromptCancelledCode            = "mesheryctl-1202"
 	ErrMesheryServerInternalErrorCode = "mesheryctl-1203"
-	ErrFailedToConnectAdapterCode     = "replace_me"
-	ErrAdapterNotReachableCode        = "replace_me"
-	ErrListMesheryPodsCode            = "replace_me"
-	ErrNoMesheryPodsCode              = "replace_me"
-	ErrMissingMesheryPodCode          = "replace_me"
-	ErrK8sVersionInfoCode             = "replace_me"
-	ErrK8sInvalidVersionFormatCode    = "replace_me"
+	ErrFailedToConnectAdapterCode     = "mesheryctl-1212"
+	ErrAdapterNotReachableCode        = "mesheryctl-1213"
+	ErrListMesheryPodsCode            = "mesheryctl-1214"
+	ErrNoMesheryPodsCode              = "mesheryctl-1215"
+	ErrMissingMesheryPodCode          = "mesheryctl-1216"
+	ErrK8sVersionInfoCode             = "mesheryctl-1217"
+	ErrK8sInvalidVersionFormatCode    = "mesheryctl-1218"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
