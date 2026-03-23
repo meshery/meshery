@@ -10,4 +10,7 @@ const userKeysApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetUserKeysQuery, useLazyGetUserKeysQuery } = userKeysApi;
+export const useGetUserKeysQuery = (queryArgs = {}, options = undefined) =>
+  userKeysApi.endpoints.getUserKeys.useQuery(queryArgs, options);
+
+export const useLazyGetUserKeysQuery = () => userKeysApi.endpoints.getUserKeys.useLazyQuery();

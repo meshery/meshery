@@ -111,17 +111,38 @@ const connectionsApi = api
     }),
   });
 
-export const {
-  useGetConnectionsQuery,
-  useLazyGetConnectionsQuery,
-  useGetCredentialsQuery,
-  useVerifyAndRegisterConnectionMutation,
-  useConnectToConnectionMutation,
-  useLazyGetConnectionDetailsQuery,
-  useVerifyConnectionURLMutation,
-  useConnectionMetaDataMutation,
-  useConfigureConnectionMutation,
-  useUpdateConnectionByIdMutation,
-  useCancelConnectionRegisterMutation,
-  useAddKubernetesConfigMutation,
-} = connectionsApi;
+export const useGetConnectionsQuery = (queryArgs = {}, options = undefined) =>
+  connectionsApi.endpoints.getConnections.useQuery(queryArgs, options);
+
+export const useLazyGetConnectionsQuery = () =>
+  connectionsApi.endpoints.getConnections.useLazyQuery();
+
+export const useGetCredentialsQuery = (queryArgs = undefined, options = undefined) =>
+  connectionsApi.endpoints.getCredentials.useQuery(queryArgs, options);
+
+export const useVerifyAndRegisterConnectionMutation = () =>
+  connectionsApi.endpoints.verifyAndRegisterConnection.useMutation();
+
+export const useConnectToConnectionMutation = () =>
+  connectionsApi.endpoints.connectToConnection.useMutation();
+
+export const useLazyGetConnectionDetailsQuery = () =>
+  connectionsApi.endpoints.getConnectionDetails.useLazyQuery();
+
+export const useVerifyConnectionURLMutation = () =>
+  connectionsApi.endpoints.verifyConnectionURL.useMutation();
+
+export const useConnectionMetaDataMutation = () =>
+  connectionsApi.endpoints.connectionMetaData.useMutation();
+
+export const useConfigureConnectionMutation = () =>
+  connectionsApi.endpoints.configureConnection.useMutation();
+
+export const useUpdateConnectionByIdMutation = () =>
+  connectionsApi.endpoints.updateConnectionById.useMutation();
+
+export const useCancelConnectionRegisterMutation = () =>
+  connectionsApi.endpoints.cancelConnectionRegister.useMutation();
+
+export const useAddKubernetesConfigMutation = () =>
+  connectionsApi.endpoints.addKubernetesConfig.useMutation();

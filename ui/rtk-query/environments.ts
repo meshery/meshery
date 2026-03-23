@@ -3,7 +3,7 @@ import { api } from './index';
 const TAGS = {
   ENVIRONMENT_CONNECTIONS: 'enivroment_connections',
 };
-const connectionsApi = api
+const environmentsApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.ENVIRONMENT_CONNECTIONS],
   })
@@ -97,13 +97,29 @@ const connectionsApi = api
     }),
   });
 
-export const {
-  useGetEnvironmentsQuery,
-  useCreateEnvironmentMutation,
-  useAddConnectionToEnvironmentMutation,
-  useRemoveConnectionFromEnvironmentMutation,
-  useUpdateEnvironmentMutation,
-  useDeleteEnvironmentMutation,
-  useGetEnvironmentConnectionsQuery,
-  useSaveEnvironmentMutation,
-} = connectionsApi;
+export const useGetEnvironmentsQuery = (queryArgs = {}, options = undefined) =>
+  environmentsApi.endpoints.getEnvironments.useQuery(queryArgs, options);
+
+export const useCreateEnvironmentMutation = () =>
+  environmentsApi.endpoints.createEnvironment.useMutation();
+
+export const useAddConnectionToEnvironmentMutation = () =>
+  environmentsApi.endpoints.addConnectionToEnvironment.useMutation();
+
+export const useRemoveConnectionToEnvironmentMutation = () =>
+  environmentsApi.endpoints.removeConnectionFromEnvironment.useMutation();
+
+export const useRemoveConnectionFromEnvironmentMutation = () =>
+  environmentsApi.endpoints.removeConnectionFromEnvironment.useMutation();
+
+export const useUpdateEnvironmentMutation = () =>
+  environmentsApi.endpoints.updateEnvironment.useMutation();
+
+export const useDeleteEnvironmentMutation = () =>
+  environmentsApi.endpoints.deleteEnvironment.useMutation();
+
+export const useGetEnvironmentConnectionsQuery = (queryArgs, options = undefined) =>
+  environmentsApi.endpoints.getEnvironmentConnections.useQuery(queryArgs, options);
+
+export const useSaveEnvironmentMutation = () =>
+  environmentsApi.endpoints.saveEnvironment.useMutation();

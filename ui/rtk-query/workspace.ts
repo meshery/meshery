@@ -336,23 +336,55 @@ const workspacesApi = api
     }),
   });
 
-export const {
-  useGetWorkspacesQuery,
-  useLazyGetWorkspacesQuery,
-  useGetEnvironmentsOfWorkspaceQuery,
-  useAssignEnvironmentToWorkspaceMutation,
-  useUnassignEnvironmentFromWorkspaceMutation,
-  useGetDesignsOfWorkspaceQuery,
-  useAssignDesignToWorkspaceMutation,
-  useUnassignDesignFromWorkspaceMutation,
-  useGetViewsOfWorkspaceQuery,
-  useAssignViewToWorkspaceMutation,
-  useUnassignViewFromWorkspaceMutation,
-  useGetTeamsOfWorkspaceQuery,
-  useAssignTeamToWorkspaceMutation,
-  useUnassignTeamFromWorkspaceMutation,
-  useGetEventsOfWorkspaceQuery,
-  useCreateWorkspaceMutation,
-  useUpdateWorkspaceMutation,
-  useDeleteWorkspaceMutation,
-} = workspacesApi;
+export const useGetWorkspacesQuery = (queryArgs, options = undefined) =>
+  workspacesApi.endpoints.getWorkspaces.useQuery(queryArgs, options);
+
+export const useLazyGetWorkspacesQuery = () => workspacesApi.endpoints.getWorkspaces.useLazyQuery();
+
+export const useGetEnvironmentsOfWorkspaceQuery = (queryArgs, options = undefined) =>
+  workspacesApi.endpoints.getEnvironmentsOfWorkspace.useQuery(queryArgs, options);
+
+export const useAssignEnvironmentToWorkspaceMutation = () =>
+  workspacesApi.endpoints.assignEnvironmentToWorkspace.useMutation();
+
+export const useUnassignEnvironmentFromWorkspaceMutation = () =>
+  workspacesApi.endpoints.unassignEnvironmentFromWorkspace.useMutation();
+
+export const useGetDesignsOfWorkspaceQuery = (queryArgs, options = undefined) =>
+  workspacesApi.endpoints.getDesignsOfWorkspace.useQuery(queryArgs, options);
+
+export const useAssignDesignToWorkspaceMutation = () =>
+  workspacesApi.endpoints.assignDesignToWorkspace.useMutation();
+
+export const useUnassignDesignFromWorkspaceMutation = () =>
+  workspacesApi.endpoints.unassignDesignFromWorkspace.useMutation();
+
+export const useGetViewsOfWorkspaceQuery = (queryArgs, options = undefined) =>
+  workspacesApi.endpoints.getViewsOfWorkspace.useQuery(queryArgs, options);
+
+export const useAssignViewToWorkspaceMutation = () =>
+  workspacesApi.endpoints.assignViewToWorkspace.useMutation();
+
+export const useUnassignViewFromWorkspaceMutation = () =>
+  workspacesApi.endpoints.unassignViewFromWorkspace.useMutation();
+
+export const useGetTeamsOfWorkspaceQuery = (queryArgs, options = undefined) =>
+  workspacesApi.endpoints.getTeamsOfWorkspace.useQuery(queryArgs, options);
+
+export const useAssignTeamToWorkspaceMutation = () =>
+  workspacesApi.endpoints.assignTeamToWorkspace.useMutation();
+
+export const useUnassignTeamFromWorkspaceMutation = () =>
+  workspacesApi.endpoints.unassignTeamFromWorkspace.useMutation();
+
+export const useGetEventsOfWorkspaceQuery = (queryArgs, options = undefined) =>
+  workspacesApi.endpoints.getEventsOfWorkspace.useQuery(queryArgs, options);
+
+export const useCreateWorkspaceMutation = () =>
+  workspacesApi.endpoints.createWorkspace.useMutation();
+
+export const useUpdateWorkspaceMutation = () =>
+  workspacesApi.endpoints.updateWorkspace.useMutation();
+
+export const useDeleteWorkspaceMutation = () =>
+  workspacesApi.endpoints.deleteWorkspace.useMutation();
