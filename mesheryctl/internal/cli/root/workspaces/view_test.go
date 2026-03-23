@@ -37,7 +37,7 @@ func TestViewWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide exactly one workspace name or ID\n\nUsage: mesheryctl exp workspace view [workspace-name|workspace-id]\nRun 'mesheryctl exp workspace view --help' to see detailed help message")),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide exactly one workspace name or ID\n\nUsage: mesheryctl workspace view [workspace-name|workspace-id]\nRun 'mesheryctl workspace view --help' to see detailed help message")),
 		},
 		{
 			Name:             "given too many arguments when running workspace view then return error",
@@ -49,7 +49,7 @@ func TestViewWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide exactly one workspace name or ID\n\nUsage: mesheryctl exp workspace view [workspace-name|workspace-id]\nRun 'mesheryctl exp workspace view --help' to see detailed help message")),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("please provide exactly one workspace name or ID\n\nUsage: mesheryctl workspace view [workspace-name|workspace-id]\nRun 'mesheryctl workspace view --help' to see detailed help message")),
 		},
 		{
 			Name:             "given valid workspace ID when running workspace view then display workspace details",
@@ -71,7 +71,7 @@ func TestViewWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("--orgId is required when searching by name\n\nUsage: mesheryctl exp workspace view [workspace-name] --orgId [orgId]")),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("--orgId is required when searching by name\n\nUsage: mesheryctl workspace view [workspace-name] --orgId [orgId]")),
 		},
 		{
 			Name:             "given invalid output format flag when running workspace view then return error",

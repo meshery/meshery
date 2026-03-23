@@ -1,39 +1,31 @@
 ---
-title: mesheryctl-exp-workspace
+title: mesheryctl-workspace-create
 display_title: false
-command: exp
-subcommand: workspace
+command: workspace
+subcommand: create
 ---
 
-# mesheryctl exp workspace
+# mesheryctl workspace create
 
-Managge workspaces under an organization
+Create a new workspace under an organization
 
 ## Synopsis
 
-Create, list of workspaces under an organization
+Create a new workspace by providing the name, description, and organization ID
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace [flags]
+mesheryctl workspace create [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-To view a list workspaces
+Create a new workspace in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace list --orgId [orgId]
-
-</div>
-</pre> 
-
-To create a workspace
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
+mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
 
 </div>
 </pre> 
@@ -42,8 +34,10 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --count   total number of registered workspaces
-  -h, --help    help for workspace
+  -d, --description string   (Optional) Description of the workspace
+  -h, --help                 help for create
+  -n, --name string          Name of the workspace
+  -o, --orgId string         Organization ID
 
 </div>
 </pre>
