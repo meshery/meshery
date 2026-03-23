@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 23rd 2026, 6:19:38 pm
+- Testing started at: March 23rd 2026, 8:38:04 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 12 skipped
 
-⌛ _Duration: 13 minutes and 41 seconds_
+⌛ _Duration: 13 minutes and 51 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -110,20 +110,6 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
-<summary>❌ should verify Design Configurator page elements (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
 <summary>❌ Test if Left Navigation Panel is displayed (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
@@ -157,6 +143,20 @@ The following tests failed. Click on each to see the failure reason:
  [90m 44 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
  [90m 45 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToConnections()[33m;[39m[0m
 ```
+
+</details>
+
+<details>
+<summary>❌ should verify Design Configurator page elements (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
 
 </details>
 
