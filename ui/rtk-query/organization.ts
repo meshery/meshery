@@ -17,4 +17,5 @@ const organizationApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetOrgsQuery } = organizationApi;
+export const useGetOrgsQuery = (queryArgs = {}, options = undefined) =>
+  organizationApi.endpoints.getOrgs.useQuery(queryArgs, options);
