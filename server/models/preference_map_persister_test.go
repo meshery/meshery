@@ -1,6 +1,9 @@
 package models
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func newTestMapPreferencePersister(t *testing.T) *MapPreferencePersister {
 	t.Helper()
