@@ -108,6 +108,18 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	return target[TokenCookieName], nil
 }
 
+func (l *RemoteProvider) latestToken(tokenString string) (string, bool) {
+	l.TokenStoreMut.Lock()
+	defer l.TokenStoreMut.Unlock()
+
+	newTokenString := l.TokenStore[tokenString]
+	if newTokenString == "" {
+		return tokenString, false
+	}
+
+	return newTokenString, true
+}
+
 func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http.Response, error) {
 	c := &http.Client{
 		Transport: tracing.NewTransport(http.DefaultTransport), // Create tracing transport to pass tracing context

@@ -749,6 +749,9 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		l.Log.Info("session not found")
 		return ErrEmptySession
 	}
+	if latestToken, updated := l.latestToken(ts); updated {
+		ts = latestToken
+	}
 	jwtClaims, err := l.VerifyToken(ts)
 	if err != nil {
 		// If parsing fails but introspection passes, treat the session as valid.
@@ -4010,10 +4013,6 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	// gets the session cookie from remote provider
 	sessionCookie := r.URL.Query().Get("session_cookie")
 
-	l.SetJWTCookie(w, tokenString)
-	// sets the session cookie for Meshery Session
-	l.SetProviderSessionCookie(w, sessionCookie)
-
 	// Get new capabilities
 	// Doing this here is important so that the latest capabilities are always fetched when a user logs in
 	providerProperties, err := l.loadCapabilities(tokenString)
@@ -4024,6 +4023,14 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		http.Error(w, "Error loading capabilities from remote provider", http.StatusInternalServerError)
 		return
 	}
+
+	if latestToken, updated := l.latestToken(tokenString); updated {
+		tokenString = latestToken
+	}
+
+	l.SetJWTCookie(w, tokenString)
+	// sets the session cookie for Meshery Session
+	l.SetProviderSessionCookie(w, sessionCookie)
 
 	l.ProviderProperties = providerProperties
 
@@ -4062,15 +4069,11 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 
 // UpdateToken - in case the token was refreshed, this routine updates the response with the new token
 func (l *RemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) string {
-	l.TokenStoreMut.Lock()
-	defer l.TokenStoreMut.Unlock()
-
 	tokenString, _ := l.GetToken(r)
-	newts := l.TokenStore[tokenString]
-	if newts != "" {
-		l.Log.Debug("set updated token: ", newts)
-		l.SetJWTCookie(w, newts)
-		return newts
+	if latestToken, updated := l.latestToken(tokenString); updated {
+		l.Log.Debug("set updated token: ", latestToken)
+		l.SetJWTCookie(w, latestToken)
+		return latestToken
 	}
 
 	return tokenString
@@ -4078,17 +4081,13 @@ func (l *RemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) str
 
 // ExtractToken - Returns the auth token and the provider type
 func (l *RemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
-	l.TokenStoreMut.Lock()
-	defer l.TokenStoreMut.Unlock()
-
 	tokenString, err := l.GetToken(r)
 	if err != nil {
 		l.Log.Error(ErrGetToken(err))
 		return
 	}
-	newts := l.TokenStore[tokenString]
-	if newts != "" {
-		tokenString = newts
+	if latestToken, updated := l.latestToken(tokenString); updated {
+		tokenString = latestToken
 	}
 
 	resp := map[string]interface{}{
