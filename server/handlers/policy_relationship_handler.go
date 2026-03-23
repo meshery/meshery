@@ -212,8 +212,8 @@ func (h *Handler) EvaluateDesign(
 			break
 		}
 		if i == (MAX_RE_EVALUATION_DEPTH - 1) {
-			h.log.Info("Evaluation depth exceeded")
-			return lastEvaluationResponse, fmt.Errorf("evaluation depth exceeded")
+			h.log.Warnf("Evaluation depth limit of %d reached; returning partial result", MAX_RE_EVALUATION_DEPTH)
+			break
 		}
 
 	}
