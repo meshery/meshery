@@ -1,6 +1,7 @@
 package system
 
 import (
+	"slices"
 	"strings"
 	"testing"
 
@@ -53,9 +54,19 @@ func TestViewCmd(t *testing.T) {
 			Args: []string{"channel", "view", "--all"},
 			ExpectedResponse: func() string {
 				output := strings.Builder{}
-				for contextName, context := range mctlCfg.Contexts {
+				keys := make([]string, 0, len(mctlCfg.Contexts))
+				for k := range mctlCfg.Contexts {
+					keys = append(keys, k)
+				}
+
+				// 2. Sort the slice alphabetically
+				slices.Sort(keys)
+
+				for _, contextName := range keys {
+					context := mctlCfg.Contexts[contextName]
 					output.WriteString(PrintChannelAndVersionToStdout(context, contextName) + "\n\n")
 				}
+
 				output.WriteString("Current Context: local\n")
 				return output.String()
 			}(),
