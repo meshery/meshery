@@ -55,7 +55,8 @@ mesheryctl model export [model-name]
 
 // Generate a model from a CSV directory
 mesheryctl model generate [path-to-csv-directory]
-// Generate model(s) using a URL and template
+
+// Generate a model from a URL based on a JSON template
 mesheryctl model generate --file [URL] --template [path-to-template.json]
 
 // Import model(s)
