@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 23rd 2026, 10:05:01 pm
+- Testing started at: March 23rd 2026, 10:39:58 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 12 skipped
 
-⌛ _Duration: 13 minutes and 48 seconds_
+⌛ _Duration: 13 minutes and 53 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -110,7 +110,44 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
+<summary>❌ Verify Kanvas Snapshot UI elements (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
 <summary>❌ should verify Design Configurator page elements (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ Test if Left Navigation Panel is displayed (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -147,58 +184,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Verify Kanvas Snapshot UI elements (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
- [90m 20 |[39m
-[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
- [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
- [90m 24 |[39m   })[33m;[39m[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Test if Left Navigation Panel is displayed (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
 <summary>❌ Logout from current user session (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -231,6 +217,20 @@ The following tests failed. Click on each to see the failure reason:
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
 ```
+
+</details>
+
+<details>
+<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
 
 </details>
 
@@ -272,29 +272,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Common UI elements (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 20 |[39m
- [90m 21 |[39m test[33m.[39mdescribe([32m'Performance Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 22 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 23 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 24 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 25 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToPerformance()[33m;[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -318,21 +295,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Test if Profile button is displayed (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ All settings tabs (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ Common UI elements (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
 
@@ -355,6 +318,20 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
+<summary>❌ Test if Profile button is displayed (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
 <summary>❌ Verify Meshery Docker Extension Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -373,6 +350,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ All settings tabs (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 20 |[39m
+ [90m 21 |[39m test[33m.[39mdescribe([32m'Performance Section Tests'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 22 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 23 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
+ [90m 24 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
+ [90m 25 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToPerformance()[33m;[39m[0m
 ```
 
 </details>
@@ -424,29 +424,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Action buttons on adapters tab (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 20 |[39m
- [90m 21 |[39m test[33m.[39mdescribe([32m'Performance Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 22 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 23 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 24 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 25 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToPerformance()[33m;[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Meshery Design Embed Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -465,6 +442,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Action buttons on adapters tab (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 20 |[39m
+ [90m 21 |[39m test[33m.[39mdescribe([32m'Performance Section Tests'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 22 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 23 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
+ [90m 24 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
+ [90m 25 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToPerformance()[33m;[39m[0m
 ```
 
 </details>
@@ -516,29 +516,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Grafana elements on metrics tab (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 20 |[39m
- [90m 21 |[39m test[33m.[39mdescribe([32m'Performance Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 22 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 23 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 24 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 25 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToPerformance()[33m;[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Meshery Catalog Section Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -557,6 +534,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Grafana elements on metrics tab (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 20 |[39m
+ [90m 21 |[39m test[33m.[39mdescribe([32m'Performance Section Tests'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 22 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 23 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
+ [90m 24 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
+ [90m 25 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToPerformance()[33m;[39m[0m
 ```
 
 </details>
@@ -599,20 +599,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Test if Left Navigation Panel is displayed (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
 <summary>❌ Verify Meshery Adapter for Istio Section (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -632,6 +618,20 @@ The following tests failed. Click on each to see the failure reason:
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
 ```
+
+</details>
+
+<details>
+<summary>❌ Test if Left Navigation Panel is displayed (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
 
 </details>
 
@@ -673,7 +673,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Test if Notification button is displayed (None - chromium-local-provider)</summary>
+<summary>❌ Logout from current user session (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -687,7 +687,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Logout from current user session (None - chromium-local-provider)</summary>
+<summary>❌ Test if Notification button is displayed (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -747,20 +747,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Test if Profile button is displayed (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
 <summary>❌ Common UI elements (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
@@ -780,6 +766,20 @@ The following tests failed. Click on each to see the failure reason:
  [90m 24 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
  [90m 25 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToPerformance()[33m;[39m[0m
 ```
+
+</details>
+
+<details>
+<summary>❌ Test if Profile button is displayed (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
 
 </details>
 
@@ -830,29 +830,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Toggle "Send Anonymous Usage Statistics" (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/userpreference.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 28 |[39m
- [90m 29 |[39m test[33m.[39mdescribe([32m'User Preferences Page Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 30 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 31 |[39m     [36mconst[39m userPrefReq [33m=[39m page[33m.[39mwaitForRequest(
- [90m 32 |[39m       (request) [33m=>[39m
- [90m 33 |[39m         request[33m.[39murl()[33m.[39mstartsWith([32m`${ENV.MESHERY_SERVER_URL}/api/user/prefs`[39m) [33m&&[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ All settings tabs (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
@@ -871,6 +848,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 23 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
  [90m 24 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
  [90m 25 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToPerformance()[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Toggle "Send Anonymous Usage Statistics" (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/userpreference.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 28 |[39m
+ [90m 29 |[39m test[33m.[39mdescribe([32m'User Preferences Page Tests'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 30 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 31 |[39m     [36mconst[39m userPrefReq [33m=[39m page[33m.[39mwaitForRequest(
+ [90m 32 |[39m       (request) [33m=>[39m
+ [90m 33 |[39m         request[33m.[39murl()[33m.[39mstartsWith([32m`${ENV.MESHERY_SERVER_URL}/api/user/prefs`[39m) [33m&&[39m[0m
 ```
 
 </details>
@@ -899,29 +899,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Toggle "Send Anonymous Performance Results" (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/userpreference.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 28 |[39m
- [90m 29 |[39m test[33m.[39mdescribe([32m'User Preferences Page Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 30 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 31 |[39m     [36mconst[39m userPrefReq [33m=[39m page[33m.[39mwaitForRequest(
- [90m 32 |[39m       (request) [33m=>[39m
- [90m 33 |[39m         request[33m.[39murl()[33m.[39mstartsWith([32m`${ENV.MESHERY_SERVER_URL}/api/user/prefs`[39m) [33m&&[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Action buttons on adapters tab (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
@@ -940,6 +917,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 23 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
  [90m 24 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
  [90m 25 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToPerformance()[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Toggle "Send Anonymous Performance Results" (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/userpreference.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 28 |[39m
+ [90m 29 |[39m test[33m.[39mdescribe([32m'User Preferences Page Tests'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 30 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 31 |[39m     [36mconst[39m userPrefReq [33m=[39m page[33m.[39mwaitForRequest(
+ [90m 32 |[39m       (request) [33m=>[39m
+ [90m 33 |[39m         request[33m.[39murl()[33m.[39mstartsWith([32m`${ENV.MESHERY_SERVER_URL}/api/user/prefs`[39m) [33m&&[39m[0m
 ```
 
 </details>
