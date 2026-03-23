@@ -36,6 +36,7 @@ var (
 	// runPortForward is used for port-forwarding Meshery UI via `system dashboard`
 	runPortForward bool
 	localPort      int
+	defaultPort    = 9081 // default port for port-forwarding
 )
 
 // dashboardOptions holds values for command line flags that apply to the dashboard
@@ -134,7 +135,15 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				signal.Notify(signals, os.Interrupt)
 				defer signal.Stop(signals)
 
-				portforward, err := utils.NewPortForward(
+				// Check if user explicitly specified a port
+				portExplicitlySet := cmd.Flags().Changed("port")
+
+				// Attempt to create port forward connection
+				// First try with the requested port, then fallback to ephemeral if not explicitly set
+				var portforward *utils.PortForward
+				var err error
+
+				portforward, err = utils.NewPortForward(
 					cmd.Context(),
 					client,
 					utils.MesheryNamespace,
@@ -147,12 +156,38 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				if err != nil {
 					utils.Log.Error(ErrInitPortForward(err))
 					return nil
-
 				}
 
 				if err = portforward.Init(); err != nil {
-					// TODO: consider falling back to an ephemeral port if defaultPort is taken
-					return ErrRunPortForward(err)
+					// If port is in use and user didn't explicitly set it, try with ephemeral port
+					if !portExplicitlySet && localPort == defaultPort {
+						log.Warn(fmt.Sprintf("Port %d is already in use, attempting to use an ephemeral port...", localPort))
+
+						portforward, err = utils.NewPortForward(
+							cmd.Context(),
+							client,
+							utils.MesheryNamespace,
+							"meshery",
+							options.host,
+							0, // Use ephemeral port
+							options.podPort,
+							false,
+						)
+						if err != nil {
+							utils.Log.Error(ErrInitPortForward(err))
+							return nil
+						}
+
+						if err = portforward.Init(); err != nil {
+							return ErrRunPortForward(err)
+						}
+						log.Info(fmt.Sprintf("Successfully bound to ephemeral port"))
+					} else if portExplicitlySet {
+						// User explicitly set port but it's in use
+						return fmt.Errorf("port %d is already in use. Please specify a different port with -p flag or omit the flag to use an ephemeral port", localPort)
+					} else {
+						return ErrRunPortForward(err)
+					}
 				}
 				log.Info("Port-forwarding for Meshery UI...")
 
@@ -172,7 +207,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 						}
 					}
 				}()
-				log.Info(fmt.Sprintf("Forwarding port %v -> %v", options.podPort, localPort))
+				log.Info(fmt.Sprintf("Forwarding pod port %v to local port %v", options.podPort, portforward.GetLocalPort()))
 				log.Info("Meshery UI available at: ", mesheryURL)
 				log.Info("Opening Meshery UI in default browser...")
 				err = utils.NavigateToBrowser(mesheryURL)
@@ -248,7 +283,7 @@ func keepConnectionAlive(url string) {
 
 func init() {
 	dashboardCmd.Flags().BoolVarP(&runPortForward, "port-forward", "", false, "(optional) Use port forwarding to access Meshery UI")
-	dashboardCmd.Flags().IntVarP(&localPort, "port", "p", 9081, "(optional) Local port that is not in use from which traffic is to be forwarded to the server running inside the Pod.")
+	dashboardCmd.Flags().IntVarP(&localPort, "port", "p", defaultPort, "(optional) Local port that is not in use from which traffic is to be forwarded to the server running inside the Pod. If not specified and default port is in use, an ephemeral port will be used.")
 
 	dashboardCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
 }

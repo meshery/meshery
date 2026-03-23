@@ -192,6 +192,11 @@ func (pf *PortForward) AddressAndPort() string {
 	return fmt.Sprintf("%s:%d", pf.host, pf.localPort)
 }
 
+// GetLocalPort returns the local port being used for forwarding.
+func (pf *PortForward) GetLocalPort() int {
+	return pf.localPort
+}
+
 // GetEphemeralPort selects a port for the port-forwarding. It binds to a free
 // ephemeral port and returns the port number.
 func GetEphemeralPort() (int, error) {
