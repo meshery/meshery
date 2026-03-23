@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 23rd 2026, 3:46:24 am
+- Testing started at: March 23rd 2026, 3:50:40 am
 
 **📦 Test Result Summary**
 
@@ -110,7 +110,7 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
-<summary>❌ Test if Left Navigation Panel is displayed (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ should verify Design Configurator page elements (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -124,7 +124,30 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ should verify Design Configurator page elements (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ Verify that UI components are displayed (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/connections.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 40 |[39m
+ [90m 41 |[39m test[33m.[39mdescribe[33m.[39mserial([32m'Connection Management Tests'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 42 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 43 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
+ [90m 44 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
+ [90m 45 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToConnections()[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Test if Left Navigation Panel is displayed (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -161,29 +184,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Verify that UI components are displayed (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/connections.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 40 |[39m
- [90m 41 |[39m test[33m.[39mdescribe[33m.[39mserial([32m'Connection Management Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 42 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 43 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 44 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 45 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToConnections()[33m;[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Logout from current user session (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
@@ -198,7 +198,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Test if Notification button is displayed (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -212,7 +212,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ Test if Notification button is displayed (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
