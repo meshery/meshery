@@ -53,7 +53,7 @@ mesheryctl model --count
 // Export registered models
 mesheryctl model export [model-name]
 
-// Generate model(s) using CSV
+// Generate a model from a CSV directory
 mesheryctl model generate [path-to-csv-directory]
 // Generate model(s) using a URL and template
 mesheryctl model generate --file [URL] --template [path-to-template.json]
