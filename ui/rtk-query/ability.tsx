@@ -5,6 +5,7 @@ import CustomErrorMessage from '@/components/ErrorPage';
 import DefaultError from '@/components/General/error-404';
 import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 import {
+  useGetProviderCapabilitiesQuery,
   useGetSelectedOrganization,
   // useGetUserPrefQuery,
   useUpdateSelectedOrganizationMutation,
@@ -55,6 +56,7 @@ const SelectedOrganizationProvider = ({ children }) => {
   } = useGetSelectedOrganization();
 
   const selectedOrganizationId = selectedOrganization?.id;
+  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery();
 
   const [updatePrefs] = useUpdateSelectedOrganizationMutation();
 
@@ -63,6 +65,37 @@ const SelectedOrganizationProvider = ({ children }) => {
   });
 
   const prefUpdatedToFallback = useRef(false);
+
+  useEffect(() => {
+    const isLoading = isFetchingSelectedOrg || isLoadingAbilities;
+    if (!isLoading) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      console.warn('[LoadSessionGuard] Session bootstrap is still loading', {
+        providerType: providerCapabilities?.provider_type,
+        hasSelectedOrganization: Boolean(selectedOrganization),
+        selectedOrganizationId,
+        didFallback,
+        isFetchingSelectedOrg,
+        isLoadingAbilities,
+        errorFetchingSelectedOrg,
+        errorLoadingAbilities,
+      });
+    }, 5000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [
+    providerCapabilities?.provider_type,
+    selectedOrganization,
+    selectedOrganizationId,
+    didFallback,
+    isFetchingSelectedOrg,
+    isLoadingAbilities,
+    errorFetchingSelectedOrg,
+    errorLoadingAbilities,
+  ]);
 
   useEffect(() => {
     if (prefUpdatedToFallback.current) {
