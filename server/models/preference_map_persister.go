@@ -59,7 +59,7 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 			log.Warn(ErrSessionNotReadIntact(userID))
 		}
 	} else {
-		log.Warn(ErrSessionNotFound(userID))
+		log.Debug(fmt.Sprintf("no persisted session found for user with id: %s, using default preferences", userID))
 	}
 	return data, nil
 }
