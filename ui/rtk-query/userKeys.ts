@@ -1,26 +1,13 @@
-import {
-  mesheryApi,
-  useGetUserKeysQuery as useSchemasGetUserKeysQuery,
-} from '@meshery/schemas/dist/mesheryApi';
+import { api } from './index';
 
-export const useGetUserKeysQuery = (queryArgs, options) =>
-  useSchemasGetUserKeysQuery(
-    {
-      orgId: queryArgs?.orgId,
-    },
-    options,
-  );
+const userKeysApi = api.injectEndpoints({
+  endpoints: (builder) => ({
+    getUserKeys: builder.query({
+      query: (queryArgs = {}) => ({
+        url: `identity/orgs/${queryArgs.orgId}/users/keys`,
+      }),
+    }),
+  }),
+});
 
-export const useLazyGetUserKeysQuery = () => {
-  const [trigger, result, lastPromiseInfo] = mesheryApi.endpoints.getUserKeys.useLazyQuery();
-
-  const wrappedTrigger = (queryArgs, preferCacheValue) =>
-    trigger(
-      {
-        orgId: queryArgs?.orgId,
-      },
-      preferCacheValue,
-    );
-
-  return [wrappedTrigger, result, lastPromiseInfo] as const;
-};
+export const { useGetUserKeysQuery, useLazyGetUserKeysQuery } = userKeysApi;
