@@ -1,11 +1,11 @@
 ---
-title: mesheryctl-exp-workspace-view
+title: mesheryctl-workspace-view
 display_title: false
-command: exp
-subcommand: workspace
+command: workspace
+subcommand: view
 ---
 
-# mesheryctl exp workspace view
+# mesheryctl workspace view
 
 View a workspace
 
@@ -15,7 +15,7 @@ View a workspace by its ID or name.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace view [workspace-name|workspace-id] [flags]
+mesheryctl workspace view [workspace-name|workspace-id] [flags]
 
 </div>
 </pre> 
@@ -25,7 +25,7 @@ mesheryctl exp workspace view [workspace-name|workspace-id] [flags]
 View details of a specific workspace by ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace view [workspace-id]
+mesheryctl workspace view [workspace-id]
 
 </div>
 </pre> 
@@ -33,7 +33,7 @@ mesheryctl exp workspace view [workspace-id]
 View details of a specific workspace by name (requires --orgId)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace view [workspace-name] --orgId [orgId]
+mesheryctl workspace view [workspace-name] --orgId [orgId]
 
 </div>
 </pre> 
@@ -41,7 +41,7 @@ mesheryctl exp workspace view [workspace-name] --orgId [orgId]
 View details of a specific workspace in JSON format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace view [workspace-id] --output-format json
+mesheryctl workspace view [workspace-id] --output-format json
 
 </div>
 </pre> 
@@ -49,7 +49,7 @@ mesheryctl exp workspace view [workspace-id] --output-format json
 View details of a specific workspace and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace view [workspace-id] --output-format json --save
+mesheryctl workspace view [workspace-id] --output-format json --save
 
 </div>
 </pre> 

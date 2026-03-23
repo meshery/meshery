@@ -2,7 +2,7 @@ import {
   HelpIcon,
 } from '@sistent/sistent';
 import React, { useReducer } from "react";
-import JoyRide, { ACTIONS, EVENTS, STATUS } from "react-joyride";
+import { Joyride as JoyRide, ACTIONS, EVENTS, STATUS } from "react-joyride";
 import { IconDiv } from "./tourStyledComponents";
 import { IconButton, Tooltip } from '@mui/material';
 const TOUR_STEPS = [
