@@ -50,11 +50,11 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/model`,
 // Display number of available models in Meshery
 mesheryctl model --count
 
-// Export registred models
+// Export registered models
 mesheryctl model export [model-name]
 
 // Generate model(s)
-mesheryctl model export [model-name]
+mesheryctl model generate [model-name]
 
 // Import model(s)
 mesheryctl model import -f [Uri]
@@ -62,7 +62,7 @@ mesheryctl model import -f [Uri]
 // List available model(s)
 mesheryctl model list
 
-// Delete avaialbe model(s)
+// Delete available model(s)
 mesheryctl model delete [model-id]
 
 // Search for a specific model
