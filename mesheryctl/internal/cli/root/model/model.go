@@ -54,7 +54,8 @@ mesheryctl model --count
 mesheryctl model export [model-name]
 
 // Generate model(s)
-mesheryctl model generate [model-name]
+mesheryctl model generate [path-to-csv-directory]
+mesheryctl model generate [URL]
 
 // Import model(s)
 mesheryctl model import -f [Uri]

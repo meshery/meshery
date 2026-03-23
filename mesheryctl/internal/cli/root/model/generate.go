@@ -46,10 +46,10 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/model/gen
 // Generate a model from a CSV file(s)
 mesheryctl model generate --f [path-to-csv-directory]
 
-// Generate a model from a Uri based on a JSON template
+// Generate a model from a URL based on a JSON template
 mesheryctl model generate --f [URL] -t [path-to-template.json]
 
-// Generate a model from a Uri based on a JSON template skipping registration
+// Generate a model from a URL based on a JSON template skipping registration
 mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
