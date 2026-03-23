@@ -112,12 +112,16 @@ func (l *RemoteProvider) latestToken(tokenString string) (string, bool) {
 	l.TokenStoreMut.Lock()
 	defer l.TokenStoreMut.Unlock()
 
-	newTokenString := l.TokenStore[tokenString]
-	if newTokenString == "" {
-		return tokenString, false
+	originalToken := tokenString
+	for {
+		refreshedToken, ok := l.TokenStore[tokenString]
+		if !ok || refreshedToken == "" {
+			break
+		}
+		tokenString = refreshedToken
 	}
 
-	return newTokenString, true
+	return tokenString, tokenString != originalToken
 }
 
 func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http.Response, error) {
