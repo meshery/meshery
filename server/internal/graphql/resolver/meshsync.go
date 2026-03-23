@@ -187,6 +187,10 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	}
 
 	if actions.ReSync == "true" {
+		if actions.HardReset == "true" {
+			r.Log.Info("Skipping resync after hard reset due to missing Kubernetes context")
+			return model.StatusProcessing, nil
+		}
 		handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
 		if !ok {
 			return "", ErrResyncCluster(

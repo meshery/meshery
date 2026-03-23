@@ -97,7 +97,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:             "given a valid format when model view then display detailed information",
 			Args:             []string{"view", modelName, "--output-format", "json"},
-			URL:              fmt.Sprintf("/%s?search=%s&page=0&pagesize=10", modelsApiPath, url.QueryEscape(modelName)),
+			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=%s", modelsApiPath, url.QueryEscape(modelName)),
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
 			Fixture:          "list.model.api.response.golden",
