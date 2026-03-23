@@ -121,6 +121,18 @@ document.addEventListener("click", (event) => {
             sidebarNav.classList.remove("main-navbar--active")
         }
     }
+
+    const docsSidebarContainer = document.querySelector(".left-container")
+    if (docsSidebarContainer && toggleBtnSidebarNav) {
+        const isActive = docsSidebarContainer.classList.contains("left-container--active")
+        if (isActive) {
+            const isInsideSidebar = docsSidebarContainer.contains(event.target)
+            const isToggleBtn = toggleBtnSidebarNav.contains(event.target)
+            if (!isInsideSidebar && !isToggleBtn) {
+                docsSidebarContainer.classList.remove("left-container--active")
+            }
+        }
+    }
 })
 
 window.addEventListener("load", () => {
