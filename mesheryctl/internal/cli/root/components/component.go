@@ -95,7 +95,7 @@ mesheryctl component view [component-name | component-id]
 
 func init() {
 	ComponentCmd.AddCommand(availableSubcommands...)
-	ComponentCmd.Flags().BoolVarP(&componentFlagsProvided.Count, "count", "", false, "(optional) Get the number of components in total")
+	ComponentCmd.Flags().BoolVarP(&componentFlagsProvided.Count, "count", "c", false, "(optional) Get the number of components in total")
 }
 
 func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponentsAPIResponse) ([][]string, int64) {

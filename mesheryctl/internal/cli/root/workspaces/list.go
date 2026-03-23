@@ -81,10 +81,10 @@ mesheryctl exp workspace list --orgId [orgId] --count
 }
 
 func init() {
-	listWorkspaceCmd.Flags().BoolVarP(&workspaceListFlags.Count, "count", "", false, "total number of registered workspaces")
+	listWorkspaceCmd.Flags().BoolVarP(&workspaceListFlags.Count, "count", "c", false, "total number of registered workspaces")
 	listWorkspaceCmd.Flags().StringVarP(&workspaceListFlags.OrgId, "orgId", "o", "", "Organization ID")
-	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlags.Page, "page", "", 1, "page number for paginated results. (default: 1)")
-	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlags.PageSize, "page-size", "", 10, "number of items to be displayed per page for paginated results. (default: 10, max limit: 100)")
+	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlags.Page, "page", "p", 1, "page number for paginated results. (default: 1)")
+	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlags.PageSize, "page-size", "s", 10, "number of items to be displayed per page for paginated results. (default: 10, max limit: 100)")
 }
 
 func processDataToDisplay(workspaceResponse *workspace.WorkspacePage) ([][]string, int64) {

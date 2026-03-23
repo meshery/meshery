@@ -62,7 +62,6 @@ func processOrgData(orgs *models.OrganizationsPage) ([][]string, int64) {
 			org.Name,
 			org.CreatedAt.Format("01-02-2006"),
 		})
-
 	}
 	return rows, int64(orgs.TotalCount)
 }
@@ -70,6 +69,5 @@ func processOrgData(orgs *models.OrganizationsPage) ([][]string, int64) {
 func init() {
 	listOrgCmd.Flags().IntP("page", "p", 1, "(optional) Page number of paginated results")
 	listOrgCmd.Flags().IntP("pagesize", "s", 10, "(optional) Number of organizations per page")
-	listOrgCmd.Flags().BoolP("count", "", false, "total number of registered orgs")
-
+	listOrgCmd.Flags().BoolP("count", "c", false, "total number of registered orgs")
 }

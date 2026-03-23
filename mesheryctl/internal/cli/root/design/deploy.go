@@ -62,7 +62,6 @@ mesheryctl design deploy -f [filepath] -s [source type]
 	`,
 	Annotations: linkDocDesignDeploy,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-
 		flagValidator := mesheryctlflags.GetFlagValidator()
 		designDeployValidSourceTypes, err := getDesignSourceTypes()
 		if err != nil {
@@ -171,7 +170,6 @@ mesheryctl design deploy -f [filepath] -s [source type]
 		}
 		utils.Log.Info(string(body))
 		return nil
-
 	},
 }
 

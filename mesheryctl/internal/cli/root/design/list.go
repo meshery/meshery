@@ -138,6 +138,6 @@ func formatTimeToString(t *time.Time, isVerbose bool) string {
 func init() {
 	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "(optional) Display full length user identifiers and detailed timestamps")
 	listCmd.Flags().IntVarP(&page, "page", "p", 1, "(optional) List next set of designs with --page")
-	listCmd.Flags().IntVarP(&pageSize, "pagesize", "", 10, "(optional) Number of designs to be displayed per page")
+	listCmd.Flags().IntVarP(&pageSize, "pagesize", "s", 10, "(optional) Number of designs to be displayed per page")
 	listCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")
 }
