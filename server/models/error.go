@@ -138,6 +138,7 @@ const (
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
+	ErrProviderInvalidUUIDCode            = "meshery-server-1376"
 	ErrWorkspaceMissingInputCode          = "meshery-server-1375"
 )
 
