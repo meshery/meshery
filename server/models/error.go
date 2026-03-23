@@ -114,7 +114,7 @@ const (
 	ErrUrlParseCode                       = "meshery-server-1335"
 	ErrCloseIoReaderCode                  = "meshery-server-1336"
 	ErrDownloadPackageCode                = "meshery-server-1337"
-	ErrOperationNotAvailableCode           = "meshery-server-1338"
+	ErrOperationNotAvailableCode          = "meshery-server-1338"
 	ErrTokenVerifyCode                    = "meshery-server-1339"
 	ErrLogoutCode                         = "meshery-server-1340"
 	ErrGetSessionCookieCode               = "meshery-server-1341"
@@ -138,7 +138,7 @@ const (
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
-	ErrProviderInvalidUUIDCode            = "meshery-server-1376"
+	ErrWorkspaceMissingInputCode          = "meshery-server-1375"
 )
 
 var (
@@ -624,5 +624,16 @@ func ErrProviderInvalidUUID(err error, field string) error {
 		[]string{err.Error()},
 		[]string{"The supplied identifier is not a valid UUID."},
 		[]string{"Provide a valid UUID value in the request path parameter."},
+	)
+}
+
+func ErrWorkspaceMissingInput() error {
+	return errors.New(
+		ErrWorkspaceMissingInputCode,
+		errors.Alert,
+		[]string{"Invalid input for workspace operation"},
+		[]string{"WorkspaceID or OrgID cannot be empty"},
+		[]string{"The workspace ID and organization ID are required for this operation."},
+		[]string{"Ensure that both WorkspaceID and OrgID are provided and not empty."},
 	)
 }
