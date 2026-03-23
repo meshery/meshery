@@ -8,14 +8,21 @@ func TestViewProviderCmd(t *testing.T) {
 	SetupContextEnv(t)
 	tests := []CmdTestInput{
 		{
+			Name:             "view with context override",
+			Args:             []string{"provider", "view", "-c", "gke"},
+			ExpectedResponse: PrintProviderToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+		},
+		{
 			Name:             "view without any parameter",
 			Args:             []string{"provider", "view"},
 			ExpectedResponse: PrintProviderToStdout(mctlCfg.Contexts["local"], "local") + "\n\n",
 		},
 		{
-			Name:             "view with context override",
-			Args:             []string{"provider", "view", "-c", "gke"},
-			ExpectedResponse: PrintProviderToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+			Name: "view all providers",
+			Args: []string{"provider", "view", "--all"},
+			ExpectedResponse: PrintProviderToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n" +
+				PrintProviderToStdout(mctlCfg.Contexts["local"], "local") + "\n\n" +
+				"Current Context: local\n",
 		},
 	}
 
