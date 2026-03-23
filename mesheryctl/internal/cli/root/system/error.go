@@ -56,11 +56,11 @@ const (
 	ErrContextNotExistsCode               = "mesheryctl-1196"
 	ErrSystemSetInvalidReleaseChannelCode = "mesheryctl-1205"
 	ErrSystemSetInvalidEdgeReleaseCode    = "mesheryctl-1206"
-	ErrSystemCheckInvalidCliVersionCode   = "replace_me"
-	ErrDockerNotRunningCode               = "replace_me"
-	ErrDockerContextCode                  = "replace_me"
-	ErrDockerStartCode                    = "replace_me"
-	ErrDockerUnknownCode                  = "replace_me"
+	ErrSystemCheckInvalidCliVersionCode   = "mesheryctl-1207"
+	ErrDockerNotRunningCode               = "mesheryctl-1208"
+	ErrDockerContextCode                  = "mesheryctl-1209"
+	ErrDockerStartCode                    = "mesheryctl-1210"
+	ErrDockerUnknownCode                  = "mesheryctl-1211"
 )
 
 var (
