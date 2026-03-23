@@ -157,7 +157,7 @@ jobs:
         run: echo "date=$(date +'%Y-%m-%d-%H.%M.%S')" >> $GITHUB_OUTPUT
 
       - name: Checkout Code
-        uses: actions/checkout@master
+        uses: actions/checkout@v6
 
       - name: Set up Go
         uses: actions/setup-go@v6
@@ -188,7 +188,8 @@ jobs:
               name: default
           EOF
           echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
-          cp "$HOME/.meshery/auth.json" "$HOME/auth.json"
+          cp "$HOME/.meshery/auth.json" "$RUNNER_TEMP/auth.json"
+          chmod 600 "$RUNNER_TEMP/auth.json"
           make build
           sudo install -m 755 ./mesheryctl /usr/local/bin/mesheryctl
           mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update
@@ -210,8 +211,7 @@ jobs:
 
       - name: Deploy Service Mesh
         run: |
-          cat ~/auth.json
-          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
+          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t "$RUNNER_TEMP/auth.json" ISTIO
           sleep 50
         shell: '/bin/bash {0}'
 
@@ -251,7 +251,7 @@ jobs:
         run: echo "date=$(date +'%Y-%m-%d-%H.%M.%S')" >> $GITHUB_OUTPUT
 
       - name: Checkout Code
-        uses: actions/checkout@master
+        uses: actions/checkout@v6
 
       - name: Set up Go
         uses: actions/setup-go@v6
@@ -282,7 +282,8 @@ jobs:
               name: default
           EOF
           echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
-          cp "$HOME/.meshery/auth.json" "$HOME/auth.json"
+          cp "$HOME/.meshery/auth.json" "$RUNNER_TEMP/auth.json"
+          chmod 600 "$RUNNER_TEMP/auth.json"
           make build
           sudo install -m 755 ./mesheryctl /usr/local/bin/mesheryctl
           mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update
@@ -300,7 +301,7 @@ jobs:
 
       - name: Deploy Service Mesh
         run: |
-          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
+          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t "$RUNNER_TEMP/auth.json" ISTIO
           sleep 50
         shell: '/bin/bash {0}'
 
