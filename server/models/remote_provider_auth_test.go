@@ -122,9 +122,10 @@ func TestRemoteProviderGetSessionUsesStoredRefreshedToken(t *testing.T) {
 
 func TestRemoteProviderTokenHandlerSetsLatestTokenCookie(t *testing.T) {
 	capabilitiesPath := writeCapabilitiesFixture(t)
+	prevCapabilitiesPath := viper.Get(PROVIDER_CAPABILITIES_FILEPATH_ENV)
 	viper.Set(PROVIDER_CAPABILITIES_FILEPATH_ENV, capabilitiesPath)
 	t.Cleanup(func() {
-		viper.Set(PROVIDER_CAPABILITIES_FILEPATH_ENV, "")
+		viper.Set(PROVIDER_CAPABILITIES_FILEPATH_ENV, prevCapabilitiesPath)
 	})
 
 	const (
