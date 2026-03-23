@@ -6,7 +6,7 @@ import ExtensionSandbox, {
 import { Box, CircularProgress, NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
 import React, { useEffect, useCallback, useState } from 'react';
-import RemoteComponent from '../../components/RemoteComponent';
+import { RemoteComponent } from '@sistent/sistent';
 import { MesheryExtensionEarlyAccessCardPopup } from '../../components/General/Popup';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { useRouter } from 'next/router';

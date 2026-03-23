@@ -10,7 +10,7 @@ import { promisifiedDataFetch } from '../lib/data-fetch';
 import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { createPathForRemoteComponent } from './ExtensionSandbox';
-import RemoteComponent from './RemoteComponent';
+import { RemoteComponent } from '@sistent/sistent';
 import { useNotification } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';

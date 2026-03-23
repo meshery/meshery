@@ -39,7 +39,7 @@ import {
 import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
 import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
-import RemoteComponent from '../RemoteComponent';
+import { RemoteComponent } from '@sistent/sistent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import MesherySettingsPerformanceComponent from '../Settings/MesherySettingsPerformanceComponent';
 import { iconMedium } from '../../css/icons.styles';
