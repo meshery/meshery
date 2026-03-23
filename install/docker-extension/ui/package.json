@@ -35,7 +35,7 @@
     "react": "^19.2.4",
     "react-app-rewired": "^2.2.1",
     "react-dom": "^19.2.4",
-    "react-joyride": "^2.9.3",
+    "react-joyride": "^3.0.0",
     "react-scripts": "5.0.1",
     "sans-serif": "^1.0.0",
     "stream-browserify": "^3.0.0",
