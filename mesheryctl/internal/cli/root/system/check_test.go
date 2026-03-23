@@ -38,7 +38,7 @@ func TestPreflightCmdIntegration(t *testing.T) {
 			buf := setupSystemOutCmdTest(t)
 			defer func() {
 				buf.Reset()
-				resetCmdFlags(SystemCmd, t)
+				// resetCmdFlags(SystemCmd, t)
 			}()
 
 			SystemCmd.SetArgs(tt.Args)
