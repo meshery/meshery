@@ -64,13 +64,13 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(r)["id"]
 	q := r.URL.Query()
-	orgId := q.Get("orgID")
-	if orgId == "" {
+	orgID := q.Get("orgID")
+	if orgID == "" {
 		h.log.Error(models.ErrWorkspaceMissingInput())
 		http.Error(w, models.ErrWorkspaceMissingInput().Error(), http.StatusBadRequest)
 		return
 	}
-	resp, err := provider.GetWorkspaceByID(r, workspaceID, orgId)
+	resp, err := provider.GetWorkspaceByID(r, workspaceID, orgID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
