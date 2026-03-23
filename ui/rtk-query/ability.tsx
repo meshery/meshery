@@ -65,8 +65,6 @@ const SelectedOrganizationProvider = ({ children }) => {
   const prefUpdatedToFallback = useRef(false);
 
   useEffect(() => {
-    console.log('[loadSession] selectedOrganization', selectedOrganization);
-
     if (prefUpdatedToFallback.current) {
       return;
     }
@@ -76,10 +74,8 @@ const SelectedOrganizationProvider = ({ children }) => {
       !errorFetchingSelectedOrg &&
       !isFetchingSelectedOrg
     ) {
-      console.log('[loadSession] setting default org');
-      const res = updatePrefs(selectedOrganizationId);
+      updatePrefs(selectedOrganizationId);
       prefUpdatedToFallback.current = true;
-      console.log('updatePrefs', res);
     }
   }, [didFallback, selectedOrganizationId, errorFetchingSelectedOrg, isFetchingSelectedOrg]);
 
