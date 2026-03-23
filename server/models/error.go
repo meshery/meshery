@@ -114,7 +114,7 @@ const (
 	ErrUrlParseCode                       = "meshery-server-1335"
 	ErrCloseIoReaderCode                  = "meshery-server-1336"
 	ErrDownloadPackageCode                = "meshery-server-1337"
-	ErrOperationNotAvailableCode           = "meshery-server-1338"
+	ErrOperationNotAvailableCode          = "meshery-server-1338"
 	ErrTokenVerifyCode                    = "meshery-server-1339"
 	ErrLogoutCode                         = "meshery-server-1340"
 	ErrGetSessionCookieCode               = "meshery-server-1341"
@@ -138,6 +138,7 @@ const (
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
+	ErrWorkspaceMissingInputCode          = "meshery-server-1375"
 )
 
 var (
@@ -613,4 +614,8 @@ func ErrMarshallingDesignIntoYAML(err error) error {
 
 func ErrMeshsyncDataHandler(err error) error {
 	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
+}
+
+func ErrWorkspaceMissingInput() error {
+	return errors.New(ErrWorkspaceMissingInputCode, errors.Alert, []string{"Invalid input for workspace operation"}, []string{"WorkspaceID or OrgID cannot be empty"}, []string{"The workspace ID and organization ID are required for this operation."}, []string{"Ensure that both WorkspaceID and OrgID are provided and not empty."})
 }
