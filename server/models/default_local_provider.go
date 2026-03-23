@@ -1314,25 +1314,23 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		}(seedContent, log, &seededUUIDs)
 	}
 
-	// Seed default organization
-	go func() {
-		id, _ := uuid.NewV4()
-		org := &organization.Organization{
-			ID:          id,
-			Name:        "My Org",
-			Country:     "",
-			Region:      "",
-			Description: "This is default organization",
-			Owner:       uuid.Nil,
+	// Seed default organization before the UI requests organizations.
+	id, _ := uuid.NewV4()
+	org := &organization.Organization{
+		ID:          id,
+		Name:        "My Org",
+		Country:     "",
+		Region:      "",
+		Description: "This is default organization",
+		Owner:       uuid.Nil,
+	}
+	count, _ := l.OrganizationPersister.GetOrganizationsCount()
+	if count == 0 {
+		_, err := l.OrganizationPersister.SaveOrganization(org)
+		if err != nil {
+			log.Error(ErrGettingSeededComponents(err, "organization"))
 		}
-		count, _ := l.OrganizationPersister.GetOrganizationsCount()
-		if count == 0 {
-			_, err := l.OrganizationPersister.SaveOrganization(org)
-			if err != nil {
-				log.Error(ErrGettingSeededComponents(err, "organization"))
-			}
-		}
-	}()
+	}
 }
 
 func (l *DefaultLocalProvider) Cleanup() error {

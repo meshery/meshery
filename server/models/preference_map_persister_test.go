@@ -35,6 +35,20 @@ func TestMapPreferencePersisterReadFromPersisterReturnsDefaultsWhenMissing(t *te
 	if !pref.AnonymousPerfResults {
 		t.Error("expected AnonymousPerfResults to default to true")
 	}
+
+	stored, ok := persister.db.Load("user-1")
+	if !ok {
+		t.Fatal("expected missing preference read to seed the default preference")
+	}
+
+	seededPref, ok := stored.(*Preference)
+	if !ok {
+		t.Fatalf("expected stored preference to be *Preference, got %T", stored)
+	}
+
+	if !reflect.DeepEqual(seededPref, pref) {
+		t.Errorf("expected seeded preference to match returned preference, got %+v want %+v", seededPref, pref)
+	}
 }
 
 func TestMapPreferencePersisterReadFromPersisterReturnsPersistedPreference(t *testing.T) {
