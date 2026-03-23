@@ -1,5 +1,4 @@
 import { urlEncodeParams } from '@/utils/utils';
-import { mesheryApi } from '@meshery/schemas/dist/mesheryApi';
 import { api } from './index';
 import _ from 'lodash';
 
@@ -113,7 +112,7 @@ const workspacesApi = api
       }),
 
       getDesignsOfWorkspace: builder.query({
-        queryFn: async (queryArgs, { dispatch }, _extraOptions, baseQuery) => {
+        queryFn: async (queryArgs, { dispatch: _dispatch }, _extraOptions, baseQuery) => {
           // eslint-disable-next-line no-unused-vars
           const { expandUser, infiniteScroll, ...otherArgs } = queryArgs;
           const params = urlEncodeParams(otherArgs);
@@ -123,9 +122,10 @@ const workspacesApi = api
           });
           if (expandUser && designs.data && !designs.error) {
             const withUsersPromises = designs.data.designs.map(async (design) => {
-              const user = await dispatch(
-                mesheryApi.endpoints.getUserProfileById.initiate({ id: design.user_id }),
-              );
+              const user = await baseQuery({
+                url: `user/profile/${design.user_id}`,
+                method: 'GET',
+              });
               return {
                 ...design,
                 first_name: user.data?.first_name || '[deleted]',
@@ -184,7 +184,7 @@ const workspacesApi = api
         }),
       }),
       getViewsOfWorkspace: builder.query({
-        queryFn: async (queryArg, { dispatch }, _extraOptions, baseQuery) => {
+        queryFn: async (queryArg, { dispatch: _dispatch }, _extraOptions, baseQuery) => {
           // eslint-disable-next-line no-unused-vars
           const { expandUser, infiniteScroll, ...otherArgs } = queryArg;
           const params = urlEncodeParams(otherArgs);
@@ -194,9 +194,10 @@ const workspacesApi = api
           });
           if (expandUser && views.data && !views.error) {
             const withUsersPromises = views.data.views.map(async (view) => {
-              const user = await dispatch(
-                mesheryApi.endpoints.getUserProfileById.initiate({ id: view.user_id }),
-              );
+              const user = await baseQuery({
+                url: `user/profile/${view.user_id}`,
+                method: 'GET',
+              });
               return {
                 ...view,
                 first_name: user.data?.first_name || '[deleted]',
@@ -286,6 +287,40 @@ const workspacesApi = api
         invalidatesTags: () => [{ type: TAGS.TEAMS }],
       }),
 
+      createWorkspace: builder.mutation({
+        query: (queryArg) => ({
+          url: 'workspaces',
+          method: 'POST',
+          body: {
+            name: queryArg.workspacePayload?.name,
+            description: queryArg.workspacePayload?.description,
+            organization_id: queryArg.workspacePayload?.organization_id,
+          },
+        }),
+        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+      }),
+
+      updateWorkspace: builder.mutation({
+        query: (queryArg) => ({
+          url: `workspaces/${queryArg.workspaceId}`,
+          method: 'PUT',
+          body: {
+            name: queryArg.workspacePayload?.name,
+            description: queryArg.workspacePayload?.description,
+            organization_id: queryArg.workspacePayload?.organization_id,
+          },
+        }),
+        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+      }),
+
+      deleteWorkspace: builder.mutation({
+        query: (queryArg) => ({
+          url: `workspaces/${queryArg.workspaceId}`,
+          method: 'DELETE',
+        }),
+        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+      }),
+
       getEventsOfWorkspace: builder.query({
         query: (queryArg) => ({
           url: `extensions/api/workspaces/${queryArg.workspaceId}/events`,
@@ -317,46 +352,7 @@ export const {
   useAssignTeamToWorkspaceMutation,
   useUnassignTeamFromWorkspaceMutation,
   useGetEventsOfWorkspaceQuery,
+  useCreateWorkspaceMutation,
+  useUpdateWorkspaceMutation,
+  useDeleteWorkspaceMutation,
 } = workspacesApi;
-
-export const useCreateWorkspaceMutation = () => {
-  const [trigger, result] = mesheryApi.endpoints.postApiWorkspaces.useMutation();
-
-  const wrappedTrigger = (queryArg) =>
-    trigger({
-      body: {
-        name: queryArg.workspacePayload?.name,
-        description: queryArg.workspacePayload?.description,
-        organization_id: queryArg.workspacePayload?.organization_id,
-      },
-    });
-
-  return [wrappedTrigger, result] as const;
-};
-
-export const useUpdateWorkspaceMutation = () => {
-  const [trigger, result] = mesheryApi.endpoints.putApiWorkspacesById.useMutation();
-
-  const wrappedTrigger = (queryArg) =>
-    trigger({
-      id: queryArg.workspaceId,
-      body: {
-        name: queryArg.workspacePayload?.name,
-        description: queryArg.workspacePayload?.description,
-        organization_id: queryArg.workspacePayload?.organization_id,
-      },
-    });
-
-  return [wrappedTrigger, result] as const;
-};
-
-export const useDeleteWorkspaceMutation = () => {
-  const [trigger, result] = mesheryApi.endpoints.deleteApiWorkspacesById.useMutation();
-
-  const wrappedTrigger = (queryArg) =>
-    trigger({
-      id: queryArg.workspaceId,
-    });
-
-  return [wrappedTrigger, result] as const;
-};
