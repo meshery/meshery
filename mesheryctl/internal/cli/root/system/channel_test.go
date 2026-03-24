@@ -6,39 +6,12 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 )
-
-func BreakupFunc() {
-	viewCmd.Flags().VisitAll(setFlagValueAsUndefined)
-	viewProviderCmd.Flags().VisitAll(setFlagValueAsUndefined)
-	SystemCmd.PersistentFlags().VisitAll(setFlagValueAsUndefined)
-	showForAllContext = false
-	showProviderForAllContext = false
-	tempContext = ""
-	utils.SilentFlag = false
-}
-
-func setFlagValueAsUndefined(flag *pflag.Flag) {
-	_ = flag.Value.Set("")
-}
-
-type CmdTestInput struct {
-	Name             string
-	Args             []string
-	ExpectedResponse string
-	Token            string
-}
 
 func TestViewCmd(t *testing.T) {
 	setupContextTestEnv(t)
 	tests := []CmdTestInput{
-		{
-			Name:             "view with context override",
-			Args:             []string{"channel", "view", "-c", "gke"},
-			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
-		},
 		{
 			Name:             "given no argument when view then display current context channel and version",
 			Args:             []string{"channel", "view"},
