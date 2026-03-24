@@ -11,24 +11,29 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{listOrgCmd}
+	availableSubcommands = []*cobra.Command{listOrgCmd, viewOrgCmd}
 	organizationsApiPath = "api/identity/orgs"
 	count                bool
 )
 
 var OrgCmd = &cobra.Command{
-
 	Use:   "organization",
 	Short: "Interact with registered organizations",
 	Long: `Interact with registered organizations to display detailed information
 Find more information at: https://docs.meshery.io/reference/mesheryctl/organizations`,
 	Example: `
-// Number of  registered orgs
+// Number of registered organizations
 mesheryctl organization --count
 
-// List registerd orgs
+// List registered organizations
 mesheryctl organization list
-	`,
+
+// View details of a specific organization
+mesheryctl organization view [organization-id]
+
+// View details of a specific organization by name
+mesheryctl organization view [organization-name]
+`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ = cmd.Flags().GetBool("count")
 		if len(args) == 0 && !count {
@@ -60,5 +65,4 @@ mesheryctl organization list
 func init() {
 	OrgCmd.Flags().BoolP("count", "", false, "total number of registered organizations")
 	OrgCmd.AddCommand(availableSubcommands...)
-
 }
