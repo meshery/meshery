@@ -29,7 +29,7 @@ func TestGetWorkspaceByIDHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodGet, "/api/workspaces/"+tt.id, nil)
+			req := httptest.NewRequest(http.MethodGet, "/api/workspaces/"+tt.id+"?orgID=test-org", nil)
 			req = mux.SetURLVars(req, map[string]string{"id": tt.id})
 			rr := httptest.NewRecorder()
 
@@ -60,7 +60,7 @@ func TestUpdateWorkspaceHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodPut, "/api/workspaces/"+tt.id, strings.NewReader(tt.payload))
+			req := httptest.NewRequest(http.MethodPut, "/api/workspaces/"+tt.id+"?orgID=test-org", strings.NewReader(tt.payload))
 			req = mux.SetURLVars(req, map[string]string{"id": tt.id})
 			rr := httptest.NewRecorder()
 
@@ -89,7 +89,7 @@ func TestDeleteWorkspaceHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodDelete, "/api/workspaces/"+tt.id, nil)
+			req := httptest.NewRequest(http.MethodDelete, "/api/workspaces/"+tt.id+"?orgID=test-org", nil)
 			req = mux.SetURLVars(req, map[string]string{"id": tt.id})
 			rr := httptest.NewRecorder()
 
