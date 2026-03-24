@@ -38,7 +38,7 @@ func TestPreflightCmdIntegration(t *testing.T) {
 			buf := utils.SetupMeshkitLoggerTesting(t, true)
 			SystemCmd.SetOut(buf)
 			SystemCmd.SetArgs(tt.Args)
-			err = SystemCmd.Execute()
+			err := SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}

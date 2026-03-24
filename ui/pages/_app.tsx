@@ -8,7 +8,7 @@ import 'billboard.js/dist/theme/dark.min.css';
 import _ from 'lodash';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
-import React, { useEffect, useMemo, useCallback, useState } from 'react';
+import React, { useEffect, useMemo, useCallback, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
@@ -79,6 +79,7 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
 import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import useDebouncedCallback from '@/utils/hooks/useDebounce';
 
 async function fetchContexts(number = 10, search = '') {
   return await promisifiedDataFetch(
@@ -345,16 +346,57 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     setState((prevState) => ({ ...prevState, isOpen: !prevState.isOpen }));
   }, []);
 
+  // Persist selected K8s contexts to user preferences
+  const [updateSelectedK8sContexts] = useUpdateSelectedK8sContextsMutation();
+  const debouncedSaveContexts = useDebouncedCallback((contexts) => {
+    updateSelectedK8sContexts(contexts);
+  }, 800);
+
   /**
    * Sets the selected k8s context on global level.
    * @param {Array.<string>} activeK8sContexts
    */
-  const activeContextChangeCallback = useCallback((activeK8sContexts) => {
-    if (activeK8sContexts.includes('all')) {
-      activeK8sContexts = ['all'];
+  const activeContextChangeCallback = useCallback(
+    (activeK8sContexts) => {
+      if (activeK8sContexts.includes('all')) {
+        activeK8sContexts = ['all'];
+      }
+      dispatch(setK8sContexts({ selectedK8sContexts: activeK8sContexts }));
+      debouncedSaveContexts(activeK8sContexts);
+    },
+    [debouncedSaveContexts],
+  );
+
+  // Restore saved K8s context selection from user preferences
+  const { savedK8sContexts, isLoading: isLoadingK8sPrefs } = useGetSelectedK8sContexts();
+  const hasRestoredK8sSelection = useRef(false);
+
+  useEffect(() => {
+    if (isLoadingK8sPrefs || hasRestoredK8sSelection.current) return;
+    if (!state.k8sContexts?.contexts?.length) return;
+
+    hasRestoredK8sSelection.current = true;
+
+    if (!savedK8sContexts || savedK8sContexts.length === 0) return;
+
+    const allContextIds = state.k8sContexts.contexts.map((ctx) => ctx.id);
+
+    if (savedK8sContexts.includes('all')) {
+      const activeContexts = [...allContextIds, 'all'];
+      setState((prev) => ({ ...prev, activeK8sContexts: activeContexts }));
+      dispatch(setK8sContexts({ selectedK8sContexts: activeContexts }));
+      return;
     }
-    dispatch(setK8sContexts({ selectedK8sContexts: activeK8sContexts }));
-  }, []);
+
+    const validSaved = savedK8sContexts.filter((id) => allContextIds.includes(id));
+    if (validSaved.length === 0) return;
+
+    const isAll = allContextIds.every((id) => validSaved.includes(id));
+    const activeContexts = isAll ? [...allContextIds, 'all'] : validSaved;
+
+    setState((prev) => ({ ...prev, activeK8sContexts: activeContexts }));
+    dispatch(setK8sContexts({ selectedK8sContexts: activeContexts }));
+  }, [isLoadingK8sPrefs, savedK8sContexts, state.k8sContexts]);
 
   const setActiveContexts = useCallback(
     (id) => {
@@ -540,33 +582,38 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   useEffect(() => {
     // todo further refactoring required for data fetch
     const loadAll = async () => {
-      loadConfigFromServer();
-      loadPromGrafanaConnection();
-      await loadOrg();
+      try {
+        loadConfigFromServer();
+        loadPromGrafanaConnection();
+        await loadOrg();
 
-      initSubscriptions([]);
+        initSubscriptions([]);
 
-      dataFetch(
-        '/api/user/prefs',
-        {
-          method: 'GET',
-          credentials: 'include',
-        },
-        (result) => {
-          if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
-            dispatch(
-              toggleCatalogContent({
-                catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
-              }),
-            );
-          }
-        },
-        (err) => console.error(err),
-      );
+        dataFetch(
+          '/api/user/prefs',
+          {
+            method: 'GET',
+            credentials: 'include',
+          },
+          (result) => {
+            if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
+              dispatch(
+                toggleCatalogContent({
+                  catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
+                }),
+              );
+            }
+          },
+          (err) => console.error(err),
+        );
 
-      document.addEventListener('fullscreenchange', fullScreenChanged);
-      await loadMeshModelComponent();
-      setState((prevState) => ({ ...prevState, isLoading: false }));
+        document.addEventListener('fullscreenchange', fullScreenChanged);
+        await loadMeshModelComponent();
+      } catch (error) {
+        console.error('[Meshery bootstrap] Failed to initialize the application shell', error);
+      } finally {
+        setState((prevState) => ({ ...prevState, isLoading: false }));
+      }
     };
     loadAll();
 
@@ -576,7 +623,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         state.disposeK8sContextSubscription();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update effect for k8sConfig
@@ -600,7 +646,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         initSubscriptions(ids);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [k8sConfig, capabilitiesRegistry]);
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
