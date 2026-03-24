@@ -55,7 +55,12 @@
       </main>
 
       {{ if ne (.Params.display_toc | default true) false }}
-        {{ partial "toc.html" . }}
+        <div class="content-table-wrapper">
+          <div class="content-table" data-proofer-ignore>
+            {{ partial "page-meta-links.html" . }}
+            {{ partial "toc.html" . }}
+          </div>
+        </div>
       {{ end }}
     </div>
 
