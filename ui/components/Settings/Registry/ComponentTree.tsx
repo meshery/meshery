@@ -31,7 +31,6 @@ const ComponentTree = ({
   return (
     <SimpleTreeView
       aria-label="controlled"
-      defaultExpandedItems={['3']}
       slots={{ collapseIcon: MinusSquare, expandIcon: PlusSquare, endIcon: DotSquare }}
       onExpandedItemsChange={handleToggle}
       onSelectedItemsChange={handleSelect}
