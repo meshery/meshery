@@ -184,7 +184,7 @@ const workspacesApi = api
       }),
       getViewsOfWorkspace: builder.query({
         queryFn: async (queryArg, { dispatch }, _extraOptions, baseQuery) => {
-          const { expandUser, infiniteScroll, ...otherArgs } = queryArg;
+          const { expandUser, infiniteScroll: _infiniteScroll, ...otherArgs } = queryArg;
           const params = urlEncodeParams(otherArgs);
           const views = await baseQuery({
             url: `extensions/api/workspaces/${queryArg.workspaceId}/views?${params}`,
