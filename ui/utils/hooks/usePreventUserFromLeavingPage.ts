@@ -27,7 +27,6 @@ export default function usePreventUserFromLeavingPage(preventLeave) {
         if (confirm(confirmationMsg)) {
           return Router.prototype.change.apply(SingletonRouter.router, args);
         } else {
-          /* eslint-disable */
           return new Promise((resolve, reject) => resolve(false));
         }
       };
