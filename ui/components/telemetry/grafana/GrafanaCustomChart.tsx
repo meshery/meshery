@@ -425,7 +425,7 @@ function GrafanaCustomChart(props) {
           expr = expr.replace(
             new RegExp(`$${tvrs[0]}`.replace(/[-/^$*+?.()|[\]{}]/g, '\\$&'), 'g'),
             tvrs[1],
-          ); //eslint-disable-line
+          );
         }
       });
     }
