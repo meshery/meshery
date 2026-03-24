@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "Edge",
+  "type": "Non-binding",
+  "subType": "Network",
+  "metadata": {
+    "description": "Visualizes the fan-out messaging flow where an SNS Topic publishes to an SQS Queue."
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Topic",
+            "model": "aws-sns-controller"
+          }
+        ],
+        "to": [
+          {
+            "kind": "Queue",
+            "model": "aws-sqs-controller"
+          }
+        ]
+      }
+    }
+  ]
+}
