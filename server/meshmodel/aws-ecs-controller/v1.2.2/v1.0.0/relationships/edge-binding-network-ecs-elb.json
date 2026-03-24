@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "Edge",
+  "type": "Binding",
+  "subType": "Network",
+  "metadata": {
+    "description": "Indicates that an ECS Service is registered to an AWS ELB Target Group for traffic routing."
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Service",
+            "model": "aws-ecs-controller"
+          }
+        ],
+        "to": [
+          {
+            "kind": "TargetGroupBinding",
+            "model": "cluster-essentials"
+          }
+        ]
+      }
+    }
+  ]
+}
