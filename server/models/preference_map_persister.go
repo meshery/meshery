@@ -48,7 +48,7 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 		return nil, ErrUserID
 	}
 
-	dataCopyB, ok := s.db.Load(userID)
+	dataCopyB, ok := s.db.LoadOrStore(userID, data)
 	if ok {
 		log.Debug(fmt.Sprintf("retrieved session for user with id: %s", userID))
 		newData, ok1 := dataCopyB.(*Preference)
@@ -60,8 +60,6 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 		}
 	} else {
 		log.Debug(ErrSessionNotFound(userID))
-		// Do not store the freshly created default preference on read-miss.
-		// Let callers explicitly persist preferences via WriteToPersister.
 	}
 	return data, nil
 }
