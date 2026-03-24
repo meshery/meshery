@@ -1,6 +1,8 @@
 package models
 
 import (
+	"sync"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
@@ -29,6 +31,9 @@ type MeshsyncDataHandler struct {
 	InstanceID   uuid.UUID
 	Token        string
 	StopFunc     func()
+	stopCh       chan struct{}
+	stopOnce     *sync.Once
+	listenerWg   *sync.WaitGroup
 }
 
 func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID uuid.UUID, token string, stopFunc func()) *MeshsyncDataHandler {
@@ -42,6 +47,9 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 		InstanceID:   instanceID,
 		Token:        token,
 		StopFunc:     stopFunc,
+		stopCh:       make(chan struct{}),
+		stopOnce:     &sync.Once{},
+		listenerWg:   &sync.WaitGroup{},
 	}
 }
 
@@ -51,9 +59,14 @@ func (mh *MeshsyncDataHandler) GetBrokerHandler() broker.Handler {
 
 func (mh *MeshsyncDataHandler) Run() error {
 	storeSubscriptionStatusChan := make(chan bool)
+	if mh.listenerWg == nil {
+		mh.listenerWg = &sync.WaitGroup{}
+	}
 	// this subscription is independent of whether or not the stale data in the database have been cleaned up
+	mh.listenerWg.Add(1)
 	go mh.subscribeToMeshsyncEvents()
 
+	mh.listenerWg.Add(1)
 	go mh.subsribeToStoreUpdates(storeSubscriptionStatusChan)
 	// to make sure that we don't ask for data before we start listening
 	if <-storeSubscriptionStatusChan {
@@ -71,7 +84,9 @@ func (mh *MeshsyncDataHandler) Run() error {
 }
 
 func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
-	eventsChan := make(chan *broker.Message)
+	defer mh.listenerWg.Done()
+
+	eventsChan := make(chan *broker.Message, 1)
 	err := mh.ListenToMeshSyncEvents(eventsChan)
 	if err != nil {
 		mh.log.Error(ErrBrokerSubscription(err))
@@ -79,7 +94,14 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 	}
 	mh.log.Info("subscribed to meshery broker for meshsync events")
 
-	for event := range eventsChan {
+	for {
+		select {
+		case <-mh.stopSignal():
+			return
+		case event, ok := <-eventsChan:
+			if !ok {
+				return
+			}
 		if event.EventType == broker.ErrorEvent {
 			// TODO: Handle errors accordingly
 			mh.log.Error(event.Object.(error))
@@ -91,6 +113,7 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 		if err != nil {
 			mh.log.Error(err)
 			continue
+		}
 		}
 	}
 }
@@ -104,7 +127,9 @@ func (mh *MeshsyncDataHandler) ListenToMeshSyncEvents(out chan *broker.Message) 
 }
 
 func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
-	storeChan := make(chan *broker.Message)
+	defer mh.listenerWg.Done()
+
+	storeChan := make(chan *broker.Message, 1)
 	mh.log.Info("subscribing to store updates from meshsync on NATS subject: ", MeshsyncStoreUpdatesSubject)
 	err := mh.broker.SubscribeWithChannel(MeshsyncStoreUpdatesSubject, "", storeChan)
 	if err != nil {
@@ -115,7 +140,14 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 
 	statusChan <- true
 
-	for storeUpdate := range storeChan {
+	for {
+		select {
+		case <-mh.stopSignal():
+			return
+		case storeUpdate, ok := <-storeChan:
+			if !ok {
+				return
+			}
 		if storeUpdate.EventType == broker.ErrorEvent {
 			mh.log.Error(storeUpdate.Object.(error))
 			continue
@@ -135,7 +167,18 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 				continue
 			}
 		}
+		}
 	}
+}
+
+func (mh *MeshsyncDataHandler) stopSignal() <-chan struct{} {
+	if mh == nil || mh.stopCh == nil {
+		closedCh := make(chan struct{})
+		close(closedCh)
+		return closedCh
+	}
+
+	return mh.stopCh
 }
 
 func (mh *MeshsyncDataHandler) Unmarshal(object interface{}) (meshsyncmodel.KubernetesResource, error) {
@@ -310,7 +353,29 @@ func (mh *MeshsyncDataHandler) Resync() error {
 }
 
 func (mh *MeshsyncDataHandler) Stop() {
-	if mh.StopFunc != nil {
-		mh.StopFunc()
+	if mh == nil {
+		return
 	}
+	if mh.stopOnce == nil {
+		mh.stopOnce = &sync.Once{}
+	}
+	if mh.listenerWg == nil {
+		mh.listenerWg = &sync.WaitGroup{}
+	}
+
+	mh.stopOnce.Do(func() {
+		if mh.stopCh != nil {
+			close(mh.stopCh)
+		}
+
+		if mh.StopFunc != nil {
+			mh.StopFunc()
+		}
+
+		if mh.broker != nil {
+			mh.broker.CloseConnection()
+		}
+
+		mh.listenerWg.Wait()
+	})
 }

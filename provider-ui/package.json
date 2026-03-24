@@ -20,7 +20,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.14.1",
-    "@meshery/schemas": "^0.8.124",
+    "@meshery/schemas": "^0.9.0",
     "@mui/icons-material": "^7.3.9",
     "@sistent/sistent": "^0.17.1",
     "http-proxy": "^1.18.1",

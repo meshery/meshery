@@ -2,8 +2,6 @@ import { ctxUrl } from '../utils/multi-ctx';
 import {
   mesheryApi,
   useGetTeamsQuery as useSchemasGetTeamsQuery,
-  useGetUserProfileByIdQuery as useSchemasGetUserProfileByIdQuery,
-  useGetUserQuery as useSchemasGetUserQuery,
   useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery,
 } from '@meshery/schemas/dist/mesheryApi';
 import { api } from './index';
@@ -97,13 +95,22 @@ export const userApi = api
           }
         },
       }),
+      getLoggedInUser: builder.query({
+        query: () => ({
+          url: '/api/user',
+          method: 'GET',
+        }),
+        // All callers share one cache entry per user session (client-side Redux store).
+        // This does not affect other users—each browser has its own isolated store.
+        serializeQueryArgs: ({ endpointName }) => endpointName,
+      }),
       getProviderCapabilities: builder.query({
         query: () => '/api/provider/capabilities',
         method: 'GET',
       }),
       getUserProfileSummaryById: builder.query({
         query: (queryArg) => ({
-          url: `/user/profile/${queryArg.id}`,
+          url: `/api/user/profile/${queryArg.id}`,
         }),
         transformResponse: (response) => {
           // Modify the response data to keep only necessary fields
@@ -236,46 +243,22 @@ export const {
   useUpdateUserPrefMutation,
   useGetUserPrefWithContextQuery,
   useUpdateUserPrefWithContextMutation,
+  useGetLoggedInUserQuery,
   useGetProviderCapabilitiesQuery,
   useHandleFeedbackFormSubmissionMutation,
   useGetAllUsersQuery,
   useRemoveUserFromTeamMutation,
   useGetSystemVersionQuery,
+  useGetUserProfileSummaryByIdQuery,
 } = userApi;
 
-export const useGetLoggedInUserQuery = (_queryArg, options) =>
-  useSchemasGetUserQuery(undefined, options);
-
 export const useGetUserByIdQuery = (id, options) =>
-  useSchemasGetUserProfileByIdQuery(
+  useGetUserProfileSummaryByIdQuery(
     {
       id,
     },
     options,
   );
-
-export const useGetUserProfileSummaryByIdQuery = (queryArg, options) => {
-  const result = useSchemasGetUserProfileByIdQuery(
-    {
-      id: queryArg?.id,
-    },
-    options,
-  );
-
-  return {
-    ...result,
-    data: result.data
-      ? {
-          id: result.data.id,
-          email: result.data.email,
-          user_id: result.data.user_id,
-          avatar_url: result.data.avatar_url,
-          first_name: result.data.first_name,
-          last_name: result.data.last_name,
-        }
-      : undefined,
-  };
-};
 
 export const useGetUsersForOrgQuery = (queryArg, options) =>
   useSchemasGetUsersForOrgQuery(
@@ -332,7 +315,7 @@ export const getUserAccessToken = async () => {
 };
 
 export const getUserProfile = async () => {
-  const userProfile = await initiateQuery(mesheryApi.endpoints.getUser, undefined, {});
+  const userProfile = await initiateQuery(userApi.endpoints.getLoggedInUser);
   return userProfile;
 };
 
