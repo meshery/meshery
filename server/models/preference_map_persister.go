@@ -60,6 +60,8 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 		}
 	} else {
 		log.Debug(ErrSessionNotFound(userID))
+		// Do not store the freshly created default preference on read-miss.
+		// Let callers explicitly persist preferences via WriteToPersister.
 	}
 	return data, nil
 }
