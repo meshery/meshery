@@ -79,8 +79,12 @@ module.exports = [
       '@next/next/no-img-element': 'off',
       'react-hooks/rules-of-hooks': 'warn',
       'react-hooks/exhaustive-deps': 'off',
-      // Disabled: React Compiler optimization hint — expensive and not yet enforced in this codebase.
+      // Disabled: React Compiler rules from react-hooks v7 / eslint-config-next.
+      // This project does not use the React Compiler, so these rules are not applicable.
       'react-hooks/static-components': 'off',
+      'react-hooks/use-memo': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/component-hook-factories': 'off',
       'jsx-a11y/alt-text': 'off',
       'valid-typeof': 'warn',
       'react/react-in-jsx-scope': 'off',
