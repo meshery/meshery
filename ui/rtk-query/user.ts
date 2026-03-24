@@ -431,3 +431,23 @@ export const useUpdateSelectedWorkspaceMutation = () => {
 
   return [updateSelectedWorkspace, response];
 };
+
+export const useGetSelectedK8sContexts = () => {
+  const { data: userPrefs, isLoading, error } = useGetUserPrefQuery();
+
+  return {
+    savedK8sContexts: userPrefs?.selectedK8sContexts || null,
+    isLoading,
+    error,
+  };
+};
+
+export const useUpdateSelectedK8sContextsMutation = () => {
+  const [updateUserPref, response] = useUpdateUserPrefMutation();
+
+  const updateSelectedK8sContexts = async (contextIds) => {
+    await updateUserPref({ selectedK8sContexts: contextIds });
+  };
+
+  return [updateSelectedK8sContexts, response] as const;
+};
