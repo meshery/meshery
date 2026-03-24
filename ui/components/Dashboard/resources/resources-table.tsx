@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* eslint-disable react/jsx-filename-extension */
+
 import React, { useEffect, useMemo, useState } from 'react';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';

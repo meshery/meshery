@@ -581,7 +581,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         state.disposeK8sContextSubscription();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update effect for k8sConfig
@@ -605,7 +604,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         initSubscriptions(ids);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [k8sConfig, capabilitiesRegistry]);
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
