@@ -76,7 +76,7 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		statusCode := http.StatusNotFound
-		if meshkiterrors.GetCode(err) == models.ErrInvalidUUIDCode {
+		if meshkiterrors.GetCode(err) == models.ErrModelInvalidUUIDCode {
 			statusCode = http.StatusBadRequest
 		}
 		http.Error(w, ErrGetResult(err).Error(), statusCode)
@@ -143,7 +143,7 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		statusCode := http.StatusNotFound
-		if meshkiterrors.GetCode(err) == models.ErrInvalidUUIDCode {
+		if meshkiterrors.GetCode(err) == models.ErrModelInvalidUUIDCode {
 			statusCode = http.StatusBadRequest
 		}
 		http.Error(w, ErrGetResult(err).Error(), statusCode)
@@ -187,7 +187,7 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		statusCode := http.StatusNotFound
-		if meshkiterrors.GetCode(err) == models.ErrInvalidUUIDCode {
+		if meshkiterrors.GetCode(err) == models.ErrModelInvalidUUIDCode {
 			statusCode = http.StatusBadRequest
 		}
 		http.Error(w, ErrGetResult(err).Error(), statusCode)

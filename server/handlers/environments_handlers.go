@@ -71,7 +71,7 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		statusCode := http.StatusNotFound
-		if meshkiterrors.GetCode(err) == models.ErrInvalidUUIDCode {
+		if meshkiterrors.GetCode(err) == models.ErrModelInvalidUUIDCode {
 			statusCode = http.StatusBadRequest
 		}
 		http.Error(w, ErrGetResult(err).Error(), statusCode)
@@ -138,7 +138,7 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		statusCode := http.StatusNotFound
-		if meshkiterrors.GetCode(err) == models.ErrInvalidUUIDCode {
+		if meshkiterrors.GetCode(err) == models.ErrModelInvalidUUIDCode {
 			statusCode = http.StatusBadRequest
 		}
 		http.Error(w, ErrGetResult(err).Error(), statusCode)
@@ -182,7 +182,7 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		statusCode := http.StatusNotFound
-		if meshkiterrors.GetCode(err) == models.ErrInvalidUUIDCode {
+		if meshkiterrors.GetCode(err) == models.ErrModelInvalidUUIDCode {
 			statusCode = http.StatusBadRequest
 		}
 		http.Error(w, ErrGetResult(err).Error(), statusCode)

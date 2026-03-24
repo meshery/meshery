@@ -66,8 +66,8 @@ func TestDefaultLocalProvider_InvalidUUID_EnvironmentWorkspaceOperations(t *test
 				t.Fatal("expected error for invalid UUID, got nil")
 			}
 
-			if meshkiterrors.GetCode(err) != ErrInvalidUUIDCode {
-				t.Fatalf("expected error code %s, got %s", ErrInvalidUUIDCode, meshkiterrors.GetCode(err))
+			if meshkiterrors.GetCode(err) != ErrModelInvalidUUIDCode {
+				t.Fatalf("expected error code %s, got %s", ErrModelInvalidUUIDCode, meshkiterrors.GetCode(err))
 			}
 		})
 	}

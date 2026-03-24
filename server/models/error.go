@@ -138,7 +138,7 @@ const (
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
-	ErrInvalidUUIDCode                    = "meshery-server-1376"
+	ErrModelInvalidUUIDCode               = "meshery-server-1376"
 	ErrWorkspaceMissingInputCode          = "meshery-server-1375"
 )
 
@@ -619,7 +619,7 @@ func ErrMeshsyncDataHandler(err error) error {
 
 func ErrInvalidUUID(err error, field string) error {
 	return errors.New(
-		ErrInvalidUUIDCode,
+		ErrModelInvalidUUIDCode,
 		errors.Alert,
 		[]string{fmt.Sprintf("Invalid UUID for %s", field)},
 		[]string{err.Error()},
