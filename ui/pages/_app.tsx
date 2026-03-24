@@ -79,7 +79,6 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
 import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
-import { useGetSelectedK8sContexts, useUpdateSelectedK8sContextsMutation } from '@/rtk-query/user';
 import useDebouncedCallback from '@/utils/hooks/useDebounce';
 
 async function fetchContexts(number = 10, search = '') {
