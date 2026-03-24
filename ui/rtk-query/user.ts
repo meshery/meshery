@@ -1,9 +1,7 @@
-import { ctxUrl } from '@/utils/multi-ctx';
+import { ctxUrl } from '../utils/multi-ctx';
 import {
   mesheryApi,
   useGetTeamsQuery as useSchemasGetTeamsQuery,
-  useGetUserProfileByIdQuery as useSchemasGetUserProfileByIdQuery,
-  useGetUserQuery as useSchemasGetUserQuery,
   useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery,
 } from '@meshery/schemas/dist/mesheryApi';
 import { api } from './index';
@@ -45,17 +43,17 @@ export const userApi = api
         invalidatesTags: [Tags.LOAD_TEST_PREF],
       }),
       getToken: builder.query({
-        query: () => `token`,
+        query: () => `/api/user/token`,
         method: 'GET',
       }),
       getUserPref: builder.query({
-        query: () => 'user/prefs',
+        query: () => '/api/user/prefs',
         method: 'GET',
         providesTags: [Tags.USER_PREF],
       }),
       updateUserPref: builder.mutation({
         query: (queryArg) => ({
-          url: 'user/prefs',
+          url: '/api/user/prefs',
           method: 'POST',
           body: queryArg,
           credentials: 'include',
@@ -64,7 +62,7 @@ export const userApi = api
       }),
       getUserPrefWithContext: builder.query({
         query: (selectedK8sContexts) => ({
-          url: ctxUrl('user/prefs', selectedK8sContexts),
+          url: ctxUrl('/api/user/prefs', selectedK8sContexts),
           method: 'GET',
           credentials: 'same-origin',
         }),
@@ -72,7 +70,7 @@ export const userApi = api
       }),
       updateUserPrefWithContext: builder.mutation({
         query: (queryArg) => ({
-          url: ctxUrl('/user/prefs', queryArg.selectedK8sContexts),
+          url: ctxUrl('/api/user/prefs', queryArg.selectedK8sContexts),
           method: 'POST',
           headers: {
             'Content-Type': 'application/json;charset=UTF-8',
@@ -97,13 +95,22 @@ export const userApi = api
           }
         },
       }),
+      getLoggedInUser: builder.query({
+        query: () => ({
+          url: '/api/user',
+          method: 'GET',
+        }),
+        // All callers share one cache entry per user session (client-side Redux store).
+        // This does not affect other users—each browser has its own isolated store.
+        serializeQueryArgs: ({ endpointName }) => endpointName,
+      }),
       getProviderCapabilities: builder.query({
-        query: () => 'provider/capabilities',
+        query: () => '/api/provider/capabilities',
         method: 'GET',
       }),
       getUserProfileSummaryById: builder.query({
         query: (queryArg) => ({
-          url: `/user/profile/${queryArg.id}`,
+          url: `/api/user/profile/${queryArg.id}`,
         }),
         transformResponse: (response) => {
           // Modify the response data to keep only necessary fields
@@ -119,7 +126,7 @@ export const userApi = api
       }),
       getExtensionsByType: builder.query({
         query: () => ({
-          url: 'provider/capabilities',
+          url: '/api/provider/capabilities',
           method: 'GET',
           credentials: 'include',
         }),
@@ -143,7 +150,7 @@ export const userApi = api
       }),
       getFullPageExtensions: builder.query({
         query: () => ({
-          url: 'provider/capabilities',
+          url: '/api/provider/capabilities',
           method: 'GET',
           credentials: 'include',
         }),
@@ -173,7 +180,7 @@ export const userApi = api
         providesTags: [Tags.PROVIDER_CAP],
       }),
       getSystemVersion: builder.query({
-        query: () => 'system/version',
+        query: () => '/api/system/version',
         method: 'GET',
       }),
       handleFeedbackFormSubmission: builder.mutation({
@@ -186,7 +193,7 @@ export const userApi = api
       }),
       getAllUsers: builder.query({
         query: (queryArg) => ({
-          url: `identity/users`,
+          url: `/api/identity/users`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -214,7 +221,7 @@ export const userApi = api
       }),
       getAccessToken: builder.query({
         query: () => ({
-          url: `/token`,
+          url: `/api/user/token`,
         }),
         transformResponse: (response) => {
           return response?.token;
@@ -236,46 +243,22 @@ export const {
   useUpdateUserPrefMutation,
   useGetUserPrefWithContextQuery,
   useUpdateUserPrefWithContextMutation,
+  useGetLoggedInUserQuery,
   useGetProviderCapabilitiesQuery,
   useHandleFeedbackFormSubmissionMutation,
   useGetAllUsersQuery,
   useRemoveUserFromTeamMutation,
   useGetSystemVersionQuery,
+  useGetUserProfileSummaryByIdQuery,
 } = userApi;
 
-export const useGetLoggedInUserQuery = (_queryArg, options) =>
-  useSchemasGetUserQuery(undefined, options);
-
 export const useGetUserByIdQuery = (id, options) =>
-  useSchemasGetUserProfileByIdQuery(
+  useGetUserProfileSummaryByIdQuery(
     {
       id,
     },
     options,
   );
-
-export const useGetUserProfileSummaryByIdQuery = (queryArg, options) => {
-  const result = useSchemasGetUserProfileByIdQuery(
-    {
-      id: queryArg?.id,
-    },
-    options,
-  );
-
-  return {
-    ...result,
-    data: result.data
-      ? {
-          id: result.data.id,
-          email: result.data.email,
-          user_id: result.data.user_id,
-          avatar_url: result.data.avatar_url,
-          first_name: result.data.first_name,
-          last_name: result.data.last_name,
-        }
-      : undefined,
-  };
-};
 
 export const useGetUsersForOrgQuery = (queryArg, options) =>
   useSchemasGetUsersForOrgQuery(
@@ -332,7 +315,7 @@ export const getUserAccessToken = async () => {
 };
 
 export const getUserProfile = async () => {
-  const userProfile = await initiateQuery(mesheryApi.endpoints.getUser, undefined, {});
+  const userProfile = await initiateQuery(userApi.endpoints.getLoggedInUser);
   return userProfile;
 };
 
