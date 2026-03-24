@@ -86,12 +86,19 @@ module.exports = [
       'react/jsx-uses-vars': [2],
       'react/jsx-no-undef': 'error',
       'no-console': 0,
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'unused-imports/no-unused-imports': 'error',
       'react/jsx-key': 'warn',
       'no-dupe-keys': 'error',
       'react/prop-types': 'off',
       'prettier/prettier': ['error', { endOfLine: 'lf' }],
+    },
+  },
+
+  // no-unused-vars: JS/JSX only — TypeScript files should use @typescript-eslint/no-unused-vars
+  {
+    files: ['**/*.{js,jsx,mjs,cjs}'],
+    rules: {
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     },
   },
 ];
