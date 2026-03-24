@@ -7,10 +7,33 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
 var b *bytes.Buffer
+
+func BreakupFunc() {
+	viewCmd.Flags().VisitAll(setFlagValueAsUndefined)
+	viewProviderCmd.Flags().VisitAll(setFlagValueAsUndefined)
+	channelCmd.Flags().VisitAll(setFlagValueAsUndefined)
+	SystemCmd.PersistentFlags().VisitAll(setFlagValueAsUndefined)
+	showForAllContext = false
+	showProviderForAllContext = false
+	tempContext = ""
+	utils.SilentFlag = false
+}
+
+func setFlagValueAsUndefined(flag *pflag.Flag) {
+	_ = flag.Value.Set("")
+}
+
+type CmdTestInput struct {
+	Name             string
+	Args             []string
+	ExpectedResponse string
+	Token            string
+}
 
 func setupContextTestEnv(t *testing.T) {
 	path, err := os.Getwd()
