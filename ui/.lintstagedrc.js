@@ -1,7 +1,7 @@
 module.exports = {
   // Lint & Prettify only staged JS/JSX/TS/TSX files
   '**/*.(ts|tsx|js|jsx)': (filenames) => [
-    `eslint --fix --max-warnings=0 ${filenames.map((f) => `"${f}"`).join(' ')}`
+    `eslint --fix --max-warnings=0 ${filenames.map((f) => `"${f}"`).join(' ')}`,
     `npx prettier --write ${filenames.map((f) => `"${f}"`).join(' ')}`,
   ],
 
