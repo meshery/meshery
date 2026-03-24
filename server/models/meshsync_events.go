@@ -322,7 +322,7 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
-			mh.log.Error(ErrResultNotFound(result.Error))
+			mh.log.Debug("No component definition found for apiVersion: ", apiVersion, " kind: ", kind, ". Using default metadata.")
 		} else {
 			mh.log.Error(ErrDBRead(result.Error))
 		}
