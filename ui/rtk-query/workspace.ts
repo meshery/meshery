@@ -114,8 +114,7 @@ const workspacesApi = api
 
       getDesignsOfWorkspace: builder.query({
         queryFn: async (queryArgs, { dispatch }, _extraOptions, baseQuery) => {
-          // eslint-disable-next-line no-unused-vars
-          const { expandUser, infiniteScroll, ...otherArgs } = queryArgs;
+          const { expandUser, infiniteScroll: _infiniteScroll, ...otherArgs } = queryArgs;
           const params = urlEncodeParams(otherArgs);
           const designs = await baseQuery({
             url: `workspaces/${queryArgs.workspaceId}/designs?${params}`,
@@ -185,8 +184,7 @@ const workspacesApi = api
       }),
       getViewsOfWorkspace: builder.query({
         queryFn: async (queryArg, { dispatch }, _extraOptions, baseQuery) => {
-          // eslint-disable-next-line no-unused-vars
-          const { expandUser, infiniteScroll, ...otherArgs } = queryArg;
+          const { expandUser, infiniteScroll: _infiniteScroll, ...otherArgs } = queryArg;
           const params = urlEncodeParams(otherArgs);
           const views = await baseQuery({
             url: `extensions/api/workspaces/${queryArg.workspaceId}/views?${params}`,

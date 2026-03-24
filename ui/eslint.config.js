@@ -33,10 +33,12 @@ module.exports = [
       'out/**',
       '.next/**',
       'static/**',
+      'public/static/**',
       'lib/**',
       'tests/samples/**',
       '**/__generated__/**',
       'playwright-report/**',
+      'playground/**',
       'test-results/**',
       // Non-JS/TS assets — ESLint 10 flat config processes every non-ignored file
       // in the directory tree when given `.` as the argument; these would be parsed
@@ -103,12 +105,23 @@ module.exports = [
       '@next/next/no-img-element': 'off',
       'react-hooks/rules-of-hooks': 'warn',
       'react-hooks/exhaustive-deps': 'off',
-      // Disabled: React Compiler rules from react-hooks v7 / eslint-config-next.
-      // This project does not use the React Compiler, so these rules are not applicable.
+      // Disabled: all React Compiler rules added by react-hooks v7 via eslint-config-next.
+      // This project does not use the React Compiler; these rules are inapplicable and slow.
       'react-hooks/static-components': 'off',
       'react-hooks/use-memo': 'off',
       'react-hooks/set-state-in-effect': 'off',
       'react-hooks/component-hook-factories': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
+      'react-hooks/incompatible-library': 'off',
+      'react-hooks/immutability': 'off',
+      'react-hooks/globals': 'off',
+      'react-hooks/refs': 'off',
+      'react-hooks/error-boundaries': 'off',
+      'react-hooks/purity': 'off',
+      'react-hooks/set-state-in-render': 'off',
+      'react-hooks/unsupported-syntax': 'off',
+      'react-hooks/config': 'off',
+      'react-hooks/gating': 'off',
       'jsx-a11y/alt-text': 'off',
       'valid-typeof': 'warn',
       'react/react-in-jsx-scope': 'off',
