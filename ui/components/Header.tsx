@@ -432,8 +432,6 @@ const Header = ({
   activeContexts,
   setActiveContexts,
   searchContexts,
-
-  abilityUpdated,
 }) => {
   const { notify } = useNotification;
   const { openModal } = useContext(WorkspaceModalContext) || {};
