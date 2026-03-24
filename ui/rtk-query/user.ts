@@ -100,6 +100,9 @@ export const userApi = api
           url: '/api/user',
           method: 'GET',
         }),
+        // All callers share one cache entry per user session (client-side Redux store).
+        // This does not affect other users—each browser has its own isolated store.
+        serializeQueryArgs: ({ endpointName }) => endpointName,
       }),
       getProviderCapabilities: builder.query({
         query: () => '/api/provider/capabilities',
