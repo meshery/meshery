@@ -13,10 +13,6 @@ const nextConfig = {
   // Static export (replaces removed `next export` in Next.js 15)
   output: 'export',
 
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
   typescript: {
     ignoreBuildErrors: false,
   },
