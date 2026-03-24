@@ -180,26 +180,41 @@ mesheryctl system check --operator
 		}
 
 		if systemCheckFlags.ComponentsFlag {
-			return hc.runComponentsHealthChecks()
+			if err := hc.runComponentsHealthChecks(); err != nil {
+				return err
+			}
 		}
 
 		if systemCheckFlags.Adapter != "" {
-			return hc.runAdapterHealthChecks(systemCheckFlags.Adapter)
+			if err := hc.runAdapterHealthChecks(systemCheckFlags.Adapter); err != nil {
+				return err
+			}
 		}
 		if systemCheckFlags.AdaptersFlag {
-			return hc.runAdapterHealthChecks("")
-		}
-
-		if systemCheckFlags.OperatorsFlag {
-			return hc.runOperatorHealthChecks()
+			if err := hc.runAdapterHealthChecks(""); err != nil {
+				return err
+			}
 		}
 
 		currContext, err := hc.mctlCfg.GetCurrentContext()
 		if err != nil {
 			return ErrGetCurrentContext(err)
 		}
-
 		currPlatform := currContext.GetPlatform()
+
+		if systemCheckFlags.OperatorsFlag {
+			if platformDocker != currPlatform {
+				return ErrOperatorUnsupportedPlatform(currPlatform)
+			}
+			if err := hc.runOperatorHealthChecks(); err != nil {
+				return err
+			}
+		}
+
+		skipFullCheck := systemCheckFlags.OperatorsFlag || systemCheckFlags.AdaptersFlag || systemCheckFlags.Adapter != "" || systemCheckFlags.ComponentsFlag
+		if skipFullCheck {
+			return nil
+		}
 
 		hc.Options.RunComponentChecks = true
 		// if platform is docker only then run docker checks

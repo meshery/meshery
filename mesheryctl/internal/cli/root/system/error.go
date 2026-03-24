@@ -61,6 +61,7 @@ const (
 	ErrDockerContextCode                  = "mesheryctl-1209"
 	ErrDockerStartCode                    = "mesheryctl-1210"
 	ErrDockerUnknownCode                  = "mesheryctl-1211"
+	ErrOperatorUnsupportedPlatformCode    = "replace_me"
 )
 
 var (
@@ -416,4 +417,14 @@ func ErrDockerUnknown(err error) error {
 		[]string{err.Error()},
 		[]string{"An unknown error occurred while trying to connect / interact with Docker"},
 		[]string{"Please ensure Docker is installed and running. If the issue persists, check the Docker configuration and logs for more details."})
+}
+
+func ErrOperatorUnsupportedPlatform(platform string) error {
+	return errors.New(
+		ErrOperatorUnsupportedPlatformCode,
+		errors.Fatal,
+		[]string{"Operator unsupported platform"},
+		[]string{fmt.Sprintf("The platform %s is not supported for operator health checks", platform)},
+		[]string{"The operator health checks can only be run on Kubernetes platform"},
+		[]string{"Please switch to a Kubernetes context to run operator health checks. "})
 }
