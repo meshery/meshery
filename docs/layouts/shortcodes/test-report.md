@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 24th 2026, 1:46:29 am
+- Testing started at: March 24th 2026, 3:23:48 am
 
 **📦 Test Result Summary**
 
-- ✅ 29 passed
-- ❌ 32 failed
+- ✅ 31 passed
+- ❌ 29 failed
 - ⚠️ 0 flaked
-- ⏩ 11 skipped
+- ⏩ 12 skipped
 
-⌛ _Duration: 6 minutes and 1 seconds_
+⌛ _Duration: 6 minutes and 12 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -28,7 +28,7 @@
 | 5 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 6 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 7 | Meshery | chromium-meshery-provider | Create a Model |  | ❌ |
-| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ❌ |
+| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
 | 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
 | 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
@@ -37,7 +37,7 @@
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ➖ |
 | 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ✅ |
-| 17 | Meshery | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ❌ |
+| 17 | Meshery | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 18 | Meshery | chromium-meshery-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 19 | Meshery | chromium-meshery-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
 | 20 | Meshery | chromium-meshery-provider | should identify relationships for Hierarchical-Parent-Namespace-Relationship | relationship | ✅ |
@@ -81,7 +81,7 @@
 | 58 | None | chromium-local-provider | should identify relationships for meshery-design | relationship | ❌ |
 | 59 | None | chromium-local-provider | should identify relationships for pv-pvc-edge-non-binding-reference-relationship | relationship | ❌ |
 | 60 | None | chromium-local-provider | should identify relationships for Service-To-Deployment-Network | relationship | ❌ |
-| 61 | None | chromium-local-provider | should verify Design Configurator page elements |  | ❌ |
+| 61 | None | chromium-local-provider | should verify Design Configurator page elements |  | ✅ |
 | 62 | None | chromium-local-provider | Test if Left Navigation Panel is displayed |  | ❌ |
 | 63 | None | chromium-local-provider | Test if Notification button is displayed |  | ❌ |
 | 64 | None | chromium-local-provider | Test if Profile button is displayed |  | ❌ |
@@ -108,20 +108,6 @@
 
 The following tests failed. Click on each to see the failure reason:
 
-
-<details>
-<summary>❌ Delete Kubernetes cluster connections (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
 
 <details>
 <summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
@@ -152,67 +138,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ should identify relationships for All Relationships (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/relationship_evaluation.spec.js`
-
-**Error Message:**
-```
-Error: apiRequestContext.post: socket hang up
-Call log:
-[2m  - → POST http://localhost:9081/api/meshmodels/relationships/evaluate[22m
-[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.7632.6 Safari/537.36[22m
-[2m    - accept: */*[22m
-[2m    - accept-encoding: gzip,deflate,br[22m
-[2m    - content-type: application/json[22m
-[2m    - content-length: 283285[22m
-[2m    - cookie: token=eyJhY2Nlc3NfdG9rZW4iOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW5CMVlteHBZem81T1dJNE1XSTBOeTA1TTJaaExUUTBNRE10T0RjMU15MHhOelU1TkRGaFptWmpOV0lpTENKMGVYQWlPaUpLVjFRaWZRLmV5SmhkV1FpT2x0ZExDSmpiR2xsYm5SZmFXUWlPaUp0WlhOb1pYSjVMV05zYjNWa0lpd2laWGgwSWpwN2ZTd2lhV0YwSWpveE56UTFNVGN5TURVNUxDSnBjM01pT2lKb2RIUndjem92TDJOc2IzVmtMbXhoZVdWeU5TNXBieTlvZVdSeVlTSXNJbXAwYVNJNklqWmlZbVV5T1RKbExUTXlaV0l0TkRaall5MWlZVEV3TFdaak9EUmlPVFUzWm1JeFpDSXNJbTVpWmlJNk1UYzBOVEUzTWpBMU9Td2ljMk53SWpwYkltOXdaVzVwWkNJc0ltOW1abXhwYm1VaVhTd2ljM1ZpSWpvaVpFZFdlbVJETVRGak1sWjVVVWQ0YUdWWFZubE9VelZ3WW5jOVBUcGlWMVo2WVVkV2VXVlRNV3BpUnpreFdrRTlQU0o5LlNBdGYwNmtNWnlZcXVCQXFrWHlIQ1Z6THRoNXUta0gzS0FmTFVGT21WU1llM0QzQlE0bi1ZbzZUYXFPcDBlY3pmQlZzVnhuQ1dsc09feUd1WkJWTVc4ckQ1VDF4TjZleFVDbHNybHJwbzlYeVFIZjhJcWFWNjNOakU2RzZqVFFjM1dQV1ZVOTRiUlNQOGgwd2RzWlZReFBFdWpweHgzaU8zaWdLS2RFVlIydUxKMk9MY09JN21xM2lxV2tGNU1NdEZTTE5xd0pvX3VVVUI4Tk1GcEtFUk1XUWx5cnZ3XzlDdWdzOTJpQWZIYUFpQXJsSkRNVVNTSE52V2k5TEVmNTRrTW05YUlwNkl2M2VrU0g2NzZyamFWZU92dE9QTWVaeGVEcE1EaFhRQ0N0SnhNOUFKQTc1T1dzNnMwV2JMZHRJYmtSc01Ndkx2c3NCelExMzNmQU5Nazc4RFp4YnozWkgxWWxMTE90c1FjQTViM2hTdHdEVHNCY3BtUld3X1hOeWY2NlhPRDd2eFNOcnpzYU11QkVZUC1uYXBqWGRsZ184TWdTWXc4UTdOVExzb1V3Zktxb2s1ZjRUeGFWZFpSRzRZNk5NWEo3TzBQelJ5UzBfU3lFZkNWakdjeW5HUnFlejJ5bjZwNWxPVnF0RHhwNHdBSFpfUE4xdTRXdlpfWWNlcE9XRVVOTEY0akNReHBwWEdLTzVoRWRlUlh2bVFXeVI1U3JNQ3hCY19IWDBUbi1wYnhxdHcwc3Z0ZEJTdHd2N2dwNEUxWUhXQkJxUi02SGlDalBuV1BWZnhCMFlGNFJTRzZ5TlNSdUx4VDk2NVREUk43clA2dGpuNkh5ZEZUdXpNQkdJR0h0ZmZ4cHBvaFhVSlpfc0VoT1phUmtDWFVIbjAyaFlHaWEzVm5rIiwiYWxnIjoiUlMyNTYiLCJyZWZyZXNoX3Rva2VuIjoiIiwidG9rZW5fdHlwZSI6ImJlYXJlciJ9; meshery-provider=Layer5[22m
-
-```
-
-**Code Snippet:**
-```
-[0m [90m 45 |[39m       [36mconst[39m designToTest [33m=[39m { [33m...[39mdesign[33m,[39m relationships[33m:[39m [] }[33m;[39m
- [90m 46 |[39m
-[31m[1m>[22m[39m[90m 47 |[39m       [36mconst[39m response [33m=[39m [36mawait[39m request[33m.[39mpost(
- [90m    |[39m                                      [31m[1m^[22m[39m
- [90m 48 |[39m         [32m`${ENV.MESHERY_SERVER_URL}/api/meshmodels/relationships/evaluate`[39m[33m,[39m
- [90m 49 |[39m         {
- [90m 50 |[39m           data[33m:[39m {[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Performance Analysis Details (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
-
-**Error Message:**
-```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
-Call log:
-[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
-
-```
-
-**Code Snippet:**
-```
-   at pages/DashboardPage.js:63
-
-[0m [90m 61 |[39m
- [90m 62 |[39m   [36masync[39m navigateToDashboard() {
-[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
- [90m    |[39m                     [31m[1m^[22m[39m
- [90m 64 |[39m   }
- [90m 65 |[39m
- [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Test if Left Navigation Panel is displayed (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
 
@@ -268,63 +194,7 @@ Call log:
 </details>
 
 <details>
-<summary>❌ Test if Notification button is displayed (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
-
-**Error Message:**
-```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
-Call log:
-[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
-
-```
-
-**Code Snippet:**
-```
-   at pages/DashboardPage.js:63
-
-[0m [90m 61 |[39m
- [90m 62 |[39m   [36masync[39m navigateToDashboard() {
-[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
- [90m    |[39m                     [31m[1m^[22m[39m
- [90m 64 |[39m   }
- [90m 65 |[39m
- [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Meshery Docker Extension Details (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
-
-**Error Message:**
-```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
-Call log:
-[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
-
-```
-
-**Code Snippet:**
-```
-   at pages/DashboardPage.js:63
-
-[0m [90m 61 |[39m
- [90m 62 |[39m   [36masync[39m navigateToDashboard() {
-[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
- [90m    |[39m                     [31m[1m^[22m[39m
- [90m 64 |[39m   }
- [90m 65 |[39m
- [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Test if Profile button is displayed (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
 
@@ -380,63 +250,7 @@ Call log:
 </details>
 
 <details>
-<summary>❌ Logout from current user session (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
-
-**Error Message:**
-```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
-Call log:
-[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
-
-```
-
-**Code Snippet:**
-```
-   at pages/DashboardPage.js:63
-
-[0m [90m 61 |[39m
- [90m 62 |[39m   [36masync[39m navigateToDashboard() {
-[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
- [90m    |[39m                     [31m[1m^[22m[39m
- [90m 64 |[39m   }
- [90m 65 |[39m
- [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Meshery Catalog Section Details (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
-
-**Error Message:**
-```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
-Call log:
-[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
-
-```
-
-**Code Snippet:**
-```
-   at pages/DashboardPage.js:63
-
-[0m [90m 61 |[39m
- [90m 62 |[39m   [36masync[39m navigateToDashboard() {
-[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
- [90m    |[39m                     [31m[1m^[22m[39m
- [90m 64 |[39m   }
- [90m 65 |[39m
- [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Create a Model (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
 
@@ -492,7 +306,142 @@ Call log:
 </details>
 
 <details>
+<summary>❌ Logout from current user session (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
+
+**Error Message:**
+```
+Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
+Call log:
+[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
+
+```
+
+**Code Snippet:**
+```
+   at pages/DashboardPage.js:63
+
+[0m [90m 61 |[39m
+ [90m 62 |[39m   [36masync[39m navigateToDashboard() {
+[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
+ [90m    |[39m                     [31m[1m^[22m[39m
+ [90m 64 |[39m   }
+ [90m 65 |[39m
+ [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Create a Model (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
+
+**Error Message:**
+```
+Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
+Call log:
+[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
+
+```
+
+**Code Snippet:**
+```
+   at pages/DashboardPage.js:63
+
+[0m [90m 61 |[39m
+ [90m 62 |[39m   [36masync[39m navigateToDashboard() {
+[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
+ [90m    |[39m                     [31m[1m^[22m[39m
+ [90m 64 |[39m   }
+ [90m 65 |[39m
+ [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
+```
+
+</details>
+
+<details>
 <summary>❌ Common UI elements (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
+
+**Error Message:**
+```
+Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
+Call log:
+[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
+
+```
+
+**Code Snippet:**
+```
+   at pages/DashboardPage.js:63
+
+[0m [90m 61 |[39m
+ [90m 62 |[39m   [36masync[39m navigateToDashboard() {
+[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
+ [90m    |[39m                     [31m[1m^[22m[39m
+ [90m 64 |[39m   }
+ [90m 65 |[39m
+ [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Test if Left Navigation Panel is displayed (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ Verify Meshery Adapter for Istio Section (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Test if Notification button is displayed (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
 
@@ -543,6 +492,90 @@ Call log:
 </details>
 
 <details>
+<summary>❌ Aggregation Charts are displayed (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
+
+**Error Message:**
+```
+Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
+Call log:
+[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
+
+```
+
+**Code Snippet:**
+```
+   at pages/DashboardPage.js:63
+
+[0m [90m 61 |[39m
+ [90m 62 |[39m   [36masync[39m navigateToDashboard() {
+[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
+ [90m    |[39m                     [31m[1m^[22m[39m
+ [90m 64 |[39m   }
+ [90m 65 |[39m
+ [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Test if Profile button is displayed (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
+
+**Error Message:**
+```
+Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
+Call log:
+[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
+
+```
+
+**Code Snippet:**
+```
+   at pages/DashboardPage.js:63
+
+[0m [90m 61 |[39m
+ [90m 62 |[39m   [36masync[39m navigateToDashboard() {
+[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
+ [90m    |[39m                     [31m[1m^[22m[39m
+ [90m 64 |[39m   }
+ [90m 65 |[39m
+ [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Toggle "Send Anonymous Usage Statistics" (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
+
+**Error Message:**
+```
+Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
+Call log:
+[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
+
+```
+
+**Code Snippet:**
+```
+   at pages/DashboardPage.js:63
+
+[0m [90m 61 |[39m
+ [90m 62 |[39m   [36masync[39m navigateToDashboard() {
+[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
+ [90m    |[39m                     [31m[1m^[22m[39m
+ [90m 64 |[39m   }
+ [90m 65 |[39m
+ [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
+```
+
+</details>
+
+<details>
 <summary>❌ should identify relationships for deployment-configmap-reference-relationship (None - chromium-local-provider)</summary>
 
 **File Location:** `apiRequestContext.post: connect ECONNREFUSED :`
@@ -562,6 +595,34 @@ Call log:
 ```
 
 
+
+</details>
+
+<details>
+<summary>❌ Toggle "Send Anonymous Performance Results" (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
+
+**Error Message:**
+```
+Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
+Call log:
+[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
+
+```
+
+**Code Snippet:**
+```
+   at pages/DashboardPage.js:63
+
+[0m [90m 61 |[39m
+ [90m 62 |[39m   [36masync[39m navigateToDashboard() {
+[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
+ [90m    |[39m                     [31m[1m^[22m[39m
+ [90m 64 |[39m   }
+ [90m 65 |[39m
+ [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
+```
 
 </details>
 
@@ -681,155 +742,6 @@ Call log:
 </details>
 
 <details>
-<summary>❌ Aggregation Charts are displayed (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
-
-**Error Message:**
-```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
-Call log:
-[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
-
-```
-
-**Code Snippet:**
-```
-   at pages/DashboardPage.js:63
-
-[0m [90m 61 |[39m
- [90m 62 |[39m   [36masync[39m navigateToDashboard() {
-[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
- [90m    |[39m                     [31m[1m^[22m[39m
- [90m 64 |[39m   }
- [90m 65 |[39m
- [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Toggle "Send Anonymous Usage Statistics" (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
-
-**Error Message:**
-```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
-Call log:
-[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
-
-```
-
-**Code Snippet:**
-```
-   at pages/DashboardPage.js:63
-
-[0m [90m 61 |[39m
- [90m 62 |[39m   [36masync[39m navigateToDashboard() {
-[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
- [90m    |[39m                     [31m[1m^[22m[39m
- [90m 64 |[39m   }
- [90m 65 |[39m
- [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Toggle "Send Anonymous Performance Results" (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
-
-**Error Message:**
-```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
-Call log:
-[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
-
-```
-
-**Code Snippet:**
-```
-   at pages/DashboardPage.js:63
-
-[0m [90m 61 |[39m
- [90m 62 |[39m   [36masync[39m navigateToDashboard() {
-[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
- [90m    |[39m                     [31m[1m^[22m[39m
- [90m 64 |[39m   }
- [90m 65 |[39m
- [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Verify Meshery Adapter for Istio Section (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
- [90m 20 |[39m
-[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
- [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
- [90m 24 |[39m   })[33m;[39m[0m
-```
-
-</details>
-
-<details>
-<summary>❌ should verify Design Configurator page elements (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DesignConfiguratorPage.js`
-
-**Error Message:**
-```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/configuration/designs/configurator?design_id=test-design
-Call log:
-[2m  - navigating to "http://localhost:9081/configuration/designs/configurator?design_id=test-design", waiting until "load"[22m
-
-```
-
-**Code Snippet:**
-```
-   at pages/DesignConfiguratorPage.js:18
-
-[0m [90m 16 |[39m   [36masync[39m navigateTo(designId) {
- [90m 17 |[39m     [36mconst[39m query [33m=[39m designId [33m?[39m [32m`?design_id=${designId}`[39m [33m:[39m [32m''[39m[33m;[39m
-[31m[1m>[22m[39m[90m 18 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([32m`/configuration/designs/configurator${query}`[39m)[33m;[39m
- [90m    |[39m                     [31m[1m^[22m[39m
- [90m 19 |[39m   }
- [90m 20 |[39m
- [90m 21 |[39m   [36masync[39m saveDesign() {[0m
-```
-
-</details>
-
-<details>
 <summary>❌ All settings tabs (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
@@ -921,11 +833,13 @@ Call log:
 **🔗 Relationship Tests**
 
 <details>
-    <summary>[Show/Hide] Relationship Test Details (14 tests)</summary>
+    <summary>[Show/Hide] Relationship Test Details (18 tests)</summary>
     <div markdown="1">
 
 | Kind | Type | SubType | From | To | Model | Design Name | Status |
 | :---: | :---: | :---: | :---: | :---: | :---: | :--- | :---: |
+| edge | binding | permission | ClusterRole | ServiceAccount | kubernetes | Understanding Relationships | ❌ |
+| edge | binding | permission | Role | ServiceAccount | kubernetes | Understanding Relationships | ❌ |
 | edge | non-binding | network | Service | Deployment | kubernetes | service-to-deployment-network | ✅ |
 | edge | non-binding | network | Service | Deployment | kubernetes | meshery-design-fixture.json | ✅ |
 | edge | non-binding | reference | ClusterRoleBinding | ClusterRole | kubernetes | meshery-design-fixture.json | ✅ |
@@ -933,10 +847,12 @@ Call log:
 | hierarchical | parent | alias | Container | Deployment | kubernetes | deployment-configmap-reference-relationship | ✅ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | service-to-deployment-network | ✅ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | meshery-design-fixture.json | ✅ |
+| hierarchical | parent | alias | Container | Deployment | kubernetes | Understanding Relationships | ✅ |
 | hierarchical | parent | alias | Container | Pod | kubernetes | container-hierarchical-parent-alias-relationship | ✅ |
 | hierarchical | parent | inventory | * | Namespace | kubernetes | hierarchical-parent-namespace-relationship | ✅ |
 | hierarchical | parent | inventory | * | Namespace | kubernetes | service-to-deployment-network | ✅ |
 | hierarchical | parent | inventory | * | Namespace | kubernetes | pv-pvc-edge-non-binding-reference-relationship | ✅ |
+| hierarchical | parent | inventory | * | Namespace | kubernetes | Understanding Relationships | ✅ |
 | hierarchical | sibling | matchlabels | ClusterRole | ClusterRole | kubernetes | meshery-design-fixture.json | ✅ |
 | hierarchical | sibling | matchlabels | Deployment | Deployment | kubernetes | meshery-design-fixture.json | ✅ |
 | hierarchical | sibling | matchlabels | Service | Service | kubernetes | meshery-design-fixture.json | ✅ |
