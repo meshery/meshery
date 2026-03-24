@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 )
 
@@ -69,7 +70,11 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	resp, err := provider.GetEnvironmentByID(r, environmentID, q.Get("orgID"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), providerErrStatusCode(err, http.StatusNotFound))
+		statusCode := http.StatusNotFound
+		if meshkiterrors.GetCode(err) == models.ErrInvalidUUIDCode {
+			statusCode = http.StatusBadRequest
+		}
+		http.Error(w, ErrGetResult(err).Error(), statusCode)
 		return
 	}
 
@@ -132,7 +137,11 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 	resp, err := provider.DeleteEnvironment(r, environmentID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), providerErrStatusCode(err, http.StatusNotFound))
+		statusCode := http.StatusNotFound
+		if meshkiterrors.GetCode(err) == models.ErrInvalidUUIDCode {
+			statusCode = http.StatusBadRequest
+		}
+		http.Error(w, ErrGetResult(err).Error(), statusCode)
 		return
 	}
 
@@ -172,7 +181,11 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	resp, err := provider.UpdateEnvironment(req, &environment, environmentID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), providerErrStatusCode(err, http.StatusNotFound))
+		statusCode := http.StatusNotFound
+		if meshkiterrors.GetCode(err) == models.ErrInvalidUUIDCode {
+			statusCode = http.StatusBadRequest
+		}
+		http.Error(w, ErrGetResult(err).Error(), statusCode)
 		return
 	}
 

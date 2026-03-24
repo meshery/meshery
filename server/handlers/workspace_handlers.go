@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 )
 
@@ -74,7 +75,11 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 	resp, err := provider.GetWorkspaceByID(r, workspaceID, orgID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), providerErrStatusCode(err, http.StatusNotFound))
+		statusCode := http.StatusNotFound
+		if meshkiterrors.GetCode(err) == models.ErrInvalidUUIDCode {
+			statusCode = http.StatusBadRequest
+		}
+		http.Error(w, ErrGetResult(err).Error(), statusCode)
 		return
 	}
 
@@ -137,7 +142,11 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 	resp, err := provider.DeleteWorkspace(r, workspaceID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), providerErrStatusCode(err, http.StatusNotFound))
+		statusCode := http.StatusNotFound
+		if meshkiterrors.GetCode(err) == models.ErrInvalidUUIDCode {
+			statusCode = http.StatusBadRequest
+		}
+		http.Error(w, ErrGetResult(err).Error(), statusCode)
 		return
 	}
 
@@ -177,7 +186,11 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	resp, err := provider.UpdateWorkspace(req, &workspace, workspaceID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), providerErrStatusCode(err, http.StatusNotFound))
+		statusCode := http.StatusNotFound
+		if meshkiterrors.GetCode(err) == models.ErrInvalidUUIDCode {
+			statusCode = http.StatusBadRequest
+		}
+		http.Error(w, ErrGetResult(err).Error(), statusCode)
 		return
 	}
 

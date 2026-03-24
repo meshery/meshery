@@ -1,6 +1,7 @@
 package models
 
 import (
+	"net/http/httptest"
 	"testing"
 
 	meshkiterrors "github.com/meshery/meshkit/errors"
@@ -8,9 +9,19 @@ import (
 	schemasWorkspace "github.com/meshery/schemas/models/v1beta1/workspace"
 )
 
-func TestDefaultLocalProvider_InvalidUUID_EnvironmentWorkspaceOperations(t *testing.T) {
-	provider := &DefaultLocalProvider{}
+func TestRemoteProvider_InvalidUUID_EnvironmentWorkspaceOperations(t *testing.T) {
+	provider := &RemoteProvider{
+		ProviderProperties: ProviderProperties{
+			ProviderName: "test-provider",
+			Capabilities: Capabilities{
+				{Feature: PersistEnvironments, Endpoint: "/environments"},
+				{Feature: PersistWorkspaces, Endpoint: "/workspaces"},
+			},
+		},
+		RemoteProviderURL: "http://example.com",
+	}
 
+	req := httptest.NewRequest("GET", "/", nil)
 	tests := []struct {
 		name string
 		call func(string) error
@@ -18,42 +29,42 @@ func TestDefaultLocalProvider_InvalidUUID_EnvironmentWorkspaceOperations(t *test
 		{
 			name: "Given invalid UUID when getting environment by ID then returns invalid UUID error code",
 			call: func(id string) error {
-				_, err := provider.GetEnvironmentByID(nil, id, "")
+				_, err := provider.GetEnvironmentByID(req, id, "")
 				return err
 			},
 		},
 		{
 			name: "Given invalid UUID when deleting environment then returns invalid UUID error code",
 			call: func(id string) error {
-				_, err := provider.DeleteEnvironment(nil, id)
+				_, err := provider.DeleteEnvironment(req, id)
 				return err
 			},
 		},
 		{
 			name: "Given invalid UUID when updating environment then returns invalid UUID error code",
 			call: func(id string) error {
-				_, err := provider.UpdateEnvironment(nil, &schemasEnvironment.EnvironmentPayload{}, id)
+				_, err := provider.UpdateEnvironment(req, &schemasEnvironment.EnvironmentPayload{}, id)
 				return err
 			},
 		},
 		{
 			name: "Given invalid UUID when getting workspace by ID then returns invalid UUID error code",
 			call: func(id string) error {
-				_, err := provider.GetWorkspaceByID(nil, id, "")
+				_, err := provider.GetWorkspaceByID(req, id, "")
 				return err
 			},
 		},
 		{
 			name: "Given invalid UUID when deleting workspace then returns invalid UUID error code",
 			call: func(id string) error {
-				_, err := provider.DeleteWorkspace(nil, id)
+				_, err := provider.DeleteWorkspace(req, id)
 				return err
 			},
 		},
 		{
 			name: "Given invalid UUID when updating workspace then returns invalid UUID error code",
 			call: func(id string) error {
-				_, err := provider.UpdateWorkspace(nil, &schemasWorkspace.WorkspacePayload{}, id)
+				_, err := provider.UpdateWorkspace(req, &schemasWorkspace.WorkspacePayload{}, id)
 				return err
 			},
 		},

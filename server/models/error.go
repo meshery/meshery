@@ -138,7 +138,7 @@ const (
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
-	ErrProviderInvalidUUIDCode            = "meshery-server-1376"
+	ErrInvalidUUIDCode                    = "meshery-server-1376"
 	ErrWorkspaceMissingInputCode          = "meshery-server-1375"
 )
 
@@ -617,14 +617,14 @@ func ErrMeshsyncDataHandler(err error) error {
 	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
 }
 
-func ErrProviderInvalidUUID(err error, field string) error {
+func ErrInvalidUUID(err error, field string) error {
 	return errors.New(
-		ErrProviderInvalidUUIDCode,
+		ErrInvalidUUIDCode,
 		errors.Alert,
-		[]string{fmt.Sprintf("Invalid %s", field)},
+		[]string{fmt.Sprintf("Invalid UUID for %s", field)},
 		[]string{err.Error()},
 		[]string{"The supplied identifier is not a valid UUID."},
-		[]string{"Provide a valid UUID value in the request path parameter."},
+		[]string{fmt.Sprintf("Provide a valid UUID value for %s in the request path parameter.", field)},
 	)
 }
 

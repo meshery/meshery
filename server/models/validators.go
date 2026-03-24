@@ -5,8 +5,18 @@ import (
 	"slices"
 	"time"
 
+	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
+
+func validateUUID(id, field string) (uuid.UUID, error) {
+	parsedID, err := uuid.FromString(id)
+	if err != nil {
+		return uuid.Nil, ErrInvalidUUID(err, field)
+	}
+
+	return parsedID, nil
+}
 
 // SMPPerformanceTestConfigValidator performs validations on the given PerformanceTestConfig object
 func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) error {
