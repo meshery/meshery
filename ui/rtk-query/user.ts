@@ -15,18 +15,6 @@ const Tags = {
   PROVIDER_CAP: 'provider_capabilities',
 };
 
-const parseJsonLikeResponse = (response) => {
-  if (typeof response !== 'string') {
-    return response;
-  }
-
-  try {
-    return JSON.parse(response);
-  } catch {
-    return response;
-  }
-};
-
 export const userApi = api
   .enhanceEndpoints({
     addTagTypes: [Tags.USER_PREF, Tags.LOAD_TEST_PREF, Tags.PROVIDER_CAP],
@@ -61,7 +49,6 @@ export const userApi = api
       getUserPref: builder.query({
         query: () => '/api/user/prefs',
         method: 'GET',
-        transformResponse: parseJsonLikeResponse,
         providesTags: [Tags.USER_PREF],
       }),
       updateUserPref: builder.mutation({
@@ -79,7 +66,6 @@ export const userApi = api
           method: 'GET',
           credentials: 'same-origin',
         }),
-        transformResponse: parseJsonLikeResponse,
         providesTags: [Tags.USER_PREF],
       }),
       updateUserPrefWithContext: builder.mutation({
@@ -114,12 +100,10 @@ export const userApi = api
           url: '/api/user',
           method: 'GET',
         }),
-        transformResponse: parseJsonLikeResponse,
       }),
       getProviderCapabilities: builder.query({
         query: () => '/api/provider/capabilities',
         method: 'GET',
-        transformResponse: parseJsonLikeResponse,
       }),
       getUserProfileSummaryById: builder.query({
         query: (queryArg) => ({
