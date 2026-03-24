@@ -65,6 +65,30 @@ func TestDefaultAPIContentTypeMiddlewarePreservesExplicitContentType(t *testing.
 	}
 }
 
+func TestDefaultAPIContentTypeMiddlewareSkipsNonAPILookalikePaths(t *testing.T) {
+	r := mux.NewRouter()
+	r.Use(defaultAPIContentTypeMiddleware)
+	r.HandleFunc("/apiary", func(w http.ResponseWriter, _ *http.Request) {
+		if err := json.NewEncoder(w).Encode(map[string]string{"status": "ok"}); err != nil {
+			t.Fatalf("encode response: %v", err)
+		}
+	}).Methods(http.MethodGet)
+
+	recorder := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodGet, "/apiary", nil)
+
+	r.ServeHTTP(recorder, request)
+
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusOK)
+	}
+
+	contentType := recorder.Header().Get("Content-Type")
+	if !strings.HasPrefix(contentType, "text/plain") {
+		t.Fatalf("content-type = %q, want prefix %q", contentType, "text/plain")
+	}
+}
+
 func TestClose(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping test in short mode.")
