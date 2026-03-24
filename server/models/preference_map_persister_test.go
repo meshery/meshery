@@ -17,13 +17,17 @@ func newTestMapPreferencePersister(t *testing.T) *MapPreferencePersister {
 }
 
 func TestMapPreferencePersisterReadFromPersisterReturnsDefaultsWhenMissing(t *testing.T) {
+	// Given
 	persister := newTestMapPreferencePersister(t)
+	defer persister.db.Clear()
 
+	// When
 	pref, err := persister.ReadFromPersister("user-1")
 	if err != nil {
 		t.Fatalf("expected missing preference to return defaults, got error: %v", err)
 	}
 
+	// Then
 	if pref == nil {
 		t.Fatal("expected default preference, got nil")
 	}
@@ -52,7 +56,9 @@ func TestMapPreferencePersisterReadFromPersisterReturnsDefaultsWhenMissing(t *te
 }
 
 func TestMapPreferencePersisterReadFromPersisterReturnsPersistedPreference(t *testing.T) {
+	// Given
 	persister := newTestMapPreferencePersister(t)
+	defer persister.db.Clear()
 
 	want := &Preference{
 		AnonymousUsageStats:    false,
@@ -63,10 +69,12 @@ func TestMapPreferencePersisterReadFromPersisterReturnsPersistedPreference(t *te
 		},
 	}
 
+	// When
 	if err := persister.WriteToPersister("user-1", want); err != nil {
 		t.Fatalf("failed to persist preference: %v", err)
 	}
 
+	// Then
 	got, err := persister.ReadFromPersister("user-1")
 	if err != nil {
 		t.Fatalf("failed to read persisted preference: %v", err)
