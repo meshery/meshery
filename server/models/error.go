@@ -138,8 +138,9 @@ const (
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
+    ErrWorkspaceMissingInputCode          = "meshery-server-1375"
 	ErrModelInvalidUUIDCode               = "meshery-server-1376"
-	ErrWorkspaceMissingInputCode          = "meshery-server-1375"
+
 )
 
 var (
