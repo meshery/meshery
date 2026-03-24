@@ -114,7 +114,7 @@ const workspacesApi = api
 
       getDesignsOfWorkspace: builder.query({
         queryFn: async (queryArgs, { dispatch }, _extraOptions, baseQuery) => {
-          const { expandUser, infiniteScroll, ...otherArgs } = queryArgs;
+          const { expandUser, infiniteScroll: _infiniteScroll, ...otherArgs } = queryArgs;
           const params = urlEncodeParams(otherArgs);
           const designs = await baseQuery({
             url: `workspaces/${queryArgs.workspaceId}/designs?${params}`,
