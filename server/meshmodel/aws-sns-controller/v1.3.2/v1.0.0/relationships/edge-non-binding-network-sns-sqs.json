@@ -5,7 +5,7 @@
   "type": "Non-binding",
   "subType": "Network",
   "metadata": {
-    "description": "Visualizes the fan-out messaging flow where an SNS Topic publishes to an SQS Queue."
+    "description": "Visualizes the message flow from an SNS Topic to a subscribing SQS Queue."
   },
   "selectors": [
     {
