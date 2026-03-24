@@ -226,13 +226,6 @@ func TestLoginHandler_NoneProviderFromMiddleware(t *testing.T) {
 	}
 }
 
-func newDeleteMeshSyncResourceTestProvider(db *gorm.DB) models.Provider {
-	provider := &models.DefaultLocalProvider{}
-	provider.Initialize()
-	provider.GenericPersister = &database.Handler{DB: db}
-	return provider
-}
-
 func TestDeleteMeshSyncResource(t *testing.T) {
 	handler := newTestHandler(t, map[string]models.Provider{}, "")
 
@@ -272,7 +265,9 @@ func TestDeleteMeshSyncResource(t *testing.T) {
 				}
 			}
 
-			provider := newDeleteMeshSyncResourceTestProvider(db)
+			provider := &models.DefaultLocalProvider{}
+			provider.Initialize()
+			provider.GenericPersister = &database.Handler{DB: db}
 
 			req := httptest.NewRequest(http.MethodDelete, "/api/system/meshsync/resources/resource-1", nil)
 			req = mux.SetURLVars(req, map[string]string{"id": "resource-1"})
