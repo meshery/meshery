@@ -1,9 +1,13 @@
 package router
 
 import (
+	"bufio"
 	"context"
 	"fmt"
+	"io"
+	"net"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -18,10 +22,81 @@ type Router struct {
 	port int
 }
 
+const defaultAPIContentType = "application/json"
+
+type defaultAPIContentTypeWriter struct {
+	http.ResponseWriter
+}
+
+func (w *defaultAPIContentTypeWriter) ensureContentType() {
+	if w.Header().Get("Content-Type") == "" {
+		w.Header().Set("Content-Type", defaultAPIContentType)
+	}
+}
+
+func (w *defaultAPIContentTypeWriter) WriteHeader(statusCode int) {
+	w.ensureContentType()
+	w.ResponseWriter.WriteHeader(statusCode)
+}
+
+func (w *defaultAPIContentTypeWriter) Write(body []byte) (int, error) {
+	w.ensureContentType()
+	return w.ResponseWriter.Write(body)
+}
+
+func (w *defaultAPIContentTypeWriter) ReadFrom(r io.Reader) (int64, error) {
+	w.ensureContentType()
+	if readerFrom, ok := w.ResponseWriter.(io.ReaderFrom); ok {
+		return readerFrom.ReadFrom(r)
+	}
+
+	return io.Copy(w.ResponseWriter, r)
+}
+
+func (w *defaultAPIContentTypeWriter) Flush() {
+	if flusher, ok := w.ResponseWriter.(http.Flusher); ok {
+		flusher.Flush()
+	}
+}
+
+func (w *defaultAPIContentTypeWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	hijacker, ok := w.ResponseWriter.(http.Hijacker)
+	if !ok {
+		return nil, nil, http.ErrNotSupported
+	}
+
+	return hijacker.Hijack()
+}
+
+func (w *defaultAPIContentTypeWriter) Push(target string, opts *http.PushOptions) error {
+	pusher, ok := w.ResponseWriter.(http.Pusher)
+	if !ok {
+		return http.ErrNotSupported
+	}
+
+	return pusher.Push(target, opts)
+}
+
+func (w *defaultAPIContentTypeWriter) Unwrap() http.ResponseWriter {
+	return w.ResponseWriter
+}
+
+func defaultAPIContentTypeMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !strings.HasPrefix(r.URL.Path, "/api") {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		next.ServeHTTP(&defaultAPIContentTypeWriter{ResponseWriter: w}, r)
+	})
+}
+
 // NewRouter returns a new ServeMux with app routes.
 func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Handler, gp http.Handler) *Router {
 	gMux := mux.NewRouter()
 	gMux.Use(otelmux.Middleware("meshery-server"))
+	gMux.Use(defaultAPIContentTypeMiddleware)
 
 	gMux.Handle("/api/system/graphql/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(g)), models.ProviderAuth))).Methods("GET", "POST")
 	gMux.Handle("/api/system/graphql/playground", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(gp)), models.ProviderAuth))).Methods("GET", "POST")
