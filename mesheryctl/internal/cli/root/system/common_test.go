@@ -11,8 +11,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var b *bytes.Buffer
-
 func BreakupFunc() {
 	viewCmd.Flags().VisitAll(setFlagValueAsUndefined)
 	viewProviderCmd.Flags().VisitAll(setFlagValueAsUndefined)
@@ -58,13 +56,3 @@ func setupSystemOutCmdTest(t *testing.T) *bytes.Buffer {
 	SystemCmd.SetOut(buf)
 	return buf
 }
-
-// func resetCmdFlags(cmd *cobra.Command, t *testing.T) {
-// 	cmd.Flags().VisitAll(func(f *pflag.Flag) {
-// 		f.Changed = false
-// 		f.Value.Set(f.DefValue) // Reset to default
-// 	})
-// 	for _, child := range cmd.Commands() {
-// 		resetCmdFlags(child, t) // Recursive call
-// 	}
-// }
