@@ -4,7 +4,7 @@ description: How to contribute to Meshery Models, Components, Relationships, Pol
 categories: [contributing]
 ---
 
-**Meshery Models are schema-driven.** Model definitions, including their structure, metadata, and versioning, are defined by JSON Schemas in the [`meshery/schemas`](https://github.com/meshery/schemas) repository. Before contributing to models, familiarize yourself with the [Model schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model) and see [Contributing to Schemas](/project/contributing/contributing-schemas) for the development workflow.
+**Meshery Models are schema-driven.** Model definitions, including their structure, metadata, and versioning, are defined by JSON Schemas in the [`meshery/schemas`](https://github.com/meshery/schemas) repository. Before contributing to models, familiarize yourself with the [Model schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model) and see [Contributing to Schemas]({{< relref "/project/contributing/contributing-schemas" >}}) for the development workflow.
 
 
 ## Understanding the internals of Meshery's logical object model
@@ -15,13 +15,13 @@ Meshery uses a logical object model to describe the infrastructure and capabilit
 
 At the core of this system are **Meshery Models** — packages that define a specific type of infrastructure, application, or capability. These models include:
 
-- **[Components](/concepts/logical/components)**: Individual parts of a system (e.g., services, databases).
-- **[Relationships](/concepts/logical/relationships)**: How those parts interact.
+- **[Components]({{< relref "/concepts/logical/components" >}})**: Individual parts of a system (e.g., services, databases).
+- **[Relationships]({{< relref "/concepts/logical/relationships" >}})**: How those parts interact.
 - **Metadata**: Visual and behavioral traits, such as icons or capabilities.
 
 Models can describe traditional technologies (like Kubernetes workloads), or more abstract entities (like annotations or diagrams).
 
-> Learn more: [What are Meshery Models?](/concepts/logical/models)
+> Learn more: [What are Meshery Models?]({{< relref "/concepts/logical/models" >}})
 
 #### What Is the Model Schema?
 
@@ -29,7 +29,7 @@ Each model includes a set of entities (in the form of definitions) that Meshery 
 
 The schema defines the structure of the model, including the entities it contains, their relationships, and the properties they have. The schema also defines the version of the model and the version of the schema itself.
 
-> See [Registry](/concepts/logical/registry) to learn more about Meshery's internal registry and how to use it.
+> See [Registry]({{< relref "/concepts/logical/registry" >}}) to learn more about Meshery's internal registry and how to use it.
 
 [![Model Entity Classification](/project/contributing/images/meshmodel-architecture.svg)](/project/contributing/images/meshery-models.png)
 _Figure: Model Entity Classification_
@@ -174,7 +174,7 @@ To simplify the assignment of these capabilities, Meshery organizes these capabi
 ### Importing and Creating Models
 
 Models can be created from scratch or imported using either the Meshery UI or the Meshery CLI.  
-To learn more, see the detailed guides on [Importing Models](/guides/configuration-management/importing-models) and [Creating Models](/guides/configuration-management/creating-models).
+To learn more, see the detailed guides on [Importing Models]({{< relref "/guides/configuration-management/importing-models" >}}) and [Creating Models]({{< relref "/guides/configuration-management/creating-models" >}}).
 
 > Use **Create** if you're starting from scratch. Use **Import** if you already have model definitions (e.g., JSON, CSV, tar).
 
@@ -203,7 +203,7 @@ When Meshery processes schemas:
 1. **Parsing**: The source is parsed to extract schema specifications for every entity.
 2. **Component Creation**: A component definition is generated for each entity, capturing its kind, version, and schema.
 3. **Model Assignment**: Components are automatically assigned to a Model based on their source context.
-4. **Registration**: Components are registered in Meshery's [Registry](/concepts/logical/registry) under their respective model.
+4. **Registration**: Components are registered in Meshery's [Registry]({{< relref "/concepts/logical/registry" >}}) under their respective model.
 5. **Enrichment**: Components inherit default properties from their model and can be further customized.
 
 This automatic grouping allows you to manage related resources as cohesive units within Meshery designs.
@@ -292,12 +292,12 @@ During model generation, corresponding components are created. Next step is to e
      - Review and confirm assigned capabilities
      - Modify capabilities as needed
 
-   See the [Contributing to Components](/project/contributing/contributing-components) for detailed instructions.
+   See the [Contributing to Components]({{< relref "/project/contributing/contributing-components" >}}) for detailed instructions.
 
 2. **Identify Relationships**
 
    - **2.1. Review Available Types**
-     Review and familiarize yourself with the predefined relationship kinds, types, and subtypes. See ["Relationships logical concepts"](/concepts/logical/relationships)
+     Review and familiarize yourself with the predefined relationship kinds, types, and subtypes. See ["Relationships logical concepts"]({{< relref "/concepts/logical/relationships" >}})
 
    - **2.2. Map Component Relationships**
 
@@ -308,7 +308,7 @@ During model generation, corresponding components are created. Next step is to e
    - **2.3. Create Definitions**
      Codify the relationships you have identified into a Relationship Definition
 
-   See the [Contributing to Relationships](/project/contributing/contributing-relationships) for detailed instructions.
+   See the [Contributing to Relationships]({{< relref "/project/contributing/contributing-relationships" >}}) for detailed instructions.
 
 ## Next Steps
 
