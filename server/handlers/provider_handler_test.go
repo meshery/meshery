@@ -4,10 +4,16 @@ import (
 	"encoding/base64"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
+	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshsync/pkg/model"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 // newTestHandler returns a minimal Handler wired with the given providers and provider override.
@@ -217,5 +223,74 @@ func TestLoginHandler_NoneProviderFromMiddleware(t *testing.T) {
 	// Should be a no-op pass-through (200 with no body), not a redirect
 	if resp.StatusCode == http.StatusFound {
 		t.Fatalf("expected no redirect from middleware path, got 302 to %s", resp.Header.Get("Location"))
+	}
+}
+
+func newDeleteMeshSyncResourceTestProvider(db *gorm.DB) models.Provider {
+	provider := &models.DefaultLocalProvider{}
+	provider.Initialize()
+	provider.GenericPersister = &database.Handler{DB: db}
+	return provider
+}
+
+func TestDeleteMeshSyncResource(t *testing.T) {
+	handler := newTestHandler(t, map[string]models.Provider{}, "")
+
+	tests := []struct {
+		name                 string
+		migrateResourceTable bool
+		expectedStatus       int
+		expectedContentType  string
+		expectedBody         string
+	}{
+		{
+			name:                 "returns 200 and deleted true when delete succeeds",
+			migrateResourceTable: true,
+			expectedStatus:       http.StatusOK,
+			expectedContentType:  "application/json",
+			expectedBody:         `"deleted":true`,
+		},
+		{
+			name:                 "returns 500 when delete fails",
+			migrateResourceTable: false,
+			expectedStatus:       http.StatusInternalServerError,
+			expectedContentType:  "text/plain",
+			expectedBody:         "meshsync data",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+			if err != nil {
+				t.Fatalf("failed to create in-memory database: %v", err)
+			}
+
+			if tt.migrateResourceTable {
+				if err := db.AutoMigrate(&model.KubernetesResource{}); err != nil {
+					t.Fatalf("failed to migrate kubernetes resource table: %v", err)
+				}
+			}
+
+			provider := newDeleteMeshSyncResourceTestProvider(db)
+
+			req := httptest.NewRequest(http.MethodDelete, "/api/system/meshsync/resources/resource-1", nil)
+			req = mux.SetURLVars(req, map[string]string{"id": "resource-1"})
+			rw := httptest.NewRecorder()
+
+			handler.DeleteMeshSyncResource(rw, req, nil, nil, provider)
+
+			if rw.Code != tt.expectedStatus {
+				t.Fatalf("expected status %d, got %d", tt.expectedStatus, rw.Code)
+			}
+
+			if contentType := rw.Header().Get("Content-Type"); !strings.HasPrefix(contentType, tt.expectedContentType) {
+				t.Fatalf("expected content type prefix %q, got %q", tt.expectedContentType, contentType)
+			}
+
+			if body := rw.Body.String(); !strings.Contains(body, tt.expectedBody) {
+				t.Fatalf("expected body to contain %q, got %q", tt.expectedBody, body)
+			}
+		})
 	}
 }
