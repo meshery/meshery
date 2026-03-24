@@ -79,6 +79,8 @@ module.exports = [
       '@next/next/no-img-element': 'off',
       'react-hooks/rules-of-hooks': 'warn',
       'react-hooks/exhaustive-deps': 'off',
+      // Disabled: React Compiler optimization hint — expensive and not yet enforced in this codebase.
+      'react-hooks/static-components': 'off',
       'jsx-a11y/alt-text': 'off',
       'valid-typeof': 'warn',
       'react/react-in-jsx-scope': 'off',
