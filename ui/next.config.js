@@ -30,6 +30,17 @@ const nextConfig = {
     relay: require('./relay.config'),
   },
 
+  // Turbopack configuration (default bundler in Next.js 16+).
+  // An explicit config block is required when a `webpack` config is also present
+  // so that Next.js 16 does not abort the build with a configuration-mismatch error.
+  // resolveAlias mirrors the webpack alias for remote-component.config.js so that
+  // @paciolan/remote-component can find the config in dev mode (Turbopack).
+  turbopack: {
+    resolveAlias: {
+      'remote-component.config.js': './remote-component.config.js',
+    },
+  },
+
   // Required for static export
   images: {
     unoptimized: true,
