@@ -60,6 +60,7 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 		}
 	} else {
 		log.Debug(ErrSessionNotFound(userID))
+		s.WriteToPersister(userID, data)
 	}
 	return data, nil
 }

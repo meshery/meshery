@@ -20,7 +20,6 @@ func TestMapPreferencePersisterReadFromPersisterReturnsDefaultsWhenMissing(t *te
 	// Given
 	persister := newTestMapPreferencePersister(t)
 	defer persister.db.Clear()
-	persister.WriteToPersister("user-1", NewDefaultPreference())
 
 	// When
 	pref, err := persister.ReadFromPersister("user-1")
