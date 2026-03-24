@@ -15,7 +15,7 @@ const Tags = {
   PROVIDER_CAP: 'provider_capabilities',
 };
 
-const parseJsonLikeResponse = (response) => {
+const parseJsonLikeResponse = (response: unknown): unknown => {
   if (typeof response !== 'string') {
     return response;
   }
