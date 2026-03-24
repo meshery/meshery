@@ -4,6 +4,7 @@
     // File Layout
     // "rootDir": "./src",
     // "outDir": "./dist",
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["components/*"],
