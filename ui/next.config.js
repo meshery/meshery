@@ -30,6 +30,13 @@ const nextConfig = {
     relay: require('./relay.config'),
   },
 
+  // Turbopack configuration (default bundler in Next.js 16+).
+  // Turbopack resolves modules consistently by design and does not require
+  // explicit singleton aliases the way webpack does.  An explicit (even empty)
+  // config block is required when a `webpack` config is also present so that
+  // Next.js 16 does not abort the build with a configuration-mismatch error.
+  turbopack: {},
+
   // Required for static export
   images: {
     unoptimized: true,
