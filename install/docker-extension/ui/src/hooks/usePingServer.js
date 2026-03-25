@@ -1,29 +1,32 @@
-import { useEffect } from "react"
-import { useState } from "react"
-import axios from "axios"
+import { useEffect, useState } from "react"
 import ping from "web-pingjs"
 
-export const usePingServer = (path, { host, port }) => {
+export const usePingServer = () => {
   const [isServerAvailable, setIsServerAvailable] = useState(false)
+
   useEffect(() => {
-    setInterval(() => {
+    let isMounted = true
+
+    const checkServerAvailability = () => {
       ping("http://127.0.0.1:9081/api/system/version").then((res) => {
-        setIsServerAvailable(true)
+        if (isMounted) {
+          setIsServerAvailable(true)
+        }
       }).catch(() => {
-        setIsServerAvailable(false)
+        if (isMounted) {
+          setIsServerAvailable(false)
+        }
       })
-      // axios.get("http://localhost:9081/api/system/versionsa"
-      // )
-      //   .then((obj) => {
-      //     console.log(obj)
-      //     if (obj.status >= 200 && obj.status < 300) setIsServerAvailable(true)
-      //     else setIsServerAvailable(false)
-      //   })
-      //   .catch((obj) => {
-      //     setIsServerAvailable(false)
-      //     console.log(obj)
-      //   })
-    }, 2000)
+    }
+
+    checkServerAvailability()
+    const intervalId = setInterval(checkServerAvailability, 2000)
+
+    return () => {
+      isMounted = false
+      clearInterval(intervalId)
+    }
   }, [])
+
   return isServerAvailable
 }

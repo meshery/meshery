@@ -11,6 +11,7 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	patternv1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"gorm.io/gorm"
 )
@@ -89,8 +90,10 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		Page:       int(pageUint),
 		PageSize:   len(workspacesFetched),
 		TotalCount: int(count),
-		Workspaces: workspacesFetched,
+		Workspaces: make([]workspace.Workspace, 0, len(workspacesFetched)),
 	}
+
+	workspacesPage.Workspaces = append(workspacesPage.Workspaces, workspacesFetched...)
 
 	// Marshal the response to JSON
 	wsJSON, err := json.Marshal(workspacesPage)
@@ -154,6 +157,8 @@ func (wp *WorkspacePersister) UpdateWorkspaceByID(selectedWorkspace *workspace.W
 	if err != nil {
 		return nil, ErrDBRead(err)
 	}
+
+	*selectedWorkspace = updatedWorkspace
 	return selectedWorkspace, nil
 }
 
@@ -189,7 +194,8 @@ func (wp *WorkspacePersister) UpdateWorkspace(workspaceID uuid.UUID, payload *wo
 
 	ws.Name = payload.Name
 	ws.Description = payload.Description
-	ws.OrganizationId = uuid.FromStringOrNil(payload.OrganizationID)
+	organizationID := payload.OrganizationID
+	ws.OrganizationID = &organizationID
 
 	return wp.UpdateWorkspaceByID(ws)
 }
@@ -479,11 +485,16 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search,
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&designsFetched)
 	}
 
-	designsPage := &MesheryDesignPage{
+	schemaDesigns, err := schemaMesheryPatterns(designsFetched)
+	if err != nil {
+		return nil, err
+	}
+
+	designsPage := &workspace.MesheryDesignPage{
 		Page:       int(pageUint),
 		PageSize:   len(designsFetched),
 		TotalCount: int(count),
-		Designs:    designsFetched,
+		Designs:    schemaDesigns,
 	}
 
 	designsJSON, err := json.Marshal(designsPage)
@@ -492,4 +503,18 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search,
 	}
 
 	return designsJSON, nil
+}
+
+func schemaMesheryPatterns(patterns []*MesheryPattern) ([]patternv1beta1.MesheryPattern, error) {
+	encoded, err := json.Marshal(patterns)
+	if err != nil {
+		return nil, err
+	}
+
+	decoded := []patternv1beta1.MesheryPattern{}
+	if err := json.Unmarshal(encoded, &decoded); err != nil {
+		return nil, err
+	}
+
+	return decoded, nil
 }
