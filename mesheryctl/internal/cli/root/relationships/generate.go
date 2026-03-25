@@ -86,7 +86,7 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 			return ErrEmptySheetData(fmt.Errorf("no relationship data found in sheet"))
 		}
 
-		return createJsonFile(resp, outputPath)
+		return processSheetData(resp, outputPath)
 	},
 }
 
@@ -150,7 +150,7 @@ func generateFromCSV(filePath, outputPath string) error {
 	return saveRelationshipsJSON(customResp, outputPath)
 }
 
-func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
+func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
 	var customResp []CustomValueRange
 
 	for _, row := range resp.Values[2:] {
