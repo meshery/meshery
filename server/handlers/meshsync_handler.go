@@ -556,7 +556,7 @@ func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request
 	db := provider.GetGenericPersister()
 	err := db.Model(&model.KubernetesResource{}).Delete(&model.KubernetesResource{ID: resourceID}).Error
 	if err != nil {
-		deleteErr := models.ErrDelete(err, "meshsync data", http.StatusInternalServerError)
+		deleteErr := ErrFailToDelete(err, "meshsync resource")
 		h.log.Error(deleteErr)
 		http.Error(rw, deleteErr.Error(), http.StatusInternalServerError)
 		return
