@@ -245,18 +245,16 @@ func TestGenerateCSVDataOutput(t *testing.T) {
 			fixturesDir := filepath.Join(currDir, "fixtures")
 			csvPath := filepath.Join(fixturesDir, tt.CSVFixture)
 
+			outputPath := filepath.Join(t.TempDir(), "output.json")
+
 			originalStdout := os.Stdout
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			defer func() {
 				os.Stdout = originalStdout
 			}()
 
-			originalPath := relationshipsOutputPath
-			defer func() { relationshipsOutputPath = originalPath }()
-			relationshipsOutputPath = "./testdata/generate.relationship.csv.json.output.golden"
-
 			mesheryctlflags.InitValidators(RelationshipCmd)
-			RelationshipCmd.SetArgs([]string{"generate", "--file", csvPath})
+			RelationshipCmd.SetArgs([]string{"generate", "--file", csvPath, "--output", outputPath})
 			RelationshipCmd.SetOut(originalStdout)
 			err := RelationshipCmd.Execute()
 
@@ -272,7 +270,7 @@ func TestGenerateCSVDataOutput(t *testing.T) {
 			}
 
 			// Validate generated json file matches expected output
-			relationshipData, err := os.ReadFile(relationshipsOutputPath)
+			relationshipData, err := os.ReadFile(outputPath)
 			if err != nil {
 				t.Fatal("Error reading generated JSON file:", err)
 			}
