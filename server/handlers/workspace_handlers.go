@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/models"
@@ -72,6 +73,12 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 		http.Error(w, models.ErrWorkspaceMissingInput().Error(), http.StatusBadRequest)
 		return
 	}
+
+	if _, err := uuid.FromString(orgID); err != nil {
+		http.Error(w, ErrInvalidUUID(err).Error(), http.StatusBadRequest)
+		return
+	}
+
 	resp, err := provider.GetWorkspaceByID(r, workspaceID, orgID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))

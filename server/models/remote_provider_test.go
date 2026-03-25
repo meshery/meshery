@@ -7,6 +7,7 @@ import (
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	schemasEnvironment "github.com/meshery/schemas/models/v1beta1/environment"
 	schemasWorkspace "github.com/meshery/schemas/models/v1beta1/workspace"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRemoteProvider_InvalidUUID_EnvironmentWorkspaceOperations(t *testing.T) {
@@ -73,13 +74,8 @@ func TestRemoteProvider_InvalidUUID_EnvironmentWorkspaceOperations(t *testing.T)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.call("not-a-uuid")
-			if err == nil {
-				t.Fatal("expected error for invalid UUID, got nil")
-			}
-
-			if meshkiterrors.GetCode(err) != ErrModelInvalidUUIDCode {
-				t.Fatalf("expected error code %s, got %s", ErrModelInvalidUUIDCode, meshkiterrors.GetCode(err))
-			}
+			assert.Error(t, err)
+			assert.Equal(t, ErrModelInvalidUUIDCode, meshkiterrors.GetCode(err))
 		})
 	}
 }

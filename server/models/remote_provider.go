@@ -5141,7 +5141,7 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
-	if _, err := validateUUID(environmentID, "environment ID"); err != nil {
+	if _, err := parseUUIDWithField(environmentID, "environment ID"); err != nil {
 		return nil, err
 	}
 
@@ -5238,7 +5238,7 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
-	if _, err := validateUUID(environmentID, "environment ID"); err != nil {
+	if _, err := parseUUIDWithField(environmentID, "environment ID"); err != nil {
 		return nil, err
 	}
 
@@ -5283,7 +5283,7 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *environment.E
 		return &environment.Environment{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
-	if _, err := validateUUID(environmentID, "environment ID"); err != nil {
+	if _, err := parseUUIDWithField(environmentID, "environment ID"); err != nil {
 		return nil, err
 	}
 
@@ -5586,7 +5586,7 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
-	if _, err := validateUUID(workspaceID, "workspace ID"); err != nil {
+	if _, err := parseUUIDWithField(workspaceID, "workspace ID"); err != nil {
 		return nil, err
 	}
 
@@ -5683,7 +5683,7 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
-	if _, err := validateUUID(workspaceID, "workspace ID"); err != nil {
+	if _, err := parseUUIDWithField(workspaceID, "workspace ID"); err != nil {
 		return nil, err
 	}
 
@@ -5728,7 +5728,7 @@ func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.Works
 		return &workspace.Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
-	if _, err := validateUUID(workspaceID, "workspace ID"); err != nil {
+	if _, err := parseUUIDWithField(workspaceID, "workspace ID"); err != nil {
 		return nil, err
 	}
 

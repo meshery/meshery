@@ -9,7 +9,7 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 
-func validateUUID(id, field string) (uuid.UUID, error) {
+func parseUUIDWithField(id, field string) (uuid.UUID, error) {
 	parsedID, err := uuid.FromString(id)
 	if err != nil {
 		return uuid.Nil, ErrInvalidUUID(err, field)

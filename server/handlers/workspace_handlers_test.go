@@ -18,18 +18,32 @@ func TestGetWorkspaceByIDHandler(t *testing.T) {
 	tests := []struct {
 		name       string
 		id         string
+		orgID      string
 		expectedSC int
 	}{
 		{
 			name:       "given non valid uuid when GetWorkspaceByIdHandler return status code 400",
 			id:         "not-a-uuid",
+			orgID:      "123e4567-e89b-12d3-a456-426614174000",
+			expectedSC: http.StatusBadRequest,
+		},
+		{
+			name:       "given missing org id when GetWorkspaceByIdHandler return status code 400",
+			id:         "123e4567-e89b-12d3-a456-426614174111",
+			orgID:      "",
+			expectedSC: http.StatusBadRequest,
+		},
+		{
+			name:       "given non valid org uuid when GetWorkspaceByIdHandler return status code 400",
+			id:         "123e4567-e89b-12d3-a456-426614174111",
+			orgID:      "not-a-uuid",
 			expectedSC: http.StatusBadRequest,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodGet, "/api/workspaces/"+tt.id+"?orgID=test-org", nil)
+			req := httptest.NewRequest(http.MethodGet, "/api/workspaces/"+tt.id+"?orgID="+tt.orgID, nil)
 			req = mux.SetURLVars(req, map[string]string{"id": tt.id})
 			rr := httptest.NewRecorder()
 
