@@ -169,7 +169,7 @@ mesheryctl system check --operator
 			}
 
 			prefix := "✓✓"
-			suffix := "Meshery prerequisites met"
+			suffix := "met"
 			output := "\n--------------\n--------------\n%s Meshery prerequisites %s"
 			if failure > 0 {
 				prefix = "!!"
@@ -203,7 +203,7 @@ mesheryctl system check --operator
 		currPlatform := currContext.GetPlatform()
 
 		if systemCheckFlags.OperatorsFlag {
-			if platformDocker != currPlatform {
+			if platformDocker == currPlatform {
 				return ErrOperatorUnsupportedPlatform(currPlatform)
 			}
 			if err := hc.runOperatorHealthChecks(); err != nil {
