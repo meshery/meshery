@@ -1,12 +1,15 @@
 package models
 
 import (
+	"fmt"
 	"net/url"
 	"slices"
 	"time"
 
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 )
 
 func parseUUIDWithField(id, field string) (uuid.UUID, error) {
@@ -16,6 +19,42 @@ func parseUUIDWithField(id, field string) (uuid.UUID, error) {
 	}
 
 	return parsedID, nil
+}
+
+func validateOptionalUUIDWithField(id, field string) error {
+	if id == "" {
+		return nil
+	}
+
+	_, err := parseUUIDWithField(id, field)
+
+	return err
+}
+
+func validateRequiredUUIDWithField(id, field string) error {
+	if id == "" {
+		return ErrInvalidUUID(fmt.Errorf("value is empty"), field)
+	}
+
+	_, err := parseUUIDWithField(id, field)
+
+	return err
+}
+
+func validateRequiredUUIDValue(id uuid.UUID, field string) error {
+	if id == uuid.Nil {
+		return ErrInvalidUUID(fmt.Errorf("value is empty"), field)
+	}
+
+	return nil
+}
+
+func validateEnvironmentPayload(payload *environment.EnvironmentPayload) error {
+	return validateRequiredUUIDWithField(payload.OrgId, "organization ID")
+}
+
+func validateWorkspacePayload(payload *workspace.WorkspacePayload) error {
+	return validateRequiredUUIDValue(payload.OrganizationID, "organization ID")
 }
 
 // SMPPerformanceTestConfigValidator performs validations on the given PerformanceTestConfig object

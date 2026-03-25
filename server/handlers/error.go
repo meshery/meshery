@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 )
 
@@ -185,6 +187,16 @@ var (
 func ErrGenerateClusterContext(err error) error {
 	return errors.New(ErrGenerateClusterContextCode, errors.Alert, []string{"Failed to generate in cluster context."}, []string{err.Error()}, []string{}, []string{})
 }
+
+func statusCodeForProviderError(err error, fallback int) int {
+	switch errors.GetCode(err) {
+	case models.ErrModelInvalidUUIDCode, models.ErrWorkspaceMissingInputCode:
+		return http.StatusBadRequest
+	default:
+		return fallback
+	}
+}
+
 func ErrNilClusterContext(err error) error {
 	return errors.New(ErrNilClusterContextCode, errors.Alert, []string{"Nil context generated from in cluster config"}, []string{err.Error()}, []string{}, []string{})
 }

@@ -5085,6 +5085,10 @@ func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, f
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
+	if err := validateOptionalUUIDWithField(orgID, "organization ID"); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
@@ -5145,6 +5149,10 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 		return nil, err
 	}
 
+	if err := validateOptionalUUIDWithField(orgID, "organization ID"); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID)
 	q := remoteProviderURL.Query()
@@ -5190,6 +5198,10 @@ func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *environment.Env
 		l.Log.Warn(ErrOperationNotAvailable)
 
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
+	}
+
+	if err := validateEnvironmentPayload(env); err != nil {
+		return nil, err
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
@@ -5287,6 +5299,10 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *environment.E
 		return nil, err
 	}
 
+	if err := validateEnvironmentPayload(env); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
 	_env, err := json.Marshal(env)
 	if err != nil {
@@ -5336,6 +5352,14 @@ func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environme
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
+	if _, err := parseUUIDWithField(environmentID, "environment ID"); err != nil {
+		return nil, err
+	}
+
+	if _, err := parseUUIDWithField(connectionID, "connection ID"); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID + "/connections/" + connectionID)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
@@ -5374,6 +5398,14 @@ func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, envi
 		l.Log.Warn(ErrOperationNotAvailable)
 
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
+	}
+
+	if _, err := parseUUIDWithField(environmentID, "environment ID"); err != nil {
+		return nil, err
+	}
+
+	if _, err := parseUUIDWithField(connectionID, "connection ID"); err != nil {
+		return nil, err
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
@@ -5415,6 +5447,10 @@ func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environm
 		l.Log.Warn(ErrOperationNotAvailable)
 
 		return []byte{}, ErrInvalidCapability("Environment", l.ProviderName)
+	}
+
+	if _, err := parseUUIDWithField(environmentID, "environment ID"); err != nil {
+		return nil, err
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
@@ -5530,6 +5566,10 @@ func (l *RemoteProvider) GetWorkspaces(token, page, pageSize, search, order, fil
 		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
+	if err := validateOptionalUUIDWithField(orgID, "organization ID"); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
@@ -5590,6 +5630,10 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 		return nil, err
 	}
 
+	if err := validateRequiredUUIDWithField(orgID, "organization ID"); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID)
 	q := remoteProviderURL.Query()
@@ -5635,6 +5679,10 @@ func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *workspace.Workspa
 		l.Log.Warn(ErrOperationNotAvailable)
 
 		return []byte(""), ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	if err := validateWorkspacePayload(env); err != nil {
+		return nil, err
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
@@ -5732,6 +5780,10 @@ func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.Works
 		return nil, err
 	}
 
+	if err := validateWorkspacePayload(env); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
 	_env, err := json.Marshal(env)
 	if err != nil {
@@ -5781,6 +5833,14 @@ func (l *RemoteProvider) AddEnvironmentToWorkspace(req *http.Request, workspaceI
 		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
+	if _, err := parseUUIDWithField(workspaceID, "workspace ID"); err != nil {
+		return nil, err
+	}
+
+	if _, err := parseUUIDWithField(environmentID, "environment ID"); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/environments/" + environmentID)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
@@ -5821,6 +5881,14 @@ func (l *RemoteProvider) RemoveEnvironmentFromWorkspace(req *http.Request, works
 		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
+	if _, err := parseUUIDWithField(workspaceID, "workspace ID"); err != nil {
+		return nil, err
+	}
+
+	if _, err := parseUUIDWithField(environmentID, "environment ID"); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/environments/" + environmentID)
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
@@ -5859,6 +5927,10 @@ func (l *RemoteProvider) GetEnvironmentsOfWorkspace(req *http.Request, workspace
 		l.Log.Warn(ErrOperationNotAvailable)
 
 		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	if _, err := parseUUIDWithField(workspaceID, "workspace ID"); err != nil {
+		return nil, err
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
@@ -5916,6 +5988,14 @@ func (l *RemoteProvider) AddDesignToWorkspace(req *http.Request, workspaceID str
 		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
+	if _, err := parseUUIDWithField(workspaceID, "workspace ID"); err != nil {
+		return nil, err
+	}
+
+	if _, err := parseUUIDWithField(designId, "design ID"); err != nil {
+		return nil, err
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/designs/" + designId)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
@@ -5947,6 +6027,10 @@ func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, p
 		l.Log.Warn(ErrOperationNotAvailable)
 
 		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	if _, err := parseUUIDWithField(workspaceID, "workspace ID"); err != nil {
+		return nil, err
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)

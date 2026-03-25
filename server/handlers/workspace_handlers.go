@@ -6,11 +6,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/models"
-	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 )
 
@@ -44,7 +42,7 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 	resp, err := provider.GetWorkspaces(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q.Get("orgID"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		http.Error(w, ErrGetResult(err).Error(), statusCodeForProviderError(err, http.StatusNotFound))
 		return
 	}
 
@@ -67,26 +65,10 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 	workspaceID := mux.Vars(r)["id"]
 
 	q := r.URL.Query()
-	orgID := q.Get("orgID")
-	if orgID == "" {
-		h.log.Error(models.ErrWorkspaceMissingInput())
-		http.Error(w, models.ErrWorkspaceMissingInput().Error(), http.StatusBadRequest)
-		return
-	}
-
-	if _, err := uuid.FromString(orgID); err != nil {
-		http.Error(w, ErrInvalidUUID(err).Error(), http.StatusBadRequest)
-		return
-	}
-
-	resp, err := provider.GetWorkspaceByID(r, workspaceID, orgID)
+	resp, err := provider.GetWorkspaceByID(r, workspaceID, q.Get("orgID"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		statusCode := http.StatusNotFound
-		if meshkiterrors.GetCode(err) == models.ErrModelInvalidUUIDCode {
-			statusCode = http.StatusBadRequest
-		}
-		http.Error(w, ErrGetResult(err).Error(), statusCode)
+		http.Error(w, ErrGetResult(err).Error(), statusCodeForProviderError(err, http.StatusNotFound))
 		return
 	}
 
@@ -123,7 +105,7 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 	bf, err := provider.SaveWorkspace(req, &workspace, "", false)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		http.Error(w, ErrGetResult(err).Error(), statusCodeForProviderError(err, http.StatusNotFound))
 		return
 	}
 
@@ -149,11 +131,7 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 	resp, err := provider.DeleteWorkspace(r, workspaceID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		statusCode := http.StatusNotFound
-		if meshkiterrors.GetCode(err) == models.ErrModelInvalidUUIDCode {
-			statusCode = http.StatusBadRequest
-		}
-		http.Error(w, ErrGetResult(err).Error(), statusCode)
+		http.Error(w, ErrGetResult(err).Error(), statusCodeForProviderError(err, http.StatusNotFound))
 		return
 	}
 
@@ -193,11 +171,7 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	resp, err := provider.UpdateWorkspace(req, &workspace, workspaceID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		statusCode := http.StatusNotFound
-		if meshkiterrors.GetCode(err) == models.ErrModelInvalidUUIDCode {
-			statusCode = http.StatusBadRequest
-		}
-		http.Error(w, ErrGetResult(err).Error(), statusCode)
+		http.Error(w, ErrGetResult(err).Error(), statusCodeForProviderError(err, http.StatusNotFound))
 		return
 	}
 
@@ -243,7 +217,7 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 	resp, err := provider.GetEnvironmentsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)
+		http.Error(w, ErrGetResult(err).Error(), statusCodeForProviderError(err, http.StatusInternalServerError))
 		return
 	}
 
@@ -274,7 +248,7 @@ func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.
 	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q["visibility"])
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)
+		http.Error(w, ErrGetResult(err).Error(), statusCodeForProviderError(err, http.StatusInternalServerError))
 		return
 	}
 
@@ -296,7 +270,7 @@ func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *h
 	resp, err := provider.AddEnvironmentToWorkspace(req, workspaceID, environmentID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)
+		http.Error(w, ErrGetResult(err).Error(), statusCodeForProviderError(err, http.StatusInternalServerError))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -317,7 +291,7 @@ func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, r
 	resp, err := provider.RemoveEnvironmentFromWorkspace(req, workspaceID, environmentID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)
+		http.Error(w, ErrGetResult(err).Error(), statusCodeForProviderError(err, http.StatusInternalServerError))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -338,7 +312,7 @@ func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.R
 	resp, err := provider.AddDesignToWorkspace(req, workspaceID, designID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)
+		http.Error(w, ErrGetResult(err).Error(), statusCodeForProviderError(err, http.StatusInternalServerError))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
