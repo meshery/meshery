@@ -16,9 +16,7 @@ registrant:
     user_id: null
     created_at: 2026-03-15T14:31:07.389347862Z
     updated_at: 2026-03-15T14:31:07.389347862Z
-    deleted_at:
-        time: 0001-01-01T00:00:00Z
-        valid: false
+    deleted_at: null
     environments: []
     schemaVersion: ""
 connection_id: cf1d6acd-4509-e589-1c1e-3f20f8aaf715

@@ -1,14 +1,12 @@
 package system
 
 import (
-	"bytes"
 	"flag"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -37,12 +35,10 @@ func TestPreflightCmdIntegration(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			// setting up log to grab logs
-			var buf bytes.Buffer
-			log.SetOutput(&buf)
-			utils.SetupLogrusFormatter()
-
+			buf := utils.SetupMeshkitLoggerTesting(t, true)
+			SystemCmd.SetOut(buf)
 			SystemCmd.SetArgs(tt.Args)
-			err = SystemCmd.Execute()
+			err := SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
