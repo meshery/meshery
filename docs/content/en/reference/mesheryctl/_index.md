@@ -21,6 +21,7 @@ Meshery CLI commands are categorized by function, which are:
 - [`mesheryctl connection`](#meshery-connection) - Managed or unmanaged resources that either through discovery or manual entry are tracked by Meshery.
 - [`mesheryctl organization`](#meshery-organization) - Manage and interact with registered organizations.
 - [`mesheryctl relationship`](#meshery-relationship) - View and manage relationships registered in Meshery.
+- [`mesheryctl workspace`](#meshery-workspace) - View and manage workspaces under an organization.
 - [`mesheryctl exp`](#experimental-featuresexp) - Experimental features
 ## Global Commands and Flags
 
@@ -71,6 +72,10 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 ## Meshery Relationship
 
 {{< mesheryctl-command-table command="relationship" >}}
+
+## Meshery Workspace
+
+{{< mesheryctl-command-table command="workspace" >}}
 
 ## Experimental Features(exp)
 

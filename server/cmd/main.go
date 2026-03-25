@@ -244,7 +244,7 @@ func main() {
 		connections.Connection{},
 		environment.Environment{},
 		environment.EnvironmentConnectionMapping{},
-		models.WorkspaceDBModel{},
+		workspace.Workspace{},
 		workspace.WorkspacesEnvironmentsMapping{},
 		workspace.WorkspacesDesignsMapping{},
 		_events.Event{},

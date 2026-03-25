@@ -40,6 +40,12 @@ func SetupFunc(t *testing.T) {
 
 func BreakupFunc() {
 	viewCmd.Flags().VisitAll(setFlagValueAsUndefined)
+	viewProviderCmd.Flags().VisitAll(setFlagValueAsUndefined)
+	SystemCmd.PersistentFlags().VisitAll(setFlagValueAsUndefined)
+	showForAllContext = false
+	showProviderForAllContext = false
+	tempContext = ""
+	utils.SilentFlag = false
 }
 
 func setFlagValueAsUndefined(flag *pflag.Flag) {
@@ -57,14 +63,21 @@ func TestViewCmd(t *testing.T) {
 	SetupContextEnv(t)
 	tests := []CmdTestInput{
 		{
+			Name:             "view with context override",
+			Args:             []string{"channel", "view", "-c", "gke"},
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+		},
+		{
 			Name:             "view without any parameter",
 			Args:             []string{"channel", "view"},
 			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n\n",
 		},
 		{
-			Name:             "view with context override",
-			Args:             []string{"channel", "view", "-c", "gke"},
-			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+			Name: "view with all flag",
+			Args: []string{"channel", "view", "--all"},
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n" +
+				PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n\n" +
+				"Current Context: local\n",
 		},
 	}
 

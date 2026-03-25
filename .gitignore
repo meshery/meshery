@@ -30,6 +30,7 @@ fortio_chart.js
 **/ui/playground/
 ui/.next/
 ui/out/
+ui/.eslintcache
 ui/node_modules/
 ui/tests/e2e/.env
 

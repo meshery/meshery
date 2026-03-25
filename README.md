@@ -19,6 +19,7 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
   <img src="https://img.shields.io/github/actions/workflow/status/meshery/meshery/release-drafter.yml" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
   <img src="https://bestpractices.coreinfrastructure.org/projects/3564/badge" /></a>
+<a href="https://www.bestpractices.dev/projects/3564" alt="OpenSSF Best Practices Baseline"><img src="https://www.bestpractices.dev/projects/3564/baseline" alt="OpenSSF Best Practices Baseline" /></a>
 <a href="https://meshery.io/community#discussion-forums" alt="Discussion Forum">
   <img src="https://img.shields.io/discourse/users?label=discuss&logo=discourse&server=https%3A%2F%2Fmeshery.io/community" /></a>
 <a href="https://slack.meshery.io" alt="Join Slack">
