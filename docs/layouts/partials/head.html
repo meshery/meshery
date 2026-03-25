@@ -1,5 +1,12 @@
 <head>
   <meta charset="utf-8" />
+  <script>
+  if (window.location.pathname.includes('//')) {
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.pathname = cleanUrl.pathname.replace(/\/+/g, '/');
+    window.location.replace(cleanUrl.href);
+  }
+</script>
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1, shrink-to-fit=no"
