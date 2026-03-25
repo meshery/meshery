@@ -1,55 +1,68 @@
 ---
-title: "Getting Started: Creating a Design from Template"
-description: "A step-by-step guide for cloning a design from Meshery Catalog templates."
+title: "Getting Started: Creating a Design from a Template"
+description: "Learn how to quickly clone and customize a design using Meshery’s catalog of pre‑built templates."
 ---
 
-# Getting Started: Creating a Design from Template
+# Getting Started: Creating a Design from a Template
 
-Meshery offers a wide array of templates within its catalog to help users jumpstart their projects. Cloning a design from these templates is an easy way to leverage pre-configured settings and configurations. This guide walks you through the process step-by-step.
+Meshery provides a rich catalog of pre‑built design templates to help you accelerate your cloud‑native workflows. Cloning a template allows you to instantly reuse best‑practice configurations and adapt them to your environment. This guide walks you through the full process of selecting, cloning, and accessing a design template.
 
 ## Prerequisites
 
-- Access to a Meshery instance.
-- Basic familiarity with the Meshery interface.
+- Access to a running Meshery instance.
+- Basic familiarity with the Meshery UI.
 
-## Steps to Clone a Design from Template
+---
 
-### Step 1: Access the Meshery Catalog
+## Step 1: Open the Meshery Catalog
 
-1. **Log in** to your Meshery instance.
-2. Navigate to the **Catalog** or **Templates** section from the main navigation menu.
+1. Log in to your Meshery instance.
+2. From the left navigation menu, select **Catalog**.
 
-### Step 2: Explore and Clone a Template
+![Catalog Page](./images/docs-new-content-en-guides-images-catalog-page.PNG)
 
-1. **Browse Templates**  
-   Explore the available templates using categories, tags, or search keywords.
+The catalog displays a wide range of ready‑to‑use templates, organized by categories, tags, and use cases.
 
-2. **Select a Template**  
-   Click on the desired template to view its details and configuration options.
+---
 
-3. **Clone the Template**  
-   Look for the **Clone** or **Use Template** option on the template page.
+## Step 2: Select and Clone a Template
 
-4. **Customize Settings (Optional)**  
-   If prompted, configure any parameters or settings according to your project requirements.
+### 1. Browse Templates  
+Use filters, tags, or the search bar to explore available templates.
 
-5. **Confirm Cloning**  
-   Meshery may prompt a confirmation dialog before completing the cloning process. Review the details and confirm.
+### 2. View Template Details  
+Click on a template to open its detail page.
 
-### Step 3: Access the Cloned Design
+![Template Detail](./images/docs-new-content-en-guides-images-template-detail.PNG)
 
-1. Once the cloning process completes, navigate to your **design workspace** or **project list**.
-2. Locate the newly cloned design and begin modifying or deploying it as needed.
+### 3. Clone the Template  
+Click **Clone** (or **Use Template**) to create a copy of the design in your workspace.
 
-## Troubleshooting Tips
+![Clone Button](./images/docs-new-content-en-guides-images-clone-button.PNG)
 
-### Common Issues
+### 4. Confirm Cloning  
+Meshery will display a confirmation dialog. Review the information and confirm.
 
-- **Failed Cloning**  
-  If the cloning process fails, check your internet connection and try again.  
-  If the issue persists, seek help from the [Meshery community](https://layer5.io/community).
+![Confirmation Popup](./images/docs-new-content-en-guides-images-confirmation-popup.PNG)
 
-### Additional Assistance
+---
 
-- **Community Support**  
-  Visit the [Meshery Community](https://layer5.io/community) to ask questions, report issues, or get assistance from other users and maintainers.
+## Step 3: Access Your Cloned Design
+
+Once cloning is complete:
+
+1. Navigate to your **Designs** or **Workspace** section.
+2. Locate the newly cloned design.
+3. Open it to begin customizing, deploying, or integrating it with your environment.
+
+![Cloned Design](./images/docs-new-content-en-guides-images-cloned-design.PNG)
+
+---
+
+## Troubleshooting
+
+### Template Not Appearing  
+If you don’t see your cloned design immediately, refresh the page or check your active workspace.
+
+### Need Help?  
+Visit the [Meshery Community](https://layer5.io/community) to ask questions, get support, or connect with maintainers and contributors.
