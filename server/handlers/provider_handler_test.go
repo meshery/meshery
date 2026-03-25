@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"encoding/base64"
 	"net/http"
 	"net/http/httptest"
@@ -283,8 +284,22 @@ func TestDeleteMeshSyncResource(t *testing.T) {
 				t.Fatalf("expected content type prefix %q, got %q", tt.expectedContentType, contentType)
 			}
 
-			if body := rw.Body.String(); !strings.Contains(body, tt.expectedBody) {
-				t.Fatalf("expected body to contain %q, got %q", tt.expectedBody, body)
+			if tt.expectedContentType == "application/json" {
+				var response struct {
+					Deleted bool `json:"deleted"`
+				}
+
+				if err := json.NewDecoder(rw.Body).Decode(&response); err != nil {
+					t.Fatalf("failed to decode json response: %v", err)
+				}
+
+				if !response.Deleted {
+					t.Fatal("expected 'deleted' field to be true")
+				}
+			} else {
+				if body := rw.Body.String(); !strings.Contains(body, tt.expectedBody) {
+					t.Fatalf("expected body to contain %q, got %q", tt.expectedBody, body)
+				}
 			}
 		})
 	}
