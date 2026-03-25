@@ -56,7 +56,7 @@ docs/resources/
 docs/.hugo_build.lock
 docs/hugo_stats.json
 
-# docs/static/v0.*/
+docs/static/v0.*/
 
 dist/
 
