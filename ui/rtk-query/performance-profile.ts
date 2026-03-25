@@ -12,7 +12,7 @@ const performanceProfile = api
     endpoints: (builder) => ({
       getPerformanceProfiles: builder.query({
         query: (queryArg) => ({
-          url: `user/performance/profiles`,
+          url: `/api/user/performance/profiles`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -25,7 +25,7 @@ const performanceProfile = api
       }),
       savePerformanceProfile: builder.mutation({
         query: (queryArg) => ({
-          url: `user/performance/profiles`,
+          url: `/api/user/performance/profiles`,
           method: 'POST',
           body: queryArg.body,
         }),
@@ -33,7 +33,7 @@ const performanceProfile = api
       }),
       getProfileResults: builder.query({
         query: (queryArg) => ({
-          url: `user/performance/profiles/results`,
+          url: `/api/user/performance/profiles/results`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -48,21 +48,21 @@ const performanceProfile = api
       }),
       getPerformanceProfileById: builder.query({
         query: (queryArg) => ({
-          url: `user/performance/profiles/${queryArg.id}`,
+          url: `/api/user/performance/profiles/${queryArg.id}`,
           method: 'GET',
         }),
         providesTags: () => [{ type: TAGS.PERFORMANCE_PROFILE }],
       }),
       deletePerformanceProfile: builder.mutation({
         query: (queryArg) => ({
-          url: `user/performance/profiles/${queryArg.id}`,
+          url: `/api/user/performance/profiles/${queryArg.id}`,
           method: 'DELETE',
         }),
         invalidatesTags: [{ type: TAGS.PERFORMANCE_PROFILE }],
       }),
       getProfileResultsById: builder.query({
         query: (queryArg) => ({
-          url: `user/performance/profiles/${queryArg.id}/results`,
+          url: `/api/user/performance/profiles/${queryArg.id}/results`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
