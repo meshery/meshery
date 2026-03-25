@@ -26,7 +26,7 @@
         <li class="nav-item">
           <a
             class="nav-link"
-            href="{{ if .url }}{{ $.Site.BaseURL }}{{ .url }}{{ else }}{{ .external_url }}{{ end }}">
+            href="{{ if .url }}{{ $.Site.BaseURL }}{{ strings.TrimPrefix "/" .url }}{{ else }}{{ .external_url }}{{ end }}">
             <span>{{ .title }}</span>
           </a>
         </li>
@@ -55,7 +55,7 @@
 
             <option
               {{ $selected }}
-              value="{{ if .url }}{{ $.Site.BaseURL }}{{ .url }}/{{ else }}{{ $.Site.BaseURL }}{{ end }}"
+              value="{{ if .url }}{{ $.Site.BaseURL }}{{ strings.TrimPrefix "/" .url }}/{{ else }}{{ $.Site.BaseURL }}{{ end }}"
               class="nav-item mr-4 mb-2 text-black">
               {{ .version }}
             </option>
