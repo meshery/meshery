@@ -31,6 +31,6 @@ func ErrEmptyCSVData(err error) error {
 		[]string{"Invalid or empty CSV file provided"},
 		[]string{err.Error()},
 		[]string{"The CSV file must contain valid relationship entries with the required headers."},
-		[]string{"Ensure the CSV file contains at least two header rows and data rows with a minimum of 15 columns. Refer to the Meshery relationship CSV template: \"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\""},
+		[]string{"Ensure the CSV file contains two header rows and at least one data row with a minimum of 15 columns. Refer to the Meshery relationship CSV template: \"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\""},
 	)
 }
