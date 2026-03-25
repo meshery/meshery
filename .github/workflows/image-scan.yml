@@ -83,3 +83,6 @@ jobs:
           else
             gh issue comment ${{ steps.check_issue.outputs.existing_issue }} --body "$(cat issue_body.txt)"
           fi
+      - name: Free disk space (end)
+        if: always()
+        uses: ./.github/actions/free-disk-space/end

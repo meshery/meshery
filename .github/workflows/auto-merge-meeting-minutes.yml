@@ -74,7 +74,9 @@ jobs:
         with:
           # Use the PAT to checkout so we can merge
           token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
-          fetch-depth: 0
+          fetch-depth: 1
+          sparse-checkout: |
+            docs/meetings/**
 
       # Core validation step using GitHub Script
       # This validates that ALL files in the PR are strictly within docs/meetings/
