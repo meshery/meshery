@@ -20,6 +20,8 @@ type cmdRelationshipGenerateFlag struct {
 	Output          string `json:"output" validate:"omitempty"`
 }
 
+const minRelationshipCSVColumns = 15
+
 var relationshipGenerateFlag cmdRelationshipGenerateFlag
 
 var fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
@@ -122,7 +124,7 @@ func generateFromCSV(filePath, outputPath string) error {
 
 	var customResp []CustomValueRange
 	for _, row := range records[2:] {
-		if len(row) >= 15 && row[0] != "" {
+		if len(row) >= minRelationshipCSVColumns && row[0] != "" {
 			customResp = append(customResp, CustomValueRange{
 				Model:                row[0],
 				Version:              row[1],
@@ -154,7 +156,7 @@ func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
 	var customResp []CustomValueRange
 
 	for _, row := range resp.Values[2:] {
-		if len(row) >= 15 && row[0] != "" {
+		if len(row) >= minRelationshipCSVColumns && row[0] != "" {
 			customResp = append(customResp, CustomValueRange{
 				Model:                row[0].(string),
 				Version:              row[1].(string),
