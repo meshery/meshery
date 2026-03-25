@@ -1,6 +1,6 @@
 ---
-title: "Getting Started: Creating a Design from a Template"
-description: "Learn how to quickly clone and customize a design using Meshery’s catalog of pre‑built templates."
+Title: "Getting Started: Creating a Design from a Template"
+Description: "Learn how to quickly clone and customize a design using Meshery’s catalog of pre‑built templates."
 ---
 
 # Getting Started: Creating a Design from a Template
