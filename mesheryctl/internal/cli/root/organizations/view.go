@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -113,11 +112,7 @@ mesheryctl organization view [organization-id] --output-format json --save`,
 		}
 
 		if orgViewFlagsProvided.Save {
-			orgString := strings.ReplaceAll(selectedOrg.Name, " ", "_")
-			if orgString == "" {
-				orgString = selectedOrg.ID.String()
-			}
-			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("organization_%s.%s", orgString, orgViewFlagsProvided.OutputFormat))
+			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("organization_%s.%s", selectedOrg.ID.String(), orgViewFlagsProvided.OutputFormat))
 			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[organization.Organization]{}
 			outputFormatterSaver, err := outputFormatterSaverFactory.New(orgViewFlagsProvided.OutputFormat, outputFormatter)
 			if err != nil {
