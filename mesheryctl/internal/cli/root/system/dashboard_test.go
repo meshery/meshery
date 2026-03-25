@@ -15,6 +15,7 @@
 package system
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -41,6 +42,42 @@ func TestShouldUseEphemeralPortFallback(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			actual := shouldUseEphemeralPortFallback(tt.portExplicitlySet)
+			assert.Equal(t, tt.expected, actual)
+		})
+	}
+}
+
+func TestIsPortAlreadyInUseError(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      error
+		expected bool
+	}{
+		{
+			name:     "given address already in use error then returns true",
+			err:      errors.New("listen tcp 127.0.0.1:9081: bind: address already in use"),
+			expected: true,
+		},
+		{
+			name:     "given bind error then returns true",
+			err:      errors.New("bind failed for namespace/pod"),
+			expected: true,
+		},
+		{
+			name:     "given spdy negotiation error then returns false",
+			err:      errors.New("error upgrading connection: malformed response"),
+			expected: false,
+		},
+		{
+			name:     "given nil error then returns false",
+			err:      nil,
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual := isPortAlreadyInUseError(tt.err)
 			assert.Equal(t, tt.expected, actual)
 		})
 	}

@@ -21,6 +21,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -158,7 +159,11 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				}
 
 				if err = portforward.Init(); err != nil {
-					// If port is in use and user didn't explicitly set it, try with ephemeral port.
+					if !isPortAlreadyInUseError(err) {
+						return ErrRunPortForward(err)
+					}
+
+					// If local listen port is in use and user didn't explicitly set it, try with ephemeral port.
 					if shouldUseEphemeralPortFallback(portExplicitlySet) {
 						utils.Log.Warnf("Port %d is already in use, attempting to use an ephemeral port...", localPort)
 
@@ -181,10 +186,8 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 						}
 						utils.Log.Info("Successfully bound to ephemeral port")
 					} else if portExplicitlySet {
-						// User explicitly set port but it's in use
+						// User explicitly set port and the port is in use.
 						return fmt.Errorf("port %d is already in use. Please specify a different port with -p flag or omit the flag to use an ephemeral port", localPort)
-					} else {
-						return ErrRunPortForward(err)
 					}
 				}
 				log.Info("Port-forwarding for Meshery UI...")
@@ -281,6 +284,15 @@ func keepConnectionAlive(url string) {
 
 func shouldUseEphemeralPortFallback(portExplicitlySet bool) bool {
 	return !portExplicitlySet
+}
+
+func isPortAlreadyInUseError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	errStr := strings.ToLower(err.Error())
+	return strings.Contains(errStr, "address already in use") || strings.Contains(errStr, "bind")
 }
 
 func init() {
