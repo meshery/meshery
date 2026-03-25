@@ -48,7 +48,7 @@ type cmdDesignDeployFlags struct {
 var designDeployFlags cmdDesignDeployFlags
 
 var linkDocDesignDeploy = map[string]string{
-	"link":    "![pattern-onboard-usage](/assets/img/mesheryctl/pattern-onboard.png)",
+	"link":    "![pattern-onboard-usage](/reference/images/pattern-onboard.png)",
 	"caption": "Usage of mesheryctl design deploy",
 }
 

@@ -1,0 +1,24 @@
+version: 0.0.13
+name: test-design-account
+displayName: test design account
+createdAt: "2025-03-27T19:45:13Z"
+description: test account publish
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/0ecab33d-6ac2-40ff-9ff9-76a706598cbe/0.0.13/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "test account publish \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 770db993-c2bb-4f9a-8539-978bc990bbcc
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/0ecab33d-6ac2-40ff-9ff9-76a706598cbe-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/0ecab33d-6ac2-40ff-9ff9-76a706598cbe-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

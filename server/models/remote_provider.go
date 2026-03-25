@@ -4040,10 +4040,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		redirectURL = GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
 	}
 
-	refQueryParam := r.URL.Query().Get("ref")
-	if refQueryParam != "" {
-		redirectURL = refQueryParam
-	}
+	redirectURL = resolvePostLoginRedirect(r.URL.Query().Get("ref"), redirectURL)
 
 	go func() {
 		credential := make(map[string]interface{}, 0)

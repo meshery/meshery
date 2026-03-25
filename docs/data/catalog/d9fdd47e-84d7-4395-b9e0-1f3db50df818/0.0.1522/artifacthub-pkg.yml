@@ -1,0 +1,24 @@
+version: 0.0.1522
+name: azure-microservices-architecture-with-aks-design
+displayName: Azure Microservices Architecture with AKS design
+createdAt: "2025-10-02T09:52:06Z"
+description: This architecture illustrates a microservices-based application deployed on Azure Kubernetes Service (AKS). Client requests pass through an Azure Load Balancer and NGINX Ingress to multiple microservices running in AKS. Azure Pipelines and Azure Container Registry enable CI/CD and container image management. The solution integrates Azure Active Directory for RBAC, Azure Key Vault for secret management, and Azure Monitor, Log Analytics, and Application Insights for monitoring. Microservices connect to external data services like Azure Cosmos DB, Redis Cache, and Azure Service Bus for data, caching, and messaging.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/d9fdd47e-84d7-4395-b9e0-1f3db50df818/0.0.1522/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "When implementing this design, ensure proper namespace isolation and RBAC configuration to maintain security and service boundaries. The Ingress controller and Load Balancer must be carefully managed to avoid routing or scaling issues. Azure Container Registry permissions and managed identities should be correctly configured to prevent image pull failures. Monitoring tools like Application Insights and Azure Monitor may add slight overhead but are essential for observability. Finally, external dependencies such as Cosmos DB, Redis, and Service Bus should be optimized for latency and connection management to ensure consistent performance. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c191d146-dd71-44ac-8ef9-bccac10068fe
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d9fdd47e-84d7-4395-b9e0-1f3db50df818-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d9fdd47e-84d7-4395-b9e0-1f3db50df818-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
