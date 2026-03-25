@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
@@ -134,6 +136,13 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 	workspaceID := mux.Vars(r)["id"]
 	resp, err := provider.DeleteWorkspace(r, workspaceID)
 	if err != nil {
+
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+
+			h.log.Error(ErrGetResult(err))
+			http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+			return
+		}
 		h.log.Error(ErrFailToDelete(err, "workspace"))
 		http.Error(w, ErrFailToDelete(err, "workspace").Error(), http.StatusInternalServerError)
 		return
@@ -173,6 +182,12 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 
 	resp, err := provider.UpdateWorkspace(req, &workspace, workspaceID)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+
+			h.log.Error(ErrGetResult(err))
+			http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+			return
+		}
 		h.log.Error(ErrFailToSave(err, "workspace"))
 		http.Error(w, ErrFailToSave(err, "workspace").Error(), http.StatusInternalServerError)
 		return
@@ -191,9 +206,7 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(respJSON)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
-		return
+		h.log.Error(err)
 	}
 }
 
