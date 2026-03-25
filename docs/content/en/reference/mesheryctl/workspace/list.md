@@ -1,11 +1,11 @@
 ---
-title: mesheryctl-exp-workspace-list
+title: mesheryctl-workspace-list
 display_title: false
-command: exp
-subcommand: workspace
+command: workspace
+subcommand: list
 ---
 
-# mesheryctl exp workspace list
+# mesheryctl workspace list
 
 List registered workspaces
 
@@ -15,7 +15,7 @@ List name of all registered workspaces
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace list [flags]
+mesheryctl workspace list [flags]
 
 </div>
 </pre> 
@@ -25,7 +25,7 @@ mesheryctl exp workspace list [flags]
 List of workspace under a specific organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace list --orgId [orgId]
+mesheryctl workspace list --orgId [orgId]
 
 </div>
 </pre> 
@@ -33,7 +33,7 @@ mesheryctl exp workspace list --orgId [orgId]
 List of workspace under a specific organization for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace list --orgId [orgId] --page [page-number]
+mesheryctl workspace list --orgId [orgId] --page [page-number]
 
 </div>
 </pre> 
@@ -41,7 +41,7 @@ mesheryctl exp workspace list --orgId [orgId] --page [page-number]
 Display number of available  workspace under a specific organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace list --orgId [orgId] --count
+mesheryctl workspace list --orgId [orgId] --count
 
 </div>
 </pre> 
@@ -50,11 +50,11 @@ mesheryctl exp workspace list --orgId [orgId] --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --count           total number of registered workspaces
-  -h, --help            help for list
-  -o, --orgId string    Organization ID
-      --page int        page number for paginated results. (default: 1) (default 1)
-      --page-size int   number of items to be displayed per page for paginated results. (default: 10, max limit: 100) (default 10)
+      --count          total number of registered workspaces
+  -h, --help           help for list
+  -o, --orgId string   Organization ID
+      --page int       page number for paginated results. (default: 1) (default 1)
+      --pagesize int   number of items to be displayed per page for paginated results. (default: 10, max limit: 100) (default 10)
 
 </div>
 </pre>

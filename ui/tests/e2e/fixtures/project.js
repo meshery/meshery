@@ -9,8 +9,8 @@ export const test = base.extend({
   // Define an option and provide a default value.
   // We can later override it in the config.
   provider: ['None', { option: true }],
-  // eslint-disable-next-line no-empty-pattern
-  clusterMetaData: async ({}, use, testInfo) => {
+
+  clusterMetaData: async (_, use) => {
     const kubeConfigPath = `${os.homedir()}/.kube/config`;
     if (!fs.existsSync(kubeConfigPath)) {
       testInfo.skip(true, 'Missing ~/.kube/config (connection tests need a local cluster context)');

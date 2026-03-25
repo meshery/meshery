@@ -119,8 +119,7 @@ mesheryctl system context delete [context name]
 		}
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
-			utils.Log.Error(ErrUnmarshallConfig(err))
-			return nil
+			return ErrUnmarshallConfig(err)
 		}
 
 		contextName := strings.ToLower(args[0])
@@ -270,8 +269,7 @@ mesheryctl system context view --all
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
-			utils.Log.Error(ErrUnmarshallConfig(err))
-			return nil
+			return ErrUnmarshallConfig(err)
 		}
 		//Storing all the tokens separately in a map, to get tokenlocation by token name.
 		for _, tok := range configuration.Tokens {
@@ -364,8 +362,7 @@ mesheryctl system context switch sample
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
-			utils.Log.Error(ErrUnmarshallConfig(err))
-			return nil
+			return ErrUnmarshallConfig(err)
 		}
 
 		contextName := strings.ToLower(args[0])
@@ -383,13 +380,11 @@ mesheryctl system context create `
 		//check if meshery is running
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
 		isRunning, _ := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 		//if meshery running stop meshery before context switch
