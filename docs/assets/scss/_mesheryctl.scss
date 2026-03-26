@@ -3,7 +3,6 @@
 
 /* COMMAND REFERENCE */
 table.mesherycomponents {
-  width: 100%;
   th {
     background-color: project.$charcoal;
     color: white;
@@ -34,4 +33,20 @@ div.prereqs {
 }
 a.meshery-light {
   color: project.$keppel;
+}
+
+.compatibility-matrix, .mesherycomponents {
+  .td-content > table {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    overflow-x: visible;
+  }
+
+  .td-content > table th,
+  .td-content > table td {
+    width: auto;
+    max-width: none;
+    overflow-wrap: anywhere;
+  }
 }
