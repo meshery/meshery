@@ -1,0 +1,24 @@
+version: 0.0.5
+name: authentik-2025.8.4.tgz
+displayName: authentik-2025.8.4.tgz
+createdAt: "2025-10-08T22:02:08Z"
+description: authentik-2025.8.4.tgz is an open-source Identity Provider focused on flexibility and versatility
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/dc11f014-d259-41e3-a377-717d4fe960ae/0.0.5/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "    \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: ecda1326-9f22-4ccb-8090-d6b89fa06ec8
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/dc11f014-d259-41e3-a377-717d4fe960ae-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/dc11f014-d259-41e3-a377-717d4fe960ae-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,17 +1,3 @@
-// Copyright Meshery Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package system
 
 import (
@@ -55,7 +41,7 @@ type contextWithLocation struct {
 }
 
 var linkDocContextCreate = map[string]string{
-	"link":    "![context-create-usage](/assets/img/mesheryctl/newcontext.png)",
+	"link":    "![context-create-usage](/reference/images/newcontext.png)",
 	"caption": "Usage of mesheryctl context create",
 }
 
@@ -113,7 +99,6 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 		}
 
 		utils.Log.Infof("Added `%s` context", contextName)
-
 		return nil
 	},
 }
@@ -134,8 +119,7 @@ mesheryctl system context delete [context name]
 		}
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
-			utils.Log.Error(ErrUnmarshallConfig(err))
-			return nil
+			return ErrUnmarshallConfig(err)
 		}
 
 		contextName := strings.ToLower(args[0])
@@ -231,7 +215,7 @@ mesheryctl system context list
 			currContext = viper.GetString("current-context")
 		}
 		if currContext == "" {
-			utils.Log.Infof("Current context not set\n")
+			utils.Log.Info("Current context not set\n")
 		} else {
 			utils.Log.Infof("Current context: %s", currContext)
 		}
@@ -256,7 +240,7 @@ mesheryctl system context list
 }
 
 var linkDocContextView = map[string]string{
-	"link":    "![context-view-usage](/assets/img/mesheryctl/context-view.png)",
+	"link":    "![context-view-usage](/reference/images/context-view.png)",
 	"caption": "Usage of mesheryctl context view",
 }
 
@@ -285,8 +269,7 @@ mesheryctl system context view --all
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
-			utils.Log.Error(ErrUnmarshallConfig(err))
-			return nil
+			return ErrUnmarshallConfig(err)
 		}
 		//Storing all the tokens separately in a map, to get tokenlocation by token name.
 		for _, tok := range configuration.Tokens {
@@ -355,7 +338,7 @@ mesheryctl system context view --all
 }
 
 var linkDocContextSwitch = map[string]string{
-	"link":    "![context-switch-usage](/assets/img/mesheryctl/contextswitch.png)",
+	"link":    "![context-switch-usage](/reference/images/contextswitch.png)",
 	"caption": "Usage of mesheryctl context switch",
 }
 
@@ -379,8 +362,7 @@ mesheryctl system context switch sample
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
-			utils.Log.Error(ErrUnmarshallConfig(err))
-			return nil
+			return ErrUnmarshallConfig(err)
 		}
 
 		contextName := strings.ToLower(args[0])
@@ -398,13 +380,11 @@ mesheryctl system context create `
 		//check if meshery is running
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
 		isRunning, _ := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 		//if meshery running stop meshery before context switch

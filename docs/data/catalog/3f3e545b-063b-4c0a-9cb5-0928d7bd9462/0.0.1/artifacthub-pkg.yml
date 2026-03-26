@@ -1,0 +1,24 @@
+version: 0.0.1
+name: vault-operator
+displayName: Vault operator
+createdAt: "2024-05-20T05:22:04Z"
+description: 'This YAML configuration defines a Kubernetes Deployment for the vault-operator using the apps/v1 API version. It specifies that a single replica of the vault-operator pod should be maintained by Kubernetes. The deployment''s metadata sets the name of the deployment to vault-operator. The pod template within the deployment includes metadata labels that tag the pod with name: vault-operator, which helps in identifying and managing the pod. The pod specification details a single container named vault-operator that uses the image quay.io/coreos/vault-operator:latest. This container is configured with two environment variables: MY_POD_NAMESPACE and MY_POD_NAME, which derive their values from the pod''s namespace and name respectively using the Kubernetes downward API. This setup ensures that the vault-operator container is aware of its deployment context within the Kubernetes cluster.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3f3e545b-063b-4c0a-9cb5-0928d7bd9462/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Single Replica:\nThe deployment is configured with a single replica. This might be a single point of failure. Consider increasing the number of replicas for high availability and fault tolerance.\n\n2. Image Tagging:\nThe container image is specified as latest, which can lead to unpredictable deployments because latest may change over time. It's recommended to use a specific version tag to ensure consistency and repeatability in deployments.\n\n3. Environment Variables:\nThe deployment uses environment variables (MY_POD_NAMESPACE and MY_POD_NAME) obtained from the downward API. Ensure these variables are correctly referenced and required by your application.\n\n4. Resource Requests and Limits:\nThe deployment does not specify resource requests and limits for CPU and memory. This could lead to resource contention or overcommitment issues. It’s good practice to define these to ensure predictable performance and resource usage. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3f3e545b-063b-4c0a-9cb5-0928d7bd9462-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3f3e545b-063b-4c0a-9cb5-0928d7bd9462-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

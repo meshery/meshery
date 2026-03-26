@@ -1,0 +1,24 @@
+version: 0.0.13
+name: guestbook-application---extended-version
+displayName: Guestbook Application - Extended Version
+createdAt: "2025-06-15T18:48:57Z"
+description: A unique and extended version of the classic Guestbook application with improved resource limits, author tagging, and a custom welcome message. Designed with ❤️ by Toko for the Meshery Catalog.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/517a238d-da27-47d3-94e0-1b75fd0b3052/0.0.13/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "For demo purposes only. Uses a public Redis and PHP image. Tested in Meshery Kanvas UI. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: d574bd52-93e6-44b7-ad69-edf67c643b2c
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/517a238d-da27-47d3-94e0-1b75fd0b3052-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/517a238d-da27-47d3-94e0-1b75fd0b3052-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

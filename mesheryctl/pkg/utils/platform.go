@@ -966,3 +966,14 @@ func ForceCleanupCluster() error {
 
 	return nil
 }
+
+// GetMesheryEndpoint discovers the Meshery service endpoint from Kubernetes.
+// This function centralizes the service discovery logic used across multiple commands.
+func GetMesheryEndpoint(ctx context.Context, client *meshkitkube.Client) (*meshkitutils.Endpoint, error) {
+	var opts meshkitkube.ServiceOptions
+	opts.Name = "meshery"
+	opts.Namespace = MesheryNamespace
+	opts.APIServerURL = client.RestConfig.Host
+
+	return meshkitkube.GetServiceEndpoint(ctx, client.KubeClient, &opts)
+}
