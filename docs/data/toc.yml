@@ -6,6 +6,8 @@
     - title: Installation ↆ
       url: installation
       children:
+        - title: Compatibility Matrix
+          url: installation/compatibility-matrix
         - title: Docker ↆ
           url: installation/docker
           grandchildren:
