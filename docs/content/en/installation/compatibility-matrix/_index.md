@@ -16,7 +16,7 @@ Use this page to choose the Meshery installation path that matches your environm
 Docker is enough to run Meshery locally and use many of its features. A Kubernetes cluster is required for most infrastructure lifecycle management features, including deploying and operating Cloud-based resources through Meshery. See the [Feature dependency matrix](#feature-dependency-matrix) below for specifics.
 {{% /alert %}}
 
-## Installation path matrix
+## Installation Path Matrix
 
 | Installation path | Runs on | Required dependencies | Kubernetes required | Best for |
 | --- | --- | --- | --- | --- |
@@ -27,7 +27,7 @@ Docker is enough to run Meshery locally and use many of its features. A Kubernet
 | [Docker Extension](/installation/docker/docker-extension) | Docker Desktop | Docker Desktop, Kubernetes enabled in Docker Desktop, Docker Extension support | Yes | Docker Desktop users who want the shortest local setup |
 | [GitHub Codespaces](/installation/codespaces) | GitHub Codespaces | `mesheryctl`, Minikube, `kubectl`, enough Codespaces CPU and memory to run Minikube | Yes | Browser-based evaluation and contributor environments |
 
-## Environment matrix
+## Environment Matrix
 
 | Environment | Supported installation paths | Hard dependencies | Recommended additions | Notes |
 | --- | --- | --- | --- | --- |
@@ -37,7 +37,7 @@ Docker is enough to run Meshery locally and use many of its features. A Kubernet
 | Remote or managed Kubernetes cluster | Kubernetes deployment, Helm | Reachable cluster, valid kubeconfig, `kubectl` | LoadBalancer, Ingress, or port-forward access to Meshery | Good fit for shared team environments and production-style installs. See also [Upgrading Meshery](/installation/upgrades). |
 | [GitHub Codespaces](/installation/codespaces) | Kubernetes deployment in Minikube | Codespace with enough resources, Minikube, `kubectl`, `mesheryctl` | VS Code desktop or browser-based Codespaces access | Useful when you do not want to manage a local cluster. |
 
-## Feature dependency matrix
+## Feature Dependency Matrix
 
 | Capability | Docker host only | Reachable Kubernetes cluster |
 | --- | --- | --- |
@@ -48,7 +48,7 @@ Docker is enough to run Meshery locally and use many of its features. A Kubernet
 | Use [Meshery Operator and MeshSync](/guides/troubleshooting/meshery-operator-meshsync) and cluster-backed adapters | No | Yes |
 | Use the Docker Extension workflow | No | Yes, through Docker Desktop Kubernetes |
 
-## Compatibility stipulations
+## Compatibility Stipulations
 
 - Meshery should be installed onto platform versions that are still maintained by their upstream project or vendor.
 - For Kubernetes-based installs, use a Kubernetes release that is still within the Kubernetes project's supported maintenance window and follow the operational guidance in [Install Meshery on Kubernetes](/installation/kubernetes).
@@ -58,18 +58,18 @@ Docker is enough to run Meshery locally and use many of its features. A Kubernet
 - Standard Meshery installation does not require local Go or Node.js runtimes. Those are contributor dependencies for [building Meshery from source](/project/contributing).
 - If you plan to run Meshery out-of-cluster against Kubernetes, ensure the host running Meshery can reach the Kubernetes API and any broker endpoints exposed by your cluster. If connectivity fails, start with [Troubleshooting Meshery Installations](/guides/troubleshooting/installation).
 
-## Release channel guidance
+## Release Channel Guidance
 
 Meshery publishes `stable` and `edge` release channels. Use the release channel that matches how quickly your environment adopts new Kubernetes minors. See [Build & Release (CI)](/project/contributing/build-and-release) for how these channels are produced and [Upgrading Meshery](/installation/upgrades) for changing deployed components over time.
 
 | Release channel | Intended use | Kubernetes guidance |
 | --- | --- | --- |
-| `stable` | Production environments and conservative upgrades | Use for environments that stay on maintained platform releases and adopt Kubernetes upgrades through planned release management. |
-| `edge` | Early validation, development, and upcoming-platform testing | Use when validating Meshery against newly introduced platform releases before they become part of your normal stable rollout. |
+| [`stable`](/project/contributing/build-and-release/#stable-channel) | Production environments and conservative upgrades | Use for environments that stay on maintained platform releases and adopt Kubernetes upgrades through planned release management. |
+| [`edge`](/project/contributing/build-and-release/#edge-channel) | Early validation, development, and upcoming-platform testing | Use when validating Meshery against newly introduced platform releases before they become part of your normal stable rollout. |
 
 Stable and edge artifacts are published separately in Meshery's build and release process, so cluster compatibility validation should be considered together with your selected release channel, your [upgrade path](/installation/upgrades), and the current [test status](/project/contributing/test-status).
 
-## Validation checks
+## Validation Checks
 
 Validate your environment before installing Meshery:
 
@@ -85,7 +85,7 @@ If you plan to use Kubernetes, verify that your current context points to the ta
 
 {{< code code="kubectl config current-context" >}}
 
-## Choosing the right path
+## Choosing the Right Path
 
 - Choose the Docker Extension when you already standardize on Docker Desktop and want a guided local workflow.
 - Choose Docker when you want to get Meshery running quickly on a single machine.
@@ -94,7 +94,7 @@ If you plan to use Kubernetes, verify that your current context points to the ta
 
 For rollout planning after initial installation, continue with [Upgrading Meshery](/installation/upgrades).
 
-## Related reading
+## Related Reading
 
 - [Install mesheryctl](/installation/mesheryctl)
 - [Install Meshery on Docker](/installation/docker)
