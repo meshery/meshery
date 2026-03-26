@@ -14,17 +14,12 @@ function displayErrorCode() {
     return;
   }
 
-  const onclickAttr = parentRow.getAttribute("onclick");
-  if (!onclickAttr) {
+  const detailsId = parentRow.dataset.detailsId;
+  if (!detailsId) {
     return;
   }
 
-  const matches = onclickAttr.match(/toggle_visibility\('([^']+)'\)/);
-  if (!matches || !matches[1]) {
-    return;
-  }
-
-  const hiddenRow = document.getElementById(matches[1]);
+  const hiddenRow = document.getElementById(detailsId);
   if (!hiddenRow) {
     return;
   }

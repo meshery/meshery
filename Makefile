@@ -414,7 +414,7 @@ docs-clean: check-go
 
 
 ## Build Meshery Docs on your local machine.
-docs-build:
+docs-build: check-go
 	cd docs; hugo 
 
 ## Build Meshery Docs for production. BASE_URL is optional.
