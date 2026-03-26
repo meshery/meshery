@@ -90,7 +90,7 @@ If you plan to use Kubernetes, verify that your current context points to the ta
 - Choose the Docker Extension when you already standardize on Docker Desktop and want a guided local workflow.
 - Choose Docker when you want to get Meshery running quickly on a single machine.
 - Choose Kubernetes or Helm when Meshery needs to manage Kubernetes-backed infrastructure and team environments.
-- Choose a the Meshery Playground when you want to try Meshery without installing anything locally. See [Try Meshery Playground](/playground).
+- Choose the Meshery Playground when you want to try Meshery without installing anything locally. See [Try Meshery Playground](/playground).
 
 For rollout planning after initial installation, continue with [Upgrading Meshery](/installation/upgrades).
 
