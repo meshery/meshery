@@ -91,9 +91,9 @@ If you plan to use Kubernetes, verify that your current context points to the ta
 - Choose Docker when you want to get Meshery running quickly on a single machine.
 - Choose Kubernetes or Helm when Meshery needs to manage Kubernetes-backed infrastructure and team environments.
 - Choose the Docker Extension when you already standardize on Docker Desktop and want a guided local workflow.
-- Choose Codespaces when you want a disposable environment without managing local cluster tooling.
+- Choose a the Meshery Playground when you want to try Meshery without installing anything locally. See [Try Meshery Playground](/playground).
 
-For rollout planning after initial installation, continue with [Upgrading Meshery](/installation/upgrades) and [Build & Release (CI)](/project/contributing/build-and-release).
+For rollout planning after initial installation, continue with [Upgrading Meshery](/installation/upgrades).
 
 ## Related reading
 
@@ -105,15 +105,4 @@ For rollout planning after initial installation, continue with [Upgrading Mesher
 - [Upgrading Meshery](/installation/upgrades)
 - [Running system checks using Meshery CLI](/guides/mesheryctl/running-system-checks-using-mesheryctl)
 - [Troubleshooting Meshery Installations](/guides/troubleshooting/installation)
-- [Test status](/project/contributing/test-status) for automated CI and integration test visibility
-
-<!-- 
-See also [test status](/project/contributing/test-status), which needs to be combined with the Compatibility Matrix test results to come together under a unified page (set of drillable pages).
-
-{{< compatibility-matrix-kubernetes >}}
-
-## Integration Tests
-
-As a key aspect of Meshery, its integrations with other systems are routinely tested. Unit and integration tests before and after every pull request (before code is to be merged into the project and after code is merged into the project). End-to-end tests are run nightly and automatically posted to the following test matrix.
-
-{{< integration-tests >}} -->
+<!-- - [Test status](/project/contributing/test-status) for automated CI and integration test visibility -->
