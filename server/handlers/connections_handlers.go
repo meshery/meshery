@@ -57,9 +57,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			nil,
 		)
 		if err != nil {
-event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{
-				"error": err,
-			}).Build()
+			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
 			_ = provider.PersistEvent(*event, nil)
