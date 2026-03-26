@@ -66,9 +66,10 @@ func HandlePaginationAsync[T any](
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {
 			errCode := errors.GetCode(err)
-			if slices.Contains(serverAndNetworkErrors, errCode) || errCode == utils.ErrUnmarshalCode {
+			if slices.Contains(serverAndNetworkErrors, errCode) || errCode == utils.ErrUnmarshalCode || errCode == utils.ErrNotFoundCode {
 				return err
 			}
+
 			return ErrPagination(err, currentPage)
 		}
 

@@ -52,7 +52,6 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	userID := user.ID
 	page, offset, limit,
 		search, order, sortOnCol, status := getPaginationParams(req)
-	fmt.Println(page)
 	// eventCategory :=
 	filter, err := getEventFilter(req)
 	if err != nil {
@@ -73,7 +72,10 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	if err != nil || e == nil {
 		h.log.Error(ErrGetEvents(err))
 		http.Error(w, ErrGetEvents(err).Error(), http.StatusInternalServerError)
+		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(e)
 
 	if err != nil {
@@ -119,6 +121,7 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(eventTypes)
 	if err != nil {
 		h.log.Error(models.ErrMarshal(err, "event types response"))
@@ -535,6 +538,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 	}
 	go h.config.EventBroadcaster.Publish(userID, event)
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(event)
 	if err != nil {
