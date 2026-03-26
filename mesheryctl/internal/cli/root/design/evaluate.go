@@ -38,7 +38,7 @@ import (
 )
 
 type evaluateDesignFlag struct {
-	File         string `json:"file"          validate:"omitempty"`
+	File         string `json:"file"          validate:"omitempty,filepath"`
 	OutputFile   string `json:"output"        validate:"required"`
 	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
 }
