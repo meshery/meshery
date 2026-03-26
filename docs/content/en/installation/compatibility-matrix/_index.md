@@ -43,7 +43,7 @@ Docker is enough to run Meshery locally. A Kubernetes cluster is required for mo
 | --- | --- | --- |
 | Start Meshery locally and open the UI | Yes | Optional |
 | Run [`mesheryctl system check --preflight`](/guides/mesheryctl/running-system-checks-using-mesheryctl) | Yes | Optional |
-| Use performance management features | Yes | No |
+| Use performance management features | Yes | Yes |
 | Deploy and manage Kubernetes infrastructure | No | Yes |
 | Use [Meshery Operator and MeshSync](/guides/troubleshooting/meshery-operator-meshsync) and cluster-backed adapters | No | Yes |
 | Use the Docker Extension workflow | No | Yes, through Docker Desktop Kubernetes |
