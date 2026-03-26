@@ -16,7 +16,6 @@ import (
 	"github.com/meshery/meshkit/utils"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
-	"gorm.io/gorm/clause"
 )
 
 // swagger:route GET /api/system/database GetSystemDatabase idGetSystemDatabase
@@ -41,7 +40,8 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	var recordCount int
 	var totalTables int64
 	countOrder := false
-	page, offset, limit, search, order, sortDir, _ := getPaginationParams(r)
+	// order contains the column name and the direction in this format "column_name direction" e.g. "created_at desc"
+	page, offset, limit, search, order, _, _ := getPaginationParams(r)
 
 	tableFinder := h.dbHandler.DB.Table("sqlite_schema").
 		Where("type = ?", "table")
@@ -55,11 +55,7 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	orderBycount := models.SanitizeOrderInput(order, []string{"count"})
 	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order != "" {
-		if sortDir == "desc" {
-			tableFinder = tableFinder.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
-		} else {
-			tableFinder = tableFinder.Order(order)
-		}
+		tableFinder = tableFinder.Order(order)
 	} else if orderBycount != "" {
 		countOrder = true
 	}

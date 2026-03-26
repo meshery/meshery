@@ -8821,9 +8821,7 @@ paths:
             description: |-
                 # Tables can be further filtered through query parameter
 
-                ```?order={field}``` orders on the passed field
-
-                ```?sort={[asc/desc]}``` Default behavior is asc
+                ```?order={field direction}``` orders on the passed field and direction (asc/desc)
 
                 ```?page={page-number}``` Default page number is 1
 
