@@ -814,15 +814,14 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
-	client := &http.Client{}
 	req, err := NewRequest(method, path, nil)
 	if err != nil {
 		return nil, ErrCreatingRequest(err)
 	}
 
-	res, err := client.Do(req)
+	res, err := MakeRequest(req)
 	if err != nil {
-		return nil, ErrRequestResponse(err)
+		return nil, err
 	}
 	defer func() { _ = res.Body.Close() }()
 
@@ -834,7 +833,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	prefs := &models.Preference{}
 	err = encoding.Unmarshal(body, prefs)
 	if err != nil {
-		return nil, errors.New("Failed to process JSON data. Please sign into Meshery")
+		return nil, ErrUnmarshal(err)
 	}
 
 	return prefs, nil
