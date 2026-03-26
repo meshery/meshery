@@ -695,7 +695,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 	var adapters []*models.Adapter
 	prefs, err := utils.GetSessionData(hc.mctlCfg)
 	if err != nil {
-		return utils.ErrInvalidToken()
+		return err
 	}
 	for _, adapter := range prefs.MeshAdapters {
 		if adapterName != "" {
