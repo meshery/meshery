@@ -88,3 +88,5 @@ ui/.env
 *.env
 */.env
 docs/hugo_stats.json
+docs/.jekyll-metadata
+docs/_site/
