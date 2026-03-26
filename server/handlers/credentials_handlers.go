@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 
@@ -13,7 +12,7 @@ import (
 )
 
 func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	bd, err := io.ReadAll(req.Body)
+	bd, err := readBodyWithLimit(req, DefaultMaxBodySize)
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error reading request body: %v", err))
@@ -100,7 +99,7 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 }
 
 func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	bd, err := io.ReadAll(req.Body)
+	bd, err := readBodyWithLimit(req, DefaultMaxBodySize)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error reading request body: %v", err))
 		http.Error(w, "unable to read credential data", http.StatusInternalServerError)

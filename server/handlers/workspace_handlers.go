@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -90,7 +89,7 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 // responses:
 // 201: workspaceResponseWrapper
 func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	bd, err := io.ReadAll(req.Body)
+	bd, err := readBodyWithLimit(req, DefaultMaxBodySize)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
@@ -154,7 +153,7 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 //	200: workspaceResponseWrapper
 func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
-	bd, err := io.ReadAll(req.Body)
+	bd, err := readBodyWithLimit(req, DefaultMaxBodySize)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)

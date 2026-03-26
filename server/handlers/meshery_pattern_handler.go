@@ -1390,7 +1390,7 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	body, err := io.ReadAll(r.Body)
+	body, err := readBodyWithLimit(r, DefaultMaxBodySize)
 	if err != nil {
 		h.log.Error(models.ErrDataRead(err, "Request Body"))
 	}

@@ -35,7 +35,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	// }
 
 	// Read the SMP File
-	body, err := io.ReadAll(req.Body)
+	body, err := readBodyWithLimit(req, DefaultMaxBodySize)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
@@ -171,7 +171,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 			}
 		}
 	}()
-	body, err := io.ReadAll(req.Body)
+	body, err := readBodyWithLimit(req, DefaultMaxBodySize)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)

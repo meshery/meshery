@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -364,7 +363,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userUUID).WithCategory("relationship").WithAction("evaluation")
 
-	body, err := io.ReadAll(r.Body)
+	body, err := readBodyWithLimit(r, DefaultMaxBodySize)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)

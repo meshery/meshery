@@ -1,9 +1,34 @@
 package handlers
 
 import (
+	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 )
+
+const (
+	// DefaultMaxBodySize is the default maximum request body size (10 MB)
+	DefaultMaxBodySize int64 = 10 * 1024 * 1024
+)
+
+// readBodyWithLimit reads the request body up to maxBytes.
+// Returns the body bytes or an error if the body exceeds the limit.
+func readBodyWithLimit(r *http.Request, maxBytes int64) ([]byte, error) {
+	if maxBytes <= 0 {
+		maxBytes = DefaultMaxBodySize
+	}
+
+	r.Body = http.MaxBytesReader(nil, r.Body, maxBytes)
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		if err.Error() == "http: request body too large" {
+			return nil, fmt.Errorf("request body exceeds maximum allowed size of %d bytes", maxBytes)
+		}
+		return nil, fmt.Errorf("failed to read request body: %w", err)
+	}
+	return body, nil
+}
 
 const (
 	defaultPageSize = 25

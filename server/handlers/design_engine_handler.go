@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -63,7 +62,7 @@ func (h *Handler) PatternFileHandler(
 	var patternFileByte []byte
 
 	// Read the PatternFile
-	body, err := io.ReadAll(r.Body)
+	body, err := readBodyWithLimit(r, DefaultMaxBodySize)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)

@@ -3,7 +3,6 @@ package handlers
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 
 	"google.golang.org/protobuf/encoding/protojson"
@@ -42,7 +41,7 @@ func (h *Handler) UserTestPreferenceHandler(w http.ResponseWriter, req *http.Req
 
 // UserTestPreferenceStore is used for persisting load test preferences
 func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	body, err := io.ReadAll(req.Body)
+	body, err := readBodyWithLimit(req, DefaultMaxBodySize)
 	if err != nil {
 		// logrus.Error(err)
 		// http.Error(w, msg, http.StatusInternalServerError)
