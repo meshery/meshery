@@ -13,7 +13,7 @@ cascade:
 Use this page to choose the Meshery installation path that matches your environment. Meshery itself runs on [Docker](/installation/docker) or [Kubernetes](/installation/kubernetes). [mesheryctl](/installation/mesheryctl) is the common control point for installing, configuring, and operating Meshery across those targets.
 
 {{% alert color="info" title="What is actually required?" %}}
-Docker is enough to run Meshery locally. A Kubernetes cluster is required for most infrastructure lifecycle management features, including deploying and operating Kubernetes-based resources through Meshery.
+Docker is enough to run Meshery locally and use many of its features. A Kubernetes cluster is required for most infrastructure lifecycle management features, including deploying and operating Cloud-based resources through Meshery. See the [Feature dependency matrix](#feature-dependency-matrix) below for specifics.
 {{% /alert %}}
 
 ## Installation path matrix
@@ -50,13 +50,12 @@ Docker is enough to run Meshery locally. A Kubernetes cluster is required for mo
 
 ## Compatibility stipulations
 
-- [`mesheryctl`](/installation/mesheryctl) is the recommended installation and operations interface for Meshery across all supported environments.
 - Meshery should be installed onto platform versions that are still maintained by their upstream project or vendor.
 - For Kubernetes-based installs, use a Kubernetes release that is still within the Kubernetes project's supported maintenance window and follow the operational guidance in [Install Meshery on Kubernetes](/installation/kubernetes).
 - Match `kubectl` to the lifecycle of the cluster you target and keep it within the Kubernetes version skew policy.
 - For Docker-based installs, use a current Docker Engine or Docker Desktop release that includes Compose support and can run the Meshery container set reliably. See [Install Meshery on Docker](/installation/docker).
 - The Docker Extension path applies when Docker Desktop supports extensions and Kubernetes is enabled in Docker Desktop. See [Install Docker Extension for Meshery](/installation/docker/docker-extension).
-- Standard Meshery installation does not require local Go or Node.js runtimes. Those are contributor dependencies for building Meshery from source.
+- Standard Meshery installation does not require local Go or Node.js runtimes. Those are contributor dependencies for [building Meshery from source](/project/contributing).
 - If you plan to run Meshery out-of-cluster against Kubernetes, ensure the host running Meshery can reach the Kubernetes API and any broker endpoints exposed by your cluster. If connectivity fails, start with [Troubleshooting Meshery Installations](/guides/troubleshooting/installation).
 
 ## Release channel guidance
@@ -88,9 +87,9 @@ If you plan to use Kubernetes, verify that your current context points to the ta
 
 ## Choosing the right path
 
+- Choose the Docker Extension when you already standardize on Docker Desktop and want a guided local workflow.
 - Choose Docker when you want to get Meshery running quickly on a single machine.
 - Choose Kubernetes or Helm when Meshery needs to manage Kubernetes-backed infrastructure and team environments.
-- Choose the Docker Extension when you already standardize on Docker Desktop and want a guided local workflow.
 - Choose a the Meshery Playground when you want to try Meshery without installing anything locally. See [Try Meshery Playground](/playground).
 
 For rollout planning after initial installation, continue with [Upgrading Meshery](/installation/upgrades).
