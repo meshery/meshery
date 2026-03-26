@@ -782,8 +782,8 @@ github.com/bufbuild/protocompile v0.14.1 h1:iA73zAf/fyljNjQKwYzUHD6AD4R8KMasmwa/
 github.com/bufbuild/protocompile v0.14.1/go.mod h1:ppVdAIhbr2H8asPk6k4pY7t9zB1OU5DoEw9xY/FUi1c=
 github.com/buger/goterm v1.0.4 h1:Z9YvGmOih81P0FbVtEYTFF6YsSgxSUKEhf/f9bTMXbY=
 github.com/buger/goterm v1.0.4/go.mod h1:HiFWV3xnkolgrBV3mY8m0X0Pumt4zg4QhbdOzQtB8tE=
-github.com/buger/jsonparser v1.1.1 h1:2PnMjfWD7wBILjqQbt530v576A/cAbQvEW9gGIpYMUs=
-github.com/buger/jsonparser v1.1.1/go.mod h1:6RYKKt7H4d4+iWqouImQ9R2FZql3VbhNgx27UK13J/0=
+github.com/buger/jsonparser v1.1.2 h1:frqHqw7otoVbk5M8LlE/L7HTnIq2v9RX6EJ48i9AxJk=
+github.com/buger/jsonparser v1.1.2/go.mod h1:6RYKKt7H4d4+iWqouImQ9R2FZql3VbhNgx27UK13J/0=
 github.com/bugsnag/bugsnag-go v1.0.5-0.20150529004307-13fd6b8acda0 h1:s7+5BfS4WFJoVF9pnB8kBk03S7pZXRdKamnV0FOl5Sc=
 github.com/bugsnag/bugsnag-go v1.0.5-0.20150529004307-13fd6b8acda0/go.mod h1:2oa8nejYd4cQ/b0hMIopN0lCRxU0bueqREvZLWFrtK8=
 github.com/bugsnag/osext v0.0.0-20130617224835-0dd3f918b21b h1:otBG+dV+YK+Soembjv71DPz3uX/V/6MMlSyD9JBQ6kQ=
@@ -1502,8 +1502,8 @@ github.com/meshery/meshkit v0.8.70 h1:+dApZEaoyXQ1vQUuKMzMBCWMAnzfROs66uN/2Csy+J
 github.com/meshery/meshkit v0.8.70/go.mod h1:kIcfGcQgOxaZ3rx2H3z8fp6VmjbNHwm9Ma6QdZ9zJj8=
 github.com/meshery/meshsync v0.8.26 h1:GM5jzECZMCQGx3BMNo9cahcAfD/TXYue/DPWFGpjnho=
 github.com/meshery/meshsync v0.8.26/go.mod h1:RNQnmmg/hq/TaGbu6hIVAPCnjB4dIMm9Nmi729OgmFM=
-github.com/meshery/schemas v0.8.129 h1:N2ZaQFeKH4U3t3TAHKUXjx/VrWYiU+EiDde8WsO6m4o=
-github.com/meshery/schemas v0.8.129/go.mod h1:+N/+Q3ZJzBrGGWVGTNWA4m8PviHhM2cnrsVv8p27ieQ=
+github.com/meshery/schemas v0.9.0 h1:BXZcx/Fm2IeKHv3YfYIn1GYEDDVwxPXVxQHyBz39O34=
+github.com/meshery/schemas v0.9.0/go.mod h1:+N/+Q3ZJzBrGGWVGTNWA4m8PviHhM2cnrsVv8p27ieQ=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
 github.com/miekg/pkcs11 v1.0.2/go.mod h1:XsNlhZGX73bx86s2hdc/FuaLm2CPZJemRLMA+WTFxgs=

@@ -7,7 +7,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
@@ -34,16 +33,19 @@ func SetupContextEnv(t *testing.T) {
 	}
 }
 
-func SetupFunc() {
-	//fmt.Println(viper.AllKeys())
-	b = bytes.NewBufferString("")
-	logrus.SetOutput(b)
-	utils.SetupLogrusFormatter()
+func SetupFunc(t *testing.T) {
+	b = utils.SetupMeshkitLoggerTesting(t, true)
 	SystemCmd.SetOut(b)
 }
 
 func BreakupFunc() {
 	viewCmd.Flags().VisitAll(setFlagValueAsUndefined)
+	viewProviderCmd.Flags().VisitAll(setFlagValueAsUndefined)
+	SystemCmd.PersistentFlags().VisitAll(setFlagValueAsUndefined)
+	showForAllContext = false
+	showProviderForAllContext = false
+	tempContext = ""
+	utils.SilentFlag = false
 }
 
 func setFlagValueAsUndefined(flag *pflag.Flag) {
@@ -61,27 +63,36 @@ func TestViewCmd(t *testing.T) {
 	SetupContextEnv(t)
 	tests := []CmdTestInput{
 		{
+			Name:             "view with context override",
+			Args:             []string{"channel", "view", "-c", "gke"},
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+		},
+		{
 			Name:             "view without any parameter",
 			Args:             []string{"channel", "view"},
 			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n\n",
 		},
 		{
-			Name:             "view with context override",
-			Args:             []string{"channel", "view", "-c", "gke"},
-			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+			Name: "view with all flag",
+			Args: []string{"channel", "view", "--all"},
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n" +
+				PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n\n" +
+				"Current Context: local\n",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc()
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+			SystemCmd.SetOut(buf)
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
 
-			actualResponse := b.String()
+			actualResponse := buf.String()
 			expectedResponse := tt.ExpectedResponse
 			assert.Equal(t, expectedResponse, actualResponse)
 			BreakupFunc()
@@ -105,13 +116,15 @@ func TestSetCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc()
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+			SystemCmd.SetOut(buf)
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
-			actualResponse := b.String()
+			actualResponse := buf.String()
 			expectedResponse := tt.ExpectedResponse
 			assert.Equal(t, expectedResponse, actualResponse)
 			BreakupFunc()

@@ -17,7 +17,11 @@ components:
   colorIcon: content/en/extensions/models/k8gb/components/gslb/icons/color/gslb-color.svg
   whiteIcon: content/en/extensions/models/k8gb/components/gslb/icons/white/gslb-white.svg
   description: 
-components-count: 2
+- name: zone-delegation
+  colorIcon: content/en/extensions/models/k8gb/components/zone-delegation/icons/color/zone-delegation-color.svg
+  whiteIcon: content/en/extensions/models/k8gb/components/zone-delegation/icons/white/zone-delegation-white.svg
+  description: 
+components-count: 3
 relationships: 
 relationship-count: 0
 featureList: [
