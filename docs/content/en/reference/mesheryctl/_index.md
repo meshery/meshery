@@ -5,6 +5,8 @@ aliases:
 - /reference/mesheryctl/commands/
 - /reference/mesheryctl/commands
 - /reference/mesheryctl/
+cascade:
+  body_class: mesheryctl-reference-page
 ---
 
 ## Categories and Command Structure
