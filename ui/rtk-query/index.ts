@@ -1,1 +1,1 @@
-export { mesheryBaseApi as api } from '@meshery/schemas/dist/api';
+export { mesheryApi as api } from '@meshery/schemas/dist/mesheryApi';
