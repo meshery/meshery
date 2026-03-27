@@ -5,6 +5,7 @@ display_title: false
 hide_summary: true
 service-mesh: istio
 subheading: "meshery-istio"
+toc_hide: true
 ---
 
 
