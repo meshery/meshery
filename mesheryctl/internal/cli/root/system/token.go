@@ -52,6 +52,14 @@ var tokenCmd = &cobra.Command{
 	},
 }
 
+func activeConfigPath() string {
+	if configPath := viper.ConfigFileUsed(); configPath != "" {
+		return configPath
+	}
+
+	return utils.DefaultConfigPath
+}
+
 func checkTokenName(n int) cobra.PositionalArgs {
 	return func(cmd *cobra.Command, args []string) error {
 		if len(args) != n || args[0] == "" {
@@ -73,6 +81,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 	Args: checkTokenName(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
+		configPath := activeConfigPath()
 		if tokenPath == "" {
 			tokenPath = "auth.json"
 		}
@@ -81,7 +90,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 			Name:     tokenName,
 			Location: tokenPath,
 		}
-		if err := config.AddTokenToConfig(token, utils.DefaultConfigPath); err != nil {
+		if err := config.AddTokenToConfig(token, configPath); err != nil {
 			return errors.Wrap(err, "Could not create specified token to config")
 		}
 		utils.Log.Info(fmt.Sprintf("Token %s created.", tokenName))
@@ -89,7 +98,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 			if ctx == "" {
 				ctx = viper.GetString("current-context")
 			}
-			if err = config.SetTokenToConfig(tokenName, utils.DefaultConfigPath, ctx); err != nil {
+			if err = config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
 				return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
 			}
 			utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, ctx))
@@ -107,8 +116,9 @@ mesheryctl system token delete [token-name]
 	Args: checkTokenName(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
+		configPath := activeConfigPath()
 
-		if err = config.DeleteTokenFromConfig(tokenName, utils.DefaultConfigPath); err != nil {
+		if err = config.DeleteTokenFromConfig(tokenName, configPath); err != nil {
 			return errors.Wrapf(err, "Could not delete token \"%s\" from config", tokenName)
 		}
 		utils.Log.Infof("Token %s deleted.", tokenName)
@@ -125,11 +135,12 @@ mesheryctl system token set [token-name]
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
+		configPath := activeConfigPath()
 		if ctx == "" {
 			ctx = viper.GetString("current-context")
 		}
 
-		if err = config.SetTokenToConfig(tokenName, utils.DefaultConfigPath, ctx); err != nil {
+		if err = config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
 			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
 
 		}
@@ -146,11 +157,12 @@ mesheryctl system token list
 	`,
 	Args: cobra.ExactArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if _, err := os.Stat(utils.DefaultConfigPath); os.IsNotExist(err) {
+		configPath := activeConfigPath()
+		if _, err := os.Stat(configPath); os.IsNotExist(err) {
 			return err
 		}
 
-		viper.SetConfigFile(utils.DefaultConfigPath)
+		viper.SetConfigFile(configPath)
 		err := viper.ReadInConfig()
 		if err != nil {
 			utils.Log.Error(utils.ErrReadConfigFile(err))
@@ -178,11 +190,12 @@ mesheryctl system token view [token-name]
 mesheryctl system token view (show token of current context)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if _, err := os.Stat(utils.DefaultConfigPath); os.IsNotExist(err) {
+		configPath := activeConfigPath()
+		if _, err := os.Stat(configPath); os.IsNotExist(err) {
 			return err
 		}
 
-		viper.SetConfigFile(utils.DefaultConfigPath)
+		viper.SetConfigFile(configPath)
 		err := viper.ReadInConfig()
 		if err != nil {
 			utils.Log.Error(utils.ErrReadConfigFile(err))
