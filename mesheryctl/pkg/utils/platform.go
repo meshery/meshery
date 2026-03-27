@@ -667,7 +667,7 @@ func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, 
 	podList, err := podInterface.List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
-		return nil, err
+		return nil, ErrListMesheryPods(err)
 	}
 	return podList, nil
 }
