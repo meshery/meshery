@@ -11,20 +11,10 @@ const REMOTE_PROVIDER_USER = {
 const PROVIDER_SELECTION_URL = `${MESHERY_SERVER_URL}/provider`;
 const PROVIDER_TOKEN = process.env.PROVIDER_TOKEN;
 
-if (process.env.CI) {
-  const core = require('@actions/core');
-
-  if (!USER_EMAIL && !USER_PASSWORD) {
-    core.warning('Using default email and password on auth');
-  } else if (!USER_EMAIL || !USER_PASSWORD) {
-    core.setFailed("You're either email or password is empty");
-  }
-} else {
-  if (!USER_EMAIL && !USER_PASSWORD) {
-    console.warn('Using default email and password on auth');
-  } else if (!USER_EMAIL || !USER_PASSWORD) {
-    throw new Error('You are email or password is empty');
-  }
+if (!USER_EMAIL && !USER_PASSWORD) {
+  console.warn('Using default email and password on auth');
+} else if (!USER_EMAIL || !USER_PASSWORD) {
+  throw new Error('Either email or password is empty');
 }
 
 const AUTHFILELOCALPROVIDER = 'playwright/.auth/user-local-provider.json';
