@@ -30,6 +30,7 @@ var (
 	tokenPath     string
 	ctx           string
 	viewAllTokens bool
+	set           bool
 )
 
 var tokenCmd = &cobra.Command{

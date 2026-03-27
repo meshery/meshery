@@ -19,6 +19,9 @@ import "github.com/meshery/meshkit/errors"
 const (
 	ErrInvalidMeshConfigCode = "mesheryctl-1008"
 	ErrUpdateConfigCode      = "mesheryctl-1009"
+	ErrReadMesheryConfigCode = "replace_me"
+	ErrDuplicateContextCode  = "replace_me"
+	ErrWriteMeshConfigCode   = "replace_me"
 )
 
 func ErrInvalidMeshConfig(err error) error {
@@ -32,4 +35,28 @@ func ErrUpdateConfig(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to Update config file"},
 		[]string{"Ensure that you have the correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."})
+}
+
+func ErrReadMesheryConfig(err error) error {
+	return errors.New(ErrReadMesheryConfigCode, errors.Fatal,
+		[]string{"Error in reading config"},
+		[]string{err.Error()},
+		[]string{"Unable to read config file"},
+		[]string{"Ensure that you have the correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."})
+}
+
+func ErrDuplicateContext(err error) error {
+	return errors.New(ErrDuplicateContextCode, errors.Fatal,
+		[]string{"Duplicate Context"},
+		[]string{err.Error()},
+		[]string{"A context with the same name already exists in the config file"},
+		[]string{"Use a different name for the context or delete the existing context with the same name"})
+}
+
+func ErrWriteMeshConfig(err error) error {
+	return errors.New(ErrWriteMeshConfigCode, errors.Fatal,
+		[]string{"Error in writing config"},
+		[]string{err.Error()},
+		[]string{"Unable to write to config file"},
+		[]string{"Ensure that you have the correct permissions to write to the config file at `$HOME/.meshery/config.yaml`."})
 }

@@ -452,12 +452,12 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 	viper.SetConfigFile(configPath)
 	err := viper.ReadInConfig()
 	if err != nil {
-		return err
+		return ErrReadMesheryConfig(err)
 	}
 
 	mctlCfg, err := GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return errors.Wrap(err, "error processing config")
+		return err
 	}
 
 	if mctlCfg.Contexts == nil {
@@ -466,7 +466,7 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 
 	_, exists := mctlCfg.Contexts[contextName]
 	if exists && !overwrite {
-		return errors.New("error adding context: a context with same name already exists")
+		return ErrDuplicateContext(errors.New("error adding context: a context with same name already exists"))
 	}
 
 	mctlCfg.Contexts[contextName] = context
@@ -480,7 +480,7 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 
 	err = viper.WriteConfig()
 	if err != nil {
-		return err
+		return ErrWriteMeshConfig(err)
 	}
 
 	return nil

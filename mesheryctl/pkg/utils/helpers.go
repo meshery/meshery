@@ -550,10 +550,10 @@ func CreateConfigFile() error {
 func ValidateURL(URL string) error {
 	ParsedURL, err := url.ParseRequestURI(URL)
 	if err != nil {
-		return err
+		return ErrParsingUrl(err)
 	}
 	if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
-		return fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme)
+		return ErrParsingUrl(fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme))
 	}
 	return nil
 }
