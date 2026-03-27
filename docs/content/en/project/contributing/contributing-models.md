@@ -25,7 +25,7 @@ Models can describe traditional technologies (like Kubernetes workloads), or mor
 
 #### What Is the Model Schema?
 
-Each model includes a set of entities (in the form of definitions) that Meshery can manage. Models are defined and versioned using the [Model Schema](https://github.com/meshery/schemas/blob/master/schemas/constructs/openapi/meshmodels.yml).
+Each model includes a set of entities (in the form of definitions) that Meshery can manage. Models are defined and versioned using the [Model Schema](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta1/model/model.yaml).
 
 The schema defines the structure of the model, including the entities it contains, their relationships, and the properties they have. The schema also defines the version of the model and the version of the schema itself.
 
