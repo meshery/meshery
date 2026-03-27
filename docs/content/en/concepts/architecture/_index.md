@@ -21,7 +21,7 @@ Meshery and its components are written using the following languages and technol
 | [Meshery CLI](#meshery-cli)                                          | Golang                                                                            |
 | --- [Extensions]({{< relref "/extensions" >}}) ---                                    |                                                                                   |
 | [Meshery Adapters]({{< relref "/concepts/architecture/adapters" >}})                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/)                              |
-| [Meshery Remote Providers]({{< relref "/extensibility/providers" >}})                 | _any_ - must adhere to Meshery [Extension Points]({{< relref "/extensibility" >}}) |
+| [Meshery Remote Providers]({{< relref "/reference/extensibility/providers" >}})                 | _any_ - must adhere to Meshery [Extension Points]({{< relref "/reference/extensibility" >}}) |
 | [Envoy WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
 
 ## Deployments
@@ -53,11 +53,11 @@ Meshery's REST API may be consumed by any number of clients. Clients need to pre
 <a href="/concepts/architecture/images/Meshery-client-architecture.webp" class="lightbox-image">
 <img src="/concepts/architecture/images/Meshery-client-architecture.webp" width="50%" /></a>
 
-_Figure: Clients use Meshery's [REST API]({{< relref "/extensibility/api" >}}#rest), [GraphQL API]({{< relref "/extensibility/api" >}}#graphql), or a combination of both._
+_Figure: Clients use Meshery's [REST API]({{< relref "/reference/extensibility/api" >}}#rest), [GraphQL API]({{< relref "/reference/extensibility/api" >}}#graphql), or a combination of both._
 
 ### Providers
 
-As a point of extensibility, Meshery supports two types of [providers]({{< relref "/extensibility/providers" >}}): _Local_ and _Remote_.
+As a point of extensibility, Meshery supports two types of [providers]({{< relref "/reference/extensibility/providers" >}}): _Local_ and _Remote_.
 
 <a href="/concepts/architecture/images/Meshery-provider-architecture.webp" class="lightbox-image">
 <img src="/concepts/architecture/images/Meshery-provider-architecture.webp" width="50%" /></a>
@@ -123,7 +123,7 @@ concerned with a long-lived configuration, while others have no state at all.
 | [mesheryctl]({{< relref "/guides/mesheryctl/working-with-mesheryctl" >}})        | stateless    | command line interface that has a configuration file                  |
 | [Meshery Adapters]({{< relref "/concepts/architecture/adapters" >}})  | stateless    | interface with cloud native infrastructure on a transactional basis                |
 | Meshery Server    | caches state | application cache is stored in `$HOME/.meshery/` folder               |
-| [Meshery Providers]({{< relref "/extensibility/providers" >}}) | stateful     | location of persistent user preferences, environment, tests and so on |
+| [Meshery Providers]({{< relref "/reference/extensibility/providers" >}}) | stateful     | location of persistent user preferences, environment, tests and so on |
 | [Meshery Operator]({{< relref "/concepts/architecture/operator" >}})  | stateless    | operator of Meshery custom controllers, notably MeshSync              |
 | [MeshSync]({{< relref "/concepts/architecture/meshsync" >}})          | stateless    | Kubernetes custom controller, continuously running discovery          |
 
