@@ -44,7 +44,7 @@ type cmdContextCreateFlags struct {
 	URL        string   `json:"url" validate:"omitempty,url"`
 	Components []string `json:"components" validate:"omitempty"`
 	Platform   string   `json:"platform" validate:"omitempty,oneof=docker kubernetes"`
-	Provider   string   `json:"provider" validate:"omitempty,oneof=Layer5 None\""`
+	Provider   string   `json:"provider" validate:"omitempty,oneof=Layer5 None"`
 	Set        bool     `json:"set" validate:"boolean"`
 }
 
