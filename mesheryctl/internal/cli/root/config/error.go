@@ -34,7 +34,7 @@ func ErrUpdateConfig(err error) error {
 		[]string{"Error in writing config"},
 		[]string{err.Error()},
 		[]string{"Unable to Update config file"},
-		[]string{"Ensure that you have the correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."})
+		[]string{"Ensure that you have the correct context in your meshconfig at `$HOME/.meshery/config.yaml`."})
 }
 
 func ErrReadMesheryConfig(err error) error {
@@ -42,7 +42,7 @@ func ErrReadMesheryConfig(err error) error {
 		[]string{"Error in reading config"},
 		[]string{err.Error()},
 		[]string{"Unable to read config file"},
-		[]string{"Ensure that you have the correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."})
+		[]string{"Ensure that you have the correct context in your meshconfig at `$HOME/.meshery/config.yaml`."})
 }
 
 func ErrDuplicateContext(err error) error {
