@@ -399,7 +399,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("DELETE")
 
 	// Handlers for User Connections
-	gMux.Handle("/api/integrations/connections", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveConnection), models.ProviderAuth))).
+	gMux.Handle("/api/integrations/connections", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.BodySizeLimiterMiddleware(h.SaveConnection)), models.ProviderAuth))).
 		Methods("POST")
 	gMux.Handle("/api/integrations/connections", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnections), models.ProviderAuth))).
 		Methods("GET")

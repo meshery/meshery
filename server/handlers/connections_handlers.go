@@ -1,9 +1,11 @@
 package handlers
 
+
 import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -129,18 +131,11 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 // responses:
 // 201: noContentWrapper
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	bd, err := readBodyWithLimit(req, DefaultMaxBodySize)
 	userID := user.ID
-	if err != nil {
-		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-		return
-	}
-
 	connection := connections.ConnectionPayload{}
-	err = json.Unmarshal(bd, &connection)
 	obj := "connection"
 
+	err := json.NewDecoder(req.Body).Decode(&connection)
 	if err != nil {
 		h.log.Error(models.ErrUnmarshal(err, obj))
 		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
@@ -179,6 +174,14 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 
 	h.log.Info(description)
 	w.WriteHeader(http.StatusCreated)
+}
+
+// BodySizeLimiterMiddleware limits the size of the request body for security and resource protection
+func (h *Handler) BodySizeLimiterMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		req.Body = http.MaxBytesReader(w, req.Body, DefaultMaxBodySize)
+		next(w, req)
+	}
 }
 
 // swagger:route GET /api/integrations/connections GetConnections idGetConnections
