@@ -105,7 +105,18 @@
         & a {
           color: var(--color-secondary-medium);
           display: block;
+          position: relative;
+          padding-left: 0.85rem;
           line-height: 1.2;
+
+          &::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.1rem;
+            font-weight: 900;
+          }
 
           & strong {
             color: inherit;
