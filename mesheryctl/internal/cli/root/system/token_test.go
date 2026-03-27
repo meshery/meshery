@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -431,5 +432,64 @@ func TestTokenListCmd(t *testing.T) {
 			}
 			BreakupFunc()
 		})
+	}
+}
+
+func TestTokenCreateUsesActiveConfigPath(t *testing.T) {
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+
+	currDir := filepath.Dir(filename)
+	activeConfigPath := filepath.Join(currDir, "testdata/token/create_default.yaml")
+	defaultConfigPath := filepath.Join(currDir, "testdata/token/list.yaml")
+
+	activeOriginal, err := os.ReadFile(activeConfigPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defaultOriginal, err := os.ReadFile(defaultConfigPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		_ = os.WriteFile(activeConfigPath, activeOriginal, 0o644)
+		_ = os.WriteFile(defaultConfigPath, defaultOriginal, 0o644)
+		BreakupFunc()
+	})
+
+	utils.SetupCustomContextEnv(t, activeConfigPath)
+	utils.DefaultConfigPath = defaultConfigPath
+	tokenPath = ""
+	set = false
+	ctx = ""
+
+	b := utils.SetupMeshkitLoggerTesting(t, false)
+	SystemCmd.SetOut(b)
+	SystemCmd.SetArgs([]string{"token", "create", "regression-token"})
+
+	if err := SystemCmd.Execute(); err != nil {
+		t.Fatal(err)
+	}
+
+	activeUpdated, err := os.ReadFile(activeConfigPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defaultUpdated, err := os.ReadFile(defaultConfigPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !strings.Contains(string(activeUpdated), "name: regression-token") {
+		t.Fatalf("expected active config %s to be updated with the new token", activeConfigPath)
+	}
+
+	if strings.Contains(string(defaultUpdated), "name: regression-token") {
+		t.Fatalf("expected default config %s to remain unchanged", defaultConfigPath)
 	}
 }
