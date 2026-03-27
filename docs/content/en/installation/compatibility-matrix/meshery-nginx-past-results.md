@@ -5,4 +5,5 @@ display_title: false
 hide_summary: true
 service-mesh: nginx-sm
 subheading: meshery-nginx-sm
+toc_hide: true
 ---

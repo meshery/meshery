@@ -7,6 +7,7 @@ display_title: false
 cascade:
   type: compatibility-matrix
 publish: false
+toc_hide: true
 ---
 
 Meshery Server and Meshery Adapters are tested daily for their compatibility with the infrastructure they manage and the platforms Meshery deploys on (Kubernetes and Docker). End-to-end test results are automatically posted to the following compatibility matrix.

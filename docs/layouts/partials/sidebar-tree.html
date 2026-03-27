@@ -87,13 +87,7 @@
   {{ $pages_tmp := where (union $s.Pages $s.Sections) ".Params.toc_hide" "!=" true -}}
   {{ $pages_tmp = sort $pages_tmp "Title" "asc" -}}
   {{ $pages_tmp = sort $pages_tmp "Weight" "asc" -}}
-  {{ $pages := $pages_tmp | first $sidebarMenuTruncate -}}
-  {{ $truncatedEntryCount := sub (len $pages_tmp) $sidebarMenuTruncate -}}
-
-  {{ if gt $truncatedEntryCount 0 -}}
-    {{ warnf "WARNING: %d sidebar entries have been truncated. To avoid this, increase `params.ui.sidebar_menu_truncate` to at least %d (from %d) in your config file. Section: %s"
-        $truncatedEntryCount (len $pages_tmp) $sidebarMenuTruncate  $s.Path -}}
-  {{ end -}}
+  {{ $pages := $pages_tmp -}}
 
   {{ $withChild := gt (len $pages) 0 -}}
   {{ $manualLink :=
