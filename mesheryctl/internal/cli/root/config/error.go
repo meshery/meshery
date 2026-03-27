@@ -19,9 +19,9 @@ import "github.com/meshery/meshkit/errors"
 const (
 	ErrInvalidMeshConfigCode = "mesheryctl-1008"
 	ErrUpdateConfigCode      = "mesheryctl-1009"
-	ErrReadMesheryConfigCode = "replace_me"
-	ErrDuplicateContextCode  = "replace_me"
-	ErrWriteMeshConfigCode   = "replace_me"
+	ErrReadMesheryConfigCode = "mesheryctl-1207"
+	ErrDuplicateContextCode  = "mesheryctl-1208"
+	ErrWriteMeshConfigCode   = "mesheryctl-1209"
 )
 
 func ErrInvalidMeshConfig(err error) error {
