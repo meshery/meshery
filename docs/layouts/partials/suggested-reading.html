@@ -24,14 +24,15 @@
 
 {{ $reading := $ctx.reading | default site.Pages }}
 
-<ul>
+<ul class="related-models-list">
 {{ range $reading }}
 
     {{ if ne .RelPermalink $ctx.url }}
 
         <li>
-            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-
+            <span>
+                <a href="{{ .Permalink }}">{{ .Title }}</a>
+            </span>
             {{ with .Params.abstract }}
                 - {{ . }}
             {{ end }}
@@ -42,3 +43,4 @@
 
 {{ end }}
 </ul>
+

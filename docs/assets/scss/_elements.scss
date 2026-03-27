@@ -150,3 +150,25 @@ button {
   border: 1px solid var(--color-secondary-light);
 }
 
+.related-models-list {
+  columns: 2;
+  column-gap: 2rem;
+  padding-inline-start: 2rem;
+  margin-bottom: 1.5rem;
+  list-style: disc inside;
+  display: block;
+
+  @media (max-width: 900px) {
+    columns: 1;
+  }
+
+  @media (min-width: 1400px) {
+    columns: 3;
+  }
+
+  li {
+    break-inside: avoid;
+    margin-bottom: 0.5rem;
+    color: var(--color-secondary-medium);
+  }
+}
