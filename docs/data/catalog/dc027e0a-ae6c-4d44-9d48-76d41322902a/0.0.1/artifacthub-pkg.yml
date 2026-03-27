@@ -1,0 +1,25 @@
+version: 0.0.1
+name: datadog-3.127.1.tgz
+displayName: datadog-3.127.1.tgz
+createdAt: "2025-10-19T16:23:00Z"
+description: |
+    Cloud-scale monitoring and observability platform with APM, infrastructure monitoring, log management, and security features for Kubernetes.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/dc027e0a-ae6c-4d44-9d48-76d41322902a/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires Datadog API credentials. Resource-intensive - review limits before deploying. Configure only needed agents (APM/logs/metrics). Ensure network policies allow external API access.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 0f2ea3e8-17e5-43cb-9484-47d586f9dbe5
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/dc027e0a-ae6c-4d44-9d48-76d41322902a-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/dc027e0a-ae6c-4d44-9d48-76d41322902a-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

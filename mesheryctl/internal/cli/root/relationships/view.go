@@ -89,7 +89,7 @@ mesheryctl relationship view [model-name] --output-format json --save
 
 		if relationshipViewFlagsProvided.save {
 
-			shortID := selectedModel.Id.String()[:8]
+			shortID := selectedModel.ID.String()[:8]
 			sanitizer := strings.NewReplacer("/", "_")
 			sanitizedName := sanitizer.Replace(selectedModel.Model.Name)
 			fileName := fmt.Sprintf("relationship_%s_%s", sanitizedName, shortID)

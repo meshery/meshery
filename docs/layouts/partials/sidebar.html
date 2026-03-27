@@ -1,0 +1,130 @@
+{{ $sidebarCacheLimit := .Site.Params.ui.sidebar_cache_limit | default 2000 -}}
+{{ $cacheSidebar := ge (len .Site.Pages) $sidebarCacheLimit -}}
+{{ $sidebarRoot := .Site.Home -}}
+{{ $sidebarRootID := $sidebarRoot.RelPermalink -}}
+{{ $args := dict
+    "context" .
+    "cacheSidebar" $cacheSidebar
+    "sidebarRoot" $sidebarRoot
+    "sidebarRootID" $sidebarRootID
+-}}
+{{ if $cacheSidebar -}}
+  {{ $mid := printf "m-%s" (.RelPermalink | anchorize) }}
+  <script>
+    $(function() {
+    $("#td-section-nav a").removeClass("active");
+    $("#td-section-nav #{{ $mid }}").addClass("active");
+    $("#td-section-nav #{{ $mid }}-li span").addClass("td-sidebar-nav-active-item");
+    $("#td-section-nav #{{ $mid }}").parents("li").addClass("active-path show");
+    $("#td-section-nav #{{ $mid }}").parents("li").siblings("li").addClass("show");
+    $("#td-section-nav #{{ $mid }}-li").siblings("li").addClass("show");
+    $("#td-section-nav #{{ $mid }}-li").children("ul").children("li").addClass("show");
+    $("#td-sidebar-menu").removeClass("d-none"); 
+    });
+  </script>
+  {{ partialCached "sidebar-tree.html" $args $sidebarRootID }}
+{{ else -}}
+  {{ partial "sidebar-tree.html" $args }}
+{{- end }}
+<script>
+  (function() {
+    function injectToggleButton(li, icon, position, extraClass) {
+      // Only process sections that actually have children (ul exists)
+      var ul = li.querySelector(":scope > ul");
+      var a = li.querySelector(":scope > a.td-sidebar-link");
+      if (!a || !ul) return;
+      
+      if (li.querySelector(':scope > .sidebar-section-flex-wrapper')) return;
+      
+      var btn = document.createElement("button");
+      btn.className = "sidebar-section-toggle " + (extraClass || "");
+      btn.setAttribute("aria-label", "Toggle section");
+      btn.innerHTML = icon;
+      btn.onclick = function(e) {
+        e.preventDefault();
+        
+        var $ul = $(ul);
+        var childLis = ul.querySelectorAll(":scope > li");
+        var isClosed = childLis.length > 0 && !childLis[0].classList.contains("show");
+        
+        if (isClosed) {
+          $ul.hide();
+          childLis.forEach(function(childLi) {
+            childLi.classList.add("show");
+          });
+        }
+        
+        $ul.slideToggle(400, function() {
+          if ($ul.css("display") === "none") {
+            childLis.forEach(function(childLi) {
+              childLi.classList.remove("show");
+            });
+            $ul.css("display", "");
+          }
+        });
+
+        li.classList.toggle("active-path");
+      };
+      
+      var wrapper = document.createElement("div");
+      wrapper.className = "sidebar-section-flex-wrapper";
+      a.parentNode.insertBefore(wrapper, a);
+      
+      if (position === "after") {
+        wrapper.style.justifyContent = "space-between";
+        wrapper.appendChild(a);
+        wrapper.appendChild(btn);
+      } else {
+        wrapper.appendChild(btn);
+        wrapper.appendChild(a);
+      }
+    }
+
+    var rootLis = document.querySelectorAll(".td-sidebar-nav .ul-1 > li.with-child");
+    rootLis.forEach(function(li) {
+      injectToggleButton(li, "⇅", "before", "");
+    });
+
+    var childLis = document.querySelectorAll(".td-sidebar-nav .ul-1 ul li.with-child");
+    childLis.forEach(function(li) {
+      injectToggleButton(li, "⇅", "before", "child-toggle");
+    });
+  })();
+</script>
+
+<script>
+  $(function() {
+    const $rootSidebarItem = $("#td-section-nav > ul > li").filter(function() {
+      return $(this).find('> a.tree-root[href="{{ .Site.Home.RelPermalink }}"], > label > a.tree-root[href="{{ .Site.Home.RelPermalink }}"]').length > 0;
+    }).first();
+    const $sidebarSearchForm = $("#td-sidebar-menu form.td-sidebar__search");
+    const $sidebarSearchInput = $sidebarSearchForm.find('input[name="q"]').first();
+
+    if ($rootSidebarItem.length) {
+      $rootSidebarItem.addClass("td-sidebar-root-hidden");
+    }
+
+    if (!$sidebarSearchForm.length || !$sidebarSearchInput.length) {
+      return;
+    }
+
+    $sidebarSearchForm.attr("action", '{{ "search" | relURL }}');
+    $sidebarSearchForm.attr("method", "get");
+
+    $sidebarSearchInput.attr("id", "sidebar-search-input");
+    $sidebarSearchInput.attr("placeholder", "Search...");
+    $sidebarSearchInput.attr("aria-label", "Search this site");
+
+    $sidebarSearchForm.on("submit", function(event) {
+      const query = ($sidebarSearchInput.val() || "").trim();
+
+      if (!query) {
+        event.preventDefault();
+        $sidebarSearchInput.focus();
+        return;
+      }
+
+      $sidebarSearchInput.val(query);
+    });
+  });
+</script>
