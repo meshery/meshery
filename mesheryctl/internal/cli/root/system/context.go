@@ -20,7 +20,6 @@ import (
 var (
 	configuration     *config.MesheryCtlConfig
 	tempCntxt         = "local"
-	newContext        = ""
 	tokenNameLocation = map[string]string{} //maps each token name to its specified location
 )
 
@@ -159,19 +158,19 @@ mesheryctl system context delete [context name]
 				return nil
 			}
 
-			var result string
+			var newContext string
 
-			if newContext != "" {
-				_, exists := configuration.Contexts[newContext]
+			if contextDeleteFlags.Set != "" {
+				_, exists := configuration.Contexts[contextDeleteFlags.Set]
 				if !exists {
 					return ErrSetCurrentContext(fmt.Errorf("new context wrongly set"))
 				}
 
-				if newContext == contextName {
+				if contextDeleteFlags.Set == contextName {
 					return ErrSetCurrentContext(fmt.Errorf("choose a new context other than the context being deleted"))
 				}
 
-				result = newContext
+				newContext = contextDeleteFlags.Set
 			} else {
 				var listContexts []string
 				for context := range configuration.Contexts {
@@ -185,14 +184,14 @@ mesheryctl system context delete [context name]
 					Items: listContexts,
 				}
 
-				_, result, err = prompt.Run()
+				_, newContext, err = prompt.Run()
 				if err != nil {
 					return utils.ErrPromptCancelled()
 				}
 			}
 
-			viper.Set("current-context", result)
-			utils.Log.Infof("The current context is now %q", result)
+			viper.Set("current-context", newContext)
+			utils.Log.Infof("The current context is now %q", newContext)
 		}
 		delete(configuration.Contexts, contextName)
 		viper.Set("contexts", configuration.Contexts)
@@ -418,7 +417,7 @@ mesheryctl system context create `
 			return ErrGetCurrentContext(err)
 		}
 		isRunning, _ := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
-		//if meshery running stop meshery before context switch
+		// if meshery running stop meshery before context switch
 		if isRunning {
 			utils.Log.Info("Meshery is running... switching context without stopping Meshery deployments.")
 		}
