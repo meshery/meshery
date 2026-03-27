@@ -79,7 +79,9 @@ mesheryctl system status --verbose
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("this command takes no arguments. See '%s --help' for more information.", cmd.CommandPath()))
+			return utils.ErrInvalidArgument(
+				fmt.Errorf("this command takes no arguments. See '%s --help' for more information", cmd.CommandPath()),
+			)
 		}
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
