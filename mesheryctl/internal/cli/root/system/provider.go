@@ -174,7 +174,7 @@ mesheryctl system provider set [provider]
 		}
 		return nil
 	},
-	PreRunE: func(cmd *cobra.Command, args []string) error{
+PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &providerSetFlags)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
