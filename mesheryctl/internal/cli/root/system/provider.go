@@ -130,7 +130,7 @@ mesheryctl system provider list
 
 		providers, err := utils.GetProviderInfo(mctlCfg)
 		if err != nil {
-			return err
+return errors.Wrap(err, "could not fetch providers as Meshery server was unreachable. Start Meshery to list available providers")
 		}
 
 		utils.Log.Info("Available providers:\n")
