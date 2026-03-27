@@ -5,10 +5,18 @@ import (
 	"net/url"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
+
+type cmdModelSearchFlags struct {
+	Page     int `json:"page" validate:"min=1"`
+	PageSize int `json:"pagesize" validate:"min=1"`
+}
+
+var modelSearchFlags cmdModelSearchFlags
 
 var searchModelCmd = &cobra.Command{
 	Use:   "search",
@@ -25,6 +33,9 @@ mesheryctl model search [query-text] --page [page-number]
 // Search list of models for a specified pagesize
 mesheryctl model search [query-text] --pagesize [pagesize-number]
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelSearchFlags)
+	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return utils.ErrInvalidArgument(errors.New(errSearchModelName))
@@ -49,6 +60,6 @@ mesheryctl model search [query-text] --pagesize [pagesize-number]
 }
 
 func init() {
-	searchModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 1)")
-	searchModelCmd.Flags().IntP("pagesize", "s", 10, "(optional) List next set of models with --pagesize (default = 10)")
+	searchModelCmd.Flags().IntVarP(&modelSearchFlags.Page, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	searchModelCmd.Flags().IntVarP(&modelSearchFlags.PageSize, "pagesize", "s", 10, "(optional) List next set of models with --pagesize (default = 10)")
 }
