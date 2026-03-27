@@ -33,10 +33,11 @@ Meshery provides a rich catalog of pre‑built design templates to help you acce
 
 ## Step 1: Open the Meshery Catalog
 
-1. Log in to your Meshery instance.
-2. From the left navigation menu, select **Catalog**.
+1. Log in to your Meshery instance (e.g., Meshery Cloud).
+2. In the **top‑right corner**, click the **menu icon** (three horizontal lines).
+3. From the menu, select **Catalog**.
 
-![Catalog Page](images/docs-new-content-en-guides-images-catalog-page.PNG)
+![Catalog Page](images/docs-new-content-en-guides-images-catalog-page.png)
 
 The catalog displays a wide range of ready‑to‑use templates, organized by categories, tags, and use cases.
 
@@ -50,17 +51,17 @@ Use filters, tags, or the search bar to explore available templates.
 ### 2. View Template Details  
 Click on a template to open its detail page.
 
-![Template Detail](images/docs-new-content-en-guides-images-template-detail.PNG)
+![Template Detail](images/docs-new-content-en-guides-images-template-detail.png)
 
 ### 3. Clone the Template  
 Click **Clone** (or **Use Template**) to create a copy of the design in your workspace.
 
-![Clone Button](images/docs-new-content-en-guides-images-clone-button.PNG)
+![Clone Button](images/docs-new-content-en-guides-images-clone-button.png)
 
 ### 4. Confirm Cloning  
 Meshery will display a confirmation dialog. Review the information and confirm.
 
-![Confirmation Popup](images/docs-new-content-en-guides-images-confirmation-popup.PNG)
+![Confirmation Popup](images/docs-new-content-en-guides-images-confirmation-popup.png)
 
 ---
 
@@ -68,11 +69,15 @@ Meshery will display a confirmation dialog. Review the information and confirm.
 
 Once cloning is complete:
 
-1. Navigate to your **Designs** or **Workspace** section.
-2. Locate the newly cloned design.
-3. Open it to begin customizing, deploying, or integrating it with your environment.
+1. Click the **menu icon** in the top‑right corner.
+2. Select **Catalog**.
+3. Click the **dropdown arrow** next to **Catalog** to expand additional options.
+4. Choose **My Designs**.
+5. Locate your newly cloned design and open it to begin customizing, deploying, or integrating it with your environment.
 
-![Cloned Design](images/docs-new-content-en-guides-images-cloned-design.PNG)
+![My Designs Button](images/docs-new-content-en-guides-images-clone-mydesign-button.png)
+
+![Cloned Design](images/docs-new-content-en-guides-images-cloned-design.png)
 
 ---
 
