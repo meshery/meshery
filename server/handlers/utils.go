@@ -21,9 +21,7 @@ func readBodyWithLimit(r *http.Request, maxBytes int64) ([]byte, error) {
 
 	limitedBody := http.MaxBytesReader(nil, r.Body, maxBytes)
 	defer func() {
-		if err := limitedBody.Close(); err != nil {
-			// Close errors are intentionally not returned from this helper.
-		}
+		_ = limitedBody.Close()
 	}()
 
 	body, err := io.ReadAll(limitedBody)
