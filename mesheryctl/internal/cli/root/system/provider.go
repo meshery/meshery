@@ -219,7 +219,12 @@ PreRunE: func(cmd *cobra.Command, args []string) error {
 			}
 
 			if !isValidProvider {
-				return ErrValidProvider()
+				providerList := "\n\nAvailable providers:"
+				sort.Strings(keys)
+				for _, k := range keys {
+    				providerList += "\n- " + k
+				}
+				return fmt.Errorf("%w%s", ErrValidProvider(), providerList)
 			}
 		}
 
