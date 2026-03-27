@@ -1,6 +1,5 @@
 ---
 title: Roadmap v0.9.0
-toc_hide: true
 ---
 This post includes the proposed roadmap for Meshery v0.9.0 release. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.
 
