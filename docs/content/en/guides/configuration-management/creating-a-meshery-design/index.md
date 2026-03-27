@@ -5,7 +5,9 @@ aliases:
 - /guides/creating-a-meshery-design
 categories: [configuration]
 suggested_reading: false
+type: docs
 ---
+
 
 {{% alert color="info" title="Learn about Designs"%}}
 Learn more about <a href='/concepts/logical/designs'>what a Meshery Design</a> is and how it fits into Meshery's approach to cloud native management.
