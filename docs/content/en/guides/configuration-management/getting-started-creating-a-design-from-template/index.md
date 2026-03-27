@@ -4,8 +4,6 @@ description: "Learn how to quickly clone and customize a design using Meshery’
 weight: 5
 ---
 
-# Getting Started: Creating a Design from a Template
-
 Meshery provides a rich catalog of pre‑built design templates to help you accelerate your cloud‑native workflows. Cloning a template allows you to instantly reuse best‑practice configurations and adapt them to your environment. This guide walks you through the full process of selecting, cloning, and accessing a design template.
 
 ## Prerequisites
