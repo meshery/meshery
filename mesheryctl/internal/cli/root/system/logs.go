@@ -179,11 +179,11 @@ mesheryctl system logs meshery-istio
 
 			// List the pods in the MesheryNamespace
 			podList, err := utils.GetPodList(client, utils.MesheryNamespace)
-			availablePods := podList.Items
-
 			if err != nil {
 				return err
 			}
+
+			availablePods := podList.Items
 
 			requiredPodsMap := make(map[string]string)
 
