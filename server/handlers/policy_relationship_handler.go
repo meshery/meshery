@@ -12,6 +12,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1alpha1/capability"
 	"github.com/meshery/schemas/models/core"
@@ -22,9 +23,11 @@ import (
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/models/meshmodel/registry"
+	regv1alpha3 "github.com/meshery/meshkit/models/meshmodel/registry/v1alpha3"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	patternHelpers "github.com/meshery/meshkit/models/patterns"
 	mutils "github.com/meshery/meshkit/utils"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -147,6 +150,103 @@ func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.Resolved
 
 }
 
+// mergeTraceUnique appends trace entries from src into dst, skipping duplicates by ID.
+func mergeTraceUnique(dst, src *pattern.Trace) {
+	compSeen := make(map[uuid.UUID]bool)
+	for _, c := range dst.ComponentsAdded {
+		compSeen[c.ID] = true
+	}
+	for _, c := range dst.ComponentsUpdated {
+		compSeen[c.ID] = true
+	}
+	for _, c := range dst.ComponentsRemoved {
+		compSeen[c.ID] = true
+	}
+	relSeen := make(map[uuid.UUID]bool)
+	for _, r := range dst.RelationshipsAdded {
+		relSeen[r.ID] = true
+	}
+	for _, r := range dst.RelationshipsUpdated {
+		relSeen[r.ID] = true
+	}
+	for _, r := range dst.RelationshipsRemoved {
+		relSeen[r.ID] = true
+	}
+
+	for _, c := range src.ComponentsAdded {
+		if !compSeen[c.ID] {
+			compSeen[c.ID] = true
+			dst.ComponentsAdded = append(dst.ComponentsAdded, c)
+		}
+	}
+	for _, c := range src.ComponentsRemoved {
+		if !compSeen[c.ID] {
+			compSeen[c.ID] = true
+			dst.ComponentsRemoved = append(dst.ComponentsRemoved, c)
+		}
+	}
+	for _, c := range src.ComponentsUpdated {
+		if !compSeen[c.ID] {
+			compSeen[c.ID] = true
+			dst.ComponentsUpdated = append(dst.ComponentsUpdated, c)
+		}
+	}
+	for _, r := range src.RelationshipsAdded {
+		if !relSeen[r.ID] {
+			relSeen[r.ID] = true
+			dst.RelationshipsAdded = append(dst.RelationshipsAdded, r)
+		}
+	}
+	for _, r := range src.RelationshipsRemoved {
+		if !relSeen[r.ID] {
+			relSeen[r.ID] = true
+			dst.RelationshipsRemoved = append(dst.RelationshipsRemoved, r)
+		}
+	}
+	for _, r := range src.RelationshipsUpdated {
+		if !relSeen[r.ID] {
+			relSeen[r.ID] = true
+			dst.RelationshipsUpdated = append(dst.RelationshipsUpdated, r)
+		}
+	}
+}
+
+// deduplicateActions removes duplicate actions by (op, id) key.
+func deduplicateActions(actions []pattern.Action) []pattern.Action {
+	type key struct {
+		op string
+		id string
+	}
+	seen := make(map[key]bool)
+	var result []pattern.Action
+	for _, a := range actions {
+		id := ""
+		if a.Value != nil {
+			if v, ok := a.Value["id"]; ok {
+				if s, ok := v.(string); ok {
+					id = s
+				}
+			}
+			// For add_component/add_relationship, the id is inside "item"
+			if id == "" {
+				if item, ok := a.Value["item"].(map[string]interface{}); ok {
+					if v, ok := item["id"]; ok {
+						if s, ok := v.(string); ok {
+							id = s
+						}
+					}
+				}
+			}
+		}
+		k := key{op: a.Op, id: id}
+		if !seen[k] {
+			seen[k] = true
+			result = append(result, a)
+		}
+	}
+	return result
+}
+
 func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 
 	for _, action := range response.Actions {
@@ -178,13 +278,35 @@ func (h *Handler) EvaluateDesign(
 	var lastEvaluationResponse pattern.EvaluationResponse
 	lastEvaluationResponse.Design = relationshipPolicyEvalPayload.Design
 
+	useGoEngine := viper.GetBool("USE_GO_POLICY_ENGINE")
+
+	// Pre-fetch and convert registered relationships once, outside the re-evaluation loop.
+	var relMaps []map[string]interface{}
+	if useGoEngine && h.GoEngine != nil {
+		registeredRels, _, _, relErr := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
+		if relErr != nil {
+			return lastEvaluationResponse, fmt.Errorf("failed to get relationships for Go engine: %w", relErr)
+		}
+		relInterfaces := make([]interface{}, len(registeredRels))
+		for idx, r := range registeredRels {
+			relInterfaces[idx] = r
+		}
+		relMaps = gopolicies.ConvertRelationships(relInterfaces)
+	}
+
 	for i := range MAX_RE_EVALUATION_DEPTH {
 
-		// evaluate specified relationship policies
-		// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
-		evaluationResponse, err := h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,
-			RelationshipPolicyPackageName,
-		)
+		var evaluationResponse pattern.EvaluationResponse
+		var err error
+
+		if useGoEngine && h.GoEngine != nil {
+			evaluationResponse, err = h.GoEngine.EvaluateDesign(lastEvaluationResponse.Design, relMaps)
+		} else {
+			// Use OPA/Rego policy engine (default)
+			evaluationResponse, err = h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,
+				RelationshipPolicyPackageName,
+			)
+		}
 
 		if err != nil {
 			h.log.Debug(err)
@@ -192,9 +314,20 @@ func (h *Handler) EvaluateDesign(
 			return pattern.EvaluationResponse{}, err
 		}
 
-		// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
-		now := time.Now()
+		// Save trace and clear it before processEvaluationResponse to prevent
+		// it from replacing components with pre-patch versions from trace.
+		// ComponentsAdded is kept for hydration (styles/icons).
+		savedTrace := evaluationResponse.Trace
+		evaluationResponse.Trace = pattern.Trace{
+			ComponentsAdded: savedTrace.ComponentsAdded,
+		}
 		_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
+		evaluationResponse.Trace = savedTrace
+
+		// Apply configuration patches AFTER processEvaluationResponse.
+		if useGoEngine {
+			gopolicies.ApplyConfigurationPatches(h.log, &evaluationResponse)
+		}
 
 		evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
 		if evaluationResponse.Design.Metadata == nil {
@@ -202,10 +335,9 @@ func (h *Handler) EvaluateDesign(
 		}
 		evaluationResponse.Design.Metadata.ResolvedAliases = &evaluatedAliases
 
-		mutils.TrackTime(h.log, now, "PostProcessEvaluationResponse")
-
 		lastEvaluationResponse.Design = evaluationResponse.Design
 		lastEvaluationResponse.Actions = append(lastEvaluationResponse.Actions, evaluationResponse.Actions...)
+		mergeTraceUnique(&lastEvaluationResponse.Trace, &evaluationResponse.Trace)
 
 		if evalIterations == i+1 || doesntNeedReeval(evaluationResponse) {
 			h.log.Info("Evaluation completed in iteration ", i+1)
@@ -220,6 +352,9 @@ func (h *Handler) EvaluateDesign(
 
 	currentTime := time.Now()
 	lastEvaluationResponse.Timestamp = &currentTime
+
+	// Deduplicate actions by (op, id) to avoid duplicates from re-evaluation iterations.
+	lastEvaluationResponse.Actions = deduplicateActions(lastEvaluationResponse.Actions)
 
 	// dehydrate the design file components to remove unnecessary details
 	patternHelpers.DehydratePattern(&lastEvaluationResponse.Design)
@@ -383,18 +518,20 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	patternUUID := relationshipPolicyEvalPayload.Design.ID
 	eventBuilder.ActedUpon(patternUUID)
 
-	evalRespChan := make(chan pattern.EvaluationResponse)
-	evalErrChan := make(chan error)
+	evalRespChan := make(chan pattern.EvaluationResponse, 1)
+	evalErrChan := make(chan error, 1)
 
 	go func() {
-		// Evaluate specified relationship policies
-		// Perform the CPU-intensive work
+		// Skip evaluation if the request was already cancelled
+		if evalCtx.Err() != nil {
+			return
+		}
 		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
 
 		if err != nil {
-			evalErrChan <- err // Send the error
+			evalErrChan <- err
 		} else {
-			evalRespChan <- evaluationResponse // Send the response
+			evalRespChan <- evaluationResponse
 		}
 	}()
 
@@ -416,7 +553,9 @@ func (h *Handler) EvaluateRelationshipPolicy(
 				"evaluation_response": evaluationResponse,
 				"evaluated_at":        *evaluationResponse.Timestamp,
 			}).WithSeverity(events.Informational).Build()
-		_ = provider.PersistEvent(*event, nil)
+		go func() {
+			_ = provider.PersistEvent(*event, nil)
+		}()
 
 		// write the response
 		ec := json.NewEncoder(rw)
