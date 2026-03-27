@@ -49,16 +49,16 @@
   {{- $node := .node -}}
   {{- $scratch := .scratch -}}
 
-  {{- range $node.Sections -}}
+  {{- $pages_tmp := where (union $node.Pages $node.Sections) ".Params.toc_hide" "!=" true -}}
+  {{- $pages_tmp = sort $pages_tmp "Title" "asc" -}}
+  {{- $pages_tmp = sort $pages_tmp "Weight" "asc" -}}
+
+  {{- range $pages_tmp -}}
     {{- if ne .Params.hide_summary true -}}
       {{- $scratch.Add "pages" (slice (dict "title" (or .LinkTitle .Title) "url" .RelPermalink)) -}}
     {{- end -}}
-    {{- template "pagination-sidebar-pages" (dict "node" . "scratch" $scratch) -}}
-  {{- end -}}
-
-  {{- range $node.RegularPages -}}
-    {{- if ne .Params.hide_summary true -}}
-      {{- $scratch.Add "pages" (slice (dict "title" (or .LinkTitle .Title) "url" .RelPermalink)) -}}
+    {{- if .IsSection -}}
+      {{- template "pagination-sidebar-pages" (dict "node" . "scratch" $scratch) -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
