@@ -1,6 +1,5 @@
 package handlers
 
-
 import (
 	"context"
 	"encoding/json"
@@ -175,11 +174,11 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	w.WriteHeader(http.StatusCreated)
 }
 
-// BodySizeLimiterMiddleware limits the size of the request body for security and resource protection
-func (h *Handler) BodySizeLimiterMiddleware(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
+// BodySizeLimiterMiddleware limits the size of the request body for security and resource protection.
+func (h *Handler) BodySizeLimiterMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
+	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 		req.Body = http.MaxBytesReader(w, req.Body, DefaultMaxBodySize)
-		next(w, req)
+		next(w, req, prefObj, user, provider)
 	}
 }
 
