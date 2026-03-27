@@ -92,7 +92,7 @@
       }
     }
   ],
-  "subType": "parent",
+  "subType": "network",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"
