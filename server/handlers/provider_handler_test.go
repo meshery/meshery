@@ -249,7 +249,7 @@ func TestDeleteMeshSyncResource(t *testing.T) {
 			migrateResourceTable: false,
 			expectedStatus:       http.StatusInternalServerError,
 			expectedContentType:  "text/plain",
-			expectedBody:         "meshsync data",
+			expectedBody:         "Failed to Delete",
 		},
 	}
 
