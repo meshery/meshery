@@ -213,11 +213,11 @@ func EnvironmentSubError(msg string, cmd string) string {
 func WorkspaceSubError(msg string, cmd string) string {
 	switch cmd {
 	case "list":
-		return formatError(msg, cmdExpWorkspaceList)
+		return formatError(msg, cmdWorkspaceList)
 	case "create":
-		return formatError(msg, cmdExpWorkspaceCreate)
+		return formatError(msg, cmdWorkspaceCreate)
 	default:
-		return formatError(msg, cmdExpWorkspace)
+		return formatError(msg, cmdWorkspace)
 	}
 }
 
@@ -341,9 +341,9 @@ var cmdUsageURLs = map[cmdType]string{
 	cmdEnvironmentDelete:        environmentDeleteURL,
 	cmdEnvironmentList:          environmentListURL,
 	cmdEnvironmentView:          environmentViewURL,
-	cmdExpWorkspace:             workspaceUsageURL,
-	cmdExpWorkspaceCreate:       workspaceCreateURL,
-	cmdExpWorkspaceList:         workspaceListURL,
+	cmdWorkspace:                workspaceUsageURL,
+	cmdWorkspaceCreate:          workspaceCreateURL,
+	cmdWorkspaceList:            workspaceListURL,
 	cmdRelationshipView:         relationshipViewURL,
 	cmdRelationships:            relationshipUsageURL,
 	cmdRelationshipGenerateDocs: cmdRelationshipGenerateDocsURL,
