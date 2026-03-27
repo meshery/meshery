@@ -1,15 +1,12 @@
-{{- $models := where site.RegularPages ".File.Dir" "like" `^extensions/models/` -}}
-{{- $scratch := newScratch -}}
-{{- range $models -}}
-  {{- $cat := .Params.integrations_category | default "" -}}
-  {{- if ne $cat "" -}}
-    {{- $scratch.Add $cat 1 -}}
+{{- $models := where site.RegularPages ".File.Dir" "like" "^extensions/models/" -}}
+{{- $grouped := $models.GroupByParam "integrations_category" -}}
+{{- $categoryList := slice -}}
+{{- range $group := $grouped -}}
+  {{- if $group.Key -}}
+    {{- $categoryList = $categoryList | append (dict "name" $group.Key "count" (len $group.Pages)) -}}
   {{- end -}}
 {{- end -}}
-{{- $categories := slice -}}
-{{- range $key, $value := $scratch.Values -}}
-  {{- $categories = $categories | append (dict "name" $key "count" $value) -}}
-{{- end -}}
-{{- range sort $categories "count" "desc" }}
+{{- $sortedCategories := sort $categoryList "count" "desc" -}}
+{{- range $sortedCategories -}}
 <li><a href="/extensions/models">{{ .name }}</a> ({{ .count }})</li>
-{{- end }}
+{{- end -}}
