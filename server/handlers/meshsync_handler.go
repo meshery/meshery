@@ -564,7 +564,9 @@ func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request
 
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusOK)
-if err := json.NewEncoder(rw).Encode(struct{ Deleted bool `json:"deleted"` }{Deleted: true}); err != nil {
+	if err := json.NewEncoder(rw).Encode(struct {
+		Deleted bool `json:"deleted"`
+	}{Deleted: true}); err != nil {
 		if isClientDisconnect(err) {
 			h.log.Debug(ErrEncodeResponse(err))
 		} else {
