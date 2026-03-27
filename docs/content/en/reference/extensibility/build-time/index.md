@@ -1,6 +1,8 @@
 ---
 title: "Extensibility: Build-time"
 description: System integrators can supply build-time configuration, data, packages, and other extensions to Meshery's container image.
+aliases:
+- /extensibility/build-time
 ---
 
 Meshery supports build-time extensibility, allowing system integrators to customize the Meshery container image during the Docker build process. This extension point enables organizations to inject custom configurations, data, provider extensions, and other resources directly into the Meshery container image at build-time.

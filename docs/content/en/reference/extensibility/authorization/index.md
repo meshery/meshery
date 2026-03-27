@@ -1,6 +1,8 @@
 ---
 title: "Extensibility: Authorization"
 description: Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native projects via authorization, adapters, load generators and providers.
+aliases:
+- /extensibility/authorization
 ---
 
 Meshery features an extensible authorization system that offers the ability to deliver fine-grained access control across it's web-based user interface, [Meshery UI](/concepts/architecture).

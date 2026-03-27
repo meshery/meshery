@@ -1,6 +1,8 @@
 ---
 title: Ensuring Extension Compatibility with Meshery
 description: A guide for Meshery extension developers on maintaining compatibility with the Meshery platform, covering shared frameworks, dependencies, and build tooling.
+aliases:
+- /extensibility/verify-compatibility
 ---
 
 The Meshery ecosystem is designed for extensibility, with the core platform (`meshery/meshery`) providing extension points for a variety of plugins, collectively managed in the `meshery-extensions` GitHub organization. To ensure a stable and seamless user experience, it is critical that extensions remain compatible with the Meshery platform, especially when shared frameworks or dependencies are updated.
