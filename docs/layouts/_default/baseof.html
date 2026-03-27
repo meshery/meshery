@@ -6,7 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <script src="{{ .Site.BaseURL }}assets/js/error-code-handler.js"></script>
+    <script src="{{ "js/error-code-handler.js" | relURL }}"></script>
     
   </head>
 
@@ -55,7 +55,12 @@
       </main>
 
       {{ if ne (.Params.display_toc | default true) false }}
-        {{ partial "toc.html" . }}
+        <div class="content-table-wrapper">
+          <div class="content-table" data-proofer-ignore>
+            {{ partial "page-meta-links.html" . }}
+            {{ partial "toc.html" . }}
+          </div>
+        </div>
       {{ end }}
     </div>
 
