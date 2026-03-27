@@ -1,31 +1,31 @@
 {{ $nav := site.Data.toc }}
 {{ $pages := slice }}
 
-{{ range $nav }}
+{{ range $section := $nav }}
 
   {{/* ADD TOP LEVEL PAGE */}}
-  {{ if .url }}
-    {{ $pages = $pages | append (dict "title" .title "url" .url) }}
+  {{ if $section.url }}
+    {{ $pages = $pages | append (dict "title" $section.title "url" $section.url "section" $section.title) }}
   {{ end }}
 
-  {{ with .links }}
+  {{ with $section.links }}
     {{ range . }}
 
       {{ if .url }}
-        {{ $pages = $pages | append (dict "title" .title "url" .url) }}
+        {{ $pages = $pages | append (dict "title" .title "url" .url "section" $section.title) }}
       {{ end }}
 
       {{ with .children }}
         {{ range . }}
 
           {{ if .url }}
-            {{ $pages = $pages | append (dict "title" .title "url" .url) }}
+            {{ $pages = $pages | append (dict "title" .title "url" .url "section" $section.title) }}
           {{ end }}
 
           {{ with .grandchildren }}
             {{ range . }}
               {{ if .url }}
-                {{ $pages = $pages | append (dict "title" .title "url" .url) }}
+                {{ $pages = $pages | append (dict "title" .title "url" .url "section" $section.title) }}
               {{ end }}
             {{ end }}
           {{ end }}
@@ -49,28 +49,31 @@
 {{ end }}
 
 {{ if ge $index 0 }}
+{{ $currentPageData := index $pages $index }}
 
 <div class="toc-pagination-wrapper">
 
   {{ if gt $index 0 }}
     {{ $prev := index $pages (sub $index 1) }}
     <a class="toc-card prev" href="{{ $prev.url | relURL }}">   
-      <div class="toc-label">Previous</div>
+      <div class="toc-label">{{ if ne $prev.section $currentPageData.section }}Previous section{{ else }}Previous{{ end }}</div>
       <div class="toc-title">
         <span class="arrow"><i class="fa-solid fa-chevron-left"></i></span>
-        {{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $prev.title) }}
+        <span class="toc-title-text">{{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $prev.title) }}</span>
       </div>
+      <div class="toc-context">{{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $prev.section) }}</div>
     </a>
   {{ end }}
 
   {{ if lt $index (sub (len $pages) 1) }}
     {{ $next := index $pages (add $index 1) }}
     <a class="toc-card next" href="{{ $next.url | relURL }}">
-      <div class="toc-label">Next</div>
+      <div class="toc-label">{{ if ne $next.section $currentPageData.section }}Next section{{ else }}Next{{ end }}</div>
       <div class="toc-title">
-        {{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $next.title) }}
+        <span class="toc-title-text">{{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $next.title) }}</span>
         <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
       </div>
+      <div class="toc-context">{{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $next.section) }}</div>
     </a>
   {{ end }}
 

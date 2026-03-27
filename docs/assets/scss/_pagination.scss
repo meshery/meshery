@@ -1,49 +1,69 @@
 .toc-pagination-wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   margin-top: 3rem;
 }
 
 .toc-card {
-  border: 1px solid #7a848e;
-  border-radius: 0.4rem;
+  border: 1px solid rgba(122, 132, 142, 0.45);
+  border-radius: 0.75rem;
   display: block;
   height: 100%;
   width: 100%;
-  line-height: 1.25;
-  padding: 1rem;
-  background: transparent;
+  line-height: 1.35;
+  padding: 1.1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
   text-decoration: none;
-  transition: border-color 200ms cubic-bezier(.08,.52,.52,1);
+  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
 
   &:hover {
     border-color: var(--brand-color-secondary);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
   }
 }
 
 .toc-label {
-  color: var(--color-white);
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
+  color: #a9b2ba;
+  font-size: 0.76rem;
+  margin-bottom: 0.45rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
 }
 
 .toc-title {
   color: var(--brand-color-secondary);
-  font-size: 1rem;
+  font-size: 1.35rem;
   font-weight: 600;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
+
+  .toc-title-text {
+    display: inline-block;
+  }
+
   .fa-chevron-right::before, .fa-chevron-left::before {
     color: var(--brand-color-secondary);
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
-  &:hover {
-    .fa-chevron-right::before, .fa-chevron-left::before {
-        color: var(--color-white);
-    }
-    color: var(--color-white);
-  }
+}
+
+.toc-card:hover .toc-title {
+  color: var(--color-white);
+}
+
+.toc-card:hover .fa-chevron-right::before,
+.toc-card:hover .fa-chevron-left::before {
+  color: var(--color-white);
+}
+
+.toc-context {
+  color: #a9b2ba;
+  font-size: 0.86rem;
+  margin-top: 0.65rem;
 }
 
 .toc-card.next {
@@ -51,5 +71,15 @@
 
   .toc-title {
     justify-content: flex-end;
+  }
+}
+
+@media (max-width: 900px) {
+  .toc-pagination-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .toc-title {
+    font-size: 1.15rem;
   }
 }
