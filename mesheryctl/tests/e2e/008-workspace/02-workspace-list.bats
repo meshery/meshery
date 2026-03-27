@@ -22,7 +22,7 @@ setup() {
     assert_failure
 
     assert_output --partial "Error"
-    assert_output --partial "Invalid value for --orgId 'foo': must be a valid UUID"
+    assert_output --partial "Invalid value for --orgid 'foo': must be a valid UUID"
 }
 
 @test "given non-existent orgId provided when running mesheryctl workspace list --orgId non-existent-orgId then an error message is displayed" {
