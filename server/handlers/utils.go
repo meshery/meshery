@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -19,10 +20,11 @@ func readBodyWithLimit(r *http.Request, maxBytes int64) ([]byte, error) {
 		maxBytes = DefaultMaxBodySize
 	}
 
-	r.Body = http.MaxBytesReader(nil, r.Body, maxBytes)
-	body, err := io.ReadAll(r.Body)
+	limitedBody := http.MaxBytesReader(nil, r.Body, maxBytes)
+	body, err := io.ReadAll(limitedBody)
 	if err != nil {
-		if err.Error() == "http: request body too large" {
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
 			return nil, fmt.Errorf("request body exceeds maximum allowed size of %d bytes", maxBytes)
 		}
 		return nil, fmt.Errorf("failed to read request body: %w", err)
