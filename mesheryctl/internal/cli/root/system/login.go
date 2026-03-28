@@ -98,7 +98,7 @@ mesheryctl system login -p Meshery
 		}
 
 		if err := os.WriteFile(token.GetLocation(), tokenData, 0666); err != nil {
-			utils.Log.Errorf("failed to write the token to the filesystem: %v", err)
+			return errors.Wrap(err, "failed to write the token to the filesystem")
 		}
 
 		return nil
