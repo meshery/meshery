@@ -115,6 +115,11 @@ When a model is marked for visual annotation only, it means the model will be us
     <p>Once the model is successfully generated, a confirmation message will appear. You'll be able to view the model along with its components and relationships directly in the Registry page.</p>
     <p>If any issues occur, Meshery will display an error message detailing what went wrong so you can correct it and try again.</p>
     <p>A notification will also appear in the <a href="/guides/events-management">Notification Center</a> to confirm whether the operation succeeded or failed, providing additional context if needed.</p>
+
+{{% alert color="info" title="Note on Deletion" %}}
+Models cannot be deleted from the Meshery UI. To delete a model, use mesheryctl. For more information, refer to the <a href="/reference/mesheryctl/model">mesheryctl model command reference</a>.
+{{% /alert %}}
+    
   </section>
 
   <!-- Second Level Tab: mesheryctl -->
