@@ -5,10 +5,10 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTokenCreateCmd(t *testing.T) {
@@ -485,11 +485,6 @@ func TestTokenCreateUsesActiveConfigPath(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !strings.Contains(string(activeUpdated), "name: regression-token") {
-		t.Fatalf("expected active config %s to be updated with the new token", activeConfigPath)
-	}
-
-	if strings.Contains(string(defaultUpdated), "name: regression-token") {
-		t.Fatalf("expected default config %s to remain unchanged", defaultConfigPath)
-	}
+	assert.Contains(t, string(activeUpdated), "name: regression-token", "expected active config %s to be updated with the new token", activeConfigPath)
+	assert.NotContains(t, string(defaultUpdated), "name: regression-token", "expected default config %s to remain unchanged", defaultConfigPath)
 }
