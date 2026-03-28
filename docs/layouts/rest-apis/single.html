@@ -1,199 +1,770 @@
 {{ define "main" }}
 {{ .Content }}
 {{ $data := .Params.data }}
-{{ $swagger := index site.Data $data }}
-{{ if not $swagger }}
-  {{ $swagger = .Params }}
+{{ $spec := index site.Data $data }}
+{{ if not $spec }}
+  {{ $spec = .Params }}
 {{ end }}
 
-<details>
-<summary>
-    Here is a concise list of all REST API endpoints.
-</summary>
-<ul>
-{{ range $path, $methods := $swagger.paths }}
-<li>{{ $path }}</li>
+{{ $components := index $spec "components" | default dict }}
+{{ $securitySchemes := index $components "securitySchemes" | default dict }}
+{{ $tagIndex := dict }}
+{{ range $spec.tags }}
+  {{ $tagIndex = merge $tagIndex (dict .name .) }}
 {{ end }}
-</ul>
-</details>
 
-{{ range $path, $route := $swagger.paths }}
-<div class="swagger-path">
-    <h2 class="swagger-path">{{ $path }}</h2>
-{{ if (strings.Contains $path "/api/oam") }}
-    <span class="deprecated-label">Deprecated</span>
-{{ end }}
-    {{ range $method, $methodData := $route }}
-    <div class="swagger-method swagger-method-{{ $method }}">
-        <h3 class="swagger-method-title">
-            <a href="#" class="swagger-method-link">
-                <span class="swagger-method-name">{{ upper $method }}</span>
-                <span class="swagger-method-summary">{{ $methodData.summary }}</span>
-            </a>
-        </h3>
-        <div class="swagger-method-details">
-            <h5>Description</h5>
-            <md-block>
-              <span class="swagger-method-description">{{ $methodData.description }}</span>
-            </md-block>
-            {{ if $methodData.parameters }}
-            <div class="swagger-parameters">
-                <h5>Parameters</h5>
-                <table class="swagger-parameters-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Located in</th>
-                            <th>Description</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{ range $methodData.parameters }}
-                        <tr>
-                            <td>
-                                {{ if .required }}
-                                <span class="swagger-parameter-required">
-                                {{ end }}
-                                {{ .name }}
-                                {{ if .required }}
-                                </span>
-                                {{ end }}
-                            </td>
-                            <td>{{ .in }}</td>
-                            <td>{{ .description }}</td>
-                            <td>
-                                {{ if .type }}
-                                {{ title .type }}
-                                {{ if .items }}
-                                of {{ title .items.type }}
-                                {{ end }}
-                                {{ else }}
-                                Unknown
-                                {{ end }}
-                            </td>
-                        </tr>
-                        {{ end }}
-                    </tbody>
-                </table>
-            </div>
-            {{ end }}
-            {{ if $methodData.responses }}
-            <div class="swagger-response">
-                <h5>Responses</h5>
-                {{ range $respCode, $respData := $methodData.responses }}
-                <div class="swagger-response-{{ $respCode }}">
-                    <p class="swagger-response-title">
-                        <span class="swagger-response-code">{{ $respCode }}</span>
-                        {{ if ne $respData.description "" }}<span class="swagger-response-seperator">-</span>{{ end }}
-                        <md-block class="mdblock">
-                            <span class="swagger-response-description">{{ $respData.description }}</span>
-                        </md-block>
-                    </p>
-                </div>
-                {{ if $respData.schema.properties }}
-                 <table class="swagger-parameters-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Format</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{ range $paramName, $paramData := $respData.schema.properties }}
-                        <tr>
-                            <td>{{ $paramName }}</td>
-                            <td>
-                                {{ if $paramData.format }}
-                                {{ $paramData.format }}
-                                {{ else }}
-                                Object
-                                {{ end }}
-                            </td>
-                            <td>{{ $paramData.type }}</td>
-                        </tr>
-                        {{ end }}
-                    </tbody>
-                </table>
-                {{ end }}
-                {{ range $swagger.produces }}
-                    {{ $contentType := . }}
-                    {{ if index $respData.examples $contentType }}
-                        {{ $example := index $respData.examples $contentType }}
-                        {{ if (strings.Contains $contentType "json") }}
-                            <pre><code class="language-json">{{ $example }}</code></pre>
-                        {{ else if (strings.Contains $contentType "xml") }}
-                            <pre><code class="language-xml">{{ $example }}</code></pre>
-                        {{ else }}
-                            <pre><code class="language-http">{{ $example }}</code></pre>
-                        {{ end }}
-                    {{ end }}
-                {{ end }}
-                {{ end }}
-            </div>
-            {{ end }}
-        </div>
-    </div>
+{{ $methodOrder := slice "get" "post" "put" "patch" "delete" "options" "head" }}
+{{ $operations := slice }}
+{{ $usedTags := slice }}
+{{ range $path, $route := $spec.paths }}
+  {{ range $methodOrder }}
+    {{ $method := . }}
+    {{ with index $route $method }}
+      {{ $operation := . }}
+      {{ if partial "rest-apis/is-operation-included.html" $operation }}
+        {{ $tagName := "Ungrouped" }}
+        {{ with $operation.tags }}
+          {{ $tagName = index . 0 }}
+        {{ end }}
+        {{ $tagMeta := partial "rest-apis/tag-meta.html" (dict "name" $tagName "tags" $tagIndex) }}
+        {{ $pathSlug := replaceRE "[{}]" "" $path }}
+        {{ $pathSlug = replaceRE "[^a-zA-Z0-9]+" "-" $pathSlug }}
+        {{ $pathSlug = lower $pathSlug }}
+        {{ $pathSlug = replaceRE "^-+|-+$" "" $pathSlug }}
+        {{ if eq $pathSlug "" }}
+          {{ $pathSlug = "root" }}
+        {{ end }}
+        {{ $operationID := printf "%s-%s" $method $pathSlug }}
+        {{ $operations = $operations | append (dict
+          "id" $operationID
+          "pathId" $pathSlug
+          "path" $path
+          "method" $method
+          "summary" ($operation.summary | default $path)
+          "description" $operation.description
+          "tag" $tagName
+          "tagLabel" (index $tagMeta "label")
+          "tagDescription" (index $tagMeta "description")
+          "data" $operation
+        ) }}
+        {{ if not (in $usedTags $tagName) }}
+          {{ $usedTags = $usedTags | append $tagName }}
+        {{ end }}
+      {{ end }}
     {{ end }}
-</div>
+  {{ end }}
+{{ end }}
+
+{{ if gt (len $operations) 0 }}
+  {{ $firstOperation := index $operations 0 }}
+  <div class="rest-api-page" data-rest-api-root data-default-operation="{{ $firstOperation.id }}">
+    <section class="rest-api-overview" aria-label="REST API overview">
+      <p class="rest-api-overview__eyebrow">Meshery REST API reference</p>
+      <p class="rest-api-overview__summary">
+        Browse {{ len $operations }} api endpoints grouped by resource. This explorer is rendered from
+        <code>docs/data/openapi.yml</code>.
+      </p>
+      <ul class="rest-api-overview__stats">
+        <li><strong>{{ len $usedTags }}</strong><span>groups</span></li>
+        <li><strong>{{ len $operations }}</strong><span>endpoints</span></li>
+        <li><strong>Source</strong><span><code>openapi.yml</code></span></li>
+      </ul>
+    </section>
+
+    <div class="rest-api-layout">
+      <aside class="rest-api-sidebar" aria-label="REST endpoint navigation">
+        <div class="rest-api-sidebar__inner">
+          <label class="rest-api-search-label" for="rest-api-search">Filter endpoints</label>
+          <input
+            id="rest-api-search"
+            class="rest-api-search"
+            type="search"
+            autocomplete="off"
+            placeholder="Search paths, summaries, and methods"
+            data-rest-api-search
+          />
+          <p class="rest-api-sidebar__hint">
+            Choose a category or search to narrow the endpoint list.
+          </p>
+
+          <div class="rest-api-nav-toolbar">
+            <button
+              type="button"
+              class="rest-api-nav-control"
+              data-toggle-all-groups
+              data-toggle-mode="collapse"
+              aria-label="Collapse all categories"
+            >
+              <span class="rest-api-nav-control__icon" aria-hidden="true">
+                <span></span>
+                <span></span>
+              </span>
+              <span class="rest-api-nav-control__text">Collapse all</span>
+            </button>
+          </div>
+
+          <div class="rest-api-nav" data-rest-api-nav>
+            {{ $renderedTags := slice }}
+            {{ range $spec.tags }}
+              {{ $tagName := .name }}
+              {{ if in $usedTags $tagName }}
+                {{ $groupMeta := partial "rest-apis/tag-meta.html" (dict "name" $tagName "tags" $tagIndex) }}
+                {{ $groupOperations := where $operations "tag" $tagName }}
+                <section class="rest-api-nav-group" data-rest-api-group>
+                  <button
+                    type="button"
+                    class="rest-api-nav-group__toggle"
+                    data-group-toggle
+                    aria-expanded="true"
+                  >
+                    <span class="rest-api-nav-group__toggle-main">
+                      <span class="rest-api-nav-group__title">{{ index $groupMeta "label" }}</span>
+                    </span>
+                    <span class="rest-api-nav-group__toggle-meta">
+                      <span class="rest-api-nav-group__count" data-group-count data-total-count="{{ len $groupOperations }}">{{ len $groupOperations }}</span>
+                      <span class="rest-api-nav-group__chevron" aria-hidden="true"></span>
+                    </span>
+                  </button>
+                  <ul class="rest-api-nav-list" data-group-panel>
+                    {{ range $groupOperations }}
+                      <li class="rest-api-nav-item">
+                        <a
+                          href="#{{ .id }}"
+                          class="rest-api-nav-link"
+                          data-operation-link
+                          data-operation-id="{{ .id }}"
+                          data-path-id="{{ .pathId }}"
+                          data-search="{{ lower (printf "%s %s %s %s" .method .path .summary .tagLabel) }}"
+                        >
+                          <span class="rest-api-nav-link__top">
+                            <span class="rest-api-method-badge rest-api-method-badge--{{ .method }}">{{ upper .method }}</span>
+                            <span class="rest-api-nav-link__path">{{ .path }}</span>
+                          </span>
+                          <span class="rest-api-nav-link__summary">{{ .summary }}</span>
+                        </a>
+                      </li>
+                    {{ end }}
+                  </ul>
+                </section>
+                {{ $renderedTags = $renderedTags | append $tagName }}
+              {{ end }}
+            {{ end }}
+
+            {{ range $tagName := $usedTags }}
+              {{ if not (in $renderedTags $tagName) }}
+                {{ $groupMeta := partial "rest-apis/tag-meta.html" (dict "name" $tagName "tags" $tagIndex) }}
+                {{ $groupOperations := where $operations "tag" $tagName }}
+                <section class="rest-api-nav-group" data-rest-api-group>
+                  <button
+                    type="button"
+                    class="rest-api-nav-group__toggle"
+                    data-group-toggle
+                    aria-expanded="true"
+                  >
+                    <span class="rest-api-nav-group__toggle-main">
+                      <span class="rest-api-nav-group__title">{{ index $groupMeta "label" }}</span>
+                    </span>
+                    <span class="rest-api-nav-group__toggle-meta">
+                      <span class="rest-api-nav-group__count" data-group-count data-total-count="{{ len $groupOperations }}">{{ len $groupOperations }}</span>
+                      <span class="rest-api-nav-group__chevron" aria-hidden="true"></span>
+                    </span>
+                  </button>
+                  <ul class="rest-api-nav-list" data-group-panel>
+                    {{ range $groupOperations }}
+                      <li class="rest-api-nav-item">
+                        <a
+                          href="#{{ .id }}"
+                          class="rest-api-nav-link"
+                          data-operation-link
+                          data-operation-id="{{ .id }}"
+                          data-path-id="{{ .pathId }}"
+                          data-search="{{ lower (printf "%s %s %s %s" .method .path .summary .tagLabel) }}"
+                        >
+                          <span class="rest-api-nav-link__top">
+                            <span class="rest-api-method-badge rest-api-method-badge--{{ .method }}">{{ upper .method }}</span>
+                            <span class="rest-api-nav-link__path">{{ .path }}</span>
+                          </span>
+                          <span class="rest-api-nav-link__summary">{{ .summary }}</span>
+                        </a>
+                      </li>
+                    {{ end }}
+                  </ul>
+                </section>
+              {{ end }}
+            {{ end }}
+          </div>
+
+          <p class="rest-api-nav__empty" data-rest-api-empty hidden>No endpoints match this filter.</p>
+        </div>
+      </aside>
+
+      <section class="rest-api-content" data-rest-api-content aria-live="polite">
+        {{ range $operations }}
+          {{ $operation := .data }}
+          {{ $authSummary := partial "rest-apis/auth-summary.html" (dict "operation" $operation "schemes" $securitySchemes) }}
+          {{ $parameters := $operation.parameters | default (slice) }}
+
+          <article class="rest-api-operation" data-operation-panel data-operation-id="{{ .id }}" data-path-id="{{ .pathId }}">
+            <div class="rest-api-operation__header">
+              <div class="rest-api-operation__labels">
+                <span class="rest-api-method-badge rest-api-method-badge--{{ .method }}">{{ upper .method }}</span>
+                <span class="rest-api-chip">{{ .tagLabel }}</span>
+              </div>
+              <h2 class="rest-api-operation__path" id="{{ .id }}">{{ .path }}</h2>
+              <p class="rest-api-operation__summary">{{ .summary }}</p>
+              {{ with .description }}
+                <div class="rest-api-prose">{{ . | markdownify }}</div>
+              {{ end }}
+            </div>
+
+            {{ if $authSummary }}
+              <dl class="rest-api-meta">
+                <div class="rest-api-meta__item">
+                  <dt>Authentication</dt>
+                  <dd>{{ $authSummary }}</dd>
+                </div>
+              </dl>
+            {{ end }}
+
+            {{ if gt (len $parameters) 0 }}
+              <section class="rest-api-section">
+                <h3>Parameters</h3>
+                {{ $locations := slice
+                  (dict "key" "path" "label" "Path parameters")
+                  (dict "key" "query" "label" "Query parameters")
+                  (dict "key" "header" "label" "Header parameters")
+                  (dict "key" "cookie" "label" "Cookie parameters")
+                }}
+                {{ range $locations }}
+                  {{ $rows := where $parameters "in" .key }}
+                  {{ if gt (len $rows) 0 }}
+                    <div class="rest-api-section-block">
+                      <p class="rest-api-section-block__title">{{ .label }}</p>
+                      <div class="rest-api-table-wrapper">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th>Type</th>
+                              <th>Required</th>
+                              <th>Description</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {{ range $rows }}
+                              {{ $parameterSchema := index . "schema" | default dict }}
+                              {{ $parameterType := partial "rest-apis/schema-type.html" $parameterSchema }}
+                              <tr>
+                                <td><code>{{ .name }}</code></td>
+                                <td>{{ $parameterType | default "schema" }}</td>
+                                <td>{{ if .required }}Yes{{ else }}No{{ end }}</td>
+                                <td>
+                                  {{ with .description }}
+                                    {{ . | markdownify }}
+                                  {{ else }}
+                                    <span class="rest-api-muted">No description provided.</span>
+                                  {{ end }}
+                                </td>
+                              </tr>
+                            {{ end }}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  {{ end }}
+                {{ end }}
+              </section>
+            {{ end }}
+
+            {{ with $operation.requestBody }}
+              {{ $requestBody := . }}
+              <section class="rest-api-section">
+                <h3>Request body</h3>
+                {{ with $requestBody.description }}
+                  <div class="rest-api-prose">{{ . | markdownify }}</div>
+                {{ end }}
+                <div class="rest-api-media-list">
+                  {{ range $contentType, $content := $requestBody.content }}
+                    {{ $schema := index $content "schema" | default dict }}
+                    {{ $schemaType := partial "rest-apis/schema-type.html" $schema }}
+                    {{ $fields := partial "rest-apis/schema-properties.html" $schema }}
+                    {{ $example := partial "rest-apis/content-example.html" $content }}
+                    <article class="rest-api-media-block">
+                      <div class="rest-api-media-block__header">
+                        <div>
+                          <p class="rest-api-media-block__title">{{ $contentType }}</p>
+                          <p class="rest-api-media-block__summary">Schema: <code>{{ $schemaType }}</code></p>
+                        </div>
+                        <span class="rest-api-chip rest-api-chip--subtle">{{ if $requestBody.required }}Required{{ else }}Optional{{ end }}</span>
+                      </div>
+
+                      {{ with index $schema "description" }}
+                        <div class="rest-api-prose">{{ . | markdownify }}</div>
+                      {{ end }}
+
+                      {{ if gt (len (index $fields "rows")) 0 }}
+                        <div class="rest-api-table-wrapper">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Field</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {{ range index $fields "rows" }}
+                                <tr>
+                                  <td><code>{{ .name }}</code></td>
+                                  <td>{{ partial "rest-apis/schema-type.html" (index . "schema") }}</td>
+                                  <td>{{ if .required }}Yes{{ else }}No{{ end }}</td>
+                                  <td>
+                                    {{ with index .schema "description" }}
+                                      {{ . | markdownify }}
+                                    {{ else }}
+                                      <span class="rest-api-muted">No description provided.</span>
+                                    {{ end }}
+                                  </td>
+                                </tr>
+                              {{ end }}
+                            </tbody>
+                          </table>
+                        </div>
+                      {{ else if index $schema "oneOf" }}
+                        <div class="rest-api-variant-grid">
+                          {{ range index $schema "oneOf" }}
+                            {{ $variantFields := partial "rest-apis/schema-properties.html" . }}
+                            <article class="rest-api-variant">
+                              <p class="rest-api-variant__title">{{ index . "title" | default (partial "rest-apis/schema-type.html" .) }}</p>
+                              {{ with index . "description" }}
+                                <div class="rest-api-prose">{{ . | markdownify }}</div>
+                              {{ end }}
+                              {{ if gt (len (index $variantFields "rows")) 0 }}
+                                <div class="rest-api-table-wrapper">
+                                  <table>
+                                    <thead>
+                                      <tr>
+                                        <th>Field</th>
+                                        <th>Type</th>
+                                        <th>Required</th>
+                                        <th>Description</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {{ range index $variantFields "rows" }}
+                                        <tr>
+                                          <td><code>{{ .name }}</code></td>
+                                          <td>{{ partial "rest-apis/schema-type.html" (index . "schema") }}</td>
+                                          <td>{{ if .required }}Yes{{ else }}No{{ end }}</td>
+                                          <td>
+                                            {{ with index .schema "description" }}
+                                              {{ . | markdownify }}
+                                            {{ else }}
+                                              <span class="rest-api-muted">No description provided.</span>
+                                            {{ end }}
+                                          </td>
+                                        </tr>
+                                      {{ end }}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              {{ else }}
+                                <p class="rest-api-muted">Schema: <code>{{ partial "rest-apis/schema-type.html" . }}</code></p>
+                              {{ end }}
+                            </article>
+                          {{ end }}
+                        </div>
+                      {{ else }}
+                        <p class="rest-api-muted">Schema: <code>{{ $schemaType }}</code></p>
+                      {{ end }}
+
+                      {{ if $example }}
+                        <div class="rest-api-example">
+                          <p class="rest-api-example__title">Example payload</p>
+                          <pre><code class="language-{{ if strings.Contains $contentType "json" }}json{{ else }}http{{ end }}">{{ if or (reflect.IsMap $example) (reflect.IsSlice $example) }}{{ $example | jsonify (dict "indent" "  ") }}{{ else }}{{ $example }}{{ end }}</code></pre>
+                        </div>
+                      {{ end }}
+                    </article>
+                  {{ end }}
+                </div>
+              </section>
+            {{ end }}
+
+            {{ with $operation.responses }}
+              <section class="rest-api-section">
+                <h3>Responses</h3>
+                <div class="rest-api-response-list">
+                  {{ range $code, $response := . }}
+                    {{ $statusCode := printf "%v" $code }}
+                    {{ $responseTone := "neutral" }}
+                    {{ if strings.HasPrefix $statusCode "2" }}
+                      {{ $responseTone = "success" }}
+                    {{ else if strings.HasPrefix $statusCode "3" }}
+                      {{ $responseTone = "info" }}
+                    {{ else if strings.HasPrefix $statusCode "4" }}
+                      {{ $responseTone = "warning" }}
+                    {{ else if strings.HasPrefix $statusCode "5" }}
+                      {{ $responseTone = "danger" }}
+                    {{ end }}
+
+                    <article class="rest-api-response rest-api-response--{{ $responseTone }}">
+                      <div class="rest-api-response__header">
+                        <span class="rest-api-status">{{ $statusCode }}</span>
+                        <div class="rest-api-response__summary">
+                          {{ with $response.description }}
+                            {{ . | markdownify }}
+                          {{ else }}
+                            <p>No description provided.</p>
+                          {{ end }}
+                        </div>
+                      </div>
+
+                      {{ with $response.content }}
+                        <div class="rest-api-media-list">
+                          {{ range $contentType, $content := . }}
+                            {{ $schema := index $content "schema" | default dict }}
+                            {{ $schemaType := partial "rest-apis/schema-type.html" $schema }}
+                            {{ $fields := partial "rest-apis/schema-properties.html" $schema }}
+                            {{ $example := partial "rest-apis/content-example.html" $content }}
+                            <article class="rest-api-media-block rest-api-media-block--response">
+                              <div class="rest-api-media-block__header">
+                                <div>
+                                  <p class="rest-api-media-block__title">{{ $contentType }}</p>
+                                  <p class="rest-api-media-block__summary">Schema: <code>{{ $schemaType }}</code></p>
+                                </div>
+                              </div>
+
+                              {{ with index $schema "description" }}
+                                <div class="rest-api-prose">{{ . | markdownify }}</div>
+                              {{ end }}
+
+                              {{ if gt (len (index $fields "rows")) 0 }}
+                                <div class="rest-api-table-wrapper">
+                                  <table>
+                                    <thead>
+                                      <tr>
+                                        <th>Field</th>
+                                        <th>Type</th>
+                                        <th>Required</th>
+                                        <th>Description</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {{ range index $fields "rows" }}
+                                        <tr>
+                                          <td><code>{{ .name }}</code></td>
+                                          <td>{{ partial "rest-apis/schema-type.html" (index . "schema") }}</td>
+                                          <td>{{ if .required }}Yes{{ else }}No{{ end }}</td>
+                                          <td>
+                                            {{ with index .schema "description" }}
+                                              {{ . | markdownify }}
+                                            {{ else }}
+                                              <span class="rest-api-muted">No description provided.</span>
+                                            {{ end }}
+                                          </td>
+                                        </tr>
+                                      {{ end }}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              {{ else if index $schema "oneOf" }}
+                                <div class="rest-api-variant-grid">
+                                  {{ range index $schema "oneOf" }}
+                                    {{ $variantFields := partial "rest-apis/schema-properties.html" . }}
+                                    <article class="rest-api-variant">
+                                      <p class="rest-api-variant__title">{{ index . "title" | default (partial "rest-apis/schema-type.html" .) }}</p>
+                                      {{ with index . "description" }}
+                                        <div class="rest-api-prose">{{ . | markdownify }}</div>
+                                      {{ end }}
+                                      {{ if gt (len (index $variantFields "rows")) 0 }}
+                                        <div class="rest-api-table-wrapper">
+                                          <table>
+                                            <thead>
+                                              <tr>
+                                                <th>Field</th>
+                                                <th>Type</th>
+                                                <th>Required</th>
+                                                <th>Description</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {{ range index $variantFields "rows" }}
+                                                <tr>
+                                                  <td><code>{{ .name }}</code></td>
+                                                  <td>{{ partial "rest-apis/schema-type.html" (index . "schema") }}</td>
+                                                  <td>{{ if .required }}Yes{{ else }}No{{ end }}</td>
+                                                  <td>
+                                                    {{ with index .schema "description" }}
+                                                      {{ . | markdownify }}
+                                                    {{ else }}
+                                                      <span class="rest-api-muted">No description provided.</span>
+                                                    {{ end }}
+                                                  </td>
+                                                </tr>
+                                              {{ end }}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      {{ else }}
+                                        <p class="rest-api-muted">Schema: <code>{{ partial "rest-apis/schema-type.html" . }}</code></p>
+                                      {{ end }}
+                                    </article>
+                                  {{ end }}
+                                </div>
+                              {{ else }}
+                                <p class="rest-api-muted">Schema: <code>{{ $schemaType }}</code></p>
+                              {{ end }}
+
+                              {{ if $example }}
+                                <div class="rest-api-example">
+                                  <p class="rest-api-example__title">Example response</p>
+                                  <pre><code class="language-{{ if strings.Contains $contentType "json" }}json{{ else }}http{{ end }}">{{ if or (reflect.IsMap $example) (reflect.IsSlice $example) }}{{ $example | jsonify (dict "indent" "  ") }}{{ else }}{{ $example }}{{ end }}</code></pre>
+                                </div>
+                              {{ end }}
+                            </article>
+                          {{ end }}
+                        </div>
+                      {{ end }}
+                    </article>
+                  {{ end }}
+                </div>
+              </section>
+            {{ end }}
+          </article>
+        {{ end }}
+      </section>
+    </div>
+  </div>
+{{ else }}
+  <p>No Meshery OSS REST operations were found in <code>docs/data/openapi.yml</code>.</p>
 {{ end }}
 
 <script type="text/javascript">
-// Helpers
+document.addEventListener("DOMContentLoaded", function () {
+  var root = document.querySelector("[data-rest-api-root]");
+  if (!root) {
+    return;
+  }
 
-var slice = Array.prototype.slice;
+  var links = Array.prototype.slice.call(root.querySelectorAll("[data-operation-link]"));
+  var panels = Array.prototype.slice.call(root.querySelectorAll("[data-operation-panel]"));
+  var groups = Array.prototype.slice.call(root.querySelectorAll("[data-rest-api-group]"));
+  var groupToggles = Array.prototype.slice.call(root.querySelectorAll("[data-group-toggle]"));
+  var toggleAllGroups = root.querySelector("[data-toggle-all-groups]");
+  var searchInput = root.querySelector("[data-rest-api-search]");
+  var emptyState = root.querySelector("[data-rest-api-empty]");
+  var defaultOperationId = root.getAttribute("data-default-operation");
 
-function $(expr, parent) {
-    return typeof expr === "string" ? (parent || document).querySelector(expr) : expr || null;
-}
-
-function $$(expr, parent) {
-    return slice.call((parent || document).querySelectorAll(expr));
-}
-
-bind = function(element, o) {
-    if (element) {
-        for (var event in o) {
-            var callback = o[event];
-
-            event.split(/\s+/).forEach(function (event) {
-                element.addEventListener(event, callback);
-            });
-        }
-    }
-};
-
-toggleDetails = function(element) {
-    if (element.classList.contains('open')) {
-        element.classList.remove('open');
-    }
-    else {
-        element.classList.add('open');
-    }
-}
-
-// Initialization
-
-function init() {
-    $$('.swagger-method-title').forEach(function (title) {
-        bind(title, {
-            'click': function (e) {
-                var details = $('.swagger-method-details', title.parentNode)
-                toggleDetails(details[0]);
-                e.preventDefault();
-            }
-        });
+  function findLink(targetId) {
+    return links.find(function (link) {
+      return link.dataset.operationId === targetId || link.dataset.pathId === targetId;
     });
-}
+  }
 
-// DOM already loaded?
-if (document.readyState !== "loading") {
-    init();
-}
-else {
-    // Wait for it
-    document.addEventListener("DOMContentLoaded", init);
-}
+  function findPanel(targetId) {
+    return panels.find(function (panel) {
+      return panel.dataset.operationId === targetId || panel.dataset.pathId === targetId;
+    });
+  }
+
+  function firstVisibleLink() {
+    return links.find(function (link) {
+      return !link.closest(".rest-api-nav-item").hidden;
+    });
+  }
+
+  function setGroupOpen(group, isOpen) {
+    if (!group) {
+      return;
+    }
+
+    var toggle = group.querySelector("[data-group-toggle]");
+    var panel = group.querySelector("[data-group-panel]");
+
+    group.classList.toggle("is-open", isOpen);
+
+    if (toggle) {
+      toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    }
+
+    if (panel) {
+      panel.hidden = !isOpen;
+    }
+
+    syncToggleAllControl();
+  }
+
+  function visibleItemsInGroup(group) {
+    return group.querySelectorAll(".rest-api-nav-item:not([hidden])").length;
+  }
+
+  function visibleGroups() {
+    return groups.filter(function (group) {
+      return !group.hidden;
+    });
+  }
+
+  function syncToggleAllControl() {
+    if (!toggleAllGroups) {
+      return;
+    }
+
+    var visible = visibleGroups();
+    var anyOpen = visible.some(function (group) {
+      return group.classList.contains("is-open");
+    });
+    var mode = anyOpen ? "collapse" : "expand";
+
+    toggleAllGroups.dataset.toggleMode = mode;
+    toggleAllGroups.setAttribute(
+      "aria-label",
+      anyOpen ? "Collapse all categories" : "Expand all categories"
+    );
+    toggleAllGroups.disabled = visible.length === 0;
+
+    var text = toggleAllGroups.querySelector(".rest-api-nav-control__text");
+    if (text) {
+      text.textContent = anyOpen ? "Collapse all" : "Expand all";
+    }
+  }
+
+  function getTargetFromHash() {
+    var hash = window.location.hash.replace(/^#/, "");
+    return hash || defaultOperationId;
+  }
+
+  function setActive(targetId, options) {
+    options = options || {};
+
+    var link = findLink(targetId);
+    var panel = findPanel(targetId);
+
+    if (!link || !panel) {
+      link = firstVisibleLink();
+      panel = link ? findPanel(link.dataset.operationId) : null;
+    }
+
+    if (!link || !panel) {
+      return;
+    }
+
+    var activeId = panel.dataset.operationId;
+    var activeGroup = link.closest(".rest-api-nav-group");
+
+    setGroupOpen(activeGroup, true);
+
+    links.forEach(function (item) {
+      var isActive = item.dataset.operationId === activeId;
+      item.classList.toggle("is-active", isActive);
+      item.setAttribute("aria-current", isActive ? "true" : "false");
+    });
+
+    panels.forEach(function (item) {
+      var isActive = item.dataset.operationId === activeId;
+      item.classList.toggle("is-active", isActive);
+      item.hidden = root.classList.contains("is-enhanced") && !isActive;
+    });
+
+    if (options.updateHash && window.location.hash !== "#" + activeId) {
+      window.history.replaceState(null, "", "#" + activeId);
+    }
+
+    if (options.scroll) {
+      panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  function applyFilter() {
+    var query = (searchInput && searchInput.value || "").trim().toLowerCase();
+    var hasQuery = query.length > 0;
+    var visibleCount = 0;
+
+    links.forEach(function (link) {
+      var item = link.closest(".rest-api-nav-item");
+      var haystack = (link.dataset.search || "").toLowerCase();
+      var visible = !query || haystack.indexOf(query) !== -1;
+      item.hidden = !visible;
+      if (visible) {
+        visibleCount += 1;
+      }
+    });
+
+    groups.forEach(function (group) {
+      var visibleItems = visibleItemsInGroup(group);
+      var count = group.querySelector("[data-group-count]");
+      group.hidden = visibleItems === 0;
+
+      if (count) {
+        count.textContent = hasQuery ? visibleItems : count.dataset.totalCount;
+      }
+
+      if (!group.hidden && hasQuery) {
+        setGroupOpen(group, true);
+      }
+    });
+
+    if (emptyState) {
+      emptyState.hidden = visibleCount !== 0;
+    }
+
+    var activeLink = root.querySelector("[data-operation-link].is-active");
+    if (!activeLink || activeLink.closest(".rest-api-nav-item").hidden) {
+      var fallback = firstVisibleLink();
+      if (fallback) {
+        setActive(fallback.dataset.operationId, { updateHash: true, scroll: false });
+      }
+    }
+
+    syncToggleAllControl();
+  }
+
+  root.classList.add("is-enhanced");
+  groups.forEach(function (group, index) {
+    setGroupOpen(group, index === 0);
+  });
+  applyFilter();
+  setActive(getTargetFromHash(), { scroll: false });
+
+  groupToggles.forEach(function (toggle) {
+    toggle.addEventListener("click", function () {
+      var group = toggle.closest(".rest-api-nav-group");
+      var isOpen = group.classList.contains("is-open");
+      setGroupOpen(group, !isOpen);
+    });
+  });
+
+  if (toggleAllGroups) {
+    toggleAllGroups.addEventListener("click", function () {
+      var visible = visibleGroups();
+      var anyOpen = visible.some(function (group) {
+        return group.classList.contains("is-open");
+      });
+
+      visible.forEach(function (group) {
+        setGroupOpen(group, !anyOpen);
+      });
+
+      syncToggleAllControl();
+    });
+  }
+
+  links.forEach(function (link) {
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+      setActive(link.dataset.operationId, { updateHash: true, scroll: true });
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener("input", function () {
+      applyFilter();
+    });
+  }
+
+  window.addEventListener("hashchange", function () {
+    setActive(getTargetFromHash(), { scroll: true });
+  });
+});
 </script>
 {{ end }}

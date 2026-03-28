@@ -1,0 +1,760 @@
+@use "project-variables" as project;
+
+$method-get: #3f9abc;
+$method-post: #3aae97;
+$method-put: #1eaaaf;
+$method-patch: #36bea1;
+$method-delete: #dd4a54;
+$method-options: #607680;
+$method-head: #7d8790;
+
+@mixin method-badge($background) {
+  background: $background;
+  color: var(--color-white);
+}
+
+.rest-api-reference-page {
+  .main-container {
+    overflow-x: visible;
+  }
+
+  .td-content {
+    max-width: none;
+  }
+
+  .rest-api-page {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .rest-api-overview,
+  .rest-api-sidebar,
+  .rest-api-operation {
+    border: 1px solid var(--color-grey-light);
+    border-radius: 1rem;
+    background: var(--background-light-cards);
+    box-shadow: var(--box-shadow-primary-light);
+  }
+
+  .rest-api-overview {
+    padding: 1.4rem 1.5rem;
+  }
+
+  .rest-api-overview__eyebrow {
+    margin: 0 0 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brand-color);
+  }
+
+  .rest-api-overview__summary {
+    margin: 0;
+    max-width: 70ch;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .rest-api-overview__stats,
+  .rest-api-nav-list,
+  .rest-api-meta {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .rest-api-overview__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .rest-api-overview__stats li {
+    min-width: 9rem;
+    padding: 0.85rem 1rem;
+    border-radius: 0.85rem;
+    background: var(--color-primary-medium);
+    border: 1px solid var(--color-grey-light);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .rest-api-overview__stats strong {
+    font-size: 1rem;
+    color: var(--color-secondary-dark);
+  }
+
+  .rest-api-overview__stats span {
+    font-size: 0.9rem;
+    color: var(--color-secondary-medium);
+  }
+
+  .rest-api-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .rest-api-sidebar {
+    align-self: start;
+    padding: 1.1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rest-api-sidebar__inner {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .rest-api-search-label {
+    display: block;
+    margin-bottom: 0.45rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+
+  .rest-api-search {
+    width: 100%;
+    border: 1px solid var(--color-grey-light);
+    border-radius: 0.75rem;
+    background: var(--color-primary-light);
+    color: var(--color-secondary-dark);
+    font: inherit;
+    padding: 0.85rem 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .rest-api-search:focus {
+    outline: none;
+    border-color: var(--brand-color);
+    box-shadow: 0 0 0 3px var(--color-grey-dark-alpha);
+  }
+
+  .rest-api-sidebar__hint {
+    margin: 0.7rem 0 0.9rem;
+    font-size: 0.9rem;
+    color: var(--color-secondary-medium);
+  }
+
+  .rest-api-nav-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+  }
+
+  .rest-api-nav-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-grey-light);
+    background: var(--color-primary-medium);
+    color: var(--color-secondary-dark);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .rest-api-nav-control:hover {
+    background: var(--color-primary-light);
+    border-color: var(--color-grey-medium);
+    box-shadow: var(--box-shadow-primary-light);
+  }
+
+  .rest-api-nav-control:disabled {
+    opacity: 0.55;
+    cursor: default;
+    box-shadow: none;
+  }
+
+  .rest-api-nav-control__icon {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .rest-api-nav-control__icon span {
+    display: block;
+    width: 0.8rem;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
+  .rest-api-nav-control[data-toggle-mode="expand"] .rest-api-nav-control__icon span:last-child {
+    width: 0.5rem;
+  }
+
+  .rest-api-nav-control__text {
+    font-size: 0.84rem;
+    font-weight: 600;
+  }
+
+  .rest-api-nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    gap: 0.8rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    min-width: 0;
+    padding: 0.1rem 0.15rem 0.25rem;
+    max-height: 28rem;
+    scrollbar-width: thin;
+  }
+
+  .rest-api-nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0 0.15rem;
+    background: transparent;
+    border: none;
+    overflow: visible;
+    min-width: 0;
+  }
+
+  .rest-api-nav-group__toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 0.75rem;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    box-shadow: none;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .rest-api-nav-group__toggle:hover {
+    background: var(--color-primary-medium);
+  }
+
+  .rest-api-nav-group__toggle:focus-visible,
+  .rest-api-nav-control:focus-visible {
+    outline: none;
+    border-color: var(--brand-color);
+    box-shadow: 0 0 0 3px var(--color-grey-dark-alpha);
+  }
+
+  .rest-api-nav-group__toggle-main,
+  .rest-api-nav-group__toggle-meta {
+    display: flex;
+    align-items: center;
+  }
+
+  .rest-api-nav-group__toggle-main {
+    min-width: 0;
+  }
+
+  .rest-api-nav-group__toggle-meta {
+    gap: 0.65rem;
+  }
+
+  .rest-api-nav-group__title {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-secondary-medium);
+  }
+
+  .rest-api-nav-group.is-open .rest-api-nav-group__title,
+  .rest-api-nav-group__toggle:hover .rest-api-nav-group__title {
+    color: var(--color-secondary-dark);
+  }
+
+  .rest-api-nav-group__count {
+    min-width: 1.75rem;
+    padding: 0.2rem 0.45rem;
+    border-radius: 999px;
+    background: var(--color-primary-medium);
+    border: 1px solid var(--color-grey-light);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  .rest-api-nav-group__chevron {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-right: 2px solid var(--color-secondary-medium);
+    border-bottom: 2px solid var(--color-secondary-medium);
+    transform: rotate(45deg);
+    transform-origin: center;
+    transition: transform 0.2s ease;
+  }
+
+  .rest-api-nav-group.is-open .rest-api-nav-group__chevron {
+    transform: rotate(225deg);
+  }
+
+  [data-group-panel][hidden] {
+    display: none !important;
+  }
+
+  .rest-api-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0 0 0 0.8rem;
+    margin-left: 0.7rem;
+    border-left: 1px solid var(--color-grey-light);
+    min-width: 0;
+  }
+
+  .rest-api-nav-item {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .rest-api-nav-link {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    border-radius: 0.9rem;
+    border: 1px solid var(--color-grey-light);
+    background: var(--color-primary-medium);
+    padding: 0.8rem;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .rest-api-nav-link:hover {
+    border-color: var(--color-grey-light);
+    box-shadow: var(--box-shadow-primary-light);
+    text-decoration: none;
+  }
+
+  .rest-api-nav-link.is-active {
+    border-color: var(--brand-color);
+    background: var(--color-primary-light);
+    box-shadow: var(--box-shadow-primary-light);
+  }
+
+  .rest-api-nav-link__top {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    min-width: 0;
+  }
+
+  .rest-api-nav-link__path {
+    min-width: 0;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, liberation mono, courier new, monospace;
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .rest-api-nav-link__summary {
+    display: block;
+    margin-top: 0.55rem;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: var(--color-secondary-medium);
+  }
+
+  .rest-api-nav__empty {
+    margin: 1rem 0 0;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--color-grey-light);
+    font-size: 0.9rem;
+    color: var(--color-secondary-medium);
+  }
+
+  .rest-api-content {
+    min-width: 0;
+  }
+
+  .rest-api-operation {
+    padding: 1.55rem;
+  }
+
+  .rest-api-page.is-enhanced .rest-api-operation {
+    display: none;
+  }
+
+  .rest-api-page.is-enhanced .rest-api-operation.is-active {
+    display: block;
+  }
+
+  .rest-api-operation__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .rest-api-operation__labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .rest-api-operation__path {
+    margin: 0;
+    font-size: 1.75rem;
+    line-height: 1.25;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, liberation mono, courier new, monospace;
+    overflow-wrap: anywhere;
+  }
+
+  .rest-api-operation__summary {
+    margin: 0;
+    font-size: 1.06rem;
+    font-weight: 600;
+    color: var(--color-secondary-medium);
+  }
+
+  .rest-api-prose,
+  .rest-api-response__summary {
+    line-height: 1.65;
+  }
+
+  .rest-api-prose p,
+  .rest-api-response__summary p {
+    margin: 0;
+  }
+
+  .rest-api-prose p + p,
+  .rest-api-response__summary p + p {
+    margin-top: 0.7rem;
+  }
+
+  .rest-api-prose a,
+  .rest-api-response__summary a {
+    color: var(--brand-color);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .rest-api-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 0.85rem;
+    margin-top: 1rem;
+  }
+
+  .rest-api-meta__item {
+    padding: 1rem;
+    border-radius: 0.9rem;
+    border: 1px solid var(--color-grey-light);
+    background: var(--color-primary-medium);
+  }
+
+  .rest-api-meta__item dt {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-secondary-medium);
+  }
+
+  .rest-api-meta__item dd {
+    margin: 0.35rem 0 0;
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .rest-api-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-grey-light);
+  }
+
+  .rest-api-section > h3 {
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .rest-api-section-block,
+  .rest-api-media-block,
+  .rest-api-response,
+  .rest-api-variant {
+    border: 1px solid var(--color-grey-light);
+    border-radius: 0.95rem;
+    background: var(--color-primary-medium);
+  }
+
+  .rest-api-section-block,
+  .rest-api-media-block,
+  .rest-api-response {
+    padding: 1rem;
+  }
+
+  .rest-api-section-block + .rest-api-section-block,
+  .rest-api-response + .rest-api-response {
+    margin-top: 1rem;
+  }
+
+  .rest-api-section-block__title,
+  .rest-api-example__title,
+  .rest-api-variant__title {
+    margin: 0 0 0.85rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--color-secondary-medium);
+  }
+
+  .rest-api-media-list,
+  .rest-api-response-list,
+  .rest-api-variant-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .rest-api-media-block__header,
+  .rest-api-response__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .rest-api-media-block__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .rest-api-media-block__summary {
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+    color: var(--color-secondary-medium);
+  }
+
+  .rest-api-example {
+    margin-top: 1rem;
+  }
+
+  .rest-api-example pre,
+  .rest-api-operation pre {
+    margin: 0;
+    padding: 1rem;
+    border-radius: 0.9rem;
+    border: 1px solid var(--color-grey-light);
+    background: var(--color-primary-light);
+    overflow: auto;
+  }
+
+  .rest-api-example code,
+  .rest-api-operation pre code {
+    display: block;
+    width: 100%;
+    color: var(--color-secondary-dark);
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    background: transparent;
+    padding: 0;
+  }
+
+  .rest-api-response__summary {
+    flex: 1 1 auto;
+  }
+
+  .rest-api-status,
+  .rest-api-chip,
+  .rest-api-method-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    white-space: nowrap;
+    font-weight: 700;
+  }
+
+  .rest-api-status {
+    min-width: 3.2rem;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.9rem;
+    background: var(--color-secondary-dark);
+    color: var(--color-white);
+  }
+
+  .rest-api-chip {
+    padding: 0.35rem 0.75rem;
+    background: var(--color-primary-dark);
+    border: 1px solid var(--color-grey-light);
+    font-size: 0.82rem;
+  }
+
+  .rest-api-chip--subtle {
+    background: transparent;
+  }
+
+  .rest-api-method-badge {
+    min-width: 4.25rem;
+    padding: 0.38rem 0.72rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  .rest-api-method-badge--get {
+    @include method-badge($method-get);
+  }
+
+  .rest-api-method-badge--post {
+    @include method-badge($method-post);
+  }
+
+  .rest-api-method-badge--put {
+    @include method-badge($method-put);
+  }
+
+  .rest-api-method-badge--patch {
+    @include method-badge($method-patch);
+  }
+
+  .rest-api-method-badge--delete {
+    @include method-badge($method-delete);
+  }
+
+  .rest-api-method-badge--options {
+    @include method-badge($method-options);
+  }
+
+  .rest-api-method-badge--head {
+    @include method-badge($method-head);
+  }
+
+  .rest-api-response--success .rest-api-status {
+    @include method-badge($method-post);
+  }
+
+  .rest-api-response--info .rest-api-status {
+    @include method-badge(project.$charcoal);
+  }
+
+  .rest-api-response--warning .rest-api-status {
+    background: #c47a15;
+    color: var(--color-white);
+  }
+
+  .rest-api-response--danger .rest-api-status {
+    @include method-badge($method-delete);
+  }
+
+  .rest-api-muted {
+    color: var(--color-secondary-medium);
+    font-size: 0.92rem;
+  }
+
+  .rest-api-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .rest-api-table-wrapper > table {
+    display: table;
+    width: 100%;
+    min-width: 100%;
+    table-layout: fixed;
+    overflow: visible;
+    margin-bottom: 0;
+  }
+
+  .rest-api-table-wrapper th,
+  .rest-api-table-wrapper td {
+    max-width: none;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .rest-api-table-wrapper td p {
+    margin: 0;
+  }
+
+  .rest-api-table-wrapper td p + p {
+    margin-top: 0.45rem;
+  }
+
+  .rest-api-table-wrapper td code {
+    word-break: break-word;
+  }
+
+  .rest-api-variant {
+    padding: 1rem;
+  }
+
+  .rest-api-variant__title {
+    color: var(--color-secondary-dark);
+  }
+
+  @media (max-width: 800px) {
+    .rest-api-overview,
+    .rest-api-sidebar,
+    .rest-api-operation {
+      padding: 1.1rem;
+    }
+
+    .rest-api-operation__path {
+      font-size: 1.4rem;
+    }
+
+    .rest-api-media-block__header,
+    .rest-api-response__header {
+      flex-direction: column;
+    }
+
+    .rest-api-method-badge {
+      min-width: 3.75rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .rest-api-page {
+      margin-top: 1.1rem;
+    }
+
+    .rest-api-nav-toolbar {
+      justify-content: stretch;
+    }
+
+    .rest-api-nav-control {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .rest-api-overview__stats {
+      flex-direction: column;
+    }
+
+    .rest-api-overview__stats li {
+      min-width: 0;
+    }
+
+    .rest-api-nav {
+      max-height: 24rem;
+    }
+
+    .rest-api-nav-list {
+      padding-left: 0.7rem;
+      margin-left: 0.35rem;
+    }
+
+    .rest-api-operation__labels,
+    .rest-api-nav-link__top {
+      flex-wrap: wrap;
+    }
+  }
+}

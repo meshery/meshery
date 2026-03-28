@@ -1,8 +1,10 @@
 ---
 title: REST API Reference
-description: Meshery REST API Documentation and Reference
+description: Meshery OSS REST API documentation and reference
 type: rest-apis
-data: swagger
+data: openapi
+display_toc: false
+body_class: rest-api-reference-page
 aliases: 
 - /reference/rest-apis/swagger
 ---
@@ -84,6 +86,7 @@ Using curl, you can access Meshery's REST API by executing this command:
 
 ## Endpoints
 
-This section contains self-generated documentation derived from Meshery’s OpenAPI specification for its REST APIs.
+This section contains API reference content derived from Meshery’s OpenAPI specification.
 
 {{% alert color="info" title="An alternative overview" %}}See the <a href='https://docs.google.com/spreadsheets/d/1ABJCbfQRi0uN_YoP2kmHZ-lTI4S4QuvRk1_unomKNRE/edit'>Meshery API Endpoints spreadsheet</a> for an alternative overview of these endpoints.{{% /alert %}}
+
