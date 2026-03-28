@@ -8,6 +8,19 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 
+func isValidPerformanceTestEndpoint(rawURL string) bool {
+	parsedURL, err := url.ParseRequestURI(rawURL)
+	if err != nil {
+		return false
+	}
+
+	if !parsedURL.IsAbs() || parsedURL.Host == "" {
+		return false
+	}
+
+	return parsedURL.Scheme == "http" || parsedURL.Scheme == "https"
+}
+
 // SMPPerformanceTestConfigValidator performs validations on the given PerformanceTestConfig object
 func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) error {
 	if perfTest.Name == "" {
@@ -34,7 +47,7 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 			return ErrTestEndpoint
 		}
 		for _, URL := range testClient.EndpointUrls {
-			if _, err := url.Parse(URL); err != nil {
+			if !isValidPerformanceTestEndpoint(URL) {
 				return ErrValidURL
 			}
 		}
