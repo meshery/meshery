@@ -1,10 +1,51 @@
 // @ts-nocheck
 import React from 'react';
 
+const ANIMATION_STYLES = `
+  /* Each triangle fades in/out staggered by its vertical position in the logo */
+  
+  /* Top row triangles - animate first */
+  .svg-meshery-14, .svg-meshery-17, .svg-meshery-10, .svg-meshery-16,
+  .svg-meshery-21, .svg-meshery-23 {
+    fill: #00B39F;
+    animation: meshery-fade 2s ease-in-out infinite;
+    animation-delay: 0s;
+  }
+  /* Middle row */
+  .svg-meshery-1, .svg-meshery-3, .svg-meshery-15, .svg-meshery-25,
+  .svg-meshery-9, .svg-meshery-11, .svg-meshery-13, .svg-meshery-18,
+  .svg-meshery-19 {
+    fill: #00B39F;
+    animation: meshery-fade 2s ease-in-out infinite;
+    animation-delay: 0.3s;
+  }
+  /* Lower middle */
+  .svg-meshery-2, .svg-meshery-5, .svg-meshery-4, .svg-meshery-7,
+  .svg-meshery-8, .svg-meshery-22 {
+    fill: #00B39F;
+    animation: meshery-fade 2s ease-in-out infinite;
+    animation-delay: 0.6s;
+  }
+  /* Bottom row - animate last */
+  .svg-meshery-6, .svg-meshery-20, .svg-meshery-24, .svg-meshery-12 {
+    fill: #00B39F;
+    animation: meshery-fade 2s ease-in-out infinite;
+    animation-delay: 0.9s;
+  }
+
+  @keyframes meshery-fade {
+    0%   { opacity: 1;   }
+    50%  { opacity: 0.2; }
+    100% { opacity: 1;   }
+  }
+`;
+
 const AnimatedMeshery = (props) => {
   const textfill = props.textFill || '#ccc';
   return (
     <div>
+      {/* Inject animation CSS inline so it works before React hydration */}
+      <style dangerouslySetInnerHTML={{ __html: ANIMATION_STYLES }} />
       <svg
         id="Layer_1"
         data-name="Layer 1"
