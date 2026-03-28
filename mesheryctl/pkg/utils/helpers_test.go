@@ -222,7 +222,7 @@ func TestValidateURL(t *testing.T) {
 	tests := []struct {
 		name    string
 		url     string
-		wantErr string
+		wantErr error
 	}{
 		{
 			name: "Correct URL",
@@ -231,22 +231,19 @@ func TestValidateURL(t *testing.T) {
 		{
 			name:    "Unsupported scheme",
 			url:     "mqtt://www.layer5.io",
-			wantErr: "mqtt is not a supported protocol",
+			wantErr: ErrParsingUrl(fmt.Errorf("mqtt is not a supported protocol")),
 		},
 		{
 			name:    "invalid URL",
 			url:     "layer5.io",
-			wantErr: "parse \"layer5.io\": invalid URI for request",
+			wantErr: ErrParsingUrl(fmt.Errorf("parse \"layer5.io\": invalid URI for request")),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := ValidateURL(tt.url)
 			if err != nil {
-				// check error message
-				if err.Error() != tt.wantErr {
-					t.Errorf("ValidateURL error = %v want = %v", err, tt.wantErr)
-				}
+				AssertMeshkitErrorsEqual(t, err, tt.wantErr)
 			}
 		})
 	}
