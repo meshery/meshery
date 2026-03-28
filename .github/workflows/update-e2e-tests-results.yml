@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  update-jekyll:
+  update-tests:
     if: >
         github.repository == 'meshery/meshery' && 
         github.event.workflow_run.event == 'push' && 
