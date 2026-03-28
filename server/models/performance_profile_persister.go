@@ -66,7 +66,9 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 // DeletePerformanceProfile takes in a profile id and delete it if it already exists
 func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id uuid.UUID) ([]byte, error) {
 	profile := PerformanceProfile{ID: &id}
-	ppp.DB.Delete(profile)
+	if err := ppp.DB.Delete(&profile).Error; err != nil {
+		return nil, err
+	}
 
 	return marshalPerformanceProfile(&profile), nil
 }

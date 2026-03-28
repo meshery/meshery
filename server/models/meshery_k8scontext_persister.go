@@ -59,7 +59,9 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 // DeleteMesheryK8sContext takes in an application id and delete it if it already exists
 func (mkcp *MesheryK8sContextPersister) DeleteMesheryK8sContext(id string) (K8sContext, error) {
 	context := K8sContext{ID: id}
-	mkcp.DB.Delete(&context)
+	if err := mkcp.DB.Delete(&context).Error; err != nil {
+		return K8sContext{}, err
+	}
 
 	return context, nil
 }
