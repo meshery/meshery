@@ -81,7 +81,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 			Name:     tokenName,
 			Location: tokenPath,
 		}
-		if err := config.AddTokenToConfig(token, configPath); err != nil {
+		if err := config.AddTokenToConfig(token, utils.CfgFile); err != nil {
 			return errors.Wrap(err, "Could not create specified token to config")
 		}
 		utils.Log.Info(fmt.Sprintf("Token %s created.", tokenName))
