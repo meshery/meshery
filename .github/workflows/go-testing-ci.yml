@@ -7,6 +7,7 @@ on:
       - "**.go"
       - "**.golden"
       - ".github/workflows/go-testing-ci.yml"
+      - ".github/.golangci.yml"
   pull_request:
     branches:
       - "master"
@@ -14,6 +15,7 @@ on:
       - "**.go"
       - "**.golden"
       - ".github/workflows/go-testing-ci.yml"
+      - ".github/.golangci.yml"
   workflow_dispatch:
     inputs:
       logLevel:
