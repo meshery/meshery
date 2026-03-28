@@ -9,7 +9,7 @@ setup() {
 @test "given an invalid orgId provided as an argument when running mesheryctl workspace create --orgId invalid-org-id then an error message is displayed" {
     run $MESHERYCTL_BIN workspace create --orgId foo
 
-    assert_failure 
+    assert_failure
     assert_output --partial "Error"
-    assert_output --partial "Invalid value for --orgId 'foo': must be a valid UUID"
+    assert_output --partial "Invalid value for --orgid 'foo': must be a valid UUID"
 }

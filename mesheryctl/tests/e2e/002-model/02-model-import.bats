@@ -11,7 +11,7 @@ setup() {
   run $MESHERYCTL_BIN model import
   assert_failure
 
-  assert_output --partial "Error: [ file | filepath | URL ] isn't specified"
+  assert_output --partial "either --file [ file | filepath | URL ] or an argument must be specified"
   assert_output --partial "Usage: mesheryctl model import [ file | filePath | URL ]"
 }
 

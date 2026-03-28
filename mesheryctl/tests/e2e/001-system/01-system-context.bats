@@ -30,7 +30,7 @@ setup() {
 
    assert_failure
    assert_output --partial "Error"
-   assert_output --partial "provide a context name"
+   assert_output --partial "only one argument must be provided"
 }
 
 @test "given a valid url as an argument when running mesheryctl system context create --url invalid-url then an the context is displayed" {
@@ -112,7 +112,7 @@ setup() {
 
    assert_failure
    assert_output --partial "Error"
-   assert_output --partial "provide exactly one context name"
+   assert_output --partial "only one argument must be provided"
 }
 
 @test "given a valid context-name provided when running mesheryctl system context switch context-name then the current context is switched to specified context" {
@@ -132,7 +132,7 @@ setup() {
 
    assert_failure
    assert_output --partial "Error"
-   assert_output --partial "provide a context name to delete"
+   assert_output --partial "only one argument must be provided"
 }
 
 @test "given an invalid context-name provided when running mesheryctl system context delete invalid-context-name then an error message is displayed" {

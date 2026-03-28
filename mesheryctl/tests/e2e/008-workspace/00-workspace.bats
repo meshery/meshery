@@ -10,6 +10,6 @@ setup() {
     run $MESHERYCTL_BIN workspace --help
 
     assert_success
-    assert_output --partial "Examples:"    
-    assert_output --partial "Available Commands:"    
+    assert_output --partial "Examples:"
+    assert_output --partial "Available Commands:"
 }
