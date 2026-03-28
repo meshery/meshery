@@ -16,6 +16,7 @@ package system
 
 import (
 	"os"
+
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -25,7 +26,7 @@ import (
 )
 
 var (
-    providerFlag string
+	providerFlag string
 )
 
 type cmdSystemLoginFlags struct {
@@ -49,7 +50,7 @@ mesheryctl system login
 // Login with the Meshery Provider by specifying it via -p or --provider flag.
 mesheryctl system login -p Meshery
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error { 
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &systemLoginFlags)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -92,7 +93,7 @@ mesheryctl system login -p Meshery
 
 			// Write new entry in the config
 			if err := config.AddTokenToConfig(token, utils.DefaultConfigPath); err != nil {
-				return err 
+				return err
 			}
 		}
 
