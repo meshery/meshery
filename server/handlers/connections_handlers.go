@@ -60,8 +60,10 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
-			_ = provider.PersistEvent(*event, nil)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
+			if event != nil {
+				_ = provider.PersistEvent(*event, nil)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
 			h.log.Error(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
