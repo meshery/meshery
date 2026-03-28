@@ -2,8 +2,6 @@
 import React from 'react';
 
 const ANIMATION_STYLES = `
-  /* Each triangle fades in/out staggered by its vertical position in the logo */
-  
   /* Top row triangles - animate first */
   .svg-meshery-14, .svg-meshery-17, .svg-meshery-10, .svg-meshery-16,
   .svg-meshery-21, .svg-meshery-23 {
