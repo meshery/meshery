@@ -38,12 +38,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-
-		w.WriteHeader(http.StatusBadRequest)
-		if _, writeErr := fmt.Fprintf(w, "failed to read request body: %s", err); writeErr != nil {
-			h.log.Error(writeErr)
-		}
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
 
