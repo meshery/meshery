@@ -264,10 +264,10 @@ var (
 
 var CfgFile string
 
-// ActiveConfigPath returns the meshconfig path selected for the current command.
+// GetActiveConfigPath returns the meshconfig path selected for the current command.
 // Prefer the explicit CLI flag value, then the config file Viper has already loaded,
 // and finally fall back to the default meshconfig path.
-func ActiveConfigPath() string {
+func GetActiveConfigPath() string {
 	if CfgFile != "" {
 		return CfgFile
 	}
