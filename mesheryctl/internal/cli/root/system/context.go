@@ -375,7 +375,7 @@ var linkDocContextSwitch = map[string]string{
 var switchContextCmd = &cobra.Command{
 	Use:   "switch context-name",
 	Short: "switch context",
-	Long: `Configure mesheryctl to actively use one one context vs. another context.
+	Long: `Configure mesheryctl to actively use one context vs. another context.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/switch`,
 	Example: `
 // Switch to context named "sample"

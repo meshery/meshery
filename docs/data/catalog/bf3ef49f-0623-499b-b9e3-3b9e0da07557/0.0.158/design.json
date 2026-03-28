@@ -2,7 +2,7 @@
   "id": "bf3ef49f-0623-499b-b9e3-3b9e0da07557",
   "name": "meshery-design-at-a-glance",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.159",
+  "version": "0.0.158",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -835,7 +835,7 @@
       "styles": {
         "background-image": "none",
         "background-opacity": 0,
-        "body-text": "   dapr-schedular-server",
+        "body-text": "   dapr-scheduler-server",
         "body-text-color": "#808080",
         "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,

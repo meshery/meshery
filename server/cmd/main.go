@@ -382,6 +382,7 @@ func main() {
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
 	// this mctrlHelper is not used it is being recreated per connection entity
 	mctrlHelper := models.NewMesheryControllersHelper(
+		"",
 		log,
 		operatorDeploymentConfig,
 		dbHandler,

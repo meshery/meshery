@@ -80,6 +80,7 @@ func (mch *MesheryControllersHelper) GetOperatorsStatusMap() controllers.Meshery
 }
 
 func NewMesheryControllersHelper(
+	contextID string,
 	log logger.Handler,
 	operatorDepConfig controllers.OperatorDeploymentConfig,
 	dbHandler *database.Handler,
@@ -88,6 +89,7 @@ func NewMesheryControllersHelper(
 	systemID *uuid.UUID,
 ) *MesheryControllersHelper {
 	return &MesheryControllersHelper{
+		contextID:             contextID,
 		ctxControllerHandlers: make(map[MesheryController]controllers.IMesheryController),
 		log:                   log,
 		oprDepConfig:          operatorDepConfig,
@@ -357,7 +359,6 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracke
 	}
 
 	if ot.IsUndeployed(mch.contextID) {
-		// this code is probably never reached as mch.contextID is never set
 		mch.ctxOperatorStatus = controllers.Undeployed
 	} else {
 		if mch.ctxControllerHandlers != nil {
@@ -390,9 +391,8 @@ func (ot *OperatorTracker) Undeployed(ctxID string, undeployed bool) {
 	if ot.DisableOperator { //no-op when operator is disabled
 		return
 	}
-	if ot.ctxIDtoDeploymentStatus == nil {
-		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
-	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
 	ot.ctxIDtoDeploymentStatus[ctxID] = undeployed
 }
 
@@ -400,10 +400,8 @@ func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return true
 	}
-	if ot.ctxIDtoDeploymentStatus == nil {
-		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
-		return false
-	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
 	return ot.ctxIDtoDeploymentStatus[ctxID]
 }
 

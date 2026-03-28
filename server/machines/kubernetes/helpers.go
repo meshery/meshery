@@ -64,6 +64,7 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
 
 func AssignControllerHandlers(machinectx *MachineCtx, systemID *uuid.UUID, provider models.Provider) {
 	machinectx.MesheryCtrlsHelper = models.NewMesheryControllersHelper(
+		machinectx.K8sContext.ID,
 		machinectx.log,
 		models.NewOperatorDeploymentConfig(adapterTracker),
 		models.GetDBInstance(),
