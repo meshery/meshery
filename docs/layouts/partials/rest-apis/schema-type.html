@@ -1,0 +1,66 @@
+{{ $schema := . }}
+{{ $type := "" }}
+{{ $format := "" }}
+
+{{ if not $schema }}
+  {{ $type = "" }}
+{{ else if and (reflect.IsMap $schema) (index $schema "$ref") }}
+  {{ $refName := replaceRE "^.*/" "" (index $schema "$ref") }}
+  {{ $type = (replace $refName "_" " " | title) }}
+{{ else }}
+  {{ with index $schema "format" }}
+    {{ $format = printf " (%s)" . }}
+  {{ end }}
+
+  {{ if index $schema "type" }}
+    {{ $type = index $schema "type" }}
+    {{ if eq $type "array" }}
+      {{ $itemType := partial "rest-apis/schema-type.html" (index $schema "items") }}
+      {{ if $itemType }}
+        {{ $type = printf "array of %s" $itemType }}
+      {{ end }}
+    {{ else if eq $type "object" }}
+      {{ $type = "object" }}
+    {{ end }}
+  {{ else if index $schema "oneOf" }}
+    {{ $labels := slice }}
+    {{ range index $schema "oneOf" }}
+      {{ $label := index . "title" | default (partial "rest-apis/schema-type.html" .) | default "schema" }}
+      {{ if not (in $labels $label) }}
+        {{ $labels = $labels | append $label }}
+      {{ end }}
+    {{ end }}
+    {{ $type = printf "one of %s" (delimit $labels ", ") }}
+  {{ else if index $schema "allOf" }}
+    {{ $labels := slice }}
+    {{ range index $schema "allOf" }}
+      {{ $label := partial "rest-apis/schema-type.html" . }}
+      {{ if and $label (not (in $labels $label)) }}
+        {{ $labels = $labels | append $label }}
+      {{ end }}
+    {{ end }}
+    {{ if gt (len $labels) 0 }}
+      {{ $type = delimit $labels " + " }}
+    {{ else }}
+      {{ $type = "composed schema" }}
+    {{ end }}
+  {{ else if index $schema "properties" }}
+    {{ $type = "object" }}
+  {{ else if index $schema "enum" }}
+    {{ $type = "enum" }}
+  {{ end }}
+
+  {{ if and (index $schema "nullable") $type }}
+    {{ $type = printf "%s | null" $type }}
+  {{ end }}
+
+  {{ if and $type $format (not (strings.Contains $type $format)) }}
+    {{ $type = printf "%s%s" $type $format }}
+  {{ end }}
+
+  {{ if not $type }}
+    {{ $type = "schema" }}
+  {{ end }}
+{{ end }}
+
+{{ return $type }}

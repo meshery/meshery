@@ -1,0 +1,22 @@
+{{ $operation := . }}
+{{ $xInternal := index $operation "x-internal" }}
+{{ $include := false }}
+
+{{ if not $xInternal }}
+  {{ $include = true }}
+{{ else }}
+  {{ $values := slice }}
+  {{ if reflect.IsSlice $xInternal }}
+    {{ $values = $xInternal }}
+  {{ else }}
+    {{ $values = slice $xInternal }}
+  {{ end }}
+
+  {{ if in $values "cloud" }}
+    {{ $include = false }}
+  {{ else if in $values "meshery" }}
+    {{ $include = true }}
+  {{ end }}
+{{ end }}
+
+{{ return $include }}
