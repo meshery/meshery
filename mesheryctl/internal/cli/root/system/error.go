@@ -439,4 +439,3 @@ func ErrDockerComposeFileMissing(err error) error {
 		[]string{"Docker Compose file is missing from the Meshery folder"},
 		[]string{"Run `mesheryctl system start` again to download and generate docker-compose file based on your context"})
 }
-
