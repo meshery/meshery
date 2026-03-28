@@ -1838,6 +1838,15 @@
         "short_description": "Error in writing config",
         "probable_cause": "Unable to write to config file",
         "suggested_remediation": "Ensure that you have the correct permissions to write to the config file at `$HOME/.meshery/config.yaml`."
+      },
+      "1223": {
+        "name": "ErrDockerComposeFileMissingCode",
+        "code": "1223",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Docker Compose file not found",
+        "probable_cause": "Docker Compose file is missing from the Meshery folder",
+        "suggested_remediation": "Run `mesheryctl system start` again to download and generate docker-compose file based on your context"
       }
     }
   }
