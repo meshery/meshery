@@ -11,7 +11,8 @@ Create a new context (a named Meshery deployment)
 
 ## Synopsis
 
-Add a new context to Meshery config.yaml file
+Add a new context to Meshery config.yaml file.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context create context-name [flags]
