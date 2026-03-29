@@ -2,44 +2,54 @@
 import React from 'react';
 
 const ANIMATION_STYLES = `
-  [class^='svg-meshery-'] {
-    fill: #00B39F;
-    animation: meshery-fade 2s ease-in-out infinite;
-  }
+        @keyframes meshery-fade-in {
+          0% { fill: transparent; }
+          100% { fill: var(--final-color); }
+        }
 
-  /* Top row triangles - animate first */
-  .svg-meshery-14, .svg-meshery-17, .svg-meshery-10, .svg-meshery-16,
-  .svg-meshery-21, .svg-meshery-23 {
-    animation-delay: 0s;
-  }
-  /* Middle row */
-  .svg-meshery-1, .svg-meshery-3, .svg-meshery-15, .svg-meshery-25,
-  .svg-meshery-9, .svg-meshery-11, .svg-meshery-13, .svg-meshery-18,
-  .svg-meshery-19 {
-    animation-delay: 0.3s;
-  }
-  /* Lower middle */
-  .svg-meshery-2, .svg-meshery-5, .svg-meshery-4, .svg-meshery-7,
-  .svg-meshery-8, .svg-meshery-22 {
-    animation-delay: 0.6s;
-  }
-  /* Bottom row - animate last */
-  .svg-meshery-6, .svg-meshery-20, .svg-meshery-24, .svg-meshery-12 {
-    animation-delay: 0.9s;
-  }
+        /* 2. Base style for all paths/polygons */
+        [class^='svg-meshery-'] {
+          fill: transparent; /* Start invisible */
+          animation-name: meshery-fade-in;
+          animation-duration: 0.7s; /* Matches your 0.7s transition duration */
+          animation-timing-function: cubic-bezier(0.47, 0, 0.745, 0.715);
+          animation-fill-mode: forwards; /* Stay colored after animation ends */
+          animation-iteration-count: infinite; /* Optional: remove if you want it to run once */
+          animation-direction: alternate; /* Optional: makes it pulse in and out */
+        }
 
-  @keyframes meshery-fade {
-    0%   { opacity: 1;   }
-    50%  { opacity: 0.2; }
-    100% { opacity: 1;   }
-  }
+        /* 3. Sequence and Color Mapping */
+        .svg-meshery-1  { --final-color: rgb(0, 211, 169); animation-delay: 0.8s; }
+        .svg-meshery-2  { --final-color: rgb(0, 211, 169); animation-delay: 0.9s; }
+        .svg-meshery-3  { --final-color: rgb(0, 179, 159); animation-delay: 1s; }
+        .svg-meshery-4  { --final-color: rgb(0, 179, 159); animation-delay: 1.1s; }
+        .svg-meshery-5  { --final-color: rgb(0, 179, 159); animation-delay: 1.2s; }
+        .svg-meshery-6  { --final-color: rgb(0, 211, 169); animation-delay: 1.3s; }
+        .svg-meshery-7  { --final-color: rgb(0, 179, 159); animation-delay: 1.4s; }
+        .svg-meshery-8  { --final-color: rgb(0, 179, 159); animation-delay: 1.5s; }
+        .svg-meshery-9  { --final-color: rgb(0, 211, 169); animation-delay: 1.6s; }
+        .svg-meshery-10 { --final-color: rgb(0, 179, 159); animation-delay: 1.7s; }
+        .svg-meshery-11 { --final-color: rgb(0, 179, 159); animation-delay: 1.8s; }
+        .svg-meshery-12 { --final-color: rgb(0, 179, 159); animation-delay: 1.9s; }
+        .svg-meshery-13 { --final-color: rgb(0, 211, 169); animation-delay: 2s; }
+        .svg-meshery-14 { --final-color: rgb(0, 179, 159); animation-delay: 2.1s; }
+        .svg-meshery-15 { --final-color: rgb(0, 211, 169); animation-delay: 2.2s; }
+        .svg-meshery-16 { --final-color: rgb(0, 179, 159); animation-delay: 2.3s; }
+        .svg-meshery-17 { --final-color: rgb(0, 211, 169); animation-delay: 2.4s; }
+        .svg-meshery-18 { --final-color: rgb(0, 211, 169); animation-delay: 2.5s; }
+        .svg-meshery-19 { --final-color: rgb(0, 211, 169); animation-delay: 2.6s; }
+        .svg-meshery-20 { --final-color: rgb(0, 179, 159); animation-delay: 2.7s; }
+        .svg-meshery-21 { --final-color: rgb(0, 211, 169); animation-delay: 2.8s; }
+        .svg-meshery-22 { --final-color: rgb(0, 211, 169); animation-delay: 2.9s; }
+        .svg-meshery-23 { --final-color: rgb(0, 179, 159); animation-delay: 3s; }
+        .svg-meshery-24 { --final-color: rgb(0, 211, 169); animation-delay: 3.1s; }
+        .svg-meshery-25 { --final-color: rgb(0, 179, 159); animation-delay: 3.2s; }
 `;
 
 const AnimatedMeshery = (props) => {
   const textfill = props.textFill || '#ccc';
   return (
     <div>
-      {/* Inject animation CSS inline so it works before React hydration */}
       <style dangerouslySetInnerHTML={{ __html: ANIMATION_STYLES }} />
       <svg
         id="Layer_1"
