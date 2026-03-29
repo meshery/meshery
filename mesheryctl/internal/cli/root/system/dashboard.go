@@ -292,7 +292,9 @@ func isPortAlreadyInUseError(err error) bool {
 	}
 
 	errStr := strings.ToLower(err.Error())
-	return strings.Contains(errStr, "address already in use") || strings.Contains(errStr, "bind")
+	return strings.Contains(errStr, "address already in use") ||
+		strings.Contains(errStr, "bind") ||
+		strings.Contains(errStr, "unable to listen on any of the requested ports")
 }
 
 func init() {

@@ -64,6 +64,11 @@ func TestIsPortAlreadyInUseError(t *testing.T) {
 			expected: true,
 		},
 		{
+			name:     "given requested ports listen failure then returns true",
+			err:      errors.New("unable to listen on any of the requested ports: [{9081 0}]"),
+			expected: true,
+		},
+		{
 			name:     "given spdy negotiation error then returns false",
 			err:      errors.New("error upgrading connection: malformed response"),
 			expected: false,
