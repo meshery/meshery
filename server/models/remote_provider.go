@@ -320,7 +320,7 @@ func (l *RemoteProvider) SyncPreferences() {
 
 // GetProviderCapabilities returns all of the provider properties
 func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request, userID string) {
-	tokenString := req.Context().Value(TokenCtxKey).(string)
+	tokenString, _ := req.Context().Value(TokenCtxKey).(string)
 
 	providerProperties, err := l.loadCapabilities(tokenString)
 
