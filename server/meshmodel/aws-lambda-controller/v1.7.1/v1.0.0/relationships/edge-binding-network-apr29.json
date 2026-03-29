@@ -1,0 +1,114 @@
+{
+    "id": "00000000-0000-0000-0000-000000000000",
+    "evaluationQuery": "",
+    "kind": "edge",
+    "metadata": {
+        "description": "AWS Lambda function interacts with DynamoDB table for data operations (read, write, query, scan, etc.)",
+        "isAnnotation": false,
+        "styles": {
+            "primaryColor": "",
+            "svgColor": "",
+            "svgWhite": ""
+        }
+    },
+    "model": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+            "version": "v1.7.1"
+        },
+        "name": "aws-lambda-controller",
+        "registrant": {
+            "kind": ""
+        },
+        "version": ""
+    },
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "selectors": [
+        {
+            "allow": {
+                "from": [
+                    {
+                        "id": null,
+                        "kind": "Function",
+                        "match": {},
+                        "match_strategy_matrix": null,
+                        "model": {
+                            "displayName": "",
+                            "id": "00000000-0000-0000-0000-000000000000",
+                            "model": {
+                                "version": ""
+                            },
+                            "name": "aws-lambda-controller",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            },
+                            "version": ""
+                        },
+                        "patch": {
+                            "mutatorRef": [
+                                [
+                                    "configuration",
+                                    "spec",
+                                    "name"
+                                ],
+                                [
+                                    "configuration",
+                                    "spec",
+                                    "environment",
+                                    "variables",
+                                    "TABLE_NAME"
+                                ]
+                            ],
+                            "patchStrategy": "replace"
+                        }
+                    }
+                ],
+                "to": [
+                    {
+                        "id": null,
+                        "kind": "Table",
+                        "match": {},
+                        "match_strategy_matrix": null,
+                        "model": {
+                            "displayName": "",
+                            "id": "00000000-0000-0000-0000-000000000000",
+                            "model": {
+                                "version": ""
+                            },
+                            "name": "dynamodb-controller",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            },
+                            "version": ""
+                        },
+                        "patch": {
+                            "mutatedRef": [
+                                [
+                                    "configuration",
+                                    "status",
+                                    "ackResourceMetadata",
+                                    "arn"
+                                ],
+                                [
+                                    "configuration",
+                                    "spec",
+                                    "name"
+                                ]
+                            ],
+                            "patchStrategy": "replace"
+                        }
+                    }
+                ]
+            },
+            "deny": {
+                "from": [],
+                "to": []
+            }
+        }
+    ],
+    "subType": "network",
+    "status": "enabled",
+    "type": "non-binding",
+    "version": "v1.0.0"
+}
