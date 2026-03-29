@@ -89,27 +89,76 @@ clipboard.on("success", (e)=>{
     },2000)
 })
 
-const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
+document.addEventListener("DOMContentLoaded", function() {
+    const toggleBtnSidebarNav = document.querySelector(".nav-toggle-btn--document");
+    const sidebarNav = document.querySelector(".left-container");
+    const desktopSidebarMedia = window.matchMedia("(min-width: 75.0625em)");
+    const sidebarStorageKey = "meshery-docs-sidebar-hidden";
 
-toggleBtnSidebarNav.addEventListener("click",()=>{
-    let sidebarNav=document.querySelector(".left-container")
-    if(sidebarNav){
-        sidebarNav.classList.toggle("left-container--active")
+    function syncSidebarButton(isExpanded) {
+        if (!toggleBtnSidebarNav) {
+            return;
+        }
+
+        toggleBtnSidebarNav.setAttribute("aria-expanded", String(isExpanded));
+        toggleBtnSidebarNav.setAttribute(
+            "aria-label",
+            isExpanded ? "Collapse sidebar" : "Expand sidebar"
+        );
     }
-})
+
+    function setDesktopSidebarState(isHidden) {
+        sidebarNav.classList.toggle("left-container--collapsed", isHidden);
+        syncSidebarButton(!isHidden);
+    }
+
+    if (toggleBtnSidebarNav && sidebarNav) {
+        if (desktopSidebarMedia.matches) {
+            setDesktopSidebarState(localStorage.getItem(sidebarStorageKey) === "true");
+        } else {
+            sidebarNav.classList.remove("left-container--collapsed");
+            syncSidebarButton(sidebarNav.classList.contains("left-container--active"));
+        }
+
+        toggleBtnSidebarNav.addEventListener("click", () => {
+            if (desktopSidebarMedia.matches) {
+                const isHidden = !sidebarNav.classList.contains("left-container--collapsed");
+                setDesktopSidebarState(isHidden);
+                localStorage.setItem(sidebarStorageKey, String(isHidden));
+                return;
+            }
+
+            sidebarNav.classList.toggle("left-container--active");
+            syncSidebarButton(sidebarNav.classList.contains("left-container--active"));
+        });
+
+        desktopSidebarMedia.addEventListener("change", (event) => {
+            if (event.matches) {
+                sidebarNav.classList.remove("left-container--active");
+                setDesktopSidebarState(localStorage.getItem(sidebarStorageKey) === "true");
+                return;
+            }
+
+            sidebarNav.classList.remove("left-container--collapsed");
+            syncSidebarButton(sidebarNav.classList.contains("left-container--active"));
+        });
+    }
+});
 
 const toggleBtnMainNav=document.querySelector(".nav-toggle-btn--main");
 
-toggleBtnMainNav.addEventListener("click",()=>{
-    let sidebarNav=document.getElementById("main_navbar")
-    if(sidebarNav){
-        sidebarNav.classList.toggle("main-navbar--active")
-    }
-})
+if (toggleBtnMainNav) {
+    toggleBtnMainNav.addEventListener("click",()=>{
+        let sidebarNav=document.getElementById("main_navbar")
+        if(sidebarNav){
+            sidebarNav.classList.toggle("main-navbar--active")
+        }
+    })
+}
 
 document.addEventListener("click", (event) => {
     let sidebarNav = document.getElementById("main_navbar")
-    if (sidebarNav) {
+    if (sidebarNav && toggleBtnMainNav) {
         let isClickInsideSidebar = sidebarNav.contains(event.target)
         let isClickOnToggleButton = toggleBtnMainNav.contains(event.target)
 

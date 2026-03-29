@@ -129,7 +129,7 @@ html {
       align-items: center;
 
       & img,
-      svg {
+      & svg {
         display: inline-block;
         height: 45px;
         margin-right: 0.5rem;
@@ -149,7 +149,7 @@ html {
       align-items: center;
 
       & img,
-      svg {
+      & svg {
         display: none;
 
         @media (max-width: 475px) {

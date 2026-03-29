@@ -5,17 +5,26 @@
   transition: all 0.5s ease-in-out;
   margin-top: calc(var(--navbar-height));
   top: calc(var(--navbar-height));
+  width: 336px;
+  flex: 0 0 336px;
+  overflow: visible;
   & .sidebar-container-wrapper {
     height: 100%;
     padding: 0.5rem;
     background: var(--background-grey);
     box-shadow: var(--box-shadow-primary);
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 0.5s ease;
   }
   & .icon-container {
     height: fit-content;
     z-index: 9;
-    display: none;
+    display: block;
+    position: absolute;
+    right: -2rem;
+    bottom: 4rem;
     @media (max-width: 75em) {
+      bottom: auto;
       margin-top: 3rem;
       position: absolute;
       right: -3rem;
@@ -28,6 +37,7 @@
     position: fixed;
     display: flex;
     width: 320px;
+    flex: none;
     left: -1rem;
   }
   &--active {
@@ -43,6 +53,31 @@
   }
 }
 
+.left-container--collapsed {
+  width: 0.75rem;
+  flex-basis: 0.75rem;
+}
+
+.left-container--collapsed .sidebar-container-wrapper {
+  clip-path: inset(0 calc(100% - 0.75rem) 0 0);
+  pointer-events: none;
+}
+
+.left-container--collapsed .nav-toggle-btn--document svg {
+  transform: rotate(0deg);
+}
+
+@media (max-width: 75em) {
+  .left-container--collapsed {
+    width: 320px;
+  }
+
+  .left-container--collapsed .sidebar-container-wrapper {
+    clip-path: inset(0 0 0 0);
+    pointer-events: auto;
+  }
+}
+
 .nav-toggle-btn--document {
   background-color: var(--color-grey-medium);
   border-radius: 0 5px 5px 0;
@@ -54,6 +89,11 @@
   padding: 5px;
   cursor: pointer;
   justify-content: center;
+
+  & svg {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+  }
 }
 #document-nav-toggle-btn {
   width: 2.2rem;
