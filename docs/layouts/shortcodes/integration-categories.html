@@ -1,5 +1,5 @@
 {{- $models := where site.RegularPages ".File.Dir" "like" "^extensions/models/" -}}
-{{- $grouped := $models.GroupByParam "integrations_category" -}}
+{{- $grouped := $models.GroupByParam "integrations-category" -}}
 {{- $categoryList := slice -}}
 {{- range $group := $grouped -}}
   {{- if $group.Key -}}
