@@ -365,7 +365,7 @@ ReleaseDrafter generates a GitHub tag and release draft. ReleaseDrafter action w
 
 #### Automated Release Notes Publishing
 
-The publishing of release notes to Meshery Docs is automated. Triggered by a release event, a workflow will checkout the Meshery repo, copy the auto-drafted release notes into the Meshery Docs (Hugo-based documentation), and generate a pull request.
+The publishing of release notes to Meshery Docs is automates, Triggered by a release event, a workflow will checkout the Meshery repo, copy the wuto-drafted release notes to the Hugo-based Meshery Docs, and generate a pull request.
 
 #### Automated Release Notes Sending
 
