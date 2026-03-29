@@ -1,6 +1,6 @@
 <div id="breadcrumbs">
   {{ $root := . }}
-  {{ $url := $root.RelPermalink }}
+  {{ $url := replaceRE "/$" "" $root.RelPermalink }}
   {{ $crumbs := split $url "/" }}
 
   {{ if ne $url "/" }}
@@ -13,7 +13,7 @@
         / {{ lower $root.Page.Title }}
       {{ else }}
         {{ $path := delimit (first (add $index 1) $crumbs) "/" }}
-        / <a href="{{ $root.Site.BaseURL }}{{ $path }}/">{{ replace (replace (lower $crumb) "-" " ") ".html" "" }}</a>
+        / <a href="{{ $root.Site.BaseURL }}{{ $path }}">{{ replace (replace (lower $crumb) "-" " ") ".html" "" }}</a>
       {{ end }}
     {{ end }}
   {{ end }}
