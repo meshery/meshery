@@ -168,7 +168,10 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 
 	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
 		for _, pObj := range patterns.Patterns {
-			id := uuid.FromStringOrNil(pObj.ID)
+			id, err := uuid.FromString(pObj.ID)
+			if err != nil {
+				return err
+			}
 			pattern := MesheryPattern{ID: &id}
 			if err := tx.Delete(&pattern).Error; err != nil {
 				return err
