@@ -39,6 +39,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/models/events"
+	workspace "github.com/meshery/schemas/models/v1beta1/workspace"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -541,28 +542,28 @@ type environmentsResponseWrapper struct {
 // swagger:response workspacesResponseWrapper
 type workspacesResponseWrapper struct {
 	// in: body
-	Body *models.WorkspacePage
+	Body *workspace.WorkspacePage
 }
 
 // Returns workspace
 // swagger:response workspaceResponseWrapper
 type workspaceResponseWrapper struct {
 	// in: body
-	Body *models.Workspace
+	Body *workspace.Workspace
 }
 
 // Returns workspace designs mapping
 // swagger:response workspaceDesignsMappingResponseWrapper
 type workspaceDesignsMappingResponseWrapper struct {
 	// in: body
-	Body *models.WorkspacesDesignsMapping
+	Body *workspace.WorkspacesDesignsMapping
 }
 
 // Returns workspace environments mapping
 // swagger:response workspaceEnvironmentsMappingResponseWrapper
 type workspaceEnvironmentsMappingResponseWrapper struct {
 	// in: body
-	Body *models.WorkspacesEnvironmentsMapping
+	Body *workspace.WorkspacesEnvironmentsMapping
 }
 
 // Returns event
@@ -611,3 +612,87 @@ type mesheryPatternFileDeployPayloadWrapper struct {
 	// in: body
 	Body *models.MesheryPatternFileDeployPayload
 }
+
+// Blank identifier declarations keep swagger-only wrapper types reachable for linting.
+var (
+	_ userInfo
+	_ users
+	_ usersParameterWrapper
+	_ usersKeys
+	_ mesheryPatternsResponseWrapper
+	_ mesheryPatternResponseWrapper
+	_ noContentWrapper
+	_ IDParameterWrapper
+	_ performanceProfilesResponseWrapper
+	_ performanceResultsResponseWrapper
+	_ performanceProfileResponseWrapper
+	_ performanceProfileParameterWrapper
+	_ performanceTestParameterWrapper
+	_ grafanaConfigParamsWrapper
+	_ grafanaConfigResponseWrapper
+	_ grafanaBoardsParamsWrapper
+	_ grafanaBoardsResponseWrapper
+	_ v1ServicesMapResponseWrapper
+	_ prometheusConfigParamsWrapper
+	_ prometheusConfigResponseWrapper
+	_ prometheusBoardImportRespWrapper
+	_ prometheusStaticBoardRespWrapper
+	_ prometheusBoardParamsWrapper
+	_ userLoadTestPrefsRespWrapper
+	_ anonymousStatsParamsWrapper
+	_ loadTestPreferencesRespWrapper
+	_ loadTestPreferencesParamsWrapper
+	_ UUIDParamsWrapper
+	_ perfTestParamsWrapper
+	_ perfSingleResultRespWrapper
+	_ perfTestPrefsRespWrapper
+	_ schedulesResponseWrapper
+	_ singleScheduleResponseWrapper
+	_ systemAdaptersRespWrapper
+	_ adapterParamsWrapper
+	_ k8sConfigRespWrapper
+	_ k8sContextsRespWrapper
+	_ mesheryProviderParamsWrapper
+	_ listProvidersRespWrapper
+	_ providerPropertiesRespWrapper
+	_ mesheryVersionRespWrapper
+	_ applicationFilesResponseWrapper
+	_ applicationFileParamsWrapper
+	_ mesheryApplicationResponseWrapper
+	_ mesheryApplicationsResponseWrapper
+	_ mesheryAdaptersRespWrapper
+	_ mesheryAdapterParamsWrapper
+	_ adapterOpsParamsWrapper
+	_ mesheryFilterResponseWrapper
+	_ mesheryFiltersResponseWrapper
+	_ filterFilesResponseWrapper
+	_ meshmodelModelsResponseWrapper
+	_ meshmodelModelsDuplicateResponseWrapper
+	_ meshmodelComponentsResponseWrapper
+	_ meshmodelComponentsDuplicateResponseWrapper
+	_ meshsyncResourcesResponseWrapper
+	_ meshmodelRelationshipsResponseWrapper
+	_ meshmodelPoliciesResponseWrapper
+	_ meshmodelCategoriesResponseWrapper
+	_ meshmodelRegistrantsResponseWrapper
+	_ systemDatabaseResponseWrapper
+	_ systemK8sContextsResponseWrapper
+	_ smiResultsResponseWrapper
+	_ mesheryApplicationTypesResponseWrapper
+	_ mesheryConnectionResponseWrapper
+	_ mesheryConnectionsResponseWrapper
+	_ mesheryConnectionsStatusPage
+	_ environmentResponseWrapper
+	_ environmentsResponseWrapper
+	_ workspacesResponseWrapper
+	_ workspaceResponseWrapper
+	_ workspaceDesignsMappingResponseWrapper
+	_ workspaceEnvironmentsMappingResponseWrapper
+	_ eventResponseWrapper
+	_ eventsResponseWrapper
+	_ possibleTransitions
+	_ orgsResponseWrapper
+	_ mesheryPatternSourceContentResponseWrapper
+	_ meshsyncResourcesSummaryResponseWrapper
+	_ mesheryPatternFileDeployPayloadWrapper
+)

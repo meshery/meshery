@@ -21,12 +21,12 @@ class MyReporter {
     this.introMessage = `- Testing started at: ${moment().format('MMMM Do YYYY, h:mm:ss a')}`;
     this.totalTests = `- Total test cases: ${suite.allTests().length}`;
   }
-  // eslint-disable-next-line no-unused-vars
+
   onStdOut(chunk, _test, _result) {
     const text = chunk.toString('utf-8');
     process.stdout.write(text);
   }
-  // eslint-disable-next-line no-unused-vars
+
   onStdErr(chunk, _test, _result) {
     const text = chunk.toString('utf-8');
     process.stderr.write(text);
@@ -56,7 +56,7 @@ class MyReporter {
       try {
         const data = JSON.parse(annotation.description);
         this.collectRelationshipData(data);
-      } catch (e) {
+      } catch {
         // Skip invalid annotations
       }
     }

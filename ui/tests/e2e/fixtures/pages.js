@@ -3,6 +3,8 @@ import { ENV } from '../env';
 
 const base = require('@playwright/test');
 
+/* eslint-disable react-hooks/rules-of-hooks */
+
 // import types
 /** @typedef {import("@playwright/test")} PlaywrightTest
  * @typedef {import("@playwright/test").Page} PlaywrightPage

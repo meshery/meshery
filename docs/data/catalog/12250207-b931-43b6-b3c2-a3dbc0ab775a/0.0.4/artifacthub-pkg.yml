@@ -1,0 +1,28 @@
+version: 0.0.4
+name: kyverno-policy-engine
+displayName: Kyverno Policy Engine
+createdAt: "2025-10-12T17:11:40Z"
+description: |-
+    Name: Kyverno Policy Engine Helm Chart
+    Description: Comprehensive CNCF policy engine for Kubernetes-native policy management with admission, background, and cleanup controllers
+    Type: Security/Policy
+    Technologies: Kubernetes, Kyverno, Policy Management, RBAC
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/12250207-b931-43b6-b3c2-a3dbc0ab775a/0.0.4/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "System Requirements: Kubernetes 1.16+, ValidatingAdmissionWebhook APIs enabled. Minimum 3 nodes recommended for HA.\n\nResource Allocation: Total ~1.5GB memory, 300m CPU across all controllers. Admission controller requires 3 replicas for availability.\n\nSecurity: ClusterRole grants extensive cluster-wide permissions. Webhook failures can block cluster operations. Review RBAC regularly.\n\nHigh Availability: PodDisruptionBudget ensures minimum 2 admission replicas. Monitor webhook latency and failure rates.\n\nProduction: Update image tags, configure monitoring, test policies before deployment. Plan rollout strategy to avoid disruption. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: f5f6fccb-7c48-497d-a848-21f03d793cfa
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/12250207-b931-43b6-b3c2-a3dbc0ab775a-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/12250207-b931-43b6-b3c2-a3dbc0ab775a-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

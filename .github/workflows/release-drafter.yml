@@ -31,7 +31,7 @@ jobs:
       # - name: Write release notes to markdown file
       #   run: |
       #     echo "Tag: " ${{ steps.release_drafter.outputs.tag_name }}
-      #     printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
+      #     printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/content/en/project/releases/${{ steps.release_drafter.outputs.tag_name }}.md
 
       # - name: Create Pull Request
       #   id: cpr

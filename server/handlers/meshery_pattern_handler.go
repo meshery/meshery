@@ -230,7 +230,7 @@ func (h *Handler) handlePatternPOST(
 		return
 	}
 
-	if requestPayload.DesignFile.Id != uuid.Nil {
+	if requestPayload.DesignFile.ID != uuid.Nil {
 		eventBuilder = eventBuilder.WithAction(models.Update)
 	} else {
 		eventBuilder = eventBuilder.WithAction(models.Create)
@@ -242,7 +242,7 @@ func (h *Handler) handlePatternPOST(
 
 		"design": map[string]interface{}{
 			"name": requestPayload.DesignFile.Name,
-			"id":   requestPayload.DesignFile.Id.String(),
+			"id":   requestPayload.DesignFile.ID.String(),
 		},
 		"doclink": "https://docs.meshery.io/concepts/logical/designs",
 	}
@@ -565,7 +565,9 @@ func (h *Handler) GetMesheryPatternsHandler(
 	// 	fmt.Println("Could not add metadata about pattern's current support ", err.Error())
 	// }
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/pattern/catalog PatternsAPI idGetCatalogMesheryPatternsHandler
@@ -616,7 +618,9 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route DELETE /api/pattern/{id} PatternsAPI idDeleteMesheryPattern
@@ -663,7 +667,9 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/pattern/download/{id} PatternsAPI idGetMesheryPattern
@@ -824,7 +830,11 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 			return
 		}
-		defer os.RemoveAll(tmpDir)
+		defer func() {
+			if err := os.RemoveAll(tmpDir); err != nil {
+				h.log.Error(err)
+			}
+		}()
 
 		tmpDesignFile := filepath.Join(tmpDir, "design.yml")
 		file, err := os.Create(tmpDesignFile)
@@ -839,7 +849,11 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 			return
 		}
-		defer file.Close()
+		defer func() {
+			if err := file.Close(); err != nil {
+				h.log.Error(err)
+			}
+		}()
 
 		var design patternV1beta1.PatternFile
 
@@ -1203,7 +1217,9 @@ func (h *Handler) CloneMesheryPatternHandler(
 
 	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route POST /api/pattern/catalog/publish PatternsAPI idPublishCatalogPatternHandler
@@ -1293,7 +1309,9 @@ func (h *Handler) PublishCatalogPatternHandler(
 	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusAccepted)
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route DELETE /api/pattern/catalog/unpublish PatternsAPI idUnPublishCatalogPatternHandler
@@ -1382,7 +1400,9 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 
 	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route DELETE /api/patterns PatternsAPI idDeleteMesheryPattern
@@ -1416,7 +1436,9 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	}
 	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/pattern/{id} PatternsAPI idGetMesheryPattern
@@ -1560,7 +1582,9 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 	}
 	eventBuilder.WithDescription(response)
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(data))
+	if _, err := fmt.Fprint(rw, string(data)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
@@ -1674,7 +1698,9 @@ func (h *Handler) handlePatternUpdate(
 		h.log.Error(errAppSave)
 
 		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "%s", err)
+		if _, writeErr := fmt.Fprintf(rw, "%s", err); writeErr != nil {
+			h.log.Error(writeErr)
+		}
 
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": errAppSave,
@@ -1746,7 +1772,9 @@ func (h *Handler) GetMesheryDesignTypesHandler(
 		return
 	}
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(b))
+	if _, err := fmt.Fprint(rw, string(b)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/pattern/download/{id}/{sourcetype} PatternsAPI typeGetPatternSourceContent
@@ -1830,7 +1858,7 @@ func (h *Handler) convertV1alpha2ToV1beta1(mesheryPattern *models.MesheryPattern
 		return nil, "", err
 	}
 
-	v1beta1PatternFile.Id = *mesheryPattern.ID
+	v1beta1PatternFile.ID = *mesheryPattern.ID
 	v1beta1PatternFile.Version = v1alpha1PatternFile.Version
 
 	h.log.Infof("Converted design file with id \"%s\" to v1beta1 format", *mesheryPattern.ID)

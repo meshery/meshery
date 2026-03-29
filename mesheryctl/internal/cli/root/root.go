@@ -21,6 +21,7 @@ import (
 	"os"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -33,7 +34,9 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/organizations"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/perf"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/registry"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/relationships"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/system"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/workspaces"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	logrus "github.com/sirupsen/logrus"
 
@@ -103,7 +106,6 @@ func init() {
 	}
 
 	cobra.OnInitialize(setupLogger)
-	cobra.OnInitialize(setVerbose)
 	cobra.OnInitialize(initConfig)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
@@ -129,6 +131,8 @@ func init() {
 		environments.EnvironmentCmd,
 		connections.ConnectionsCmd,
 		organizations.OrgCmd,
+		relationships.RelationshipCmd,
+		workspaces.WorkSpaceCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
@@ -217,15 +221,14 @@ func initConfig() {
 	}
 }
 
-// setVerbose sets the log level to debug if the -v flag is set
-func setVerbose() {
-	utils.Log.SetLevel(logrus.InfoLevel)
-
-	if verbose {
-		utils.Log.SetLevel(logrus.DebugLevel)
-	}
-}
-
 func setupLogger() {
-	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
+	// default log level is info
+	logLevel := logrus.InfoLevel
+
+	// log level to debug if the -v flag is set
+	if verbose {
+		logLevel = logrus.DebugLevel
+	}
+
+	utils.Log = mesheryctllogger.GetMeshkitLogger(logLevel)
 }
