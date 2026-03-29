@@ -1,6 +1,6 @@
 <div id="breadcrumbs">
   {{ $root := . }}
-  {{ $url := replaceRE "/$" "" $root.RelPermalink }}
+  {{ $url := strings.TrimRight $root.RelPermalink "/" }}
   {{ $crumbs := split $url "/" }}
 
   {{ if ne $url "/" }}
