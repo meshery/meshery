@@ -70,7 +70,7 @@ mesheryctl design list --count
   -h, --help           help for list
   -p, --page int       (optional) List next set of designs with --page (default 1)
       --pagesize int   (optional) Number of designs to be displayed per page (default 10)
-  -v, --verbose        (optional) Display full length user and design file identifiers
+  -v, --verbose        (optional) Display full length user identifiers and detailed timestamps
 
 </div>
 </pre>

@@ -41,7 +41,15 @@ components:
   colorIcon: content/en/extensions/models/loki/components/pod-logs/icons/color/pod-logs-color.svg
   whiteIcon: content/en/extensions/models/loki/components/pod-logs/icons/white/pod-logs-white.svg
   description: 
-components-count: 8
+- name: replica-template
+  colorIcon: content/en/extensions/models/loki/components/replica-template/icons/color/replica-template-color.svg
+  whiteIcon: content/en/extensions/models/loki/components/replica-template/icons/white/replica-template-white.svg
+  description: 
+- name: zone-aware-pod-disruption-budget
+  colorIcon: content/en/extensions/models/loki/components/zone-aware-pod-disruption-budget/icons/color/zone-aware-pod-disruption-budget-color.svg
+  whiteIcon: content/en/extensions/models/loki/components/zone-aware-pod-disruption-budget/icons/white/zone-aware-pod-disruption-budget-white.svg
+  description: 
+components-count: 10
 relationships: 
 relationship-count: 0
 featureList: [
