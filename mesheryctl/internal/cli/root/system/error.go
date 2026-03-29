@@ -62,6 +62,7 @@ const (
 	ErrDockerStartCode                    = "mesheryctl-1210"
 	ErrDockerUnknownCode                  = "mesheryctl-1211"
 	ErrOperatorUnsupportedPlatformCode    = "mesheryctl-1219"
+	ErrDockerComposeFileMissingCode       = "mesheryctl-1223"
 )
 
 var (
@@ -427,4 +428,14 @@ func ErrOperatorUnsupportedPlatform(platform string) error {
 		[]string{fmt.Sprintf("The platform %s is not supported for operator health checks", platform)},
 		[]string{"The operator health checks can only be run on Kubernetes platform"},
 		[]string{"Please switch to a Kubernetes context to run operator health checks. "})
+}
+
+func ErrDockerComposeFileMissing(err error) error {
+	return errors.New(
+		ErrDockerComposeFileMissingCode,
+		errors.Fatal,
+		[]string{"Docker Compose file not found"},
+		[]string{err.Error()},
+		[]string{"Docker Compose file is missing from the Meshery folder"},
+		[]string{"Run `mesheryctl system start` again to download and generate docker-compose file based on your context"})
 }
