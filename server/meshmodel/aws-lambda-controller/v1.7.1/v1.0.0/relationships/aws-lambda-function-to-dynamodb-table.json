@@ -1,5 +1,5 @@
 {
-    "id": "00000000-0000-0000-0000-000000000000",
+    "id": "6e07f450-24b8-4d42-a34e-4adcb68cf62c",
     "evaluationQuery": "",
     "kind": "edge",
     "metadata": {
@@ -12,16 +12,16 @@
         }
     },
     "model": {
-        "displayName": "",
-        "id": "00000000-0000-0000-0000-000000000000",
+        "displayName": "AWS Lambda to DynamoDB Table Relationship",
+        "id": "d62e96e5-629a-45ae-9064-b8661ecfb679",
         "model": {
             "version": "v1.7.1"
         },
         "name": "aws-lambda-controller",
         "registrant": {
-            "kind": ""
+            "kind": "artifacthub"
         },
-        "version": ""
+        "version": "v1.0.0"
     },
     "schemaVersion": "relationships.meshery.io/v1alpha3",
     "selectors": [
@@ -34,16 +34,16 @@
                         "match": {},
                         "match_strategy_matrix": null,
                         "model": {
-                            "displayName": "",
-                            "id": "00000000-0000-0000-0000-000000000000",
+                            "displayName": "AWS Lambda Function",
+                            "id": "bb12dc30-859e-43f8-949c-315dbb4d0f8f",
                             "model": {
-                                "version": ""
+                                "version": "v1.7.1"
                             },
                             "name": "aws-lambda-controller",
                             "registrant": {
                                 "kind": "artifacthub"
                             },
-                            "version": ""
+                            "version": "v1.0.0"
                         },
                         "patch": {
                             "mutatorRef": [
@@ -71,16 +71,16 @@
                         "match": {},
                         "match_strategy_matrix": null,
                         "model": {
-                            "displayName": "",
-                            "id": "00000000-0000-0000-0000-000000000000",
+                            "displayName": "DynamoDB Table",
+                            "id": "acbcc0a2-f3d4-4c93-950a-a1ee568377c2",
                             "model": {
-                                "version": ""
+                                "version": "v1.7.1"
                             },
                             "name": "dynamodb-controller",
                             "registrant": {
                                 "kind": "artifacthub"
                             },
-                            "version": ""
+                            "version": "v1.0.0"
                         },
                         "patch": {
                             "mutatedRef": [
