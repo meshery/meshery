@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
 	"database/sql"
 	"encoding/json"
@@ -1006,6 +1007,23 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		if err != nil {
 			h.log.Error(ErrIOReader(err))
 			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
+			return
+		}
+
+		var gzipBuffer bytes.Buffer
+		gzipWriter := gzip.NewWriter(&gzipBuffer)
+
+		_, err = gzipWriter.Write(content)
+		if err != nil {
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		gzipWriter.Close()
+		if err != nil {
+			h.log.Error(ErrIOReader(err))
+			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 				"error": ErrIOReader(err),
 			}).WithDescription(fmt.Sprintf("Failed to read contents of OCI artifact %s", tmpOCITarFilePath)).Build()
@@ -1022,10 +1040,48 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		go h.config.EventBroadcaster.Publish(userID, event)
 		_ = provider.PersistEvent(*event, nil)
 
-		rw.Header().Set("Content-Type", "application/tar")
-		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.tar", pattern.Name))
+		rw.Header().Set("Content-Type", "application/gzip")
+		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.tar.gz", pattern.Name))
 
-		reader := bytes.NewReader(content)
+		content, err = io.ReadAll(file)
+		if err != nil {
+			h.log.Error(ErrIOReader(err))
+			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
+			return
+		}
+
+		gzipWriter = gzip.NewWriter(&gzipBuffer)
+
+		_, err = gzipWriter.Write(content)
+		if err != nil {
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = gzipWriter.Close()
+		if err != nil {
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Logging (keep as is)
+		h.log.Info("OCI Artifact saved at: ", tmpOCITarFilePath)
+
+		eventBuilder.WithSeverity(events.Informational).WithDescription(
+			fmt.Sprintf("OCI Artifact temporarily saved at: %s", tmpOCITarFilePath),
+		)
+		event = eventBuilder.Build()
+		go h.config.EventBroadcaster.Publish(userID, event)
+		_ = provider.PersistEvent(*event, nil)
+
+		// Headers
+		rw.Header().Set("Content-Type", "application/gzip")
+		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.tar.gz", pattern.Name))
+
+		// Send response (KEEP io.Copy style)
+		reader := bytes.NewReader(gzipBuffer.Bytes())
 		if _, err := io.Copy(rw, reader); err != nil {
 			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
