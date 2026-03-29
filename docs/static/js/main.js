@@ -109,16 +109,29 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function setDesktopSidebarState(isHidden) {
         sidebarNav.classList.toggle("left-container--collapsed", isHidden);
+        sidebarNav.setAttribute("data-testid", isHidden ? "sidebar-collapsed" : "sidebar-expanded");
         syncSidebarButton(!isHidden);
     }
 
-    if (toggleBtnSidebarNav && sidebarNav) {
-        if (desktopSidebarMedia.matches) {
-            setDesktopSidebarState(localStorage.getItem(sidebarStorageKey) === "true");
-        } else {
-            sidebarNav.classList.remove("left-container--collapsed");
-            syncSidebarButton(sidebarNav.classList.contains("left-container--active"));
+    function setSidebarView() {
+        if (!sidebarNav) {
+            return;
         }
+
+        if (desktopSidebarMedia.matches) {
+            sidebarNav.classList.remove("left-container--active");
+            setDesktopSidebarState(localStorage.getItem(sidebarStorageKey) === "true");
+            return;
+        }
+
+        sidebarNav.classList.remove("left-container--collapsed");
+        const isActive = sidebarNav.classList.contains("left-container--active");
+        sidebarNav.setAttribute("data-testid", isActive ? "sidebar-active" : "sidebar-inactive");
+        syncSidebarButton(isActive);
+    }
+
+    if (toggleBtnSidebarNav && sidebarNav) {
+        setSidebarView();
 
         toggleBtnSidebarNav.addEventListener("click", () => {
             if (desktopSidebarMedia.matches) {
@@ -129,19 +142,12 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             sidebarNav.classList.toggle("left-container--active");
-            syncSidebarButton(sidebarNav.classList.contains("left-container--active"));
+            const isActive = sidebarNav.classList.contains("left-container--active");
+            sidebarNav.setAttribute("data-testid", isActive ? "sidebar-active" : "sidebar-inactive");
+            syncSidebarButton(isActive);
         });
 
-        desktopSidebarMedia.addEventListener("change", (event) => {
-            if (event.matches) {
-                sidebarNav.classList.remove("left-container--active");
-                setDesktopSidebarState(localStorage.getItem(sidebarStorageKey) === "true");
-                return;
-            }
-
-            sidebarNav.classList.remove("left-container--collapsed");
-            syncSidebarButton(sidebarNav.classList.contains("left-container--active"));
-        });
+        desktopSidebarMedia.addEventListener("change", setSidebarView);
     }
 });
 
