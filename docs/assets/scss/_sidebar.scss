@@ -14,12 +14,13 @@
   & .icon-container {
     height: fit-content;
     z-index: 9;
-    display: none;
+    display: block;
+    position: absolute;
+    right: -2rem;
+    top: 3rem;
+
     @media (max-width: 75em) {
-      margin-top: 3rem;
-      position: absolute;
       right: -3rem;
-      display: block;
     }
   }
   @media (max-width: 75em) {
@@ -31,10 +32,13 @@
     left: -1rem;
   }
   &--active {
-    transform: translateX(0%);
+    transform: translateX(-100%);
     & .nav-toggle-btn--document svg {
       transform: rotate(180deg);
     }
+    @media (max-width: 75em) {
+    transform: translateX(0%);
+  }
   }
 
   @media (max-width: 37.5em) {
