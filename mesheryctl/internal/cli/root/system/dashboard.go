@@ -172,7 +172,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 					}
 				}()
 				utils.Log.Infof("Forwarding port %v -> %v", options.podPort, dashboardCmdFlags.Port)
-				utils.Log.Info("Meshery UI available at: " + mesheryURL)
+				utils.Log.Infof("Meshery UI available at: %s", mesheryURL)
 				utils.Log.Info("Opening Meshery UI in default browser...")
 				err = utils.NavigateToBrowser(mesheryURL)
 				if err != nil {
@@ -221,13 +221,13 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		}
 
 		if !dashboardCmdFlags.SkipBrowser {
-			utils.Log.Info("Opening Meshery UI in browser at " + currCtx.GetEndpoint())
+			utils.Log.Infof("Opening Meshery UI in browser at %s", currCtx.GetEndpoint())
 			err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 			if err != nil {
 				utils.Log.Warnf("Failed to open Meshery UI in your browser, please point your browser to %s to access Meshery UI.\n\nOr run `mesheryctl system dashboard --port-forward` to access Meshery UI via port-forwarding.", currCtx.GetEndpoint())
 			}
 		} else {
-			utils.Log.Info("Meshery UI available at: " + currCtx.GetEndpoint())
+			utils.Log.Infof("Meshery UI available at: %s", currCtx.GetEndpoint())
 		}
 
 		return nil
