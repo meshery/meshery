@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 30th 2026, 7:45:17 pm
+- Testing started at: March 30th 2026, 11:34:02 pm
 
 **📦 Test Result Summary**
 
-- ✅ 32 passed
-- ❌ 29 failed
+- ✅ 33 passed
+- ❌ 28 failed
 - ⚠️ 0 flaked
 - ⏩ 11 skipped
 
-⌛ _Duration: 6 minutes and 48 seconds_
+⌛ _Duration: 6 minutes and 55 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -82,7 +82,7 @@
 | 59 | None | chromium-local-provider | should identify relationships for pv-pvc-edge-non-binding-reference-relationship | relationship | ❌ |
 | 60 | None | chromium-local-provider | should identify relationships for Service-To-Deployment-Network | relationship | ❌ |
 | 61 | None | chromium-local-provider | should verify Design Configurator page elements |  | ✅ |
-| 62 | None | chromium-local-provider | Test if Left Navigation Panel is displayed |  | ❌ |
+| 62 | None | chromium-local-provider | Test if Left Navigation Panel is displayed |  | ✅ |
 | 63 | None | chromium-local-provider | Test if Notification button is displayed |  | ❌ |
 | 64 | None | chromium-local-provider | Test if Profile button is displayed |  | ❌ |
 | 65 | None | chromium-local-provider | Toggle &quot;Send Anonymous Performance Results&quot; |  | ❌ |
@@ -152,6 +152,34 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
+<summary>❌ Test if Notification button is displayed (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
+
+**Error Message:**
+```
+Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
+Call log:
+[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
+
+```
+
+**Code Snippet:**
+```
+   at pages/DashboardPage.js:63
+
+[0m [90m 61 |[39m
+ [90m 62 |[39m   [36masync[39m navigateToDashboard() {
+[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
+ [90m    |[39m                     [31m[1m^[22m[39m
+ [90m 64 |[39m   }
+ [90m 65 |[39m
+ [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
+```
+
+</details>
+
+<details>
 <summary>❌ Verify Performance Analysis Details (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
@@ -180,7 +208,7 @@ Call log:
 </details>
 
 <details>
-<summary>❌ Logout from current user session (None - chromium-local-provider)</summary>
+<summary>❌ Test if Profile button is displayed (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
 
@@ -663,7 +691,7 @@ Call log:
 </details>
 
 <details>
-<summary>❌ Test if Left Navigation Panel is displayed (None - chromium-local-provider)</summary>
+<summary>❌ Logout from current user session (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -673,62 +701,6 @@ Call log:
 ```
 
 
-
-</details>
-
-<details>
-<summary>❌ Test if Notification button is displayed (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
-
-**Error Message:**
-```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
-Call log:
-[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
-
-```
-
-**Code Snippet:**
-```
-   at pages/DashboardPage.js:63
-
-[0m [90m 61 |[39m
- [90m 62 |[39m   [36masync[39m navigateToDashboard() {
-[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
- [90m    |[39m                     [31m[1m^[22m[39m
- [90m 64 |[39m   }
- [90m 65 |[39m
- [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Test if Profile button is displayed (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/pages/DashboardPage.js`
-
-**Error Message:**
-```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9081/
-Call log:
-[2m  - navigating to "http://localhost:9081/", waiting until "load"[22m
-
-```
-
-**Code Snippet:**
-```
-   at pages/DashboardPage.js:63
-
-[0m [90m 61 |[39m
- [90m 62 |[39m   [36masync[39m navigateToDashboard() {
-[31m[1m>[22m[39m[90m 63 |[39m     [36mawait[39m [36mthis[39m[33m.[39mpage[33m.[39mgoto([33mLEFT_NAV[39m[33m.[39m[33mDASHBOARD[39m[33m.[39mpath)[33m;[39m
- [90m    |[39m                     [31m[1m^[22m[39m
- [90m 64 |[39m   }
- [90m 65 |[39m
- [90m 66 |[39m   [36masync[39m navigateToPerformance() {[0m
-```
 
 </details>
 
