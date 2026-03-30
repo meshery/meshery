@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
 	pkgconstants "github.com/meshery/meshery/mesheryctl/pkg/constants"
@@ -34,6 +35,16 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+type cmdSystemStartFlags struct {
+	SkipUpdate  bool   `json:"skipUpdate" validate:"boolean"`
+	SkipBrowser bool   `json:"skipBrowser" validate:"boolean"`
+	Reset       bool   `json:"reset" validate:"boolean"`
+	Platform    string `json:"platform" validate:"omitempty"`
+	Provider    string `json:"provider" validate:"omitempty"`
+}
+
+var systemStartFlags cmdSystemStartFlags
 
 var (
 	skipUpdateFlag  bool
@@ -66,6 +77,9 @@ mesheryctl system start -p docker
 mesheryctl system start --provider Meshery
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := mesheryctlflags.ValidateCmdFlags(cmd, &systemStartFlags); err != nil {
+			return err
+		}
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
@@ -92,7 +106,7 @@ mesheryctl system start --provider Meshery
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			return err
+			return ErrValidateVersion(err)
 		}
 		return nil
 	},
@@ -220,7 +234,7 @@ func startDockerDeployment(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 	if skipUpdateFlag {
 		utils.Log.Info("Skipping Meshery update...")
 	} else if err := utils.UpdateMesheryContainers(); err != nil {
-		return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
+		return ErrUpdateContainers(err)
 	}
 
 	endpoint, err := resolveDockerEndpoint(mctlCfg, currCtx, userPort)
@@ -259,7 +273,7 @@ func configureDockerServices(currCtx *config.Context, mesheryImageVersion, callb
 	for name, service := range allowedServices {
 		utils.ViperCompose.Set(fmt.Sprintf("services.%s", name), service)
 		if err := utils.ViperCompose.WriteConfig(); err != nil {
-			utils.Log.Error(fmt.Errorf("encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file", name))
+			return nil, ErrWriteConfig(err)
 		}
 	}
 
@@ -413,7 +427,7 @@ func waitForMesheryContainer(composeClient *utils.ComposeClient) error {
 	utils.Log.Info("Timeout waiting for Meshery container to start. Checking container status...")
 	containers, err := composeClient.Ps(context.Background(), utils.DockerComposeFile)
 	if err != nil {
-		return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
+		return ErrFetchContainers(err)
 	}
 
 	utils.Log.Info("Container status:")
@@ -469,7 +483,7 @@ func startKubernetesDeployment(currCtx *config.Context, mesheryImageVersion, cal
 	time.Sleep(20 * time.Second)
 	ready, err := mesheryReadinessHealthCheck()
 	if err != nil {
-		utils.Log.Info(err)
+		utils.Log.Error(err)
 	}
 
 	if !ready {
