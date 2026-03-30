@@ -47,8 +47,8 @@ func TestConnectionDeleteCmd(t *testing.T) {
 					ResponseCode: 404,
 				},
 			},
-			IsOutputGolden:   true,
-			ExpectedResponse: "delete.connection.notfound.output.golden",
+			ExpectError:   true,
+			ExpectedError: utils.ErrNotFound(fmt.Errorf("no connection with ID %q found", connectionId)),
 		},
 		{
 			Name: "given a valid connectionID provided when running mesheryctl connection delete then the connection is deleted",
