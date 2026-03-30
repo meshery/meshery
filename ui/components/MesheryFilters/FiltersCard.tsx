@@ -9,8 +9,10 @@ import {
   Link,
   Avatar,
   useTheme,
+  DeleteIcon,
+  PublicIcon,
+  LockIcon,
 } from '@sistent/sistent';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Fullscreen from '@mui/icons-material/Fullscreen';
 import Save from '@mui/icons-material/Save';
 import Moment from 'react-moment';
@@ -30,7 +32,6 @@ import {
 } from '../MesheryPatterns/Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import CloneIcon from '../../public/static/img/CloneIcon';
-import PublicIcon from '@mui/icons-material/Public';
 import TooltipButton from '../../utils/TooltipButton';
 import { VISIBILITY } from '../../utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
@@ -41,7 +42,6 @@ import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { VisibilityChipMenu } from '@sistent/sistent';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
-import { Public, Lock } from '@mui/icons-material';
 import { iconMedium } from 'css/icons.styles';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
@@ -139,8 +139,8 @@ function FiltersCard_({
                   onChange={() => {}}
                   enabled={false}
                   options={[
-                    [VIEW_VISIBILITY.PUBLIC, Public],
-                    [VIEW_VISIBILITY.PRIVATE, Lock],
+                    [VIEW_VISIBILITY.PUBLIC, PublicIcon],
+                    [VIEW_VISIBILITY.PRIVATE, LockIcon],
                   ]}
                 />
               </div>{' '}

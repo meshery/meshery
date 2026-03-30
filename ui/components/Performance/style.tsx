@@ -1,5 +1,11 @@
-import { Accordion, FormControl, IconButton, styled, Radio } from '@sistent/sistent';
-import { HelpOutlineOutlined } from '@mui/icons-material';
+import {
+  Accordion,
+  FormControl,
+  IconButton,
+  styled,
+  Radio,
+  HelpOutlinedIcon,
+} from '@sistent/sistent';
 import { Calendar } from 'react-big-calendar';
 
 export const CardButton = styled('div')(() => ({
@@ -113,7 +119,7 @@ export const CenterTimer = styled('div')(() => ({
   alignItems: 'center',
 }));
 
-export const HelpIcon = styled(HelpOutlineOutlined)(({ theme }) => ({
+export const HelpIcon = styled(HelpOutlinedIcon)(({ theme }) => ({
   width: '15px',
   height: '18px',
   marginBottom: theme.spacing(1),
