@@ -19,9 +19,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -64,7 +61,7 @@ mesheryctl system restart --skip-update
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) > 1 {
-			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("restart takes only one flag. See '%s --help' for more information.\n", cmd.CommandPath()), "restart"))
+			return utils.ErrInvalidArgument(fmt.Errorf("restart takes only one flag. See '%s --help' for more information", cmd.CommandPath()))
 		}
 		return restart()
 	},
@@ -74,8 +71,7 @@ func restart() error {
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		utils.Log.Error(err)
-		return nil
+		return err
 	}
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
@@ -95,8 +91,7 @@ func restart() error {
 
 	running, err := utils.AreMesheryComponentsRunning(currPlatform)
 	if err != nil {
-		utils.Log.Error(err)
-		return nil
+		return err
 	}
 	if !running { // Meshery is not running
 		if err := start(); err != nil {
@@ -112,7 +107,7 @@ func restart() error {
 				userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
 			}
 			if !userResponse {
-				log.Info("Restart aborted.")
+				utils.Log.Info("Restart aborted.")
 				return nil
 			}
 			// take a backup of silentFlag value to pass it to start() function later
@@ -121,7 +116,7 @@ func restart() error {
 			utils.SilentFlag = true
 		}
 
-		log.Info("Restarting Meshery...")
+		utils.Log.Info("Restarting Meshery...")
 
 		if err := stop(); err != nil {
 			return ErrRestartMeshery(err)
