@@ -62,8 +62,8 @@ const (
 	ErrDockerStartCode                    = "mesheryctl-1210"
 	ErrDockerUnknownCode                  = "mesheryctl-1211"
 	ErrOperatorUnsupportedPlatformCode    = "mesheryctl-1219"
-	ErrDockerComposeFileMissingCode       = "mesheryctl-1223"
-	ErrLogoutCode                         = "mesheryctl-1224"
+	ErrDockerComposeFileMissingCode       = "mesheryctl-1228"
+	ErrLogoutCode                         = "mesheryctl-1229"
 )
 
 var (
