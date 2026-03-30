@@ -31,7 +31,7 @@
 
         <li>
             <span>
-                <a href="{{ .Permalink }}">{{ .Title }}</a>
+                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
             </span>
             {{ with .Params.abstract }}
                 - {{ . }}
