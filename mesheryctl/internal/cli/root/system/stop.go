@@ -138,7 +138,7 @@ func stop() error {
 		if err := composeClient.Remove(context.Background(), utils.DockerComposeFile); err != nil {
 			return ErrStopMeshery(err)
 		}
-		utils.Log.Info("Meshery resources is stopped.")
+		utils.Log.Info("Meshery resources are stopped.")
 	case platformKubernetes:
 		client, err := meshkitkube.New([]byte(""))
 		if err != nil {
@@ -281,6 +281,7 @@ func invokeDeleteCRDs() error {
 		}
 
 		utils.Log.Debug(err)
+		return nil
 	}
 
 	if err = deleteCRD(brokerCRDName, client); err != nil {
