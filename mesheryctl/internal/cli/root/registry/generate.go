@@ -93,9 +93,26 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		directory, _ := cmd.Flags().GetString("directory")
 		modelCSV, _ := cmd.Flags().GetString("model-csv")
 		componentCSV, _ := cmd.Flags().GetString("component-csv")
+		relationshipCSV, _ := cmd.Flags().GetString("relationship-csv")
+
+		modelCSVProvided := modelCSV != ""
+		componentCSVProvided := componentCSV != ""
+		relationshipCSVProvided := relationshipCSV != ""
+
+		if modelCSVProvided && !componentCSVProvided {
+			return errors.New(utils.RegistryError("--component-csv is required when --model-csv is provided", "generate"))
+		}
+
+		if componentCSVProvided && !modelCSVProvided {
+			return errors.New(utils.RegistryError("--model-csv is required when --component-csv is provided", "generate"))
+		}
+
+		if relationshipCSVProvided && !(modelCSVProvided && componentCSVProvided) {
+			return errors.New(utils.RegistryError("--relationship-csv can only be used with --model-csv and --component-csv", "generate"))
+		}
 
 		// Check if individual CSV flags are provided
-		hasIndividualCSVs := modelCSV != "" && componentCSV != ""
+		hasIndividualCSVs := modelCSVProvided && componentCSVProvided
 
 		if spreadsheetIdFlag == "" && registrantDefFlag == "" && directory == "" && !hasIndividualCSVs {
 			return errors.New(utils.RegistryError(errorMsg, "generate"))
@@ -120,7 +137,6 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			if _, err := os.Stat(componentCSV); os.IsNotExist(err) {
 				return errors.New(utils.RegistryError(fmt.Sprintf("Component CSV file not found: %s", componentCSV), "generate"))
 			}
-			relationshipCSV, _ := cmd.Flags().GetString("relationship-csv")
 			if relationshipCSV != "" {
 				if _, err := os.Stat(relationshipCSV); os.IsNotExist(err) {
 					return errors.New(utils.RegistryError(fmt.Sprintf("Relationship CSV file not found: %s", relationshipCSV), "generate"))

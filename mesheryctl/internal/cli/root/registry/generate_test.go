@@ -1,6 +1,8 @@
 package registry
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -9,6 +11,14 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 )
+
+func createTempCSVFile(t *testing.T, dir, fileName string) string {
+	t.Helper()
+	filePath := filepath.Join(dir, fileName)
+	err := os.WriteFile(filePath, []byte("header\nvalue\n"), 0o600)
+	assert.NoError(t, err)
+	return filePath
+}
 
 // resetGenerateFlags resets all flags to their default values
 func resetGenerateFlags(cmd *cobra.Command) {
@@ -328,4 +338,99 @@ func TestPreRunEValidation(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestPreRunEValidationPartialCSVInputs(t *testing.T) {
+	tests := []struct {
+		name        string
+		flagValues  map[string]string
+		expectError bool
+		errorMsg    string
+	}{
+		{
+			name: "Model CSV without component CSV",
+			flagValues: map[string]string{
+				"model-csv": "models.csv",
+			},
+			expectError: true,
+			errorMsg:    "--component-csv is required when --model-csv is provided",
+		},
+		{
+			name: "Component CSV without model CSV",
+			flagValues: map[string]string{
+				"component-csv": "components.csv",
+			},
+			expectError: true,
+			errorMsg:    "--model-csv is required when --component-csv is provided",
+		},
+		{
+			name: "Relationship CSV without CSV mode",
+			flagValues: map[string]string{
+				"relationship-csv": "relationships.csv",
+			},
+			expectError: true,
+			errorMsg:    "--relationship-csv can only be used with --model-csv and --component-csv",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resetGenerateFlags(generateCmd)
+			for flagName, value := range tt.flagValues {
+				err := generateCmd.PersistentFlags().Set(flagName, value)
+				assert.NoError(t, err)
+			}
+
+			err := generateCmd.PreRunE(generateCmd, []string{})
+			if tt.expectError {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.errorMsg)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestPreRunEValidationValidPathsNoRegression(t *testing.T) {
+	t.Run("Complete CSV mode with optional relationship CSV", func(t *testing.T) {
+		resetGenerateFlags(generateCmd)
+		tmpDir := t.TempDir()
+		modelPath := createTempCSVFile(t, tmpDir, "models.csv")
+		componentPath := createTempCSVFile(t, tmpDir, "components.csv")
+		relationshipPath := createTempCSVFile(t, tmpDir, "relationships.csv")
+
+		assert.NoError(t, generateCmd.PersistentFlags().Set("model-csv", modelPath))
+		assert.NoError(t, generateCmd.PersistentFlags().Set("component-csv", componentPath))
+		assert.NoError(t, generateCmd.PersistentFlags().Set("relationship-csv", relationshipPath))
+
+		err := generateCmd.PreRunE(generateCmd, []string{})
+		assert.NoError(t, err)
+	})
+
+	t.Run("Spreadsheet mode remains valid", func(t *testing.T) {
+		resetGenerateFlags(generateCmd)
+		assert.NoError(t, generateCmd.PersistentFlags().Set("spreadsheet-id", "sheet-id"))
+		assert.NoError(t, generateCmd.PersistentFlags().Set("spreadsheet-cred", "dummy-cred"))
+
+		err := generateCmd.PreRunE(generateCmd, []string{})
+		assert.NoError(t, err)
+	})
+
+	t.Run("Registrant mode remains valid", func(t *testing.T) {
+		resetGenerateFlags(generateCmd)
+		assert.NoError(t, generateCmd.PersistentFlags().Set("registrant-def", "conn-def"))
+		assert.NoError(t, generateCmd.PersistentFlags().Set("registrant-cred", "cred-def"))
+
+		err := generateCmd.PreRunE(generateCmd, []string{})
+		assert.NoError(t, err)
+	})
+
+	t.Run("Directory mode remains valid", func(t *testing.T) {
+		resetGenerateFlags(generateCmd)
+		assert.NoError(t, generateCmd.PersistentFlags().Set("directory", t.TempDir()))
+
+		err := generateCmd.PreRunE(generateCmd, []string{})
+		assert.NoError(t, err)
+	})
 }
