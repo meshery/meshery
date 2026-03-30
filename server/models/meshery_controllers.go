@@ -393,6 +393,9 @@ func (ot *OperatorTracker) Undeployed(ctxID string, undeployed bool) {
 	}
 	ot.mx.Lock()
 	defer ot.mx.Unlock()
+	if ot.ctxIDtoDeploymentStatus == nil {
+		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
+	}
 	ot.ctxIDtoDeploymentStatus[ctxID] = undeployed
 }
 
@@ -402,6 +405,10 @@ func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
 	}
 	ot.mx.Lock()
 	defer ot.mx.Unlock()
+	if ot.ctxIDtoDeploymentStatus == nil {
+		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
+		return false
+	}
 	return ot.ctxIDtoDeploymentStatus[ctxID]
 }
 
