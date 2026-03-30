@@ -1,20 +1,28 @@
 .left-container {
+  --docs-sidebar-width: 336px;
+  --docs-sidebar-collapsed-peek: 2.75rem;
   position: sticky;
   z-index: 9;
   height: calc(100vh - var(--navbar-height));
-  transition: all 0.5s ease-in-out;
+  transition: width 0.5s ease-in-out, flex-basis 0.5s ease-in-out,
+    transform 0.5s ease-in-out;
   margin-top: calc(var(--navbar-height));
   top: calc(var(--navbar-height));
-  width: 336px;
-  flex: 0 0 336px;
+  width: var(--docs-sidebar-width);
+  flex: 0 0 var(--docs-sidebar-width);
   overflow: visible;
+  & .left-container__track {
+    position: relative;
+    width: var(--docs-sidebar-width);
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+  }
   & .sidebar-container-wrapper {
     height: 100%;
     padding: 0.5rem;
     background: var(--background-grey);
     box-shadow: var(--box-shadow-primary);
-    clip-path: inset(0 0 0 0);
-    transition: clip-path 0.5s ease;
+    transition: box-shadow 0.5s ease-in-out;
   }
   & .icon-container {
     height: fit-content;
@@ -32,11 +40,12 @@
     }
   }
   @media (max-width: 75em) {
+    --docs-sidebar-width: 320px;
     margin-top: 0;
     transform: translateX(-100%);
     position: fixed;
     display: flex;
-    width: 320px;
+    width: var(--docs-sidebar-width);
     flex: none;
     left: -1rem;
   }
@@ -54,12 +63,17 @@
 }
 
 .left-container--collapsed {
-  width: 0.75rem;
-  flex-basis: 0.75rem;
+  width: var(--docs-sidebar-collapsed-peek);
+  flex-basis: var(--docs-sidebar-collapsed-peek);
+}
+
+.left-container--collapsed .left-container__track {
+  transform: translateX(
+    calc(-1 * (var(--docs-sidebar-width) - var(--docs-sidebar-collapsed-peek)))
+  );
 }
 
 .left-container--collapsed .sidebar-container-wrapper {
-  clip-path: inset(0 calc(100% - 0.75rem) 0 0);
   pointer-events: none;
 }
 
@@ -69,11 +83,15 @@
 
 @media (max-width: 75em) {
   .left-container--collapsed {
-    width: 320px;
+    width: var(--docs-sidebar-width);
+    flex-basis: auto;
+  }
+
+  .left-container--collapsed .left-container__track {
+    transform: none;
   }
 
   .left-container--collapsed .sidebar-container-wrapper {
-    clip-path: inset(0 0 0 0);
     pointer-events: auto;
   }
 }

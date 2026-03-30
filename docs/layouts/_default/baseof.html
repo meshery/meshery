@@ -24,14 +24,16 @@
 
     <div class="flex-container">
       <div class="left-container">
-        <div class="sidebar-container-wrapper">
-          <div class="sidebar-container">
-            {{ partial "sidebar.html" . }}
+        <div class="left-container__track">
+          <div class="sidebar-container-wrapper">
+            <div class="sidebar-container">
+              {{ partial "sidebar.html" . }}
+            </div>
           </div>
-        </div>
 
-        <div class="icon-container">
-          {{ partial "nav-toggle.html" . }}
+          <div class="icon-container">
+            {{ partial "nav-toggle.html" . }}
+          </div>
         </div>
       </div>
 

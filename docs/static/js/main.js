@@ -94,6 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const sidebarNav = document.querySelector(".left-container");
     const desktopSidebarMedia = window.matchMedia("(min-width: 75.0625em)");
     const sidebarStorageKey = "meshery-docs-sidebar-hidden";
+    const getStoredDesktopSidebarState = () => localStorage.getItem(sidebarStorageKey) === "true";
 
     function syncSidebarButton(isExpanded) {
         if (!toggleBtnSidebarNav) {
@@ -120,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (desktopSidebarMedia.matches) {
             sidebarNav.classList.remove("left-container--active");
-            setDesktopSidebarState(localStorage.getItem(sidebarStorageKey) === "true");
+            setDesktopSidebarState(getStoredDesktopSidebarState());
             return;
         }
 
@@ -135,9 +136,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
         toggleBtnSidebarNav.addEventListener("click", () => {
             if (desktopSidebarMedia.matches) {
-                const isHidden = !sidebarNav.classList.contains("left-container--collapsed");
-                setDesktopSidebarState(isHidden);
-                localStorage.setItem(sidebarStorageKey, String(isHidden));
+                const shouldCollapse = !sidebarNav.classList.contains("left-container--collapsed");
+                setDesktopSidebarState(shouldCollapse);
+                localStorage.setItem(sidebarStorageKey, String(shouldCollapse));
                 return;
             }
 
