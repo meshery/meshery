@@ -2,15 +2,15 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
+
 	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"gorm.io/gorm"
 
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 )
 
@@ -138,10 +138,8 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 	resp, err := provider.DeleteWorkspace(r, workspaceID)
 	if err != nil {
 
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-
-			h.log.Error(ErrGetResult(err))
-			http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		if errors.GetCode(err) == models.ErrResultNotFoundCode {
+			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 		deleteErr := ErrFailToDelete(err, "workspace")
@@ -184,10 +182,8 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 
 	resp, err := provider.UpdateWorkspace(req, &workspace, workspaceID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-
-			h.log.Error(ErrGetResult(err))
-			http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		if errors.GetCode(err) == models.ErrResultNotFoundCode {
+			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 		updateErr := ErrFailToSave(err, "workspace")
@@ -198,8 +194,9 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 
 	respJSON, err := json.Marshal(resp)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, "Failed to marshal response to JSON", http.StatusInternalServerError)
+		marshalErr := ErrFailToSave(err, "workspace")
+		h.log.Error(marshalErr)
+		http.Error(w, marshalErr.Error(), http.StatusInternalServerError)
 		return
 	}
 	description := fmt.Sprintf("Workspace %s updated.", workspace.Name)
