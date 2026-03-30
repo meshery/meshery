@@ -24,9 +24,9 @@ import (
 
 	"github.com/pkg/errors"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	apiCorev1 "k8s.io/api/core/v1"
@@ -54,8 +54,9 @@ func printLogs(logs string, podName string) {
 }
 
 type cmdSystemLogsFlags struct {
-    Follow bool `json:"follow" validate:"boolean"`
+	Follow bool `json:"follow" validate:"boolean"`
 }
+
 var systemLogsFlags cmdSystemLogsFlags
 
 const BYTE_SIZE = 2000
@@ -79,8 +80,8 @@ mesheryctl system logs meshery-istio
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
 		if err := mesheryctlflags.ValidateCmdFlags(cmd, &systemLogsFlags); err != nil {
-        	return err
-    	}
+			return err
+		}
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
@@ -117,7 +118,7 @@ mesheryctl system logs meshery-istio
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			return ErrGetCurrentContext(err)	
+			return ErrGetCurrentContext(err)
 		}
 
 		currPlatform := currCtx.GetPlatform()
@@ -135,13 +136,13 @@ mesheryctl system logs meshery-istio
 			utils.Log.Info("Starting Meshery logging...")
 
 			if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
-				return ErrDockerComposeFileMissing(err)
+				return utils.ErrDockerComposeFileMissing(err)
 			}
 
 			// Use compose library instead of exec.Command
 			composeClient, err := utils.NewComposeClient()
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to create compose client"))
+				return utils.ErrDockerComposeClient(err)
 			}
 
 			if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, true, os.Stdout); err != nil {
