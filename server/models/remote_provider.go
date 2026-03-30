@@ -5698,6 +5698,9 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 		l.Log.Info("Workspace deleted from remote provider")
 		return bdr, nil
 	}
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, ErrResultNotFound(fmt.Errorf("workspace with ID %s not found", workspaceID))
+	}
 	return nil, ErrFetch(fmt.Errorf("failed to delete workspace"), "Workspace", resp.StatusCode)
 }
 
@@ -5746,6 +5749,9 @@ func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.Works
 		}
 		return &workspace, nil
 	}
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, ErrResultNotFound(fmt.Errorf("workspace with ID %s not found", workspaceID))
+	}
 
 	return nil, ErrFetch(fmt.Errorf("failed to update the workspace"), "Workspace", resp.StatusCode)
 }
@@ -5787,6 +5793,7 @@ func (l *RemoteProvider) AddEnvironmentToWorkspace(req *http.Request, workspaceI
 		l.Log.Info("Environment added to workspace")
 		return bdr, nil
 	}
+
 	return nil, ErrFetch(fmt.Errorf("failed to get workspaces"), "Workspace", resp.StatusCode)
 }
 
