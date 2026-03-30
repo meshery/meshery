@@ -1,5 +1,5 @@
 {
-  "id": "caab7c49-f24e-4e7a-8e05-09a78a9be597",
+  "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
@@ -13,7 +13,7 @@
   },
   "model": {
     "displayName": "AWS Lambda Controller",
-    "id": "07b1a579-04d0-4058-99f4-bb1e4610f3ba",
+    "id": "00000000-0000-0000-0000-000000000000",
     "model": {
       "version": "v1.11.0"
     },
@@ -35,7 +35,7 @@
             "match_strategy_matrix": null,
             "model": {
               "displayName": "AWS Lambda Controller",
-              "id": "3f72b9d4-c18a-46ae-9d4a-f1c231bde27b",
+              "id": "00000000-0000-0000-0000-000000000000",
               "model": {
                 "version": "v1.11.0"
               },
@@ -65,7 +65,7 @@
             "match_strategy_matrix": null,
             "model": {
               "displayName": "AWS IAM Controller",
-              "id": "30b99170-f376-4a41-ac5c-2abeb513dc26",
+              "id": "00000000-0000-0000-0000-000000000000",
               "model": {
                 "version": "v1.11.0"
               },
