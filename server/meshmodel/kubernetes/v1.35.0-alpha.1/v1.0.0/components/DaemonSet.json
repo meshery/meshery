@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "background-image": "none",
@@ -193,7 +193,7 @@
   "status": "enabled",
   "metadata": {
     "configurationUISchema": "",
-    "genealogy": "parent",
+    "genealogy": "",
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
