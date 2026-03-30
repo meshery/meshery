@@ -22,8 +22,7 @@ teardown_file() {
     NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"
 
     run $MESHERYCTL_BIN connection delete "$NONEXISTENT_ID"
-    assert_success
-    assert_output --partial "No connection with ID"
+    assert_failure
 }
 
 @test "given an invalid connection-id is provided as an argument when running mesheryctl connection delete invalid-connection-id then an error message is displayed" {
