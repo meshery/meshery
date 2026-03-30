@@ -175,6 +175,9 @@ func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID uuid.UUID
 }
 
 func (cp *ConnectionPersister) UpdateConnectionByID(connection *connections.Connection) (*connections.Connection, error) {
+	if connection.ID == uuid.Nil {
+		return nil, ErrGenerateUUID(fmt.Errorf("connection ID must not be nil"))
+	}
 	err := cp.DB.Save(connection).Error
 	if err != nil {
 		return nil, ErrDBPut(err)
