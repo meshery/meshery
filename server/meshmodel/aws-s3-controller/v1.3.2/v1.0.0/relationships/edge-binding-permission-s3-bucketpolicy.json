@@ -1,5 +1,5 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
+  "id": "a7a0e5bb-2045-4a49-983b-d8c904d8291b",
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
@@ -12,8 +12,8 @@
     }
   },
   "model": {
-    "displayName": "",
-    "id": "00000000-0000-0000-0000-000000000000",
+    "displayName": "AWS S3 Controller",
+    "id": "fe95d78f-7eb0-4b17-a7e7-3a54465d8765",
     "model": {
       "version": "v1.3.2"
     },
@@ -21,7 +21,7 @@
     "registrant": {
       "kind": "github"
     },
-    "version": ""
+    "version": "v1.3.2"
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -30,27 +30,27 @@
         "from": [
           {
             "id": null,
-            "kind": "Bucket",
+            "kind": "BucketPolicy",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
+              "displayName": "AWS S3 Controller",
+              "id": "95a20608-202d-4079-af07-7bae00ac5b3f",
               "model": {
-                "version": ""
+                "version": "v1.3.2"
               },
               "name": "aws-s3-controller",
               "registrant": {
                 "kind": "github"
               },
-              "version": ""
+              "version": "v1.3.2"
             },
             "patch": {
               "mutatorRef": [
                 [
                   "configuration",
                   "spec",
-                  "bucketName"
+                  "bucket"
                 ]
               ],
               "patchStrategy": "replace"
@@ -60,25 +60,27 @@
         "to": [
           {
             "id": null,
-            "kind": "BucketPolicy",
+            "kind": "Bucket",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
+              "displayName": "AWS S3 Controller",
+              "id": "526f2300-21cb-40c8-a06f-37ebf934d6ea",
               "model": {
-                "version": ""
+                "version": "v1.3.2"
               },
               "name": "aws-s3-controller",
               "registrant": {
                 "kind": "github"
               },
-              "version": ""
+              "version": "v1.3.2"
             },
             "patch": {
               "mutatedRef": [
                 [
-                  "displayName"
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
                 ]
               ],
               "patchStrategy": "replace"

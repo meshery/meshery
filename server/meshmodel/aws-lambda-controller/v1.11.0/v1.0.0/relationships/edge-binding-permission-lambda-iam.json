@@ -1,5 +1,5 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
+  "id": "caab7c49-f24e-4e7a-8e05-09a78a9be597",
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
@@ -12,8 +12,8 @@
     }
   },
   "model": {
-    "displayName": "",
-    "id": "00000000-0000-0000-0000-000000000000",
+    "displayName": "AWS Lambda Controller",
+    "id": "07b1a579-04d0-4058-99f4-bb1e4610f3ba",
     "model": {
       "version": "v1.11.0"
     },
@@ -21,7 +21,7 @@
     "registrant": {
       "kind": "github"
     },
-    "version": ""
+    "version": "v1.11.0"
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -34,23 +34,23 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
+              "displayName": "AWS Lambda Controller",
+              "id": "3f72b9d4-c18a-46ae-9d4a-f1c231bde27b",
               "model": {
-                "version": ""
+                "version": "v1.11.0"
               },
               "name": "aws-lambda-controller",
               "registrant": {
                 "kind": "github"
               },
-              "version": ""
+              "version": "v1.11.0"
             },
             "patch": {
               "mutatorRef": [
                 [
                   "configuration",
                   "spec",
-                  "functionName"
+                  "role"
                 ]
               ],
               "patchStrategy": "replace"
@@ -64,21 +64,23 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
+              "displayName": "AWS IAM Controller",
+              "id": "30b99170-f376-4a41-ac5c-2abeb513dc26",
               "model": {
-                "version": ""
+                "version": "v1.11.0"
               },
               "name": "aws-iam-controller",
               "registrant": {
                 "kind": "github"
               },
-              "version": ""
+              "version": "v1.11.0"
             },
             "patch": {
               "mutatedRef": [
                 [
-                  "displayName"
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
                 ]
               ],
               "patchStrategy": "replace"
