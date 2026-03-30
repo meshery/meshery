@@ -259,7 +259,7 @@ func configureDockerServices(currCtx *config.Context, mesheryImageVersion, callb
 	for name, service := range allowedServices {
 		utils.ViperCompose.Set(fmt.Sprintf("services.%s", name), service)
 		if err := utils.ViperCompose.WriteConfig(); err != nil {
-			utils.Log.Error(fmt.Errorf("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file", name))
+			utils.Log.Error(fmt.Errorf("encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file", name))
 		}
 	}
 
