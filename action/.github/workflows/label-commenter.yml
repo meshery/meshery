@@ -1,0 +1,28 @@
+name: Label Commenter
+
+on:
+  issues:
+    types:
+      - labeled
+
+  pull_request_target:
+    types:
+      - labeled
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  comment:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo 🛎️
+        uses: actions/checkout@master
+        with:
+          ref: master # Set your default branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Label Commenter
+        uses: peaceiris/actions-label-commenter@v1.10.0

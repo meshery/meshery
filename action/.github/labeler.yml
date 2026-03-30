@@ -1,0 +1,30 @@
+area/docs:
+- changed-files:
+  - any-glob-to-any-file:
+    - "readme.md"
+    - "contributing.md"
+    - "docs/**/*"
+area/cypress-action:
+- changed-files:
+  - any-glob-to-any-file:
+    - "cypress-action/**/*"
+area/node-action:
+- changed-files:
+  - any-glob-to-any-file:
+    - "node-action/**/*"
+area/playright-action:
+- changed-files:
+  - any-glob-to-any-file:
+    - "playright-action/**/*"
+area/ci:
+- changed-files:
+  - any-glob-to-any-file:
+    - ".github/**/*"
+playground:
+- changed-files:
+  - any-glob-to-any-file:
+    - "install/playground/**/*"
+opa:
+- changed-files:
+  - any-glob-to-any-file:
+    - "*.rego"

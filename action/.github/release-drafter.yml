@@ -1,0 +1,25 @@
+name-template: 'Kanvas SnapShot v$NEXT_PATCH_VERSION'
+tag-template: 'v$NEXT_PATCH_VERSION'
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'kind/feature'
+      - 'kind/enhancement'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'fix'
+      - 'bugfix'
+      - 'kind/bug'
+  - title: '🧰 Maintenance'
+    labels: 
+      - 'kind/chore'
+      - 'chore'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+template: |
+  ## What's New
+  $CHANGES
+  
+  ## Contributors
+  
+  Thank you to our contributors for making this release possible:
+  $CONTRIBUTORS

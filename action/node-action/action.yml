@@ -1,0 +1,14 @@
+name: 'run puppeteer to take screenshot'
+description: 'run puppeteer to take screenshot'
+author: Layer5
+inputs:
+  authToken:  # id of input
+    description: 'Authentication token for Meshery Server'
+    required: true
+    default: ""
+outputs:
+  mardownResult: # id of output
+    description: 'The markdown result'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
