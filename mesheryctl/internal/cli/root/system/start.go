@@ -117,6 +117,7 @@ mesheryctl system start --provider Meshery
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		mesheryctlflags.InitValidators(cmd)
 		utils.CheckMesheryctlClientVersion(constants.GetMesheryctlVersion())
 	},
 }
