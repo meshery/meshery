@@ -62,9 +62,9 @@ const (
 	ErrDockerStartCode                    = "mesheryctl-1210"
 	ErrDockerUnknownCode                  = "mesheryctl-1211"
 	ErrOperatorUnsupportedPlatformCode    = "mesheryctl-1219"
-	ErrValidateVersionCode                = "mesheryctl-1220"
-	ErrUpdateContainersCode               = "mesheryctl-1221"
-	ErrFetchContainersCode                = "mesheryctl-1222"
+	ErrValidateVersionCode                = "mesheryctl-1227"
+	ErrUpdateContainersCode               = "mesheryctl-1228"
+	ErrFetchContainersCode                = "mesheryctl-1229"
 )
 
 var (
