@@ -131,16 +131,25 @@ func parseKubectlShortVersion(version string) ([3]int, error) {
 // IsMesheryRunning checks if the meshery server containers are up and running
 func IsMesheryRunning(currPlatform string) (bool, error) {
 	// Get viper instance used for context to extract the endpoint from config file
-	mctlCfg, _ := config.GetMesheryCtl(viper.GetViper())
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return false, err
+	}
 
-	currCtx, _ := mctlCfg.GetCurrentContext()
+	currCtx, err := mctlCfg.GetCurrentContext()
+	if err != nil {
+		return false, err
+	}
 
 	urlEndpoint := currCtx.GetEndpoint()
 
 	urlTest := urlEndpoint + "/api/system/version"
 
 	// Checking if Meshery is running with the URL obtained
-	resp, _ := http.Get(urlTest)
+	resp, err := http.Get(urlTest)
+	if err != nil {
+		return false, err
+	}
 
 	if resp != nil && resp.StatusCode == 200 {
 		return true, nil
