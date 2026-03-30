@@ -107,7 +107,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			return errors.New(utils.RegistryError("--model-csv is required when --component-csv is provided", "generate"))
 		}
 
-		if relationshipCSVProvided && !(modelCSVProvided && componentCSVProvided) {
+		if relationshipCSVProvided && (!modelCSVProvided || !componentCSVProvided) {
 			return errors.New(utils.RegistryError("--relationship-csv can only be used with --model-csv and --component-csv", "generate"))
 		}
 
