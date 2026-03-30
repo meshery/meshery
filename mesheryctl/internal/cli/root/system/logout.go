@@ -44,7 +44,7 @@ mesheryctl system logout
 
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
-			return ErrGetCurrentContext(errors.Wrap(err, "failed to find token path for the current context"))
+			return ErrGetCurrentContext(err)
 		}
 
 		// Replace the content of the token file with empty content
