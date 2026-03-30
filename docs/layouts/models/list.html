@@ -7,15 +7,18 @@
 
 {{ if gt (len $models) 0 }}
 <div class="models-list">
-  <ul>
-    {{ range $models }}
-      {{ if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") }}
-      <li style="list-style-type: disc !important; margin: 2px 0 !important">
-        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-      </li>
+  {{ range ($models.GroupByParam "integrations-category") }}
+    <h3 id="{{ .Key | urlize }}">{{ .Key | default "Other Integrations" }}</h3>
+    <ul>
+      {{ range .Pages }}
+        {{ if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") }}
+        <li style="list-style-type: disc !important; margin: 2px 0 !important">
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        </li>
+        {{ end }}
       {{ end }}
-    {{ end }}
-  </ul>
+    </ul>
+  {{ end }}
 </div>
 {{ end }}
 {{ end }}
