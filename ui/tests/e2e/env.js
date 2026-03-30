@@ -15,7 +15,7 @@ if (process.env.CI) {
   if (!USER_EMAIL && !USER_PASSWORD) {
     console.warn('Using default email and password on auth');
   } else if (!USER_EMAIL || !USER_PASSWORD) {
-    console.warn("You're either email or password is empty");
+console.error("You're either email or password is empty");
     process.exit(1);
   }
 } else {
