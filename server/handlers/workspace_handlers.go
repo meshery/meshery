@@ -111,9 +111,8 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 
 	bf, err := provider.SaveWorkspace(req, &workspace, "", false)
 	if err != nil {
-		saveErr := ErrFailToSave(err, "workspace")
-		h.log.Error(saveErr)
-		http.Error(w, saveErr.Error(), http.StatusInternalServerError)
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -142,9 +141,8 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
-		deleteErr := ErrFailToDelete(err, "workspace")
-		h.log.Error(deleteErr)
-		http.Error(w, deleteErr.Error(), http.StatusInternalServerError)
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -186,9 +184,8 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
-		updateErr := ErrFailToSave(err, "workspace")
-		h.log.Error(updateErr)
-		http.Error(w, updateErr.Error(), http.StatusInternalServerError)
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
