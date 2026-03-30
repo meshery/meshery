@@ -1,5 +1,5 @@
 {
-  "id": "a7a0e5bb-2045-4a49-983b-d8c904d8291b",
+  "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
@@ -13,7 +13,7 @@
   },
   "model": {
     "displayName": "AWS S3 Controller",
-    "id": "fe95d78f-7eb0-4b17-a7e7-3a54465d8765",
+    "id": "00000000-0000-0000-0000-000000000000",
     "model": {
       "version": "v1.3.2"
     },
@@ -35,7 +35,7 @@
             "match_strategy_matrix": null,
             "model": {
               "displayName": "AWS S3 Controller",
-              "id": "95a20608-202d-4079-af07-7bae00ac5b3f",
+              "id": "00000000-0000-0000-0000-000000000000",
               "model": {
                 "version": "v1.3.2"
               },
@@ -65,7 +65,7 @@
             "match_strategy_matrix": null,
             "model": {
               "displayName": "AWS S3 Controller",
-              "id": "526f2300-21cb-40c8-a06f-37ebf934d6ea",
+              "id": "00000000-0000-0000-0000-000000000000",
               "model": {
                 "version": "v1.3.2"
               },

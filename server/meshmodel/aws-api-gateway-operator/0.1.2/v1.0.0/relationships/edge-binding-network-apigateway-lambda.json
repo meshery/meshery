@@ -1,5 +1,5 @@
 {
-  "id": "8e9c2625-8d6b-4779-8e4c-76bbc9e76838",
+  "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
@@ -13,7 +13,7 @@
   },
   "model": {
     "displayName": "AWS API Gateway Operator",
-    "id": "75422846-bf89-428f-a434-b38ac6ebf232",
+    "id": "00000000-0000-0000-0000-000000000000",
     "model": {
       "version": "0.1.2"
     },
@@ -35,7 +35,7 @@
             "match_strategy_matrix": null,
             "model": {
               "displayName": "AWS API Gateway Operator",
-              "id": "c029a4b1-e9eb-428e-a0dd-591248029022",
+              "id": "00000000-0000-0000-0000-000000000000",
               "model": {
                 "version": "0.1.2"
               },
@@ -65,7 +65,7 @@
             "match_strategy_matrix": null,
             "model": {
               "displayName": "AWS Lambda Controller",
-              "id": "d94089ad-ca13-4023-b279-f8cafee4203a",
+              "id": "00000000-0000-0000-0000-000000000000",
               "model": {
                 "version": "v1.11.0"
               },
