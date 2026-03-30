@@ -1110,9 +1110,13 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 }
 
 func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
-	id := uuid.Nil
-	if conn.ID != uuid.Nil {
-		id = conn.ID
+	id := conn.ID
+	if id == uuid.Nil {
+		var err error
+		id, err = uuid.NewV4()
+		if err != nil {
+			return nil, ErrGenerateUUID(err)
+		}
 	}
 	connection := &connections.Connection{
 		ID:           id,
