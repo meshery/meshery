@@ -445,6 +445,6 @@ func ErrLogout(err error) error {
 	return errors.New(ErrLogoutCode, errors.Fatal,
 		[]string{"Logout failed"},
 		[]string{err.Error()},
-		[]string{"Unable to write to the authentication token file"},
+		[]string{"Unable to complete the logout operation"},
 		[]string{"Check the token file path and permissions. The underlying error will provide more details."})
 }
