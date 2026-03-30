@@ -4333,6 +4333,14 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 }
 
 func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
+	if conn.ID == uuid.Nil {
+		id, err := uuid.NewV4()
+		if err != nil {
+			return nil, ErrGenerateUUID(err)
+		}
+		conn.ID = id
+	}
+
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
