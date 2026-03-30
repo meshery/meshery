@@ -17,18 +17,23 @@ package system
 import (
 	"os"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	log "github.com/sirupsen/logrus"
 )
 
 var (
 	providerFlag string
 )
+
+type cmdSystemLoginFlags struct {
+	Provider string `json:"provider" validate:"omitempty"`
+}
+
+var systemLoginFlags cmdSystemLoginFlags
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
@@ -45,6 +50,9 @@ mesheryctl system login
 // Login with the Meshery Provider by specifying it via -p or --provider flag.
 mesheryctl system login -p Meshery
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &systemLoginFlags)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -58,19 +66,16 @@ mesheryctl system login -p Meshery
 
 		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		if !isRunning {
-			utils.Log.Error(utils.ErrMesheryServerNotRunning(currCtx.GetPlatform()))
-			return nil
+			return utils.ErrMesheryServerNotRunning(currCtx.GetPlatform())
 		}
 
 		var tokenData []byte
-		if providerFlag != "" {
-			var provider = providerFlag
-			tokenData, err = utils.InitiateLogin(mctlCfg, provider)
+		if systemLoginFlags.Provider != "" {
+			tokenData, err = utils.InitiateLogin(mctlCfg, systemLoginFlags.Provider)
 		} else {
 			tokenData, err = utils.InitiateLogin(mctlCfg, "")
 		}
@@ -79,7 +84,7 @@ mesheryctl system login -p Meshery
 			return errors.Wrap(err, "authentication failed: Unable to reach Meshery Server. Verify system readiness with `mesheryctl system check`.")
 		}
 
-		log.Println("authenticated")
+		utils.Log.Info("authenticated")
 
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
@@ -88,13 +93,12 @@ mesheryctl system login -p Meshery
 
 			// Write new entry in the config
 			if err := config.AddTokenToConfig(token, utils.DefaultConfigPath); err != nil {
-				log.Error("failed to find token path for the current context")
-				return nil
+				return err
 			}
 		}
 
 		if err := os.WriteFile(token.GetLocation(), tokenData, 0666); err != nil {
-			log.Error("failed to write the token to the filesystem: ", err)
+			return errors.Wrap(err, "failed to write the token to the filesystem")
 		}
 
 		return nil
@@ -102,5 +106,5 @@ mesheryctl system login -p Meshery
 }
 
 func init() {
-	loginCmd.PersistentFlags().StringVarP(&providerFlag, "provider", "p", "", "login Meshery with specified provider")
+	loginCmd.PersistentFlags().StringVarP(&systemLoginFlags.Provider, "provider", "p", "", "login Meshery with specified provider")
 }
