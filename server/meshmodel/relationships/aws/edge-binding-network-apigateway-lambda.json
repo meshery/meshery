@@ -1,0 +1,32 @@
+{
+  "id": "9f2f1eb3-c38c-4463-9b30-1adba088982c",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "kind": "edge",
+  "type": "binding",
+  "subType": "network",
+  "displayName": "API Gateway to Lambda Function Network",
+  "version": "v1.0.0",
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "API",
+            "model": "aws-apigateway-controller"
+          }
+        ],
+        "to": [
+          {
+            "kind": "Function",
+            "model": "aws-lambda-controller"
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+
