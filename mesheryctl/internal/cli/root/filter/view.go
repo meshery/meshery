@@ -61,15 +61,19 @@ mesheryctl filter view --all --output-format json -s
 //View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 mesheryctl filter view "filter name"
         `,
-	Args: cobra.ArbitraryArgs,
+	Args: cobra.MaximumNArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 0 && filterViewFlagsProvided.viewAllFlag {
+			return ErrViewAllWithName(cmd.Use)
+		}
+		if len(args) == 0 && !filterViewFlagsProvided.viewAllFlag {
+			return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
+		}
 		// Validate output-format
 		return display.ValidateOutputFormat(filterViewFlagsProvided.outputFormat)
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// for formatting errors
-		subCmdUsed := cmd.Use
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -78,18 +82,8 @@ mesheryctl filter view "filter name"
 
 		filter := ""
 		isID := false
-		// if filter name/id available
 		if len(args) > 0 {
-			if filterViewFlagsProvided.viewAllFlag {
-				return ErrViewAllWithName(subCmdUsed)
-			}
-
-			filterArg, err := parseQuotedArg(args, subCmdUsed)
-			if err != nil {
-				return err
-			}
-
-			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), filterArg, "filter")
+			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 			if err != nil {
 				return utils.ErrInvalidNameOrID(err)
 			}
@@ -97,11 +91,7 @@ mesheryctl filter view "filter name"
 
 		urlString := ""
 		if len(filter) == 0 {
-			if filterViewFlagsProvided.viewAllFlag {
-				urlString = "api/filter?pagesize=10000"
-			} else {
-				return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
-			}
+			urlString = "api/filter?pagesize=10000"
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
 			urlString = "api/filter/" + filter
@@ -197,17 +187,6 @@ func saveToFile(
 	return outputFormatterSaver.Save()
 }
 
-// Check if the argument starts and ends with double quotes
-func parseQuotedArg(args []string, subCmdUsed string) (string, error) {
-	fullArg := strings.Join(args, " ")
-
-	if strings.HasPrefix(fullArg, "\"") && strings.HasSuffix(fullArg, "\"") {
-		return strings.Trim(fullArg, "\""), nil
-	} else if len(args) == 1 {
-		return args[0], nil
-	}
-	return "", ErrMultiWordFilterName(subCmdUsed)
-}
 
 func init() {
 	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.viewAllFlag, "all", "a", false, "(optional) view all filters available")
