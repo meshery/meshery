@@ -60,8 +60,8 @@ mesheryctl system restart --skip-update
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("restart takes only one flag. See '%s --help' for more information", cmd.CommandPath()))
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("restart doesn't take any arguments. See '%s --help' for more information", cmd.CommandPath()))
 		}
 		return restart()
 	},
