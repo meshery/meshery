@@ -36,6 +36,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/relationships"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/system"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/workspaces"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	logrus "github.com/sirupsen/logrus"
 
@@ -131,6 +132,7 @@ func init() {
 		connections.ConnectionsCmd,
 		organizations.OrgCmd,
 		relationships.RelationshipCmd,
+		workspaces.WorkSpaceCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)

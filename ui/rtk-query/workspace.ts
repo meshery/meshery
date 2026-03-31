@@ -122,8 +122,7 @@ const workspacesApi = api
 
       getDesignsOfWorkspace: builder.query({
         queryFn: async (queryArgs, { dispatch }, _extraOptions, baseQuery) => {
-          // eslint-disable-next-line no-unused-vars
-          const { expandUser, infiniteScroll, ...otherArgs } = queryArgs;
+          const { expandUser, infiniteScroll: _infiniteScroll, ...otherArgs } = queryArgs;
           const params = urlEncodeParams(otherArgs);
           const designs = await baseQuery({
             url: `workspaces/${queryArgs.workspaceId}/designs?${params}`,
@@ -195,8 +194,7 @@ const workspacesApi = api
       }),
       getViewsOfWorkspace: builder.query({
         queryFn: async (queryArg, { dispatch }, _extraOptions, baseQuery) => {
-          // eslint-disable-next-line no-unused-vars
-          const { expandUser, infiniteScroll, ...otherArgs } = queryArg;
+          const { expandUser, infiniteScroll: _infiniteScroll, ...otherArgs } = queryArg;
           const params = urlEncodeParams(otherArgs);
           const views = await baseQuery({
             url: `extensions/api/workspaces/${queryArg.workspaceId}/views?${params}`,
@@ -309,6 +307,40 @@ const workspacesApi = api
         }),
         providesTags: () => [{ type: TAGS.EVENTS }],
       }),
+
+      createWorkspace: builder.mutation({
+        query: (queryArg) => ({
+          url: `workspaces`,
+          method: 'POST',
+          body: {
+            name: queryArg.name,
+            description: queryArg.description,
+            organization_id: queryArg.organization_id,
+          },
+        }),
+        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+      }),
+
+      updateWorkspace: builder.mutation({
+        query: (queryArg) => ({
+          url: `workspaces/${queryArg.id}`,
+          method: 'PUT',
+          body: {
+            name: queryArg.name,
+            description: queryArg.description,
+            organization_id: queryArg.organization_id,
+          },
+        }),
+        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+      }),
+
+      deleteWorkspace: builder.mutation({
+        query: (queryArg) => ({
+          url: `workspaces/${queryArg.id}`,
+          method: 'DELETE',
+        }),
+        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+      }),
     }),
   });
 
@@ -331,38 +363,34 @@ export const {
 } = workspacesApi;
 
 export const useCreateWorkspaceMutation = () => {
-  const [trigger, result] = mesheryApi.endpoints.postApiWorkspaces.useMutation();
+  const [trigger, result] = workspacesApi.endpoints.createWorkspace.useMutation();
 
   const wrappedTrigger = (queryArg) =>
     trigger({
-      body: {
-        name: queryArg.workspacePayload?.name,
-        description: queryArg.workspacePayload?.description,
-        organization_id: queryArg.workspacePayload?.organization_id,
-      },
+      name: queryArg.workspacePayload?.name,
+      description: queryArg.workspacePayload?.description,
+      organization_id: queryArg.workspacePayload?.organization_id,
     });
 
   return [wrappedTrigger, result] as const;
 };
 
 export const useUpdateWorkspaceMutation = () => {
-  const [trigger, result] = mesheryApi.endpoints.putApiWorkspacesById.useMutation();
+  const [trigger, result] = workspacesApi.endpoints.updateWorkspace.useMutation();
 
   const wrappedTrigger = (queryArg) =>
     trigger({
       id: queryArg.workspaceId,
-      body: {
-        name: queryArg.workspacePayload?.name,
-        description: queryArg.workspacePayload?.description,
-        organization_id: queryArg.workspacePayload?.organization_id,
-      },
+      name: queryArg.workspacePayload?.name,
+      description: queryArg.workspacePayload?.description,
+      organization_id: queryArg.workspacePayload?.organization_id,
     });
 
   return [wrappedTrigger, result] as const;
 };
 
 export const useDeleteWorkspaceMutation = () => {
-  const [trigger, result] = mesheryApi.endpoints.deleteApiWorkspacesById.useMutation();
+  const [trigger, result] = workspacesApi.endpoints.deleteWorkspace.useMutation();
 
   const wrappedTrigger = (queryArg) =>
     trigger({
