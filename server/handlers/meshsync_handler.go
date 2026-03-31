@@ -502,17 +502,13 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 
 	err1 := kindsQuery.Scan(&kindCounts).Error
 
-	
-
 	err2 := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
 		Select("distinct namespace").
 		Where("kubernetes_resources.cluster_id IN (?)", clusterIds).
 		Scan(&namespaces).Error
-
 	
-
 	var labels []model.KubernetesKeyValue
 
 	labelsQuery := selectDistinctKeyValues(provider.GetGenericPersister().Model(&model.KubernetesResource{}), "label")
@@ -522,9 +518,6 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 
 	err := labelsQuery.Scan(&labels).Error
 
-	
-
-	
 	if err1 != nil || err2 != nil || err != nil {
 		var errs []string
 		if err1 != nil {
@@ -537,6 +530,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 			errs = append(errs, fmt.Sprintf("labels_err=%v", err))
 		}
 		combinedErr := fmt.Errorf("error fetching meshsync resources summary: %s", strings.Join(errs, ", "))
+		h.log.Error(ErrFetchMeshSyncResources(combinedErr))
 		http.Error(rw, ErrFetchMeshSyncResources(combinedErr).Error(), http.StatusInternalServerError)
 		return
 	}
