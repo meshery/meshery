@@ -72,12 +72,12 @@ func RemoveFileAndDirectory() {
 	// from the directory
 	removeMesheryYaml := os.Remove("meshery.yaml")
 	if removeMesheryYaml != nil {
-		utils.Log.Fatal(removeMesheryYaml)
+		log.Fatal(removeMesheryYaml)
 	}
 
 	// Removing the .meshery directory
 	removeMesheryHiddenDirectory := os.RemoveAll(".meshery")
 	if removeMesheryHiddenDirectory != nil {
-		utils.Log.Fatal(removeMesheryHiddenDirectory)
+		log.Fatal(removeMesheryHiddenDirectory)
 	}
 }
