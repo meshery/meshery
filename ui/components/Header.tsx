@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
-import { Search } from '@mui/icons-material';
+// import { Search } from '@mui/icons-material';
+import { SearchIcon } from '@sistent/sistent';
 import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
@@ -353,7 +354,7 @@ function K8sContextMenu({
                         margin: '1px 0px',
                       }}
                       InputProps={{
-                        endAdornment: <Search style={iconMedium} width={24} />,
+                        endAdornment: <SearchIcon style={iconMedium} width={24} />,
                       }}
                     />
                   </div>
