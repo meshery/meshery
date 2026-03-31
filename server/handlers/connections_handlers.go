@@ -605,6 +605,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info("connection deleted.")
+	h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
 	w.WriteHeader(http.StatusOK)
 }
 

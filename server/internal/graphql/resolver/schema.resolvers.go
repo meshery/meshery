@@ -187,6 +187,9 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 			}
 			ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
 			for controller, handler := range ctrlHandlers {
+				if handler == nil {
+					continue
+				}
 				if _, ok := statusMapPerConnection[connectionID]; !ok {
 					statusMapPerConnection[connectionID] = make(map[models.MesheryController]models.MesheryControllerStatusAndVersion)
 				}

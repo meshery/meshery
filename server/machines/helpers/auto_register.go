@@ -104,6 +104,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 
 						if err != nil {
 							arh.log.Error(ErrAutoRegister(err, connType))
+							continue
 						}
 
 						_, err = machineInst.SendEvent(ctx, machines.Register, connectionPayload)
