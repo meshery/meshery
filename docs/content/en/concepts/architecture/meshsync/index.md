@@ -84,19 +84,22 @@ MeshSync health can be verified using Meshery's built-in system checks. For exam
 mesheryctl system check --operator
 ```
 
+This check reports the status of Meshery Operator and its controllers, including MeshSync and Broker.
+This check can also be triggered in the UI from the **Connections** view by clicking the **connection chip**.
+
 Example output:
 
 ```text
 Meshery Operators
 --------------
-✓ Meshery Operator is running
-✓ Meshsync is running
-✓ Meshery Broker is running
-✓ Meshery Broker CR contains Status.Endpoint (External: <public-endpoint>, Internal: <cluster-endpoint>)
+OK Meshery Operator is running
+OK Meshsync is running
+OK Meshery Broker is running
+OK Meshery Broker CR contains Status.Endpoint (External: <public-endpoint>, Internal: <cluster-endpoint>)
 ```
 
 How to interpret:
-- A ✓ line means that component is healthy and reachable.
+- An OK line means that component is healthy and reachable.
 - A "!!" line indicates the component is not running or a required status field is missing.
 
 # Scalability and Performance
@@ -160,4 +163,6 @@ Even if you're not using Kubernetes, Meshery empowers you to manage your infrast
 # Recap
 
 MeshSync maintains an up-to-date snapshot of your cluster, ensuring you always have an accurate view of your infrastructure. This snapshot is refreshed in real-time through event-based updates. Whether you're starting fresh or adopting Meshery into existing setups, MeshSync supports both greenfield and brownfield discovery of your environment.
+
+
 
