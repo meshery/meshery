@@ -114,7 +114,7 @@ func validateWorkload(comp map[string]interface{}, wc component.ComponentDefinit
 	}
 	schemaByt := []byte(wc.Component.Schema)
 	// Create schema validator from the schema
-	rs := jsonschema.GlobalJSONSchema()
+	rs := &jsonschema.Schema{}
 	if err := json.Unmarshal(schemaByt, rs); err != nil {
 		return fmt.Errorf("failed to create schema: %s", err)
 	}
