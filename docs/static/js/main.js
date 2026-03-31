@@ -90,11 +90,11 @@ clipboard.on("success", (e)=>{
 })
 
 document.addEventListener("DOMContentLoaded", function() {
+    const root = document.documentElement;
     const toggleBtnSidebarNav = document.querySelector(".nav-toggle-btn--document");
     const sidebarNav = document.querySelector(".left-container");
     const desktopSidebarMedia = window.matchMedia("(min-width: 75.0625em)");
     const sidebarStorageKey = "meshery-docs-sidebar-hidden";
-    const getStoredDesktopSidebarState = () => localStorage.getItem(sidebarStorageKey) === "true";
 
     function syncSidebarButton(isExpanded) {
         if (!toggleBtnSidebarNav) {
@@ -109,6 +109,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function setDesktopSidebarState(isHidden) {
+        root.classList.toggle("docs-sidebar-collapsed", isHidden);
         sidebarNav.classList.toggle("left-container--collapsed", isHidden);
         sidebarNav.setAttribute("data-testid", isHidden ? "sidebar-collapsed" : "sidebar-expanded");
         syncSidebarButton(!isHidden);
@@ -121,14 +122,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (desktopSidebarMedia.matches) {
             sidebarNav.classList.remove("left-container--active");
-            setDesktopSidebarState(getStoredDesktopSidebarState());
+            setDesktopSidebarState(localStorage.getItem(sidebarStorageKey) === "true");
+            root.classList.remove("docs-sidebar-preload");
             return;
         }
 
+        root.classList.remove("docs-sidebar-collapsed");
         sidebarNav.classList.remove("left-container--collapsed");
         const isActive = sidebarNav.classList.contains("left-container--active");
         sidebarNav.setAttribute("data-testid", isActive ? "sidebar-active" : "sidebar-inactive");
         syncSidebarButton(isActive);
+        root.classList.remove("docs-sidebar-preload");
     }
 
     if (toggleBtnSidebarNav && sidebarNav) {
@@ -136,9 +140,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
         toggleBtnSidebarNav.addEventListener("click", () => {
             if (desktopSidebarMedia.matches) {
-                const shouldCollapse = !sidebarNav.classList.contains("left-container--collapsed");
-                setDesktopSidebarState(shouldCollapse);
-                localStorage.setItem(sidebarStorageKey, String(shouldCollapse));
+                const isHidden = !sidebarNav.classList.contains("left-container--collapsed");
+                setDesktopSidebarState(isHidden);
+                localStorage.setItem(sidebarStorageKey, String(isHidden));
                 return;
             }
 

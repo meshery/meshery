@@ -12,6 +12,13 @@
 
   <body class="td-{{ .Kind }} dark-mode {{ with .Params.body_class }}{{ . }}{{ end }}">
     <script>
+      const desktopSidebarMedia = window.matchMedia("(min-width: 75.0625em)");
+      document.documentElement.classList.add("docs-sidebar-preload");
+
+      if (desktopSidebarMedia.matches && localStorage.getItem("meshery-docs-sidebar-hidden") === "true") {
+        document.documentElement.classList.add("docs-sidebar-collapsed");
+      }
+
       if (localStorage.getItem("mode") === "light-mode") {
         document.body.classList.remove("dark-mode");
         document.querySelectorAll("#logo-dark-light").forEach(e => {
@@ -24,7 +31,7 @@
 
     <div class="flex-container">
       <div class="left-container">
-        <div class="left-container__track">
+        <div class="sidebar-shell">
           <div class="sidebar-container-wrapper">
             <div class="sidebar-container">
               {{ partial "sidebar.html" . }}
