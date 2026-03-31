@@ -3,8 +3,12 @@ run:
   timeout: 5m
 
 linters:
+  settings:
+    staticcheck:
+      checks:
+        - all
+        - -ST1005
   exclusions:
     paths:
       - server/handlers/doc.go
       - server/models/meshmodel/core/register.go
- 
