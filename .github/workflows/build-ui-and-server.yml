@@ -82,12 +82,12 @@ jobs:
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
       - name: Download meshery-ui artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v6
         with:
           name: meshery-ui
           path: /home/runner/work/meshery/meshery/ui/out
       - name: Download provider-ui artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v6
         with:
           name: provider-ui
           path: /home/runner/work/meshery/meshery/provider-ui/out
@@ -225,7 +225,7 @@ jobs:
         run: swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
       - name: swagger-docs
         if: steps.changes.outputs.modified == 'true'
-        run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models && swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+        run: swagger generate spec -o ./docs/data/swagger.yml --scan-models && swagger flatten ./docs/data/swagger.yml -o ./docs/data/swagger.yml --with-expand --format=yaml
 
   # validate graphQL schema
   graphql_validate:

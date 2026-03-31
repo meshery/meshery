@@ -39,13 +39,13 @@ var viewCmd = &cobra.Command{
 	Long:  "view a relationship queried by the model name",
 	Example: `
 // View relationships of a model in default format yaml
-mesheryctl exp relationship view [model-name]
+mesheryctl relationship view [model-name]
 
 // View relationships of a model in JSON format
-mesheryctl exp relationship view [model-name] --output-format json
+mesheryctl relationship view [model-name] --output-format json
 
 // View relationships of a model in json format and save it to a file
-mesheryctl exp relationship view [model-name] --output-format json --save
+mesheryctl relationship view [model-name] --output-format json --save
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
@@ -89,7 +89,7 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 
 		if relationshipViewFlagsProvided.save {
 
-			shortID := selectedModel.Id.String()[:8]
+			shortID := selectedModel.ID.String()[:8]
 			sanitizer := strings.NewReplacer("/", "_")
 			sanitizedName := sanitizer.Replace(selectedModel.Model.Name)
 			fileName := fmt.Sprintf("relationship_%s_%s", sanitizedName, shortID)

@@ -4,24 +4,24 @@
   "kind": "edge",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
-    "version": "",
-    "name": "aws-opensearchservice-controller",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.2.2"
+    },
+    "name": "aws-opensearchservice-controller",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "v1.2.2"
-    }
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -34,19 +34,18 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "aws-opensearchservice-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-opensearchservice-controller",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
@@ -54,7 +53,8 @@
                   "vpcOptions",
                   "subnetIds"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -65,24 +65,24 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "aws-ec2-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-ec2-controller",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "displayName"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]

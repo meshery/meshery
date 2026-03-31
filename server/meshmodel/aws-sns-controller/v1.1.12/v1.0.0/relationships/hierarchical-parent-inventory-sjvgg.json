@@ -4,24 +4,24 @@
   "kind": "hierarchical",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
-    "version": "",
-    "name": "aws-sns-controller",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.1.12"
+    },
+    "name": "aws-sns-controller",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "v1.1.12"
-    }
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -34,26 +34,26 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "aws-sns-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-sns-controller",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
                   "spec",
                   "platformApplicationARN"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -64,19 +64,18 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "aws-sns-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-sns-controller",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
@@ -84,7 +83,8 @@
                   "ackResourceMetadata",
                   "arn"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]

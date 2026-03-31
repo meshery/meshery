@@ -40,7 +40,11 @@ func TestProviderHandler_NoneRedirectsThroughLogin(t *testing.T) {
 	h.ProviderHandler(rec, req)
 
 	resp := rec.Result()
-	defer resp.Body.Close()
+	t.Cleanup(func() {
+		if err := resp.Body.Close(); err != nil {
+			t.Errorf("failed to close response body: %v", err)
+		}
+	})
 
 	if resp.StatusCode != http.StatusFound {
 		t.Fatalf("expected 302 Found, got %d", resp.StatusCode)
@@ -77,7 +81,11 @@ func TestProviderUIHandler_NoneEnvVarRedirectsThroughLogin(t *testing.T) {
 	h.ProviderUIHandler(rec, req)
 
 	resp := rec.Result()
-	defer resp.Body.Close()
+	t.Cleanup(func() {
+		if err := resp.Body.Close(); err != nil {
+			t.Errorf("failed to close response body: %v", err)
+		}
+	})
 
 	if resp.StatusCode != http.StatusFound {
 		t.Fatalf("expected 302 Found, got %d", resp.StatusCode)
@@ -102,7 +110,11 @@ func TestLoginHandler_NoneProviderRedirectsHome(t *testing.T) {
 	h.LoginHandler(rec, req, local, false)
 
 	resp := rec.Result()
-	defer resp.Body.Close()
+	t.Cleanup(func() {
+		if err := resp.Body.Close(); err != nil {
+			t.Errorf("failed to close response body: %v", err)
+		}
+	})
 
 	if resp.StatusCode != http.StatusFound {
 		t.Fatalf("expected 302 Found, got %d", resp.StatusCode)
@@ -128,7 +140,11 @@ func TestLoginHandler_NoneProviderDeepLink(t *testing.T) {
 	h.LoginHandler(rec, req, local, false)
 
 	resp := rec.Result()
-	defer resp.Body.Close()
+	t.Cleanup(func() {
+		if err := resp.Body.Close(); err != nil {
+			t.Errorf("failed to close response body: %v", err)
+		}
+	})
 
 	if resp.StatusCode != http.StatusFound {
 		t.Fatalf("expected 302 Found, got %d", resp.StatusCode)
@@ -164,7 +180,11 @@ func TestLoginHandler_NoneProviderRejectsOpenRedirect(t *testing.T) {
 			h.LoginHandler(rec, req, local, false)
 
 			resp := rec.Result()
-			defer resp.Body.Close()
+			t.Cleanup(func() {
+				if err := resp.Body.Close(); err != nil {
+					t.Errorf("failed to close response body: %v", err)
+				}
+			})
 
 			loc := resp.Header.Get("Location")
 			if loc != "/" {
@@ -188,7 +208,11 @@ func TestLoginHandler_NoneProviderFromMiddleware(t *testing.T) {
 	h.LoginHandler(rec, req, local, true)
 
 	resp := rec.Result()
-	defer resp.Body.Close()
+	t.Cleanup(func() {
+		if err := resp.Body.Close(); err != nil {
+			t.Errorf("failed to close response body: %v", err)
+		}
+	})
 
 	// Should be a no-op pass-through (200 with no body), not a redirect
 	if resp.StatusCode == http.StatusFound {

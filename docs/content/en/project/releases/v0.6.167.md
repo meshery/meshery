@@ -1,0 +1,14 @@
+---
+title: v0.6.167
+date: 2023-10-30
+tag: v0.6.167
+---
+
+## What's New
+## 🔤 General
+- Update go base image version in Dockerfile @MUzairS15 (#9239)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@MUzairS15
