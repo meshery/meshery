@@ -16,12 +16,10 @@ package system
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	apiextension "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -43,6 +41,7 @@ var (
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop",
+	Args: cobra.NoArgs,
 	Short: "Stop Meshery",
 	Long:  `Stop all Meshery containers / remove all Meshery resources.`,
 	Example: `
@@ -72,13 +71,10 @@ mesheryctl system stop --force
 		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "stop"))
-		}
 		if err := stop(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to stop Meshery"))
-		}
-		return nil
+            return ErrStopMeshery(err)
+        }
+        return nil
 	},
 }
 
@@ -88,13 +84,13 @@ func stop() error {
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return errors.Wrap(err, "error processing config")
+		return ErrUnmarshallConfig(err)
 	}
 
 	// if a temp context is set using the -c flag, use it as the current context
 	err = mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
-		return errors.Wrap(err, "failed to retrieve current-context")
+		return ErrRetrievingCurrentContext(err)
 	}
 
 	currCtx, err := mctlCfg.GetCurrentContext()
@@ -126,12 +122,12 @@ func stop() error {
 		// Use compose library instead of exec.Command
 		composeClient, err := utils.NewComposeClient()
 		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to create compose client"))
+			return ErrCreatingDockerClient(err)
 		}
 
 		// Stop all Docker containers
 		if err := composeClient.Stop(context.Background(), utils.DockerComposeFile); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to stop meshery - could not stop some containers."))
+			return ErrStopMeshery(err)
 		}
 
 		// Remove all Docker containers
@@ -190,7 +186,7 @@ func stop() error {
 			// Dry run passed; now delete meshery components with the helm pkg
 			err := applyHelmCharts(client, currCtx, currCtx.GetVersion(), false, meshkitkube.UNINSTALL, "", "")
 			if err != nil {
-				return errors.Wrap(err, "cannot stop Meshery")
+				return ErrStopMeshery(err)
 			}
 		}
 
@@ -236,7 +232,7 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 	)
 
 	if err := deleteCR(brokerResourceName, brokerInstanceName, client); err != nil {
-		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CR "+brokerInstanceName))
+		err = ErrStopMeshery(err)
 		if !forceDelete {
 			return err
 		}
@@ -245,7 +241,7 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 	}
 
 	if err := deleteCR(meshsyncResourceName, meshsyncInstanceName, client); err != nil {
-		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CR "+meshsyncInstanceName))
+		err = ErrStopMeshery(err)
 		if !forceDelete {
 			return err
 		}
@@ -275,7 +271,7 @@ func invokeDeleteCRDs() error {
 	cfg := controllerConfig.GetConfigOrDie()
 	client, err := apiextension.NewForConfig(cfg)
 	if err != nil {
-		err = ErrStopMeshery(errors.Wrap(err, "cannot invoke delete CRDs"))
+		err = ErrStopMeshery(err)
 		if !forceDelete {
 			return err
 		}
@@ -285,7 +281,7 @@ func invokeDeleteCRDs() error {
 	}
 
 	if err = deleteCRD(brokerCRDName, client); err != nil {
-		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CRD "+brokerCRDName))
+		err = ErrStopMeshery(err)
 		if !forceDelete {
 			return err
 		}
@@ -294,7 +290,7 @@ func invokeDeleteCRDs() error {
 	}
 
 	if err = deleteCRD(meshsyncCRDName, client); err != nil {
-		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CRD "+meshsyncCRDName))
+		err = ErrStopMeshery(err)
 		if !forceDelete {
 			return err
 		}
