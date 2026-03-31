@@ -62,6 +62,9 @@ const (
 	ErrDockerStartCode                    = "mesheryctl-1210"
 	ErrDockerUnknownCode                  = "mesheryctl-1211"
 	ErrOperatorUnsupportedPlatformCode    = "mesheryctl-1219"
+	ErrValidateVersionCode                = "mesheryctl-1227"
+	ErrUpdateContainersCode               = "mesheryctl-1228"
+	ErrFetchContainersCode                = "mesheryctl-1229"
 )
 
 var (
@@ -427,4 +430,34 @@ func ErrOperatorUnsupportedPlatform(platform string) error {
 		[]string{fmt.Sprintf("The platform %s is not supported for operator health checks", platform)},
 		[]string{"The operator health checks can only be run on Kubernetes platform"},
 		[]string{"Please switch to a Kubernetes context to run operator health checks. "})
+}
+
+func ErrValidateVersion(err error) error {
+	return errors.New(
+		ErrValidateVersionCode,
+		errors.Alert,
+		[]string{"Error validating Meshery version"},
+		[]string{err.Error()},
+		[]string{"The version in the context is invalid or unsupported"},
+		[]string{"Verify the version in your context is valid. " + FormatErrorReference()})
+}
+
+func ErrUpdateContainers(err error) error {
+	return errors.New(
+		ErrUpdateContainersCode,
+		errors.Alert,
+		[]string{"Error updating Meshery containers"},
+		[]string{err.Error()},
+		[]string{"Failed to update Meshery container images"},
+		[]string{"Ensure Docker is running and you have a stable network connection"})
+}
+
+func ErrFetchContainers(err error) error {
+	return errors.New(
+		ErrFetchContainersCode,
+		errors.Alert,
+		[]string{"Error fetching container status"},
+		[]string{err.Error()},
+		[]string{"Failed to fetch the list of running containers"},
+		[]string{"Ensure Docker is running and docker-compose is available"})
 }
