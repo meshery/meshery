@@ -76,6 +76,17 @@ In case of any installation issues, use the [discussion forum](https://meshery.i
 
   This runs `hugo server -D -F`, which serves the site with draft and future content enabled. The site will be available at `http://localhost:1313`.
 
+       ### Beginner Note
+
+       Though the recommended way to run the Meshery documentation is:
+
+      ```bash
+      make setup
+      make site
+
+      some users may attempt to run npm commands directly. In such cases ensure that Go is installed, as it is required for Hugo modules.otherwise u may encounter errors like:
+      "binary with name 'go' not found in PATH"
+
 - To build the site without serving:
 
   <pre class="codeblock-pre"><div class="codeblock">
