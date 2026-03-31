@@ -264,6 +264,21 @@ var (
 
 var CfgFile string
 
+// GetActiveConfigPath returns the meshconfig path selected for the current command.
+// Prefer the explicit CLI flag value, then the config file Viper has already loaded,
+// and finally fall back to the default meshconfig path.
+func GetActiveConfigPath() string {
+	if CfgFile != "" {
+		return CfgFile
+	}
+
+	if configPath := viper.ConfigFileUsed(); configPath != "" {
+		return configPath
+	}
+
+	return DefaultConfigPath
+}
+
 // TODO: add "meshery-perf" as a component
 
 // ListOfComponents returns the list of components available
@@ -550,10 +565,10 @@ func CreateConfigFile() error {
 func ValidateURL(URL string) error {
 	ParsedURL, err := url.ParseRequestURI(URL)
 	if err != nil {
-		return err
+		return ErrParsingUrl(err)
 	}
 	if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
-		return fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme)
+		return ErrParsingUrl(fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme))
 	}
 	return nil
 }
