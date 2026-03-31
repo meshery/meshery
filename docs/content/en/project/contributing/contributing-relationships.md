@@ -8,7 +8,7 @@ categories: [contributing]
 
 [Relationships](/concepts/logical/relationships) within [Models](/concepts/logical/models) play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected [Components](/concepts/logical/components).
 
-In short: a relationship definition is a YAML file that tells Meshery when and how to draw a connection between two components on the canvas and optionally how to patch configuration between them.
+In short: a relationship definition is a YAML or JSON file that tells Meshery when and how to draw a connection between two components on the canvas and optionally how to patch configuration between them.
 
 Before you start, make sure you're familiar with [Components](/concepts/logical/components)
 and [Models](/concepts/logical/models). Relationships always exist *between* components —
