@@ -69,7 +69,7 @@ func TestDecodeRefURL(t *testing.T) {
 		},
 		{
 			name:        "Invalid base64 input",
-			input:       "!!!not-base64!!!", // Added an actual invalid case
+			input:       "!!!not-base64!!!", 
 			expected:    "",
 			expectError: true,
 		},
@@ -79,14 +79,49 @@ func TestDecodeRefURL(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual, err := DecodeRefURL(tc.input)
 
-			// Verify if the error state matches what we expect
+		
 			if (err != nil) != tc.expectError {
 				t.Fatalf("Test %s: DecodeRefURL() error = %v, wantErr %v", tc.name, err, tc.expectError)
 			}
 
-			// Only check the result if we didn't expect (and get) an error
+		
 			if !tc.expectError && actual != tc.expected {
 				t.Errorf("Test %s failed: expected %q, but got %q", tc.name, tc.expected, actual)
+			}
+		})
+	}
+}
+
+func TestEncodeDecodeRoundtrip(t *testing.T) {
+	testCases := []struct {
+		name  string
+		input url.URL
+	}{
+		{
+			name:  "Relative URL roundtrip",
+			input: url.URL{Path: "/settings/system"},
+		},
+		{
+			name: "Absolute URL roundtrip",
+			input: url.URL{
+				Scheme:   "https",
+				Host:     "meshery.io",
+				Path:     "/catalog",
+				RawQuery: "type=wasm",
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			encoded := EncodeRefUrl(tc.input)
+			decoded, err := DecodeRefURL(encoded)
+			
+			if err != nil {
+				t.Fatalf("Test %s: Unexpected error during decode: %v", tc.name, err)
+			}
+			if decoded != tc.input.String() {
+				t.Errorf("Test %s failed: expected %q, but got %q", tc.name, tc.input.String(), decoded)
 			}
 		})
 	}
