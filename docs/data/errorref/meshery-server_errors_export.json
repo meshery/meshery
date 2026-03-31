@@ -3359,6 +3359,15 @@
         "short_description": "failed to encode and write response",
         "probable_cause": "Client may have disconnected before the response was fully written\nResponse data could not be serialized to JSON",
         "suggested_remediation": "If the issue persists, check server logs for details"
+      },
+      "1375": {
+        "name": "ErrWorkspaceMissingInputCode",
+        "code": "1375",
+        "severity": "Alert",
+        "long_description": "WorkspaceID or OrgID cannot be empty",
+        "short_description": "Invalid input for workspace operation",
+        "probable_cause": "The workspace ID and organization ID are required for this operation.",
+        "suggested_remediation": "Ensure that both WorkspaceID and OrgID are provided and not empty."
       }
     }
   }
