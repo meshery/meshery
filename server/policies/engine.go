@@ -7,7 +7,6 @@ import (
 	"github.com/meshery/meshkit/utils"
 	patching "github.com/meshery/meshkit/utils/patching"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
-	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
@@ -32,42 +31,53 @@ func NewGoEngine(log logger.Handler) *GoEngine {
 	}
 }
 
-// ConvertRelationships converts entity interfaces to generic maps once for reuse across iterations.
-func ConvertRelationships(registeredRelationships []interface{}) []map[string]interface{} {
-	var relMaps []map[string]interface{}
+// ConvertRelationships converts entity interfaces to typed relationship definitions.
+func ConvertRelationships(registeredRelationships []interface{}) []*relationship.RelationshipDefinition {
+	var rels []*relationship.RelationshipDefinition
 	for _, r := range registeredRelationships {
-		rm, err := toGenericMapFromInterface(r)
-		if err != nil {
-			continue
+		switch v := r.(type) {
+		case *relationship.RelationshipDefinition:
+			rels = append(rels, v)
+		case relationship.RelationshipDefinition:
+			rels = append(rels, &v)
+		default:
+			data, err := json.Marshal(r)
+			if err != nil {
+				continue
+			}
+			var rel relationship.RelationshipDefinition
+			if err := json.Unmarshal(data, &rel); err != nil {
+				continue
+			}
+			rels = append(rels, &rel)
 		}
-		relMaps = append(relMaps, rm)
 	}
-	return relMaps
+	return rels
 }
 
 // EvaluateDesign evaluates a design file using the Go policy engine.
 func (e *GoEngine) EvaluateDesign(
 	design pattern.PatternFile,
-	relMaps []map[string]interface{},
+	registeredRelationships []*relationship.RelationshipDefinition,
 ) (pattern.EvaluationResponse, error) {
 	var resp pattern.EvaluationResponse
 
-	designMap, err := toGenericMap(design)
-	if err != nil {
-		return resp, ErrConvertDesign(err)
+	// Ensure ModelReference.Name is populated for all components.
+	// Some designs from cloud only have Model.Name set, not ModelReference.Name.
+	for _, comp := range design.Components {
+		if comp.ModelReference.Name == "" && comp.Model != nil {
+			comp.ModelReference.Name = comp.Model.Name
+		}
 	}
 
-	modelsInDesign := getModelsInDesign(designMap)
-	relsInScope := filterRelationshipsInScope(relMaps, modelsInDesign, designMap)
+	modelsInDesign := getModelsInDesign(&design)
+	relsInScope := filterRelationshipsInScope(registeredRelationships, modelsInDesign, &design)
 
-	e.log.Info("models in design: ", len(modelsInDesign), ", registered rels: ", len(relMaps), ", rels in scope: ", len(relsInScope))
+	e.log.Info("models in design: ", len(modelsInDesign), ", registered rels: ", len(registeredRelationships), ", rels in scope: ", len(relsInScope))
 
-	resultDesign, allActions := e.evaluate(designMap, relsInScope)
+	resultDesign, allActions := e.evaluate(&design, relsInScope)
 
-	resp, err = fromGenericMap(resultDesign)
-	if err != nil {
-		return resp, ErrConvertResult(err)
-	}
+	resp.Design = *resultDesign
 
 	for _, action := range allActions {
 		resp.Actions = append(resp.Actions, pattern.Action{
@@ -76,7 +86,7 @@ func (e *GoEngine) EvaluateDesign(
 		})
 	}
 
-	resp.Trace = buildTrace(allActions, designMap, resultDesign)
+	resp.Trace = buildTrace(allActions, &design, resultDesign)
 
 	return resp, nil
 }
@@ -105,13 +115,9 @@ func ApplyConfigurationPatches(log logger.Handler, resp *pattern.EvaluationRespo
 		var patches []patching.Patch
 		for _, up := range updates {
 			if up.ID == comp.ID.String() {
-				var path []string
-				if len(up.Path) > 0 && up.Path[0] == "configuration" {
-					path = up.Path[1:] // strip "configuration" prefix
-				} else {
-					// Non-configuration path (e.g., ["metadata", "labels"]).
-					// Use as-is for patching configuration.
-					path = up.Path
+				path := up.Path
+				if len(path) > 0 && path[0] == "configuration" {
+					path = path[1:]
 				}
 				patches = append(patches, patching.Patch{Path: path, Value: up.Value})
 			}
@@ -128,19 +134,19 @@ func ApplyConfigurationPatches(log logger.Handler, resp *pattern.EvaluationRespo
 	}
 }
 
-// evaluate runs the full evaluation pipeline on a design map.
-func (e *GoEngine) evaluate(designMap map[string]interface{}, relsInScope []map[string]interface{}) (map[string]interface{}, []PolicyAction) {
+// evaluate runs the full evaluation pipeline on a design.
+func (e *GoEngine) evaluate(design *pattern.PatternFile, relsInScope []*relationship.RelationshipDefinition) (*pattern.PatternFile, []PolicyAction) {
 	var allActions []PolicyAction
 
-	// Phase 1: Validate existing relationships
+	// Phase 1: Validate existing relationships.
 	for _, policy := range e.policies {
-		validationActions := validateRelationshipsInDesign(designMap, policy)
+		validationActions := validateRelationshipsInDesign(design, policy)
 		allActions = append(allActions, validationActions...)
 	}
 
-	designWithValidatedRels := applyAllActionsToDesign(designMap, allActions)
+	designWithValidatedRels := applyActionsToDesign(design, allActions)
 
-	// Phase 2: Identify new relationships (also handles inventory additions)
+	// Phase 2: Identify new relationships.
 	var identifyActions []PolicyAction
 	for _, policy := range e.policies {
 		actions := identifyRelationshipsInDesign(designWithValidatedRels, relsInScope, policy)
@@ -148,150 +154,33 @@ func (e *GoEngine) evaluate(designMap map[string]interface{}, relsInScope []map[
 	}
 
 	combinedActions := append(allActions, identifyActions...)
-	designWithIdentified := applyAllActionsToDesign(designMap, combinedActions)
+	designWithIdentified := applyActionsToDesign(design, combinedActions)
 
-	// Phase 3: Generate and apply actions
-	designForActions := designWithIdentified
-
+	// Phase 3: Generate and apply actions.
 	var phaseActions []PolicyAction
 	for _, policy := range e.policies {
-		actions := generateActionsToApplyOnDesign(designForActions, policy)
+		actions := generateActionsToApplyOnDesign(designWithIdentified, policy)
 		phaseActions = append(phaseActions, actions...)
 	}
 
 	allActions = append(allActions, identifyActions...)
 	allActions = append(allActions, phaseActions...)
 
-	finalDesign := applyAllActionsToDesign(designForActions, phaseActions)
+	finalDesign := applyActionsToDesign(designWithIdentified, phaseActions)
 
-	e.log.Info("evaluation complete: ", countItems(finalDesign, "relationships"), " relationships, ", len(allActions), " actions")
+	e.log.Info("evaluation complete: ", len(finalDesign.Relationships), " relationships, ", len(allActions), " actions")
 
 	return finalDesign, allActions
 }
 
-// getModelsInDesign extracts unique model references from design components.
-func getModelsInDesign(design map[string]interface{}) []map[string]interface{} {
-	comps := getMapSlice(design, "components")
-	seen := make(map[string]bool)
-	var models []map[string]interface{}
-
-	for _, c := range comps {
-		comp, ok := c.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		model := getMapMap(comp, "model")
-		if model == nil {
-			continue
-		}
-		name := getMapString(model, "name")
-		if name == "" || seen[name] {
-			continue
-		}
-		seen[name] = true
-		models = append(models, model)
-	}
-	return models
-}
-
-// filterRelationshipsInScope filters relationships to those matching models in the design
-// and respecting user preferences.
-func filterRelationshipsInScope(
-	allRels []map[string]interface{},
-	modelsInDesign []map[string]interface{},
-	design map[string]interface{},
-) []map[string]interface{} {
-	preferences := getMapMap(design, "preferences")
-	var layerPrefs map[string]interface{}
-	if preferences != nil {
-		layers := getMapMap(preferences, "layers")
-		if layers != nil {
-			layerPrefs = getMapMap(layers, "relationships")
-		}
-	}
-
-	var result []map[string]interface{}
-	for _, rel := range allRels {
-		relModel := getMapMap(rel, "model")
-		relModelName := getMapString(relModel, "name")
-
-		matched := false
-		for _, model := range modelsInDesign {
-			if getMapString(model, "name") == relModelName {
-				matched = true
-				break
-			}
-		}
-		if !matched {
-			continue
-		}
-
-		if layerPrefs != nil {
-			key := relationshipPreferenceKey(rel)
-			if v, exists := layerPrefs[key]; exists {
-				if b, ok := v.(bool); ok && !b {
-					continue
-				}
-			}
-		}
-
-		result = append(result, rel)
-	}
-	return result
-}
-
-func countItems(design map[string]interface{}, key string) int {
-	return len(getMapSlice(design, key))
-}
-
-func toGenericMap(v interface{}) (map[string]interface{}, error) {
-	data, err := json.Marshal(v)
-	if err != nil {
-		return nil, err
-	}
-	var result map[string]interface{}
-	err = json.Unmarshal(data, &result)
-	return result, err
-}
-
-func toGenericMapFromInterface(v interface{}) (map[string]interface{}, error) {
-	if m, ok := v.(map[string]interface{}); ok {
-		return m, nil
-	}
-	return toGenericMap(v)
-}
-
-func fromGenericMap(designMap map[string]interface{}) (pattern.EvaluationResponse, error) {
-	var resp pattern.EvaluationResponse
-
-	data, err := json.Marshal(designMap)
-	if err != nil {
-		return resp, err
-	}
-
-	var designFile pattern.PatternFile
-	if err := json.Unmarshal(data, &designFile); err != nil {
-		return resp, err
-	}
-
-	resp.Design = designFile
-
-	return resp, nil
-}
-
 // buildTrace constructs a Trace from the actions produced during evaluation.
-// originalDesign is the pre-evaluation design (for looking up removed items);
-// finalDesign is the post-evaluation design (for looking up updated items).
-func buildTrace(actions []PolicyAction, originalDesign, finalDesign map[string]interface{}) pattern.Trace {
+func buildTrace(actions []PolicyAction, originalDesign, finalDesign *pattern.PatternFile) pattern.Trace {
 	var trace pattern.Trace
-
-	// Track IDs already added to updated slices to avoid duplicates.
 	updatedCompIDs := make(map[string]bool)
 	updatedRelIDs := make(map[string]bool)
 
 	for _, action := range actions {
 		switch action.Op {
-
 		case AddComponentOp:
 			item := getMapMap(action.Value, "item")
 			if item == nil {
@@ -306,10 +195,7 @@ func buildTrace(actions []PolicyAction, originalDesign, finalDesign map[string]i
 			id := getMapString(action.Value, "id")
 			comp := componentDeclarationByID(originalDesign, id)
 			if comp != nil {
-				compDef, err := mapToComponentDef(comp)
-				if err == nil {
-					trace.ComponentsRemoved = append(trace.ComponentsRemoved, compDef)
-				}
+				trace.ComponentsRemoved = append(trace.ComponentsRemoved, *comp)
 			}
 
 		case UpdateComponentOp, UpdateComponentConfigurationOp:
@@ -320,10 +206,7 @@ func buildTrace(actions []PolicyAction, originalDesign, finalDesign map[string]i
 			updatedCompIDs[id] = true
 			comp := componentDeclarationByID(finalDesign, id)
 			if comp != nil {
-				compDef, err := mapToComponentDef(comp)
-				if err == nil {
-					trace.ComponentsUpdated = append(trace.ComponentsUpdated, compDef)
-				}
+				trace.ComponentsUpdated = append(trace.ComponentsUpdated, *comp)
 			}
 
 		case AddRelationshipOp:
@@ -337,15 +220,17 @@ func buildTrace(actions []PolicyAction, originalDesign, finalDesign map[string]i
 			}
 
 		case DeleteRelationshipOp:
-			rel := getMapMap(action.Value, "relationship")
-			if rel == nil {
-				id := getMapString(action.Value, "id")
-				rel = relationshipDeclarationByID(originalDesign, id)
-			}
-			if rel != nil {
-				relDef, err := mapToRelationshipDef(rel)
+			relMap := getMapMap(action.Value, "relationship")
+			if relMap != nil {
+				rel, err := mapToRelationshipDef(relMap)
 				if err == nil {
-					trace.RelationshipsRemoved = append(trace.RelationshipsRemoved, relDef)
+					trace.RelationshipsRemoved = append(trace.RelationshipsRemoved, rel)
+				}
+			} else {
+				id := getMapString(action.Value, "id")
+				rel := findRelationshipByID(originalDesign, id)
+				if rel != nil {
+					trace.RelationshipsRemoved = append(trace.RelationshipsRemoved, *rel)
 				}
 			}
 
@@ -354,56 +239,14 @@ func buildTrace(actions []PolicyAction, originalDesign, finalDesign map[string]i
 			if id == "" || updatedRelIDs[id] {
 				continue
 			}
-			// Only track relationships that still exist in the final design
-			// (relationships marked "deleted" then removed won't be present).
-			rel := relationshipDeclarationByID(finalDesign, id)
+			rel := findRelationshipByID(finalDesign, id)
 			if rel == nil {
 				continue
 			}
 			updatedRelIDs[id] = true
-			relDef, err := mapToRelationshipDef(rel)
-			if err == nil {
-				trace.RelationshipsUpdated = append(trace.RelationshipsUpdated, relDef)
-			}
+			trace.RelationshipsUpdated = append(trace.RelationshipsUpdated, *rel)
 		}
 	}
-
 	return trace
 }
 
-// relationshipDeclarationByID finds a relationship in the design by its ID.
-func relationshipDeclarationByID(design map[string]interface{}, id string) map[string]interface{} {
-	rels := getMapSlice(design, "relationships")
-	for _, r := range rels {
-		rel, ok := r.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		if getMapString(rel, "id") == id {
-			return rel
-		}
-	}
-	return nil
-}
-
-// mapToComponentDef converts a generic map to a ComponentDefinition.
-func mapToComponentDef(m map[string]interface{}) (component.ComponentDefinition, error) {
-	var comp component.ComponentDefinition
-	data, err := json.Marshal(m)
-	if err != nil {
-		return comp, err
-	}
-	err = json.Unmarshal(data, &comp)
-	return comp, err
-}
-
-// mapToRelationshipDef converts a generic map to a RelationshipDefinition.
-func mapToRelationshipDef(m map[string]interface{}) (relationship.RelationshipDefinition, error) {
-	var rel relationship.RelationshipDefinition
-	data, err := json.Marshal(m)
-	if err != nil {
-		return rel, err
-	}
-	err = json.Unmarshal(data, &rel)
-	return rel, err
-}

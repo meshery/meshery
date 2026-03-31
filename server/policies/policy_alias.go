@@ -3,6 +3,10 @@ package policies
 import (
 	"fmt"
 	"strings"
+
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
 // AliasPolicy handles alias relationships (hierarchical parent alias).
@@ -12,117 +16,84 @@ func (p *AliasPolicy) Identifier() string {
 	return "alias_relationships_policy"
 }
 
-func (p *AliasPolicy) IsImplicatedBy(rel map[string]interface{}) bool {
+func (p *AliasPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinition) bool {
 	return isAliasRelationship(rel)
 }
 
-func (p *AliasPolicy) IsInvalid(rel, designFile map[string]interface{}) bool {
-	return !isAliasRelationshipValid(rel, designFile)
+func (p *AliasPolicy) IsInvalid(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
+	return !isAliasRelationshipValid(rel, design)
 }
 
-func (p *AliasPolicy) AlreadyExists(rel, designFile map[string]interface{}) bool {
-	return aliasRelationshipAlreadyExists(designFile, rel)
+func (p *AliasPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
+	return aliasRelationshipAlreadyExists(design, rel)
 }
 
-func (p *AliasPolicy) IdentifyRelationship(relDef, designFile map[string]interface{}) []map[string]interface{} {
-	var allIdentified []map[string]interface{}
-	comps := getMapSlice(designFile, "components")
-
-	for _, c := range comps {
-		comp, ok := c.(map[string]interface{})
-		if !ok {
-			continue
-		}
+func (p *AliasPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
+	var allIdentified []*relationship.RelationshipDefinition
+	for _, comp := range design.Components {
 		if isRelationshipFeasibleTo(comp, relDef) == nil {
 			continue
 		}
-		identified := identifyAliasRelationships(comp, relDef, designFile)
+		identified := identifyAliasRelationships(comp, relDef, design)
 		allIdentified = append(allIdentified, identified...)
 	}
 	return allIdentified
 }
 
-func (p *AliasPolicy) SideEffects(rel, designFile map[string]interface{}) []PolicyAction {
-	status := getMapString(rel, "status")
-
+func (p *AliasPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
+	status := getRelStatus(rel)
 	if status == "identified" || status == "pending" {
-		return aliasAddComponentSideEffects(rel, designFile)
+		return aliasAddComponentSideEffects(rel, design)
 	}
 	if status == "deleted" {
-		return aliasDeleteComponentSideEffects(rel, designFile)
+		return aliasDeleteComponentSideEffects(rel, design)
 	}
 	return nil
 }
 
 // isAliasRelationship checks if a relationship is an alias type.
-func isAliasRelationship(rel map[string]interface{}) bool {
-	return strings.EqualFold(getMapString(rel, "kind"), "hierarchical") &&
-		strings.EqualFold(getMapString(rel, "type"), "parent") &&
-		strings.EqualFold(getMapString(rel, "subType"), "alias")
+func isAliasRelationship(rel *relationship.RelationshipDefinition) bool {
+	return strings.EqualFold(string(rel.Kind), "hierarchical") &&
+		strings.EqualFold(rel.RelationshipType, "parent") &&
+		strings.EqualFold(rel.SubType, "alias")
 }
 
 // isAliasRelationshipValid checks if an alias relationship is still valid.
-func isAliasRelationshipValid(rel, designFile map[string]interface{}) bool {
-	status := getMapString(rel, "status")
-
+func isAliasRelationshipValid(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
+	status := getRelStatus(rel)
 	if status == "pending" {
 		return true
 	}
-
 	if status != "approved" {
 		return false
 	}
 
-	// Check from component exists
-	fromID := fromComponentID(rel)
-	fromComp := componentDeclarationByID(designFile, fromID)
+	fromComp := componentDeclarationByID(design, fromComponentID(rel))
 	if fromComp == nil {
 		return false
 	}
-
-	// Check to component exists
-	toID := toComponentID(rel)
-	toComp := componentDeclarationByID(designFile, toID)
+	toComp := componentDeclarationByID(design, toComponentID(rel))
 	if toComp == nil {
 		return false
 	}
 
-	// Check the path in the to component is still present
 	ref := aliasRefFromRelationship(rel)
 	if ref == nil {
 		return false
 	}
-
-	config := getComponentConfiguration(toComp, designFile)
-	value := objectGetNested(config, popFirst(ref), nil)
-	return value != nil
+	config := getComponentConfiguration(toComp, design)
+	return objectGetNested(config, popFirst(ref), nil) != nil
 }
 
 // aliasRefFromRelationship extracts the mutatorRef path from an alias relationship.
-func aliasRefFromRelationship(rel map[string]interface{}) []string {
-	selectors := getMapSlice(rel, "selectors")
-	for _, s := range selectors {
-		sel, ok := s.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		allow := getMapMap(sel, "allow")
-		if allow == nil {
-			continue
-		}
-		fromArr := getMapSlice(allow, "from")
-		for _, f := range fromArr {
-			from, ok := f.(map[string]interface{})
-			if !ok {
-				continue
-			}
-			patch := getMapMap(from, "patch")
-			if patch == nil {
-				continue
-			}
-			mutatorRef := getMapSlice(patch, "mutatorRef")
-			if len(mutatorRef) > 0 {
-				return interfaceToStringSlice(mutatorRef[0])
+func aliasRefFromRelationship(rel *relationship.RelationshipDefinition) []string {
+	if rel.Selectors == nil {
+		return nil
+	}
+	for _, ss := range *rel.Selectors {
+		for _, fromSel := range ss.Allow.From {
+			if fromSel.Patch != nil && fromSel.Patch.MutatorRef != nil && len(*fromSel.Patch.MutatorRef) > 0 {
+				return (*fromSel.Patch.MutatorRef)[0]
 			}
 		}
 	}
@@ -130,88 +101,64 @@ func aliasRefFromRelationship(rel map[string]interface{}) []string {
 }
 
 // identifyAliasRelationships identifies alias relationships for a component.
-func identifyAliasRelationships(component, relDef, designFile map[string]interface{}) []map[string]interface{} {
-	var identified []map[string]interface{}
+func identifyAliasRelationships(comp *component.ComponentDefinition, relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
+	if relDef.Selectors == nil {
+		return nil
+	}
+	var identified []*relationship.RelationshipDefinition
 
-	selectors := getMapSlice(relDef, "selectors")
-	for _, s := range selectors {
-		sel, ok := s.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		allow := getMapMap(sel, "allow")
-		if allow == nil {
-			continue
-		}
-		fromArr := getMapSlice(allow, "from")
-		toArr := getMapSlice(allow, "to")
-
-		for _, f := range fromArr {
-			from, ok := f.(map[string]interface{})
-			if !ok {
-				continue
-			}
-			for _, t := range toArr {
-				to, ok := t.(map[string]interface{})
-				if !ok {
+	for _, ss := range *relDef.Selectors {
+		for _, fromSel := range ss.Allow.From {
+			for _, toSel := range ss.Allow.To {
+				if fromSel.Patch == nil || fromSel.Patch.MutatorRef == nil || len(*fromSel.Patch.MutatorRef) == 0 {
 					continue
 				}
-
-				fromPatch := getMapMap(from, "patch")
-				if fromPatch == nil {
-					continue
-				}
-				mutatorRefs := getMapSlice(fromPatch, "mutatorRef")
-				if len(mutatorRefs) == 0 {
-					continue
-				}
-
-				ref := interfaceToStringSlice(mutatorRefs[0])
-				paths := getArrayAwareConfigPaths(ref, component, designFile)
+				ref := (*fromSel.Patch.MutatorRef)[0]
+				paths := getArrayAwareConfigPaths(ref, comp, design)
 
 				for _, path := range paths {
-					selectorPatchDecl := map[string]interface{}{
-						"patchStrategy": "replace",
-						"mutatorRef":    []interface{}{stringSliceToInterface(path)},
-						"mutatedRef":    []interface{}{stringSliceToInterface(path)},
+					mutatorRef := relationship.MutatorRef{path}
+					mutatedRef := relationship.MutatedRef{path}
+					selectorPatch := relationship.RelationshipDefinitionSelectorsPatch{
+						MutatorRef: &mutatorRef,
+						MutatedRef: &mutatedRef,
 					}
 
-					compID := staticUUID(map[string]interface{}{"c": component, "s": selectorPatchDecl}).String()
+					compID := staticUUID(map[string]interface{}{"c": comp.ID.String(), "s": path})
 
-					newFrom := deepCopyMap(from)
-					newFrom["id"] = compID
-					newFrom["patch"] = selectorPatchDecl
+					newFromSel := fromSel
+					newFromSel.ID = &compID
+					newFromSel.Patch = &selectorPatch
 
-					newTo := deepCopyMap(to)
-					newTo["id"] = getMapString(component, "id")
-					newTo["patch"] = selectorPatchDecl
+					newToSel := toSel
+					newToSel.ID = &comp.ID
+					newToSel.Patch = &selectorPatch
 
-					selectorDecl := map[string]interface{}{
-						"allow": map[string]interface{}{
-							"from": []interface{}{newFrom},
-							"to":   []interface{}{newTo},
+					selectorSetItem := relationship.SelectorSetItem{
+						Allow: relationship.Selector{
+							From: []relationship.SelectorItem{newFromSel},
+							To:   []relationship.SelectorItem{newToSel},
 						},
-						"deny": map[string]interface{}{},
 					}
 
-					rel := deepCopyMap(relDef)
-					rel["selectors"] = []interface{}{selectorDecl}
-					rel["id"] = staticUUID(selectorDecl).String()
-					rel["status"] = "identified"
+					decl := deepCopyRelDef(relDef)
+					selectors := relationship.SelectorSet{selectorSetItem}
+					decl.Selectors = &selectors
+					decl.ID = staticUUID(selectorSetItem)
+					setRelStatus(decl, "identified")
 
-					identified = append(identified, rel)
+					identified = append(identified, decl)
 				}
 			}
 		}
 	}
-
 	return identified
 }
 
 // getArrayAwareConfigPaths resolves paths, handling array wildcards.
-func getArrayAwareConfigPaths(ref []string, component, design map[string]interface{}) [][]string {
+func getArrayAwareConfigPaths(ref []string, comp *component.ComponentDefinition, design *pattern.PatternFile) [][]string {
 	if isDirectReference(ref) {
-		config := getComponentConfiguration(component, design)
+		config := getComponentConfiguration(comp, design)
 		value := objectGetNested(config, popFirst(ref), nil)
 		if value == nil {
 			return nil
@@ -219,9 +166,8 @@ func getArrayAwareConfigPaths(ref []string, component, design map[string]interfa
 		return [][]string{ref}
 	}
 
-	// Array reference (ends with "_")
 	directRef := popLast(ref)
-	config := getComponentConfiguration(component, design)
+	config := getComponentConfiguration(comp, design)
 	items := objectGetNested(config, popFirst(directRef), nil)
 
 	arr, ok := items.([]interface{})
@@ -243,28 +189,15 @@ func getArrayAwareConfigPaths(ref []string, component, design map[string]interfa
 }
 
 // aliasRelationshipAlreadyExists checks for duplicate alias relationships.
-func aliasRelationshipAlreadyExists(designFile, relationship map[string]interface{}) bool {
-	rels := getMapSlice(designFile, "relationships")
-
-	for _, r := range rels {
-		existing, ok := r.(map[string]interface{})
-		if !ok {
+func aliasRelationshipAlreadyExists(design *pattern.PatternFile, rel *relationship.RelationshipDefinition) bool {
+	for _, existing := range design.Relationships {
+		if getRelStatus(existing) == "deleted" || !isAliasRelationship(existing) {
 			continue
 		}
-		if getMapString(existing, "status") == "deleted" {
-			continue
-		}
-		if !isAliasRelationship(existing) {
-			continue
-		}
-
-		existingTo := getFirstTo(existing)
-		newTo := getFirstTo(relationship)
-
+		existingTo := getFirstToSelectorItem(existing)
+		newTo := getFirstToSelectorItem(rel)
 		if existingTo != nil && newTo != nil {
-			if getMapString(existingTo, "kind") == getMapString(newTo, "kind") &&
-				getMapString(existingTo, "id") == getMapString(newTo, "id") &&
-				deepEqual(existingTo["patch"], newTo["patch"]) {
+			if sameRelationshipSelectorClause(*existingTo, *newTo) {
 				return true
 			}
 		}
@@ -272,78 +205,53 @@ func aliasRelationshipAlreadyExists(designFile, relationship map[string]interfac
 	return false
 }
 
-// getFirstTo returns the first "to" selector from a relationship.
-func getFirstTo(rel map[string]interface{}) map[string]interface{} {
-	selectors := getMapSlice(rel, "selectors")
-	for _, s := range selectors {
-		sel, ok := s.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		allow := getMapMap(sel, "allow")
-		if allow == nil {
-			continue
-		}
-		toArr := getMapSlice(allow, "to")
-		if len(toArr) > 0 {
-			if to, ok := toArr[0].(map[string]interface{}); ok {
-				return to
-			}
+// getFirstToSelectorItem returns the first "to" selector item from a relationship.
+func getFirstToSelectorItem(rel *relationship.RelationshipDefinition) *relationship.SelectorItem {
+	if rel.Selectors == nil {
+		return nil
+	}
+	for _, ss := range *rel.Selectors {
+		if len(ss.Allow.To) > 0 {
+			return &ss.Allow.To[0]
 		}
 	}
 	return nil
 }
 
 // aliasAddComponentSideEffects creates actions to add alias components.
-func aliasAddComponentSideEffects(rel, designFile map[string]interface{}) []PolicyAction {
+func aliasAddComponentSideEffects(rel *relationship.RelationshipDefinition, _ *pattern.PatternFile) []PolicyAction {
+	if rel.Selectors == nil {
+		return nil
+	}
 	var actions []PolicyAction
-	selectors := getMapSlice(rel, "selectors")
-
-	for _, s := range selectors {
-		sel, ok := s.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		allow := getMapMap(sel, "allow")
-		if allow == nil {
-			continue
-		}
-		fromArr := getMapSlice(allow, "from")
-
-		for _, f := range fromArr {
-			from, ok := f.(map[string]interface{})
-			if !ok {
+	for _, ss := range *rel.Selectors {
+		for _, fromSel := range ss.Allow.From {
+			if fromSel.Patch == nil || fromSel.Patch.MutatorRef == nil || len(*fromSel.Patch.MutatorRef) == 0 {
 				continue
 			}
-			patch := getMapMap(from, "patch")
-			if patch == nil {
-				continue
-			}
-			mutatorRefs := getMapSlice(patch, "mutatorRef")
-			if len(mutatorRefs) == 0 {
-				continue
-			}
-
-			path := interfaceToStringSlice(mutatorRefs[0])
+			path := (*fromSel.Patch.MutatorRef)[0]
 			length := len(path)
 			displayName := ""
 			if length >= 2 {
 				displayName = fmt.Sprintf("%s.%s", path[length-2], path[length-1])
 			}
 
-			component := map[string]interface{}{
-				"id":          getMapString(from, "id"),
-				"component":   map[string]interface{}{"kind": getMapString(from, "kind")},
-				"model":       from["model"],
+			comp := map[string]interface{}{
+				"id":          selectorItemID(fromSel),
+				"component":   map[string]interface{}{"kind": selectorItemKind(fromSel)},
 				"displayName": displayName,
 				"metadata":    map[string]interface{}{"isAnnotation": true},
 			}
+			if fromSel.Model != nil {
+				compMap, err := toGenericMap(fromSel.Model)
+				if err == nil {
+					comp["model"] = compMap
+				}
+			}
 
 			actions = append(actions, PolicyAction{
-				Op: AddComponentOp,
-				Value: map[string]interface{}{
-					"item": component,
-				},
+				Op:    AddComponentOp,
+				Value: map[string]interface{}{"item": comp},
 			})
 		}
 	}
@@ -351,32 +259,24 @@ func aliasAddComponentSideEffects(rel, designFile map[string]interface{}) []Poli
 }
 
 // aliasDeleteComponentSideEffects creates actions to delete alias components.
-func aliasDeleteComponentSideEffects(rel, designFile map[string]interface{}) []PolicyAction {
+func aliasDeleteComponentSideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
+	if rel.Selectors == nil {
+		return nil
+	}
 	var actions []PolicyAction
-	selectors := getMapSlice(rel, "selectors")
-
-	for _, s := range selectors {
-		sel, ok := s.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		allow := getMapMap(sel, "allow")
-		if allow == nil {
-			continue
-		}
-		fromArr := getMapSlice(allow, "from")
-
-		for _, f := range fromArr {
-			from, ok := f.(map[string]interface{})
-			if !ok {
-				continue
+	for _, ss := range *rel.Selectors {
+		for _, fromSel := range ss.Allow.From {
+			fID := selectorItemID(fromSel)
+			comp := componentDeclarationByID(design, fID)
+			var compMap map[string]interface{}
+			if comp != nil {
+				compMap, _ = toGenericMap(comp)
 			}
-			fromID := getMapString(from, "id")
 			actions = append(actions, PolicyAction{
 				Op: DeleteComponentOp,
 				Value: map[string]interface{}{
-					"id":        fromID,
-					"component": componentDeclarationByID(designFile, fromID),
+					"id":        fID,
+					"component": compMap,
 				},
 			})
 		}

@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/open-policy-agent/opa/v1/rego"
 	"github.com/open-policy-agent/opa/v1/storage/inmem"
 )
@@ -439,20 +440,62 @@ func fingerprintRel(rel map[string]any) relFingerprint {
 		Kind:    strings.ToLower(getMapString(rel, "kind")),
 		Type:    strings.ToLower(getMapString(rel, "type")),
 		SubType: strings.ToLower(getMapString(rel, "subType")),
-		FromID:  fromComponentID(rel),
-		ToID:    toComponentID(rel),
+		FromID:  relMapFromID(rel),
+		ToID:    relMapToID(rel),
 		Status:  strings.ToLower(getMapString(rel, "status")),
 	}
 }
 
-func fingerprintDesignRels(design map[string]any) []relFingerprint {
+// relMapFromID extracts the from component ID from a map-based relationship definition.
+func relMapFromID(rel map[string]any) string {
+	selectors, _ := rel["selectors"].([]any)
+	if len(selectors) == 0 {
+		return ""
+	}
+	ss, _ := selectors[0].(map[string]any)
+	allow, _ := ss["allow"].(map[string]any)
+	from, _ := allow["from"].([]any)
+	if len(from) == 0 {
+		return ""
+	}
+	fromItem, _ := from[0].(map[string]any)
+	id, _ := fromItem["id"].(string)
+	return id
+}
+
+// relMapToID extracts the to component ID from a map-based relationship definition.
+func relMapToID(rel map[string]any) string {
+	selectors, _ := rel["selectors"].([]any)
+	if len(selectors) == 0 {
+		return ""
+	}
+	ss, _ := selectors[0].(map[string]any)
+	allow, _ := ss["allow"].(map[string]any)
+	to, _ := allow["to"].([]any)
+	if len(to) == 0 {
+		return ""
+	}
+	toItem, _ := to[0].(map[string]any)
+	id, _ := toItem["id"].(string)
+	return id
+}
+
+// fingerprintTypedDesignRels fingerprints relationships from a typed PatternFile.
+func fingerprintTypedDesignRels(design *pattern.PatternFile) []relFingerprint {
 	var fps []relFingerprint
-	for _, r := range getMapSlice(design, "relationships") {
-		rel, ok := r.(map[string]any)
-		if !ok {
+	for _, rel := range design.Relationships {
+		if rel == nil {
 			continue
 		}
-		fps = append(fps, fingerprintRel(rel))
+		fp := relFingerprint{
+			Kind:    strings.ToLower(string(rel.Kind)),
+			Type:    strings.ToLower(rel.RelationshipType),
+			SubType: strings.ToLower(rel.SubType),
+			FromID:  fromComponentID(rel),
+			ToID:    toComponentID(rel),
+			Status:  strings.ToLower(getRelStatus(rel)),
+		}
+		fps = append(fps, fp)
 	}
 	return fps
 }
@@ -654,7 +697,7 @@ func fetchCatalogDesigns(t *testing.T) []catalogDesignData {
 			if err != nil || resp.StatusCode != http.StatusOK {
 				return
 			}
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return
@@ -743,13 +786,18 @@ func TestCatalogAlignment(t *testing.T) {
 		}
 
 		// --- Go engine ---
-		relsInScope := extractMapSlice(design, "relationships")
+		// Convert the map-based design to typed structs for the Go engine.
+		typedDesign, convErr := mapToPatternFile(design)
+		if convErr != nil {
+			continue
+		}
+		relsInScope := typedDesign.Relationships
 		goStart := time.Now()
-		goDesign, goActions := goEngine.evaluate(deepCopyMap(design), relsInScope)
+		goTypedDesign, goActions := goEngine.evaluate(deepCopyDesign(typedDesign), relsInScope)
 		goTime := time.Since(goStart)
 		totalGoTime += goTime
 
-		goFps := fingerprintDesignRels(goDesign)
+		goFps := fingerprintTypedDesignRels(goTypedDesign)
 
 		// --- OPA engine ---
 		// Run eval in a goroutine so a hung OPA goroutine (e.g. ast.Compare
@@ -1134,4 +1182,17 @@ func short(id string) string {
 		return id
 	}
 	return id[:8]
+}
+
+// mapToPatternFile converts a map-based design to a typed PatternFile via JSON round-trip.
+func mapToPatternFile(m map[string]any) (*pattern.PatternFile, error) {
+	data, err := json.Marshal(m)
+	if err != nil {
+		return nil, err
+	}
+	var pf pattern.PatternFile
+	if err := json.Unmarshal(data, &pf); err != nil {
+		return nil, err
+	}
+	return &pf, nil
 }

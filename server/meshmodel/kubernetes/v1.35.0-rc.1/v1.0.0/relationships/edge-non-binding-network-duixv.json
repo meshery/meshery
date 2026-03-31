@@ -426,6 +426,7 @@
             "patch": {
               "mutatedRef": [
                 [
+                  "configuration",
                   "metadata",
                   "labels",
                   "kubernetes.io/service-name"
@@ -506,6 +507,7 @@
             "patch": {
               "mutatedRef": [
                 [
+                  "configuration",
                   "metadata",
                   "labels"
                 ],

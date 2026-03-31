@@ -1,6 +1,12 @@
 package policies
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
+)
 
 // Action operation constants.
 const (
@@ -253,4 +259,113 @@ func appendUniqueByID(existing, toAdd []map[string]interface{}) []map[string]int
 		}
 	}
 	return existing
+}
+
+// applyActionsToDesign applies all actions to a design, returning a new copy.
+func applyActionsToDesign(design *pattern.PatternFile, actions []PolicyAction) *pattern.PatternFile {
+	if len(actions) == 0 {
+		return design
+	}
+	result := deepCopyDesign(design)
+
+	deleteCompIDs := make(map[string]bool)
+	deleteRelIDs := make(map[string]bool)
+	for _, a := range actions {
+		switch a.Op {
+		case DeleteComponentOp:
+			if id := getMapString(a.Value, "id"); id != "" {
+				deleteCompIDs[id] = true
+			}
+		case DeleteRelationshipOp:
+			if id := getMapString(a.Value, "id"); id != "" {
+				deleteRelIDs[id] = true
+			}
+		}
+	}
+
+	// Filter deleted components.
+	if len(deleteCompIDs) > 0 {
+		comps := make([]*component.ComponentDefinition, 0, len(result.Components))
+		for _, c := range result.Components {
+			if !deleteCompIDs[c.ID.String()] {
+				comps = append(comps, c)
+			}
+		}
+		result.Components = comps
+	}
+
+	// Filter deleted relationships.
+	if len(deleteRelIDs) > 0 {
+		rels := make([]*relationship.RelationshipDefinition, 0, len(result.Relationships))
+		for _, r := range result.Relationships {
+			if !deleteRelIDs[r.ID.String()] {
+				rels = append(rels, r)
+			}
+		}
+		result.Relationships = rels
+	}
+
+	// Add new components.
+	existingCompIDs := make(map[string]bool)
+	for _, c := range result.Components {
+		existingCompIDs[c.ID.String()] = true
+	}
+	for _, a := range actions {
+		if a.Op == AddComponentOp {
+			item := getMapMap(a.Value, "item")
+			if item == nil {
+				continue
+			}
+			comp, err := mapToComponentDef(item)
+			if err != nil {
+				continue
+			}
+			id := comp.ID.String()
+			if !existingCompIDs[id] {
+				result.Components = append(result.Components, &comp)
+				existingCompIDs[id] = true
+			}
+		}
+	}
+
+	// Add new relationships.
+	existingRelIDs := make(map[string]bool)
+	for _, r := range result.Relationships {
+		existingRelIDs[r.ID.String()] = true
+	}
+	for _, a := range actions {
+		if a.Op == AddRelationshipOp {
+			item := getMapMap(a.Value, "item")
+			if item == nil {
+				continue
+			}
+			rel, err := mapToRelationshipDef(item)
+			if err != nil {
+				continue
+			}
+			id := rel.ID.String()
+			if !existingRelIDs[id] {
+				result.Relationships = append(result.Relationships, &rel)
+				existingRelIDs[id] = true
+			}
+		}
+	}
+
+	// Update relationships (status changes).
+	for _, a := range actions {
+		if a.Op == UpdateRelationshipOp {
+			id := getMapString(a.Value, "id")
+			path, _ := a.Value["path"].(string)
+			value, _ := a.Value["value"].(string)
+			if path == "/status" && id != "" {
+				for _, rel := range result.Relationships {
+					if rel.ID.String() == id {
+						setRelStatus(rel, value)
+					}
+				}
+			}
+		}
+	}
+
+	return result
 }

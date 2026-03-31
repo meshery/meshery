@@ -47,6 +47,7 @@
             "patch": {
               "mutatorRef": [
                 [
+                  "configuration",
                   "metadata",
                   "name"
                 ]
@@ -75,6 +76,7 @@
             "patch": {
               "mutatedRef": [
                 [
+                  "configuration",
                   "metadata",
                   "name"
                 ]

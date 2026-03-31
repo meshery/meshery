@@ -281,7 +281,7 @@ func (h *Handler) EvaluateDesign(
 	useGoEngine := viper.GetBool("USE_GO_POLICY_ENGINE")
 
 	// Pre-fetch and convert registered relationships once, outside the re-evaluation loop.
-	var relMaps []map[string]interface{}
+	var convertedRels []*relationship.RelationshipDefinition
 	if useGoEngine && h.GoEngine != nil {
 		registeredRels, _, _, relErr := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
 		if relErr != nil {
@@ -291,7 +291,7 @@ func (h *Handler) EvaluateDesign(
 		for idx, r := range registeredRels {
 			relInterfaces[idx] = r
 		}
-		relMaps = gopolicies.ConvertRelationships(relInterfaces)
+		convertedRels = gopolicies.ConvertRelationships(relInterfaces)
 	}
 
 	for i := range MAX_RE_EVALUATION_DEPTH {
@@ -300,7 +300,7 @@ func (h *Handler) EvaluateDesign(
 		var err error
 
 		if useGoEngine && h.GoEngine != nil {
-			evaluationResponse, err = h.GoEngine.EvaluateDesign(lastEvaluationResponse.Design, relMaps)
+			evaluationResponse, err = h.GoEngine.EvaluateDesign(lastEvaluationResponse.Design, convertedRels)
 		} else {
 			// Use OPA/Rego policy engine (default)
 			evaluationResponse, err = h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,

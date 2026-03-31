@@ -1,37 +1,40 @@
 package policies
 
-import "strings"
+import (
+	"strings"
 
-// HierarchicalWalletPolicy handles hierarchical parent wallet relationships
-// (e.g., PodTemplate to Pod, EndpointSlice to Service).
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
+)
+
+// HierarchicalWalletPolicy handles hierarchical parent wallet relationships.
 type HierarchicalWalletPolicy struct{}
 
 func (p *HierarchicalWalletPolicy) Identifier() string {
 	return "hierarchical_wallet"
 }
 
-func (p *HierarchicalWalletPolicy) IsImplicatedBy(rel map[string]interface{}) bool {
-	return strings.EqualFold(getMapString(rel, "kind"), "hierarchical") &&
-		strings.EqualFold(getMapString(rel, "type"), "parent") &&
-		strings.EqualFold(getMapString(rel, "subType"), "wallet")
+func (p *HierarchicalWalletPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinition) bool {
+	return strings.EqualFold(string(rel.Kind), "hierarchical") &&
+		strings.EqualFold(rel.RelationshipType, "parent") &&
+		strings.EqualFold(rel.SubType, "wallet")
 }
 
-func (p *HierarchicalWalletPolicy) IsInvalid(rel, designFile map[string]interface{}) bool {
-	return fromOrToComponentsDontExist(rel, designFile)
+func (p *HierarchicalWalletPolicy) IsInvalid(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
+	return fromOrToComponentsDontExist(rel, design)
 }
 
-func (p *HierarchicalWalletPolicy) AlreadyExists(rel, designFile map[string]interface{}) bool {
+func (p *HierarchicalWalletPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
 	return false
 }
 
-func (p *HierarchicalWalletPolicy) IdentifyRelationship(relDef, designFile map[string]interface{}) []map[string]interface{} {
-	return identifyRelationshipsBasedOnMatchingMutatorAndMutatedFields(relDef, designFile)
+func (p *HierarchicalWalletPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
+	return identifyRelationshipsBasedOnMatchingMutatorAndMutatedFields(relDef, design)
 }
 
-func (p *HierarchicalWalletPolicy) SideEffects(rel, designFile map[string]interface{}) []PolicyAction {
-	status := getMapString(rel, "status")
-	if status == "deleted" {
+func (p *HierarchicalWalletPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
+	if getRelStatus(rel) == "deleted" {
 		return nil
 	}
-	return patchMutatorsAction(rel, designFile)
+	return patchMutatorsAction(rel, design)
 }

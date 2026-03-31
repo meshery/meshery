@@ -76,6 +76,7 @@
             "patch": {
               "mutatedRef": [
                 [
+                  "configuration",
                   "metadata",
                   "uid"
                 ]

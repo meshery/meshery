@@ -3,6 +3,10 @@ package policies
 import (
 	"fmt"
 	"strings"
+
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
 // MatchLabelsPolicy handles sibling match-label relationships.
@@ -14,24 +18,23 @@ func (p *MatchLabelsPolicy) Identifier() string {
 	return "sibling_match_labels_policy"
 }
 
-func (p *MatchLabelsPolicy) IsImplicatedBy(rel map[string]interface{}) bool {
-	return strings.EqualFold(getMapString(rel, "type"), "sibling")
+func (p *MatchLabelsPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinition) bool {
+	return strings.EqualFold(rel.RelationshipType, "sibling")
 }
 
-func (p *MatchLabelsPolicy) IsInvalid(rel, designFile map[string]interface{}) bool {
-	// Matchlabel rels are stateless - invalidate all then re-identify
+func (p *MatchLabelsPolicy) IsInvalid(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
 	return p.IsImplicatedBy(rel)
 }
 
-func (p *MatchLabelsPolicy) AlreadyExists(rel, designFile map[string]interface{}) bool {
-	return false // matchlabels always re-identify
+func (p *MatchLabelsPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
+	return false
 }
 
-func (p *MatchLabelsPolicy) IdentifyRelationship(relDef, designFile map[string]interface{}) []map[string]interface{} {
-	return identifyMatchlabelRelationships(relDef, designFile)
+func (p *MatchLabelsPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
+	return identifyMatchlabelRelationships(relDef, design)
 }
 
-func (p *MatchLabelsPolicy) SideEffects(rel, designFile map[string]interface{}) []PolicyAction {
+func (p *MatchLabelsPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
 	return nil
 }
 
@@ -39,57 +42,38 @@ func (p *MatchLabelsPolicy) SideEffects(rel, designFile map[string]interface{}) 
 type matchLabelGroup struct {
 	Field      string
 	Value      interface{}
-	Components []map[string]interface{}
+	Components []*component.ComponentDefinition
 }
 
 // identifyMatchlabels finds all matching label groups in the design.
-func identifyMatchlabels(designFile, relationship map[string]interface{}) []matchLabelGroup {
-	comps := getMapSlice(designFile, "components")
-
+func identifyMatchlabels(design *pattern.PatternFile, relDef *relationship.RelationshipDefinition) []matchLabelGroup {
 	type fieldPair struct {
 		field      string
 		value      interface{}
-		components []map[string]interface{}
+		components []*component.ComponentDefinition
 	}
 
-	// Collect field pairs
 	var pairs []fieldPair
-	for _, ci := range comps {
-		comp, ok := ci.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		for _, oi := range comps {
-			other, ok := oi.(map[string]interface{})
-			if !ok {
+	for _, comp := range design.Components {
+		for _, other := range design.Components {
+			if comp.ID == other.ID {
 				continue
 			}
-			if getMapString(comp, "id") == getMapString(other, "id") {
-				continue
-			}
-
-			from := isRelationshipFeasibleFrom(comp, relationship)
+			from := isRelationshipFeasibleFrom(comp, relDef)
 			if from == nil {
 				continue
 			}
-			if isRelationshipFeasibleTo(other, relationship) == nil {
+			if isRelationshipFeasibleTo(other, relDef) == nil {
 				continue
 			}
 
-			// Get match refs
-			match := getMapMap(from, "match")
-			if match == nil {
+			if from.Match == nil || from.Match.Refs == nil || len(*from.Match.Refs) == 0 {
 				continue
 			}
-			refs := getMapSlice(match, "refs")
-			if len(refs) == 0 {
-				continue
-			}
+			path := (*from.Match.Refs)[0]
 
-			path := interfaceToStringSlice(refs[0])
-
-			compConfig := configurationForComponentAtPath(path, comp, designFile)
-			otherConfig := configurationForComponentAtPath(path, other, designFile)
+			compConfig := configurationForComponentAtPath(path, comp, design)
+			otherConfig := configurationForComponentAtPath(path, other, design)
 
 			compMap, compOk := compConfig.(map[string]interface{})
 			otherMap, otherOk := otherConfig.(map[string]interface{})
@@ -98,35 +82,32 @@ func identifyMatchlabels(designFile, relationship map[string]interface{}) []matc
 			}
 
 			for field, value := range compMap {
-				if otherValue, exists := otherMap[field]; exists {
-					if deepEqual(value, otherValue) {
-						pairs = append(pairs, fieldPair{
-							field:      field,
-							value:      value,
-							components: []map[string]interface{}{comp, other},
-						})
-					}
+				if otherValue, exists := otherMap[field]; exists && deepEqual(value, otherValue) {
+					pairs = append(pairs, fieldPair{
+						field:      field,
+						value:      value,
+						components: []*component.ComponentDefinition{comp, other},
+					})
 				}
 			}
 		}
 	}
 
-	// Merge pairs into groups
+	// Merge pairs into groups.
 	groupMap := make(map[string]*matchLabelGroup)
 	for _, pair := range pairs {
 		key := fmt.Sprintf("%s=%v", pair.field, pair.value)
 		if g, exists := groupMap[key]; exists {
-			for _, comp := range pair.components {
+			for _, c := range pair.components {
 				found := false
-				compID := getMapString(comp, "id")
 				for _, existing := range g.Components {
-					if getMapString(existing, "id") == compID {
+					if existing.ID == c.ID {
 						found = true
 						break
 					}
 				}
 				if !found {
-					g.Components = append(g.Components, comp)
+					g.Components = append(g.Components, c)
 				}
 			}
 		} else {
@@ -142,61 +123,57 @@ func identifyMatchlabels(designFile, relationship map[string]interface{}) []matc
 	for _, g := range groupMap {
 		groups = append(groups, *g)
 	}
-
-	// Truncate to max
 	if len(groups) > maxMatchLabels {
 		groups = groups[:maxMatchLabels]
 	}
-
 	return groups
 }
 
-// identifyMatchlabelRelationships creates relationship declarations from matchlabel groups.
-func identifyMatchlabelRelationships(relDef, designFile map[string]interface{}) []map[string]interface{} {
-	groups := identifyMatchlabels(designFile, relDef)
+// identifyMatchlabelRelationships creates relationship definitions from matchlabel groups.
+func identifyMatchlabelRelationships(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
+	groups := identifyMatchlabels(design, relDef)
 
-	var identified []map[string]interface{}
+	var identified []*relationship.RelationshipDefinition
 	seen := make(map[string]bool)
 
 	for _, group := range groups {
-		var fromSelectors []interface{}
+		var fromSelectors []relationship.SelectorItem
 		for _, comp := range group.Components {
-			fromSel := map[string]interface{}{
-				"id":    getMapString(comp, "id"),
-				"kind":  getMapString(getMapMap(comp, "component"), "kind"),
-				"model": comp["model"],
-				"patch": map[string]interface{}{
-					"patchStrategy": "replace",
-					"mutatorRef":    []interface{}{[]interface{}{group.Field}},
+			kind := comp.Component.Kind
+			mutatorRef := relationship.MutatorRef{[]string{group.Field}}
+			fromSel := relationship.SelectorItem{
+				ID:   &comp.ID,
+				Kind: &kind,
+				Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+					MutatorRef: &mutatorRef,
 				},
+			}
+			if comp.ModelReference.Name != "" {
+				fromSel.Model = &comp.ModelReference
 			}
 			fromSelectors = append(fromSelectors, fromSel)
 		}
 
-		selectorDecl := map[string]interface{}{
-			"allow": map[string]interface{}{
-				"from": fromSelectors,
-				"to":   fromSelectors,
-			},
-			"deny": map[string]interface{}{
-				"from": []interface{}{},
-				"to":   []interface{}{},
+		ss := relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: fromSelectors,
+				To:   fromSelectors,
 			},
 		}
 
-		id := staticUUID(fmt.Sprintf("%v%s", selectorDecl, "sibling_match_labels_policy")).String()
+		id := staticUUID(fmt.Sprintf("%v%s", ss, "sibling_match_labels_policy")).String()
 		if seen[id] {
 			continue
 		}
 		seen[id] = true
 
-		rel := deepCopyMap(relDef)
-		rel["selectors"] = []interface{}{selectorDecl}
-		rel["id"] = id
-		rel["status"] = "identified"
+		decl := deepCopyRelDef(relDef)
+		selectors := relationship.SelectorSet{ss}
+		decl.Selectors = &selectors
+		decl.ID = staticUUID(fmt.Sprintf("%v%s", ss, "sibling_match_labels_policy"))
+		setRelStatus(decl, "identified")
 
-		identified = append(identified, rel)
+		identified = append(identified, decl)
 	}
-
 	return identified
 }

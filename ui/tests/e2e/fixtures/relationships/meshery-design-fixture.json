@@ -2661,7 +2661,7 @@
                 },
                 "patch": {
                   "patchStrategy": "replace",
-                  "mutatedRef": [["metadata", "name"]]
+                  "mutatedRef": [["configuration", "metadata", "name"]]
                 }
               }
             ]

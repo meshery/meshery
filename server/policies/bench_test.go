@@ -7,11 +7,16 @@ import (
 	"testing"
 
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/open-policy-agent/opa/v1/rego"
 	"github.com/open-policy-agent/opa/v1/storage/inmem"
 )
 
-// benchDesign returns a realistic design with components and relationships.
+// benchDesign returns a realistic design with components and relationships as a map
+// (for OPA benchmarking and alignment tests).
 func benchDesign() map[string]interface{} {
 	return map[string]interface{}{
 		"components": []interface{}{
@@ -78,7 +83,8 @@ func benchDesign() map[string]interface{} {
 	}
 }
 
-// benchRelDefs returns relationship definitions for benchmarking.
+// benchRelDefs returns relationship definitions for benchmarking as maps
+// (for OPA benchmarking).
 func benchRelDefs() []map[string]interface{} {
 	return []map[string]interface{}{
 		{
@@ -117,6 +123,124 @@ func benchRelDefs() []map[string]interface{} {
 			},
 		},
 	}
+}
+
+// benchTypedDesign returns the bench design as typed structs for Go engine functions.
+func benchTypedDesign() *pattern.PatternFile {
+	ns, deploy, svc := benchTypedComponents()
+	rel := benchTypedRelationship(ns, deploy)
+	return &pattern.PatternFile{
+		Components:    []*component.ComponentDefinition{ns, deploy, svc},
+		Relationships: []*relationship.RelationshipDefinition{rel},
+	}
+}
+
+// benchTypedComponents returns the three typed components used in benchmarks.
+func benchTypedComponents() (ns, deploy, svc *component.ComponentDefinition) {
+	ns = &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Namespace"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration:  map[string]interface{}{"name": "default"},
+	}
+	// Use deterministic UUIDs that correspond to the map-based IDs above.
+	ns.ID = staticUUID("ns-1")
+
+	deploy = &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Deployment"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration:  map[string]interface{}{"namespace": "default", "replicas": float64(3)},
+	}
+	deploy.ID = staticUUID("deploy-1")
+
+	svc = &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Service"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration:  map[string]interface{}{"namespace": "default", "port": float64(80)},
+	}
+	svc.ID = staticUUID("svc-1")
+
+	return ns, deploy, svc
+}
+
+
+// benchTypedRelationship builds the approved hierarchical relationship between ns and deploy.
+func benchTypedRelationship(ns, deploy *component.ComponentDefinition) *relationship.RelationshipDefinition {
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "namespace"}}
+	relStatus := relationship.RelationshipDefinitionStatus("approved")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:   &ns.ID,
+						Kind: strPtr("Namespace"),
+						Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:   &deploy.ID,
+						Kind: strPtr("Deployment"),
+						Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+		RelationshipType: "parent",
+		SubType:          "inventory",
+		Status:           &relStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	rel.ID, _ = uuidFromString("rel-1")
+	return rel
+}
+
+// benchTypedRelDefs returns the relationship definitions for benchmarking as typed structs.
+func benchTypedRelDefs() []*relationship.RelationshipDefinition {
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "namespace"}}
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						Kind:  strPtr("Namespace"),
+						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+						Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						Kind:  strPtr("Deployment"),
+						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+						Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+	relDef := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+		RelationshipType: "parent",
+		SubType:          "inventory",
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	relDef.ID, _ = uuidFromString("rel-def-1")
+	return []*relationship.RelationshipDefinition{relDef}
 }
 
 // loadOPAModules loads all rego policy modules (excluding tests).
@@ -191,15 +315,16 @@ func TestBehaviorAlignment(t *testing.T) {
 	})
 
 	t.Run("from_and_to_components_exist", func(t *testing.T) {
-		rel := extractMapSlice(design, "relationships")[0]
+		typedDesign := benchTypedDesign()
+		rel := typedDesign.Relationships[0]
 
 		// Go
-		goResult := fromAndToComponentsExist(rel, design)
+		goResult := fromAndToComponentsExist(rel, typedDesign)
 		if !goResult {
 			t.Fatal("Go: fromAndToComponentsExist should return true")
 		}
 
-		// OPA
+		// OPA: use the map-based design for OPA input
 		pq := prepareOPAQuery(t,
 			`data.eval_rules.from_and_to_components_exist(input.relationships[0], input)`,
 			design, map[string]interface{}{})
@@ -226,15 +351,22 @@ func TestBehaviorAlignment(t *testing.T) {
 			},
 		}
 
-		rel := extractMapSlice(missingDesign, "relationships")[0]
+		// Build typed design with only ns component but keeping the relationship
+		// The relationship still references deploy (which is absent from the design).
+		ns, deploy, _ := benchTypedComponents()
+		rel := benchTypedRelationship(ns, deploy)
+		typedMissingDesign := &pattern.PatternFile{
+			Components:    []*component.ComponentDefinition{ns},
+			Relationships: []*relationship.RelationshipDefinition{rel},
+		}
 
 		// Go
-		goResult := fromAndToComponentsExist(rel, missingDesign)
+		goResult := fromAndToComponentsExist(rel, typedMissingDesign)
 		if goResult {
 			t.Fatal("Go: fromAndToComponentsExist should return false when deploy-1 is missing")
 		}
 
-		// OPA
+		// OPA: use map-based design for OPA input
 		pq := prepareOPAQuery(t,
 			`data.eval_rules.from_or_to_components_dont_exist(input.relationships[0], input)`,
 			missingDesign, map[string]interface{}{})
@@ -261,9 +393,17 @@ func TestBehaviorAlignment(t *testing.T) {
 			},
 		}
 
+		// Build typed orphan design: only ns, but relationship references deploy (missing).
+		ns, deploy, _ := benchTypedComponents()
+		rel := benchTypedRelationship(ns, deploy)
+		typedOrphanDesign := &pattern.PatternFile{
+			Components:    []*component.ComponentDefinition{ns},
+			Relationships: []*relationship.RelationshipDefinition{rel},
+		}
+
 		// Go: validation should produce a delete action for the orphaned relationship
 		policy := &HierarchicalParentChildPolicy{}
-		goActions := validateRelationshipsInDesign(orphanDesign, policy)
+		goActions := validateRelationshipsInDesign(typedOrphanDesign, policy)
 		if len(goActions) != 1 {
 			t.Fatalf("Go: expected 1 validation action, got %d", len(goActions))
 		}
@@ -307,11 +447,13 @@ func TestBehaviorAlignment(t *testing.T) {
 	})
 
 	t.Run("identify_relationships", func(t *testing.T) {
+		typedDesign := benchTypedDesign()
+		typedRelDefs := benchTypedRelDefs()
 		relDefs := benchRelDefs()
 
 		// Go
 		policy := &HierarchicalParentChildPolicy{}
-		goActions := identifyRelationshipsInDesign(design, relDefs, policy)
+		goActions := identifyRelationshipsInDesign(typedDesign, typedRelDefs, policy)
 
 		// OPA: identify_relationships_in_design needs relationships as data
 		opaData := map[string]interface{}{
@@ -357,11 +499,19 @@ func BenchmarkValidation(b *testing.B) {
 		},
 	}
 
+	// Typed orphan design for Go engine: relationship still references deploy (absent).
+	ns, deploy, _ := benchTypedComponents()
+	rel := benchTypedRelationship(ns, deploy)
+	typedOrphanDesign := &pattern.PatternFile{
+		Components:    []*component.ComponentDefinition{ns},
+		Relationships: []*relationship.RelationshipDefinition{rel},
+	}
+
 	b.Run("Go", func(b *testing.B) {
 		policy := &HierarchicalParentChildPolicy{}
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			validateRelationshipsInDesign(orphanDesign, policy)
+			validateRelationshipsInDesign(typedOrphanDesign, policy)
 		}
 	})
 
@@ -372,7 +522,7 @@ func BenchmarkValidation(b *testing.B) {
 			orphanDesign, map[string]interface{}{})
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			pq.Eval(ctx)
+			_, _ = pq.Eval(ctx)
 		}
 	})
 }
@@ -380,13 +530,15 @@ func BenchmarkValidation(b *testing.B) {
 // BenchmarkIdentify/Go vs BenchmarkIdentify/OPA
 func BenchmarkIdentify(b *testing.B) {
 	design := benchDesign()
+	typedDesign := benchTypedDesign()
+	typedRelDefs := benchTypedRelDefs()
 	relDefs := benchRelDefs()
 
 	b.Run("Go", func(b *testing.B) {
 		policy := &HierarchicalParentChildPolicy{}
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			identifyRelationshipsInDesign(design, relDefs, policy)
+			identifyRelationshipsInDesign(typedDesign, typedRelDefs, policy)
 		}
 	})
 
@@ -400,7 +552,7 @@ func BenchmarkIdentify(b *testing.B) {
 			design, opaData)
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			pq.Eval(ctx)
+			_, _ = pq.Eval(ctx)
 		}
 	})
 }
@@ -408,12 +560,13 @@ func BenchmarkIdentify(b *testing.B) {
 // BenchmarkActions/Go vs BenchmarkActions/OPA
 func BenchmarkActions(b *testing.B) {
 	design := benchDesign()
+	typedDesign := benchTypedDesign()
 
 	b.Run("Go", func(b *testing.B) {
 		policy := &HierarchicalParentChildPolicy{}
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			generateActionsToApplyOnDesign(design, policy)
+			generateActionsToApplyOnDesign(typedDesign, policy)
 		}
 	})
 
@@ -424,7 +577,7 @@ func BenchmarkActions(b *testing.B) {
 			design, map[string]interface{}{})
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			pq.Eval(ctx)
+			_, _ = pq.Eval(ctx)
 		}
 	})
 }
@@ -432,6 +585,7 @@ func BenchmarkActions(b *testing.B) {
 // BenchmarkFullPipeline/Go benchmarks the full Go evaluation pipeline.
 func BenchmarkFullPipeline(b *testing.B) {
 	design := benchDesign()
+	typedRelDefs := benchTypedRelDefs()
 	relDefs := benchRelDefs()
 
 	b.Run("Go", func(b *testing.B) {
@@ -439,7 +593,7 @@ func BenchmarkFullPipeline(b *testing.B) {
 		engine := NewGoEngine(log)
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			engine.evaluate(deepCopyMap(design), relDefs)
+			engine.evaluate(deepCopyDesign(benchTypedDesign()), typedRelDefs)
 		}
 	})
 
@@ -457,7 +611,7 @@ func BenchmarkFullPipeline(b *testing.B) {
 				rego.Store(store),
 			)
 			r := rego.New(opts...)
-			r.Eval(ctx)
+			_, _ = r.Eval(ctx)
 		}
 	})
 
@@ -471,7 +625,7 @@ func BenchmarkFullPipeline(b *testing.B) {
 			design, opaData)
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			pq.Eval(ctx)
+			_, _ = pq.Eval(ctx)
 		}
 	})
 }
@@ -491,7 +645,7 @@ func BenchmarkMatchValues(b *testing.B) {
 			map[string]interface{}{}, map[string]interface{}{})
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			pq.Eval(ctx)
+			_, _ = pq.Eval(ctx)
 		}
 	})
 }

@@ -1,6 +1,11 @@
 package policies
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
+)
 
 // HierarchicalParentChildPolicy handles hierarchical parent-child (inventory) relationships.
 type HierarchicalParentChildPolicy struct{}
@@ -9,30 +14,29 @@ func (p *HierarchicalParentChildPolicy) Identifier() string {
 	return "hierarchical_parent_child"
 }
 
-func (p *HierarchicalParentChildPolicy) IsImplicatedBy(rel map[string]interface{}) bool {
-	return strings.EqualFold(getMapString(rel, "kind"), "hierarchical") &&
-		strings.EqualFold(getMapString(rel, "type"), "parent") &&
-		strings.EqualFold(getMapString(rel, "subType"), "inventory")
+func (p *HierarchicalParentChildPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinition) bool {
+	return strings.EqualFold(string(rel.Kind), "hierarchical") &&
+		strings.EqualFold(rel.RelationshipType, "parent") &&
+		strings.EqualFold(rel.SubType, "inventory")
 }
 
-func (p *HierarchicalParentChildPolicy) IsInvalid(rel, designFile map[string]interface{}) bool {
-	return fromOrToComponentsDontExist(rel, designFile)
+func (p *HierarchicalParentChildPolicy) IsInvalid(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
+	return fromOrToComponentsDontExist(rel, design)
 }
 
-func (p *HierarchicalParentChildPolicy) AlreadyExists(rel, designFile map[string]interface{}) bool {
+func (p *HierarchicalParentChildPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
 	return false
 }
 
-func (p *HierarchicalParentChildPolicy) IdentifyRelationship(relDef, designFile map[string]interface{}) []map[string]interface{} {
-	candidates := identifyRelationshipsBasedOnMatchingMutatorAndMutatedFields(relDef, designFile)
+func (p *HierarchicalParentChildPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
+	candidates := identifyRelationshipsBasedOnMatchingMutatorAndMutatedFields(relDef, design)
 
-	// Filter by feasibility and deny selectors.
-	var result []map[string]interface{}
+	var result []*relationship.RelationshipDefinition
 	for _, rel := range candidates {
-		fromID := fromComponentID(rel)
-		toID := toComponentID(rel)
-		fromComp := componentDeclarationByID(designFile, fromID)
-		toComp := componentDeclarationByID(designFile, toID)
+		fID := fromComponentID(rel)
+		tID := toComponentID(rel)
+		fromComp := componentDeclarationByID(design, fID)
+		toComp := componentDeclarationByID(design, tID)
 		if fromComp == nil || toComp == nil {
 			continue
 		}
@@ -42,32 +46,27 @@ func (p *HierarchicalParentChildPolicy) IdentifyRelationship(relDef, designFile 
 		}
 
 		denied := false
-		for _, s := range getMapSlice(relDef, "selectors") {
-			selectorSet, ok := s.(map[string]interface{})
-			if !ok {
-				continue
-			}
-			deny := getMapMap(selectorSet, "deny")
-			if deny != nil && isRelationshipDenied(fromComp, toComp, deny) {
-				denied = true
-				break
+		if relDef.Selectors != nil {
+			for _, ss := range *relDef.Selectors {
+				if ss.Deny != nil && isRelationshipDenied(fromComp, toComp, ss.Deny) {
+					denied = true
+					break
+				}
 			}
 		}
 		if denied {
 			continue
 		}
 
-		rel["status"] = "approved"
+		setRelStatus(rel, "approved")
 		result = append(result, rel)
 	}
 	return result
 }
 
-func (p *HierarchicalParentChildPolicy) SideEffects(rel, designFile map[string]interface{}) []PolicyAction {
-	status := getMapString(rel, "status")
-	if status == "deleted" {
+func (p *HierarchicalParentChildPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
+	if getRelStatus(rel) == "deleted" {
 		return nil
 	}
-	return patchMutatorsAction(rel, designFile)
+	return patchMutatorsAction(rel, design)
 }
-

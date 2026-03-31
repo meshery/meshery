@@ -1,30 +1,24 @@
 package policies
 
+import (
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
+)
+
 // RelationshipPolicy defines the interface each relationship type policy must implement.
 type RelationshipPolicy interface {
-	// Identifier returns the unique policy identifier string.
 	Identifier() string
-
-	// IsImplicatedBy returns true if the relationship belongs to this policy.
-	IsImplicatedBy(rel map[string]interface{}) bool
-
-	// IsInvalid checks whether an existing relationship is now invalid in the design.
-	IsInvalid(rel, designFile map[string]interface{}) bool
-
-	// AlreadyExists provides policy-specific duplicate detection (beyond the generic check).
-	AlreadyExists(rel, designFile map[string]interface{}) bool
-
-	// IdentifyRelationship identifies new relationships from a relationship definition against a design.
-	IdentifyRelationship(relDef, designFile map[string]interface{}) []map[string]interface{}
-
-	// SideEffects returns additional actions for a relationship (e.g., adding/removing components).
-	SideEffects(rel, designFile map[string]interface{}) []PolicyAction
+	IsImplicatedBy(rel *relationship.RelationshipDefinition) bool
+	IsInvalid(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool
+	AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool
+	IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition
+	SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction
 }
 
 // implicableRelationships filters relationships that belong to a specific policy.
-func implicableRelationships(relationships []map[string]interface{}, policy RelationshipPolicy) []map[string]interface{} {
-	var result []map[string]interface{}
-	for _, rel := range relationships {
+func implicableRelationships(rels []*relationship.RelationshipDefinition, policy RelationshipPolicy) []*relationship.RelationshipDefinition {
+	var result []*relationship.RelationshipDefinition
+	for _, rel := range rels {
 		if policy.IsImplicatedBy(rel) {
 			result = append(result, rel)
 		}
@@ -33,18 +27,16 @@ func implicableRelationships(relationships []map[string]interface{}, policy Rela
 }
 
 // validateRelationshipsInDesign validates relationships in the design for a policy.
-// Returns delete/update actions for relationships that are now invalid.
-func validateRelationshipsInDesign(designFile map[string]interface{}, policy RelationshipPolicy) []PolicyAction {
-	rels := extractMapSlice(designFile, "relationships")
-	implicated := implicableRelationships(rels, policy)
+func validateRelationshipsInDesign(design *pattern.PatternFile, policy RelationshipPolicy) []PolicyAction {
+	implicated := implicableRelationships(design.Relationships, policy)
 
 	var actions []PolicyAction
 	for _, rel := range implicated {
-		if fromOrToComponentsDontExist(rel, designFile) && policy.IsInvalid(rel, designFile) {
+		if fromOrToComponentsDontExist(rel, design) && policy.IsInvalid(rel, design) {
 			actions = append(actions, PolicyAction{
 				Op: UpdateRelationshipOp,
 				Value: map[string]interface{}{
-					"id":    getMapString(rel, "id"),
+					"id":    rel.ID.String(),
 					"path":  "/status",
 					"value": "deleted",
 				},
@@ -55,51 +47,41 @@ func validateRelationshipsInDesign(designFile map[string]interface{}, policy Rel
 }
 
 // identifyRelationshipsInDesign identifies new relationships in the design for a policy.
-// It also handles inventory additions (missing components) within the same phase.
 func identifyRelationshipsInDesign(
-	designFile map[string]interface{},
-	relationshipsInScope []map[string]interface{},
+	design *pattern.PatternFile,
+	relationshipsInScope []*relationship.RelationshipDefinition,
 	policy RelationshipPolicy,
 ) []PolicyAction {
 	implicated := implicableRelationships(relationshipsInScope, policy)
 
-	// Identify and apply any missing component additions before relationship identification.
-	var additionActions []PolicyAction
-	for _, relDef := range implicated {
-		additionActions = append(additionActions, identifyAdditions(relDef, designFile)...)
-	}
-	workingDesign := designFile
-	if len(additionActions) > 0 {
-		workingDesign = applyAllActionsToDesign(designFile, additionActions)
-	}
-
 	var actions []PolicyAction
-	actions = append(actions, additionActions...)
 	seen := make(map[string]bool)
 
 	for _, relDef := range implicated {
-		identified := policy.IdentifyRelationship(relDef, workingDesign)
+		identified := policy.IdentifyRelationship(relDef, design)
 
 		for _, rel := range identified {
-			// Check generic duplicate
-			if relationshipAlreadyExists(designFile, rel) {
+			if relationshipAlreadyExists(design, rel) {
 				continue
 			}
-			// Check policy-specific duplicate
-			if policy.AlreadyExists(rel, designFile) {
+			if policy.AlreadyExists(rel, design) {
 				continue
 			}
 
-			id := getMapString(rel, "id")
+			id := rel.ID.String()
 			if seen[id] {
 				continue
 			}
 			seen[id] = true
 
+			relMap, err := toGenericMap(rel)
+			if err != nil {
+				continue
+			}
 			actions = append(actions, PolicyAction{
 				Op: AddRelationshipOp,
 				Value: map[string]interface{}{
-					"item": rel,
+					"item": relMap,
 				},
 			})
 		}
@@ -108,21 +90,15 @@ func identifyRelationshipsInDesign(
 }
 
 // generateActionsToApplyOnDesign generates all actions for a policy.
-func generateActionsToApplyOnDesign(designFile map[string]interface{}, policy RelationshipPolicy) []PolicyAction {
-	rels := extractMapSlice(designFile, "relationships")
-	implicated := implicableRelationships(rels, policy)
+func generateActionsToApplyOnDesign(design *pattern.PatternFile, policy RelationshipPolicy) []PolicyAction {
+	implicated := implicableRelationships(design.Relationships, policy)
 
 	var allActions []PolicyAction
-
-	// Approve identified relationships
 	allActions = append(allActions, approveIdentifiedRelationshipsAction(implicated, 100)...)
-
-	// Cleanup deleted relationships
 	allActions = append(allActions, cleanupDeletedRelationshipsActions(implicated)...)
 
-	// Policy-specific side effects
 	for _, rel := range implicated {
-		allActions = append(allActions, policy.SideEffects(rel, designFile)...)
+		allActions = append(allActions, policy.SideEffects(rel, design)...)
 	}
 
 	return allActions

@@ -93,6 +93,7 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "configuration",
                   "metadata",
                   "labels"
                 ],

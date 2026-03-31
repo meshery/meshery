@@ -79,6 +79,7 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "configuration",
                   "metadata",
                   "name"
                 ]

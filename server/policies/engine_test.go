@@ -5,8 +5,24 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
+
+// strPtr returns a pointer to the given string.
+func strPtr(s string) *string { return &s }
+
+// makePatternFile builds a PatternFile from typed components and relationships.
+func makePatternFile(comps []*component.ComponentDefinition, rels []*relationship.RelationshipDefinition) *pattern.PatternFile {
+	return &pattern.PatternFile{
+		Components:    comps,
+		Relationships: rels,
+	}
+}
 
 func TestObjectGetNested(t *testing.T) {
 	obj := map[string]interface{}{
@@ -93,29 +109,29 @@ func TestMatchValues(t *testing.T) {
 }
 
 func TestIsRelationshipFeasible(t *testing.T) {
-	comp := map[string]interface{}{
-		"component": map[string]interface{}{"kind": "Namespace"},
-		"model":     map[string]interface{}{"name": "kubernetes"},
+	comp := &component.ComponentDefinition{
+		Component:       component.Component{Kind: "Namespace"},
+		ModelReference:  modelv1beta1.ModelReference{Name: "kubernetes"},
 	}
 
 	tests := []struct {
 		name     string
-		selector map[string]interface{}
+		selector relationship.SelectorItem
 		expected bool
 	}{
 		{
 			"wildcard",
-			map[string]interface{}{"kind": "*", "model": map[string]interface{}{"name": "*"}},
+			relationship.SelectorItem{Kind: strPtr("*"), Model: &modelv1beta1.ModelReference{Name: "*"}},
 			true,
 		},
 		{
 			"exact match",
-			map[string]interface{}{"kind": "Namespace", "model": map[string]interface{}{"name": "kubernetes"}},
+			relationship.SelectorItem{Kind: strPtr("Namespace"), Model: &modelv1beta1.ModelReference{Name: "kubernetes"}},
 			true,
 		},
 		{
 			"kind mismatch",
-			map[string]interface{}{"kind": "Service", "model": map[string]interface{}{"name": "kubernetes"}},
+			relationship.SelectorItem{Kind: strPtr("Service"), Model: &modelv1beta1.ModelReference{Name: "kubernetes"}},
 			false,
 		},
 	}
@@ -131,41 +147,21 @@ func TestIsRelationshipFeasible(t *testing.T) {
 }
 
 func TestIsRelationshipDenied(t *testing.T) {
-	fromDecl := map[string]interface{}{
-		"id":        "from-namespace",
-		"component": map[string]interface{}{"kind": "Namespace"},
-		"model": map[string]interface{}{
-			"name":       "kubernetes",
-			"registrant": map[string]interface{}{"kind": "github"},
-		},
+	fromDecl := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Namespace"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
 	}
-	toDecl := map[string]interface{}{
-		"id":        "to-namespace",
-		"component": map[string]interface{}{"kind": "Namespace"},
-		"model": map[string]interface{}{
-			"name":       "kubernetes",
-			"registrant": map[string]interface{}{"kind": "github"},
-		},
+	toDecl := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Namespace"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
 	}
 
-	denySelectors := map[string]interface{}{
-		"from": []interface{}{
-			map[string]interface{}{
-				"kind": "Namespace",
-				"model": map[string]interface{}{
-					"name":       "kubernetes",
-					"registrant": "*",
-				},
-			},
+	denySelectors := &relationship.Selector{
+		From: []relationship.SelectorItem{
+			{Kind: strPtr("Namespace"), Model: &modelv1beta1.ModelReference{Name: "kubernetes"}},
 		},
-		"to": []interface{}{
-			map[string]interface{}{
-				"kind": "Namespace",
-				"model": map[string]interface{}{
-					"name":       "kubernetes",
-					"registrant": "*",
-				},
-			},
+		To: []relationship.SelectorItem{
+			{Kind: strPtr("Namespace"), Model: &modelv1beta1.ModelReference{Name: "kubernetes"}},
 		},
 	}
 
@@ -178,22 +174,34 @@ func TestIsRelationshipDenied(t *testing.T) {
 func TestIsAliasRelationship(t *testing.T) {
 	tests := []struct {
 		name     string
-		rel      map[string]interface{}
+		rel      *relationship.RelationshipDefinition
 		expected bool
 	}{
 		{
 			"alias",
-			map[string]interface{}{"kind": "hierarchical", "type": "parent", "subType": "alias"},
+			&relationship.RelationshipDefinition{
+				Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+				RelationshipType: "parent",
+				SubType:          "alias",
+			},
 			true,
 		},
 		{
 			"alias uppercase",
-			map[string]interface{}{"kind": "Hierarchical", "type": "Parent", "subType": "Alias"},
+			&relationship.RelationshipDefinition{
+				Kind:             relationship.RelationshipDefinitionKind("Hierarchical"),
+				RelationshipType: "Parent",
+				SubType:          "Alias",
+			},
 			true,
 		},
 		{
 			"inventory",
-			map[string]interface{}{"kind": "hierarchical", "type": "parent", "subType": "inventory"},
+			&relationship.RelationshipDefinition{
+				Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+				RelationshipType: "parent",
+				SubType:          "inventory",
+			},
 			false,
 		},
 	}
@@ -218,27 +226,40 @@ func TestPolicyImplication(t *testing.T) {
 
 	tests := []struct {
 		name           string
-		rel            map[string]interface{}
+		rel            *relationship.RelationshipDefinition
 		expectedPolicy string
 	}{
 		{
 			"hierarchical inventory",
-			map[string]interface{}{"kind": "hierarchical", "type": "parent", "subType": "inventory"},
+			&relationship.RelationshipDefinition{
+				Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+				RelationshipType: "parent",
+				SubType:          "inventory",
+			},
 			"hierarchical_parent_child",
 		},
 		{
 			"edge non-binding",
-			map[string]interface{}{"kind": "edge", "type": "non-binding"},
+			&relationship.RelationshipDefinition{
+				Kind:             relationship.RelationshipDefinitionKind("edge"),
+				RelationshipType: "non-binding",
+			},
 			"edge-non-binding",
 		},
 		{
 			"alias",
-			map[string]interface{}{"kind": "hierarchical", "type": "parent", "subType": "alias"},
+			&relationship.RelationshipDefinition{
+				Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+				RelationshipType: "parent",
+				SubType:          "alias",
+			},
 			"alias_relationships_policy",
 		},
 		{
 			"sibling",
-			map[string]interface{}{"type": "sibling"},
+			&relationship.RelationshipDefinition{
+				RelationshipType: "sibling",
+			},
 			"sibling_match_labels_policy",
 		},
 	}
@@ -334,38 +355,38 @@ func TestApplyAllActionsToDesign(t *testing.T) {
 }
 
 func TestFromAndToComponentsExist(t *testing.T) {
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{"id": "comp-a"},
-			map[string]interface{}{"id": "comp-b"},
-		},
-	}
+	compA := &component.ComponentDefinition{}
+	compA.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
 
-	rel := map[string]interface{}{
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{map[string]interface{}{"id": "comp-a"}},
-					"to":   []interface{}{map[string]interface{}{"id": "comp-b"}},
-				},
+	compB := &component.ComponentDefinition{}
+	compB.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000002")
+
+	design := makePatternFile([]*component.ComponentDefinition{compA, compB}, nil)
+
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{{ID: &compA.ID}},
+				To:   []relationship.SelectorItem{{ID: &compB.ID}},
 			},
 		},
 	}
+	rel := &relationship.RelationshipDefinition{Selectors: &selectorSet}
 
 	if !fromAndToComponentsExist(rel, design) {
 		t.Error("Expected both components to exist")
 	}
 
-	relMissing := map[string]interface{}{
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{map[string]interface{}{"id": "comp-a"}},
-					"to":   []interface{}{map[string]interface{}{"id": "comp-missing"}},
-				},
+	missingID, _ := uuid.FromString("00000000-0000-0000-0000-000000000099")
+	selectorSetMissing := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{{ID: &compA.ID}},
+				To:   []relationship.SelectorItem{{ID: &missingID}},
 			},
 		},
 	}
+	relMissing := &relationship.RelationshipDefinition{Selectors: &selectorSetMissing}
 
 	if fromAndToComponentsExist(relMissing, design) {
 		t.Error("Expected missing component to be detected")
@@ -373,28 +394,31 @@ func TestFromAndToComponentsExist(t *testing.T) {
 }
 
 func TestValidateRelationshipsInDesign(t *testing.T) {
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{"id": "comp-a"},
-		},
-		"relationships": []interface{}{
-			map[string]interface{}{
-				"id":      "rel-1",
-				"kind":    "edge",
-				"type":    "non-binding",
-				"status":  "approved",
-				"subType": "",
-				"selectors": []interface{}{
-					map[string]interface{}{
-						"allow": map[string]interface{}{
-							"from": []interface{}{map[string]interface{}{"id": "comp-a"}},
-							"to":   []interface{}{map[string]interface{}{"id": "comp-deleted"}},
-						},
-					},
-				},
+	compA := &component.ComponentDefinition{}
+	compA.ID, _ = uuid.FromString("00000000-0000-0000-0000-0000000000aa")
+
+	compDeleted := &component.ComponentDefinition{}
+	compDeleted.ID, _ = uuid.FromString("00000000-0000-0000-0000-00000000dead")
+
+	relStatus := relationship.RelationshipDefinitionStatus("approved")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{{ID: &compA.ID}},
+				To:   []relationship.SelectorItem{{ID: &compDeleted.ID}},
 			},
 		},
 	}
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("edge"),
+		RelationshipType: "non-binding",
+		Status:           &relStatus,
+		Selectors:        &selectorSet,
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
+
+	// design only has compA, not compDeleted
+	design := makePatternFile([]*component.ComponentDefinition{compA}, []*relationship.RelationshipDefinition{rel})
 
 	policy := &EdgeNonBindingPolicy{}
 	actions := validateRelationshipsInDesign(design, policy)
@@ -413,19 +437,17 @@ func TestValidateRelationshipsInDesign(t *testing.T) {
 func TestEdgeBindingPolicyImplication(t *testing.T) {
 	p := &EdgeBindingPolicy{}
 
-	binding := map[string]interface{}{
-		"kind":    "edge",
-		"type":    "binding",
-		"subType": "",
+	binding := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("edge"),
+		RelationshipType: "binding",
 	}
 	if !p.IsImplicatedBy(binding) {
 		t.Error("Expected edge binding to be implicated")
 	}
 
-	nonBinding := map[string]interface{}{
-		"kind":    "edge",
-		"type":    "non-binding",
-		"subType": "",
+	nonBinding := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("edge"),
+		RelationshipType: "non-binding",
 	}
 	if p.IsImplicatedBy(nonBinding) {
 		t.Error("Expected edge non-binding to not be implicated")
@@ -433,41 +455,54 @@ func TestEdgeBindingPolicyImplication(t *testing.T) {
 }
 
 func TestIsValidBinding(t *testing.T) {
-	role := map[string]interface{}{
-		"id":        "role-1",
-		"component": map[string]interface{}{"kind": "Role"},
-		"name":      "my-role",
+	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+
+	// role has "name" in configuration
+	role := &component.ComponentDefinition{
+		Component:     component.Component{Kind: "Role"},
+		Configuration: map[string]interface{}{"name": "my-role"},
 	}
-	roleBinding := map[string]interface{}{
-		"id":        "rb-1",
-		"component": map[string]interface{}{"kind": "RoleBinding"},
-		"roleRef":   map[string]interface{}{"name": "my-role"},
+	role.ID = roleID
+
+	// roleBinding has "roleRef.name" in configuration
+	roleBinding := &component.ComponentDefinition{
+		Component:     component.Component{Kind: "RoleBinding"},
+		Configuration: map[string]interface{}{"roleRef": map[string]interface{}{"name": "my-role"}},
 	}
-	selector := map[string]interface{}{
-		"kind": "Role",
-		"match": map[string]interface{}{
-			"from": []interface{}{map[string]interface{}{
-				"kind":       "self",
-				"mutatorRef": []interface{}{[]interface{}{"name"}},
-			}},
-			"to": []interface{}{map[string]interface{}{
-				"kind":       "RoleBinding",
-				"mutatedRef": []interface{}{[]interface{}{"roleRef", "name"}},
-			}},
+	roleBinding.ID = rbID
+
+	// mutatorRef/mutatedRef paths are relative to the component map root (not configuration prefix)
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "roleRef", "name"}}
+	selector := relationship.SelectorItem{
+		Kind: strPtr("Role"),
+		Match: &relationship.MatchSelector{
+			From: &[]relationship.MatchSelectorItem{
+				{Kind: "self", MutatorRef: &mutatorRef},
+			},
+			To: &[]relationship.MatchSelectorItem{
+				{Kind: "RoleBinding", MutatedRef: &mutatedRef},
+			},
 		},
 	}
 
-	if !isValidBinding(role, roleBinding, selector) {
+	design := makePatternFile([]*component.ComponentDefinition{role, roleBinding}, nil)
+
+	if !isValidBindingTyped(role, roleBinding, selector, design) {
 		t.Error("Expected valid binding")
 	}
 
 	// Mismatched value
-	badBinding := map[string]interface{}{
-		"id":        "rb-2",
-		"component": map[string]interface{}{"kind": "RoleBinding"},
-		"roleRef":   map[string]interface{}{"name": "other-role"},
+	badRbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
+	badBinding := &component.ComponentDefinition{
+		Component:     component.Component{Kind: "RoleBinding"},
+		Configuration: map[string]interface{}{"roleRef": map[string]interface{}{"name": "other-role"}},
 	}
-	if isValidBinding(role, badBinding, selector) {
+	badBinding.ID = badRbID
+
+	design2 := makePatternFile([]*component.ComponentDefinition{role, badBinding}, nil)
+	if isValidBindingTyped(role, badBinding, selector, design2) {
 		t.Error("Expected invalid binding")
 	}
 }
@@ -475,65 +510,68 @@ func TestIsValidBinding(t *testing.T) {
 func TestHierarchicalIdentifyRelationship(t *testing.T) {
 	p := &HierarchicalParentChildPolicy{}
 
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":            "ns-1",
-				"component":     map[string]interface{}{"kind": "Namespace"},
-				"model":         map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{"name": "default"},
-			},
-			map[string]interface{}{
-				"id":        "deploy-1",
-				"component": map[string]interface{}{"kind": "Deployment"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{
-					"namespace": "default",
-				},
-			},
-		},
-		"relationships": []interface{}{},
-	}
+	nsID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
 
-	relDef := map[string]interface{}{
-		"id":      "rel-def-1",
-		"kind":    "hierarchical",
-		"type":    "parent",
-		"subType": "inventory",
-		"model":   map[string]interface{}{"name": "kubernetes"},
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind": "Namespace",
-							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{
-									[]interface{}{"configuration", "name"},
-								},
-							},
+	ns := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Namespace"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration:  map[string]interface{}{"name": "default"},
+	}
+	ns.ID = nsID
+
+	deploy := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Deployment"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration:  map[string]interface{}{"namespace": "default"},
+	}
+	deploy.ID = deployID
+
+	design := makePatternFile(
+		[]*component.ComponentDefinition{ns, deploy},
+		[]*relationship.RelationshipDefinition{},
+	)
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "namespace"}}
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						Kind:  strPtr("Namespace"),
+						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+						Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
 						},
 					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind": "Deployment",
-							"patch": map[string]interface{}{
-								"mutatedRef": []interface{}{
-									[]interface{}{"configuration", "namespace"},
-								},
-							},
+				},
+				To: []relationship.SelectorItem{
+					{
+						Kind:  strPtr("Deployment"),
+						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+						Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
 						},
 					},
 				},
 			},
 		},
 	}
+	relDef := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+		RelationshipType: "parent",
+		SubType:          "inventory",
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	relDef.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
 
 	identified := p.IdentifyRelationship(relDef, design)
 	if len(identified) != 1 {
 		t.Fatalf("Expected 1 identified relationship, got %d", len(identified))
 	}
-	if getMapString(identified[0], "status") != "approved" {
+	if getRelStatus(identified[0]) != "approved" {
 		t.Error("Expected status to be 'approved'")
 	}
 }
@@ -541,56 +579,56 @@ func TestHierarchicalIdentifyRelationship(t *testing.T) {
 func TestHierarchicalSideEffects(t *testing.T) {
 	p := &HierarchicalParentChildPolicy{}
 
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":            "ns-1",
-				"component":     map[string]interface{}{"kind": "Namespace"},
-				"configuration": map[string]interface{}{"name": "production"},
-			},
-			map[string]interface{}{
-				"id":        "deploy-1",
-				"component": map[string]interface{}{"kind": "Deployment"},
-				"configuration": map[string]interface{}{
-					"namespace": "default",
-				},
-			},
-		},
-	}
+	nsID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
 
-	rel := map[string]interface{}{
-		"id":      "rel-1",
-		"kind":    "hierarchical",
-		"type":    "parent",
-		"subType": "inventory",
-		"status":  "approved",
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"id": "ns-1",
-							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{
-									[]interface{}{"configuration", "name"},
-								},
-							},
+	ns := &component.ComponentDefinition{
+		Component:     component.Component{Kind: "Namespace"},
+		Configuration: map[string]interface{}{"name": "production"},
+	}
+	ns.ID = nsID
+
+	deploy := &component.ComponentDefinition{
+		Component:     component.Component{Kind: "Deployment"},
+		Configuration: map[string]interface{}{"namespace": "default"},
+	}
+	deploy.ID = deployID
+
+	design := makePatternFile([]*component.ComponentDefinition{ns, deploy}, nil)
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "namespace"}}
+	relStatus := relationship.RelationshipDefinitionStatus("approved")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID: &nsID,
+						Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
 						},
 					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"id": "deploy-1",
-							"patch": map[string]interface{}{
-								"mutatedRef": []interface{}{
-									[]interface{}{"configuration", "namespace"},
-								},
-							},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID: &deployID,
+						Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
 						},
 					},
 				},
 			},
 		},
 	}
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+		RelationshipType: "parent",
+		SubType:          "inventory",
+		Status:           &relStatus,
+		Selectors:        &selectorSet,
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
 
 	actions := p.SideEffects(rel, design)
 	if len(actions) == 0 {
@@ -598,141 +636,6 @@ func TestHierarchicalSideEffects(t *testing.T) {
 	}
 	if actions[0].Value["value"] != "production" {
 		t.Errorf("Expected namespace to be updated to 'production', got %v", actions[0].Value["value"])
-	}
-}
-
-func TestIdentifyAdditions(t *testing.T) {
-	// A deployment references namespace "default" but no Namespace component exists.
-	// Real registry structure: from=* (mutatedRef, the namespaced component),
-	// to=Namespace (mutatorRef, the namespace component to auto-add).
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":        "deploy-1",
-				"component": map[string]interface{}{"kind": "Deployment"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{
-					"namespace": "default",
-				},
-			},
-		},
-		"relationships": []interface{}{},
-	}
-
-	relDef := map[string]interface{}{
-		"id":      "rel-def-1",
-		"kind":    "hierarchical",
-		"type":    "parent",
-		"subType": "inventory",
-		"model":   map[string]interface{}{"name": "kubernetes"},
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind":  "*",
-							"model": map[string]interface{}{"name": "*"},
-							"patch": map[string]interface{}{
-								"mutatedRef": []interface{}{
-									[]interface{}{"configuration", "namespace"},
-								},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind":  "Namespace",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{
-									[]interface{}{"displayName"},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	actions := identifyAdditions(relDef, design)
-	if len(actions) == 0 {
-		t.Fatal("Expected addition actions for missing Namespace")
-	}
-	if actions[0].Op != AddComponentOp {
-		t.Errorf("Expected add_component op, got %s", actions[0].Op)
-	}
-	item := getMapMap(actions[0].Value, "item")
-	if item == nil {
-		t.Fatal("Expected item in action value")
-	}
-	comp := getMapMap(item, "component")
-	if getMapString(comp, "kind") != "Namespace" {
-		t.Errorf("Expected Namespace kind, got %s", getMapString(comp, "kind"))
-	}
-}
-
-func TestIdentifyAdditionsNoAction(t *testing.T) {
-	// Both namespace and deployment exist, so no additions needed.
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":          "ns-1",
-				"component":   map[string]interface{}{"kind": "Namespace"},
-				"model":       map[string]interface{}{"name": "kubernetes"},
-				"displayName": "default",
-			},
-			map[string]interface{}{
-				"id":        "deploy-1",
-				"component": map[string]interface{}{"kind": "Deployment"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{
-					"namespace": "default",
-				},
-			},
-		},
-		"relationships": []interface{}{},
-	}
-
-	relDef := map[string]interface{}{
-		"id":      "rel-def-1",
-		"kind":    "hierarchical",
-		"type":    "parent",
-		"subType": "inventory",
-		"model":   map[string]interface{}{"name": "kubernetes"},
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind":  "*",
-							"model": map[string]interface{}{"name": "*"},
-							"patch": map[string]interface{}{
-								"mutatedRef": []interface{}{
-									[]interface{}{"configuration", "namespace"},
-								},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind":  "Namespace",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{
-									[]interface{}{"displayName"},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	actions := identifyAdditions(relDef, design)
-	if len(actions) != 0 {
-		t.Errorf("Expected no additions, got %d", len(actions))
 	}
 }
 
@@ -960,53 +863,54 @@ func TestNewUUIDNonDeterminism(t *testing.T) {
 func TestAliasIsInvalidStatusMatrix(t *testing.T) {
 	p := &AliasPolicy{}
 
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":        "from-comp",
-				"component": map[string]interface{}{"kind": "Container"},
-				"configuration": map[string]interface{}{
-					"ports": []interface{}{map[string]interface{}{"containerPort": 80}},
-				},
-			},
-			map[string]interface{}{
-				"id":        "to-comp",
-				"component": map[string]interface{}{"kind": "Deployment"},
-				"configuration": map[string]interface{}{
-					"ports": []interface{}{map[string]interface{}{"containerPort": 80}},
-				},
-			},
+	fromID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	toID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+
+	fromComp := &component.ComponentDefinition{
+		Component: component.Component{Kind: "Container"},
+		Configuration: map[string]interface{}{
+			"ports": []interface{}{map[string]interface{}{"containerPort": 80}},
 		},
 	}
+	fromComp.ID = fromID
 
-	makeRel := func(status string) map[string]interface{} {
-		return map[string]interface{}{
-			"kind":    "hierarchical",
-			"type":    "parent",
-			"subType": "alias",
-			"status":  status,
-			"selectors": []interface{}{
-				map[string]interface{}{
-					"allow": map[string]interface{}{
-						"from": []interface{}{
-							map[string]interface{}{
-								"id": "from-comp",
-								"patch": map[string]interface{}{
-									"mutatorRef": []interface{}{
-										[]interface{}{"configuration", "ports"},
-									},
-								},
+	toComp := &component.ComponentDefinition{
+		Component: component.Component{Kind: "Deployment"},
+		Configuration: map[string]interface{}{
+			"ports": []interface{}{map[string]interface{}{"containerPort": 80}},
+		},
+	}
+	toComp.ID = toID
+
+	makeRel := func(status string) *relationship.RelationshipDefinition {
+		mutatorRef := relationship.MutatorRef{[]string{"configuration", "ports"}}
+		relStatus := relationship.RelationshipDefinitionStatus(status)
+		selectorSet := relationship.SelectorSet{
+			relationship.SelectorSetItem{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{
+						{
+							ID: &fromID,
+							Patch: &relationship.RelationshipDefinitionSelectorsPatch{
+								MutatorRef: &mutatorRef,
 							},
 						},
-						"to": []interface{}{
-							map[string]interface{}{
-								"id": "to-comp",
-							},
-						},
+					},
+					To: []relationship.SelectorItem{
+						{ID: &toID},
 					},
 				},
 			},
 		}
+		rel := &relationship.RelationshipDefinition{
+			Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+			RelationshipType: "parent",
+			SubType:          "alias",
+			Status:           &relStatus,
+			Selectors:        &selectorSet,
+		}
+		rel.ID = staticUUID(fmt.Sprintf("test-alias-%s", status))
+		return rel
 	}
 
 	tests := []struct {
@@ -1022,1490 +926,11 @@ func TestAliasIsInvalidStatusMatrix(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.status, func(t *testing.T) {
 			rel := makeRel(tt.status)
+			design := makePatternFile([]*component.ComponentDefinition{fromComp, toComp}, []*relationship.RelationshipDefinition{rel})
 			result := p.IsInvalid(rel, design)
 			if result != tt.expected {
 				t.Errorf("IsInvalid(status=%q) = %v, want %v", tt.status, result, tt.expected)
 			}
 		})
 	}
-}
-
-func TestAliasRefFromRelationshipMissingSelectorParts(t *testing.T) {
-	t.Run("no selectors", func(t *testing.T) {
-		rel := map[string]interface{}{}
-		ref := aliasRefFromRelationship(rel)
-		if ref != nil {
-			t.Errorf("Expected nil, got %v", ref)
-		}
-	})
-
-	t.Run("empty selectors", func(t *testing.T) {
-		rel := map[string]interface{}{
-			"selectors": []interface{}{},
-		}
-		ref := aliasRefFromRelationship(rel)
-		if ref != nil {
-			t.Errorf("Expected nil, got %v", ref)
-		}
-	})
-
-	t.Run("selector without allow", func(t *testing.T) {
-		rel := map[string]interface{}{
-			"selectors": []interface{}{
-				map[string]interface{}{},
-			},
-		}
-		ref := aliasRefFromRelationship(rel)
-		if ref != nil {
-			t.Errorf("Expected nil, got %v", ref)
-		}
-	})
-
-	t.Run("allow without from", func(t *testing.T) {
-		rel := map[string]interface{}{
-			"selectors": []interface{}{
-				map[string]interface{}{
-					"allow": map[string]interface{}{},
-				},
-			},
-		}
-		ref := aliasRefFromRelationship(rel)
-		if ref != nil {
-			t.Errorf("Expected nil, got %v", ref)
-		}
-	})
-
-	t.Run("from without patch", func(t *testing.T) {
-		rel := map[string]interface{}{
-			"selectors": []interface{}{
-				map[string]interface{}{
-					"allow": map[string]interface{}{
-						"from": []interface{}{
-							map[string]interface{}{"id": "comp-1"},
-						},
-					},
-				},
-			},
-		}
-		ref := aliasRefFromRelationship(rel)
-		if ref != nil {
-			t.Errorf("Expected nil, got %v", ref)
-		}
-	})
-
-	t.Run("valid extraction", func(t *testing.T) {
-		rel := map[string]interface{}{
-			"selectors": []interface{}{
-				map[string]interface{}{
-					"allow": map[string]interface{}{
-						"from": []interface{}{
-							map[string]interface{}{
-								"id": "comp-1",
-								"patch": map[string]interface{}{
-									"mutatorRef": []interface{}{
-										[]interface{}{"configuration", "containers", "0"},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		}
-		ref := aliasRefFromRelationship(rel)
-		if len(ref) != 3 || ref[0] != "configuration" || ref[1] != "containers" || ref[2] != "0" {
-			t.Errorf("Expected [configuration containers 0], got %v", ref)
-		}
-	})
-}
-
-func TestGetArrayAwareConfigPaths(t *testing.T) {
-	design := map[string]interface{}{}
-
-	t.Run("direct ref", func(t *testing.T) {
-		comp := map[string]interface{}{
-			"id":            "comp-1",
-			"configuration": map[string]interface{}{"name": "test"},
-		}
-		ref := []string{"configuration", "name"}
-		paths := getArrayAwareConfigPaths(ref, comp, design)
-		if len(paths) != 1 {
-			t.Fatalf("Expected 1 path, got %d", len(paths))
-		}
-		if len(paths[0]) != 2 || paths[0][0] != "configuration" || paths[0][1] != "name" {
-			t.Errorf("Expected [configuration name], got %v", paths[0])
-		}
-	})
-
-	t.Run("direct ref missing value", func(t *testing.T) {
-		comp := map[string]interface{}{
-			"id":            "comp-1",
-			"configuration": map[string]interface{}{},
-		}
-		ref := []string{"configuration", "name"}
-		paths := getArrayAwareConfigPaths(ref, comp, design)
-		if paths != nil {
-			t.Errorf("Expected nil for missing value, got %v", paths)
-		}
-	})
-
-	t.Run("wildcard ref", func(t *testing.T) {
-		comp := map[string]interface{}{
-			"id": "comp-1",
-			"configuration": map[string]interface{}{
-				"containers": []interface{}{
-					map[string]interface{}{"name": "nginx"},
-					map[string]interface{}{"name": "sidecar"},
-				},
-			},
-		}
-		ref := []string{"configuration", "containers", "_"}
-		paths := getArrayAwareConfigPaths(ref, comp, design)
-		if len(paths) != 2 {
-			t.Fatalf("Expected 2 paths, got %d", len(paths))
-		}
-	})
-
-	t.Run("wildcard ref empty array", func(t *testing.T) {
-		comp := map[string]interface{}{
-			"id": "comp-1",
-			"configuration": map[string]interface{}{
-				"containers": []interface{}{},
-			},
-		}
-		ref := []string{"configuration", "containers", "_"}
-		paths := getArrayAwareConfigPaths(ref, comp, design)
-		if paths != nil {
-			t.Errorf("Expected nil for empty array, got %v", paths)
-		}
-	})
-}
-
-func TestAliasIdentifyRelationshipMultiplePaths(t *testing.T) {
-	p := &AliasPolicy{}
-
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":        "deploy-1",
-				"component": map[string]interface{}{"kind": "Deployment"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{
-					"containers": []interface{}{
-						map[string]interface{}{"name": "nginx"},
-						map[string]interface{}{"name": "sidecar"},
-					},
-				},
-			},
-		},
-		"relationships": []interface{}{},
-	}
-
-	relDef := map[string]interface{}{
-		"id":      "alias-def",
-		"kind":    "hierarchical",
-		"type":    "parent",
-		"subType": "alias",
-		"model":   map[string]interface{}{"name": "kubernetes"},
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind":  "Container",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{
-									[]interface{}{"configuration", "containers", "_"},
-								},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind":  "Deployment",
-							"model": map[string]interface{}{"name": "kubernetes"},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	identified := p.IdentifyRelationship(relDef, design)
-	if len(identified) != 2 {
-		t.Fatalf("Expected 2 identified relationships (one per container), got %d", len(identified))
-	}
-	for _, rel := range identified {
-		if getMapString(rel, "status") != "identified" {
-			t.Error("Expected status 'identified'")
-		}
-	}
-}
-
-func TestAliasAlreadyExistsDuplicateDetection(t *testing.T) {
-	patch := map[string]interface{}{
-		"patchStrategy": "replace",
-		"mutatorRef":    []interface{}{[]interface{}{"configuration", "containers", "0"}},
-	}
-
-	existing := map[string]interface{}{
-		"kind":    "hierarchical",
-		"type":    "parent",
-		"subType": "alias",
-		"status":  "approved",
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{map[string]interface{}{"id": "from-1"}},
-					"to": []interface{}{map[string]interface{}{
-						"kind":  "Deployment",
-						"id":    "to-1",
-						"patch": patch,
-					}},
-				},
-			},
-		},
-	}
-
-	newRel := map[string]interface{}{
-		"kind":    "hierarchical",
-		"type":    "parent",
-		"subType": "alias",
-		"status":  "identified",
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{map[string]interface{}{"id": "from-new"}},
-					"to": []interface{}{map[string]interface{}{
-						"kind":  "Deployment",
-						"id":    "to-1",
-						"patch": patch,
-					}},
-				},
-			},
-		},
-	}
-
-	t.Run("duplicate detected", func(t *testing.T) {
-		design := map[string]interface{}{
-			"relationships": []interface{}{existing},
-		}
-		p := &AliasPolicy{}
-		if !p.AlreadyExists(newRel, design) {
-			t.Error("Expected duplicate to be detected")
-		}
-	})
-
-	t.Run("deleted existing skipped", func(t *testing.T) {
-		deletedExisting := deepCopyMap(existing)
-		deletedExisting["status"] = "deleted"
-		design := map[string]interface{}{
-			"relationships": []interface{}{deletedExisting},
-		}
-		p := &AliasPolicy{}
-		if p.AlreadyExists(newRel, design) {
-			t.Error("Expected deleted relationship to be skipped")
-		}
-	})
-
-	t.Run("no duplicate", func(t *testing.T) {
-		design := map[string]interface{}{
-			"relationships": []interface{}{},
-		}
-		p := &AliasPolicy{}
-		if p.AlreadyExists(newRel, design) {
-			t.Error("Expected no duplicate in empty design")
-		}
-	})
-}
-
-func TestAliasSideEffectsByStatus(t *testing.T) {
-	p := &AliasPolicy{}
-
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{"id": "from-comp"},
-			map[string]interface{}{"id": "to-comp"},
-		},
-	}
-
-	rel := map[string]interface{}{
-		"kind":    "hierarchical",
-		"type":    "parent",
-		"subType": "alias",
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"id":   "from-comp",
-							"kind": "Container",
-							"model": map[string]interface{}{
-								"name": "kubernetes",
-							},
-							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{
-									[]interface{}{"configuration", "containers", "0"},
-								},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{"id": "to-comp"},
-					},
-				},
-			},
-		},
-	}
-
-	t.Run("identified triggers add", func(t *testing.T) {
-		r := deepCopyMap(rel)
-		r["status"] = "identified"
-		actions := p.SideEffects(r, design)
-		if len(actions) == 0 {
-			t.Fatal("Expected add component actions for identified status")
-		}
-		if actions[0].Op != AddComponentOp {
-			t.Errorf("Expected add_component, got %s", actions[0].Op)
-		}
-	})
-
-	t.Run("pending triggers add", func(t *testing.T) {
-		r := deepCopyMap(rel)
-		r["status"] = "pending"
-		actions := p.SideEffects(r, design)
-		if len(actions) == 0 {
-			t.Fatal("Expected add component actions for pending status")
-		}
-		if actions[0].Op != AddComponentOp {
-			t.Errorf("Expected add_component, got %s", actions[0].Op)
-		}
-	})
-
-	t.Run("deleted triggers delete", func(t *testing.T) {
-		r := deepCopyMap(rel)
-		r["status"] = "deleted"
-		actions := p.SideEffects(r, design)
-		if len(actions) == 0 {
-			t.Fatal("Expected delete component actions for deleted status")
-		}
-		if actions[0].Op != DeleteComponentOp {
-			t.Errorf("Expected delete_component, got %s", actions[0].Op)
-		}
-	})
-
-	t.Run("approved returns nil", func(t *testing.T) {
-		r := deepCopyMap(rel)
-		r["status"] = "approved"
-		actions := p.SideEffects(r, design)
-		if actions != nil {
-			t.Errorf("Expected nil actions for approved status, got %d", len(actions))
-		}
-	})
-}
-
-// --- policy_hierarchical.go tests ---
-
-func TestHierarchicalDenySelectorRejection(t *testing.T) {
-	p := &HierarchicalParentChildPolicy{}
-
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":            "ns-1",
-				"component":     map[string]interface{}{"kind": "Namespace"},
-				"model":         map[string]interface{}{"name": "kubernetes", "registrant": map[string]interface{}{"kind": "github"}},
-				"configuration": map[string]interface{}{"name": "default"},
-			},
-			map[string]interface{}{
-				"id":            "ns-2",
-				"component":     map[string]interface{}{"kind": "Namespace"},
-				"model":         map[string]interface{}{"name": "kubernetes", "registrant": map[string]interface{}{"kind": "github"}},
-				"configuration": map[string]interface{}{"namespace": "default"},
-			},
-		},
-		"relationships": []interface{}{},
-	}
-
-	relDef := map[string]interface{}{
-		"id":      "rel-def",
-		"kind":    "hierarchical",
-		"type":    "parent",
-		"subType": "inventory",
-		"model":   map[string]interface{}{"name": "kubernetes"},
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind":  "Namespace",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{[]interface{}{"configuration", "name"}},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind":  "Namespace",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"patch": map[string]interface{}{
-								"mutatedRef": []interface{}{[]interface{}{"configuration", "namespace"}},
-							},
-						},
-					},
-				},
-				"deny": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind":  "Namespace",
-							"model": map[string]interface{}{"name": "kubernetes", "registrant": "*"},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind":  "Namespace",
-							"model": map[string]interface{}{"name": "kubernetes", "registrant": "*"},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	identified := p.IdentifyRelationship(relDef, design)
-	if len(identified) != 0 {
-		t.Errorf("Expected denied relationship to be rejected, got %d identified", len(identified))
-	}
-}
-
-func TestHierarchicalFeasibilityRejection(t *testing.T) {
-	p := &HierarchicalParentChildPolicy{}
-
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":            "ns-1",
-				"component":     map[string]interface{}{"kind": "Namespace"},
-				"model":         map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{"name": "default"},
-			},
-			map[string]interface{}{
-				"id":            "svc-1",
-				"component":     map[string]interface{}{"kind": "Service"},
-				"model":         map[string]interface{}{"name": "istio"}, // different model
-				"configuration": map[string]interface{}{"namespace": "default"},
-			},
-		},
-		"relationships": []interface{}{},
-	}
-
-	relDef := map[string]interface{}{
-		"id":      "rel-def",
-		"kind":    "hierarchical",
-		"type":    "parent",
-		"subType": "inventory",
-		"model":   map[string]interface{}{"name": "kubernetes"},
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind":  "Namespace",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{[]interface{}{"configuration", "name"}},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind":  "Deployment",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"patch": map[string]interface{}{
-								"mutatedRef": []interface{}{[]interface{}{"configuration", "namespace"}},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	identified := p.IdentifyRelationship(relDef, design)
-	if len(identified) != 0 {
-		t.Errorf("Expected infeasible relationship to be rejected, got %d identified", len(identified))
-	}
-}
-
-func TestHierarchicalApprovedStatusOnValidPair(t *testing.T) {
-	p := &HierarchicalParentChildPolicy{}
-
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":            "ns-1",
-				"component":     map[string]interface{}{"kind": "Namespace"},
-				"model":         map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{"name": "prod"},
-			},
-			map[string]interface{}{
-				"id":        "deploy-1",
-				"component": map[string]interface{}{"kind": "Deployment"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{
-					"namespace": "prod",
-				},
-			},
-		},
-		"relationships": []interface{}{},
-	}
-
-	relDef := map[string]interface{}{
-		"id":      "rel-def",
-		"kind":    "hierarchical",
-		"type":    "parent",
-		"subType": "inventory",
-		"model":   map[string]interface{}{"name": "kubernetes"},
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind":  "Namespace",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{[]interface{}{"configuration", "name"}},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind":  "Deployment",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"patch": map[string]interface{}{
-								"mutatedRef": []interface{}{[]interface{}{"configuration", "namespace"}},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	identified := p.IdentifyRelationship(relDef, design)
-	if len(identified) != 1 {
-		t.Fatalf("Expected 1 identified relationship, got %d", len(identified))
-	}
-	if getMapString(identified[0], "status") != "approved" {
-		t.Errorf("Expected status 'approved', got %q", getMapString(identified[0], "status"))
-	}
-}
-
-func TestHierarchicalSideEffectsSkippedWhenDeleted(t *testing.T) {
-	p := &HierarchicalParentChildPolicy{}
-
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":            "ns-1",
-				"component":     map[string]interface{}{"kind": "Namespace"},
-				"configuration": map[string]interface{}{"name": "production"},
-			},
-			map[string]interface{}{
-				"id":        "deploy-1",
-				"component": map[string]interface{}{"kind": "Deployment"},
-				"configuration": map[string]interface{}{
-					"namespace": "default",
-				},
-			},
-		},
-	}
-
-	rel := map[string]interface{}{
-		"id":      "rel-1",
-		"kind":    "hierarchical",
-		"type":    "parent",
-		"subType": "inventory",
-		"status":  "deleted",
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"id": "ns-1",
-							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{[]interface{}{"configuration", "name"}},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"id": "deploy-1",
-							"patch": map[string]interface{}{
-								"mutatedRef": []interface{}{[]interface{}{"configuration", "namespace"}},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	actions := p.SideEffects(rel, design)
-	if len(actions) != 0 {
-		t.Errorf("Expected no side effects for deleted status, got %d actions", len(actions))
-	}
-}
-
-// --- policy_binding.go tests ---
-
-func TestBindingTripleMatching(t *testing.T) {
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":        "role-1",
-				"component": map[string]interface{}{"kind": "ClusterRole"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"name":      "admin-role",
-			},
-			map[string]interface{}{
-				"id":        "rb-1",
-				"component": map[string]interface{}{"kind": "ClusterRoleBinding"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"roleRef":   map[string]interface{}{"name": "admin-role"},
-				"subjects":  []interface{}{map[string]interface{}{"name": "my-sa"}},
-			},
-			map[string]interface{}{
-				"id":        "sa-1",
-				"component": map[string]interface{}{"kind": "ServiceAccount"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"name":      "my-sa",
-			},
-		},
-		"relationships": []interface{}{},
-	}
-
-	relDef := map[string]interface{}{
-		"id":      "binding-def",
-		"kind":    "edge",
-		"type":    "binding",
-		"subType": "permission",
-		"model":   map[string]interface{}{"name": "kubernetes"},
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind": "ClusterRole",
-							"match": map[string]interface{}{
-								"from": []interface{}{
-									map[string]interface{}{
-										"kind":       "self",
-										"mutatorRef": []interface{}{[]interface{}{"name"}},
-									},
-								},
-								"to": []interface{}{
-									map[string]interface{}{
-										"kind":       "ClusterRoleBinding",
-										"mutatedRef": []interface{}{[]interface{}{"roleRef", "name"}},
-									},
-								},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind": "ServiceAccount",
-							"match": map[string]interface{}{
-								"from": []interface{}{
-									map[string]interface{}{
-										"kind":       "ClusterRoleBinding",
-										"mutatorRef": []interface{}{[]interface{}{"subjects", "0", "name"}},
-									},
-								},
-								"to": []interface{}{
-									map[string]interface{}{
-										"kind":       "self",
-										"mutatedRef": []interface{}{[]interface{}{"name"}},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	p := &EdgeBindingPolicy{}
-	identified := p.IdentifyRelationship(relDef, design)
-	if len(identified) != 1 {
-		t.Fatalf("Expected 1 binding relationship, got %d", len(identified))
-	}
-	if getMapString(identified[0], "status") != "approved" {
-		t.Error("Expected status 'approved'")
-	}
-}
-
-func TestBindingMismatchRejection(t *testing.T) {
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":        "role-1",
-				"component": map[string]interface{}{"kind": "ClusterRole"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"name":      "admin-role",
-			},
-			map[string]interface{}{
-				"id":        "rb-1",
-				"component": map[string]interface{}{"kind": "ClusterRoleBinding"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"roleRef":   map[string]interface{}{"name": "different-role"}, // mismatch
-				"subjects":  []interface{}{map[string]interface{}{"name": "my-sa"}},
-			},
-			map[string]interface{}{
-				"id":        "sa-1",
-				"component": map[string]interface{}{"kind": "ServiceAccount"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"name":      "my-sa",
-			},
-		},
-		"relationships": []interface{}{},
-	}
-
-	relDef := map[string]interface{}{
-		"id":      "binding-def",
-		"kind":    "edge",
-		"type":    "binding",
-		"subType": "permission",
-		"model":   map[string]interface{}{"name": "kubernetes"},
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind": "ClusterRole",
-							"match": map[string]interface{}{
-								"from": []interface{}{
-									map[string]interface{}{
-										"kind":       "self",
-										"mutatorRef": []interface{}{[]interface{}{"name"}},
-									},
-								},
-								"to": []interface{}{
-									map[string]interface{}{
-										"kind":       "ClusterRoleBinding",
-										"mutatedRef": []interface{}{[]interface{}{"roleRef", "name"}},
-									},
-								},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind": "ServiceAccount",
-							"match": map[string]interface{}{
-								"from": []interface{}{
-									map[string]interface{}{
-										"kind":       "ClusterRoleBinding",
-										"mutatorRef": []interface{}{[]interface{}{"subjects", "0", "name"}},
-									},
-								},
-								"to": []interface{}{
-									map[string]interface{}{
-										"kind":       "self",
-										"mutatedRef": []interface{}{[]interface{}{"name"}},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	p := &EdgeBindingPolicy{}
-	identified := p.IdentifyRelationship(relDef, design)
-	if len(identified) != 0 {
-		t.Errorf("Expected 0 binding relationships for mismatched role, got %d", len(identified))
-	}
-}
-
-func TestBindingDenySelectorEnforcement(t *testing.T) {
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":        "role-1",
-				"component": map[string]interface{}{"kind": "ClusterRole"},
-				"model":     map[string]interface{}{"name": "kubernetes", "registrant": map[string]interface{}{"kind": "github"}},
-				"name":      "admin-role",
-			},
-			map[string]interface{}{
-				"id":        "rb-1",
-				"component": map[string]interface{}{"kind": "ClusterRoleBinding"},
-				"model":     map[string]interface{}{"name": "kubernetes", "registrant": map[string]interface{}{"kind": "github"}},
-				"roleRef":   map[string]interface{}{"name": "admin-role"},
-				"subjects":  []interface{}{map[string]interface{}{"name": "my-sa"}},
-			},
-			map[string]interface{}{
-				"id":        "sa-1",
-				"component": map[string]interface{}{"kind": "ServiceAccount"},
-				"model":     map[string]interface{}{"name": "kubernetes", "registrant": map[string]interface{}{"kind": "github"}},
-				"name":      "my-sa",
-			},
-		},
-		"relationships": []interface{}{},
-	}
-
-	relDef := map[string]interface{}{
-		"id":      "binding-def",
-		"kind":    "edge",
-		"type":    "binding",
-		"subType": "permission",
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind": "ClusterRole",
-							"match": map[string]interface{}{
-								"from": []interface{}{
-									map[string]interface{}{
-										"kind":       "self",
-										"mutatorRef": []interface{}{[]interface{}{"name"}},
-									},
-								},
-								"to": []interface{}{
-									map[string]interface{}{
-										"kind":       "ClusterRoleBinding",
-										"mutatedRef": []interface{}{[]interface{}{"roleRef", "name"}},
-									},
-								},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind": "ServiceAccount",
-							"match": map[string]interface{}{
-								"from": []interface{}{
-									map[string]interface{}{
-										"kind":       "ClusterRoleBinding",
-										"mutatorRef": []interface{}{[]interface{}{"subjects", "0", "name"}},
-									},
-								},
-								"to": []interface{}{
-									map[string]interface{}{
-										"kind":       "self",
-										"mutatedRef": []interface{}{[]interface{}{"name"}},
-									},
-								},
-							},
-						},
-					},
-				},
-				"deny": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind":  "ClusterRole",
-							"model": map[string]interface{}{"name": "kubernetes", "registrant": "*"},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind":  "ServiceAccount",
-							"model": map[string]interface{}{"name": "kubernetes", "registrant": "*"},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	p := &EdgeBindingPolicy{}
-	identified := p.IdentifyRelationship(relDef, design)
-	if len(identified) != 0 {
-		t.Errorf("Expected denied binding to produce 0 results, got %d", len(identified))
-	}
-}
-
-func TestBindingSelfReferenceExclusion(t *testing.T) {
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":        "role-1",
-				"component": map[string]interface{}{"kind": "ClusterRole"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"name":      "admin-role",
-				"roleRef":   map[string]interface{}{"name": "admin-role"},
-				"subjects":  []interface{}{map[string]interface{}{"name": "admin-role"}},
-			},
-		},
-		"relationships": []interface{}{},
-	}
-
-	relDef := map[string]interface{}{
-		"id":      "binding-def",
-		"kind":    "edge",
-		"type":    "binding",
-		"subType": "permission",
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind": "ClusterRole",
-							"match": map[string]interface{}{
-								"from": []interface{}{
-									map[string]interface{}{
-										"kind":       "self",
-										"mutatorRef": []interface{}{[]interface{}{"name"}},
-									},
-								},
-								"to": []interface{}{
-									map[string]interface{}{
-										"kind":       "ClusterRole",
-										"mutatedRef": []interface{}{[]interface{}{"roleRef", "name"}},
-									},
-								},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind": "ClusterRole",
-							"match": map[string]interface{}{
-								"from": []interface{}{
-									map[string]interface{}{
-										"kind":       "ClusterRole",
-										"mutatorRef": []interface{}{[]interface{}{"subjects", "0", "name"}},
-									},
-								},
-								"to": []interface{}{
-									map[string]interface{}{
-										"kind":       "self",
-										"mutatedRef": []interface{}{[]interface{}{"name"}},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	p := &EdgeBindingPolicy{}
-	identified := p.IdentifyRelationship(relDef, design)
-	// With only one component, from==binding or binding==to should be excluded
-	if len(identified) != 0 {
-		t.Errorf("Expected self-reference to be excluded, got %d", len(identified))
-	}
-}
-
-// --- policy_edge_network.go tests ---
-
-func TestEdgeNonBindingImplication(t *testing.T) {
-	p := &EdgeNonBindingPolicy{}
-
-	t.Run("positive", func(t *testing.T) {
-		rel := map[string]interface{}{"kind": "edge", "type": "non-binding"}
-		if !p.IsImplicatedBy(rel) {
-			t.Error("Expected edge non-binding to be implicated")
-		}
-	})
-
-	t.Run("negative binding", func(t *testing.T) {
-		rel := map[string]interface{}{"kind": "edge", "type": "binding"}
-		if p.IsImplicatedBy(rel) {
-			t.Error("Expected edge binding to not be implicated by non-binding policy")
-		}
-	})
-
-	t.Run("negative hierarchical", func(t *testing.T) {
-		rel := map[string]interface{}{"kind": "hierarchical", "type": "parent"}
-		if p.IsImplicatedBy(rel) {
-			t.Error("Expected hierarchical to not be implicated by non-binding policy")
-		}
-	})
-}
-
-func TestEdgeNonBindingIdentifyPositive(t *testing.T) {
-	p := &EdgeNonBindingPolicy{}
-
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":        "svc-1",
-				"component": map[string]interface{}{"kind": "Service"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{
-					"selector": map[string]interface{}{"app": "web"},
-				},
-			},
-			map[string]interface{}{
-				"id":        "deploy-1",
-				"component": map[string]interface{}{"kind": "Deployment"},
-				"model":     map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{
-					"selector": map[string]interface{}{
-						"matchLabels": map[string]interface{}{"app": "web"},
-					},
-				},
-			},
-		},
-		"relationships": []interface{}{},
-	}
-
-	relDef := map[string]interface{}{
-		"id":      "net-def",
-		"kind":    "edge",
-		"type":    "non-binding",
-		"subType": "network",
-		"model":   map[string]interface{}{"name": "kubernetes"},
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind": "Service",
-							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{[]interface{}{"configuration", "selector"}},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind": "Deployment",
-							"patch": map[string]interface{}{
-								"mutatedRef": []interface{}{[]interface{}{"configuration", "selector", "matchLabels"}},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	identified := p.IdentifyRelationship(relDef, design)
-	if len(identified) != 1 {
-		t.Fatalf("Expected 1 identified network relationship, got %d", len(identified))
-	}
-}
-
-func TestEdgeNonBindingSideEffectsDeletedNoop(t *testing.T) {
-	p := &EdgeNonBindingPolicy{}
-
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":            "svc-1",
-				"component":     map[string]interface{}{"kind": "Service"},
-				"configuration": map[string]interface{}{"selector": map[string]interface{}{"app": "web"}},
-			},
-			map[string]interface{}{
-				"id":        "deploy-1",
-				"component": map[string]interface{}{"kind": "Deployment"},
-				"configuration": map[string]interface{}{
-					"selector": map[string]interface{}{"matchLabels": map[string]interface{}{"app": "old"}},
-				},
-			},
-		},
-	}
-
-	rel := map[string]interface{}{
-		"id":      "rel-1",
-		"kind":    "edge",
-		"type":    "non-binding",
-		"subType": "network",
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"id": "svc-1",
-							"patch": map[string]interface{}{
-								"mutatorRef": []interface{}{[]interface{}{"configuration", "selector"}},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"id": "deploy-1",
-							"patch": map[string]interface{}{
-								"mutatedRef": []interface{}{[]interface{}{"configuration", "selector", "matchLabels"}},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	t.Run("deleted returns nil", func(t *testing.T) {
-		r := deepCopyMap(rel)
-		r["status"] = "deleted"
-		actions := p.SideEffects(r, design)
-		if actions != nil {
-			t.Errorf("Expected nil side effects for deleted, got %d", len(actions))
-		}
-	})
-
-	t.Run("approved produces patch", func(t *testing.T) {
-		r := deepCopyMap(rel)
-		r["status"] = "approved"
-		actions := p.SideEffects(r, design)
-		if len(actions) == 0 {
-			t.Fatal("Expected patch actions for approved status with differing values")
-		}
-	})
-}
-
-// --- policy_matchlabels.go tests ---
-
-func TestMatchLabelsGroupingLogic(t *testing.T) {
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":            "svc-1",
-				"component":     map[string]interface{}{"kind": "Service"},
-				"model":         map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{"labels": map[string]interface{}{"app": "web"}},
-			},
-			map[string]interface{}{
-				"id":            "svc-2",
-				"component":     map[string]interface{}{"kind": "Service"},
-				"model":         map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{"labels": map[string]interface{}{"app": "web"}},
-			},
-			map[string]interface{}{
-				"id":            "svc-3",
-				"component":     map[string]interface{}{"kind": "Service"},
-				"model":         map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{"labels": map[string]interface{}{"app": "api"}},
-			},
-		},
-	}
-
-	relDef := map[string]interface{}{
-		"kind":    "hierarchical",
-		"type":    "sibling",
-		"subType": "matchlabels",
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind":  "Service",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"match": map[string]interface{}{
-								"refs": []interface{}{[]interface{}{"configuration", "labels"}},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind":  "Service",
-							"model": map[string]interface{}{"name": "kubernetes"},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	groups := identifyMatchlabels(design, relDef)
-	// svc-1 and svc-2 share app=web, svc-3 has app=api so no group for it
-	found := false
-	for _, g := range groups {
-		if g.Field == "app" && g.Value == "web" {
-			found = true
-			if len(g.Components) != 2 {
-				t.Errorf("Expected 2 components in web group, got %d", len(g.Components))
-			}
-		}
-	}
-	if !found {
-		t.Error("Expected to find group for app=web")
-	}
-}
-
-func TestMatchLabelsDedupInGroup(t *testing.T) {
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":            "svc-1",
-				"component":     map[string]interface{}{"kind": "Service"},
-				"model":         map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{"labels": map[string]interface{}{"app": "web", "env": "prod"}},
-			},
-			map[string]interface{}{
-				"id":            "svc-2",
-				"component":     map[string]interface{}{"kind": "Service"},
-				"model":         map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{"labels": map[string]interface{}{"app": "web", "env": "prod"}},
-			},
-		},
-	}
-
-	relDef := map[string]interface{}{
-		"kind":    "hierarchical",
-		"type":    "sibling",
-		"subType": "matchlabels",
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind":  "Service",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"match": map[string]interface{}{
-								"refs": []interface{}{[]interface{}{"configuration", "labels"}},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind":  "Service",
-							"model": map[string]interface{}{"name": "kubernetes"},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	groups := identifyMatchlabels(design, relDef)
-	for _, g := range groups {
-		ids := make(map[string]bool)
-		for _, comp := range g.Components {
-			id := getMapString(comp, "id")
-			if ids[id] {
-				t.Errorf("Duplicate component %q in group %s=%v", id, g.Field, g.Value)
-			}
-			ids[id] = true
-		}
-	}
-}
-
-func TestMatchLabelsMaxCap(t *testing.T) {
-	// Create more than maxMatchLabels unique label groups
-	var comps []interface{}
-	for i := 0; i < maxMatchLabels+5; i++ {
-		label := fmt.Sprintf("label-%d", i)
-		comps = append(comps, map[string]interface{}{
-			"id":            fmt.Sprintf("svc-%d-a", i),
-			"component":     map[string]interface{}{"kind": "Service"},
-			"model":         map[string]interface{}{"name": "kubernetes"},
-			"configuration": map[string]interface{}{"labels": map[string]interface{}{label: "val"}},
-		})
-		comps = append(comps, map[string]interface{}{
-			"id":            fmt.Sprintf("svc-%d-b", i),
-			"component":     map[string]interface{}{"kind": "Service"},
-			"model":         map[string]interface{}{"name": "kubernetes"},
-			"configuration": map[string]interface{}{"labels": map[string]interface{}{label: "val"}},
-		})
-	}
-
-	design := map[string]interface{}{
-		"components": comps,
-	}
-
-	relDef := map[string]interface{}{
-		"kind":    "hierarchical",
-		"type":    "sibling",
-		"subType": "matchlabels",
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind":  "Service",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"match": map[string]interface{}{
-								"refs": []interface{}{[]interface{}{"configuration", "labels"}},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind":  "Service",
-							"model": map[string]interface{}{"name": "kubernetes"},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	groups := identifyMatchlabels(design, relDef)
-	if len(groups) > maxMatchLabels {
-		t.Errorf("Expected at most %d groups, got %d", maxMatchLabels, len(groups))
-	}
-}
-
-func TestMatchLabelsDeterministicID(t *testing.T) {
-	design := map[string]interface{}{
-		"components": []interface{}{
-			map[string]interface{}{
-				"id":            "svc-1",
-				"component":     map[string]interface{}{"kind": "Service"},
-				"model":         map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{"labels": map[string]interface{}{"app": "web"}},
-			},
-			map[string]interface{}{
-				"id":            "svc-2",
-				"component":     map[string]interface{}{"kind": "Service"},
-				"model":         map[string]interface{}{"name": "kubernetes"},
-				"configuration": map[string]interface{}{"labels": map[string]interface{}{"app": "web"}},
-			},
-		},
-		"relationships": []interface{}{},
-	}
-
-	relDef := map[string]interface{}{
-		"id":      "ml-def",
-		"kind":    "hierarchical",
-		"type":    "sibling",
-		"subType": "matchlabels",
-		"selectors": []interface{}{
-			map[string]interface{}{
-				"allow": map[string]interface{}{
-					"from": []interface{}{
-						map[string]interface{}{
-							"kind":  "Service",
-							"model": map[string]interface{}{"name": "kubernetes"},
-							"match": map[string]interface{}{
-								"refs": []interface{}{[]interface{}{"configuration", "labels"}},
-							},
-						},
-					},
-					"to": []interface{}{
-						map[string]interface{}{
-							"kind":  "Service",
-							"model": map[string]interface{}{"name": "kubernetes"},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	p := &MatchLabelsPolicy{}
-	rels1 := p.IdentifyRelationship(relDef, design)
-	rels2 := p.IdentifyRelationship(relDef, design)
-
-	if len(rels1) != len(rels2) {
-		t.Fatalf("Different number of identified rels: %d vs %d", len(rels1), len(rels2))
-	}
-
-	ids1 := make(map[string]bool)
-	for _, r := range rels1 {
-		ids1[getMapString(r, "id")] = true
-	}
-	for _, r := range rels2 {
-		id := getMapString(r, "id")
-		if !ids1[id] {
-			t.Errorf("ID %q from second run not found in first run", id)
-		}
-	}
-}
-
-func TestMatchLabelsMalformedInput(t *testing.T) {
-	t.Run("nil config", func(t *testing.T) {
-		design := map[string]interface{}{
-			"components": []interface{}{
-				map[string]interface{}{
-					"id":        "svc-1",
-					"component": map[string]interface{}{"kind": "Service"},
-					"model":     map[string]interface{}{"name": "kubernetes"},
-				},
-				map[string]interface{}{
-					"id":        "svc-2",
-					"component": map[string]interface{}{"kind": "Service"},
-					"model":     map[string]interface{}{"name": "kubernetes"},
-				},
-			},
-		}
-
-		relDef := map[string]interface{}{
-			"kind":    "hierarchical",
-			"type":    "sibling",
-			"subType": "matchlabels",
-			"selectors": []interface{}{
-				map[string]interface{}{
-					"allow": map[string]interface{}{
-						"from": []interface{}{
-							map[string]interface{}{
-								"kind":  "Service",
-								"model": map[string]interface{}{"name": "kubernetes"},
-								"match": map[string]interface{}{
-									"refs": []interface{}{[]interface{}{"configuration", "labels"}},
-								},
-							},
-						},
-						"to": []interface{}{
-							map[string]interface{}{
-								"kind":  "Service",
-								"model": map[string]interface{}{"name": "kubernetes"},
-							},
-						},
-					},
-				},
-			},
-		}
-
-		groups := identifyMatchlabels(design, relDef)
-		if len(groups) != 0 {
-			t.Errorf("Expected 0 groups for nil config, got %d", len(groups))
-		}
-	})
-
-	t.Run("empty match refs", func(t *testing.T) {
-		design := map[string]interface{}{
-			"components": []interface{}{
-				map[string]interface{}{
-					"id":            "svc-1",
-					"component":     map[string]interface{}{"kind": "Service"},
-					"model":         map[string]interface{}{"name": "kubernetes"},
-					"configuration": map[string]interface{}{"labels": map[string]interface{}{"app": "web"}},
-				},
-			},
-		}
-
-		relDef := map[string]interface{}{
-			"kind":    "hierarchical",
-			"type":    "sibling",
-			"subType": "matchlabels",
-			"selectors": []interface{}{
-				map[string]interface{}{
-					"allow": map[string]interface{}{
-						"from": []interface{}{
-							map[string]interface{}{
-								"kind":  "Service",
-								"model": map[string]interface{}{"name": "kubernetes"},
-								"match": map[string]interface{}{
-									"refs": []interface{}{},
-								},
-							},
-						},
-						"to": []interface{}{
-							map[string]interface{}{
-								"kind":  "Service",
-								"model": map[string]interface{}{"name": "kubernetes"},
-							},
-						},
-					},
-				},
-			},
-		}
-
-		groups := identifyMatchlabels(design, relDef)
-		if len(groups) != 0 {
-			t.Errorf("Expected 0 groups for empty refs, got %d", len(groups))
-		}
-	})
 }

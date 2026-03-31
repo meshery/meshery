@@ -1,6 +1,12 @@
 package policies
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
+)
 
 // EdgeBindingPolicy handles edge binding relationships (3-party: from, binding, to).
 type EdgeBindingPolicy struct{}
@@ -9,287 +15,246 @@ func (p *EdgeBindingPolicy) Identifier() string {
 	return "edge_binding"
 }
 
-func (p *EdgeBindingPolicy) IsImplicatedBy(rel map[string]interface{}) bool {
-	return strings.EqualFold(getMapString(rel, "kind"), "edge") &&
-		strings.EqualFold(getMapString(rel, "type"), "binding")
+func (p *EdgeBindingPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinition) bool {
+	return strings.EqualFold(string(rel.Kind), "edge") &&
+		strings.EqualFold(rel.RelationshipType, "binding")
 }
 
-func (p *EdgeBindingPolicy) IsInvalid(rel, designFile map[string]interface{}) bool {
-	return fromOrToComponentsDontExist(rel, designFile)
+func (p *EdgeBindingPolicy) IsInvalid(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
+	return fromOrToComponentsDontExist(rel, design)
 }
 
-func (p *EdgeBindingPolicy) AlreadyExists(rel, designFile map[string]interface{}) bool {
+func (p *EdgeBindingPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
 	return false
 }
 
-func (p *EdgeBindingPolicy) IdentifyRelationship(relDef, designFile map[string]interface{}) []map[string]interface{} {
-	return identifyBindingRelationships(relDef, designFile)
+func (p *EdgeBindingPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
+	return identifyBindingRelationships(relDef, design)
 }
 
-func (p *EdgeBindingPolicy) SideEffects(rel, designFile map[string]interface{}) []PolicyAction {
-	status := getMapString(rel, "status")
-	if status == "deleted" {
+func (p *EdgeBindingPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
+	if getRelStatus(rel) == "deleted" {
 		return nil
 	}
-	// Try standard patch first (from selector patch fields).
-	actions := patchMutatorsAction(rel, designFile)
+	actions := patchMutatorsAction(rel, design)
 	if len(actions) > 0 {
 		return actions
 	}
-	// For binding relationships, the match fields contain the mutator/mutated refs.
-	// Extract them and create patch actions for the binding component.
-	return patchBindingMatchFields(rel, designFile)
+	return patchBindingMatchFields(rel, design)
 }
 
 // patchBindingMatchFields patches the binding component's configuration
 // using values from the match fields of the binding relationship selectors.
-func patchBindingMatchFields(rel, designFile map[string]interface{}) []PolicyAction {
+func patchBindingMatchFields(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
+	if rel.Selectors == nil {
+		return nil
+	}
 	var actions []PolicyAction
-	selectors := getMapSlice(rel, "selectors")
 
-	for _, s := range selectors {
-		selectorSet, ok := s.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		allow := getMapMap(selectorSet, "allow")
-		if allow == nil {
-			continue
-		}
-
-		for _, key := range []string{"from", "to"} {
-			arr := getMapSlice(allow, key)
-			if len(arr) == 0 {
+	for _, ss := range *rel.Selectors {
+		for _, selArr := range [][]relationship.SelectorItem{ss.Allow.From, ss.Allow.To} {
+			if len(selArr) == 0 {
 				continue
 			}
-			sel, ok := arr[0].(map[string]interface{})
-			if !ok {
+			sel := selArr[0]
+			if sel.Match == nil {
 				continue
 			}
-			match := getMapMap(sel, "match")
-			if match == nil {
-				continue
-			}
-			compID := getMapString(sel, "id")
-			comp := componentDeclarationByID(designFile, compID)
+			compID := selectorItemID(sel)
+			comp := componentDeclarationByID(design, compID)
 			if comp == nil {
 				continue
 			}
 
-			// Each match has from/to with mutatorRef or mutatedRef.
-			// Find pairs and patch the mutated side with the mutator value.
-			for _, mKey := range []string{"from", "to"} {
-				mArr := getMapSlice(match, mKey)
-				if len(mArr) == 0 {
-					continue
-				}
-				mSel, ok := mArr[0].(map[string]interface{})
-				if !ok {
-					continue
-				}
-
-				mutatorRefs := getMapSlice(mSel, "mutatorRef")
-				matchCompID := getMapString(mSel, "id")
-				matchComp := componentDeclarationByID(designFile, matchCompID)
-				if matchComp == nil {
-					continue
-				}
-
-				if mutatorRefs != nil {
-					// This side is the source. Find mutatedRef on the other side.
-					otherKey := "to"
-					if mKey == "to" {
-						otherKey = "from"
-					}
-					otherArr := getMapSlice(match, otherKey)
-					if len(otherArr) == 0 {
-						continue
-					}
-					otherSel, ok := otherArr[0].(map[string]interface{})
-					if !ok {
-						continue
-					}
-					otherMutatedRefs := getMapSlice(otherSel, "mutatedRef")
-					otherID := getMapString(otherSel, "id")
-					otherComp := componentDeclarationByID(designFile, otherID)
-					if otherComp == nil || otherMutatedRefs == nil {
-						continue
-					}
-
-					count := len(mutatorRefs)
-					if len(otherMutatedRefs) < count {
-						count = len(otherMutatedRefs)
-					}
-
-					for i := 0; i < count; i++ {
-						mutatorPath := interfaceToStringSlice(mutatorRefs[i])
-						mutatedPath := interfaceToStringSlice(otherMutatedRefs[i])
-
-						mutatorValue := objectGetNestedWithSpecFallback(matchComp, mutatorPath)
-						oldValue := objectGetNestedWithSpecFallback(otherComp, mutatedPath)
-
-						if deepEqual(mutatorValue, oldValue) || mutatorValue == nil {
-							continue
-						}
-
-						actions = append(actions, PolicyAction{
-							Op: getComponentUpdateOp(mutatedPath),
-							Value: map[string]interface{}{
-								"id":    otherID,
-								"path":  mutatedPath,
-								"value": mutatorValue,
-							},
-						})
-					}
-				}
-			}
+			actions = append(actions, patchBindingMatchFieldsForSelector(sel.Match, comp, design)...)
 		}
 	}
 	return actions
 }
 
-// identifyBindingRelationships identifies 3-party binding relationships.
-// For each (from, binding, to) triple, validates that from-binding and binding-to match
-// via the selector's match field, then creates an identified relationship.
-func identifyBindingRelationships(relDef, designFile map[string]interface{}) []map[string]interface{} {
-	comps := getMapSlice(designFile, "components")
-	selectors := getMapSlice(relDef, "selectors")
-	var identified []map[string]interface{}
+// patchBindingMatchFieldsForSelector processes match fields for a single selector.
+func patchBindingMatchFieldsForSelector(match *relationship.MatchSelector, comp *component.ComponentDefinition, design *pattern.PatternFile) []PolicyAction {
+	var actions []PolicyAction
 
-	for _, s := range selectors {
-		selectorSet, ok := s.(map[string]interface{})
-		if !ok {
+	type matchSide struct {
+		self  *[]relationship.MatchSelectorItem
+		other *[]relationship.MatchSelectorItem
+	}
+	sides := []matchSide{
+		{match.From, match.To},
+		{match.To, match.From},
+	}
+	for _, ms := range sides {
+		if ms.self == nil || len(*ms.self) == 0 {
 			continue
 		}
-		allow := getMapMap(selectorSet, "allow")
-		if allow == nil {
+		mSel := (*ms.self)[0]
+		if mSel.MutatorRef == nil {
 			continue
 		}
-		deny := getMapMap(selectorSet, "deny")
+		matchComp := findMatchSelectorComponent(mSel, design)
+		if matchComp == nil {
+			continue
+		}
 
-		fromSelectorArr := getMapSlice(allow, "from")
-		toSelectorArr := getMapSlice(allow, "to")
+		if ms.other == nil || len(*ms.other) == 0 {
+			continue
+		}
+		otherSel := (*ms.other)[0]
+		if otherSel.MutatedRef == nil {
+			continue
+		}
+		otherComp := findMatchSelectorComponent(otherSel, design)
+		if otherComp == nil {
+			continue
+		}
 
-		// Index from selectors by component kind.
-		fromSelByKind := make(map[string]map[string]interface{})
-		for _, fs := range fromSelectorArr {
-			fromSel, ok := fs.(map[string]interface{})
-			if !ok {
+		count := len(*mSel.MutatorRef)
+		if len(*otherSel.MutatedRef) < count {
+			count = len(*otherSel.MutatedRef)
+		}
+
+		for i := 0; i < count; i++ {
+			mutatorPath := (*mSel.MutatorRef)[i]
+			mutatedPath := (*otherSel.MutatedRef)[i]
+
+			matchCompMap, _ := toGenericMap(matchComp)
+			otherCompMap, _ := toGenericMap(otherComp)
+			mutatorValue := objectGetNestedWithSpecFallback(matchCompMap, mutatorPath)
+			oldValue := objectGetNestedWithSpecFallback(otherCompMap, mutatedPath)
+
+			if deepEqual(mutatorValue, oldValue) || mutatorValue == nil {
 				continue
 			}
-			fromSelByKind[getMapString(fromSel, "kind")] = fromSel
+			actions = append(actions, PolicyAction{
+				Op: getComponentUpdateOp(mutatedPath),
+				Value: map[string]interface{}{
+					"id":    otherComp.ID.String(),
+					"path":  mutatedPath,
+					"value": mutatorValue,
+				},
+			})
+		}
+	}
+	return actions
+}
+
+// findMatchSelectorComponent finds the component referenced by a MatchSelectorItem.
+func findMatchSelectorComponent(mSel relationship.MatchSelectorItem, design *pattern.PatternFile) *component.ComponentDefinition {
+	if mSel.ID == nil {
+		return nil
+	}
+	return componentDeclarationByID(design, mSel.ID.String())
+}
+
+// identifyBindingRelationships identifies 3-party binding relationships.
+func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
+	if relDef.Selectors == nil {
+		return nil
+	}
+	var identified []*relationship.RelationshipDefinition
+
+	for _, ss := range *relDef.Selectors {
+		fromSelByKind := make(map[string]relationship.SelectorItem)
+		for _, fromSel := range ss.Allow.From {
+			fromSelByKind[selectorItemKind(fromSel)] = fromSel
 		}
 
-		// Collect binding component kinds from match selectors.
-		bindingKinds := collectBindingKinds(fromSelectorArr)
+		bindingKinds := collectBindingKindsTyped(ss.Allow.From)
+		toSelByPair := indexToSelectorsByKindPairTyped(ss.Allow.To)
 
-		// Index to selectors by "toKind#bindingKind".
-		toSelByPair := indexToSelectorsByKindPair(toSelectorArr)
-
-		// Pre-filter from and to components.
-		fromComps := filterComponentsByKindSet(comps, fromSelByKind)
-		toComps := filterComponentsByToSelectors(comps, toSelectorArr)
+		fromComps := filterComponentsByKindSetTyped(design.Components, fromSelByKind)
+		toComps := filterComponentsByToSelectorsTyped(design.Components, ss.Allow.To)
 
 		for bindingKind := range bindingKinds {
-			bindingDecls := filterComponentsByKind(comps, bindingKind)
+			bindingDecls := filterComponentsByKindTyped(design.Components, bindingKind)
 			if len(bindingDecls) == 0 {
 				continue
 			}
 
 			for _, fromDecl := range fromComps {
-				fromKind := getMapString(getMapMap(fromDecl, "component"), "kind")
+				fromKind := fromDecl.Component.Kind
 				fromSel, exists := fromSelByKind[fromKind]
 				if !exists {
 					continue
 				}
 
 				for _, bindingDecl := range bindingDecls {
-					if getMapString(fromDecl, "id") == getMapString(bindingDecl, "id") {
+					if fromDecl.ID == bindingDecl.ID {
 						continue
 					}
-					if !isValidBinding(fromDecl, bindingDecl, fromSel) {
+					if !isValidBindingTyped(fromDecl, bindingDecl, fromSel, design) {
 						continue
 					}
 
 					for _, toDecl := range toComps {
-						if getMapString(toDecl, "id") == getMapString(bindingDecl, "id") {
+						if toDecl.ID == bindingDecl.ID {
 							continue
 						}
-
-						toKind := getMapString(getMapMap(toDecl, "component"), "kind")
+						toKind := toDecl.Component.Kind
 						toSel, exists := toSelByPair[toKind+"#"+bindingKind]
 						if !exists {
 							continue
 						}
 
-						if deny != nil && isRelationshipDenied(fromDecl, toDecl, deny) {
+						if ss.Deny != nil && isRelationshipDenied(fromDecl, toDecl, ss.Deny) {
+							continue
+						}
+						if !isValidBindingTyped(bindingDecl, toDecl, toSel, design) {
 							continue
 						}
 
-						if !isValidBinding(bindingDecl, toDecl, toSel) {
-							continue
-						}
+						newFromSel := fromSel
+						newFromSel.ID = &fromDecl.ID
+						patchBindingSelectorIDsTyped(&newFromSel, fromDecl.ID.String(), bindingDecl.ID.String())
 
-						fromDeclID := getMapString(fromDecl, "id")
-						bindingDeclID := getMapString(bindingDecl, "id")
-						toDeclID := getMapString(toDecl, "id")
+						newToSel := toSel
+						newToSel.ID = &toDecl.ID
+						patchBindingSelectorIDsTyped(&newToSel, bindingDecl.ID.String(), toDecl.ID.String())
 
-						newFromSel := deepCopyMap(fromSel)
-						patchBindingSelectorIDs(newFromSel, fromDeclID, fromDeclID, bindingDeclID)
-
-						newToSel := deepCopyMap(toSel)
-						patchBindingSelectorIDs(newToSel, toDeclID, bindingDeclID, toDeclID)
-
-						selectorDecl := map[string]interface{}{
-							"allow": map[string]interface{}{
-								"from": []interface{}{newFromSel},
-								"to":   []interface{}{newToSel},
+						selectorSetItem := relationship.SelectorSetItem{
+							Allow: relationship.Selector{
+								From: []relationship.SelectorItem{newFromSel},
+								To:   []relationship.SelectorItem{newToSel},
 							},
 						}
 
 						seed := map[string]interface{}{
-							"from":    fromDeclID,
-							"binding": bindingDeclID,
-							"to":      toDeclID,
-							"relId":   getMapString(relDef, "id"),
+							"from":    fromDecl.ID.String(),
+							"binding": bindingDecl.ID.String(),
+							"to":      toDecl.ID.String(),
+							"relId":   relDef.ID.String(),
 						}
 
-						rel := deepCopyMap(relDef)
-						rel["id"] = staticUUID(seed).String()
-						rel["selectors"] = []interface{}{selectorDecl}
-						rel["status"] = "approved"
+						decl := deepCopyRelDef(relDef)
+						decl.ID = staticUUID(seed)
+						selectors := relationship.SelectorSet{selectorSetItem}
+						decl.Selectors = &selectors
+						setRelStatus(decl, "approved")
 
-						identified = append(identified, rel)
+						identified = append(identified, decl)
 					}
 				}
 			}
 		}
 	}
-
 	return identified
 }
 
-// collectBindingKinds extracts binding component kinds from from selectors' match fields.
-func collectBindingKinds(fromSelectorArr []interface{}) map[string]bool {
+// collectBindingKindsTyped extracts binding component kinds from from selectors' match fields.
+func collectBindingKindsTyped(fromSels []relationship.SelectorItem) map[string]bool {
 	kinds := make(map[string]bool)
-	for _, fs := range fromSelectorArr {
-		fromSel, ok := fs.(map[string]interface{})
-		if !ok {
+	for _, fromSel := range fromSels {
+		if fromSel.Match == nil {
 			continue
 		}
-		match := getMapMap(fromSel, "match")
-		if match == nil {
-			continue
-		}
-		for _, key := range []string{"from", "to"} {
-			for _, mv := range getMapSlice(match, key) {
-				mSel, ok := mv.(map[string]interface{})
-				if !ok {
-					continue
-				}
-				kind := getMapString(mSel, "kind")
-				if kind != "" && !strings.EqualFold(kind, "self") {
-					kinds[kind] = true
+		for _, matchSels := range []*[]relationship.MatchSelectorItem{fromSel.Match.From, fromSel.Match.To} {
+			if matchSels == nil {
+				continue
+			}
+			for _, mSel := range *matchSels {
+				if mSel.Kind != "" && !strings.EqualFold(mSel.Kind, "self") {
+					kinds[mSel.Kind] = true
 				}
 			}
 		}
@@ -297,28 +262,21 @@ func collectBindingKinds(fromSelectorArr []interface{}) map[string]bool {
 	return kinds
 }
 
-// indexToSelectorsByKindPair indexes to selectors by "toKind#matchKind".
-func indexToSelectorsByKindPair(toSelectorArr []interface{}) map[string]map[string]interface{} {
-	result := make(map[string]map[string]interface{})
-	for _, ts := range toSelectorArr {
-		toSel, ok := ts.(map[string]interface{})
-		if !ok {
+// indexToSelectorsByKindPairTyped indexes to selectors by "toKind#matchKind".
+func indexToSelectorsByKindPairTyped(toSels []relationship.SelectorItem) map[string]relationship.SelectorItem {
+	result := make(map[string]relationship.SelectorItem)
+	for _, toSel := range toSels {
+		toKind := selectorItemKind(toSel)
+		if toSel.Match == nil {
 			continue
 		}
-		toKind := getMapString(toSel, "kind")
-		match := getMapMap(toSel, "match")
-		if match == nil {
-			continue
-		}
-		for _, key := range []string{"from", "to"} {
-			for _, mv := range getMapSlice(match, key) {
-				mSel, ok := mv.(map[string]interface{})
-				if !ok {
-					continue
-				}
-				matchKind := getMapString(mSel, "kind")
-				if matchKind != "" && !strings.EqualFold(matchKind, "self") {
-					result[toKind+"#"+matchKind] = toSel
+		for _, matchSels := range []*[]relationship.MatchSelectorItem{toSel.Match.From, toSel.Match.To} {
+			if matchSels == nil {
+				continue
+			}
+			for _, mSel := range *matchSels {
+				if mSel.Kind != "" && !strings.EqualFold(mSel.Kind, "self") {
+					result[toKind+"#"+mSel.Kind] = toSel
 				}
 			}
 		}
@@ -326,40 +284,33 @@ func indexToSelectorsByKindPair(toSelectorArr []interface{}) map[string]map[stri
 	return result
 }
 
-// patchBindingSelectorIDs sets the IDs in a binding selector and its match field.
-func patchBindingSelectorIDs(sel map[string]interface{}, selectorID, matchFromID, matchToID string) {
-	sel["id"] = selectorID
-	match := getMapMap(sel, "match")
-	if match == nil {
+// patchBindingSelectorIDsTyped sets the IDs in a binding selector's match field.
+func patchBindingSelectorIDsTyped(sel *relationship.SelectorItem, matchFromID, matchToID string) {
+	if sel.Match == nil {
 		return
 	}
-	fromArr := getMapSlice(match, "from")
-	if len(fromArr) > 0 {
-		if f, ok := fromArr[0].(map[string]interface{}); ok {
-			f["id"] = matchFromID
-		}
+	fromUUID, _ := uuidFromString(matchFromID)
+	toUUID, _ := uuidFromString(matchToID)
+	if sel.Match.From != nil && len(*sel.Match.From) > 0 {
+		(*sel.Match.From)[0].ID = &fromUUID
 	}
-	toArr := getMapSlice(match, "to")
-	if len(toArr) > 0 {
-		if t, ok := toArr[0].(map[string]interface{}); ok {
-			t["id"] = matchToID
-		}
+	if sel.Match.To != nil && len(*sel.Match.To) > 0 {
+		(*sel.Match.To)[0].ID = &toUUID
 	}
 }
 
-// isValidBinding checks if two components match via a binding selector's match field.
-func isValidBinding(comp1, comp2, selector map[string]interface{}) bool {
-	match := getMapMap(selector, "match")
-	if match == nil {
+// isValidBindingTyped checks if two components match via a binding selector's match field.
+func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relationship.SelectorItem, design *pattern.PatternFile) bool {
+	if sel.Match == nil {
 		return false
 	}
 
-	mutatorDecl, mutatorPaths := extractMutatorFromMatch(match, comp1, comp2)
-	mutatedDecl, mutatedPaths := extractMutatedFromMatch(match, comp1, comp2)
-	if mutatorDecl == nil || mutatedDecl == nil {
-		return false
-	}
-	if len(mutatorPaths) == 0 || len(mutatedPaths) == 0 {
+	comp1Map, _ := toGenericMap(comp1)
+	comp2Map, _ := toGenericMap(comp2)
+
+	mutatorDecl, mutatorPaths := extractMutatorFromMatchTyped(sel.Match, comp1Map, comp2Map)
+	mutatedDecl, mutatedPaths := extractMutatedFromMatchTyped(sel.Match, comp1Map, comp2Map)
+	if mutatorDecl == nil || mutatedDecl == nil || len(mutatorPaths) == 0 || len(mutatedPaths) == 0 {
 		return false
 	}
 
@@ -369,116 +320,78 @@ func isValidBinding(comp1, comp2, selector map[string]interface{}) bool {
 	}
 
 	for i := 0; i < count; i++ {
-		fromPath := interfaceToStringSlice(mutatorPaths[i])
-		toPath := interfaceToStringSlice(mutatedPaths[i])
-
-		resolvedFrom := resolvePath(fromPath, mutatorDecl)
-		resolvedTo := resolvePath(toPath, mutatedDecl)
-
+		resolvedFrom := resolvePath(mutatorPaths[i], mutatorDecl)
+		resolvedTo := resolvePath(mutatedPaths[i], mutatedDecl)
 		val1 := objectGetNestedWithSpecFallback(mutatorDecl, resolvedFrom)
 		val2 := objectGetNestedWithSpecFallback(mutatedDecl, resolvedTo)
-
-		if !deepEqual(val1, val2) {
+		if val1 != nil && val2 != nil && !deepEqual(val1, val2) {
 			return false
 		}
 	}
-
 	return true
 }
 
-// extractMutatorFromMatch finds the mutator declaration and ref paths from a match field.
-func extractMutatorFromMatch(match, comp1, comp2 map[string]interface{}) (map[string]interface{}, []interface{}) {
-	fromArr := getMapSlice(match, "from")
-	if len(fromArr) > 0 {
-		if from, ok := fromArr[0].(map[string]interface{}); ok {
-			if refs := getMapSlice(from, "mutatorRef"); refs != nil {
-				return comp1, refs
-			}
+// extractMutatorFromMatchTyped finds the mutator declaration and ref paths from a match field.
+func extractMutatorFromMatchTyped(match *relationship.MatchSelector, comp1Map, comp2Map map[string]interface{}) (map[string]interface{}, [][]string) {
+	if match.From != nil && len(*match.From) > 0 {
+		if (*match.From)[0].MutatorRef != nil {
+			return comp1Map, *(*match.From)[0].MutatorRef
 		}
 	}
-	toArr := getMapSlice(match, "to")
-	if len(toArr) > 0 {
-		if to, ok := toArr[0].(map[string]interface{}); ok {
-			if refs := getMapSlice(to, "mutatorRef"); refs != nil {
-				return comp2, refs
-			}
+	if match.To != nil && len(*match.To) > 0 {
+		if (*match.To)[0].MutatorRef != nil {
+			return comp2Map, *(*match.To)[0].MutatorRef
 		}
 	}
 	return nil, nil
 }
 
-// extractMutatedFromMatch finds the mutated declaration and ref paths from a match field.
-func extractMutatedFromMatch(match, comp1, comp2 map[string]interface{}) (map[string]interface{}, []interface{}) {
-	fromArr := getMapSlice(match, "from")
-	if len(fromArr) > 0 {
-		if from, ok := fromArr[0].(map[string]interface{}); ok {
-			if refs := getMapSlice(from, "mutatedRef"); refs != nil {
-				return comp1, refs
-			}
+// extractMutatedFromMatchTyped finds the mutated declaration and ref paths from a match field.
+func extractMutatedFromMatchTyped(match *relationship.MatchSelector, comp1Map, comp2Map map[string]interface{}) (map[string]interface{}, [][]string) {
+	if match.From != nil && len(*match.From) > 0 {
+		if (*match.From)[0].MutatedRef != nil {
+			return comp1Map, *(*match.From)[0].MutatedRef
 		}
 	}
-	toArr := getMapSlice(match, "to")
-	if len(toArr) > 0 {
-		if to, ok := toArr[0].(map[string]interface{}); ok {
-			if refs := getMapSlice(to, "mutatedRef"); refs != nil {
-				return comp2, refs
-			}
+	if match.To != nil && len(*match.To) > 0 {
+		if (*match.To)[0].MutatedRef != nil {
+			return comp2Map, *(*match.To)[0].MutatedRef
 		}
 	}
 	return nil, nil
 }
 
-// filterComponentsByKind returns components matching the given kind.
-func filterComponentsByKind(comps []interface{}, kind string) []map[string]interface{} {
-	var result []map[string]interface{}
-	for _, ci := range comps {
-		comp, ok := ci.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		compKind := getMapString(getMapMap(comp, "component"), "kind")
-		if matchName(compKind, kind) {
+// filterComponentsByKindTyped returns components matching the given kind.
+func filterComponentsByKindTyped(comps []*component.ComponentDefinition, kind string) []*component.ComponentDefinition {
+	var result []*component.ComponentDefinition
+	for _, comp := range comps {
+		if matchName(comp.Component.Kind, kind) {
 			result = append(result, comp)
 		}
 	}
 	return result
 }
 
-// filterComponentsByKindSet returns components whose kind is in the given set.
-func filterComponentsByKindSet(comps []interface{}, kindSet map[string]map[string]interface{}) []map[string]interface{} {
-	var result []map[string]interface{}
-	for _, ci := range comps {
-		comp, ok := ci.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		compKind := getMapString(getMapMap(comp, "component"), "kind")
-		if _, exists := kindSet[compKind]; exists {
+// filterComponentsByKindSetTyped returns components whose kind is in the given set.
+func filterComponentsByKindSetTyped(comps []*component.ComponentDefinition, kindSet map[string]relationship.SelectorItem) []*component.ComponentDefinition {
+	var result []*component.ComponentDefinition
+	for _, comp := range comps {
+		if _, exists := kindSet[comp.Component.Kind]; exists {
 			result = append(result, comp)
 		}
 	}
 	return result
 }
 
-// filterComponentsByToSelectors returns components matching any to selector kind.
-func filterComponentsByToSelectors(comps, toSelectorArr []interface{}) []map[string]interface{} {
+// filterComponentsByToSelectorsTyped returns components matching any to selector kind.
+func filterComponentsByToSelectorsTyped(comps []*component.ComponentDefinition, toSels []relationship.SelectorItem) []*component.ComponentDefinition {
 	toKinds := make(map[string]bool)
-	for _, ts := range toSelectorArr {
-		toSel, ok := ts.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		toKinds[getMapString(toSel, "kind")] = true
+	for _, toSel := range toSels {
+		toKinds[selectorItemKind(toSel)] = true
 	}
-
-	var result []map[string]interface{}
-	for _, ci := range comps {
-		comp, ok := ci.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		compKind := getMapString(getMapMap(comp, "component"), "kind")
-		if toKinds[compKind] || toKinds["*"] {
+	var result []*component.ComponentDefinition
+	for _, comp := range comps {
+		if toKinds[comp.Component.Kind] || toKinds["*"] {
 			result = append(result, comp)
 		}
 	}

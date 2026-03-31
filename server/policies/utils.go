@@ -10,6 +10,9 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
 // objectGetNestedWithSpecFallback tries objectGetNested with the full path,
@@ -255,20 +258,6 @@ func resolvePath(path []string, obj map[string]interface{}) []string {
 	return result
 }
 
-// interfaceToStringSlice converts an interface{} to []string.
-func interfaceToStringSlice(v interface{}) []string {
-	if v == nil {
-		return nil
-	}
-	switch val := v.(type) {
-	case []string:
-		return val
-	case []interface{}:
-		return toStringSlice(val)
-	default:
-		return nil
-	}
-}
 
 // stringSliceToInterface converts []string to []interface{}.
 func stringSliceToInterface(ss []string) []interface{} {
@@ -284,10 +273,146 @@ func deepEqual(a, b interface{}) bool {
 	return reflect.DeepEqual(a, b)
 }
 
-// relationshipPreferenceKey builds the preference key for a relationship.
+// uuidFromString parses a UUID from a string, returning zero UUID on error.
+func uuidFromString(s string) (uuid.UUID, error) {
+	return uuid.FromString(s)
+}
+
+// relationshipPreferenceKey builds the preference key for a relationship map.
 func relationshipPreferenceKey(rel map[string]interface{}) string {
 	kind := strings.ToLower(getMapString(rel, "kind"))
 	relType := strings.ToLower(getMapString(rel, "type"))
 	subType := strings.ToLower(getMapString(rel, "subType"))
 	return kind + "-" + relType + "-" + subType
+}
+
+// deepCopyDesign creates a deep copy of a PatternFile via JSON round-trip.
+func deepCopyDesign(design *pattern.PatternFile) *pattern.PatternFile {
+	data, err := json.Marshal(design)
+	if err != nil {
+		return design
+	}
+	var cp pattern.PatternFile
+	if err := json.Unmarshal(data, &cp); err != nil {
+		return design
+	}
+	return &cp
+}
+
+// deepCopyRelDef creates a deep copy of a RelationshipDefinition via JSON round-trip.
+func deepCopyRelDef(rel *relationship.RelationshipDefinition) *relationship.RelationshipDefinition {
+	data, err := json.Marshal(rel)
+	if err != nil {
+		return rel
+	}
+	var cp relationship.RelationshipDefinition
+	if err := json.Unmarshal(data, &cp); err != nil {
+		return rel
+	}
+	return &cp
+}
+
+// getRelStatus returns the status string of a relationship, or empty if nil.
+func getRelStatus(rel *relationship.RelationshipDefinition) string {
+	if rel.Status == nil {
+		return ""
+	}
+	return string(*rel.Status)
+}
+
+// setRelStatus sets the status on a relationship.
+func setRelStatus(rel *relationship.RelationshipDefinition, status string) {
+	s := relationship.RelationshipDefinitionStatus(status)
+	rel.Status = &s
+}
+
+// getModelsInDesign extracts unique model names from design components.
+// Checks both ModelReference.Name and Model.Name for compatibility with
+// designs that may only have one or the other populated.
+func getModelsInDesign(design *pattern.PatternFile) []string {
+	seen := make(map[string]bool)
+	var names []string
+	for _, comp := range design.Components {
+		name := comp.ModelReference.Name
+		if name == "" && comp.Model != nil {
+			name = comp.Model.Name
+		}
+		if name == "" || seen[name] {
+			continue
+		}
+		seen[name] = true
+		names = append(names, name)
+	}
+	return names
+}
+
+// filterRelationshipsInScope filters relationships to those matching models in the design.
+func filterRelationshipsInScope(
+	allRels []*relationship.RelationshipDefinition,
+	modelNames []string,
+	design *pattern.PatternFile,
+) []*relationship.RelationshipDefinition {
+	modelSet := make(map[string]bool, len(modelNames))
+	for _, name := range modelNames {
+		modelSet[name] = true
+	}
+
+	var layerPrefs map[string]interface{}
+	if design.Preferences != nil {
+		if layers, ok := design.Preferences.Layers["relationships"]; ok {
+			if m, ok := layers.(map[string]interface{}); ok {
+				layerPrefs = m
+			}
+		}
+	}
+
+	var result []*relationship.RelationshipDefinition
+	for _, rel := range allRels {
+		if !modelSet[rel.Model.Name] {
+			continue
+		}
+		if layerPrefs != nil {
+			key := strings.ToLower(string(rel.Kind)) + "-" + strings.ToLower(rel.RelationshipType) + "-" + strings.ToLower(rel.SubType)
+			if v, exists := layerPrefs[key]; exists {
+				if b, ok := v.(bool); ok && !b {
+					continue
+				}
+			}
+		}
+		result = append(result, rel)
+	}
+	return result
+}
+
+// toGenericMap converts any struct to a map[string]interface{} via JSON round-trip.
+func toGenericMap(v interface{}) (map[string]interface{}, error) {
+	data, err := json.Marshal(v)
+	if err != nil {
+		return nil, err
+	}
+	var result map[string]interface{}
+	err = json.Unmarshal(data, &result)
+	return result, err
+}
+
+// mapToComponentDef converts a generic map to a ComponentDefinition.
+func mapToComponentDef(m map[string]interface{}) (component.ComponentDefinition, error) {
+	var comp component.ComponentDefinition
+	data, err := json.Marshal(m)
+	if err != nil {
+		return comp, err
+	}
+	err = json.Unmarshal(data, &comp)
+	return comp, err
+}
+
+// mapToRelationshipDef converts a generic map to a RelationshipDefinition.
+func mapToRelationshipDef(m map[string]interface{}) (relationship.RelationshipDefinition, error) {
+	var rel relationship.RelationshipDefinition
+	data, err := json.Marshal(m)
+	if err != nil {
+		return rel, err
+	}
+	err = json.Unmarshal(data, &rel)
+	return rel, err
 }
