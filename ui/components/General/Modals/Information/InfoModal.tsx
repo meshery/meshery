@@ -331,7 +331,7 @@ const InfoModal_ = React.memo((props) => {
       >
         <ModalBody>
           <Grid container spacing={2}>
-            <Grid item>
+            <Grid>
               <Button
                 variant="outlined"
                 disabled
@@ -363,7 +363,7 @@ const InfoModal_ = React.memo((props) => {
                 )}
               </Button>
               <ResourceName variant="subtitle1">{selectedResource?.name}</ResourceName>
-              <Grid item xs={12} style={{ marginTop: '1rem' }}>
+              <Grid size={12} style={{ marginTop: '1rem' }}>
                 <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Created</CreatAtContainer>
                   <CreatAtContainer isBold={false}>
@@ -371,7 +371,7 @@ const InfoModal_ = React.memo((props) => {
                   </CreatAtContainer>
                 </Typography>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Updated</CreatAtContainer>
                   <CreatAtContainer idBold={false}>
@@ -380,7 +380,7 @@ const InfoModal_ = React.memo((props) => {
                 </Typography>
               </Grid>
               {version === '' ? null : (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                     <CreatAtContainer isBold={true}>Version</CreatAtContainer>
                     <CreatAtContainer isBold={false}>{version}</CreatAtContainer>
@@ -388,9 +388,9 @@ const InfoModal_ = React.memo((props) => {
                 </Grid>
               )}
             </Grid>
-            <Grid item xs={8} lg>
+            <Grid size={{ xs: 8, lg: 'grow' }}>
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography gutterBottom variant="subtitle1">
                     <CustomTooltip
                       title={`Owner: ${
@@ -404,8 +404,7 @@ const InfoModal_ = React.memo((props) => {
                   </Typography>
                 </Grid>
                 <Grid
-                  item
-                  xs={6}
+                  size={6}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
                 >
                   <Typography
@@ -429,7 +428,6 @@ const InfoModal_ = React.memo((props) => {
                 </Grid>
 
                 <Grid
-                  item
                   style={{
                     marginLeft: '-1rem',
                     marginTop: '-1rem',

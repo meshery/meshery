@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import dataFetch from '../../lib/data-fetch';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { ctxUrl } from '../multi-ctx';

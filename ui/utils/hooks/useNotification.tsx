@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 //NOTE: This file is being refactored to use the new notification center
 
 import { Close, IconButton, ToggleButtonGroup } from '@sistent/sistent';

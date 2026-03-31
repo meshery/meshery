@@ -407,8 +407,14 @@ docs: check-go
 docs-serve: check-go
 	cd docs; hugo server -D -F --watch=false
 
+## Run Meshery Docs. Do not listen for changes.
+docs-clean: check-go
+	cd docs; hugo --cleanDestinationDir
+	make docs
+
+
 ## Build Meshery Docs on your local machine.
-docs-build:
+docs-build: check-go
 	cd docs; hugo 
 
 ## Build Meshery Docs for production. BASE_URL is optional.

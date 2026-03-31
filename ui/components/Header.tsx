@@ -432,8 +432,6 @@ const Header = ({
   activeContexts,
   setActiveContexts,
   searchContexts,
-  // eslint-disable-next-line no-unused-vars
-  abilityUpdated,
 }) => {
   const { notify } = useNotification;
   const { openModal } = useContext(WorkspaceModalContext) || {};
