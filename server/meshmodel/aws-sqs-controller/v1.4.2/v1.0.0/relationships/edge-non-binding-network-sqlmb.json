@@ -1,5 +1,5 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
+  "id": "6f6a6dc8-7189-446e-82ba-9f6dcf5586fe",
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
@@ -14,10 +14,10 @@
   "model": {
     "version": "",
     "name": "aws-sqs-controller",
-    "displayName": "",
+    "displayName": "AWS SQS Controller",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "model": {
       "version": "v1.4.2"
@@ -36,7 +36,7 @@
             "model": {
               "version": "",
               "name": "aws-sqs-controller",
-              "displayName": "",
+              "displayName": "AWS SQS Controller",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "github"
@@ -66,7 +66,7 @@
             "model": {
               "version": "",
               "name": "aws-lambda-controller",
-              "displayName": "",
+              "displayName": "AWS Lambda Controller",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "artifacthub"

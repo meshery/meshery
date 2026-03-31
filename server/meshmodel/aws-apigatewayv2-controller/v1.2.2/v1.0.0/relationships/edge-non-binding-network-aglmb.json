@@ -1,5 +1,5 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
+  "id": "0105fab2-fe67-49c7-8ee2-86da3ae8176d",
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
@@ -14,10 +14,10 @@
   "model": {
     "version": "",
     "name": "aws-apigatewayv2-controller",
-    "displayName": "",
+    "displayName": "AWS APIGatewayV2 Controller",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "model": {
       "version": "v1.2.2"
@@ -36,7 +36,7 @@
             "model": {
               "version": "",
               "name": "aws-apigatewayv2-controller",
-              "displayName": "",
+              "displayName": "AWS APIGatewayV2 Controller",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "github"
@@ -66,7 +66,7 @@
             "model": {
               "version": "",
               "name": "aws-lambda-controller",
-              "displayName": "",
+              "displayName": "AWS Lambda Controller",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "artifacthub"

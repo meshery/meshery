@@ -1,5 +1,5 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
+  "id": "5c58aff9-56f3-4163-b5ff-1ff6e612c373",
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
@@ -14,10 +14,10 @@
   "model": {
     "version": "",
     "name": "aws-ec2-controller",
-    "displayName": "",
+    "displayName": "AWS EC2 Controller",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "model": {
       "version": "v1.10.1"
@@ -36,7 +36,7 @@
             "model": {
               "version": "",
               "name": "aws-ec2-controller",
-              "displayName": "",
+              "displayName": "AWS EC2 Controller",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "github"
@@ -66,7 +66,7 @@
             "model": {
               "version": "",
               "name": "aws-ec2-controller",
-              "displayName": "",
+              "displayName": "AWS EC2 Controller",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "github"

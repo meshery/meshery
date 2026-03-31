@@ -1,5 +1,5 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
+  "id": "09271b48-adf0-4445-8f46-06ae186da417",
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
@@ -14,10 +14,10 @@
   "model": {
     "version": "",
     "name": "aws-ec2-controller",
-    "displayName": "",
+    "displayName": "AWS EC2 Controller",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "model": {
       "version": "v1.10.1"
@@ -36,7 +36,7 @@
             "model": {
               "version": "",
               "name": "aws-ec2-controller",
-              "displayName": "",
+              "displayName": "AWS EC2 Controller",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "github"
@@ -66,7 +66,7 @@
             "model": {
               "version": "",
               "name": "aws-iam-controller",
-              "displayName": "",
+              "displayName": "AWS IAM Controller",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "artifacthub"
