@@ -211,7 +211,7 @@ export function unparseRam(value) {
   let i = 0;
   while (value >= 1024 && i < RAM_TYPES.length - 1) {
     i++;
-    value /= 1024; // eslint-disable-line no-param-reassign
+    value /= 1024;
   }
 
   return {

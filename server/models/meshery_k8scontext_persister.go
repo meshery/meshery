@@ -28,7 +28,7 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	count := int64(0)

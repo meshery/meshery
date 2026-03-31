@@ -16,6 +16,7 @@ import (
 
 // UserHandler returns info about the logged in user
 func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, user *models.User, _ models.Provider) {
+	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		obj := "user data"
 		h.log.Error(models.ErrEncoding(err, obj))
@@ -46,7 +47,9 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/identity/users UserAPI idGetAllUsersHandler
@@ -83,7 +86,9 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs
@@ -103,6 +108,7 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 // UserPrefsHandler updates anonymous stats for user or for persisting load test preferences
 func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method == http.MethodGet {
+		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 			obj := "user preference object"
 			h.log.Error(models.ErrEncoding(err, obj))
@@ -172,6 +178,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 		obj := "user preferences"
 		h.log.Error(models.ErrEncoding(err, obj))
@@ -197,7 +204,9 @@ func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, "Design shared")
+	if _, err := fmt.Fprint(w, "Design shared"); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route POST /api/content/filter/share ShareContent idPostShareContent
@@ -217,5 +226,7 @@ func (h *Handler) ShareFilterHandler(w http.ResponseWriter, r *http.Request, _ *
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, "Filter shared")
+	if _, err := fmt.Fprint(w, "Filter shared"); err != nil {
+		h.log.Error(err)
+	}
 }

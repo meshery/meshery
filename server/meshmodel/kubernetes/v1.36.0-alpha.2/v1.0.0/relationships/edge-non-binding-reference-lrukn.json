@@ -4,24 +4,24 @@
   "kind": "edge",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
-    "version": "",
-    "name": "kubernetes",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.36.0-alpha.2"
+    },
+    "name": "kubernetes",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "v1.36.0-alpha.2"
-    }
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -31,29 +31,28 @@
           {
             "id": null,
             "kind": "Binding",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
                   "metadata",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -61,28 +60,27 @@
           {
             "id": null,
             "kind": "Pod",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "metadata",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]
