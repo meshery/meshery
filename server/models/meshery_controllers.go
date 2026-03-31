@@ -495,7 +495,7 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 	// Inform user of the latest release version
 	versions, err := utils.GetLatestReleaseTagsSorted("meshery", "meshery")
-if err != nil {
+	if err != nil {
 		return nil, "", ErrCreateOperatorDeploymentConfig(err)
 	}
 	if len(versions) == 0 {
