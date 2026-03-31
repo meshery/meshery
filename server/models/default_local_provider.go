@@ -20,7 +20,6 @@ import (
 
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
@@ -134,6 +133,7 @@ func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
 }
 
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request, _ string) {
+	w.Header().Set("Content-Type", "application/json")
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
 		obj := "provider capabilities"
@@ -152,27 +152,8 @@ func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Requ
 	if fromMiddleWare {
 		return
 	}
-	redirectURL := "/"
-	if ref := r.URL.Query().Get("ref"); ref != "" {
-		if decoded, err := core.DecodeRefURL(ref); err == nil && isSafeRedirect(decoded) {
-			redirectURL = decoded
-		}
-	}
+	redirectURL := resolvePostLoginRedirect(r.URL.Query().Get("ref"), "/")
 	http.Redirect(w, r, redirectURL, http.StatusFound)
-}
-
-// isSafeRedirect validates that a decoded ref URL is a relative in-app path
-// to prevent open redirects. It rejects absolute URLs (with scheme/host) and
-// protocol-relative URLs (starting with //).
-func isSafeRedirect(rawURL string) bool {
-	if rawURL == "" || strings.HasPrefix(rawURL, "//") {
-		return false
-	}
-	parsed, err := url.Parse(rawURL)
-	if err != nil {
-		return false
-	}
-	return parsed.Scheme == "" && parsed.Host == ""
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
@@ -1314,25 +1295,23 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		}(seedContent, log, &seededUUIDs)
 	}
 
-	// Seed default organization
-	go func() {
-		id, _ := uuid.NewV4()
-		org := &organization.Organization{
-			Id:          id,
-			Name:        "My Org",
-			Country:     "",
-			Region:      "",
-			Description: "This is default organization",
-			Owner:       uuid.Nil,
+	// Seed default organization before the UI requests organizations.
+	id, _ := uuid.NewV4()
+	org := &organization.Organization{
+		ID:          id,
+		Name:        "My Org",
+		Country:     "",
+		Region:      "",
+		Description: "This is default organization",
+		Owner:       uuid.Nil,
+	}
+	count, _ := l.OrganizationPersister.GetOrganizationsCount()
+	if count == 0 {
+		_, err := l.OrganizationPersister.SaveOrganization(org)
+		if err != nil {
+			log.Error(ErrGettingSeededComponents(err, "organization"))
 		}
-		count, _ := l.OrganizationPersister.GetOrganizationsCount()
-		if count == 0 {
-			_, err := l.OrganizationPersister.SaveOrganization(org)
-			if err != nil {
-				log.Error(ErrGettingSeededComponents(err, "organization"))
-			}
-		}
-	}()
+	}
 }
 
 func (l *DefaultLocalProvider) Cleanup() error {
@@ -1488,12 +1467,12 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID stri
 }
 
 func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	orgID := workspacePayload.OrganizationID
 	workspace := &workspace.Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationId: orgId,
+		OrganizationID: &orgID,
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}
@@ -1502,13 +1481,13 @@ func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *
 
 func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
 	id, _ := uuid.FromString(workspaceID)
-	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	orgID := workspacePayload.OrganizationID
 	workspace := &workspace.Workspace{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationId: orgId,
+		OrganizationID: &orgID,
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}

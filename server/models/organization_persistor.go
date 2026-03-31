@@ -48,13 +48,13 @@ func (op *OrganizationPersister) GetOrganizations(search, order string, page, pa
 }
 
 func (op *OrganizationPersister) SaveOrganization(org *organization.Organization) ([]byte, error) {
-	if org.Id == uuid.Nil {
+	if org.ID == uuid.Nil {
 		id, err := uuid.NewV4()
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
 		}
 
-		org.Id = id
+		org.ID = id
 	}
 
 	return marshalOrganizations([]organization.Organization{*org}), op.DB.Save(org).Error

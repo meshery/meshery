@@ -4,7 +4,7 @@ const userProviderRolesApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getUserProviderRoles: builder.query({
       query: () => ({
-        url: `user`,
+        url: `/api/user`,
         method: 'GET',
         credentials: 'include',
       }),
