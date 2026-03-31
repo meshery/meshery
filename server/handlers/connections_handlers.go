@@ -93,9 +93,21 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 	}
 	smInstancetracker := h.ConnectionToStateMachineInstanceTracker
 
-	id, ok := body["id"]
+	idStr, ok := body["id"]
 	if ok {
-		smInstancetracker.Remove(uuid.FromStringOrNil(id))
+		connectionID := uuid.FromStringOrNil(idStr)
+		if inst, found := smInstancetracker.Get(connectionID); found {
+			go func(inst *machines.StateMachine) {
+				event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
+				if err != nil {
+					h.log.Error(err)
+					h.log.Debug(event)
+				}
+				smInstancetracker.Remove(connectionID)
+			}(inst)
+		} else {
+			smInstancetracker.Remove(connectionID)
+		}
 	}
 }
 
@@ -605,7 +617,18 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info("connection deleted.")
-	h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+	if inst, found := h.ConnectionToStateMachineInstanceTracker.Get(connectionID); found {
+		go func(inst *machines.StateMachine) {
+			event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
+			if err != nil {
+				h.log.Error(err)
+				h.log.Debug(event)
+			}
+			h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+		}(inst)
+	} else {
+		h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+	}
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -690,7 +713,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		// connect
 		{
 			ctrlHelper.
-				AddCtxControllerHandlers(machineCtx.K8sContext).
+				AddCtxControllerHandlers(machineCtx.K8sContext, userID).
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
 				DeployUndeployedOperators(machineCtx.OperatorTracker).

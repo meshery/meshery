@@ -75,7 +75,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 
 	go func() {
 		ctrlHelper := machinectx.MesheryCtrlsHelper.
-			AddCtxControllerHandlers(machinectx.K8sContext).
+			AddCtxControllerHandlers(machinectx.K8sContext, userUUID).
 			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			DeployUndeployedOperators(machinectx.OperatorTracker)

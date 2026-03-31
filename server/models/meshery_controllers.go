@@ -318,20 +318,20 @@ func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
 }
 
 // handleControllerInitError handles errors that occur during controller initialization
-func (mch *MesheryControllersHelper) handleControllerInitError(ctx K8sContext, err error, message string) *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) handleControllerInitError(ctx K8sContext, err error, message string, userID uuid.UUID) *MesheryControllersHelper {
 	mch.log.Error(err)
 	mch.emitErrorEvent(message, err, map[string]any{
 		"k8sContextID":   ctx.ID,
 		"k8sContextName": ctx.Name,
 		"connectionID":   ctx.ConnectionID,
-	}, uuid.Nil)
+	}, userID)
 	return mch
 }
 
 // attach a MesheryController for each context if
 // 1. the config is valid
 // 2. if it is not already attached
-func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext, userID uuid.UUID) *MesheryControllersHelper {
 	// go func(mch *MesheryControllersHelper) {
 	mch.contextID = ctx.ID
 
@@ -340,13 +340,13 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 
 	cfg, err := ctx.GenerateKubeConfig()
 	if err != nil {
-		return mch.handleControllerInitError(ctx, err, "Failed to generate kubeconfig")
+		return mch.handleControllerInitError(ctx, err, "Failed to generate kubeconfig", userID)
 	}
 
 	client, err := mesherykube.New(cfg)
 	// means that the config is invalid
 	if err != nil {
-		return mch.handleControllerInitError(ctx, err, "Failed to create Kubernetes client")
+		return mch.handleControllerInitError(ctx, err, "Failed to create Kubernetes client", userID)
 	}
 
 	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{
