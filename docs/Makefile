@@ -1,4 +1,4 @@
-# Copyright Layer5, Inc.
+# Copyright Meshery Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-## Install docs.layer5.io dependencies on your local machine.
+## Install docs.meshery.io dependencies on your local machine.
 ## See https://gohugo.io/categories/installation
 setup:
 	npm install

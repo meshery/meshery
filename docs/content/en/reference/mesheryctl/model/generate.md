@@ -22,15 +22,15 @@ mesheryctl model generate [flags]
 
 ## Examples
 
-Generate a model from a CSV file(s)
+Generate a model from a CSV directory
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model generate --f [path-to-csv-drectory]
+mesheryctl model generate --f [path-to-csv-directory]
 
 </div>
 </pre> 
 
-Generate a model from a Uri baesd on a JSON template
+Generate a model from a URL based on a JSON template
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model generate --f [URL] -t [path-to-template.json]
@@ -38,7 +38,7 @@ mesheryctl model generate --f [URL] -t [path-to-template.json]
 </div>
 </pre> 
 
-Generate a model from a Uri baesd on a JSON template skipping registration
+Generate a model from a URL based on a JSON template skipping registration
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model generate --f [URL] -t [path-to-template.json] -r
