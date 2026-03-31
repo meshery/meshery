@@ -148,7 +148,9 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	// Checking if Meshery is running with the URL obtained
 	resp, err := http.Get(urlTest)
 	if err != nil {
-		return false, err
+		Log.Infof("Meshery endpoint from current context is not reachable using the URL: %s\n", urlTest)
+		Log.Debugf("Error while reaching Meshery endpoint: %v\n", err)
+		Log.Infof("Checking if Meshery is running using the platform: %s\n", currPlatform)
 	}
 
 	if resp != nil && resp.StatusCode == 200 {
