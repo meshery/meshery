@@ -7,7 +7,7 @@ categories: [configuration]
 suggested_reading: false
 ---
 
-{{% alert color="info" title="Learn about Designs"%}}
+{{% alert color="info" title="Learn about Designs" %}}
 Learn more about <a href='/concepts/logical/designs'>what a Meshery Design</a> is and how it fits into Meshery's approach to cloud native management.
 {{% /alert %}}
 
@@ -123,6 +123,6 @@ You can now customize, deploy, or integrate the design with your environment.
 ### Template Not Appearing  
 If you don’t see your cloned design immediately, refresh the page or check your active workspace.
 
-{{% alert color="info" title="Learn about Patterns"%}}
+{{% alert color="info" title="Learn about Patterns" %}}
 Learn more about <a href='/concepts/logical/patterns'>what a Meshery Pattern</a> is and how it fits into Meshery's approach to cloud native management.
 {{% /alert %}}
