@@ -8,6 +8,12 @@ categories: [contributing]
 
 [Relationships](/concepts/logical/relationships) within [Models](/concepts/logical/models) play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected [Components](/concepts/logical/components).
 
+In short: a relationship definition is a YAML file that tells Meshery when and how to draw a connection between two components on the canvas and optionally how to patch configuration between them.
+
+Before you start, make sure you're familiar with [Components](/concepts/logical/components)
+and [Models](/concepts/logical/models). Relationships always exist *between* components —
+so you need to know what components are available first.
+
 ## Overview of Steps to Create Relationships
 
 **Prework:**
@@ -16,10 +22,12 @@ categories: [contributing]
 2. [Relationship Classification](#relationship-visualizations)
 
 **Development:**
+
 3. [Relationship Definition](#relationship-definitions)
 4. [Relationship Scopes](#relationship-scopes)
 
 **Postwork:**
+
 5. [Relationship Testing](#relationship-testing)
 6. [Relationship Contribution](#relationship-contribution)
 
@@ -29,9 +37,19 @@ categories: [contributing]
 
 ### 1. Characterize the relationship and any specific constraints
 
-Using your domain expertise, define the qualities of this new relationship. Identify and qualify any specific constraints to be enforced between one or more specific components within the same or different models. Let's take an example to understand this better.
+Start by describing the relationship in plain language before writing any code. Ask yourself:
 
-For example, you might know that a Kubernetes `Service` can have a network-based relatinship with a Kubernetes `Pod`. To codify this relationship, you would define the relationship as a `kind: edge` relationship with a `type: network`.
+- What are the two components involved?
+- What is the nature of their interaction — does one depend on the other,
+  or do they communicate with each other?
+- Are there situations where this relationship should *not* apply?
+
+For example: *"A Kubernetes `Service` routes traffic to a Kubernetes `Pod` —
+but not when the Pod is owned by a Deployment."*
+
+Once you can describe it clearly, you're ready to codify it. The example above
+would translate to a `kind: edge`, `type: network` relationship with a `deny`
+rule for the Deployment constraint.
 
 <details close>
 <summary>Relationship Example</summary>
@@ -157,7 +175,7 @@ Browse the <a href='https://github.com/meshery/meshery/tree/master/server/meshmo
 
 ### 4. Configuring the Scope of Relationships
 
-The extent to which a relationship affects components within a model or beyond a model is defined and controlled using scopes. Scopes exist at two levels in Meshery relationships. 
+The extent to which a relationship affects components within a model or beyond a model is defined and controlled using scopes. Scopes exist at two levels in Meshery relationships.
 
 #### Global Scope
 
