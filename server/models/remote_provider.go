@@ -419,7 +419,11 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	flowResponse := AnonymousFlowResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&flowResponse)
@@ -1827,7 +1831,7 @@ func (l *RemoteProvider) BulkDeleteEvent(token string, eventIDs []*uuid.UUID) er
 	return nil
 }
 
-// PublishMetrics - publishes metrics to the provider backend asyncronously
+// PublishMetrics - publishes metrics to the provider backend asynchronously
 func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResult) error {
 	if !l.Capabilities.IsSupported(PersistMetrics) {
 		l.Log.Error(ErrInvalidCapability("PersistMetrics", l.ProviderName))
@@ -1856,13 +1860,15 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 		l.Log.Error(ErrPost(err, "metrics", resp.StatusCode))
 		return ErrPost(err, "metrics", resp.StatusCode)
 	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Warn(fmt.Errorf("error closing response body: %w", err))
+		}
+	}()
 	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("metrics published to remote provider")
 		return nil
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return ErrDataRead(err, "metrics Data")
@@ -3536,7 +3542,7 @@ func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID 
 // DeleteMesheryApplication deletes a meshery application with the given id
 func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
-l.Log.Error(ErrOperationNotAvailable)
+		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
 	}
 
@@ -4034,10 +4040,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		redirectURL = GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
 	}
 
-	refQueryParam := r.URL.Query().Get("ref")
-	if refQueryParam != "" {
-		redirectURL = refQueryParam
-	}
+	redirectURL = resolvePostLoginRedirect(r.URL.Query().Get("ref"), redirectURL)
 
 	go func() {
 		credential := make(map[string]interface{}, 0)
@@ -4426,7 +4429,11 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	if err != nil {
 		return nil, ErrFetch(err, "Connections Page", resp.StatusCode)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
@@ -4551,7 +4558,11 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 	if err != nil {
 		return nil, ErrFetch(err, "Update Connection", resp.StatusCode)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4593,7 +4604,11 @@ func (l *RemoteProvider) UpdateConnectionById(token string, connection *connecti
 		}
 		return nil, ErrFetch(err, "Update Connection", resp.StatusCode)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4636,7 +4651,11 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.U
 		l.Log.Error(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4773,8 +4792,13 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 			if err != nil {
 				return err
 			}
-			defer outFile.Close()
 			if _, err := io.CopyN(outFile, tarReader, header.Size); err != nil {
+				if closeErr := outFile.Close(); closeErr != nil {
+					return fmt.Errorf("%w (close error: %v)", err, closeErr)
+				}
+				return err
+			}
+			if err := outFile.Close(); err != nil {
 				return err
 			}
 		default:
@@ -4828,7 +4852,11 @@ func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential
 	if err != nil {
 		return nil, ErrFetch(err, "Save Credential", http.StatusInternalServerError)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4872,7 +4900,11 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	if err != nil {
 		return nil, ErrFetch(err, "Credentials Page", resp.StatusCode)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
@@ -4904,7 +4936,11 @@ func (l *RemoteProvider) GetCredentialByID(token string, credentialID uuid.UUID)
 		}
 		return nil, statusCode, ErrFetch(err, "Credentials Page", resp.StatusCode)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
@@ -4942,7 +4978,11 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 	if err != nil {
 		return nil, ErrFetch(err, "Update Credential", http.StatusInternalServerError)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4988,7 +5028,11 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uu
 		l.Log.Error(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {

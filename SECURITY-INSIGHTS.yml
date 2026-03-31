@@ -82,7 +82,7 @@ repository:
       social: https://layer5.io/community/members/sangram-rath/
   license:
     url: https://github.com/meshery/meshery/blob/master/LICENSE
-    expression: Apache License 2.0
+    expression: Apache-2.0
   security:
     assessments:
       self:

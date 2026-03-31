@@ -2,10 +2,10 @@ package connections
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -34,8 +34,9 @@ mesheryctl connection delete [connection_id]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		_, err := api.Delete(fmt.Sprintf("%s/%s", connectionApiPath, args[0]))
 		if err != nil {
-			if strings.Contains(err.Error(), "no rows in result set") {
-				return errConnectionNotFound(fmt.Errorf("no connection with id %q found", args[0]))
+			if errors.GetCode(err) == utils.ErrNotFoundCode {
+				utils.Log.Warnf("No connection with ID \"%s\" found", args[0])
+				return nil
 			}
 
 			return err

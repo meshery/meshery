@@ -58,7 +58,9 @@ func (h *Handler) SaveScheduleHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/user/schedules SchedulesAPI idGetSchedules
@@ -93,7 +95,9 @@ func (h *Handler) GetSchedulesHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route DELETE /api/user/schedules/{id} SchedulesAPI idDeleteSchedules
@@ -123,7 +127,9 @@ func (h *Handler) DeleteScheduleHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/user/schedules/{id} SchedulesAPI idGetSingleSchedule
@@ -153,5 +159,7 @@ func (h *Handler) GetScheduleHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }

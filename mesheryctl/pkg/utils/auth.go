@@ -90,6 +90,7 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
 		}
+		Log.Debugf("Response body for 404 Not Found: %s", string(bodyBytes))
 		return nil, ErrNotFound(errors.New(string(bodyBytes)))
 	}
 
