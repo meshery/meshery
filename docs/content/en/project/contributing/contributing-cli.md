@@ -40,10 +40,10 @@ The documentation pages for `mesheryctl` reference are made with the help of the
 - Then, edit the Cobra macro variables present in the each file. An example is given below for reference.
 
 {{< code code=`var startCmd = &cobra.Command{
-Use: "start",
-Short: "Start Meshery",
-Long: 'Start Meshery and each of its components.',
-Args: cobra.NoArgs,
+    Use:   "start",
+    Short: "Start Meshery",
+    Long:  'Start Meshery and each of its components.',
+    Args:  cobra.NoArgs,
 Example:
 // Start meshery
 mesheryctl system start
@@ -58,8 +58,8 @@ The variables present in above sample will be used in creating the doc pages for
 Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/content/en/reference/images` folder in **PNG** format. The screenshot field is given for reference below
 
 {{< code code=`var linkDocPatternApply = map[string]string{
-"link": "![pattern-apply-usage](/reference/images/patternApply.png)",
-"caption": "Usage of mesheryctl design apply",
+    "link":    "![pattern-apply-usage](/reference/images/patternApply.png)",
+    "caption": "Usage of mesheryctl design apply",
 }
 ...
 Example:
