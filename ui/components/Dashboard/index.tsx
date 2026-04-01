@@ -35,6 +35,8 @@ import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user
 import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
 import { useSelector } from 'react-redux';
+import useUnsavedChanges from './useUnsavedChanges';
+import UnsavedChangesModal from './UnsavedChangesModal';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -132,6 +134,27 @@ const Dashboard = () => {
   };
   const orgDashboardLayout = getCurrentDashboardLayoutFromOrgPrefs(userData?.dashboardPreferences);
   const [dashboardLayout, setDashboardLayout] = useState(orgDashboardLayout);
+
+  const {
+    showModal: showUnsavedModal,
+    confirmNavigation,
+    cancelNavigation,
+  } = useUnsavedChanges({
+    isEditMode,
+    dashboardLayout,
+    savedLayout: orgDashboardLayout,
+  });
+
+  const handleDiscardAndNavigate = () => {
+    cancelEditing();
+    confirmNavigation();
+  };
+
+  const handleSaveAndNavigate = async () => {
+    await saveLayout();
+    setIsEditMode(false);
+    confirmNavigation();
+  };
 
   const widgetsToAdd = getWidgetsAvailableToBeAdded(dashboardLayout, currentBreakPoint);
 
@@ -416,6 +439,12 @@ const Dashboard = () => {
         })}
       </>
       <Popup />
+      <UnsavedChangesModal
+        open={showUnsavedModal}
+        onClose={cancelNavigation}
+        onDiscard={handleDiscardAndNavigate}
+        onSave={handleSaveAndNavigate}
+      />
     </>
   );
 };
