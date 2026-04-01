@@ -57,19 +57,27 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			nil,
 		)
 		if err != nil {
-			event := eventBuilder.WithSeverity(events.Error).WithDescription("Unable to perisit the \"%s\" connection details").WithMetadata(map[string]interface{}{
+			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
-			_ = provider.PersistEvent(*event, nil)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
+			if event != nil {
+				_ = provider.PersistEvent(*event, nil)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+			h.log.Error(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		event, err := inst.SendEvent(req.Context(), machines.EventType(connectionRegisterPayload.Status), connectionRegisterPayload)
 		if err != nil {
 			h.log.Error(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			_ = provider.PersistEvent(*event, nil)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
+			if event != nil {
+				_ = provider.PersistEvent(*event, nil)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+			return
 		}
 	}
 }

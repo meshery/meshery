@@ -68,6 +68,18 @@ var (
 	ErrCommandContextMissingCode      = "mesheryctl-1201"
 	ErrPromptCancelledCode            = "mesheryctl-1202"
 	ErrMesheryServerInternalErrorCode = "mesheryctl-1203"
+	ErrFailedToConnectAdapterCode     = "mesheryctl-1212"
+	ErrAdapterNotReachableCode        = "mesheryctl-1213"
+	ErrListMesheryPodsCode            = "mesheryctl-1214"
+	ErrNoMesheryPodsCode              = "mesheryctl-1215"
+	ErrMissingMesheryPodCode          = "mesheryctl-1216"
+	ErrK8sVersionInfoCode             = "mesheryctl-1217"
+	ErrK8sInvalidVersionFormatCode    = "mesheryctl-1218"
+	ErrDockerComposeFileMissingCode   = "mesheryctl-1223"
+	ErrDockerComposeClientCode        = "mesheryctl-1224"
+	ErrDockerComposeRemoveCode        = "mesheryctl-1225"
+	ErrDockerComposeLogsCode          = "mesheryctl-1226"
+	ErrMesheryCheckRunningStatusCode  = "mesheryctl-1227"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -206,11 +218,11 @@ func EnvironmentSubError(msg string, cmd string) string {
 func WorkspaceSubError(msg string, cmd string) string {
 	switch cmd {
 	case "list":
-		return formatError(msg, cmdExpWorkspaceList)
+		return formatError(msg, cmdWorkspaceList)
 	case "create":
-		return formatError(msg, cmdExpWorkspaceCreate)
+		return formatError(msg, cmdWorkspaceCreate)
 	default:
-		return formatError(msg, cmdExpWorkspace)
+		return formatError(msg, cmdWorkspace)
 	}
 }
 
@@ -334,9 +346,9 @@ var cmdUsageURLs = map[cmdType]string{
 	cmdEnvironmentDelete:        environmentDeleteURL,
 	cmdEnvironmentList:          environmentListURL,
 	cmdEnvironmentView:          environmentViewURL,
-	cmdExpWorkspace:             workspaceUsageURL,
-	cmdExpWorkspaceCreate:       workspaceCreateURL,
-	cmdExpWorkspaceList:         workspaceListURL,
+	cmdWorkspace:                workspaceUsageURL,
+	cmdWorkspaceCreate:          workspaceCreateURL,
+	cmdWorkspaceList:            workspaceListURL,
 	cmdRelationshipView:         relationshipViewURL,
 	cmdRelationships:            relationshipUsageURL,
 	cmdRelationshipGenerateDocs: cmdRelationshipGenerateDocsURL,
@@ -816,4 +828,132 @@ func ErrMesheryServerInternalError(err error) error {
 		[]string{"An unexpected error occurred on the server side"},
 		[]string{"Check the server logs using 'mesheryctl system logs' for more details and try again later"},
 	)
+}
+
+func ErrFailedToConnectAdapter(name string, err error) error {
+	return errors.New(
+		ErrFailedToConnectAdapterCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("!! Failed to connect to Meshery Adapter for %s adapter", name)},
+		[]string{err.Error()},
+		[]string{"The connection to the Meshery Adapter failed"},
+		[]string{"Ensure that the Meshery Adapter is running and accessible, and try again"},
+	)
+}
+
+func ErrAdapterNotReachable(name string) error {
+	return errors.New(
+		ErrAdapterNotReachableCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("!! Meshery Adapter for %s is not reachable", name)},
+		[]string{"The Meshery Adapter is not responding to requests"},
+		[]string{"The adapter may be down or there may be network issues"},
+		[]string{"Check the status of the adapter and your network connection, and try again"},
+	)
+}
+
+func ErrListMesheryPods(err error) error {
+	return errors.New(
+		ErrListMesheryPodsCode,
+		errors.Alert,
+		[]string{"Failed to list Meshery pods"},
+		[]string{err.Error()},
+		[]string{"Unable to retrieve the list of Meshery pods from the Kubernetes cluster"},
+		[]string{"Ensure your Kubernetes cluster is running and accessible, and that you have the necessary permissions to list pods"},
+	)
+}
+
+func ErrNoMesheryPodsFound(namespace string) error {
+	return errors.New(
+		ErrNoMesheryPodsCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("No Meshery pods found in namespace %s", namespace)},
+		[]string{fmt.Sprintf("Unable to find any Meshery pods in %s namespace", namespace)},
+		[]string{fmt.Sprintf("The namespace %s may be incorrect or there may be no Meshery pods running", namespace)},
+		[]string{"Verify the namespace and ensure that Meshery pods are deployed and running"},
+	)
+}
+
+func ErrMissingMesheryPod(podName string) error {
+	return errors.New(
+		ErrMissingMesheryPodCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("pod with name %s not found", podName)},
+		[]string{fmt.Sprintf("Unable to find pod with name %s", podName)},
+		[]string{"The specified pod name may be incorrect or the pod may not be running"},
+		[]string{"Verify the pod name and ensure that the Meshery pod is deployed and running"},
+	)
+}
+
+func Errk8sVersionInfo(err error) error {
+	return errors.New(
+		ErrK8sVersionInfoCode,
+		errors.Alert,
+		[]string{"Failed to get Kubernetes version information"},
+		[]string{err.Error()},
+		[]string{"Unable to retrieve Kubernetes version information from the cluster"},
+		[]string{"Ensure your Kubernetes cluster is running and accessible, and that you have the necessary permissions to query version information"},
+	)
+}
+
+func ErrK8sInvalidVersionFormat(err error) error {
+	return errors.New(
+		ErrK8sInvalidVersionFormatCode,
+		errors.Alert,
+		[]string{"Invalid Kubernetes version format"},
+		[]string{err.Error()},
+		[]string{"The Kubernetes version information retrieved is in an unexpected format"},
+		[]string{"Check the Kubernetes cluster for any issues and ensure it is running a supported version"},
+	)
+}
+
+func ErrDockerComposeClient(err error) error {
+	return errors.New(
+		ErrDockerComposeClientCode,
+		errors.Alert,
+		[]string{"Failed to create Docker Compose client"},
+		[]string{err.Error()},
+		[]string{"Unable to initialize the Docker Compose client, which is required for managing Docker-based Meshery deployments"},
+		[]string{"Ensure that Docker is installed and running on your system, and that you have the necessary permissions to access the Docker API"},
+	)
+}
+
+func ErrDockerComposeFileMissing(err error) error {
+	return errors.New(
+		ErrDockerComposeFileMissingCode,
+		errors.Fatal,
+		[]string{"Docker Compose file not found"},
+		[]string{err.Error()},
+		[]string{"Docker Compose file is missing from the Meshery folder"},
+		[]string{"Run `mesheryctl system start` again to download and generate docker-compose file based on your context"})
+}
+
+func ErrDockerComposeRemove(err error) error {
+	return errors.New(
+		ErrDockerComposeRemoveCode,
+		errors.Fatal,
+		[]string{"Failed to delete Meshery containers"},
+		[]string{err.Error()},
+		[]string{"An error occurred while trying to delete Meshery containers using Docker Compose"},
+		[]string{"Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder. If the issue persists, check the Docker and Docker Compose configuration and logs for more details."})
+}
+
+func ErrDockerComposeLog(err error) error {
+	return errors.New(
+		ErrDockerComposeLogsCode,
+		errors.Alert,
+		[]string{"Failed to fetch logs from Meshery containers"},
+		[]string{err.Error()},
+		[]string{"An error occurred while trying to fetch logs from Meshery containers using Docker Compose"},
+		[]string{"Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder. If the issue persists, check the Docker and Docker Compose configuration and logs for more details."})
+}
+
+func ErrMesheryCheckRunningStatus(err error) error {
+	return errors.New(
+		ErrMesheryCheckRunningStatusCode,
+		errors.Alert,
+		[]string{"Failed to check if Meshery is running"},
+		[]string{err.Error()},
+		[]string{"You are not on correct context. ", "Meshery is not reachable. ", "There might be some issue with your Docker or Kubernetes environment. "},
+		[]string{"Please ensure Meshery is installed. ", "Validate that you are in the correct context. "})
 }
