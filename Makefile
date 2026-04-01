@@ -487,11 +487,13 @@ api-audit-setup:
 
 ## Audit Meshery REST API endpoints (dry-run). Compares router registrations,
 ## OpenAPI spec, and handler imports without writing to any external sheet.
+## Prints a summary only. Use --verbose for per-endpoint details.
 api-audit: api-audit-setup
-	$(API_AUDIT_PY) $(API_AUDIT_DIR)/api_audit.py --repo . --dry-run --verbose
+	$(API_AUDIT_PY) $(API_AUDIT_DIR)/api_audit.py --repo . --dry-run
 
 ## Audit Meshery REST API endpoints and write results to the configured
-## Google Sheet. Requires SHEET_ID and Google credentials (see top of
+## Google Sheet. Prints a summary of changes applied.
+## Requires SHEET_ID and Google credentials (see top of
 ## install/scripts/api-audit/api_audit.py for configuration).
 api-audit-update: api-audit-setup
 	$(API_AUDIT_PY) $(API_AUDIT_DIR)/api_audit.py --repo .
