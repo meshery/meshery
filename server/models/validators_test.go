@@ -8,8 +8,7 @@ import (
 
 func TestSMPPerformanceTestConfigValidatorRejectsRelativeEndpoints(t *testing.T) {
 	perfTest := &SMP.PerformanceTestConfig{
-		Name:     "invalid-endpoint-test",
-		Duration: "30s",
+		Name:     "given invalid endpoint when SMPPerformanceTestConfigValidator then throw ErrValidURL",		Duration: "30s",
 		Clients: []*SMP.PerformanceTestConfig_Client{
 			{
 				LoadGenerator: FortioLG.Name(),
@@ -19,16 +18,15 @@ func TestSMPPerformanceTestConfigValidatorRejectsRelativeEndpoints(t *testing.T)
 		},
 	}
 
-	err := SMPPerformanceTestConfigValidator(perfTest)
-	if err != ErrValidURL {
-		t.Fatalf("expected ErrValidURL, got %v", err)
-	}
+	       err := SMPPerformanceTestConfigValidator(perfTest)
+	       if err != ErrValidURL {
+		       t.Errorf("expected ErrValidURL, got %v", err)
+	       }
 }
 
 func TestSMPPerformanceTestConfigValidatorAcceptsAbsoluteEndpoints(t *testing.T) {
 	perfTest := &SMP.PerformanceTestConfig{
-		Name:     "valid-endpoint-test",
-		Duration: "30s",
+		Name:     "given valid endpoint when SMPPerformanceTestConfigValidator then assert err nil",		Duration: "30s",
 		Clients: []*SMP.PerformanceTestConfig_Client{
 			{
 				LoadGenerator: FortioLG.Name(),
@@ -43,7 +41,7 @@ func TestSMPPerformanceTestConfigValidatorAcceptsAbsoluteEndpoints(t *testing.T)
 		},
 	}
 
-	if err := SMPPerformanceTestConfigValidator(perfTest); err != nil {
-		t.Fatalf("expected valid absolute endpoints to pass validation, got %v", err)
-	}
+	       if err := SMPPerformanceTestConfigValidator(perfTest); err != nil {
+		       t.Errorf("expected valid absolute endpoints to pass validation, got %v", err)
+	       }
 }
