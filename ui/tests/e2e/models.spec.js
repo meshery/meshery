@@ -30,8 +30,12 @@ test.describe.serial('Model Workflow Tests', () => {
   });
 
   test('Create a Model', async ({ page }) => {
+    // Model generation downloads from GitHub and can be slow in CI
+    test.slow();
+
     await page.getByTestId('TabBar-Button-CreateModel').click();
 
+    await page.locator('#model-name').waitFor({ state: 'visible' });
     await page.locator('#model-name').fill(model.MODEL_NAME);
     await page.locator('#model-display-name').fill(model.MODEL_DISPLAY_NAME);
 
@@ -52,6 +56,7 @@ test.describe.serial('Model Workflow Tests', () => {
     await page.getByTestId('UrlStepper-Button-Next').click();
 
     await page.getByTestId('UrlStepper-Select-Source-GitHub').check();
+    await page.locator('#model-url').waitFor({ state: 'visible' });
     await page.locator('#model-url').fill(model.MODEL_URL);
 
     await page.getByTestId('UrlStepper-Button-Next').click();
@@ -60,9 +65,10 @@ test.describe.serial('Model Workflow Tests', () => {
 
     await page.getByTestId('UrlStepper-Button-Generate').click();
 
+    // Model generation fetches from GitHub — wait with extended timeout
     await expect(
       page.getByTestId(`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 120_000 });
     await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible();
 
     await page.getByTestId('UrlStepper-Button-Finish').click();
