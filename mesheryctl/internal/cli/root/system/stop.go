@@ -84,7 +84,7 @@ func stop() error {
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return ErrUnmarshallConfig(err)
+		return err
 	}
 
 	// if a temp context is set using the -c flag, use it as the current context
@@ -225,40 +225,43 @@ func stop() error {
 // invokeDeleteCRs is a wrapper of deleteCR to delete CR instances (brokers and meshsyncs)
 func invokeDeleteCRs(client *meshkitkube.Client) error {
 	const (
-		brokerResourceName   = "brokers"
-		brokerInstanceName   = "meshery-broker"
-		meshsyncResourceName = "meshsyncs"
-		meshsyncInstanceName = "meshery-meshsync"
-	)
+        brokerResourceName   = "brokers"
+        brokerInstanceName   = "meshery-broker"
+        meshsyncResourceName = "meshsyncs"
+        meshsyncInstanceName = "meshery-meshsync"
+    )
 
-	if err := deleteCR(brokerResourceName, brokerInstanceName, client); err != nil {
-		err = ErrStopMeshery(err)
-		if !forceDelete {
-			return err
-		}
+    if err := deleteCR(brokerResourceName, brokerInstanceName, client); err != nil {
+        if !forceDelete {
+            return err
+        }
 
-		utils.Log.Debug(err)
-	}
+        utils.Log.Debug(err)
+    }
 
-	if err := deleteCR(meshsyncResourceName, meshsyncInstanceName, client); err != nil {
-		err = ErrStopMeshery(err)
-		if !forceDelete {
-			return err
-		}
+    if err := deleteCR(meshsyncResourceName, meshsyncInstanceName, client); err != nil {
+        if !forceDelete {
+            return err
+        }
+		
+        utils.Log.Debug(err)
+    }
 
-		utils.Log.Debug(err)
-	}
-
-	return nil
+    return nil
 }
 
 // deleteCRs delete the specified CR instance in the clusters
 func deleteCR(resourceName, instanceName string, client *meshkitkube.Client) error {
-	return client.DynamicKubeClient.Resource(schema.GroupVersionResource{
+	err := client.DynamicKubeClient.Resource(schema.GroupVersionResource{
 		Group:    v1alpha1.GroupVersion.Group,
 		Version:  v1alpha1.GroupVersion.Version,
 		Resource: resourceName,
 	}).Namespace(utils.MesheryNamespace).Delete(context.TODO(), instanceName, metav1.DeleteOptions{})
+	
+	if err != nil {
+		return ErrStopMeshery(err)
+	}
+	return nil
 }
 
 // invokeDeleteCRs is a wrapper of deleteCRD to delete CRDs (brokers and meshsyncs)
@@ -271,17 +274,15 @@ func invokeDeleteCRDs() error {
 	cfg := controllerConfig.GetConfigOrDie()
 	client, err := apiextension.NewForConfig(cfg)
 	if err != nil {
-		err = ErrStopMeshery(err)
 		if !forceDelete {
-			return err
+			return ErrStopMeshery(err)
 		}
 
-		utils.Log.Debug(err)
+		utils.Log.Debug(ErrStopMeshery(err))
 		return nil
 	}
 
 	if err = deleteCRD(brokerCRDName, client); err != nil {
-		err = ErrStopMeshery(err)
 		if !forceDelete {
 			return err
 		}
@@ -290,7 +291,6 @@ func invokeDeleteCRDs() error {
 	}
 
 	if err = deleteCRD(meshsyncCRDName, client); err != nil {
-		err = ErrStopMeshery(err)
 		if !forceDelete {
 			return err
 		}
@@ -303,7 +303,11 @@ func invokeDeleteCRDs() error {
 
 // deleteCRs delete the specified CRD in the clusters
 func deleteCRD(name string, client *apiextension.Clientset) error {
-	return client.ApiextensionsV1().CustomResourceDefinitions().Delete(context.TODO(), name, metav1.DeleteOptions{})
+	err := client.ApiextensionsV1().CustomResourceDefinitions().Delete(context.TODO(), name, metav1.DeleteOptions{})
+	if err != nil {
+		return ErrStopMeshery(err)
+	}
+	return nil
 }
 
 func deleteNs(ns string, client *kubernetes.Clientset) error {
