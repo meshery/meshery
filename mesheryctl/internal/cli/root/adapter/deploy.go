@@ -70,6 +70,7 @@ mesheryctl adapter deploy linkerd --watch
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false, "null")
 			if err != nil {
+				s.Stop()
 				return err
 			}
 			s.Stop()

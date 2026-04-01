@@ -92,6 +92,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 		s.Start()
 		_, err = sendOperationRequest(mctlCfg, meshName, false, spec)
 		if err != nil {
+			s.Stop()
 			return err
 		}
 		s.Stop()

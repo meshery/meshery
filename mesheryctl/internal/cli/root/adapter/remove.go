@@ -58,6 +58,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), true, "null")
 			if err != nil {
+				s.Stop()
 				return ErrSendOperation(err)
 			}
 			s.Stop()
