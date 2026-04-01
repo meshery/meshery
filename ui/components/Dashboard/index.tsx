@@ -151,7 +151,10 @@ const Dashboard = () => {
   };
 
   const handleSaveAndNavigate = async () => {
-    await saveLayout();
+    const isSaved = await saveLayout();
+    if (!isSaved) {
+      return;
+    }
     setIsEditMode(false);
     confirmNavigation();
   };
@@ -188,9 +191,10 @@ const Dashboard = () => {
     const res = await updateUserPref({ dashboardPreferences: dashboardLayout });
     if (res.error) {
       handleError('failed to save layout');
-      return;
+      return false;
     }
     handleSuccess('Layout saved');
+    return true;
   };
 
   const toggleEditMode = () => {
@@ -202,7 +206,7 @@ const Dashboard = () => {
   };
 
   const saveLayout = () => {
-    updateLayout(dashboardLayout);
+    return updateLayout(dashboardLayout);
   };
 
   const resetLayout = () => {
@@ -235,8 +239,11 @@ const Dashboard = () => {
     SAVE_AND_CLOSE: {
       label: 'Save and Close',
       Icon: OutlinedValidateIcon,
-      action: () => {
-        saveLayout();
+      action: async () => {
+        const isSaved = await saveLayout();
+        if (!isSaved) {
+          return;
+        }
         toggleEditMode();
       },
 

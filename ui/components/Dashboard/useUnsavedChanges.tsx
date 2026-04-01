@@ -2,22 +2,37 @@ import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const useUnsavedChanges = ({ isEditMode, dashboardLayout, savedLayout }) => {
+interface UseUnsavedChangesProps {
+  isEditMode: boolean;
+  dashboardLayout: unknown;
+  savedLayout: unknown;
+}
+
+const useUnsavedChanges = ({
+  isEditMode,
+  dashboardLayout,
+  savedLayout,
+}: UseUnsavedChangesProps) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
-  const pendingUrlRef = useRef(null);
+  const pendingUrlRef = useRef<string | null>(null);
+  const allowNavigationRef = useRef(false);
   const hasUnsavedChanges = isEditMode && !_.isEqual(dashboardLayout, savedLayout);
   const hasUnsavedRef = useRef(hasUnsavedChanges);
   hasUnsavedRef.current = hasUnsavedChanges;
 
   useEffect(() => {
-    const handleRouteChange = (url) => {
+    const handleRouteChange = (url: string) => {
+      if (allowNavigationRef.current) {
+        allowNavigationRef.current = false;
+        return;
+      }
+
       if (hasUnsavedRef.current) {
         pendingUrlRef.current = url;
         setShowModal(true);
         router.events.emit('routeChangeError');
-        // eslint-disable-next-line no-throw-literal
-        throw 'Navigation blocked due to unsaved changes';
+        throw new Error('Navigation blocked due to unsaved changes');
       }
     };
 
@@ -28,7 +43,7 @@ const useUnsavedChanges = ({ isEditMode, dashboardLayout, savedLayout }) => {
   }, [router.events]);
 
   useEffect(() => {
-    const handleBeforeUnload = (e) => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasUnsavedChanges) {
         e.preventDefault();
         e.returnValue = '';
@@ -46,6 +61,8 @@ const useUnsavedChanges = ({ isEditMode, dashboardLayout, savedLayout }) => {
     setShowModal(false);
     pendingUrlRef.current = null;
     if (destination) {
+      hasUnsavedRef.current = false;
+      allowNavigationRef.current = true;
       router.push(destination);
     }
   }, [router]);

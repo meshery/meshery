@@ -11,7 +11,14 @@ import {
   useTheme,
 } from '@sistent/sistent';
 
-const UnsavedChangesModal = ({ open, onClose, onDiscard, onSave }) => {
+interface UnsavedChangesModalProps {
+  open: boolean;
+  onClose: () => void;
+  onDiscard: () => void;
+  onSave: () => void | Promise<void>;
+}
+
+const UnsavedChangesModal = ({ open, onClose, onDiscard, onSave }: UnsavedChangesModalProps) => {
   const theme = useTheme();
 
   return (
