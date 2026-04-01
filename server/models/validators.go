@@ -35,7 +35,8 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 		}
 		for _, rawURL := range testClient.EndpointUrls {
 			parsedURL, err := url.ParseRequestURI(rawURL)
-			if err != nil || parsedURL.Scheme == "" || parsedURL.Host == "" {
+			if err != nil || parsedURL.Scheme == "" || parsedURL.Host == "" ||
+				(parsedURL.Scheme != "http" && parsedURL.Scheme != "https") {
 				return ErrValidURL
 			}
 		}
