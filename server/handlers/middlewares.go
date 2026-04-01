@@ -363,7 +363,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			continue
 		}
 		mdh := kubernesMachineCtx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
-		if mdh != nil {
+		if mdh != nil && k8sContext.KubernetesServerID != nil {
 			dataHandlers = append(dataHandlers, &dataHandlerToClusterID{
 				mdh:       *mdh,
 				clusterID: k8sContext.KubernetesServerID.String(),
