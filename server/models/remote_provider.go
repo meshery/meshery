@@ -1831,7 +1831,7 @@ func (l *RemoteProvider) BulkDeleteEvent(token string, eventIDs []*uuid.UUID) er
 	return nil
 }
 
-// PublishMetrics - publishes metrics to the provider backend asyncronously
+// PublishMetrics - publishes metrics to the provider backend asynchronously
 func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResult) error {
 	if !l.Capabilities.IsSupported(PersistMetrics) {
 		l.Log.Error(ErrInvalidCapability("PersistMetrics", l.ProviderName))
@@ -1860,13 +1860,15 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 		l.Log.Error(ErrPost(err, "metrics", resp.StatusCode))
 		return ErrPost(err, "metrics", resp.StatusCode)
 	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Warn(fmt.Errorf("error closing response body: %w", err))
+		}
+	}()
 	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("metrics published to remote provider")
 		return nil
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return ErrDataRead(err, "metrics Data")
@@ -4038,10 +4040,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		redirectURL = GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
 	}
 
-	refQueryParam := r.URL.Query().Get("ref")
-	if refQueryParam != "" {
-		redirectURL = refQueryParam
-	}
+	redirectURL = resolvePostLoginRedirect(r.URL.Query().Get("ref"), redirectURL)
 
 	go func() {
 		credential := make(map[string]interface{}, 0)

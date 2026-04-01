@@ -1,0 +1,24 @@
+version: 0.0.2
+name: dremio-helm
+displayName: dremio-helm
+createdAt: "2025-10-12T16:29:21Z"
+description: "Dremio (OSS) deployed on Kubernetes via the official dremio_v2 Helm chart. \nThis Design represents a baseline installation of the Dremio coordinator (master) and executors with Services, ConfigMaps/Secrets, and optional Ingress. \nChart values are adjusted to use an S3-compatible distStorage to satisfy Dremio ≥21.0’s “no local distStorage” requirement. \nImport-only topology intended for reuse and customization in Meshery Kanvas; users can override values (resources, node selectors, Ingress/TLS, persistence) per cluster.\n"
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/11d54f4a-129a-43f5-9c17-7e7518202ea6/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "• distStorage: Dremio ≥21.0 does NOT support 'local'. Set distStorage.type to aws/azure/gcp and provide bucket + credentials (S3/MinIO example included).\n• Credentials: Store access keys in Kubernetes Secrets (avoid plain text). Update fs.s3a.endpoint and path-style access if using MinIO.\n• Persistence: Ensure PVCs are provisioned for metadata and scratch space; validate StorageClass and access modes for your cluster.\n• Resources: Size coordinators/executors appropriately (e.g., coordinator ≥4Gi RAM; executors commonly ≥8Gi RAM). Tune CPU/memory/heap per workload.\n• Networking: Ingress is off by default; configure hostnames, TLS, and service type (NodePort/LoadBalancer) as required.\n• Version note: Imported from packaged chart `dremio-2.0.0.tgz` (dremio_v2). Adjust if you target a different chart release.\n• This Design captures chart structure for catalog sharing; deployment behavior depends on cluster-specific values (storage class, DNS, IAM, etc.).\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 985074f5-27a0-406c-b83a-7f247ba77746
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/11d54f4a-129a-43f5-9c17-7e7518202ea6-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/11d54f4a-129a-43f5-9c17-7e7518202ea6-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

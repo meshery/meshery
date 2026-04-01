@@ -12,7 +12,7 @@ Kubernetes API
 Kubernetes Version 
 --------------
 !! cannot check Kubernetes version
-!! exit status 1
+!! exec: "kubectl": executable file not found in $PATH
 
 --------------
 --------------

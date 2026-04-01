@@ -30,6 +30,7 @@ fortio_chart.js
 **/ui/playground/
 ui/.next/
 ui/out/
+ui/.eslintcache
 ui/node_modules/
 ui/tests/e2e/.env
 
@@ -50,15 +51,12 @@ cmd/meshery
 log.txt
 
 # Docs
-docs/_site
-docs/.sass-cache
-docs/.jekyll-metadata
-docs/.jekyll-cache
+docs/public
+docs/resources/
+docs/.hugo_build.lock
+docs/hugo_stats.json
 
-docs/v0.4
-docs/v0.5
-docs/v0.6
-docs/v0.*
+docs/static/v0.*/
 
 dist/
 
@@ -89,3 +87,4 @@ install/docker-extension/vm/vm
 ui/.env
 *.env
 */.env
+docs/hugo_stats.json

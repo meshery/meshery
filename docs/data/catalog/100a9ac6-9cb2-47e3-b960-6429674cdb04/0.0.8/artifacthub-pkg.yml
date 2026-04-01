@@ -1,0 +1,24 @@
+version: 0.0.8
+name: observerbalkubernetesworkloads
+displayName: ObserverbalKubernetesWorkloads
+createdAt: "2025-10-23T10:04:53Z"
+description: 'This is an observability workload utilizing Prometheus and Grafana  for a kubernetes API service  '
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/100a9ac6-9cb2-47e3-b960-6429674cdb04/0.0.8/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Prometheus connects to the kubernetes  API service to observe  its external cluster metrics. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c8be787b-0881-4eda-a43e-fe6872261dc4
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/100a9ac6-9cb2-47e3-b960-6429674cdb04-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/100a9ac6-9cb2-47e3-b960-6429674cdb04-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
