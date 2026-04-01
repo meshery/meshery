@@ -53,7 +53,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 		}
 
 		if !utils.IsUUID(createEnvironmentFlagsProvided.orgID) {
-			return utils.ErrInvalidUUID(fmt.Errorf("invalid Environment ID: %s", createEnvironmentFlagsProvided.orgID))
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid Organization ID: %s", createEnvironmentFlagsProvided.orgID))
 		}
 
 		return nil
