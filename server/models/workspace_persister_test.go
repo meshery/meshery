@@ -6,7 +6,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
-	corev1alpha1 "github.com/meshery/schemas/models/v1alpha1/core"
+	corev1alpha1 "github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

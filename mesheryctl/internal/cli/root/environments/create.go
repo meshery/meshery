@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	googleuuid "github.com/google/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	mErrors "github.com/meshery/meshkit/errors"
@@ -62,7 +63,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 		payload := &environment.EnvironmentPayload{
 			Name:        createEnvironmentFlagsProvided.name,
 			Description: createEnvironmentFlagsProvided.description,
-			OrgId:       createEnvironmentFlagsProvided.orgID, // TODO update OrgId in schema to OrgID
+			OrgId:       googleuuid.MustParse(createEnvironmentFlagsProvided.orgID),
 		}
 
 		payloadBytes, err := json.Marshal(payload)

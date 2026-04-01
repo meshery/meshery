@@ -22,7 +22,7 @@ func (kp *KeyPersister) GetUsersKeys(search, order, updatedAfter string) ([]byte
 	}
 
 	count := int64(0)
-	keys := []*Key{}
+	keys := []Key{}
 
 	query := kp.DB.Where("updated_at > ?", updatedAfter).Order(order)
 
@@ -53,7 +53,7 @@ func (kp *KeyPersister) SaveUsersKey(key *Key) (*Key, error) {
 }
 
 // SaveUsersKeys saves a key to the database
-func (kp *KeyPersister) SaveUsersKeys(keys []*Key) ([]*Key, error) {
+func (kp *KeyPersister) SaveUsersKeys(keys []Key) ([]Key, error) {
 	if err := kp.DB.Save(keys).Error; err != nil {
 		return nil, ErrDBCreate(err)
 	}

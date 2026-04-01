@@ -53,7 +53,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		credName, _ := payload.CredentialSecret["name"].(string)
 		credential, err = provider.SaveUserCredential(token, &models.Credential{
 			Name:   credName,
-			UserID: &userUUID,
+			UserId: &userUUID,
 			Type:   payload.Kind,
 			Secret: payload.CredentialSecret,
 		})
@@ -73,7 +73,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		Status:       connections.CONNECTED,
 		Name:         payload.Name,
 		MetaData:     payload.MetaData,
-		CredentialID: &credential.ID,
+		CredentialID: credential.ID,
 	}, token, false)
 	if err != nil {
 		_err := models.ErrPersistConnection(err)

@@ -3,7 +3,7 @@ import {
   useCreateEnvironmentMutation as useSchemasCreateEnvironmentMutation,
   useGetEnvironmentsQuery as useSchemasGetEnvironmentsQuery,
   useRemoveConnectionFromEnvironmentMutation as useSchemasRemoveConnectionFromEnvironmentMutation,
-} from '@meshery/schemas/dist/mesheryApi';
+} from '@meshery/schemas/mesheryApi';
 import { api } from './index';
 
 const TAGS = {
