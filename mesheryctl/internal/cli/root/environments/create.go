@@ -59,10 +59,8 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		orgUUID, err := googleuuid.Parse(createEnvironmentFlagsProvided.orgID)
-		if err != nil {
-			return utils.ErrInvalidUUID(fmt.Errorf("invalid Organization ID: %s", createEnvironmentFlagsProvided.orgID))
-		}
+		// PreRunE already validated the UUID format; Parse here only to get the typed value.
+		orgUUID := googleuuid.MustParse(createEnvironmentFlagsProvided.orgID)
 
 		payload := &environment.EnvironmentPayload{
 			Name:        createEnvironmentFlagsProvided.name,

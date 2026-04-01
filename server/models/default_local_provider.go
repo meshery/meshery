@@ -1447,9 +1447,8 @@ func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byt
 	return l.KeyPersister.GetUsersKey(id)
 }
 
-// SaveKey saves the given key with the provider
+// SaveUsersKey saves the given keys with the provider
 func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []Key) ([]Key, error) {
-	// fmt.Printf(keys)
 	return l.KeyPersister.SaveUsersKeys(keys)
 }
 

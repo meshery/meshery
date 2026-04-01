@@ -44,9 +44,12 @@ func TestFetchKubernetesVersion(t *testing.T) {
 	}
 	utils.StartMockery(t)
 
-	// Use a valid kubeconfig from the standard location if available,
-	// otherwise skip since FetchKubernetesVersion requires a real K8s cluster.
-	home, _ := os.UserHomeDir()
+	// FetchKubernetesVersion requires a real K8s cluster.
+	// Skip when no kubeconfig is available.
+	home, err := os.UserHomeDir()
+	if err != nil {
+		t.Skip("skipping: unable to determine home directory")
+	}
 	kubeconfig, err := os.ReadFile(filepath.Join(home, ".kube", "config"))
 	if err != nil {
 		t.Skip("skipping: no kubeconfig available at ~/.kube/config")
