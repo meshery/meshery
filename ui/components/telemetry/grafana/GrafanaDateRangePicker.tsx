@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NoSsr } from '@sistent/sistent';
 import {
+  AccessTime,
   Button,
   TextField,
   MenuItem,
@@ -16,7 +17,6 @@ import {
   styled,
 } from '@sistent/sistent';
 import Moment from 'react-moment';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PropTypes from 'prop-types';
 import MesheryDateTimePicker from '../../MesheryDateTimePicker';
 import { Close } from '@mui/icons-material';
@@ -578,7 +578,7 @@ const GrafanaDateRangePicker = (props) => {
   return (
     <NoSsr>
       <RangeButton variant="filled" onClick={handleClick}>
-        <AccessTimeIcon sx={{ marginRight: '0.25rem', fontSize: '1.15rem' }} />
+        <AccessTime sx={{ marginRight: '0.25rem', fontSize: '1.15rem' }} />
         <Moment format="LLLL">{startDate}</Moment>
         <Space>-</Space>
         {liveTail ? 'now' : <Moment format="LLLL">{endDate}</Moment>}

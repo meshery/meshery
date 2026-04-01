@@ -1,13 +1,22 @@
 /* eslint-disable react/display-name */
 
 import {
+  Close,
   CustomColumnVisibilityControl,
   CustomTooltip,
+  Delete,
+  Edit,
+  Fullscreen,
+  GetApp,
+  InfoOutlined,
   OutlinedPatternIcon,
+  Save,
   SearchBar,
   UniversalFilter,
   importDesignSchema,
   importDesignUiSchema,
+  Public,
+  Publish,
   publishCatalogItemSchema,
   publishCatalogItemUiSchema,
   Box,
@@ -21,14 +30,9 @@ import {
   Typography,
   styled,
   PROMPT_VARIANTS,
+  NoSsr,
 } from '@sistent/sistent';
-import { NoSsr } from '@sistent/sistent';
-import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import GetAppIcon from '@mui/icons-material/GetApp';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import SaveIcon from '@mui/icons-material/Save';
 import CustomToolbarSelect from './CustomToolbarSelect';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
@@ -39,8 +43,6 @@ import ViewSwitch from '../ViewSwitch';
 import MesheryPatternGrid from './MesheryPatternGridView';
 import UndeployIcon from '../../public/static/img/UndeployIcon';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
-import PublicIcon from '@mui/icons-material/Public';
-import PublishIcon from '@mui/icons-material/Publish';
 import _PromptComponent from '../PromptComponent';
 import LoadingScreen from '../LoadingComponents/LoadingComponent';
 import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../../utils/Enum';
@@ -55,11 +57,9 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';
 import { modifyRJSFSchema } from '../../utils/utils';
-import { Edit as EditIcon } from '@mui/icons-material';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../General/Modals/Information/InfoModal';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import DefaultError from '../General/error-404/index';
 import CAN from '@/utils/can';
@@ -184,10 +184,10 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
             onClick={toggleFullScreen}
           >
-            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            {fullScreen ? <FullscreenExitIcon /> : <Fullscreen />}
           </CustomTooltip>
           <CustomTooltip placement="top" title="Exit" onClick={onClose}>
-            <CloseIcon />
+            <Close />
           </CustomTooltip>
         </div>
       </YamlDialogTitle>
@@ -228,7 +228,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
                   })
                 }
               >
-                <SaveIcon />
+                <Save />
               </IconButton>
             </CustomTooltip>
             <CustomTooltip title="Delete Pattern">
@@ -245,7 +245,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
                   })
                 }
               >
-                <DeleteIcon />
+                <Delete />
               </IconButton>
             </CustomTooltip>
           </>
@@ -1049,7 +1049,7 @@ function MesheryPatterns({
           const actions = [
             {
               label: 'Edit',
-              icon: <EditIcon fill="currentColor" />,
+              icon: <Edit fill="currentColor" />,
               onClick: (e) => {
                 e.stopPropagation();
                 handleOpenInConfigurator(rowData.id);
@@ -1111,7 +1111,7 @@ function MesheryPatterns({
             },
             {
               label: 'Download',
-              icon: <GetAppIcon data-cy="download-button" />,
+              icon: <GetApp data-cy="download-button" />,
               onClick: (e) => {
                 handleDesignDownloadModal(e, rowData);
               },
@@ -1119,7 +1119,7 @@ function MesheryPatterns({
             },
             {
               label: 'Design Information',
-              icon: <InfoOutlinedIcon data-cy="information-button" />,
+              icon: <InfoOutlined data-cy="information-button" />,
               onClick: (e) => {
                 genericClickHandler(e, () => handleInfoModal(rowData));
               },
@@ -1137,7 +1137,7 @@ function MesheryPatterns({
 
             {
               label: 'Unpublish',
-              icon: <PublicIcon fill="#F91313" data-cy="unpublish-button" />,
+              icon: <Public fill="#F91313" data-cy="unpublish-button" />,
               onClick: (e) => {
                 handleUnpublishModal(e, rowData)();
               },
@@ -1458,7 +1458,7 @@ function MesheryPatterns({
                             disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
                           >
                             <AddIconStyled>
-                              <PublishIcon />
+                              <Publish />
                             </AddIconStyled>
                             <BtnText> Import Design </BtnText>
                           </TooltipButton>

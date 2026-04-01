@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@sistent/sistent';
+import { NoSsr, Warning } from '@sistent/sistent';
 import moment from 'moment';
 import OpenInNewIcon from '@mui/icons-material/OpenInNewOutlined';
-import WarningIcon from '@mui/icons-material/Warning';
 import CachedIcon from '@mui/icons-material/Cached';
 import dataFetch from '../../../lib/data-fetch';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
@@ -673,7 +672,7 @@ function GrafanaCustomChart(props) {
             avatar={
               error && (
                 <Tooltip title="There was an error communicating with the server" placement="top">
-                  <WarningIcon component={ErrorText} />
+                  <Warning component={ErrorText} />
                 </Tooltip>
               )
             }

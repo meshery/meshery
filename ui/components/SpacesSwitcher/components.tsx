@@ -18,11 +18,12 @@ import {
   OutlinedInput,
   FormControlLabel,
   FormGroup,
-  DeleteIcon,
+  Delete,
   ShareIcon,
   ExportIcon,
   IconButton,
-  CloseIcon,
+  Close,
+  Settings,
 } from '@sistent/sistent';
 import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
@@ -33,7 +34,6 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useImportPatternMutation } from '@/rtk-query/design';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import { useAssignDesignToWorkspaceMutation } from '@/rtk-query/workspace';
@@ -412,7 +412,7 @@ export const AssignDesignViewButton = ({ type, handleAssign, disabled }) => {
         minWidth: 'fit-content',
         padding: '0.85rem',
       }}
-      startIcon={<SettingsIcon />}
+      startIcon={<Settings />}
     >
       {type === RESOURCE_TYPE.DESIGN ? 'Manage Designs' : 'Manage Views'}
     </Button>
@@ -445,7 +445,7 @@ export const MultiContentSelectToolbar = ({
         >
           <Box display={'flex'} alignItems={'center'} gap={'0.5rem'}>
             <IconButton onClick={() => setMultiSelectedContent([])}>
-              <CloseIcon />
+              <Close />
             </IconButton>
             <Typography>
               {multiSelectedContent.length} {type} selected
@@ -504,7 +504,7 @@ export const MultiContentSelectToolbar = ({
               sx={{
                 backgroundColor: `${theme.palette.error.dark} !important`,
               }}
-              startIcon={<DeleteIcon style={iconMedium} fill={theme.palette.common.white} />}
+              startIcon={<Delete style={iconMedium} fill={theme.palette.common.white} />}
             >
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Delete</Box>
             </StyledResponsiveButton>

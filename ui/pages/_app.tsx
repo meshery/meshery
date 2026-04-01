@@ -1,5 +1,3 @@
-import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { CacheProvider } from '@emotion/react';
@@ -42,6 +40,11 @@ import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
 import {
   ErrorBoundary,
+  CheckCircle,
+  Error,
+  Info,
+  Warning,
+  Favorite,
   useTheme,
   SistentThemeProvider,
   CssBaseline,
@@ -128,7 +131,7 @@ const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }) => {
             <>
               {' '}
               Built with{' '}
-              <FavoriteIcon
+              <Favorite
                 style={{
                   color: theme.palette.background.brand.default,
                   display: 'inline',

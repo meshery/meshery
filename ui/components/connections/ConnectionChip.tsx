@@ -1,7 +1,5 @@
-import { Avatar, useTheme } from '@sistent/sistent';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Avatar, CheckCircle, Explore, useTheme } from '@sistent/sistent';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import HandymanIcon from '@mui/icons-material/Handyman';
@@ -106,7 +104,7 @@ const DiscoveredStateChip = ({ value }) => {
   return (
     <ConnectionStyledMenuItem value={value} sx={{ padding: 0 }}>
       <DiscoveredChip
-        avatar={<ExploreIcon />}
+        avatar={<Explore />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
@@ -132,7 +130,7 @@ const ConnectedStateChip = ({ value }) => {
   return (
     <ConnectionStyledMenuItem value={value}>
       <ConnectedChip
-        avatar={<CheckCircleIcon />}
+        avatar={<CheckCircle />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
@@ -225,7 +223,7 @@ const NotFoundStateChip = ({ value }) => {
 const Default = ({ value }) => {
   return (
     <ConnectionStyledMenuItem value={value}>
-      <DiscoveredChip value={value} avatar={<ExploreIcon />} label={value} />
+      <DiscoveredChip value={value} avatar={<Explore />} label={value} />
     </ConnectionStyledMenuItem>
   );
 };

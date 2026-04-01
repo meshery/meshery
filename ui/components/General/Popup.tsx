@@ -1,5 +1,4 @@
-import { Button, Grid2, IconButton, Typography, styled, useTheme } from '@sistent/sistent';
-import CloseIcon from '@mui/icons-material/Close';
+import { Button, Close, Grid2, IconButton, Typography, styled, useTheme } from '@sistent/sistent';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'universal-cookie';
@@ -171,7 +170,7 @@ export function MesheryExtensionEarlyAccessCard({
               onClick={closeForm}
               style={{ height: '40px' }}
             >
-              <CloseIcon />
+              <Close />
             </IconButton>
           </StyledCloseButtonContainer>
         </StyledHeaderWrapper>

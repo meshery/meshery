@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import type { Theme } from '@sistent/sistent';
 import {
+  Delete,
   Divider,
+  Fullscreen,
+  GetApp,
   Grid2,
+  InfoOutlined,
   IconButton,
+  Public,
+  Save,
   Typography,
   Tooltip,
+  Lock,
   Link,
   Avatar,
   useTheme,
 } from '@sistent/sistent';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Fullscreen from '@mui/icons-material/Fullscreen';
-import Save from '@mui/icons-material/Save';
 import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from '../CodeMirror';
@@ -30,18 +34,14 @@ import {
 } from '../MesheryPatterns/Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import CloneIcon from '../../public/static/img/CloneIcon';
-import PublicIcon from '@mui/icons-material/Public';
 import TooltipButton from '../../utils/TooltipButton';
 import { VISIBILITY } from '../../utils/Enum';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { VisibilityChipMenu } from '@sistent/sistent';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
-import { Public, Lock } from '@mui/icons-material';
 import { iconMedium } from 'css/icons.styles';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
@@ -168,7 +168,7 @@ function FiltersCard_({
                   onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
                   disabled={!CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject)}
                 >
-                  <PublicIcon style={iconMedium} />
+                  <Public style={iconMedium} />
                   <> Publish </>
                 </TooltipButton>
               ) : (
@@ -184,7 +184,7 @@ function FiltersCard_({
                     !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
                   }
                 >
-                  <PublicIcon style={iconMedium} />
+                  <Public style={iconMedium} />
                   <GridBtnText> Unpublish </GridBtnText>
                 </TooltipButton>
               )}
@@ -201,7 +201,7 @@ function FiltersCard_({
                   !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
                 }
               >
-                <GetAppIcon fill={theme.palette.background.constant.white} style={iconMedium} />
+                <GetApp fill={theme.palette.background.constant.white} style={iconMedium} />
                 <GridBtnText>Download</GridBtnText>
               </TooltipButton>
 
@@ -234,10 +234,7 @@ function FiltersCard_({
                   !CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject)
                 }
               >
-                <InfoOutlinedIcon
-                  fill={theme.palette.background.constant.white}
-                  style={iconMedium}
-                />
+                <InfoOutlined fill={theme.palette.background.constant.white} style={iconMedium} />
                 <GridBtnText> Info </GridBtnText>
               </TooltipButton>
             </CatalogCardButtons>
@@ -327,7 +324,7 @@ function FiltersCard_({
                     disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
                     onClick={(ev) => genericClickHandler(ev, deleteHandler)}
                   >
-                    <DeleteIcon fill={theme.palette.icon.default} />
+                    <Delete fill={theme.palette.icon.default} />
                   </IconButton>
                 </Tooltip>
               </UpdateDeleteButtons>
