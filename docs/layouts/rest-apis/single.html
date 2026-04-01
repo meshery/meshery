@@ -730,14 +730,21 @@ document.addEventListener("DOMContentLoaded", function () {
     return hash;
   }
 
+  function getNavbarOffset() {
+    var navbar = document.querySelector(".navbar");
+    if (navbar) {
+      return navbar.getBoundingClientRect().height;
+    }
+
+    return 0;
+  }
+
   function scrollToElement(element) {
     if (!element) {
       return;
     }
 
-    var navbarHeight = parseFloat(
-      window.getComputedStyle(document.documentElement).getPropertyValue("--navbar-height")
-    ) || 0;
+    var navbarHeight = getNavbarOffset();
     var top = window.pageYOffset + element.getBoundingClientRect().top - navbarHeight - 16;
     window.scrollTo({
       top: Math.max(top, 0),
@@ -934,6 +941,7 @@ document.addEventListener("DOMContentLoaded", function () {
   links.forEach(function (link) {
     link.addEventListener("click", function (event) {
       event.preventDefault();
+      event.stopPropagation();
       setActive(link.dataset.operationId, { updateHash: true, scroll: true });
     });
   });
