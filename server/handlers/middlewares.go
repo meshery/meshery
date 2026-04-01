@@ -289,6 +289,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		)
 		if err != nil {
 			h.log.Error(err)
+			continue
 		}
 
 		inst.ResetState()
@@ -347,6 +348,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		)
 		if err != nil {
 			h.log.Error(err)
+			continue
 		}
 
 		inst.ResetState()
