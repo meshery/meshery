@@ -679,8 +679,6 @@ const Navigator_ = () => {
                 src={icon}
                 style={{
                   width: '20px',
-                  display: 'block',
-                  pointerEvents: 'none',
                   filter:
                     window.location.pathname === href
                       ? 'invert(50%) sepia(30%) saturate(1000%) hue-rotate(120deg)'
