@@ -46,7 +46,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 	if err != nil {
 		return NoOp, eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
-	_, ok := payload.CredentialSecret["id"]
+	existingCredID, ok := payload.CredentialSecret["id"]
 	credential := &models.Credential{}
 	// If existing credential is used do not persist again
 	if !ok {
@@ -65,6 +65,16 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 			WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), _err
 	}
 
+	var credentialID *uuid.UUID
+	if ok {
+		if idStr, isStr := existingCredID.(string); isStr {
+			parsed := uuid.FromStringOrNil(idStr)
+			credentialID = &parsed
+		}
+	} else {
+		credentialID = credential.ID
+	}
+
 	connection, err := provider.SaveConnection(&connections.ConnectionPayload{
 		ID:           payload.ID,
 		Kind:         payload.Kind,
@@ -73,7 +83,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		Status:       connections.CONNECTED,
 		Name:         payload.Name,
 		MetaData:     payload.MetaData,
-		CredentialID: credential.ID,
+		CredentialID: credentialID,
 	}, token, false)
 	if err != nil {
 		_err := models.ErrPersistConnection(err)

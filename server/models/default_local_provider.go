@@ -1388,8 +1388,9 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
-	if err := l.GetGenericPersister().Model(*updatedCredential).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential); err != nil {
-		return nil, fmt.Errorf("error updating user credential: %v", err)
+	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential)
+	if db.Error != nil {
+		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
 	}
 
 	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserId, credential.ID).First(updatedCredential).Error; err != nil {
