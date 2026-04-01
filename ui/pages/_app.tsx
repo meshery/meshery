@@ -540,33 +540,38 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   useEffect(() => {
     // todo further refactoring required for data fetch
     const loadAll = async () => {
-      loadConfigFromServer();
-      loadPromGrafanaConnection();
-      await loadOrg();
+      try {
+        loadConfigFromServer();
+        loadPromGrafanaConnection();
+        await loadOrg();
 
-      initSubscriptions([]);
+        initSubscriptions([]);
 
-      dataFetch(
-        '/api/user/prefs',
-        {
-          method: 'GET',
-          credentials: 'include',
-        },
-        (result) => {
-          if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
-            dispatch(
-              toggleCatalogContent({
-                catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
-              }),
-            );
-          }
-        },
-        (err) => console.error(err),
-      );
+        dataFetch(
+          '/api/user/prefs',
+          {
+            method: 'GET',
+            credentials: 'include',
+          },
+          (result) => {
+            if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
+              dispatch(
+                toggleCatalogContent({
+                  catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
+                }),
+              );
+            }
+          },
+          (err) => console.error(err),
+        );
 
-      document.addEventListener('fullscreenchange', fullScreenChanged);
-      await loadMeshModelComponent();
-      setState((prevState) => ({ ...prevState, isLoading: false }));
+        document.addEventListener('fullscreenchange', fullScreenChanged);
+        await loadMeshModelComponent();
+      } catch (error) {
+        console.error('[Meshery bootstrap] Failed to initialize the application shell', error);
+      } finally {
+        setState((prevState) => ({ ...prevState, isLoading: false }));
+      }
     };
     loadAll();
 
@@ -576,7 +581,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         state.disposeK8sContextSubscription();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update effect for k8sConfig
@@ -600,7 +604,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         initSubscriptions(ids);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [k8sConfig, capabilitiesRegistry]);
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;

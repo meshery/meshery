@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 19th 2026, 7:34:01 am
+- Testing started at: April 1st 2026, 12:25:30 pm
 
 **📦 Test Result Summary**
 
-- ✅ 60 passed
-- ❌ 5 failed
+- ✅ 57 passed
+- ❌ 4 failed
 - ⚠️ 0 flaked
-- ⏩ 7 skipped
+- ⏩ 11 skipped
 
-⌛ _Duration: 4 minutes and 24 seconds_
+⌛ _Duration: 5 minutes and 24 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -27,17 +27,17 @@
 | 4 | Meshery | chromium-meshery-provider | Common UI elements |  | ✅ |
 | 5 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 6 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
-| 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
-| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
+| 7 | Meshery | chromium-meshery-provider | Create a Model |  | ❌ |
+| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ❌ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
 | 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
+| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
 | 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
-| 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
+| 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ➖ |
 | 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ✅ |
-| 17 | Meshery | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ❌ |
+| 17 | Meshery | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 18 | Meshery | chromium-meshery-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 19 | Meshery | chromium-meshery-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
 | 20 | Meshery | chromium-meshery-provider | should identify relationships for Hierarchical-Parent-Namespace-Relationship | relationship | ✅ |
@@ -64,17 +64,17 @@
 | 41 | None | chromium-local-provider | Common UI elements |  | ✅ |
 | 42 | None | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 43 | None | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
-| 44 | None | chromium-local-provider | Create a Model |  | ✅ |
+| 44 | None | chromium-local-provider | Create a Model |  | ❌ |
 | 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 46 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
 | 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
-| 48 | None | chromium-local-provider | Import a Model via File Import |  | ❌ |
+| 48 | None | chromium-local-provider | Import a Model via File Import |  | ➖ |
 | 49 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 51 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
-| 52 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
+| 52 | None | chromium-local-provider | Search a Model and Export it |  | ➖ |
 | 53 | None | chromium-local-provider | should edit design in Design Configurator |  | ✅ |
-| 54 | None | chromium-local-provider | should identify relationships for All Relationships | relationship | ❌ |
+| 54 | None | chromium-local-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 55 | None | chromium-local-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 56 | None | chromium-local-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
 | 57 | None | chromium-local-provider | should identify relationships for Hierarchical-Parent-Namespace-Relationship | relationship | ✅ |
@@ -110,6 +110,20 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
+<summary>❌ Delete Kubernetes cluster connections (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
 <summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
@@ -124,32 +138,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ should identify relationships for All Relationships (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/relationship_evaluation.spec.js`
-
-**Error Message:**
-```
-Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
-
-Received: [31mfalse[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 58 |[39m       )[33m;[39m
- [90m 59 |[39m
-[31m[1m>[22m[39m[90m 60 |[39m       expect(response[33m.[39mok())[33m.[39mtoBeTruthy()[33m;[39m
- [90m    |[39m                             [31m[1m^[22m[39m
- [90m 61 |[39m       [36mconst[39m responseBody [33m=[39m [36mawait[39m response[33m.[39mjson()[33m;[39m
- [90m 62 |[39m
- [90m 63 |[39m       [36mconst[39m actualRelationships [33m=[39m responseBody[33m.[39mdesign[33m.[39mrelationships [33m||[39m [][33m;[39m[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Import a Model via File Import (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ Create a Model (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -163,32 +152,7 @@ Received: [31mfalse[39m
 </details>
 
 <details>
-<summary>❌ should identify relationships for All Relationships (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/relationship_evaluation.spec.js`
-
-**Error Message:**
-```
-Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
-
-Received: [31mfalse[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 58 |[39m       )[33m;[39m
- [90m 59 |[39m
-[31m[1m>[22m[39m[90m 60 |[39m       expect(response[33m.[39mok())[33m.[39mtoBeTruthy()[33m;[39m
- [90m    |[39m                             [31m[1m^[22m[39m
- [90m 61 |[39m       [36mconst[39m responseBody [33m=[39m [36mawait[39m response[33m.[39mjson()[33m;[39m
- [90m 62 |[39m
- [90m 63 |[39m       [36mconst[39m actualRelationships [33m=[39m responseBody[33m.[39mdesign[33m.[39mrelationships [33m||[39m [][33m;[39m[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Import a Model via File Import (None - chromium-local-provider)</summary>
+<summary>❌ Create a Model (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -209,11 +173,13 @@ Received: [31mfalse[39m
 **🔗 Relationship Tests**
 
 <details>
-    <summary>[Show/Hide] Relationship Test Details (14 tests)</summary>
+    <summary>[Show/Hide] Relationship Test Details (18 tests)</summary>
     <div markdown="1">
 
 | Kind | Type | SubType | From | To | Model | Design Name | Status |
 | :---: | :---: | :---: | :---: | :---: | :---: | :--- | :---: |
+| edge | binding | permission | ClusterRole | ServiceAccount | kubernetes | Understanding Relationships | ❌ |
+| edge | binding | permission | Role | ServiceAccount | kubernetes | Understanding Relationships | ❌ |
 | edge | non-binding | network | Service | Deployment | kubernetes | service-to-deployment-network | ✅ |
 | edge | non-binding | network | Service | Deployment | kubernetes | meshery-design-fixture.json | ✅ |
 | edge | non-binding | reference | ClusterRoleBinding | ClusterRole | kubernetes | meshery-design-fixture.json | ✅ |
@@ -221,10 +187,12 @@ Received: [31mfalse[39m
 | hierarchical | parent | alias | Container | Deployment | kubernetes | deployment-configmap-reference-relationship | ✅ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | service-to-deployment-network | ✅ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | meshery-design-fixture.json | ✅ |
+| hierarchical | parent | alias | Container | Deployment | kubernetes | Understanding Relationships | ✅ |
 | hierarchical | parent | alias | Container | Pod | kubernetes | container-hierarchical-parent-alias-relationship | ✅ |
 | hierarchical | parent | inventory | * | Namespace | kubernetes | hierarchical-parent-namespace-relationship | ✅ |
 | hierarchical | parent | inventory | * | Namespace | kubernetes | service-to-deployment-network | ✅ |
 | hierarchical | parent | inventory | * | Namespace | kubernetes | pv-pvc-edge-non-binding-reference-relationship | ✅ |
+| hierarchical | parent | inventory | * | Namespace | kubernetes | Understanding Relationships | ✅ |
 | hierarchical | sibling | matchlabels | ClusterRole | ClusterRole | kubernetes | meshery-design-fixture.json | ✅ |
 | hierarchical | sibling | matchlabels | Deployment | Deployment | kubernetes | meshery-design-fixture.json | ✅ |
 | hierarchical | sibling | matchlabels | Service | Service | kubernetes | meshery-design-fixture.json | ✅ |

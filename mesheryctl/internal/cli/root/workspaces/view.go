@@ -33,32 +33,32 @@ var viewWorkspaceCmd = &cobra.Command{
 	Use:   "view [workspace-name|workspace-id]",
 	Short: "View a workspace",
 	Long: `View a workspace by its ID or name.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/exp/workspace/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace/view`,
 	Example: `
 // View details of a specific workspace by ID
-mesheryctl exp workspace view [workspace-id]
+mesheryctl workspace view [workspace-id]
 
 // View details of a specific workspace by name (requires --orgId)
-mesheryctl exp workspace view [workspace-name] --orgId [orgId]
+mesheryctl workspace view [workspace-name] --orgId [orgId]
 
 // View details of a specific workspace in JSON format
-mesheryctl exp workspace view [workspace-id] --output-format json
+mesheryctl workspace view [workspace-id] --output-format json
 
 // View details of a specific workspace and save it to a file
-mesheryctl exp workspace view [workspace-id] --output-format json --save
+mesheryctl workspace view [workspace-id] --output-format json --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceViewFlagsProvided)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp workspace view [workspace-name|workspace-id]\nRun 'mesheryctl exp workspace view --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl workspace view [workspace-name|workspace-id]\nRun 'mesheryctl workspace view --help' to see detailed help message"
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("please provide exactly one workspace name or ID\n\n%v", errMsg))
 		}
 
 		// Validate orgId is provided when arg is not a UUID
 		if !utils.IsUUID(args[0]) && workspaceViewFlagsProvided.OrgID == "" {
-			return utils.ErrInvalidArgument(fmt.Errorf("--orgId is required when searching by name\n\nUsage: mesheryctl exp workspace view [workspace-name] --orgId [orgId]"))
+			return utils.ErrInvalidArgument(fmt.Errorf("--orgId is required when searching by name\n\nUsage: mesheryctl workspace view [workspace-name] --orgId [orgId]"))
 		}
 		return nil
 	},

@@ -5,6 +5,7 @@ display_title: false
 hide_summary: true
 service-mesh: consul
 subheading: "meshery-consul"
+toc_hide: true
 ---
 
 
