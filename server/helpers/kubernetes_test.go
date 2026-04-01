@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -34,7 +35,7 @@ func TestFetchKubernetesVersion(t *testing.T) {
 	if err != nil {
 		t.Fatal("unable to locate working directory")
 	}
-	configPath := path + "/../../mesheryctl/pkg/utils/TestConfig.yaml"
+	configPath := filepath.Join(path, "..", "..", "mesheryctl", "pkg", "utils", "TestConfig.yaml")
 	viper.Reset()
 	viper.SetConfigFile(configPath)
 	utils.DefaultConfigPath = configPath
@@ -46,7 +47,7 @@ func TestFetchKubernetesVersion(t *testing.T) {
 	// Use a valid kubeconfig from the standard location if available,
 	// otherwise skip since FetchKubernetesVersion requires a real K8s cluster.
 	home, _ := os.UserHomeDir()
-	kubeconfig, err := os.ReadFile(home + "/.kube/config")
+	kubeconfig, err := os.ReadFile(filepath.Join(home, ".kube", "config"))
 	if err != nil {
 		t.Skip("skipping: no kubeconfig available at ~/.kube/config")
 	}
