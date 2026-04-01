@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 1st 2026, 8:36:29 pm
+- Testing started at: April 1st 2026, 9:11:55 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 11 skipped
 
-⌛ _Duration: 5 minutes and 17 seconds_
+⌛ _Duration: 5 minutes and 33 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -124,7 +124,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ Create a Model (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -138,7 +138,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Create a Model (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
