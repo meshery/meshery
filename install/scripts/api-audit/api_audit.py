@@ -36,7 +36,7 @@ For advanced usage or CI, the script can be invoked directly:
 
 # Google Sheet ID to write audit results to.
 # Find this in the sheet URL: https://docs.google.com/spreadsheets/d/<SHEET_ID>/edit
-SHEET_ID = ""
+SHEET_ID = "1YYpMp0H1vlcdnWReaNfVzPcBHXAIlNh52tYBBaRBP7s"
 
 # Absolute path to the meshery/meshery repository root.
 # Leave empty to use the current working directory.
@@ -44,7 +44,7 @@ MESHERY_REPO_PATH = ""
 
 # Path to Google service-account credentials JSON file (for local development).
 # See: https://cloud.google.com/iam/docs/keys-create-delete
-GOOGLE_APPLICATION_CREDENTIALS = ""
+GOOGLE_APPLICATION_CREDENTIALS = "/home/pragalva/Downloads/spreadsheet.json"
 
 # Inline Google credentials JSON string (for CI / GitHub Actions).
 # If set, this takes priority over GOOGLE_APPLICATION_CREDENTIALS.
@@ -787,9 +787,7 @@ def _build_actionable_notes(
     if coverage == "Server Underlap":
         parts.append("Not in OpenAPI spec — add spec definition")
     elif coverage == "Schema Underlap":
-        if status == "Cloud-only":
-            parts.append("Cloud-only (x-internal) — no OSS route required")
-        elif status == "Unimplemented":
+        if status == "Unimplemented":
             parts.append("In spec but no server route — implement handler or remove from spec")
 
     # --- Cloud backward compat (Overlap case) ---
@@ -996,30 +994,33 @@ def classify_endpoints(
         # --- Schema-Backed ---
         backed = "TRUE"
 
-        # --- Schema Completeness ---
-        completeness, compl_notes = _aggregate_completeness(
-            norm_path, methods_sorted, spec_data
-        )
-
         # --- Schema-Driven ---
         driven = "N/A"
 
-        # --- Notes (actionable summary) ---
-        cloud_methods_list = [
-            m for m in methods_sorted
-            if "cloud" in x_internal_map.get((norm_path, m), [])
-        ]
-        notes = _build_actionable_notes(
-            coverage=coverage,
-            status=status,
-            is_commented=False,
-            completeness=completeness,
-            compl_notes=compl_notes,
-            driven=driven,
-            handler="",
-            cloud_methods=cloud_methods_list,
-            spec_methods=set(methods_sorted),
-        )
+        # --- Schema Completeness & Notes ---
+        if status == "Cloud-only":
+            # No router equivalent — spec completeness checks don't apply
+            completeness = "N/A"
+            notes = "No equivalent route in Meshery server; defined in spec as x-internal: cloud"
+        else:
+            completeness, compl_notes = _aggregate_completeness(
+                norm_path, methods_sorted, spec_data
+            )
+            cloud_methods_list = [
+                m for m in methods_sorted
+                if "cloud" in x_internal_map.get((norm_path, m), [])
+            ]
+            notes = _build_actionable_notes(
+                coverage=coverage,
+                status=status,
+                is_commented=False,
+                completeness=completeness,
+                compl_notes=compl_notes,
+                driven=driven,
+                handler="",
+                cloud_methods=cloud_methods_list,
+                spec_methods=set(methods_sorted),
+            )
 
         endpoints.append({
             "category": category,
