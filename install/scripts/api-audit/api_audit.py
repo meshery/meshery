@@ -18,10 +18,16 @@ For each endpoint the script computes:
 
 Writes results to a Google Sheet. Credentials come from environment variables.
 
-Usage:
-  python api_audit.py --repo .
-  python api_audit.py --repo . --sheet-id $SHEET_ID
-  python api_audit.py --repo /path/to/meshery --dry-run
+Intended to be run via Make targets from the repo root:
+
+  make api-audit            # Dry-run audit — prints summary only
+  make api-audit-update     # Audit and write results to Google Sheet
+  make api-audit-setup      # Install Python dependencies only
+
+For advanced usage or CI, the script can be invoked directly:
+
+  python api_audit.py --repo . --dry-run --verbose   # Summary + per-endpoint details
+  python api_audit.py --repo . --sheet-id $SHEET_ID  # Write to specific sheet
 """
 
 # =====================================================================
@@ -116,33 +122,19 @@ MIDDLEWARE_NAMES = frozenset({
     "NoCacheMiddleware",
 })
 
-# Category classification — most-specific prefix first
-CATEGORY_RULES: List[Tuple[str, str, str]] = [
+# Fallback category rules for router-only endpoints that have no OpenAPI tags.
+# Spec-backed endpoints derive their category from x-tagGroups / tags instead.
+CATEGORY_FALLBACK: List[Tuple[str, str, str]] = [
     ("/api/system/graphql", "Meshery Server and Components", "Meshery Operator"),
     ("/api/system/database", "Meshery Server and Components", "Database"),
-    ("/api/system/kubernetes", "Meshery Server and Components", "System"),
     ("/api/system/adapter", "Meshery Server and Components", "Adapters"),
     ("/api/system/adapters", "Meshery Server and Components", "Adapters"),
     ("/api/system/availableAdapters", "Meshery Server and Components", "Adapters"),
     ("/api/system/meshsync", "Meshery Server and Components", "Meshsync"),
-    ("/api/system/events", "Meshery Server and Components", "System"),
-    ("/api/system/version", "Meshery Server and Components", "System"),
-    ("/api/system/sync", "Meshery Server and Components", "System"),
-    ("/api/system/fileDownload", "Meshery Server and Components", "System"),
-    ("/api/system/fileView", "Meshery Server and Components", "System"),
-    ("/api/extension/version", "Meshery Server and Components", "System"),
-    ("/api/integrations/connections", "Integrations", "Connections"),
-    ("/api/integrations/credentials", "Integrations", "Credentials"),
-    ("/api/environments", "Integrations", "Environments"),
-    ("/api/workspaces", "Integrations", "Workspaces"),
+    ("/api/system", "Meshery Server and Components", "System"),
+    ("/api/extension", "Meshery Server and Components", "System"),
     ("/api/meshmodels", "Capabilities Registry", "Entities"),
     ("/api/meshmodel", "Capabilities Registry", "Model Lifecycle"),
-    ("/api/pattern/deploy", "Configuration", "Patterns"),
-    ("/api/pattern/import", "Configuration", "Patterns"),
-    ("/api/pattern/catalog", "Configuration", "Patterns"),
-    ("/api/pattern/clone", "Configuration", "Patterns"),
-    ("/api/pattern/download", "Configuration", "Patterns"),
-    ("/api/pattern/types", "Configuration", "Patterns"),
     ("/api/pattern", "Configuration", "Patterns"),
     ("/api/patterns", "Configuration", "Patterns"),
     ("/api/filter", "Configuration", "Filters"),
@@ -153,19 +145,15 @@ CATEGORY_RULES: List[Tuple[str, str, str]] = [
     ("/api/smi", "Benchmarking and Validation", "Conformance (SMI)"),
     ("/api/user/performance", "Benchmarking and Validation", "Performance (SMP)"),
     ("/api/user/prefs/perf", "Benchmarking and Validation", "Performance (SMP)"),
-    ("/api/user/schedules", "Identity", "User"),
     ("/api/telemetry/metrics/grafana", "Telemetry", "Grafana API"),
     ("/api/grafana", "Telemetry", "Grafana API"),
     ("/api/telemetry/metrics", "Telemetry", "Prometheus API"),
     ("/api/prometheus", "Telemetry", "Prometheus API"),
-    ("/api/identity/orgs", "Identity", "Organization"),
     ("/api/identity", "Identity", "User"),
     ("/api/user", "Identity", "User"),
     ("/api/token", "Identity", "User"),
     ("/api/provider", "Identity", "Providers, Extensions"),
     ("/api/providers", "Identity", "Providers, Extensions"),
-    ("/api/extension", "Identity", "Providers, Extensions"),
-    ("/api/extensions", "Identity", "Providers, Extensions"),
     ("/api/schema", "Meshery Server and Components", "System"),
     ("/provider", "Identity", "Providers, Extensions"),
     ("/auth", "Identity", "User"),
@@ -193,9 +181,19 @@ def normalize_path(path: str) -> str:
     return re.sub(r"\{[^}]+\}", _repl, path)
 
 
-def categorize(path: str) -> Tuple[str, str]:
-    """Return (category, subcategory) for a given endpoint path."""
-    for prefix, cat, sub in CATEGORY_RULES:
+def categorize(
+    path: str,
+    spec_categories: Optional[Dict[str, Tuple[str, str]]] = None,
+) -> Tuple[str, str]:
+    """Return (category, subcategory) for a given endpoint path.
+
+    First checks *spec_categories* (derived from OpenAPI tags / x-tagGroups).
+    Falls back to CATEGORY_FALLBACK prefix rules for router-only endpoints.
+    """
+    norm = normalize_path(path)
+    if spec_categories and norm in spec_categories:
+        return spec_categories[norm]
+    for prefix, cat, sub in CATEGORY_FALLBACK:
         if path.startswith(prefix):
             return cat, sub
     return "Other", ""
@@ -482,6 +480,38 @@ def _assess_completeness(operation: dict, method: str) -> Tuple[str, List[str]]:
         return "Stub", notes
 
 
+def _build_tag_category_map(doc: dict) -> Dict[str, Tuple[str, str]]:
+    """Build a mapping from OpenAPI tag name to (category, subcategory).
+
+    Uses x-tagGroups for the category (group name) and the tag's
+    x-displayName for the subcategory.  Falls back to the raw tag name
+    when x-displayName is absent.
+    """
+    # tag name → x-displayName
+    tag_display: Dict[str, str] = {}
+    for tag_def in doc.get("tags", []):
+        if isinstance(tag_def, dict) and "name" in tag_def:
+            display = tag_def.get("x-displayName", tag_def["name"])
+            tag_display[tag_def["name"]] = display
+
+    # tag name → (group_name, display_name)
+    tag_to_category: Dict[str, Tuple[str, str]] = {}
+    for group in doc.get("x-tagGroups", []):
+        if not isinstance(group, dict):
+            continue
+        group_name = group.get("name", "Other")
+        for tag_name in group.get("tags", []):
+            display = tag_display.get(tag_name, tag_name)
+            tag_to_category[tag_name] = (group_name, display)
+
+    # Tags not listed in any group still get a category from their name
+    for tag_name, display in tag_display.items():
+        if tag_name not in tag_to_category:
+            tag_to_category[tag_name] = (display, display)
+
+    return tag_to_category
+
+
 def parse_openapi(repo: Path, spec_override: Optional[Path] = None) -> dict:
     """Parse an OpenAPI spec and return structured data for all columns.
 
@@ -489,11 +519,12 @@ def parse_openapi(repo: Path, spec_override: Optional[Path] = None) -> dict:
     falls back to ``docs/data/openapi.yml`` inside *repo*.
 
     Returns a dict with:
-      all_paths:      {norm_path: {METHOD, ...}}
-      completeness:   {(norm_path, METHOD): "Full"/"Partial"/"Stub"}
-      x_internal:     {(norm_path, METHOD): ["cloud"] or []}
-      original_paths: {norm_path: original_path}
-      compl_notes:    {(norm_path, METHOD): [detail_notes]}
+      all_paths:        {norm_path: {METHOD, ...}}
+      completeness:     {(norm_path, METHOD): "Full"/"Partial"/"Stub"}
+      x_internal:       {(norm_path, METHOD): ["cloud"] or []}
+      original_paths:   {norm_path: original_path}
+      compl_notes:      {(norm_path, METHOD): [detail_notes]}
+      path_categories:  {norm_path: (category, subcategory)}
     """
     spec_file = spec_override if spec_override else repo / OPENAPI_FILE
     empty = {
@@ -502,6 +533,7 @@ def parse_openapi(repo: Path, spec_override: Optional[Path] = None) -> dict:
         "x_internal": {},
         "original_paths": {},
         "compl_notes": {},
+        "path_categories": {},
     }
     if not spec_file.exists():
         print(f"ERROR: {spec_file} not found", file=sys.stderr)
@@ -510,11 +542,15 @@ def parse_openapi(repo: Path, spec_override: Optional[Path] = None) -> dict:
     with open(spec_file, encoding="utf-8") as f:
         doc = yaml.safe_load(f)
 
+    # Build tag → (category, subcategory) from x-tagGroups + tags
+    tag_to_category = _build_tag_category_map(doc)
+
     all_paths: Dict[str, Set[str]] = {}
     completeness: Dict[Tuple[str, str], str] = {}
     x_internal: Dict[Tuple[str, str], List[str]] = {}
     original_paths: Dict[str, str] = {}
     compl_notes: Dict[Tuple[str, str], List[str]] = {}
+    path_categories: Dict[str, Tuple[str, str]] = {}
 
     for path, methods_obj in doc.get("paths", {}).items():
         if not isinstance(methods_obj, dict):
@@ -533,6 +569,15 @@ def parse_openapi(repo: Path, spec_override: Optional[Path] = None) -> dict:
             if norm not in original_paths:
                 original_paths[norm] = path
 
+            # Derive category from the operation's first tag
+            if norm not in path_categories:
+                op_tags = details.get("tags", [])
+                if isinstance(op_tags, list):
+                    for tag_name in op_tags:
+                        if tag_name in tag_to_category:
+                            path_categories[norm] = tag_to_category[tag_name]
+                            break
+
             # x-internal tag
             xi = details.get("x-internal", [])
             if not isinstance(xi, list):
@@ -550,6 +595,7 @@ def parse_openapi(repo: Path, spec_override: Optional[Path] = None) -> dict:
         "x_internal": x_internal,
         "original_paths": original_paths,
         "compl_notes": compl_notes,
+        "path_categories": path_categories,
     }
 
 
@@ -827,6 +873,7 @@ def classify_endpoints(
     all_paths = spec_data["all_paths"]
     x_internal_map = spec_data["x_internal"]
     original_paths = spec_data["original_paths"]
+    path_categories = spec_data.get("path_categories", {})
 
     endpoints: List[Dict[str, Any]] = []
     router_norm_paths: Set[str] = set()
@@ -845,8 +892,8 @@ def classify_endpoints(
         methods = route["methods"]
         is_commented = all(r["commented"] for r in route_group)
 
-        category, subcategory = categorize(path)
         norm = normalize_path(path)
+        category, subcategory = categorize(path, path_categories)
         router_norm_paths.add(norm)
 
         spec_methods = all_paths.get(norm, set())
@@ -925,7 +972,7 @@ def classify_endpoints(
 
         original = original_paths.get(norm_path, norm_path)
         methods_sorted = sorted(spec_methods)
-        category, subcategory = categorize(original)
+        category, subcategory = categorize(original, path_categories)
 
         # Determine x-internal across all methods for this path
         all_cloud = True
@@ -1329,57 +1376,71 @@ def main():
         sys.exit(1)
 
     # --- Phase 1: Parse ---
-    print("Parsing router...")
     routes = parse_router(repo)
-    print(f"  {len(routes)} route registrations")
-
     spec_override = Path(args.spec).resolve() if args.spec else None
-    spec_label = spec_override or (repo / OPENAPI_FILE)
-    print(f"Parsing OpenAPI spec ({spec_label})...")
     spec_data = parse_openapi(repo, spec_override=spec_override)
     n_spec = len(spec_data["all_paths"])
-    print(f"  {n_spec} spec paths")
-
-    print("Scanning handler imports...")
     schema_map = build_schema_driven_map(repo)
-    n_true = sum(1 for s, _ in schema_map.values() if s == "TRUE")
-    n_part = sum(1 for s, _ in schema_map.values() if s == "Partial")
-    print(f"  {len(schema_map)} handlers ({n_true} schema-driven, {n_part} partial)")
+    n_driven = sum(1 for s, _ in schema_map.values() if s == "TRUE")
 
     # --- Phase 2: Classify ---
     endpoints = classify_endpoints(routes, spec_data, schema_map)
     total = len(endpoints)
 
-    # Coverage breakdown
-    n_overlap = sum(1 for e in endpoints if e["coverage"] == "Overlap")
+    # Counts
     n_srv_under = sum(1 for e in endpoints if e["coverage"] == "Server Underlap")
-    n_sch_under = sum(1 for e in endpoints if e["coverage"] == "Schema Underlap")
-
-    # Status breakdown
     n_active = sum(1 for e in endpoints if e["status"] == "Active")
     n_cloud_compat = sum(1 for e in endpoints if e["status"] == "Active (Cloud-annotated)")
     n_deprecated = sum(1 for e in endpoints if e["status"] == "Deprecated")
     n_unimpl = sum(1 for e in endpoints if e["status"] == "Unimplemented")
     n_cloud = sum(1 for e in endpoints if e["status"] == "Cloud-only")
-
-    # Schema-Backed
     b_true = sum(1 for e in endpoints if e["backed"] == "TRUE")
-
-    # Completeness
-    comp_full = sum(1 for e in endpoints if e["completeness"] == "Full")
-    comp_part = sum(1 for e in endpoints if e["completeness"] == "Partial")
     comp_stub = sum(1 for e in endpoints if e["completeness"] == "Stub")
-
-    # Schema-Driven
     d_true = sum(1 for e in endpoints if e["driven"] == "TRUE")
     d_part = sum(1 for e in endpoints if e["driven"] == "Partial")
+    n_na_driven = sum(1 for e in endpoints if e["driven"] == "N/A")
 
-    print(f"\nClassified {total} endpoints:")
-    print(f"  Coverage:      {n_overlap} Overlap, {n_srv_under} Server Underlap, {n_sch_under} Schema Underlap")
-    print(f"  Status:        {n_active} Active, {n_cloud_compat} Active (Cloud-annotated), {n_deprecated} Deprecated, {n_unimpl} Unimplemented, {n_cloud} Cloud-only")
-    print(f"  Backed:        {b_true} TRUE, {total - b_true} FALSE")
-    print(f"  Completeness:  {comp_full} Full, {comp_part} Partial, {comp_stub} Stub")
-    print(f"  Driven:        {d_true} TRUE, {d_part} Partial")
+    # --- Summary ---
+    print("\nMeshery API Audit Summary")
+    print("=" * 25)
+    print(f"Sources: {len(routes)} routes | {n_spec} spec paths | "
+          f"{len(schema_map)} handlers ({n_driven} schema-driven)")
+
+    status_parts = []
+    for label, count in [
+        ("Active", n_active + n_cloud_compat),
+        ("Deprecated", n_deprecated),
+        ("Unimplemented", n_unimpl),
+        ("Cloud-only", n_cloud),
+    ]:
+        if count:
+            status_parts.append(f"{count} {label}")
+    print(f"\n{total} endpoints (router + spec combined): {', '.join(status_parts)}")
+
+    # Actionable gaps — only show non-zero items
+    gaps = []
+    if n_srv_under:
+        gaps.append(f"  {n_srv_under} routes have no OpenAPI spec definition")
+    if n_unimpl:
+        gaps.append(f"  {n_unimpl} spec-defined endpoints have no router registration")
+    not_backed = total - b_true
+    if not_backed:
+        gaps.append(f"  {not_backed}/{total} endpoints are not schema-backed")
+    if comp_stub:
+        gaps.append(f"  {comp_stub} endpoint schemas are stubs")
+    router_total = total - n_na_driven
+    not_driven = router_total - d_true - d_part
+    if not_driven > 0:
+        gaps.append(f"  {not_driven}/{router_total} handlers are not schema-driven")
+
+    if gaps:
+        print("\nNeeds attention:")
+        for g in gaps:
+            print(g)
+    else:
+        print("\nNo gaps found — all endpoints are fully covered.")
+
+    print("\nRun with --verbose for per-endpoint details.")
 
     if args.verbose:
         print()
@@ -1407,9 +1468,13 @@ def main():
     if not changes:
         print("Sheet is up to date.")
     else:
-        print(f"\n{len(changes)} change(s):")
-        for ch in changes:
-            print(f"  {ch}")
+        n_updates = sum(1 for c in changes if c.startswith("UPDATE"))
+        n_new = sum(1 for c in changes if c.startswith("NEW ROW"))
+        n_errors = sum(1 for c in changes if "ERROR" in c)
+        print(f"\n{len(changes)} change(s): {n_updates} updated, {n_new} new, {n_errors} error(s)")
+        if args.verbose:
+            for ch in changes:
+                print(f"  {ch}")
 
 
 if __name__ == "__main__":
