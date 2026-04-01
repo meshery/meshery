@@ -474,7 +474,28 @@ helm-meshery-lint:
 #-----------------------------------------------------------------------------
 # Meshery APIs
 #-----------------------------------------------------------------------------
-.PHONY: swagger-build swagger swagger-docs-build graphql-docs-build graphql-build
+.PHONY: swagger-build swagger swagger-docs-build graphql-docs-build graphql-build api-audit api-audit-update api-audit-setup
+
+API_AUDIT_DIR = install/scripts/api-audit
+API_AUDIT_VENV = $(API_AUDIT_DIR)/venv
+API_AUDIT_PY   = $(API_AUDIT_VENV)/bin/python3
+
+## Install Python dependencies for the API schema audit tool.
+api-audit-setup:
+	python3 -m venv $(API_AUDIT_VENV)
+	$(API_AUDIT_PY) -m pip install --quiet pyyaml gspread google-auth
+
+## Audit Meshery REST API endpoints (dry-run). Compares router registrations,
+## OpenAPI spec, and handler imports without writing to any external sheet.
+api-audit: api-audit-setup
+	$(API_AUDIT_PY) $(API_AUDIT_DIR)/api_audit.py --repo . --dry-run --verbose
+
+## Audit Meshery REST API endpoints and write results to the configured
+## Google Sheet. Requires SHEET_ID and Google credentials (see top of
+## install/scripts/api-audit/api_audit.py for configuration).
+api-audit-update: api-audit-setup
+	$(API_AUDIT_PY) $(API_AUDIT_DIR)/api_audit.py --repo .
+
 ## Build Meshery REST API specifications
 swagger-build:
 	swagger generate spec -o ./server/helpers/swagger.yaml --scan-models

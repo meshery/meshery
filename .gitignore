@@ -83,6 +83,8 @@ allure-results/
 playwright-report/
 
 install/docker-extension/vm/vm
+install/scripts/api-audit/venv/
+install/scripts/api-audit/__pycache__/
 .env
 ui/.env
 *.env
