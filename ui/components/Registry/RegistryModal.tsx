@@ -32,7 +32,6 @@ import {
   useGetRelationshipsQuery,
   useGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
-import { removeDuplicateVersions } from '../Settings/Registry/helper';
 
 const DRAWER_WIDTH = 250;
 
@@ -222,22 +221,22 @@ export const Navigation = ({ setHeaderInfo }) => {
   }, [selectedView]);
 
   const { data: modelsData, isLoading: modelsLoading } = useGetMeshModelsQuery({
-    params: { pagesize: 'all' },
+    params: { pagesize: 1 },
   });
   const { data: componentsData, isLoading: componentsLoading } = useGetComponentsQuery({
-    params: { pagesize: 'all' },
+    params: { pagesize: 1 },
   });
   const { data: relationshipsData, isLoading: relationshipsLoading } = useGetRelationshipsQuery({
-    params: { pagesize: 'all' },
+    params: { pagesize: 1 },
   });
   const { data: registrantsData, isLoading: registrantsLoading } = useGetRegistrantsQuery({
-    params: { pagesize: 'all' },
+    params: { pagesize: 1 },
   });
   const counts = {
-    models: modelsData ? removeDuplicateVersions(modelsData.models || []).length : 0,
-    components: componentsData?.total_count || 0,
-    relationships: relationshipsData?.total_count || 0,
-    registrants: registrantsData?.total_count || 0,
+    models: modelsLoading ? '...' : modelsData?.total_count || 0,
+    components: componentsLoading ? '...' : componentsData?.total_count || 0,
+    relationships: relationshipsLoading ? '...' : relationshipsData?.total_count || 0,
+    registrants: registrantsLoading ? '...' : registrantsData?.total_count || 0,
   };
   const navConfig = getNavItems(theme, counts);
 
