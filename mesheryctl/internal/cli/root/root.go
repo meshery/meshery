@@ -162,10 +162,10 @@ func TreePath() *cobra.Command {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-// Skip config initialization for completion command
-if len(os.Args) > 1 && os.Args[1] == "completion" {
-	return
-}
+	// Skip config initialization for completion command
+	if len(os.Args) > 1 && os.Args[1] == "completion" {
+		return
+	}
 	utils.CfgFile = cfgFile
 	// initialize the path to the kubeconfig file
 	utils.SetKubeConfig()
