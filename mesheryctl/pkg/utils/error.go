@@ -80,6 +80,7 @@ var (
 	ErrDockerComposeRemoveCode        = "mesheryctl-1225"
 	ErrDockerComposeLogsCode          = "mesheryctl-1226"
 	ErrMesheryCheckRunningStatusCode  = "mesheryctl-1227"
+	ErrDockerComposeStopCode          = "mesheryctl-1228"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -956,4 +957,13 @@ func ErrMesheryCheckRunningStatus(err error) error {
 		[]string{err.Error()},
 		[]string{"You are not on correct context. ", "Meshery is not reachable. ", "There might be some issue with your Docker or Kubernetes environment. "},
 		[]string{"Please ensure Meshery is installed. ", "Validate that you are in the correct context. "})
+}
+func ErrDockerComposeStop(err error) error {
+	return errors.New(
+		ErrDockerComposeStopCode,
+		errors.Fatal,
+		[]string{"Failed to stop Meshery containers"},
+		[]string{err.Error()},
+		[]string{"An error occurred while trying to stop Meshery containers using Docker Compose"},
+		[]string{"Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder."})
 }
