@@ -11,6 +11,11 @@ setup() {
 }
 
 @test "mesheryctl design delete removes the associate design" {
+  # Check if the design ID file exists (created by previous import test)
+  if [[ ! -f "$TESTDATA_DIR/id" ]]; then
+    skip "Design ID file not found (import test may have failed)"
+  fi
+  
   DESIGN_ID=$(cat "$TESTDATA_DIR/id")
   [ -n "$DESIGN_ID" ] || skip "Empty design ID"
 
@@ -20,7 +25,7 @@ setup() {
   assert_output --partial "deleted" || assert_output --partial "Design"
 }
 
-# Test 2: Verify appropriate response for deleting a non-existent design
+
 @test "mesheryctl design delete for non-existent ID gives appropriate response" {
   # Use a non-existent design ID
   NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"

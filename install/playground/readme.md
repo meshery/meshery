@@ -49,7 +49,7 @@ chmod +x protect-kubelet
 
 ## Reinstalling Meshery after a clean Meshery uninstall
 If mistakenly or for some reason Meshery is uninstalled (along with `meshery` namespace) then follow the below steps to bring it back up.
-1. `helm install meshery meshery/meshery --namespace meshery --set env.PROVIDER=Meshery`
+1. `helm install meshery meshery/meshery --namespace meshery --set env.PROVIDER=Layer5`
 2. `kubectl create secret tls -n meshery tls-secret-meshery --cert=/etc/letsencrypt/live/playground.meshery.io-0001/fullchain.pem --key=/etc/letsencrypt/live/playground.meshery.io-0001/privkey.pem`  Make sure to have private and public keys generated for `playground.meshery.io` in appropriate directories.
 3. kubectl apply -f contour-http-proxy.yaml 
 ## Prometheus deployment

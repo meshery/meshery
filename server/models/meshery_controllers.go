@@ -475,7 +475,6 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 		// if unable to fetch latest release tag, meshkit helm functions handle
 		// this automatically fetch the latest one
 		if err != nil {
-			// mch.log.Error(fmt.Errorf("Couldn't check release tag: %s. Will use latest version", err))
 			mesheryReleaseVersion = ""
 		} else {
 			mesheryReleaseVersion = latestRelease
@@ -638,24 +637,66 @@ func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, inst
 // General helper method to emit events for system-level operations
 func (mch *MesheryControllersHelper) emitEvent(description string, severity events.EventSeverity, metadata map[string]any, userID uuid.UUID) {
 	if mch.eventBroadcaster != nil && mch.systemID != nil {
-		event := events.NewEvent().
+		actedUpon := controllerEventActedUpon(userID, metadata)
+
+		eventBuilder := events.NewEvent().
 			FromSystem(*mch.systemID).
-			FromUser(userID).
 			WithCategory("connection").
 			WithAction("update").
-			ActedUpon(userID).
 			WithSeverity(severity).
 			WithDescription(description).
-			WithMetadata(metadata).
-			Build()
+			WithMetadata(metadata)
+
+		if userID != uuid.Nil {
+			eventBuilder = eventBuilder.FromUser(userID)
+		}
+
+		if actedUpon != uuid.Nil {
+			eventBuilder = eventBuilder.ActedUpon(actedUpon)
+		}
+
+		event := eventBuilder.Build()
 
 		if mch.provider != nil {
-			if err := mch.provider.PersistEvent(*event, nil); err != nil {
-				mch.log.Error(fmt.Errorf("failed to persist event: %w", err))
+			if shouldPersistControllerEvent(userID, actedUpon) {
+				if err := mch.provider.PersistEvent(*event, nil); err != nil {
+					mch.log.Error(fmt.Errorf("failed to persist event: %w", err))
+				}
+			} else {
+				mch.log.Debug("skipping remote persistence for controller event without valid user or resource association")
 			}
 		}
 		go mch.eventBroadcaster.Publish(userID, event)
 	}
+}
+
+func controllerEventActedUpon(userID uuid.UUID, metadata map[string]any) uuid.UUID {
+	if metadata != nil {
+		switch connectionID := metadata["connectionID"].(type) {
+		case string:
+			if parsedID := uuid.FromStringOrNil(connectionID); parsedID != uuid.Nil {
+				return parsedID
+			}
+		case uuid.UUID:
+			if connectionID != uuid.Nil {
+				return connectionID
+			}
+		case *uuid.UUID:
+			if connectionID != nil && *connectionID != uuid.Nil {
+				return *connectionID
+			}
+		}
+	}
+
+	if userID != uuid.Nil {
+		return userID
+	}
+
+	return uuid.Nil
+}
+
+func shouldPersistControllerEvent(userID, actedUpon uuid.UUID) bool {
+	return userID != uuid.Nil && actedUpon != uuid.Nil
 }
 
 // Common helper for both error and warning events with error information

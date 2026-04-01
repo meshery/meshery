@@ -196,6 +196,11 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
+	if req.Method == http.MethodDelete {
+		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
+		return
+	}
+
 	if req.Method == http.MethodPost {
 		promURL := req.FormValue("prometheusURL")
 		promKey := req.FormValue("prometheusKey")
@@ -264,9 +269,6 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
 		h.log.Debug("Prometheus URL %s saved", promURL)
-	} else if req.Method == http.MethodDelete {
-		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
-		return
 	}
 
 	err := provider.RecordPreferences(req, user.UserId, prefObj)
@@ -291,9 +293,13 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 
@@ -360,9 +366,13 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 
@@ -388,9 +398,13 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 
@@ -427,9 +441,13 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 	url, _ := connection.Metadata["url"].(string)
@@ -506,9 +524,13 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 

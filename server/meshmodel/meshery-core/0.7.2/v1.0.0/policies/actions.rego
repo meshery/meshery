@@ -6,7 +6,7 @@ import rego.v1
 # { "op": "update_component", "value": { "id": "xxx-xxx", "path": ["name"], "value": 2 }  op: "replace"| "merge" }
 update_component_op := "update_component"
 
-# This is specially handled as configurations are complex and need to be specialy patched ( lot of array index edgecases)
+# This is specially handled as configurations are complex and need to be specially patched (lot of array index edge cases)
 # right now this is handled from golang
 # { "op": "update_component_configuration", "value": { "id": "xxx-xxx", "path": ["configuration","spec"], "value": 2 }  op: "replace"| "merge" }
 update_component_configuration_op := "update_component_configuration"

@@ -120,7 +120,6 @@ func setContext(configFile, cname string) error {
 	if err != nil {
 		return utils.ErrReadResponseBody(err)
 	}
-	// TODO: Pretty print the output
 	log.Debugf("Set context API response: %s", string(body))
 	return nil
 }
@@ -331,7 +330,7 @@ mesheryctl system config minikube
 		}
 
 		log.Infof("A flattened Minikube kubeconfig file available at: %s", utils.ConfigPath)
-		log.Info("A new Meshery connection has been created. Run `mesheryctl connnection list` for details.")
+		log.Info("A new Meshery connection has been created. Run `mesheryctl connection list` for details.")
 
 		// set the token in the chosen context
 		setToken()

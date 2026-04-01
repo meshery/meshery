@@ -52,13 +52,17 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	if req.Method == http.MethodGet {
+	switch req.Method {
+	case http.MethodGet:
 		req = mux.SetURLVars(req, map[string]string{"connectionKind": "grafana"})
 		h.GetConnectionsByKind(w, req, prefObj, user, p)
 		return
-	}
 
-	if req.Method == http.MethodPost {
+	case http.MethodDelete:
+		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
+		return
+
+	case http.MethodPost:
 		grafanaURL := req.FormValue("grafanaURL")
 		grafanaAPIKey := req.FormValue("grafanaAPIKey")
 		credName := req.FormValue("grafanaCredentialName")
@@ -126,11 +130,8 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		h.log.Debug(fmt.Sprintf("connection to grafana @ %s succeeded", grafanaURL))
 
 		_ = json.NewEncoder(w).Encode(connection)
-	} else if req.Method == http.MethodDelete {
-		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
 		return
 	}
-
 }
 
 // swagger:route GET /api/telemetry/metrics/grafana/ping/{connectionID} GrafanaAPI idGetGrafanaPing
@@ -145,9 +146,13 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "grafana" {
+		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
 		return
 	}
 
@@ -182,11 +187,15 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	h.log.Debug("connection id : ", connectionID)
 	if err != nil {
 		h.log.Error(err)
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "grafana" {
+		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
 		return
 	}
 
@@ -233,9 +242,13 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 	reqQuery := req.URL.Query()
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "grafana" {
+		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
 		return
 	}
 
@@ -270,9 +283,13 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "grafana")
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "grafana" {
+		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
 		return
 	}
 
@@ -335,9 +352,13 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "grafana" {
+		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
 		return
 	}
 

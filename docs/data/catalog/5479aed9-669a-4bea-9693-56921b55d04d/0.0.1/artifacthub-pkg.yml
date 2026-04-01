@@ -1,0 +1,20 @@
+version: 0.0.1
+name: prometheus-sample
+displayName: Prometheus Sample
+createdAt: "2023-08-29T07:32:54Z"
+description: This is a simple prometheus montioring design
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/5479aed9-669a-4bea-9693-56921b55d04d/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Networking should be properly configured to enable communication between the frontend and backend components of the app. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 08a365f5-5305-4007-8088-d57f45b4966c
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

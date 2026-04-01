@@ -10,7 +10,13 @@
       "@/api/*": ["api/*"],
       "@/assets/*": ["assets/*"],
       "@/themes/*": ["themes/*"],
-      "@/store/*": ["store/*"]
+      "@/store/*": ["store/*"],
+      "lib/*": ["lib/*"],
+      "machines/*": ["machines/*"],
+      "css/*": ["css/*"],
+      "assets/*": ["assets/*"],
+      "utils/*": ["utils/*"],
+      "rtk-query/*": ["rtk-query/*"]
     }
   },
   "exclude": ["node_modules", "out"]
