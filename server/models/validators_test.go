@@ -13,7 +13,7 @@ func TestSMPPerformanceTestConfigValidatorRejectsRelativeEndpoints(t *testing.T)
 			{
 				LoadGenerator: FortioLG.Name(),
 				Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_HTTP,
-				EndpointUrls:  []string{"not-a-url"},
+				EndpointUrls:  []string{"not-a-url", "/health", "health"},
 			},
 		},
 	}
