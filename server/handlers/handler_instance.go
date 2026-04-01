@@ -2,6 +2,8 @@
 package handlers
 
 import (
+	"path/filepath"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
@@ -10,6 +12,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/meshmodel/core/policies"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshkit/utils/events"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/spf13/viper"
@@ -34,6 +37,7 @@ type Handler struct {
 	Rego                                    *policies.Rego
 	ConnectionToStateMachineInstanceTracker *machines.ConnectionToStateMachineInstanceTracker
 	MeshsyncDefaultDeploymentMode           schemasConnection.MeshsyncDeploymentMode
+	mesheryHome                             string
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -68,6 +72,7 @@ func NewHandlerInstance(
 		SystemID:                                viper.Get("INSTANCE_ID").(*uuid.UUID),
 		ConnectionToStateMachineInstanceTracker: connToInstanceTracker,
 		MeshsyncDefaultDeploymentMode:           meshsyncDefaultDeploymentMode,
+		mesheryHome:                             filepath.Join(utils.GetHome(), ".meshery"),
 	}
 
 	h.task = taskq.RegisterTask(&taskq.TaskOptions{
