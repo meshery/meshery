@@ -27,13 +27,32 @@ func TestFetchKubernetesVersion(t *testing.T) {
 		logrus.Error(err)
 		os.Exit(1)
 	}
-	utils.SetupContextEnv(t)
-	utils.StartMockery(t)
-	testByte := []byte{0, 0}
-	var testContext = "nil"
 
-	_, err = FetchKubernetesVersion(testByte, testContext, log)
+	// SetupContextEnv uses a relative path that assumes mesheryctl/ depth.
+	// Override with the correct path for server/helpers/.
+	path, err := os.Getwd()
 	if err != nil {
-		t.Error("FetchKubernetesVersion() failed")
+		t.Fatal("unable to locate working directory")
+	}
+	configPath := path + "/../../mesheryctl/pkg/utils/TestConfig.yaml"
+	viper.Reset()
+	viper.SetConfigFile(configPath)
+	utils.DefaultConfigPath = configPath
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatalf("unable to read configuration from %v: %v", configPath, err)
+	}
+	utils.StartMockery(t)
+
+	// Use a valid kubeconfig from the standard location if available,
+	// otherwise skip since FetchKubernetesVersion requires a real K8s cluster.
+	home, _ := os.UserHomeDir()
+	kubeconfig, err := os.ReadFile(home + "/.kube/config")
+	if err != nil {
+		t.Skip("skipping: no kubeconfig available at ~/.kube/config")
+	}
+
+	_, err = FetchKubernetesVersion(kubeconfig, "", log)
+	if err != nil {
+		t.Errorf("FetchKubernetesVersion() failed: %v", err)
 	}
 }
