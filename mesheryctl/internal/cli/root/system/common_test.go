@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
