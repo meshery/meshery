@@ -67,10 +67,24 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 
 	var credentialID *uuid.UUID
 	if ok {
-		if idStr, isStr := existingCredID.(string); isStr {
-			parsed := uuid.FromStringOrNil(idStr)
-			credentialID = &parsed
+		idStr, isStr := existingCredID.(string)
+		if !isStr {
+			parseErr := fmt.Errorf("credential id is not a string")
+			_err := models.ErrPersistCredential(parseErr)
+			return NoOp, eventBuilder.
+				WithDescription(fmt.Sprintf("Invalid credential identifier for the connection %s", payload.Name)).
+				WithSeverity(events.Error).
+				WithMetadata(map[string]interface{}{"error": parseErr}).Build(), _err
 		}
+		parsed, parseErr := uuid.FromString(idStr)
+		if parseErr != nil {
+			_err := models.ErrPersistCredential(parseErr)
+			return NoOp, eventBuilder.
+				WithDescription(fmt.Sprintf("Invalid credential identifier for the connection %s", payload.Name)).
+				WithSeverity(events.Error).
+				WithMetadata(map[string]interface{}{"error": parseErr}).Build(), _err
+		}
+		credentialID = &parsed
 	} else {
 		credentialID = credential.ID
 	}
