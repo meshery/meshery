@@ -41,7 +41,12 @@ var (
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop",
-	Args: cobra.NoArgs,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if err := cobra.NoArgs(cmd, args); err != nil {
+			return ErrStopMeshery(err)
+		}
+		return nil
+	},
 	Short: "Stop Meshery",
 	Long:  `Stop all Meshery containers / remove all Meshery resources.`,
 	Example: `
@@ -278,7 +283,7 @@ func invokeDeleteCRDs() error {
 			return ErrStopMeshery(err)
 		}
 
-		utils.Log.Debug(ErrStopMeshery(err))
+		utils.Log.Debug(err)
 		return nil
 	}
 
