@@ -159,6 +159,22 @@ func cloneRequestForRetry(req *http.Request) (*http.Request, error) {
 	return retryReq, nil
 }
 
+func (l *RemoteProvider) latestToken(tokenString string) (string, bool) {
+	l.TokenStoreMut.Lock()
+	defer l.TokenStoreMut.Unlock()
+
+	originalToken := tokenString
+	for {
+		refreshedToken, ok := l.TokenStore[tokenString]
+		if !ok || refreshedToken == "" {
+			break
+		}
+		tokenString = refreshedToken
+	}
+
+	return tokenString, tokenString != originalToken
+}
+
 func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http.Response, error) {
 	c := &http.Client{
 		Transport: tracing.NewTransport(http.DefaultTransport), // Create tracing transport to pass tracing context
