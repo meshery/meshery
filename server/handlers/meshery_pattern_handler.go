@@ -76,8 +76,6 @@ type DesignPostPayload struct {
 	CatalogData v1alpha1.CatalogData `json:"catalog_data,omitempty"`
 }
 
-// PatternFileRequestHandler will handle requests of both type GET and POST
-// on the route /api/pattern
 func (h *Handler) PatternFileRequestHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -162,13 +160,6 @@ func (h *Handler) handleProviderPatternGetError(rw http.ResponseWriter, eventBui
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 
-// swagger:route POST /api/pattern PatternsAPI idPostPatternFile
-// Handle POST requests for patterns
-//
-// Edit/update a meshery pattern
-// responses:
-//
-//	200: mesheryPatternResponseWrapper
 func (h *Handler) handlePatternPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -256,10 +247,6 @@ func (h *Handler) handlePatternPOST(
 
 }
 
-// Verifies and converts a pattern to design format if required.
-// A pattern is required to be converted to design format iff,
-// 1. pattern_file attribute is empty, and
-// 2. The "type" (sourcetype/original content) is not Design. [is one of compose/helmchart/manifests]
 func (h *Handler) VerifyAndConvertToDesign(
 	ctx context.Context,
 	mesheryPattern *models.MesheryPattern,
@@ -311,213 +298,6 @@ func (h *Handler) VerifyAndConvertToDesign(
 	}
 	return nil
 }
-
-// Commenting out unused function
-// func unCompressOCIArtifactIntoDesign(artifact []byte) (*models.MesheryPattern, error) {
-
-// 	// Assume design is in OCI Tarball Format
-// 	tmpDir, err := oci.CreateTempOCIContentDir()
-// 	if err != nil {
-// 		return nil, ErrCreateDir(err, "OCI")
-// 	}
-// 	defer os.RemoveAll(tmpDir)
-
-// 	tmpInputDesignFile := filepath.Join(tmpDir, "design.tar")
-// 	file, err := os.Create(tmpInputDesignFile)
-// 	if err != nil {
-// 		return nil, ErrCreateFile(err, tmpInputDesignFile)
-// 	}
-// 	defer file.Close()
-
-// 	reader := bytes.NewReader(artifact)
-// 	if _, err := io.Copy(file, reader); err != nil {
-// 		return nil, ErrWritingIntoFile(err, tmpInputDesignFile)
-// 	}
-
-// 	tmpOutputDesignFile := filepath.Join(tmpDir, "output")
-// 	// Extract the tarball
-// 	if err := oci.UnCompressOCIArtifact(tmpInputDesignFile, tmpOutputDesignFile); err != nil {
-// 		return nil, ErrUnCompressOCIArtifact(err)
-// 	}
-
-// 	files, err := walker.WalkLocalDirectory(tmpOutputDesignFile)
-// 	if err != nil {
-// 		return nil, ErrWaklingLocalDirectory(err)
-// 	}
-
-// 	// TODO: Add support to merge multiple designs into one
-// 	// Currently, assumes to save only the first design
-// 	if len(files) == 0 {
-// 		return nil, ErrEmptyOCIImage(fmt.Errorf("no design file detected in the imported OCI image"))
-// 	}
-// 	design := files[0]
-
-// 	var patternFile pattern.PatternFile
-
-// 	err = encoding.Unmarshal([]byte(design.Content), &patternFile)
-// 	if err != nil {
-// 		return nil, ErrDecodePattern(err)
-// 	}
-// 	mesheryPattern := &models.MesheryPattern{
-// 		PatternFile: design.Content,
-// 		Name:        design.Name,
-// 	}
-
-// 	return mesheryPattern, nil
-// }
-
-// Commenting out unused function
-// func githubRepoDesignScan(
-// 	owner,
-// 	repo,
-// 	path,
-// 	branch,
-// 	sourceType string,
-// 	reg *meshmodel.RegistryManager,
-// ) ([]models.MesheryPattern, error) {
-// 	var mu sync.Mutex
-// 	ghWalker := walker.NewGit()
-// 	result := make([]models.MesheryPattern, 0)
-// 	err := ghWalker.
-// 		Owner(owner).
-// 		Repo(repo).
-// 		Branch(branch).
-// 		Root(path).
-// 		RegisterFileInterceptor(func(f walker.File) error {
-// 			ext := filepath.Ext(f.Name)
-// 			var k8sres string
-// 			var err error
-// 			k8sres = f.Content
-// 			if ext == ".yml" || ext == ".yaml" {
-// 				if sourceType == string(models.DockerCompose) {
-// 					k8sres, err = kompose.Convert([]byte(f.Content))
-// 					if err != nil {
-// 						return ErrRemoteApplication(err)
-// 					}
-// 				}
-// 				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, "", false, reg)
-// 				if err != nil {
-// 					return err //always a meshkit error
-// 				}
-
-// 				patternByt, _ := encoding.Marshal(pattern)
-
-// 				af := models.MesheryPattern{
-// 					Name:        strings.TrimSuffix(f.Name, ext),
-// 					PatternFile: string(patternByt),
-// 					Location: map[string]interface{}{
-// 						"type":   "github",
-// 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-// 						"path":   f.Path,
-// 						"branch": branch,
-// 					},
-// 					Type: sql.NullString{
-// 						String: string(sourceType),
-// 						Valid:  true,
-// 					},
-// 					SourceContent: []byte(f.Content),
-// 				}
-
-// 				mu.Lock()
-// 				result = append(result, af)
-// 				mu.Unlock()
-// 			}
-
-// 			return nil
-// 		}).
-// 		Walk()
-
-// 	return result, ErrRemoteApplication(err)
-// }
-
-// Commenting out unused function
-// Always returns a meshery pattern slice of length 1 otherwise an error is returned
-// func genericHTTPDesignFile(fileURL, patternName, sourceType string, reg *meshmodel.RegistryManager, log logger.Handler) ([]models.MesheryPattern, error) {
-// 	resp, err := http.Get(fileURL)
-// 	if err != nil {
-// 		return nil, ErrRemoteApplication(err)
-// 	}
-// 	if resp.StatusCode != http.StatusOK {
-// 		return nil, ErrRemoteApplication(fmt.Errorf("file not found"))
-// 	}
-
-// 	defer models.SafeClose(resp.Body, log)
-
-// 	body, err := io.ReadAll(resp.Body)
-// 	if err != nil {
-// 		return nil, ErrRemoteApplication(err)
-// 	}
-
-// 	res := string(body)
-
-// 	if sourceType == string(models.DockerCompose) {
-// 		res, err = kompose.Convert(body)
-// 		if err != nil {
-// 			return nil, ErrRemoteApplication(err)
-// 		}
-// 	}
-
-// 	var pattern pattern.PatternFile
-// 	if sourceType == string(models.DockerCompose) || sourceType == string(models.K8sManifest) {
-// 		var err error
-// 		pattern, err = pCore.NewPatternFileFromK8sManifest(res, "", false, reg)
-// 		if err != nil {
-// 			return nil, err //This error is already a meshkit error
-// 		}
-// 	} else {
-// 		err := encoding.Unmarshal([]byte(res), &pattern)
-// 		if err != nil {
-// 			return nil, ErrDecodePattern(err)
-// 		}
-// 	}
-
-// 	if patternName != "" {
-// 		pattern.Name = patternName
-// 	}
-
-// 	patternByt, _ := encoding.Marshal(pattern)
-
-// 	url := strings.Split(fileURL, "/")
-// 	af := models.MesheryPattern{
-// 		Name:        url[len(url)-1],
-// 		PatternFile: string(patternByt),
-// 		Location: map[string]interface{}{
-// 			"type":   "http",
-// 			"host":   fileURL,
-// 			"path":   "",
-// 			"branch": "",
-// 		},
-// 		Type: sql.NullString{
-// 			String: string(sourceType),
-// 			Valid:  true,
-// 		},
-// 		SourceContent: body,
-// 	}
-// 	return []models.MesheryPattern{af}, nil
-// }
-
-// swagger:route GET /api/pattern PatternsAPI idGetPatternFiles
-// Handle GET request for patterns
-//
-// Returns the list of all the patterns saved by the current user
-// This will return all the patterns with their details
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search=<design name>``` A string matching is done on the specified design name
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-//
-// ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
-// Eg: ```?visibility=["public", "published"]``` will return public and published designs
-//
-// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default is false,
-//
-// / ```?populate``` Add the design content to the response like pattern_file return design file content
-//
-//	200: mesheryPatternsResponseWrapper
 func (h *Handler) GetMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -570,36 +350,6 @@ func (h *Handler) GetMesheryPatternsHandler(
 	}
 }
 
-// swagger:route GET /api/pattern/catalog PatternsAPI idGetCatalogMesheryPatternsHandler
-// Handle GET request for catalog patterns
-//
-// # Patterns can be further filtered through query parameter
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10.
-//
-// ```?search={patternname}``` If search is non empty then a greedy search is performed
-//
-// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for designs, default false,
-//
-// ```?class={class}``` Filters patterns based on class
-//
-// ```?technology={technology}``` Filters patterns based on technology
-//
-// ```?type={type}``` Filters patterns based on type
-//
-// ```?orgID={orgID}``` Filters patterns based on organization ID
-//
-// ```?workspaceID={workspaceID}``` Filter patterns based on workspace ID
-//
-// ```?userid={userid}``` Filters patterns based on user ID
-//
-// responses:
-//
-// 200: mesheryPatternsResponseWrapper
 func (h *Handler) GetCatalogMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -623,15 +373,6 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	}
 }
 
-// swagger:route DELETE /api/pattern/{id} PatternsAPI idDeleteMesheryPattern
-// Handle Delete for a Meshery Pattern
-//
-// Deletes a meshery pattern with ID: id
-// responses:
-//
-//	200: noContentWrapper
-//
-// DeleteMesheryPatternHandler deletes a pattern with the given id
 func (h *Handler) DeleteMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -671,20 +412,6 @@ func (h *Handler) DeleteMesheryPatternHandler(
 		h.log.Error(err)
 	}
 }
-
-// swagger:route GET /api/pattern/download/{id} PatternsAPI idGetMesheryPattern
-// Handle GET request for Meshery Pattern with the given id
-//
-// ?oci={true|false} - If true, returns the pattern in OCI Artifact format
-// ?export={Kubernetes Manifest} - exports the pattern file in the specified design format
-// ?pkg={true|false} - If true, returns the artifact hub pkg and pattern file in zip file. If "oci" is true, "pkg" is ignored and the export always contains the artifact hub pkg.
-//
-// Get the pattern with the given id
-// responses:
-//  200:
-
-// GetMesheryPatternHandler returns the pattern file with the given id
-
 func (h *Handler) DownloadMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -1107,15 +834,6 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 }
 
-// swagger:route POST /api/pattern/clone/{id} PatternsAPI idCloneMesheryPattern
-// Handle Clone for a Meshery Pattern
-//
-// Creates a local copy of a published pattern with id: id
-// responses:
-//
-//	200 : noContentWrapper
-//
-// CloneMesheryPatternHandler clones a pattern with the given id
 func (h *Handler) CloneMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -1222,15 +940,6 @@ func (h *Handler) CloneMesheryPatternHandler(
 	}
 }
 
-// swagger:route POST /api/pattern/catalog/publish PatternsAPI idPublishCatalogPatternHandler
-// Handle Publish for a Meshery Pattern
-//
-// Publishes pattern to Meshery Catalog by setting visibility to published and setting catalog data
-// responses:
-//
-//	202: noContentWrapper
-//
-// PublishCatalogPatternHandler sets visibility of pattern with given id as published
 func (h *Handler) PublishCatalogPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -1301,15 +1010,6 @@ func (h *Handler) PublishCatalogPatternHandler(
 	}
 }
 
-// swagger:route DELETE /api/pattern/catalog/unpublish PatternsAPI idUnPublishCatalogPatternHandler
-// Handle Publish for a Meshery Pattern
-//
-// Unpublishes pattern from Meshery Catalog by setting visibility to private and removing catalog data from website
-// responses:
-//
-//	200: noContentWrapper
-//
-// UnPublishCatalogPatternHandler sets visibility of pattern with given id as private
 func (h *Handler) UnPublishCatalogPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -1379,10 +1079,6 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 	}
 }
 
-// swagger:route DELETE /api/patterns PatternsAPI idDeleteMesheryPattern
-// Handle Delete for multiple Meshery Patterns
-//
-// DeleteMultiMesheryPatternsHandler deletes patterns with the given ids
 func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -1414,17 +1110,6 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 		h.log.Error(err)
 	}
 }
-
-// swagger:route GET /api/pattern/{id} PatternsAPI idGetMesheryPattern
-// Handle GET for a Meshery Pattern
-//
-// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default false,
-//
-// Fetches the pattern with the given id
-// responses:
-// 	200: mesheryPatternResponseWrapper
-
-// GetMesheryPatternHandler fetched the pattern with the given id
 func (h *Handler) GetMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -1594,13 +1279,6 @@ func addMeshkitErr(res *meshes.EventsResponse, err error) {
 	}
 }
 
-// swagger:route PUT /api/pattern/{sourcetype} PatternsAPI idUpdateMesheryPattern
-// Handle PUT request for Meshery Pattern with the given payload
-//
-// Updates the pattern with the given payload
-// responses:
-//
-//	200: mesheryPatternResponseWrapper
 func (h *Handler) handlePatternUpdate(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -1695,16 +1373,6 @@ func (h *Handler) handlePatternUpdate(
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 }
-
-// swagger:route POST /api/pattern/{sourcetype} PatternsAPI idPostPatternFileRequest
-// Handle POST request for Pattern Files
-//
-// Creates a new Pattern with source-content
-// responses:
-//  200: mesheryPatternResponseWrapper
-
-// PatternFileRequestHandler will handle requests of both type GET and POST
-// on the route /api/pattern
 func (h *Handler) DesignFileRequestHandlerWithSourceType(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -1723,13 +1391,6 @@ func (h *Handler) DesignFileRequestHandlerWithSourceType(
 	}
 }
 
-// swagger:route GET /api/pattern/types PatternsAPI typeGetMesheryPatternTypesHandler
-// Handle GET request for Meshery Pattern types
-//
-// Get pattern file types
-// responses:
-//
-//	200: mesheryApplicationTypesResponseWrapper
 func (h *Handler) GetMesheryDesignTypesHandler(
 	rw http.ResponseWriter,
 	_ *http.Request,
@@ -1750,15 +1411,6 @@ func (h *Handler) GetMesheryDesignTypesHandler(
 		h.log.Error(err)
 	}
 }
-
-// swagger:route GET /api/pattern/download/{id}/{sourcetype} PatternsAPI typeGetPatternSourceContent
-// Handle GET request for Meshery Patterns with of source content
-//
-// Get the pattern source-content
-// responses:
-//  200: mesheryPatternSourceContentResponseWrapper
-
-// GetMesheryPatternHandler fetched the design using the given id and sourcetype
 func (h *Handler) GetMesheryPatternSourceHandler(
 	rw http.ResponseWriter,
 	r *http.Request,

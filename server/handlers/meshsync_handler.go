@@ -191,25 +191,6 @@ func filterByPatternIds(query *gorm.DB, patternIDs []string) *gorm.DB {
 	}
 	return query
 }
-
-// filterByKey filters a GORM query to only include resources with specific key-value pairs in their metadata.
-//
-// This function performs the following steps:
-// 1. Joins the `kubernetes_resources` table with `kubernetes_resource_object_meta` to access metadata for resources.
-// 2. Joins the `kubernetes_resource_object_meta` table with `kubernetes_key_values` to access key-value pairs.
-// 3. Filters the results based on:
-//   - The `kind` of the key-value pair (e.g., "label", "annotation").
-//   - A set of key-value pairs provided in the `keyValues` slice, formatted as "key=value".
-//
-// The query ensures only matching resources are returned.
-//
-// Parameters:
-// - query: The initial GORM query to apply the filters to.
-// - kind: The kind of key-value pair to filter by (e.g., "label").
-// - keyValues: A slice of strings in the format "key=value" used to match key-value pairs.
-//
-// Returns:
-// - A filtered GORM query that includes only resources with matching key-value pairs.
 func filterByKey(query *gorm.DB, kind string, keyValues []string) *gorm.DB {
 	if len(keyValues) == 0 {
 		return query
@@ -230,37 +211,6 @@ func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
 		Where("kubernetes_key_values.kind = ?", kind)
 }
 
-// swagger:route GET /api/system/meshsync/resources GetMeshSyncResources idGetMeshSyncResources
-// Handle GET request for meshsync discovered resources
-//
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
-//
-// ```?search={componentname}``` If search is non empty then a greedy search is performed
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?annotation={annotaion}``` annotation is a boolean value. If true then annotations are returned
-//
-// ```?labels={labels}``` labels is a boolean value. If true then labels are returned
-//
-// ```?spec={spec}``` spec is a boolean value. If true then spec is returned
-//
-// ```?model={[model]}``` model is an array of string values to filter the resources
-//
-// ```?status={status}``` status is a boolean value. If true then status is returned
-//
-// ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
-//
-// ```?asDesign={bool}``` asDesign is a boolean value. If true then the response is returned as a design and resources are omitted
-//
-// responses:
-// 200: []meshsyncResourcesResponseWrapper
 func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -411,10 +361,6 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 }
 
-// swagger:route GET /api/system/meshsync/resources/{id} GetMeshSyncResourceByID idGetMeshSyncResourceByID
-// Handle GET request for meshsync discovered resource by ID ( returns the resource in v1beta1 component format )
-// responses:
-// 200: meshsyncResourceByIDResponseWrapper
 func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -456,16 +402,6 @@ func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Reques
 		}
 	}
 }
-
-// swagger:route GET /api/system/meshsync/resources/summary GetMeshSyncResourcesSummary idGetMeshSyncResourcesSummary
-// Handle GET request for meshsync discovered resources
-//
-// ```?clusterId={clusterId}``` clusterId is id of the cluster to get resources for ( multiple supported)
-//
-//
-// responses:
-// 200: []meshsyncResourcesSummaryResponseWrapper
-
 func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)

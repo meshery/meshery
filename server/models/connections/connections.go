@@ -11,7 +11,6 @@ import (
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 )
 
-// swagger:response ConnectionStatus
 type ConnectionStatus = schemasConnection.ConnectionStatus
 
 type InitFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
@@ -65,7 +64,6 @@ type GrafanaCred struct {
 	APIKeyOrBasicAuth string `json:"secret,omitempty"`
 }
 
-// swagger:response Connection
 type Connection = schemasConnection.Connection
 
 var validConnectionStatusToManage = []ConnectionStatus{
@@ -86,7 +84,6 @@ func ShouldConnectionBeManaged(c Connection) bool {
 	return false
 }
 
-// swagger:response ConnectionPage
 type ConnectionPage = schemasConnection.ConnectionPage
 
 type ConnectionStatusInfo struct {
@@ -94,7 +91,6 @@ type ConnectionStatusInfo struct {
 	Count  int    `json:"count" db:"count"`
 }
 
-// swagger:response ConnectionsStatusPage
 type ConnectionsStatusPage struct {
 	ConnectionsStatus []*ConnectionStatusInfo `json:"connections_status"`
 }

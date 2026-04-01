@@ -14,7 +14,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 )
 
-// UserHandler returns info about the logged in user
 func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, user *models.User, _ models.Provider) {
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(user); err != nil {
@@ -24,14 +23,6 @@ func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.
 		return
 	}
 }
-
-// swagger:route GET /api/user/profile/{id} UserAPI idGetUserByIDHandler
-// Handle GET for User info by ID
-//
-// Returns User info
-// responses:
-// 	200: userInfo
-
 func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	userID := mux.Vars(r)["id"]
 	_, err := uuid.FromString(userID)
@@ -51,24 +42,6 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 		h.log.Error(err)
 	}
 }
-
-// swagger:route GET /api/identity/users UserAPI idGetAllUsersHandler
-// Handles GET for all Users
-//
-// # Users can be further filtered through query parameters
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 20
-//
-// ```?search={username|email|first_name|last_name}``` If search is non empty then a greedy search is performed
-//
-// ```?filter={condition}```
-// responses:
-// 	200: users
-
 func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -90,22 +63,6 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 		h.log.Error(err)
 	}
 }
-
-// swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs
-// Handle GET Requests for User Load Test Preferences
-//
-// Returns User Load Test Preferences
-// responses:
-// 	200: userLoadTestPrefsRespWrapper
-
-// swagger:route POST /api/user/prefs UserAPI idPostUserTestPrefs
-// Handle POST Requests for User Load Test Preferences
-//
-// Updates User Load Test Preferences
-// responses:
-// 	200: userLoadTestPrefsRespWrapper
-
-// UserPrefsHandler updates anonymous stats for user or for persisting load test preferences
 func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method == http.MethodGet {
 		w.Header().Set("Content-Type", "application/json")
@@ -186,16 +143,6 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		return
 	}
 }
-
-// swagger:route POST /api/content/design/share ShareContent idPostShareContent
-// Handle POST request for Sharing content
-//
-// Used to share designs with others
-// responses:
-// 	200:
-//  403:
-//  500:
-
 func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	statusCode, err := provider.ShareDesign(r)
 	if err != nil {
@@ -208,16 +155,6 @@ func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *
 		h.log.Error(err)
 	}
 }
-
-// swagger:route POST /api/content/filter/share ShareContent idPostShareContent
-// Handle POST request for Sharing content
-//
-// Used to share filters with others
-// responses:
-// 	200:
-//  403:
-//  500:
-
 func (h *Handler) ShareFilterHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	statusCode, err := provider.ShareFilter(r)
 	if err != nil {

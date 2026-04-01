@@ -532,14 +532,6 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/3c7914a412990c50b36a619488ea076bf6e2618c"
 },
 {
-"path": ".github/workflows/swagger.yml",
-"mode": "100644",
-"type": "blob",
-"sha": "264f9d2fb63ed2108fb4b10a3dd08534ab13a0ff",
-"size": 1285,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/264f9d2fb63ed2108fb4b10a3dd08534ab13a0ff"
-},
-{
 "path": ".gitignore",
 "mode": "100644",
 "type": "blob",
@@ -2336,14 +2328,6 @@
 "sha": "c81a5238b66e11cc25d65f36a005ffba382f17c5",
 "size": 702,
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/c81a5238b66e11cc25d65f36a005ffba382f17c5"
-},
-{
-"path": "docs/_data/swagger.yml",
-"mode": "100644",
-"type": "blob",
-"sha": "761912b483183fdb2088ac9c694727a57c5219d7",
-"size": 781219,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/761912b483183fdb2088ac9c694727a57c5219d7"
 },
 {
 "path": "docs/_data/toc.yml",
@@ -6576,14 +6560,6 @@
 "sha": "9e8352c67e210a8141f63bbec222724228090ef9",
 "size": 12680,
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/9e8352c67e210a8141f63bbec222724228090ef9"
-},
-{
-"path": "server/helpers/swagger.yaml",
-"mode": "100644",
-"type": "blob",
-"sha": "baf1560bc20aedeaa451db6723e2dc1d678b95d4",
-"size": 115719,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/baf1560bc20aedeaa451db6723e2dc1d678b95d4"
 },
 {
 "path": "server/helpers/uuid_query_tracker.go",
