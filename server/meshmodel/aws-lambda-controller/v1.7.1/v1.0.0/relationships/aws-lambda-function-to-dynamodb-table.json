@@ -3,7 +3,7 @@
     "evaluationQuery": "",
     "kind": "edge",
     "metadata": {
-        "description": "AWS Lambda function interacts with DynamoDB table for data operations (read, write, query, scan, etc.)",
+        "description": "Defines relationship where an AWS Lambda function interacts with a DynamoDB table for data operations such as read, write, query, and scan",
         "isAnnotation": false,
         "styles": {
             "primaryColor": "",
@@ -12,7 +12,7 @@
         }
     },
     "model": {
-        "displayName": "AWS Lambda to DynamoDB Table Relationship.",
+        "displayName": "AWS Lambda to DynamoDB Table Relationship",
         "id": "d62e96e5-629a-45ae-9064-b8661ecfb679",
         "model": {
             "version": "v1.7.1"
@@ -50,9 +50,7 @@
                                 [
                                     "configuration",
                                     "spec",
-                                    "environment",
-                                    "variables",
-                                    "TABLE_NAME"
+                                    "name"
                                 ]
                             ],
                             "patchStrategy": "replace"
@@ -96,7 +94,7 @@
             }
         }
     ],
-    "subType": "network",
+    "subType": "binding",
     "status": "enabled",
     "type": "non-binding",
     "version": "v1.0.0"
