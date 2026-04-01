@@ -32,16 +32,20 @@ var linkDocReset = map[string]string{
 var resetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "Reset Meshery's configuration",
-	Long:  `Reset Meshery to it's default configuration.`,
+	Long: `Reset Meshery to it's default configuration.
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/reset`,
 	Example: `
 // Resets meshery.yaml file with a copy from Meshery repo
 mesheryctl system reset
 	`,
 	Annotations: linkDocReset,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
 			return utils.ErrInvalidArgument(fmt.Errorf("this command takes no arguments. See '%s --help' for more information", cmd.CommandPath()))
 		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		return resetMesheryConfig()
 	},
 }
