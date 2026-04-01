@@ -322,6 +322,9 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 	dataHandlers := []*dataHandlerToClusterID{}
 	clusterIDs := []string{}
 	for _, k8sContext := range connectedK8sContexts {
+		if k8sContext == nil {
+			continue
+		}
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         *k8sContext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
