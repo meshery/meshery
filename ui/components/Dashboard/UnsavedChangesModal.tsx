@@ -25,7 +25,7 @@ const UnsavedChangesModal = ({ open, onClose, onDiscard, onSave }: UnsavedChange
     <Modal
       open={open}
       closeModal={onClose}
-      title="Unsaved changes"
+      title="Unsaved dashboard layout changes"
       maxWidth="xs"
       sx={{
         '& .MuiDialogTitle-root': {
@@ -35,7 +35,8 @@ const UnsavedChangesModal = ({ open, onClose, onDiscard, onSave }: UnsavedChange
     >
       <ModalBody>
         <Typography variant="body1">
-          You have unsaved changes. Leaving now will discard your edits.
+          You have unsaved changes to your dashboard layout. If you leave now, your widget
+          arrangement and edits will be lost.
         </Typography>
       </ModalBody>
       <ModalFooter variant="filled">
