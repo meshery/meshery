@@ -44,7 +44,7 @@ MESHERY_REPO_PATH = ""
 
 # Path to Google service-account credentials JSON file (for local development).
 # See: https://cloud.google.com/iam/docs/keys-create-delete
-GOOGLE_APPLICATION_CREDENTIALS = "/home/pragalva/Downloads/spreadsheet.json"
+GOOGLE_APPLICATION_CREDENTIALS = ""
 
 # Inline Google credentials JSON string (for CI / GitHub Actions).
 # If set, this takes priority over GOOGLE_APPLICATION_CREDENTIALS.
@@ -60,6 +60,7 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 from collections import defaultdict
 from datetime import datetime
@@ -115,6 +116,10 @@ HTTP_METHODS = frozenset({"get", "post", "put", "delete", "patch", "options", "h
 
 # Methods that typically carry a request body
 BODY_METHODS = frozenset({"POST", "PUT", "PATCH"})
+
+# Sentinel value for handler response types that are []byte passthrough
+# from the Provider interface (opaque JSON forwarded without typed struct).
+_PROVIDER_BYTES_SENTINEL = "<provider-[]byte>"
 
 MIDDLEWARE_NAMES = frozenset({
     "ProviderMiddleware", "AuthMiddleware", "SessionInjectorMiddleware",
@@ -525,6 +530,7 @@ def parse_openapi(repo: Path, spec_override: Optional[Path] = None) -> dict:
       original_paths:   {norm_path: original_path}
       compl_notes:      {(norm_path, METHOD): [detail_notes]}
       path_categories:  {norm_path: (category, subcategory)}
+      operations:       {(norm_path, METHOD): operation_dict}
     """
     spec_file = spec_override if spec_override else repo / OPENAPI_FILE
     empty = {
@@ -534,6 +540,7 @@ def parse_openapi(repo: Path, spec_override: Optional[Path] = None) -> dict:
         "original_paths": {},
         "compl_notes": {},
         "path_categories": {},
+        "operations": {},
     }
     if not spec_file.exists():
         print(f"ERROR: {spec_file} not found", file=sys.stderr)
@@ -551,6 +558,7 @@ def parse_openapi(repo: Path, spec_override: Optional[Path] = None) -> dict:
     original_paths: Dict[str, str] = {}
     compl_notes: Dict[Tuple[str, str], List[str]] = {}
     path_categories: Dict[str, Tuple[str, str]] = {}
+    operations: Dict[Tuple[str, str], dict] = {}
 
     for path, methods_obj in doc.get("paths", {}).items():
         if not isinstance(methods_obj, dict):
@@ -584,10 +592,13 @@ def parse_openapi(repo: Path, spec_override: Optional[Path] = None) -> dict:
                 xi = [xi] if xi else []
             x_internal[(norm, m_upper)] = xi
 
-            # Schema completeness
+            # Schema completeness (legacy — kept for fallback)
             comp, cnotes = _assess_completeness(details, method)
             completeness[(norm, m_upper)] = comp
             compl_notes[(norm, m_upper)] = cnotes
+
+            # Store raw operation for cross-check
+            operations[(norm, m_upper)] = details
 
     return {
         "all_paths": all_paths,
@@ -596,6 +607,7 @@ def parse_openapi(repo: Path, spec_override: Optional[Path] = None) -> dict:
         "original_paths": original_paths,
         "compl_notes": compl_notes,
         "path_categories": path_categories,
+        "operations": operations,
     }
 
 
@@ -758,7 +770,744 @@ def build_schema_driven_map(repo: Path) -> Dict[str, Tuple[str, str]]:
 
 
 # ---------------------------------------------------------------------------
-# 4. Actionable Notes Builder
+# 4. Handler I/O Type Extractor
+# ---------------------------------------------------------------------------
+
+def _find_var_type(body: str, var_name: str) -> Optional[str]:
+    """Find the Go type of a variable from its declaration in a function body.
+
+    Handles:
+      var x *pkg.Type             → pkg.Type
+      var x pkg.Type              → pkg.Type
+      x := &pkg.Type{}           → pkg.Type
+      x := pkg.Type{field: val}  → pkg.Type
+      x = &pkg.Type{}            → pkg.Type
+      x := make([]pkg.Type, 0)   → []pkg.Type
+    """
+    esc = re.escape(var_name)
+
+    # var x *Type  /  var x Type
+    m = re.search(rf"\bvar\s+{esc}\s+\*?([\[\]]*[A-Za-z_][\w.]*)", body)
+    if m:
+        return m.group(1)
+
+    # x := &Type{...}  /  x := Type{...}  /  x = &Type{...}
+    # Must not match keywords (e.g. "if", "for", "return") or function calls
+    m = re.search(
+        rf"\b{esc}\s*:?=\s*&?([\[\]]*[A-Za-z_][\w.]*)\s*\{{", body
+    )
+    if m:
+        candidate = m.group(1)
+        # Filter out Go keywords and common non-type tokens
+        if candidate not in (
+            "if", "for", "range", "return", "func", "switch", "select",
+            "map", "struct", "interface", "err", "nil",
+        ):
+            return candidate
+
+    # x := make([]Type, ...)
+    m = re.search(rf"\b{esc}\s*:?=\s*make\(([\[\]]+[A-Za-z_][\w.]*)", body)
+    if m:
+        return m.group(1)
+
+    return None
+
+
+def _build_provider_return_types(repo: Path) -> Dict[str, str]:
+    """Parse the Provider interface to build {MethodName: return_type}.
+
+    The Provider interface in server/models/providers.go defines the
+    return types for all provider methods.  Many return ([]byte, error)
+    which is opaque, but others return concrete typed values like
+    (*connections.ConnectionPage, error).
+
+    Returns {"GetConnections": "*connections.ConnectionPage", ...}.
+    Only includes methods that return a typed (non-[]byte) first value.
+    """
+    providers_file = repo / "server" / "models" / "providers.go"
+    if not providers_file.exists():
+        return {}
+
+    text = providers_file.read_text(errors="replace")
+
+    # Find the Provider interface block
+    m = re.search(r"type\s+Provider\s+interface\s*\{", text)
+    if not m:
+        return {}
+
+    # Walk braces to extract interface body
+    start = m.end()
+    depth = 1
+    i = start
+    while i < len(text) and depth > 0:
+        if text[i] == "{":
+            depth += 1
+        elif text[i] == "}":
+            depth -= 1
+        i += 1
+    iface_body = text[start : i - 1]
+
+    result: Dict[str, str] = {}
+
+    # Match method signatures:  MethodName(...) (RetType, error)
+    # or MethodName(...) (RetType, int, error) etc.
+    for m in re.finditer(
+        r"^\s*(\w+)\s*\([^)]*\)\s*\(([^)]+)\)",
+        iface_body,
+        re.MULTILINE,
+    ):
+        method_name = m.group(1)
+        returns = m.group(2).strip()
+
+        # Parse return types — split by comma
+        ret_parts = [r.strip() for r in returns.split(",")]
+        if len(ret_parts) < 2:
+            continue
+
+        first_ret = ret_parts[0]
+
+        # Skip []byte returns — opaque passthrough
+        if first_ret == "[]byte":
+            continue
+        # Skip string, int, bool, error returns — not typed structs
+        if first_ret in ("string", "int", "bool", "error"):
+            continue
+
+        result[method_name] = first_ret
+
+    return result
+
+
+def _resolve_resp_type(
+    body: str,
+    resp_var: str,
+    provider_types: Dict[str, str],
+) -> Optional[str]:
+    """Try to resolve the type of a response variable.
+
+    Checks in order:
+      1. Local type declaration (var, :=, make)
+      2. Provider method return type (x, err := provider.Method(...))
+      3. Config/field method return type (h.config.Client.Method(...))
+    """
+    # 1. Local declaration
+    t = _find_var_type(body, resp_var)
+    if t:
+        return t
+
+    esc = re.escape(resp_var)
+
+    # 2. x, err := provider.MethodName(...)
+    m = re.search(
+        rf"\b{esc}\s*(?:,\s*\w+)*\s*:?=\s*(?:\w+\.)*provider\.(\w+)\s*\(",
+        body,
+    )
+    if m:
+        method = m.group(1)
+        ptype = provider_types.get(method)
+        if ptype:
+            return ptype
+
+    # 3. x, err := provider.MethodName(...)  (provider as p, prov, etc.)
+    m = re.search(
+        rf"\b{esc}\s*(?:,\s*\w+)*\s*:?=\s*(?:p|prov|provider)\.(\w+)\s*\(",
+        body,
+    )
+    if m:
+        method = m.group(1)
+        ptype = provider_types.get(method)
+        if ptype:
+            return ptype
+
+    # 4. x, err := h.config.SomeClient.Method(...) — can't resolve generically
+    #    but at least return None cleanly
+
+    return None
+
+
+def extract_handler_io_types(
+    repo: Path,
+) -> Dict[str, Dict[str, Optional[str]]]:
+    """For each handler function, extract request-body and response Go types.
+
+    Scans server/handlers/*.go for json.Decode / json.Unmarshal (request)
+    and json.Encode / json.Marshal (response) calls, then resolves the
+    variable's declared type using local declarations and Provider interface
+    return types.
+
+    Returns {handler_name: {"request_type": "pkg.Type" | None,
+                            "response_type": "pkg.Type" | None}}.
+    """
+    handlers_dir = repo / HANDLERS_DIR
+    if not handlers_dir.exists():
+        return {}
+
+    provider_types = _build_provider_return_types(repo)
+
+    result: Dict[str, Dict[str, Optional[str]]] = {}
+
+    for go_file in sorted(handlers_dir.glob("*.go")):
+        if go_file.name.endswith("_test.go"):
+            continue
+
+        text = go_file.read_text(errors="replace")
+
+        # Collect handler function names (methods on *Handler receiver)
+        handler_names = re.findall(
+            r"func\s+\([^)]*\*?Handler[^)]*\)\s+(\w+)\s*\(", text
+        )
+
+        for name in handler_names:
+            func_body = _extract_function_body(text, name)
+            if not func_body:
+                continue
+
+            io: Dict[str, Optional[str]] = {
+                "request_type": None,
+                "response_type": None,
+            }
+
+            # --- Request type ---
+            # json.NewDecoder(r.Body).Decode(&var)
+            req_vars = re.findall(
+                r"json\.NewDecoder\(\w+\.Body\)\.Decode\(&(\w+)\)",
+                func_body,
+            )
+            # json.Unmarshal(bytes, &var)  (only if preceded by io.ReadAll on Body)
+            if not req_vars and re.search(
+                r"io\.ReadAll\(\w+\.Body\)", func_body
+            ):
+                req_vars = re.findall(
+                    r"json\.Unmarshal\(\w+,\s*&(\w+)\)", func_body
+                )
+
+            if req_vars:
+                io["request_type"] = _find_var_type(func_body, req_vars[0])
+                # Fallback: check function parameters for request var type
+                if not io["request_type"]:
+                    sig_m = re.search(
+                        rf"func\s+\([^)]*\)\s+{re.escape(name)}"
+                        rf"\s*\(([^)]*)\)",
+                        text,
+                    )
+                    if sig_m:
+                        params = sig_m.group(1)
+                        pm = re.search(
+                            rf"\b{re.escape(req_vars[0])}\s+"
+                            rf"\*?([\[\]]*[A-Za-z_][\w.]*)",
+                            params,
+                        )
+                        if pm:
+                            io["request_type"] = pm.group(1)
+
+            # --- Response type ---
+            # json.NewEncoder(w).Encode(expr)  (chained)
+            enc_matches = re.findall(
+                r"json\.NewEncoder\(\w+\)\.Encode\(([^)]+)\)", func_body
+            )
+            # enc := json.NewEncoder(w) ... enc.Encode(expr) (stored encoder)
+            if not enc_matches:
+                enc_var_m = re.search(
+                    r"(\w+)\s*:?=\s*json\.NewEncoder\(\w+\)", func_body
+                )
+                if enc_var_m:
+                    enc_var = enc_var_m.group(1)
+                    enc_matches = re.findall(
+                        rf"{re.escape(enc_var)}\.Encode\(([^)]+)\)",
+                        func_body,
+                    )
+            # json.Marshal(expr)
+            marsh_matches = re.findall(
+                r"json\.Marshal\(([^)]+)\)", func_body
+            )
+
+            resp_expr = None
+            if enc_matches:
+                resp_expr = enc_matches[0].strip().lstrip("&*")
+            elif marsh_matches:
+                resp_expr = marsh_matches[0].strip().lstrip("&*")
+
+            if resp_expr:
+                # Direct struct literal: pkg.Type{...}
+                m = re.match(r"([\[\]]*[A-Za-z_][\w.]*)\s*\{", resp_expr)
+                if m:
+                    candidate = m.group(1)
+                    if candidate not in (
+                        "if", "for", "range", "return", "func",
+                        "map", "struct", "interface",
+                    ):
+                        io["response_type"] = candidate
+                # Package-level variable: pkg.VarName (no parens/braces)
+                elif re.match(r"[A-Za-z_]\w*\.[A-Z]\w*$", resp_expr):
+                    io["response_type"] = resp_expr
+                # Simple variable name — trace via local decls + provider types
+                elif re.match(r"[A-Za-z_]\w*$", resp_expr):
+                    io["response_type"] = _resolve_resp_type(
+                        func_body, resp_expr, provider_types
+                    )
+                    # Fallback: check function parameters
+                    if not io["response_type"]:
+                        sig_m = re.search(
+                            rf"func\s+\([^)]*\)\s+{re.escape(name)}"
+                            rf"\s*\(([^)]*)\)",
+                            text,
+                        )
+                        if sig_m:
+                            params = sig_m.group(1)
+                            pm = re.search(
+                                rf"\b{re.escape(resp_expr)}\s+"
+                                rf"\*?([\[\]]*[A-Za-z_][\w.]*)",
+                                params,
+                            )
+                            if pm:
+                                io["response_type"] = pm.group(1)
+
+            # --- Fallback: fmt.Fprint with provider response ---
+            # Pattern: resp, err := provider.X(...) then fmt.Fprint(w, string(resp))
+            if not io["response_type"]:
+                fprint_m = re.search(
+                    r"fmt\.Fprint\w*\(\w+,\s*string\((\w+)\)\)", func_body
+                )
+                if fprint_m:
+                    resolved = _resolve_resp_type(
+                        func_body, fprint_m.group(1), provider_types
+                    )
+                    if resolved:
+                        io["response_type"] = resolved
+                    else:
+                        # Provider returns []byte — opaque passthrough
+                        io["response_type"] = _PROVIDER_BYTES_SENTINEL
+
+            result[name] = io
+
+    return result
+
+
+# ---------------------------------------------------------------------------
+# 5. Go Struct Field Parser — json tags → field name set
+# ---------------------------------------------------------------------------
+
+def _gomodcache() -> Optional[Path]:
+    """Return GOMODCACHE path, or None."""
+    try:
+        out = subprocess.check_output(
+            ["go", "env", "GOMODCACHE"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+        if out:
+            return Path(out)
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        pass
+    fallback = Path.home() / "go" / "pkg" / "mod"
+    return fallback if fallback.exists() else None
+
+
+def _parse_struct_json_fields(text: str, type_name: str) -> Optional[Set[str]]:
+    """Extract the set of JSON field names from a Go struct definition.
+
+    Looks for ``type <type_name> struct { ... }`` and pulls out every
+    ``json:"<name>,..."`` tag.  Returns None if the struct is not found.
+    """
+    # Match: type TypeName struct {
+    pat = re.compile(
+        rf"\btype\s+{re.escape(type_name)}\s+struct\s*\{{", re.MULTILINE
+    )
+    m = pat.search(text)
+    if not m:
+        return None
+
+    # Walk braces to find end of struct
+    start = m.end()
+    depth = 1
+    i = start
+    while i < len(text) and depth > 0:
+        if text[i] == "{":
+            depth += 1
+        elif text[i] == "}":
+            depth -= 1
+        i += 1
+
+    struct_body = text[start : i - 1]
+    fields: Set[str] = set()
+    for tag_m in re.finditer(r'json:"([^"]+)"', struct_body):
+        json_name = tag_m.group(1).split(",")[0]
+        if json_name and json_name != "-":
+            fields.add(json_name)
+    return fields if fields else None
+
+
+def _resolve_type_alias(text: str, type_name: str) -> Optional[str]:
+    """If ``type TypeName = pkg.Actual``, return the aliased type."""
+    m = re.search(
+        rf"\btype\s+{re.escape(type_name)}\s*=\s*([\w./]+\.(\w+))",
+        text,
+    )
+    if m:
+        return m.group(1)  # e.g. schemasEnvironment.EnvironmentPayload
+    return None
+
+
+def build_go_struct_fields(
+    repo: Path,
+) -> Dict[str, Set[str]]:
+    """Build a map of Go type → {json field names} for types used in handlers.
+
+    Searches:
+      1. server/handlers/*.go  (inline struct types)
+      2. server/models/**/*.go (models package + sub-packages)
+      3. GOMODCACHE/github.com/meshery/schemas/... (generated schema types)
+
+    Handles one level of type-alias indirection (common in meshery — e.g.
+    ``type EnvironmentPayload = schemasEnv.EnvironmentPayload``).
+
+    Returns {"TypeName": {"field_a", "field_b", ...}, ...}.
+    The key is the short type name (without package qualifier).
+    """
+    result: Dict[str, Set[str]] = {}
+    alias_map: Dict[str, str] = {}  # short_name → aliased_full_import
+
+    # --- Scan local Go files ---
+    search_dirs = [
+        repo / HANDLERS_DIR,
+        repo / "server" / "models",
+    ]
+
+    for search_dir in search_dirs:
+        if not search_dir.exists():
+            continue
+        for go_file in sorted(search_dir.rglob("*.go")):
+            if go_file.name.endswith("_test.go"):
+                continue
+            text = go_file.read_text(errors="replace")
+
+            # Find all struct definitions
+            for name in re.findall(
+                r"\btype\s+(\w+)\s+struct\s*\{", text
+            ):
+                fields = _parse_struct_json_fields(text, name)
+                if fields:
+                    result[name] = fields
+
+            # Find type aliases  (type X = pkg.Y)
+            for m in re.finditer(
+                r"\btype\s+(\w+)\s*=\s*(\w+)\.(\w+)", text
+            ):
+                local_name, _alias_pkg, remote_name = (
+                    m.group(1),
+                    m.group(2),
+                    m.group(3),
+                )
+                alias_map[local_name] = remote_name
+                # Also try to find the import path for the alias package
+                imp_match = re.search(
+                    rf'{re.escape(_alias_pkg)}\s+"([^"]+)"', text
+                )
+                if imp_match:
+                    alias_map[f"_imp_{local_name}"] = imp_match.group(1)
+
+    # --- Resolve aliases from GOMODCACHE ---
+    modcache = _gomodcache()
+    schema_version = None
+    go_mod = repo / GO_MOD_FILE
+    if go_mod.exists():
+        for line in go_mod.read_text().splitlines():
+            vm = re.match(
+                r"\s*github\.com/meshery/schemas\s+(v[\d.]+)", line.strip()
+            )
+            if vm:
+                schema_version = vm.group(1)
+                break
+
+    if modcache and schema_version:
+        schema_root = (
+            modcache
+            / f"github.com/meshery/schemas@{schema_version}"
+        )
+        if schema_root.exists():
+            for go_file in sorted(schema_root.rglob("*.go")):
+                if go_file.name.endswith("_test.go"):
+                    continue
+                text = go_file.read_text(errors="replace")
+                for name in re.findall(
+                    r"\btype\s+(\w+)\s+struct\s*\{", text
+                ):
+                    fields = _parse_struct_json_fields(text, name)
+                    if fields and name not in result:
+                        result[name] = fields
+
+    # --- Resolve aliases: if local name not found, use remote name ---
+    for local_name, remote_name in alias_map.items():
+        if local_name.startswith("_imp_"):
+            continue
+        if local_name not in result and remote_name in result:
+            result[local_name] = result[remote_name]
+
+    return result
+
+
+# ---------------------------------------------------------------------------
+# 6. Spec Schema Field Extractor
+# ---------------------------------------------------------------------------
+
+def _collect_property_names(schema: Any) -> Set[str]:
+    """Recursively collect property names from an OpenAPI schema."""
+    if not isinstance(schema, dict):
+        return set()
+
+    props = set()
+
+    if "properties" in schema and isinstance(schema["properties"], dict):
+        props.update(schema["properties"].keys())
+
+    # Walk allOf / oneOf / anyOf
+    for combo in ("allOf", "oneOf", "anyOf"):
+        if combo in schema and isinstance(schema[combo], list):
+            for sub in schema[combo]:
+                props.update(_collect_property_names(sub))
+
+    # Array items
+    if schema.get("type") == "array" and isinstance(
+        schema.get("items"), dict
+    ):
+        props.update(_collect_property_names(schema["items"]))
+
+    return props
+
+
+def extract_spec_schema_fields(
+    operation: dict, method: str
+) -> Dict[str, Set[str]]:
+    """Extract property name sets from an OpenAPI operation.
+
+    Returns {"request_fields": set, "response_fields": set}.
+    """
+    req_fields: Set[str] = set()
+    resp_fields: Set[str] = set()
+
+    # --- Request body ---
+    req_body = operation.get("requestBody", {})
+    if isinstance(req_body, dict) and req_body:
+        content = req_body.get("content", {})
+        if isinstance(content, dict):
+            for _mt, media_obj in content.items():
+                if isinstance(media_obj, dict) and "schema" in media_obj:
+                    req_fields = _collect_property_names(media_obj["schema"])
+                    break
+
+    # --- Response (first 2xx) ---
+    responses = operation.get("responses", {})
+    if isinstance(responses, dict):
+        for code, resp in responses.items():
+            if not str(code).startswith("2") or not isinstance(resp, dict):
+                continue
+            content = resp.get("content", {})
+            if isinstance(content, dict):
+                for _mt, media_obj in content.items():
+                    if isinstance(media_obj, dict) and "schema" in media_obj:
+                        resp_fields = _collect_property_names(
+                            media_obj["schema"]
+                        )
+                        break
+            break  # use first 2xx only
+
+    return {"request_fields": req_fields, "response_fields": resp_fields}
+
+
+# ---------------------------------------------------------------------------
+# 7. Cross-Check Completeness
+# ---------------------------------------------------------------------------
+
+def _field_overlap(
+    go_fields: Optional[Set[str]], spec_fields: Set[str]
+) -> Tuple[Optional[float], Set[str], Set[str], Set[str]]:
+    """Compute overlap between Go struct fields and spec properties.
+
+    Returns (ratio_or_None, common, only_go, only_spec).
+    """
+    if go_fields is None or not spec_fields or not go_fields:
+        return None, set(), set(), set()
+
+    common = go_fields & spec_fields
+    only_go = go_fields - spec_fields
+    only_spec = spec_fields - go_fields
+    ratio = len(common) / max(len(go_fields), len(spec_fields))
+    return ratio, common, only_go, only_spec
+
+
+def _format_field_set(fields: Set[str], limit: int = 6) -> str:
+    """Format a set of field names as a compact string."""
+    if not fields:
+        return ""
+    items = sorted(fields)
+    preview = ", ".join(items[:limit])
+    if len(items) > limit:
+        preview += f", ... ({len(items)} total)"
+    return preview
+
+
+def cross_check_completeness(
+    handler_name: str,
+    handler_io: Dict[str, Optional[str]],
+    go_fields_map: Dict[str, Set[str]],
+    spec_fields: Dict[str, Set[str]],
+    method: str,
+) -> Tuple[str, List[str]]:
+    """Cross-check handler's Go types against spec schemas.
+
+    Returns (completeness, structured_notes) where structured_notes is a
+    list of lines with clear section markers for later formatting.
+
+    Lines are prefixed with markers:
+      [REQ]  — request-side finding
+      [RESP] — response-side finding
+      [INFO] — general info
+    """
+    notes: List[str] = []
+    expects_body = method.upper() in BODY_METHODS
+
+    req_type = handler_io.get("request_type")
+    resp_type = handler_io.get("response_type")
+    is_resp_passthrough = resp_type == _PROVIDER_BYTES_SENTINEL
+
+    # Strip pointer/slice prefix for type lookup
+    def _bare_type(t: Optional[str]) -> Optional[str]:
+        if t is None or t == _PROVIDER_BYTES_SENTINEL:
+            return None
+        return t.lstrip("*[]").split(".")[-1]
+
+    req_type_short = _bare_type(req_type)
+    resp_type_short = _bare_type(resp_type)
+
+    req_go_fields = (
+        go_fields_map.get(req_type_short) if req_type_short else None
+    )
+    resp_go_fields = (
+        go_fields_map.get(resp_type_short) if resp_type_short else None
+    )
+
+    spec_req = spec_fields.get("request_fields", set())
+    spec_resp = spec_fields.get("response_fields", set())
+    has_spec = bool(spec_req or spec_resp)
+
+    if not has_spec:
+        return "N/A", ["[INFO] No spec schema to compare against"]
+
+    # --- Request side ---
+    req_ratio, req_common, req_only_go, req_only_spec = _field_overlap(
+        req_go_fields, spec_req
+    )
+
+    if expects_body:
+        if req_type:
+            notes.append(f"[REQ] Handler type: {req_type}")
+            if req_ratio is not None:
+                pct = int(req_ratio * 100)
+                notes.append(
+                    f"[REQ] Field match: {pct}% "
+                    f"({len(req_common)}/{max(len(req_go_fields or set()), len(spec_req))})"
+                )
+                if req_common:
+                    notes.append(
+                        f"[REQ] Matching: {_format_field_set(req_common)}"
+                    )
+                if req_only_go:
+                    notes.append(
+                        f"[REQ] In handler only: "
+                        f"{_format_field_set(req_only_go, 5)}"
+                    )
+                if req_only_spec:
+                    notes.append(
+                        f"[REQ] In spec only: "
+                        f"{_format_field_set(req_only_spec, 5)}"
+                    )
+            else:
+                notes.append(
+                    "[REQ] Struct fields not found for comparison"
+                )
+        else:
+            notes.append("[REQ] Could not extract request type from handler")
+
+    # --- Response side ---
+    resp_ratio, resp_common, resp_only_go, resp_only_spec = _field_overlap(
+        resp_go_fields, spec_resp
+    )
+
+    if is_resp_passthrough:
+        notes.append(
+            "[RESP] Provider returns raw []byte — "
+            "response type is opaque, cannot cross-check"
+        )
+    elif resp_type:
+        notes.append(f"[RESP] Handler type: {resp_type}")
+        if resp_ratio is not None:
+            pct = int(resp_ratio * 100)
+            notes.append(
+                f"[RESP] Field match: {pct}% "
+                f"({len(resp_common)}/{max(len(resp_go_fields or set()), len(spec_resp))})"
+            )
+            if resp_common:
+                notes.append(
+                    f"[RESP] Matching: {_format_field_set(resp_common)}"
+                )
+            if resp_only_go:
+                notes.append(
+                    f"[RESP] In handler only: "
+                    f"{_format_field_set(resp_only_go, 5)}"
+                )
+            if resp_only_spec:
+                notes.append(
+                    f"[RESP] In spec only: "
+                    f"{_format_field_set(resp_only_spec, 5)}"
+                )
+        else:
+            notes.append(
+                "[RESP] Struct fields not found for comparison"
+            )
+    else:
+        if spec_resp:
+            notes.append(
+                "[RESP] Could not extract response type from handler"
+            )
+        else:
+            notes.append("[RESP] No response body in spec (expected)")
+
+    # --- Classify ---
+    GOOD_THRESHOLD = 0.70
+
+    if expects_body:
+        req_good = req_ratio is not None and req_ratio >= GOOD_THRESHOLD
+        resp_good = resp_ratio is not None and resp_ratio >= GOOD_THRESHOLD
+        req_any = req_ratio is not None and req_ratio > 0
+        resp_any = resp_ratio is not None and resp_ratio > 0
+
+        if req_ratio is None and resp_ratio is None:
+            if req_type or resp_type:
+                return "Stub", notes
+            return "N/A", notes
+
+        if req_good and resp_good:
+            return "Full", notes
+        if req_good or resp_good or (req_any and resp_any):
+            return "Partial", notes
+        return "Stub", notes
+    else:
+        if resp_ratio is None:
+            if is_resp_passthrough or (resp_type and resp_type != _PROVIDER_BYTES_SENTINEL):
+                return "Stub", notes
+            if spec_resp:
+                return "N/A", notes
+            return "N/A", notes
+
+        if resp_ratio >= GOOD_THRESHOLD:
+            return "Full", notes
+        if resp_ratio > 0:
+            return "Partial", notes
+        return "Stub", notes
+
+
+# ---------------------------------------------------------------------------
+# 8. Actionable Notes Builder
 # ---------------------------------------------------------------------------
 
 def _build_actionable_notes(
@@ -773,46 +1522,104 @@ def _build_actionable_notes(
     cloud_methods: List[str],
     spec_methods: Set[str],
 ) -> str:
-    """Build a detailed, actionable summary for the Notes column.
+    """Build a structured, readable summary for the Notes column.
 
-    Includes high-level action items plus specific findings from the
-    completeness assessment (missing fields, bare types, property gaps, etc.).
+    Organises findings into clearly labelled sections separated by
+    newlines so that the sheet cell (or verbose CLI output) is scannable.
+
+    Sections (only included when relevant):
+      COVERAGE / STATUS  — high-level action for the endpoint
+      CLOUD              — x-internal annotation info
+      CROSS-CHECK        — handler ↔ spec field comparison (request, response)
+      SPEC QUALITY       — legacy completeness notes (fallback path)
+      SCHEMA-DRIVEN      — whether handler imports meshery/schemas types
     """
-    parts: List[str] = []
+    sections: List[str] = []
 
-    # --- Status-level action ---
+    # ── COVERAGE / STATUS ──────────────────────────────────────────────
     if is_commented:
-        parts.append("Route commented out — consider removal from router and spec")
+        sections.append(
+            "[COVERAGE] Route is commented out — "
+            "consider removal from router and spec"
+        )
 
     if coverage == "Server Underlap":
-        parts.append("Not in OpenAPI spec — add spec definition")
+        sections.append(
+            "[COVERAGE] Not in OpenAPI spec — add spec definition"
+        )
     elif coverage == "Schema Underlap":
         if status == "Unimplemented":
-            parts.append("In spec but no server route — implement handler or remove from spec")
-
-    # --- Cloud backward compat (Overlap case) ---
-    if coverage == "Overlap" and cloud_methods:
-        if len(cloud_methods) == len(spec_methods):
-            parts.append("Marked as cloud in schema (x-internal), equivalent route exists in server")
-        else:
-            parts.append(
-                f"Partially marked as cloud in schema ({', '.join(cloud_methods)} are x-internal: cloud), equivalent route exists in server"
+            sections.append(
+                "[COVERAGE] In spec but no server route — "
+                "implement handler or remove from spec"
             )
 
-    # --- Detailed spec completeness findings ---
-    if compl_notes:
-        parts.extend(compl_notes)
+    # ── CLOUD ──────────────────────────────────────────────────────────
+    if coverage == "Overlap" and cloud_methods:
+        if len(cloud_methods) == len(spec_methods):
+            sections.append(
+                "[CLOUD] All methods marked x-internal: cloud in spec, "
+                "but an equivalent route exists in the server"
+            )
+        else:
+            sections.append(
+                f"[CLOUD] Partially cloud-annotated: "
+                f"{', '.join(cloud_methods)} marked x-internal in spec"
+            )
 
-    # --- Schema-driven ---
+    # ── CROSS-CHECK ────────────────────────────────────────────────────
+    # compl_notes from cross_check_completeness carry [REQ]/[RESP]/[INFO]
+    # prefixes.  Group them for readability.
+    req_lines = [n for n in compl_notes if n.startswith("[REQ]")]
+    resp_lines = [n for n in compl_notes if n.startswith("[RESP]")]
+    info_lines = [n for n in compl_notes if n.startswith("[INFO]")]
+    legacy_lines = [
+        n for n in compl_notes
+        if not n.startswith(("[REQ]", "[RESP]", "[INFO]"))
+    ]
+
+    if req_lines or resp_lines or info_lines:
+        cross_parts: List[str] = []
+        if info_lines:
+            for line in info_lines:
+                cross_parts.append(line.replace("[INFO] ", ""))
+        if req_lines:
+            cross_parts.append("Request:")
+            for line in req_lines:
+                cross_parts.append("  " + line.replace("[REQ] ", ""))
+        if resp_lines:
+            cross_parts.append("Response:")
+            for line in resp_lines:
+                cross_parts.append("  " + line.replace("[RESP] ", ""))
+        sections.append(
+            "[CROSS-CHECK]\n" + "\n".join(cross_parts)
+        )
+
+    # ── SPEC QUALITY (legacy fallback) ─────────────────────────────────
+    if legacy_lines:
+        sections.append(
+            "[SPEC QUALITY]\n" + "\n".join(legacy_lines)
+        )
+
+    # ── SCHEMA-DRIVEN ──────────────────────────────────────────────────
     if driven == "FALSE" and coverage != "Schema Underlap":
         if handler in ("<inline>", "<unknown>"):
-            parts.append(f"Handler is {handler} — extract to named function and adopt schema types")
+            sections.append(
+                f"[SCHEMA-DRIVEN] Handler is {handler} — "
+                "extract to a named function and adopt schema types"
+            )
         else:
-            parts.append("Handler not using meshery/schemas types — migrate to schema-driven")
+            sections.append(
+                "[SCHEMA-DRIVEN] Handler does not import meshery/schemas "
+                "types — migrate to schema-driven"
+            )
     elif driven == "Partial":
-        parts.append("Uses only core schema types — adopt versioned model types (v1beta1, etc.)")
+        sections.append(
+            "[SCHEMA-DRIVEN] Uses only core schema types — "
+            "adopt versioned model types (v1beta1, etc.)"
+        )
 
-    return "; ".join(parts) if parts else ""
+    return "\n\n".join(sections) if sections else ""
 
 
 # ---------------------------------------------------------------------------
@@ -866,12 +1673,21 @@ def classify_endpoints(
     routes: List[Dict[str, Any]],
     spec_data: dict,
     schema_map: Dict[str, Tuple[str, str]],
+    handler_io_map: Optional[Dict[str, Dict[str, Optional[str]]]] = None,
+    go_fields_map: Optional[Dict[str, Set[str]]] = None,
 ) -> List[Dict[str, Any]]:
-    """Classify endpoints from both router and spec (bidirectional walk)."""
+    """Classify endpoints from both router and spec (bidirectional walk).
+
+    When *handler_io_map* and *go_fields_map* are provided, schema
+    completeness is determined by cross-checking handler Go types against
+    spec schemas (field-level comparison).  Otherwise falls back to the
+    legacy structural assessment.
+    """
     all_paths = spec_data["all_paths"]
     x_internal_map = spec_data["x_internal"]
     original_paths = spec_data["original_paths"]
     path_categories = spec_data.get("path_categories", {})
+    operations_map = spec_data.get("operations", {})
 
     endpoints: List[Dict[str, Any]] = []
     router_norm_paths: Set[str] = set()
@@ -923,11 +1739,67 @@ def classify_endpoints(
         # --- Schema-Backed ---
         backed = "TRUE" if spec_methods else "FALSE"
 
-        # --- Schema Completeness ---
-        completeness, compl_notes = _aggregate_completeness(norm, methods, spec_data)
+        # --- Schema Completeness (cross-check or legacy fallback) ---
+        handler = route["handler"]
+        use_crosscheck = (
+            handler_io_map is not None
+            and go_fields_map is not None
+            and handler in handler_io_map
+            and spec_methods
+        )
+
+        if use_crosscheck:
+            # Cross-check: pick the first matching method for comparison
+            check_methods_list = (
+                sorted(spec_methods)
+                if methods == ["ALL"]
+                else [m for m in methods if m in spec_methods]
+            )
+            if check_methods_list:
+                # Aggregate cross-check across all matching methods
+                method_comps: List[str] = []
+                agg_notes: List[str] = []
+                for m in check_methods_list:
+                    op = operations_map.get((norm, m))
+                    if op:
+                        sf = extract_spec_schema_fields(op, m)
+                        comp, cnotes = cross_check_completeness(
+                            handler, handler_io_map[handler],
+                            go_fields_map, sf, m,
+                        )
+                        method_comps.append(comp)
+                        agg_notes.extend(cnotes)
+                    else:
+                        method_comps.append("N/A")
+
+                # Aggregate: best-of across methods
+                if all(c == "Full" for c in method_comps):
+                    completeness = "Full"
+                elif any(c == "Full" for c in method_comps) or any(
+                    c == "Partial" for c in method_comps
+                ):
+                    completeness = "Partial"
+                elif all(c == "N/A" for c in method_comps):
+                    completeness = "N/A"
+                else:
+                    completeness = "Stub"
+                # Deduplicate notes
+                seen_n: Set[str] = set()
+                compl_notes = []
+                for n in agg_notes:
+                    if n not in seen_n:
+                        seen_n.add(n)
+                        compl_notes.append(n)
+            else:
+                completeness, compl_notes = _aggregate_completeness(
+                    norm, methods, spec_data
+                )
+        else:
+            completeness, compl_notes = _aggregate_completeness(
+                norm, methods, spec_data
+            )
 
         # --- Schema-Driven ---
-        handler = route["handler"]
         if handler in ("<inline>", "<unknown>"):
             driven, driven_reason = "FALSE", f"handler: {handler}"
         else:
@@ -1384,8 +2256,22 @@ def main():
     schema_map = build_schema_driven_map(repo)
     n_driven = sum(1 for s, _ in schema_map.values() if s == "TRUE")
 
+    # Handler I/O types and Go struct fields for cross-check completeness
+    handler_io_map = extract_handler_io_types(repo)
+    go_fields_map = build_go_struct_fields(repo)
+    n_io_extracted = sum(
+        1 for io in handler_io_map.values()
+        if io.get("request_type") or io.get("response_type")
+    )
+    print(f"Cross-check: {n_io_extracted}/{len(handler_io_map)} handlers "
+          f"with extractable I/O types, {len(go_fields_map)} Go struct definitions")
+
     # --- Phase 2: Classify ---
-    endpoints = classify_endpoints(routes, spec_data, schema_map)
+    endpoints = classify_endpoints(
+        routes, spec_data, schema_map,
+        handler_io_map=handler_io_map,
+        go_fields_map=go_fields_map,
+    )
     total = len(endpoints)
 
     # Counts
