@@ -121,16 +121,16 @@ jobs:
           path: ./qa
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
+      - name: Pull latest qa changes
+        if: ${{ !cancelled() &&  github.event_name == 'push' }}
+        working-directory: qa
+        run: git pull --rebase --autostash origin master
+
       - name: Sync results with qa
         if: ${{ !cancelled() &&  github.event_name == 'push' }}
         working-directory: qa
         run: |
           make meshery-results-sync MESHERY_RESULTS_PATH=../ui/allure-results
-
-      - name: Pull latest qa changes
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
-        working-directory: qa
-        run: git pull --rebase origin master || true
 
       - name: Commit & push academy to qa
         if: ${{ !cancelled() &&  github.event_name == 'push' }}

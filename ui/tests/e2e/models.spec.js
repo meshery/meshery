@@ -35,7 +35,6 @@ test.describe.serial('Model Workflow Tests', () => {
 
     await page.getByTestId('TabBar-Button-CreateModel').click();
 
-    await page.locator('#model-name').waitFor({ state: 'visible' });
     await page.locator('#model-name').fill(model.MODEL_NAME);
     await page.locator('#model-display-name').fill(model.MODEL_DISPLAY_NAME);
 
@@ -56,7 +55,6 @@ test.describe.serial('Model Workflow Tests', () => {
     await page.getByTestId('UrlStepper-Button-Next').click();
 
     await page.getByTestId('UrlStepper-Select-Source-GitHub').check();
-    await page.locator('#model-url').waitFor({ state: 'visible' });
     await page.locator('#model-url').fill(model.MODEL_URL);
 
     await page.getByTestId('UrlStepper-Button-Next').click();
