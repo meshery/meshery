@@ -144,7 +144,7 @@ func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
 		utils.Log.Info("...meshconfig has been reset to default settings.")
 
 	default:
-		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.Platform, utils.MesheryFolder)
+		return ErrUnsupportedPlatform(currCtx.Platform, utils.MesheryFolder)
 	}
 
 	return nil
