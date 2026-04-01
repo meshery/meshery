@@ -54,7 +54,7 @@ func (kp *KeyPersister) SaveUsersKey(key *Key) (*Key, error) {
 
 // SaveUsersKeys saves a key to the database
 func (kp *KeyPersister) SaveUsersKeys(keys []Key) ([]Key, error) {
-	if err := kp.DB.Save(keys).Error; err != nil {
+	if err := kp.DB.Save(&keys).Error; err != nil {
 		return nil, ErrDBCreate(err)
 	}
 
