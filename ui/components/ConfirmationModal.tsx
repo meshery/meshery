@@ -22,7 +22,7 @@ import {
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { RoundedTriangleShape } from './shapes/RoundedTriangle';
 import { notificationColors } from '../themes/app';
@@ -142,6 +142,10 @@ function ConfirmationMsg(props) {
   const [tabVal, setTabVal] = useState(tab);
 
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    setTabVal(tab);
+  }, [open, tab]);
 
   const { notify } = useNotification();
   const { selectedK8sContexts } = useSelector((state) => state.ui);
