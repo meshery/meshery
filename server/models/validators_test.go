@@ -6,42 +6,62 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 
-func TestSMPPerformanceTestConfigValidatorRejectsRelativeEndpoints(t *testing.T) {
-	perfTest := &SMP.PerformanceTestConfig{
-		Name:     "given invalid endpoint when SMPPerformanceTestConfigValidator then throw ErrValidURL",		Duration: "30s",
-		Clients: []*SMP.PerformanceTestConfig_Client{
-			{
-				LoadGenerator: FortioLG.Name(),
-				Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_HTTP,
-				EndpointUrls:  []string{"not-a-url", "/health", "health"},
-			},
-		},
-	}
 
-	       err := SMPPerformanceTestConfigValidator(perfTest)
-	       if err != ErrValidURL {
-		       t.Errorf("expected ErrValidURL, got %v", err)
-	       }
-}
+func TestSMPPerformanceTestConfigValidator(t *testing.T) {
+       cases := []struct {
+	       name      string
+	       config    *SMP.PerformanceTestConfig
+	       wantError error
+       }{
+	       {
+		       name: "rejects invalid/relative endpoints",
+		       config: &SMP.PerformanceTestConfig{
+			       Name:     "invalid endpoints",
+			       Duration: "30s",
+			       Clients: []*SMP.PerformanceTestConfig_Client{
+				       {
+					       LoadGenerator: FortioLG.Name(),
+					       Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_HTTP,
+					       EndpointUrls:  []string{"not-a-url", "/health", "health"},
+				       },
+			       },
+		       },
+		       wantError: ErrValidURL,
+	       },
+	       {
+		       name: "accepts valid absolute endpoints",
+		       config: &SMP.PerformanceTestConfig{
+			       Name:     "valid endpoints",
+			       Duration: "30s",
+			       Clients: []*SMP.PerformanceTestConfig_Client{
+				       {
+					       LoadGenerator: FortioLG.Name(),
+					       Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_HTTP,
+					       EndpointUrls:  []string{"https://meshery.io/api/health"},
+				       },
+				       {
+					       LoadGenerator: Wrk2LG.Name(),
+					       Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_TCP,
+					       EndpointUrls:  []string{"tcp://127.0.0.1:8080"},
+				       },
+			       },
+		       },
+		       wantError: nil,
+	       },
+       }
 
-func TestSMPPerformanceTestConfigValidatorAcceptsAbsoluteEndpoints(t *testing.T) {
-	perfTest := &SMP.PerformanceTestConfig{
-		Name:     "given valid endpoint when SMPPerformanceTestConfigValidator then assert err nil",		Duration: "30s",
-		Clients: []*SMP.PerformanceTestConfig_Client{
-			{
-				LoadGenerator: FortioLG.Name(),
-				Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_HTTP,
-				EndpointUrls:  []string{"https://meshery.io/api/health"},
-			},
-			{
-				LoadGenerator: Wrk2LG.Name(),
-				Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_TCP,
-				EndpointUrls:  []string{"tcp://127.0.0.1:8080"},
-			},
-		},
-	}
-
-	       if err := SMPPerformanceTestConfigValidator(perfTest); err != nil {
-		       t.Errorf("expected valid absolute endpoints to pass validation, got %v", err)
-	       }
+       for _, tc := range cases {
+	       t.Run(tc.name, func(t *testing.T) {
+		       err := SMPPerformanceTestConfigValidator(tc.config)
+		       if tc.wantError != nil {
+			       if !t.ErrorIs(err, tc.wantError) {
+				       t.Errorf("expected error %v, got %v", tc.wantError, err)
+			       }
+		       } else {
+			       if err != nil {
+				       t.Errorf("expected no error, got %v", err)
+			       }
+		       }
+	       })
+       }
 }
