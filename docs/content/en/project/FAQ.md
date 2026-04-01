@@ -102,7 +102,7 @@ categories: [project]
 <summary>
 <h6>Question: What systems can I deploy Meshery onto?</h6>
 </summary>
-<strong>Answer:</strong> Many. See Meshery's <a href="/installation">Compatibility Matrix</a>.
+<strong>Answer:</strong> Many. See Meshery's <a href="/installation/compatibility-matrix">Compatibility Matrix</a>.
 </details>
 
 <details>

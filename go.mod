@@ -52,7 +52,7 @@ require (
 	github.com/meshery/meshery-operator v0.8.11
 	github.com/meshery/meshkit v0.8.70
 	github.com/meshery/meshsync v0.8.26
-	github.com/meshery/schemas v0.8.129
+	github.com/meshery/schemas v0.9.0
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.2.0
 	github.com/olekukonko/tablewriter v1.1.0
@@ -145,7 +145,7 @@ require (
 	github.com/bsm/redislock v0.7.2 // indirect
 	github.com/bufbuild/protocompile v0.14.1 // indirect
 	github.com/buger/goterm v1.0.4 // indirect
-	github.com/buger/jsonparser v1.1.1 // indirect
+	github.com/buger/jsonparser v1.1.2 // indirect
 	github.com/capnm/sysinfo v0.0.0-20130621111458-5909a53897f3 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
