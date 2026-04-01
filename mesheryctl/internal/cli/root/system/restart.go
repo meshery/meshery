@@ -39,6 +39,15 @@ mesheryctl system restart
 // (optional) skip checking for new updates available in Meshery.
 mesheryctl system restart --skip-update
 	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 0 {
+			return utils.ErrInvalidArgument(
+				fmt.Errorf("restart does not take any arguments, see '%s --help' for more information", cmd.CommandPath()),
+			)
+		}
+		return nil
+	},
+
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -59,10 +68,6 @@ mesheryctl system restart --skip-update
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) > 0 {
-			//nolint:ST1005
-			return utils.ErrInvalidArgument(fmt.Errorf("restart does not take any arguments, see '%s --help' for more information", cmd.CommandPath()))
-		}
 		return restart()
 	},
 }
@@ -91,7 +96,7 @@ func restart() error {
 
 	running, err := utils.AreMesheryComponentsRunning(currPlatform)
 	if err != nil {
-		return err
+		return ErrRestartMeshery(err)
 	}
 	if !running { // Meshery is not running
 		if err := start(); err != nil {
