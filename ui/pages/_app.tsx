@@ -1,5 +1,5 @@
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import { Footer, KubernetesSubscription, NavigationBar } from '../components/AppComponents';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { CacheProvider } from '@emotion/react';
@@ -12,7 +12,6 @@ import React, { useEffect, useMemo, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
-import Navigator from '../components/Navigator';
 import getPageContext from '../components/PageContext';
 import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
@@ -27,7 +26,6 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
-import subscribeK8sContext from '../components/graphql/subscriptions/K8sContextSubscription';
 import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
 import './styles/AnimatedMeshPattern.css';
@@ -41,28 +39,16 @@ import uiConfig from '../ui.config';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponentByName } from '../api/meshmodel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
-import CAN, { ability } from '../utils/can';
+import { ability } from '../utils/can';
 import { useLazyGetCredentialByIdQuery } from '@/rtk-query/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
-import {
-  ErrorBoundary,
-  useTheme,
-  SistentThemeProvider,
-  CssBaseline,
-  Typography,
-  Hidden,
-  NoSsr,
-} from '@sistent/sistent';
+import { ErrorBoundary, SistentThemeProvider, CssBaseline, NoSsr } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
-import { keys } from '@/utils/permission_constants';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
 import {
   StyledAppContent,
-  StyledDrawer,
-  StyledFooterBody,
-  StyledFooterText,
   StyledMainContent,
   StyledContentWrapper,
   StyledRoot,
@@ -76,7 +62,6 @@ import {
   setOrganization,
   toggleCatalogContent,
   updateExtensionType,
-  updateK8SConfig,
 } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
 import { updateGrafanaConfig, updatePrometheusConfig } from '@/store/slices/telemetry';
@@ -98,108 +83,6 @@ function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
 export function isExtensionOpen() {
   return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
-
-const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }) => {
-  const theme = useTheme();
-  const isPlaygroundBuild = process.env.NEXT_PUBLIC_PLAYGROUND_BUILD === 'true';
-
-  const { extensionType: extension } = useSelector((state) => state.ui);
-
-  if (extension == 'navigator') {
-    return null;
-  }
-
-  return (
-    <StyledFooterBody>
-      <Typography
-        variant="body2"
-        align="center"
-        component="p"
-        style={{
-          color:
-            theme.palette.mode === 'light'
-              ? theme.palette.text.default
-              : theme.palette.text.disabled,
-        }}
-      >
-        <StyledFooterText onClick={handleMesheryCommunityClick}>
-          {capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted || isPlaygroundBuild ? (
-            'ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.'
-          ) : (
-            <>
-              {' '}
-              Built with{' '}
-              <FavoriteIcon
-                style={{
-                  color: theme.palette.background.brand.default,
-                  display: 'inline',
-                  verticalAlign: 'bottom',
-                }}
-              />{' '}
-              by the Meshery Community
-            </>
-          )}
-        </StyledFooterText>
-      </Typography>
-    </StyledFooterBody>
-  );
-};
-
-const KubernetesSubscription = ({ setAppState }) => {
-  const dispatch = useDispatch();
-  const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
-    // Don't fetch k8s contexts if user doesn't have permission
-    if (!CAN(keys.VIEW_ALL_KUBERNETES_CLUSTERS.action, keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject)) {
-      return () => {};
-    }
-
-    const subscription = subscribeK8sContext(
-      (result) => {
-        // Initialize activeContexts with all context IDs plus "all"
-        const allContexts = [];
-        if (result.k8sContext?.contexts?.length > 0) {
-          result.k8sContext.contexts.forEach((ctx) => allContexts.push(ctx.id));
-          allContexts.push('all');
-        }
-
-        // TODO: Remove local state and only use redux store
-        setAppState({
-          k8sContexts: result.k8sContext,
-          activeK8sContexts: allContexts,
-        });
-
-        dispatch(updateK8SConfig({ k8sConfig: result.k8sContext.contexts }));
-      },
-      {
-        selector: {
-          page: page,
-          pageSize: pageSize,
-          order: order,
-          search: search,
-        },
-      },
-    );
-
-    // `requestSubscription` returns a Disposable with a `dispose` method.
-    // Return a cleanup function that calls `dispose` so callers can treat
-    // this as a simple function to unsubscribe.
-    return () => {
-      if (subscription && typeof subscription.dispose === 'function') {
-        subscription.dispose();
-      }
-    };
-  };
-
-  useEffect(() => {
-    const disposeK8sContextSubscription = k8sContextSubscription();
-    setAppState({ disposeK8sContextSubscription });
-    return () => {
-      disposeK8sContextSubscription();
-    };
-  }, []);
-
-  return null;
-};
 
 const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) => {
   const pageContext = useMemo(() => getPageContext(), []);
@@ -730,39 +613,3 @@ const MesheryAppWrapper = ({ emotionCache = clientSideEmotionCache, ...props }) 
 };
 
 export default MesheryAppWrapper;
-
-const NavigationBar = ({
-  isDrawerCollapsed,
-  mobileOpen,
-  handleDrawerToggle,
-  updateExtensionType,
-  canShowNav,
-}) => {
-  if (!canShowNav) {
-    return null;
-  }
-
-  return (
-    <StyledDrawer
-      isDrawerCollapsed={isDrawerCollapsed}
-      data-testid="navigation"
-      id="left-navigation-bar"
-    >
-      <Hidden smUp implementation="js">
-        <Navigator
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          isDrawerCollapsed={isDrawerCollapsed}
-          updateExtensionType={updateExtensionType}
-        />
-      </Hidden>
-      <Hidden xsDown implementation="css">
-        <Navigator
-          isDrawerCollapsed={isDrawerCollapsed}
-          updateExtensionType={updateExtensionType}
-        />
-      </Hidden>
-    </StyledDrawer>
-  );
-};
