@@ -33,10 +33,12 @@ test.describe('Extensions Section Tests', () => {
 
   test('Verify Kanvas Details', async () => {
     await extensionsPage.verifyKanvasSignupUI();
-    if (await extensionsPage.kanvasSignupBtn.isEnabled()) {
-      await extensionsPage.verifyNewTab(extensionsPage.kanvasSignupBtn, URLS.KANVAS.DOCS);
+    const hasAccess = await extensionsPage.hasKanvasAccess();
+    if (hasAccess) {
+      await expect(extensionsPage.kanvasSignupBtn).toBeDisabled();
     } else {
-      await expect(extensionsPage.kanvasSignupBtn).toHaveText('Enabled');
+      await expect(extensionsPage.kanvasSignupBtn).toBeEnabled();
+      await extensionsPage.verifyNewTab(extensionsPage.kanvasSignupBtn, URLS.KANVAS.DOCS);
     }
   });
 

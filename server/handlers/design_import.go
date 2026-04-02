@@ -21,7 +21,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
-	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
+	coreV1 "github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
@@ -304,9 +304,7 @@ func (h *Handler) DesignFileImportHandler(
 	}
 
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &designRecord)
-
 	if err != nil {
-
 		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider)
 		return
 	}

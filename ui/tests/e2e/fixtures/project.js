@@ -10,7 +10,7 @@ export const test = base.extend({
   // We can later override it in the config.
   provider: ['None', { option: true }],
 
-  clusterMetaData: async (_, use) => {
+  clusterMetaData: async ({}, use) => {
     const kubeConfigPath = `${os.homedir()}/.kube/config`;
     if (!fs.existsSync(kubeConfigPath)) {
       testInfo.skip(true, 'Missing ~/.kube/config (connection tests need a local cluster context)');
