@@ -19,7 +19,11 @@ func TestIsValidPath(t *testing.T) {
 		mesheryHome: tmpDir,
 	}
 
-	mesheryHome, _ := filepath.Abs(tmpDir)
+	mesheryHome, err := filepath.EvalSymlinks(tmpDir)
+	if err != nil {
+		mesheryHome = tmpDir
+	}
+	mesheryHome, _ = filepath.Abs(mesheryHome)
 
 	// Create some files for EvalSymlinks to work with
 	testFile := filepath.Join(mesheryHome, "test.log")
@@ -33,10 +37,25 @@ func TestIsValidPath(t *testing.T) {
 	// Create a symlink that points outside
 	outsideFile := filepath.Join(os.TempDir(), "outside.txt")
 	_ = os.WriteFile(outsideFile, []byte("outside"), 0644)
-	defer os.Remove(outsideFile)
+	defer func() {
+		if err := os.Remove(outsideFile); err != nil {
+			t.Logf("failed to remove temporary file: %v", err)
+		}
+	}()
 
 	evilSymlink := filepath.Join(mesheryHome, "evil_link")
 	_ = os.Symlink(outsideFile, evilSymlink)
+
+	// Create a directory that could cause a partial prefix bypass
+	// We use the same parent directory as mesheryHome
+	parentDir := filepath.Dir(mesheryHome)
+	backupDir := filepath.Join(parentDir, filepath.Base(mesheryHome)+"-backup")
+	_ = os.MkdirAll(backupDir, 0755)
+	backupFile := filepath.Join(backupDir, "secret.txt")
+	_ = os.WriteFile(backupFile, []byte("secret"), 0644)
+	defer func() {
+		_ = os.RemoveAll(backupDir)
+	}()
 
 	tests := []struct {
 		name     string
@@ -65,7 +84,7 @@ func TestIsValidPath(t *testing.T) {
 		},
 		{
 			name:     "Invalid path - partial prefix match bypass",
-			path:     mesheryHome + "-backup/secret.txt",
+			path:     backupFile,
 			expected: false,
 		},
 	}
@@ -87,7 +106,11 @@ func TestViewHandler_Validation(t *testing.T) {
 		mesheryHome: tmpDir,
 	}
 
-	mesheryHome, _ := filepath.Abs(tmpDir)
+	mesheryHome, err := filepath.EvalSymlinks(tmpDir)
+	if err != nil {
+		mesheryHome = tmpDir
+	}
+	mesheryHome, _ = filepath.Abs(mesheryHome)
 
 	// Create a dummy log file for testing
 	testLogDir := filepath.Join(mesheryHome, "test_logs")
