@@ -473,7 +473,7 @@ func GetAuthRetryCount(req *http.Request) int {
 		return 0
 	}
 	count := 0
-	fmt.Sscanf(ck.Value, "%d", &count)
+	_, _ = fmt.Sscanf(ck.Value, "%d", &count)
 	return count
 }
 

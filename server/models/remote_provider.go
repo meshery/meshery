@@ -764,7 +764,7 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		newts, refreshErr := l.refreshToken(ts)
 		if refreshErr != nil {
 			l.Log.Error(ErrTokenRefresh(refreshErr))
-			return ErrTokenClaims
+			return ErrTokenRefresh(refreshErr)
 		}
 		if _, verifyErr2 := l.VerifyToken(newts); verifyErr2 != nil {
 			l.Log.Error(ErrTokenVerify(verifyErr2))
@@ -787,7 +787,7 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 			newts, refreshErr := l.refreshToken(ts)
 			if refreshErr != nil {
 				l.Log.Error(ErrTokenRefresh(refreshErr))
-				return introspectErr
+				return ErrTokenRefresh(refreshErr)
 			}
 			if introspectErr2 := l.introspectToken(newts); introspectErr2 != nil {
 				return introspectErr2
