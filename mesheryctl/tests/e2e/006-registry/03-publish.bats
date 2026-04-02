@@ -47,7 +47,7 @@ require_spreadsheet_credentials() {
 @test "given an invalid system when running mesheryctl registry publish then an error is displayed" {
     require_spreadsheet_credentials
     run $MESHERYCTL_BIN registry publish invalid-system "$TEST_SPREADSHEET_CRED" "$TEST_SPREADSHEET_ID" "$TESTDATA_DIR/models" "$TESTDATA_DIR/imgs"
-    assert_success
+    assert_failure
     assert_output --partial "invalid system"
 }
 
