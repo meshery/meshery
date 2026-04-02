@@ -406,16 +406,16 @@ function GrafanaCustomChart(props) {
   const getData = async (ind, target, chartInst, datasource) => {
     let { xAxis: currentXAxis, chartData: currentChartData } = { xAxis, chartData };
 
-    let queryRangeURL = '';
+    let queryRangeType = '';
     let endpointURL = '';
     let endpointAPIKey = '';
     if (prometheusURL && prometheusURL !== '') {
       endpointURL = prometheusURL;
-      queryRangeURL = `/api/prometheus/query_range/${connectionID}`;
+      queryRangeType = 'prometheus';
     } else if (grafanaURL && grafanaURL !== '') {
       endpointURL = grafanaURL;
       endpointAPIKey = grafanaAPIKey;
-      queryRangeURL = `/api/grafana/query_range/${connectionID}`;
+      queryRangeType = 'grafana';
     }
 
     let { expr } = target;
@@ -533,9 +533,7 @@ function GrafanaCustomChart(props) {
       queryParams += `&url=${encodeURIComponent(endpointURL)}&api-key=${encodeURIComponent(
         endpointAPIKey,
       )}`;
-      // Strip leading /api/ since RTK Query base URL already includes it
-      const rtkUrl = queryRangeURL.replace(/^\/api\//, '');
-      triggerQueryRange({ url: rtkUrl, queryParams })
+      triggerQueryRange({ type: queryRangeType, connectionID, queryParams })
         .unwrap()
         .then(processReceivedData)
         .catch(handleError);

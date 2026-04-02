@@ -14,7 +14,7 @@ export const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }) =>
   const isPlaygroundBuild = process.env.NEXT_PUBLIC_PLAYGROUND_BUILD === 'true';
   const { extensionType: extension } = useSelector((state) => state.ui);
 
-  if (extension == 'navigator') {
+  if (extension === 'navigator') {
     return null;
   }
 

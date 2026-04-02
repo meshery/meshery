@@ -85,8 +85,8 @@ const telemetryApi = api.injectEndpoints({
       }),
     }),
     queryRange: builder.query({
-      query: ({ url, queryParams }) => ({
-        url: `${url}?${queryParams}`,
+      query: ({ type, connectionID, queryParams }) => ({
+        url: `${type}/query_range/${connectionID}?${queryParams}`,
         method: 'GET',
         credentials: 'include',
       }),

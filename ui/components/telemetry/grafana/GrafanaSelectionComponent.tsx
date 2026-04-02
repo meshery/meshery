@@ -123,32 +123,25 @@ function GrafanaSelectionComponent(props) {
 
   const queryTemplateVars = (ind) => {
     if (templateVars.length > 0) {
-      let queryURL = `/api/telemetry/metrics/grafana/query/${connectionID}?query=${encodeURIComponent(
-        templateVars[ind].query,
-      )}&dsid=${templateVars[ind].datasource.id}`;
+      // Build query string params directly
+      const params = new URLSearchParams();
+      params.set('query', templateVars[ind].query);
+      params.set('dsid', templateVars[ind].datasource.id);
       for (let i = ind; i > 0; i--) {
-        queryURL += `&${templateVars[i - 1].name}=${selectedTemplateVars[i - 1]}`;
+        params.set(templateVars[i - 1].name, selectedTemplateVars[i - 1]);
       }
       if (
         templateVars[ind].query.startsWith('label_values') &&
         templateVars[ind].query.indexOf(',') > -1
       ) {
-        // series query needs a start and end time or else it will take way longer to return. . .
-        // but at this point this component does not have the time range selection bcoz the time range selection comes after this component makes its selections
-        // hence for now just limiting the time period to the last 24hrs
-
         const ed = new Date();
         const sd = new Date();
         sd.setDate(sd.getDate() - 1);
-        queryURL += `&start=${Math.floor(sd.getTime() / 1000)}&end=${Math.floor(
-          ed.getTime() / 1000,
-        )}`;
+        params.set('start', String(Math.floor(sd.getTime() / 1000)));
+        params.set('end', String(Math.floor(ed.getTime() / 1000)));
       }
       updateProgress({ showProgress: true });
-      // Extract query string portion from the full URL
-      const queryString =
-        queryURL.split(`/api/telemetry/metrics/grafana/query/${connectionID}?`)[1] || '';
-      triggerQueryVars({ connectionID, query: queryString })
+      triggerQueryVars({ connectionID, query: params.toString() })
         .unwrap()
         .then((result) => {
           updateProgress({ showProgress: false });
