@@ -22,6 +22,10 @@ export default defineConfig({
       '@/assets': path.resolve(__dirname, './assets'),
       '@/themes': path.resolve(__dirname, './themes'),
       '@/store': path.resolve(__dirname, './store'),
+      // Non-@ aliases used by the codebase
+      lib: path.resolve(__dirname, './lib'),
+      css: path.resolve(__dirname, './css'),
+      machines: path.resolve(__dirname, './machines'),
     },
   },
 });

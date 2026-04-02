@@ -10,7 +10,7 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
     .then((res) => {
       if (res.status === 401 || res.redirected) {
         store.dispatch({ type: 'SESSION_EXPIRED' });
-        return;
+        return new Promise(() => {});
       }
 
       let result;

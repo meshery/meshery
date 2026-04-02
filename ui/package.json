@@ -116,6 +116,12 @@
     "prettier": "^3.8.1",
     "relay-compiler": "^20.1.1",
     "start-server-and-test": "^2.1.5",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-react": "^4.5.2",
+    "jsdom": "^26.1.0",
+    "vitest": "^3.2.1",
     "typescript": "6.0.2",
     "webpack": "^5.105.4",
     "webpack-cli": "^7.0.2"

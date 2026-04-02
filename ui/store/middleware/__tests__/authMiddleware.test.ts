@@ -11,13 +11,13 @@ describe('authMiddleware', () => {
     const store = createFakeStore();
     const next = vi.fn();
 
+    // RTK marks rejected-with-value actions with this meta shape
     const action = {
       type: 'api/executeQuery/rejected',
       meta: { rejectedWithValue: true },
       payload: { status: 401 },
     };
 
-    // Simulate RTK's isRejectedWithValue check
     Object.defineProperty(action, 'meta', {
       value: { ...action.meta, rejectedWithValue: true },
     });
@@ -25,9 +25,11 @@ describe('authMiddleware', () => {
     authMiddleware(store)(next)(action);
 
     expect(next).toHaveBeenCalledWith(action);
+    expect(store.dispatch).toHaveBeenCalledWith({ type: 'SESSION_EXPIRED' });
+    expect(store.dispatch).toHaveBeenCalledTimes(1);
   });
 
-  it('passes through non-401 rejected actions without dispatching', () => {
+  it('passes through non-401 rejected actions without dispatching SESSION_EXPIRED', () => {
     const store = createFakeStore();
     const next = vi.fn();
 
@@ -40,6 +42,7 @@ describe('authMiddleware', () => {
     authMiddleware(store)(next)(action);
 
     expect(next).toHaveBeenCalledWith(action);
+    expect(store.dispatch).not.toHaveBeenCalled();
   });
 
   it('passes through fulfilled actions without dispatching', () => {

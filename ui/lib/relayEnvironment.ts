@@ -73,7 +73,7 @@ export const serializeRelayEnvironment = (environment) => {
 // which defeats Relay's normalized cache.
 let clientEnvironment: Environment | null = null;
 
-export const createRelayEnvironment = (records) => {
+export const createRelayEnvironment = (records = {}) => {
   // Server-side: always create a fresh environment per request
   if (typeof window === 'undefined') {
     return new Environment({
