@@ -15,7 +15,6 @@ import RemoteComponent from './RemoteComponent';
 import { useNotification } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
-import { CONNECTION_KINDS } from '../utils/Enum';
 import SettingsIcon from '@mui/icons-material/Settings';
 import RegistryModal from './Registry/RegistryModal';
 
