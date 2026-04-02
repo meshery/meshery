@@ -18,5 +18,14 @@ module.exports = function override(config, env) {
         }),
     );
 
+    // @docker/docker-mui-theme ships ESM syntax but declares "type": "commonjs"
+    // in its package.json. This causes webpack's CJS parser to reject the
+    // import/export statements. Override the module type to auto-detect.
+    config.module.rules.unshift({
+        test: /\.js$/,
+        include: /[\\/]node_modules[\\/]@docker[\\/]docker-mui-theme[\\/]/,
+        type: 'javascript/auto',
+    });
+
     return config;
 }

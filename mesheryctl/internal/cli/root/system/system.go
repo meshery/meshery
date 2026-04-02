@@ -16,6 +16,7 @@ package system
 
 import (
 	"fmt"
+
 	config "github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -38,6 +39,18 @@ const (
 
 func unsupportedPlatformError(platform string) error {
 	return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\n%s\n%s\nPlease check %s/config.yaml file", platform, platformDocker, platformKubernetes, utils.MesheryFolder)
+}
+
+func focusedSystemContext(cmd *cobra.Command, defaultContext string) string {
+	if flag := cmd.Flags().Lookup("context"); flag != nil && flag.Changed && tempContext != "" {
+		return tempContext
+	}
+
+	if flag := cmd.InheritedFlags().Lookup("context"); flag != nil && flag.Changed && tempContext != "" {
+		return tempContext
+	}
+
+	return defaultContext
 }
 
 // SystemCmd represents Meshery Lifecycle Management cli commands

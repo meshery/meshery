@@ -1,0 +1,42 @@
+name: Build Meshery UI
+on:
+  workflow_call:
+    outputs:
+      ui-artifact:
+        description: 'Name of the UI artifact'
+        value: 'meshery-ui'
+      provider-ui-artifact:
+        description: 'Name of the Provider UI artifact'
+        value: 'meshery-provider-ui'
+    secrets: {}
+
+jobs:
+  ui-build:
+    name: UI build
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          check-latest: true
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+          
+      - name: Build UIs
+        run: make ui-build
+          
+      - name: Upload meshery-ui artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: meshery-ui
+          path: ui/out/
+          
+      - name: Upload provider-ui artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: meshery-provider-ui
+          path: provider-ui/out/
