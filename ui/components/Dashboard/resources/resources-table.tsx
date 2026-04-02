@@ -33,6 +33,20 @@ export const ACTION_TYPES = {
 const ResourcesTable = (props) => {
   const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
     props;
+  const router = useRouter();
+
+  // Wait for router to be ready before rendering query-dependent content.
+  // Static export has no query params; they're only available after hydration.
+  if (!router.isReady) {
+    return null;
+  }
+
+  return <ResourcesTableInner {...props} />;
+};
+
+const ResourcesTableInner = (props) => {
+  const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
+    props;
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
