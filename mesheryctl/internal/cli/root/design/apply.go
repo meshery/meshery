@@ -30,7 +30,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/core"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -99,8 +98,7 @@ mesheryctl design apply [design-name]
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				utils.Log.Error(ErrDesignNotFound(patternName))
-				return nil
+				return ErrDesignNotFound(patternName)
 			} else if len(response.Patterns) == 1 {
 				designFile = response.Patterns[0].PatternFile
 			} else {
@@ -211,7 +209,7 @@ mesheryctl design apply [design-name]
 				}
 				err = json.Unmarshal(body, &response)
 				if err != nil {
-					return utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
+					return utils.ErrUnmarshal(err)
 				}
 
 				// setup pattern file here
