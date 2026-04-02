@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/pflag"
@@ -49,6 +50,10 @@ func setupContextTestEnv(t *testing.T) {
 	if err != nil {
 		t.Error("error processing config", err)
 	}
+
+	// Initialize the flag validator on SystemCmd so child commands
+	// can access it via their command context.
+	mesheryctlflags.InitValidators(SystemCmd)
 }
 
 func setupSystemOutCmdTest(t *testing.T) *bytes.Buffer {
