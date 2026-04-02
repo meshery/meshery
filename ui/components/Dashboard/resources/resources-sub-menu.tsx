@@ -8,7 +8,7 @@ import { SecondaryTab, SecondaryTabs, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
 import { iconMedium } from 'css/icons.styles';
 import { styled } from '@sistent/sistent';
-import { tabsClasses } from '@mui/material';
+import { tabsClasses } from '@sistent/sistent';
 
 const DashboardIconText = styled('div')({
   display: 'flex',

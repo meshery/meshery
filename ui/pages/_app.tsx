@@ -79,6 +79,7 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
 import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import SessionExpiredModal from '@/components/General/SessionExpiredModal';
 
 async function fetchContexts(number = 10, search = '') {
   return await promisifiedDataFetch(
@@ -702,6 +703,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                       />
                     </RegistryModalContextProvider>
                   </WorkspaceModalContextProvider>
+                  <SessionExpiredModal />
                 </LoadSessionGuard>
               </ErrorBoundary>
             </NoSsr>

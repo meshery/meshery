@@ -13,7 +13,7 @@ import {
   Grid2,
   MenuItem,
 } from '@sistent/sistent';
-import { GlobalStyles } from '@mui/material';
+import { GlobalStyles } from '@sistent/sistent';
 import { styled } from '@sistent/sistent';
 import { RelationshipDefinitionV1Alpha3OpenApiSchema } from '@meshery/schemas';
 import DescriptionIcon from '@mui/icons-material/Description';

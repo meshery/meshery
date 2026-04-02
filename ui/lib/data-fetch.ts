@@ -1,8 +1,6 @@
+import { store } from '../store';
+
 const dataFetch = (url, options = {}, successFn, errorFn) => {
-  // const controller = new AbortController();
-  // const signal = controller.signal;
-  // options.signal = signal;
-  // setTimeout(() => controller.abort(), 10000); // nice to have but will mess with the load test
   if (errorFn === undefined) {
     errorFn = (err) => {
       console.error(`Error fetching ${url} --DataFetch`, err);
@@ -11,11 +9,8 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
   fetch(url, options)
     .then((res) => {
       if (res.status === 401 || res.redirected) {
-        if (window.location.host.endsWith('3000')) {
-          window.location = '/user/login'; // for local dev thru node server
-        } else {
-          window.location.reload(); // for use with Go server
-        }
+        store.dispatch({ type: 'SESSION_EXPIRED' });
+        return;
       }
 
       let result;
