@@ -24,7 +24,6 @@ import (
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -50,11 +49,14 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/model`,
 // Display number of available models in Meshery
 mesheryctl model --count
 
-// Export registred models
+// Export registered models
 mesheryctl model export [model-name]
 
-// Generate model(s)
-mesheryctl model export [model-name]
+// Generate a model from a CSV directory
+mesheryctl model generate [path-to-csv-directory]
+
+// Generate a model from a URL based on a JSON template
+mesheryctl model generate --file [URL] --template [path-to-template.json]
 
 // Import model(s)
 mesheryctl model import -f [Uri]
@@ -62,7 +64,7 @@ mesheryctl model import -f [Uri]
 // List available model(s)
 mesheryctl model list
 
-// Delete avaialbe model(s)
+// Delete available model(s)
 mesheryctl model delete [model-id]
 
 // Search for a specific model
@@ -110,7 +112,7 @@ mesheryctl model build [model-name]/[model-version]
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			return err
 		}
 
 		err = cmd.Usage()

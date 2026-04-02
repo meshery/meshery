@@ -1,5 +1,6 @@
 .toc-pagination-wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin-top: 3rem;
 }
@@ -9,7 +10,6 @@
   border-radius: 0.4rem;
   display: block;
   height: 100%;
-  width: 100%;
   line-height: 1.25;
   padding: 1rem;
   background: transparent;
@@ -48,6 +48,7 @@
 
 .toc-card.next {
   text-align: right;
+  grid-column: 2; /* Force into empty right hand space safely when isolated */
 
   .toc-title {
     justify-content: flex-end;

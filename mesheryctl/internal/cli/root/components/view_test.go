@@ -26,7 +26,7 @@ func TestComponentView(t *testing.T) {
 
 	tests := []utils.MesheryListCommandTest{
 		{
-			Name:           "given no component is provided when running mesheryctl component view then an error message is displayed",
+			Name:           "given no argument provided when component view then throw error",
 			Args:           []string{"view"},
 			URL:            "/api/meshmodels/components",
 			Fixture:        "components.empty.api.response.golden",
@@ -35,7 +35,7 @@ func TestComponentView(t *testing.T) {
 			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errInvalidArg, viewUsageMsg)),
 		},
 		{
-			Name:             "given a non-existent component is provided when running mesheryctl component view non-existent-component then it displays empty output",
+			Name:             "given non-existent component provided when component view then display no component found",
 			Args:             []string{"view", "foo"},
 			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=foo", componentApiPath),
 			Fixture:          "components.empty.api.response.golden",
@@ -45,7 +45,7 @@ func TestComponentView(t *testing.T) {
 			ExpectedError:    utils.ErrNotFound(fmt.Errorf("%s%s", errNoComponentFound, "foo")),
 		},
 		{
-			Name:           "given multiple component name is provided when running mesheryctl component view component-1 component-2 then an error message is displayed",
+			Name:           "given multiple component name is provided when running component view then throw error",
 			Args:           []string{"view", "Test", "ACL"},
 			URL:            fmt.Sprintf("/%s?pagesize=all&search=Test&search=ACL", componentApiPath),
 			Fixture:        "components.empty.api.response.golden",
@@ -54,7 +54,7 @@ func TestComponentView(t *testing.T) {
 			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errInvalidArg, viewUsageMsg)),
 		},
 		{
-			Name:             "given a valid component is provided when running mesheryctl component view valid-component then the detailed output of the component is displayed",
+			Name:             "given valid component provided when component view then display detailed information",
 			Args:             []string{"view", "Test"},
 			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=Test", componentApiPath),
 			Fixture:          "components.api.response.golden",
@@ -63,7 +63,7 @@ func TestComponentView(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name:           "given an invalid argument is provided for --output-format flag when running mesheryctl component view valid-component --output-format invalid-format then an error message is displayed",
+			Name:           "given invalid argument value provided for --output-format flag when component view then throw error",
 			Args:           []string{"view", "Test", "--output-format", "invalid"},
 			URL:            fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
 			Fixture:        "components.api.response.golden",
@@ -72,7 +72,7 @@ func TestComponentView(t *testing.T) {
 			ExpectedError:  expectedViewFlagError("invalid"),
 		},
 		{
-			Name:             "given a valid argument is provided for --output-format flag when running mesheryctl component view valid-component --output-format valid-format then a detailed output is displayed in specified format",
+			Name:             "given valid component provided and --output-format flag when component view then display detail information in the specified output format",
 			Args:             []string{"view", "Test", "--output-format", "json"},
 			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=Test", componentApiPath),
 			Fixture:          "components.api.response.golden",
@@ -81,7 +81,7 @@ func TestComponentView(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name:             "given a valid UUID is provided when running mesheryctl component view valid-uuid then the detailed output of the component is displayed",
+			Name:             "given a valid UUID provided when component view then display detailed information of the component",
 			Args:             []string{"view", "fda1c4e7-14ae-4435-8236-adfb9cea0395"},
 			URL:              fmt.Sprintf("/%s?id=fda1c4e7-14ae-4435-8236-adfb9cea0395&page=0&pagesize=10", componentApiPath),
 			Fixture:          "components.api.response.golden",
@@ -99,5 +99,6 @@ func TestComponentView(t *testing.T) {
 		},
 	}
 
+	mesheryctlflags.InitValidators(ComponentCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, ComponentCmd, tests, currDir, "component")
 }
