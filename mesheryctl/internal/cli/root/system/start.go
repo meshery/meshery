@@ -447,9 +447,8 @@ func waitForMesheryEndpoint(endpoint meshkitutils.HostPort) {
 			return
 		}
 	}
-
-	log.Warn("Warning: Meshery endpoint is not yet accessible. The server may still be initializing.")
-	log.Info("You can check the status later with: mesheryctl system status")
+	utils.Log.Warn("meshery endpoint is not yet accessible. The server may still be initializing")
+	utils.Log.Info("You can check the status later with: mesheryctl system status")
 }
 
 func startKubernetesDeployment(currCtx *config.Context, mesheryImageVersion, callbackURL, providerURL string) error {
