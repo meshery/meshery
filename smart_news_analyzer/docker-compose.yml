@@ -1,0 +1,300 @@
+version: "3.9"
+
+services:
+  # ============================================================
+  # Infrastructure Services
+  # ============================================================
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: smart_news_postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smart_news_network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: smart_news_redis
+    command: redis-server --appendonly yes --requirepass redis-password
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smart_news_network
+    restart: unless-stopped
+
+  # ============================================================
+  # Core Backend Services
+  # ============================================================
+
+  backend:
+    build:
+      context: ./backend/django_core
+      dockerfile: Dockerfile
+    container_name: smart_news_backend
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 4 --worker-class sync"
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      - REDIS_URL=${REDIS_URL}
+      - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DEBUG=${DJANGO_DEBUG}
+      - ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - NLP_SERVICE_URL=${NLP_SERVICE_URL}
+      - PREDICTION_SERVICE_URL=${PREDICTION_SERVICE_URL}
+      - FRONTEND_URL=${FRONTEND_URL}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend/django_core:/app
+      - static_files:/app/staticfiles
+      - media_files:/app/media
+    networks:
+      - smart_news_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ============================================================
+  # AI/ML Services
+  # ============================================================
+
+  nlp-service:
+    build:
+      context: ./backend/nlp_service
+      dockerfile: Dockerfile
+    container_name: smart_news_nlp
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - SUMMARIZER_MODEL=${SUMMARIZER_MODEL}
+      - SENTIMENT_MODEL=${SENTIMENT_MODEL}
+      - LOG_LEVEL=${LOG_LEVEL}
+    ports:
+      - "8001:8001"
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend/nlp_service:/app
+      - huggingface_cache:/root/.cache/huggingface
+    networks:
+      - smart_news_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4G
+        reservations:
+          cpus: "1"
+          memory: 2G
+
+  prediction-service:
+    build:
+      context: ./backend/prediction_service
+      dockerfile: Dockerfile
+    container_name: smart_news_prediction
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - DB_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      - LOG_LEVEL=${LOG_LEVEL}
+    ports:
+      - "8002:8002"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend/prediction_service:/app
+    networks:
+      - smart_news_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ============================================================
+  # Task Processing
+  # ============================================================
+
+  celery-worker:
+    build:
+      context: ./backend/django_core
+      dockerfile: Dockerfile
+    container_name: smart_news_celery_worker
+    command: celery -A config worker --loglevel=info --concurrency=${CELERY_WORKERS} --time-limit=3600
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      - REDIS_URL=${REDIS_URL}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - NLP_SERVICE_URL=${NLP_SERVICE_URL}
+      - PREDICTION_SERVICE_URL=${PREDICTION_SERVICE_URL}
+    depends_on:
+      - backend
+      - redis
+      - postgres
+    volumes:
+      - ./backend/django_core:/app
+    networks:
+      - smart_news_network
+    restart: unless-stopped
+
+  celery-beat:
+    build:
+      context: ./backend/django_core
+      dockerfile: Dockerfile
+    container_name: smart_news_celery_beat
+    command: celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      - REDIS_URL=${REDIS_URL}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - SECRET_KEY=${DJANGO_SECRET_KEY}
+    depends_on:
+      - backend
+      - redis
+      - postgres
+    volumes:
+      - ./backend/django_core:/app
+    networks:
+      - smart_news_network
+    restart: unless-stopped
+
+  # ============================================================
+  # Scraper Service (runs periodically via Celery)
+  # ============================================================
+
+  scrapers:
+    build:
+      context: ./backend/scrapers
+      dockerfile: Dockerfile
+    container_name: smart_news_scrapers
+    environment:
+      - DJANGO_API_URL=http://backend:8000/api
+      - YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
+      - TELEGRAM_API_ID=${TELEGRAM_API_ID}
+      - TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
+      - TWITTER_BEARER_TOKEN=${TWITTER_BEARER_TOKEN}
+      - SCRAPY_PIPELINE_CONCURRENCY=${SCRAPY_PIPELINE_CONCURRENCY}
+      - SCRAPY_DOWNLOADER_MIDDLEWARES_ROBOTSTXT_OBEY=false
+    depends_on:
+      - backend
+      - postgres
+    volumes:
+      - ./backend/scrapers:/app
+      - scraper_logs:/app/logs
+    networks:
+      - smart_news_network
+    restart: unless-stopped
+
+  # ============================================================
+  # Frontend
+  # ============================================================
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_BASE_URL=${API_BASE_URL}
+    container_name: smart_news_frontend
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=${API_BASE_URL}
+      - NEXT_PUBLIC_ENVIRONMENT=${ENVIRONMENT}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/.next
+    networks:
+      - smart_news_network
+    restart: unless-stopped
+
+  # ============================================================
+  # Reverse Proxy
+  # ============================================================
+
+  nginx:
+    image: nginx:alpine
+    container_name: smart_news_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx/ssl/:/etc/nginx/ssl/
+      - static_files:/app/staticfiles:ro
+      - media_files:/app/media:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - smart_news_network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  static_files:
+    driver: local
+  media_files:
+    driver: local
+  scraper_logs:
+    driver: local
+  huggingface_cache:
+    driver: local
+
+networks:
+  smart_news_network:
+    driver: bridge

@@ -1,0 +1,72 @@
+# Core Django
+Django==4.2.11
+djangorestframework==3.14.0
+django-filter==23.5
+django-cors-headers==4.3.1
+
+# Database
+psycopg2-binary==2.9.9
+dj-database-url==2.1.0
+
+# Caching & Sessions
+django-redis==5.4.0
+redis==5.0.1
+
+# Task Queue & Scheduling
+celery==5.3.4
+django-celery-beat==2.5.0
+django-celery-results==2.5.1
+
+# Authentication & Security
+djangorestframework-simplejwt==5.3.2
+python-decouple==3.8
+pytz==2023.3
+
+# API & Serialization
+djangorestframework-nested==0.0.3
+python-dateutil==2.8.2
+pytz==2023.3
+
+# NLP & ML
+requests==2.31.0
+httpx==0.25.2
+aiohttp==3.9.1
+
+# Utils
+Pillow==10.1.0
+python-slugify==8.0.1
+bleach==6.1.0
+beautifulsoup4==4.12.2
+
+# Production Server
+gunicorn==21.2.0
+whitenoise==6.6.0
+
+# Monitoring & Logging
+sentry-sdk==1.38.0
+python-json-logger==2.0.7
+
+# Testing
+pytest==7.4.3
+pytest-django==4.7.0
+pytest-cov==4.1.0
+factory-boy==3.3.0
+
+# Development
+django-debug-toolbar==4.2.0
+django-extensions==3.2.3
+black==23.12.0
+flake8==6.1.0
+isort==5.13.2
+pre-commit==3.6.0
+
+# Documentation
+drf-spectacular==0.26.5
+drf-spectacular[sidecar]==0.26.5
+
+# Email & Notifications
+django-anymail==10.0
+
+# Async Support
+channels==4.0.0
+daphne==4.0.0
