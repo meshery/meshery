@@ -168,7 +168,7 @@ func (h *Handler) serveAllowedFile(responseWriter http.ResponseWriter, request *
 
 	if _, err = io.Copy(responseWriter, file); err != nil {
 		h.log.Error(err)
-		http.Error(responseWriter, "failed to stream requested file", http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -276,7 +276,7 @@ func pathWithinAllowedRoots(path string, allowedRoots []string) (bool, error) {
 		if err != nil {
 			return false, fmt.Errorf("resolve relative path from %q to %q: %w", allowedRoot, path, err)
 		}
-		if relPath == "." || (relPath != ".." && !strings.HasPrefix(relPath, ".."+string(os.PathSeparator))) {
+		if !strings.HasPrefix(relPath, "..") {
 			return true, nil
 		}
 	}
