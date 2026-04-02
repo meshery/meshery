@@ -2,10 +2,9 @@ package model
 
 import (
 	"errors"
-	"path/filepath"
-	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
@@ -44,27 +43,24 @@ func TestHasCSVs(t *testing.T) {
 }
 
 func TestImportModelReturnsErrorForURLImportFailure(t *testing.T) {
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
+	defer utils.ResetCommandFlags(ModelCmd, t)
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
 
-	currDir := filepath.Dir(filename)
-
-	tests := []utils.MesheryCommandTest{
-		{
-			Name:           "given a URL import failure when importing model then return the error",
-			Args:           []string{"import", "https://example.com/model"},
-			URL:            "/api/meshmodels/register",
-			HttpMethod:     "POST",
-			HttpStatusCode: 500,
-			Fixture:        "model.import.error.api.response.golden",
-			ExpectError:    true,
-			ExpectedError:  utils.ErrMesheryServerInternalError(errors.New("internal server error\n")),
-			IsOutputGolden: false,
-		},
-	}
-
+	utils.TokenFlag = utils.GetToken(t)
 	mesheryctlflags.InitValidators(ModelCmd)
-	utils.InvokeMesheryctlTestCommand(t, update, ModelCmd, tests, currDir, "model")
+
+	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/meshmodels/register",
+		httpmock.NewStringResponder(500, "internal server error"))
+
+	buf := utils.SetupMeshkitLoggerTesting(t, false)
+	ModelCmd.SetArgs([]string{"import", "https://example.com/model"})
+	ModelCmd.SetOut(buf)
+
+	err := ModelCmd.Execute()
+	if err == nil {
+		t.Fatal("expected an error but command succeeded")
+	}
+
+	utils.AssertMeshkitErrorsEqual(t, err, utils.ErrMesheryServerInternalError(errors.New("internal server error")))
 }

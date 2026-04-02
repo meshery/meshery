@@ -201,10 +201,6 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 	}
 
 	defer func() { _ = resp.Body.Close() }()
-	if resp.StatusCode != http.StatusOK {
-		err = models.ErrDoRequest(err, resp.Request.Method, url)
-		return err
-	}
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		err = models.ErrDataRead(err, "response body")
