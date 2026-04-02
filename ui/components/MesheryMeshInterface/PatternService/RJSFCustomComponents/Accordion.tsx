@@ -11,6 +11,7 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import { iconSmall } from '../../../../css/icons.styles';
+import { safeStringTitle } from '../helper';
 
 export default function SimpleAccordion(props) {
   useEffect(() => {
@@ -41,7 +42,10 @@ export default function SimpleAccordion(props) {
               fontWeight: theme.typography.fontWeightRegular,
             }}
           >
-            {props.heading?.charAt(0).toUpperCase() + props.heading?.slice(1)}{' '}
+            {(() => {
+              const h = safeStringTitle(props.heading);
+              return h ? h.charAt(0).toUpperCase() + h.slice(1) : '';
+            })()}{' '}
           </Typography>
 
           {props.childProps.hasRemove && (

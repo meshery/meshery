@@ -28,13 +28,15 @@ import {
 import { WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
-import { Responsive, WidthProvider } from 'react-grid-layout';
+import { Responsive, WidthProvider } from 'react-grid-layout/legacy';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
 import Popup from '../General/Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
 import { useSelector } from 'react-redux';
+import useUnsavedChanges from './useUnsavedChanges';
+import UnsavedChangesModal from './UnsavedChangesModal';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -106,10 +108,6 @@ const Dashboard = () => {
   const { selectedK8sContexts } = useSelector((state) => state.ui);
   const { k8sConfig } = useSelector((state) => state.ui);
   const [isEditMode, setIsEditMode] = useState(false);
-  const WIDGETS = getWidgets({ iconsProps, isEditMode });
-  const availableHandles = ['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne'];
-
-  const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 
   const iconsProps = {
     fill: theme.palette.icon.default,
@@ -117,6 +115,11 @@ const Dashboard = () => {
     secondaryFill: theme.palette.icon.secondary,
     width: '40',
   };
+
+  const WIDGETS = getWidgets({ iconsProps, isEditMode });
+  const availableHandles = ['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne'];
+
+  const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 
   const isWidgetAlreadyAdded = (key, layout, breakpoint) => {
     return Boolean(layout[breakpoint].find((item) => item.i == key));
@@ -131,6 +134,30 @@ const Dashboard = () => {
   };
   const orgDashboardLayout = getCurrentDashboardLayoutFromOrgPrefs(userData?.dashboardPreferences);
   const [dashboardLayout, setDashboardLayout] = useState(orgDashboardLayout);
+
+  const {
+    showModal: showUnsavedModal,
+    confirmNavigation,
+    cancelNavigation,
+  } = useUnsavedChanges({
+    isEditMode,
+    dashboardLayout,
+    savedLayout: orgDashboardLayout,
+  });
+
+  const handleDiscardAndNavigate = () => {
+    cancelEditing();
+    confirmNavigation();
+  };
+
+  const handleSaveAndNavigate = async () => {
+    const isSaved = await saveLayout();
+    if (!isSaved) {
+      return;
+    }
+    setIsEditMode(false);
+    confirmNavigation();
+  };
 
   const widgetsToAdd = getWidgetsAvailableToBeAdded(dashboardLayout, currentBreakPoint);
 
@@ -164,9 +191,10 @@ const Dashboard = () => {
     const res = await updateUserPref({ dashboardPreferences: dashboardLayout });
     if (res.error) {
       handleError('failed to save layout');
-      return;
+      return false;
     }
     handleSuccess('Layout saved');
+    return true;
   };
 
   const toggleEditMode = () => {
@@ -178,7 +206,7 @@ const Dashboard = () => {
   };
 
   const saveLayout = () => {
-    updateLayout(dashboardLayout);
+    return updateLayout(dashboardLayout);
   };
 
   const resetLayout = () => {
@@ -211,8 +239,11 @@ const Dashboard = () => {
     SAVE_AND_CLOSE: {
       label: 'Save and Close',
       Icon: OutlinedValidateIcon,
-      action: () => {
-        saveLayout();
+      action: async () => {
+        const isSaved = await saveLayout();
+        if (!isSaved) {
+          return;
+        }
         toggleEditMode();
       },
 
@@ -415,6 +446,12 @@ const Dashboard = () => {
         })}
       </>
       <Popup />
+      <UnsavedChangesModal
+        open={showUnsavedModal}
+        onClose={cancelNavigation}
+        onDiscard={handleDiscardAndNavigate}
+        onSave={handleSaveAndNavigate}
+      />
     </>
   );
 };

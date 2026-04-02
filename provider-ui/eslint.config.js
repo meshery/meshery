@@ -1,11 +1,30 @@
-const js = require('@eslint/js');
-const { FlatCompat } = require('@eslint/eslintrc');
+import js from '@eslint/js';
+import next from 'eslint-config-next';
+import globals from 'globals';
 
-const compat = new FlatCompat({
-  recommendedConfig: js.configs.recommended,
+
+// ESLint 10: eslint-config-next's babel-based parser returns a scope manager that
+// doesn't implement addGlobals (new ESLint 10 API). Replace it with espree (ESLint's
+// built-in parser) for JS/JSX files; the TS entry already uses @typescript-eslint/parser.
+const patchedNextConfig = next.map((cfg) => {
+  if (cfg.name === 'next') {
+    const { parser, globals, ...restLangOpts } = cfg.languageOptions ?? {};    return {
+      ...cfg,
+      languageOptions: {
+        ...restLangOpts,
+        parserOptions: {
+          ...restLangOpts.parserOptions,
+          ecmaFeatures: { jsx: true },
+          ecmaVersion: 'latest',
+          sourceType: 'module',
+        },
+      },
+    };
+  }
+  return cfg;
 });
 
-module.exports = [
+const config = [
   {
     ignores: [
       'node_modules/**',
@@ -13,20 +32,20 @@ module.exports = [
       '.next/**',
       'package.json',
       'package-lock.json',
-      'nodemon.json'
-    ]
+      'nodemon.json',
+    ],
   },
   js.configs.recommended,
-  ...compat.extends(
-    'next/core-web-vitals',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended'
-  ),
+  ...patchedNextConfig,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
@@ -34,10 +53,11 @@ module.exports = [
       },
     },
     settings: {
-      react: {
-        version: 'detect',
-      },
+      // eslint-plugin-react calls context.getFilename() during 'detect' (removed in ESLint 9+).
+      // Provide an explicit version to skip detection entirely.
+      react: { version: '19' },
     },
+
     rules: {
       '@next/next/no-img-element': 'off',
       'react-hooks/rules-of-hooks': 'warn',
@@ -88,13 +108,16 @@ module.exports = [
       'no-unused-vars': 'error',
       'react/jsx-key': 'warn',
       'no-dupe-keys': 'error',
-      'react/jsx-filename-extension': [
-        'warn',
-        {
-          extensions: ['.js', '.jsx'],
-        },
-      ],
+      "react-hooks/immutability": "off",
       'react/prop-types': 'off',
     },
   },
+
+  {
+    files: ["eslint.config.js"],
+    rules: {
+      "no-unused-vars": "off",
+    },
+  },
 ];
+export default config;

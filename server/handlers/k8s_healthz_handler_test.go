@@ -177,7 +177,11 @@ func TestK8sHealthzHandler_ExtensionInfo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tempDir)
+	t.Cleanup(func() {
+		if err := os.RemoveAll(tempDir); err != nil {
+			t.Fatalf("Failed to clean temp dir: %v", err)
+		}
+	})
 
 	// Create extension file structure
 	packagePath := path.Join(tempDir, "provider", "test-provider", "1.0.0")

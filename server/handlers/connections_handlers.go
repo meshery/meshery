@@ -16,6 +16,7 @@ import (
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
@@ -56,19 +57,27 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			nil,
 		)
 		if err != nil {
-			event := eventBuilder.WithSeverity(events.Error).WithDescription("Unable to perisit the \"%s\" connection details").WithMetadata(map[string]interface{}{
+			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
-			_ = provider.PersistEvent(*event, nil)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
+			if event != nil {
+				_ = provider.PersistEvent(*event, nil)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+			h.log.Error(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		event, err := inst.SendEvent(req.Context(), machines.EventType(connectionRegisterPayload.Status), connectionRegisterPayload)
 		if err != nil {
 			h.log.Error(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			_ = provider.PersistEvent(*event, nil)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
+			if event != nil {
+				_ = provider.PersistEvent(*event, nil)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+			return
 		}
 	}
 }
@@ -579,6 +588,11 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
+		if errors.GetCode(err) == models.ErrResultNotFoundCode {
+			h.log.Warnf("No connection with ID %q found to delete", connectionID)
+			http.Error(w, _err.Error(), http.StatusNotFound)
+			return
+		}
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return

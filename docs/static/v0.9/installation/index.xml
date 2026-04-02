@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Installation on Documentation</title>
+    <link>/v0.9/installation/</link>
+    <description>Recent content in Installation on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/installation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Accessing Meshery UI</title>
+      <link>/v0.9/installation/accessing-meshery-ui/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/accessing-meshery-ui/</guid>
+      <description>&lt;h2&gt;Accessing Meshery UI&lt;/h2&gt;&#xA;&#xA;&#xA;&lt;p&gt;After successfully deploying Meshery, you can access Meshery&#39;s web-based user interface. Your default browser will automatically open and navigate to Meshery UI (default location is &lt;a href=&#34;http://localhost:9081&#34;&gt;http://localhost:9081&lt;/a&gt;).&lt;/p&gt;&#xA;&#xA;&lt;p&gt;You can use the following command to open Meshery UI in your default browser:&lt;/p&gt;&#xA;&#xA;&lt;pre class=&#34;codeblock-pre&#34; style=&#34;font-size: 1.75rem !important;&#34;&gt;&#xA;&lt;div class=&#34;codeblock&#34;&gt;&#xA;&lt;code class=&#34;clipboardjs&#34;&gt;mesheryctl system dashboard&lt;/code&gt;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;If you have installed Meshery on Kubernetes or a remote host, you can access Meshery UI by exposing it as a Kubernetes service or by port forwarding to Meshery UI.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Codespaces</title>
+      <link>/v0.9/installation/codespaces/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/codespaces/</guid>
+      <description>&lt;p&gt;Use Minikube in GitHub Codespaces to setup your development environment for Meshery.&lt;/p&gt;&#xA;&lt;div class=&#34;prereqs&#34;&gt;&lt;p&gt;&lt;strong style=&#34;font-size: 20px;&#34;&gt;Prerequisites&lt;/strong&gt; &lt;/p&gt; &#xA;  &lt;ol&gt;&#xA;    &lt;li&gt;Install the Meshery command line client, &lt;a href=&#34;/v0.9/installation/mesheryctl&#34; class=&#34;meshery-light&#34;&gt;mesheryctl&lt;/a&gt;.&lt;/li&gt;&#xA;  &lt;/ol&gt;&#xA;&lt;/div&gt;&#xA;&lt;h2 id=&#34;available-deployment-methods&#34;&gt;&#xA;&#x9;Available Deployment Methods&#xA;&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/installation/codespaces/#in-cluster-installation&#34;&gt;In-cluster Installation&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/installation/codespaces/#preflight-checks&#34;&gt;Preflight Checks&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/installation/codespaces/#preflight-cluster-connectivity&#34;&gt;Preflight: Cluster Connectivity&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/installation/codespaces/#installation-using-mesheryctl&#34;&gt;Installation: Using &lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/installation/codespaces/#installation-using-helm&#34;&gt;Installation: Using Helm&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/installation/codespaces/#installation-manual-steps&#34;&gt;Installation: Manual Steps&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/v0.9/installation/codespaces/#post-installation-steps&#34;&gt;Post-Installation Steps&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h1 id=&#34;in-cluster-installation&#34;&gt;&#xA;&#x9;In-cluster Installation&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;Follow the steps below to install Meshery in your Minikube cluster.&lt;/p&gt;&#xA;&lt;h2 id=&#34;preflight-checks&#34;&gt;&#xA;&#x9;Preflight Checks&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Read through the following considerations prior to deploying Meshery on Minikube.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Install mesheryctl</title>
+      <link>/v0.9/installation/mesheryctl/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/mesheryctl/</guid>
+      <description>&lt;p&gt;Meshery&amp;rsquo;s command line client is &lt;code&gt;mesheryctl&lt;/code&gt; and is the recommended tool for configuring and deploying one or more Meshery deployments. To install &lt;code&gt;mesheryctl&lt;/code&gt; on your system, you may choose from any of the following supported methods.&lt;/p&gt;&#xA;&lt;p&gt;&lt;code&gt;mesheryctl&lt;/code&gt; can be installed via &lt;a href=&#34;/v0.9/installation/linux-mac/bash/&#34;&gt;bash&lt;/a&gt;, &lt;a href=&#34;/v0.9/installation/linux-mac/brew/&#34;&gt;Homebrew&lt;/a&gt;, &lt;a href=&#34;/v0.9/installation/windows/scoop/&#34;&gt;Scoop&lt;/a&gt; or &lt;a href=&#34;https://github.com/meshery/meshery/releases/latest&#34;&gt;directly downloaded&lt;/a&gt;.&lt;/p&gt;&#xA;&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;&lt;div class=&#34;h4 alert-heading&#34; role=&#34;heading&#34;&gt;NOTE&lt;/div&gt;&#xA;&lt;p&gt;Mesheryctl is configured for Kubernetes by default. To specify a different supported platform, use the &lt;code&gt;-p&lt;/code&gt; flag.&lt;/p&gt;&#xA;&lt;/div&gt;&#xA;&lt;h1 id=&#34;install-meshery-cli-with-brew&#34;&gt;&#xA;&#x9;Install Meshery CLI with Brew&#xA;&lt;/h1&gt;&#xA;&lt;h3 id=&#34;prerequisites&#34;&gt;&#xA;&#x9;Prerequisites&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;You need to have &lt;code&gt;Brew&lt;/code&gt; installed on your &lt;strong&gt;Linux&lt;/strong&gt; or &lt;strong&gt;macOS&lt;/strong&gt; system to perform these actions.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Meshery Playground</title>
+      <link>/v0.9/installation/playground/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/playground/</guid>
+      <description>&lt;p&gt;&lt;em&gt;Try out Meshery Playground at &lt;a href=&#34;https://playground.meshery.io/&#34;&gt;https://playground.meshery.io/&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;Meshery Playground is a web-based, collaborative environment that lets you explore Meshery as a cloud native manager and all of the infrastructure it manages, including multiple Kubernetes clusters, CNCF projects and applications, services, and operators that run on Kubernetes. Meshery Playground provides a sandboxed environment to experiment with different infrastructure configurations and deployment options. Its multiplayer plugins allow you to collaborate in real time with your teammates on infrastructure design and operation.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Quick Start Guide</title>
+      <link>/v0.9/installation/quick-start/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/quick-start/</guid>
+      <description>&lt;p&gt;&lt;a name=&#34;getting-started&#34;&gt;&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster.&lt;/p&gt;&#xA;&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;&lt;div class=&#34;h4 alert-heading&#34; role=&#34;heading&#34;&gt;Quick Start Assumptions&lt;/div&gt;&#xA;&lt;p&gt;This quick start guide enables you to download, install, and run Meshery in a single command. See all &lt;a href=&#39;/v0.9/installation&#39;&gt;supported platforms&lt;/a&gt; for more specific (and less presumptuous) instructions.&lt;/p&gt;&#xA;&lt;/div&gt;&#xA;&lt;h2 id=&#34;1-download-install-and-run-meshery&#34;&gt;&#xA;&#x9;1. Download, install, and run Meshery&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;If you are on a macOS or Linux system, you can download, install, and run both &lt;code&gt;mesheryctl&lt;/code&gt; and Meshery Server by executing the following command.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Upgrading Meshery and all of its components</title>
+      <link>/v0.9/installation/upgrades/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/upgrades/</guid>
+      <description>&lt;h1 id=&#34;upgrade-guide&#34;&gt;&#xA;&#x9;Upgrade Guide&#xA;&lt;/h1&gt;&#xA;&lt;h2 id=&#34;upgrading-meshery-server-adapters-and-ui&#34;&gt;&#xA;&#x9;Upgrading Meshery Server, Adapters, and UI&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of different functional components.&lt;/p&gt;&#xA;&lt;p style=&#34;text-align:center&#34;&gt;&#xA;&lt;a href=&#34;./images/upgrading-meshery.svg&#34;&gt;&#xA;    &lt;img src=&#34;./images/upgrading-meshery.svg&#34; style=&#34;margin: 1rem;&#34; /&gt;&#xA;&lt;/a&gt;&lt;br /&gt;&lt;i&gt;&lt;small&gt;Figure: Meshery components&lt;/small&gt;&lt;/i&gt;&#xA;&lt;/p&gt;&#xA;&lt;p&gt;Some of the components must be upgraded simultaneously, while others may be upgraded independently. The following table depicts components, their versions, and deployment units (deployment groups).&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Using Multiple Adapters</title>
+      <link>/v0.9/installation/multiple-adapters/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/multiple-adapters/</guid>
+      <description>&lt;h2 id=&#34;advanced-configuration&#34;&gt;&#xA;&#x9;Advanced Configuration&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Meshery is capable of running zero or more adapters. Meshery offers many features without the need for adapters. Adapters are optional components that enhance and extend Meshery&amp;rsquo;s core functionality.&lt;/p&gt;&#xA;&lt;h3 id=&#34;modifying-the-default-adapter-deployment-configuration&#34;&gt;&#xA;&#x9;Modifying the default adapter deployment configuration&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;The number of adapters, type of adapters, where they are deployed, how they are named and what port they are exposed on are all configurable deployment options. To modify the default configuration, find &lt;code&gt;~/.meshery/meshery.yaml&lt;/code&gt; on your system. &lt;code&gt;~/.meshery/meshery.yaml&lt;/code&gt; is a Docker Compose file.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

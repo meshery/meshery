@@ -9,7 +9,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	mErrors "github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/viper"
 )
 
@@ -96,15 +96,14 @@ func makeRequest(urlPath string, httpMethod string, body io.Reader, headers map[
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		if meshkitErr, ok := err.(*mErrors.Error); ok {
-			if meshkitErr.Code == utils.ErrFailRequestCode {
-				endpoint := mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint
-				errCtx := fmt.Sprintf("Unable to connect to Meshery server at %s (current context).", endpoint)
-				failedReqErr := utils.ErrFailRequest(fmt.Errorf("%s", errCtx))
-				errRemediation := mErrors.GetRemedy(failedReqErr)
-				return nil, utils.ErrFailRequest(fmt.Errorf("%s\n%s\n%s", errCtx, errRemediation, generateErrorReferenceDetails("ErrFailRequestCode", utils.ErrFailRequestCode)))
-			}
+		if errors.GetCode(err) == utils.ErrFailRequestCode {
+			endpoint := mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint
+			errCtx := fmt.Sprintf("Unable to connect to Meshery server at %s (current context).", endpoint)
+			failedReqErr := utils.ErrFailRequest(fmt.Errorf("%s", errCtx))
+			errRemediation := errors.GetRemedy(failedReqErr)
+			return nil, utils.ErrFailRequest(fmt.Errorf("%s\n%s\n%s", errCtx, errRemediation, generateErrorReferenceDetails("ErrFailRequestCode", utils.ErrFailRequestCode)))
 		}
+
 		return nil, err
 	}
 

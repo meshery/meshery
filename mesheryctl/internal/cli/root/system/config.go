@@ -120,7 +120,6 @@ func setContext(configFile, cname string) error {
 	if err != nil {
 		return utils.ErrReadResponseBody(err)
 	}
-	// TODO: Pretty print the output
 	log.Debugf("Set context API response: %s", string(body))
 	return nil
 }
