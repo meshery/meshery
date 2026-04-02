@@ -43,9 +43,6 @@ jobs:
       playwright-report-artifact: playwright-report
     
     steps:
-      - name: Check out code
-        uses: actions/checkout@v6
-        
       - name: Setup Kubernetes (Kind)
         uses: helm/kind-action@v1.13.0
         with:
@@ -64,11 +61,17 @@ jobs:
           backend-artifact: ${{ inputs.backend-artifact }}
           ui-artifact: ${{ inputs.ui-artifact }}
           provider-ui-artifact: ${{ inputs.provider-ui-artifact }}
+      - name: Debug downloaded files
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Listing root:"
+          ls -la
   
       - name: Run Meshery UI and Server
         run: |
-          chmod +x ./main
-          ./main &
+          chmod +x ./artifacts/backend/main
+          ./artifacts/backend/main &
           sleep 90
           
       - name: Install Playwright

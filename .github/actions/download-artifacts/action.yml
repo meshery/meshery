@@ -19,7 +19,7 @@ runs:
       uses: actions/download-artifact@v6
       with:
         name: ${{ inputs.backend-artifact }}
-        path: .
+        path: ./artifacts/backend
 
     - name: Download UI Artifact
       uses: actions/download-artifact@v6
