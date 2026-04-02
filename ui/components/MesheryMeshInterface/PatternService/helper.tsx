@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 import _ from 'lodash';
 import { Colors } from '@/themes/app';
 
@@ -203,7 +204,7 @@ const getHyperLinkWithDescription = (description) => {
 };
 
 export const getHyperLinkDiv = (text) => (
-  <div dangerouslySetInnerHTML={{ __html: getHyperLinkWithDescription(text) }} />
+  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getHyperLinkWithDescription(text)) }} />
 );
 /**
  * Returns the schema for the credentials.
