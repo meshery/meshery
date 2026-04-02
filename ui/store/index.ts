@@ -6,11 +6,8 @@ import mesheryUiReducer from './slices/mesheryUi';
 import prefTestReducer from './slices/prefTest';
 import telemetryReducer from './slices/telemetry';
 import adapterReducer from './slices/adapter';
-import sessionReducer from './slices/session';
-import { authMiddleware } from './middleware/authMiddleware';
 import { rtkErrorMiddleware } from './middleware/rtkErrorMiddleware';
 import { mesheryEventBus } from '@/utils/eventBus';
-import { installSessionInterceptor } from '../lib/sessionInterceptor';
 
 export const store = configureStore({
   reducer: {
@@ -20,16 +17,11 @@ export const store = configureStore({
     prefTest: prefTestReducer,
     telemetry: telemetryReducer,
     adapter: adapterReducer,
-    session: sessionReducer,
     [api.reducerPath]: api.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware).concat(authMiddleware).concat(rtkErrorMiddleware),
+    getDefaultMiddleware().concat(api.middleware).concat(rtkErrorMiddleware),
 });
-
-// Install global fetch interceptor for 401/redirect -> SESSION_EXPIRED.
-// This catches ALL HTTP requests (dataFetch, RTK Query, Relay, raw fetch).
-installSessionInterceptor(store);
 
 mesheryEventBus.on('DISPATCH_TO_MESHERY_STORE').subscribe((event) => {
   console.log('Dispatching to Meshery Store:', event.data);

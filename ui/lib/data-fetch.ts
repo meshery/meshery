@@ -6,8 +6,13 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
   }
   fetch(url, options)
     .then((res) => {
-      // 401/redirect handling is done by the global session interceptor
-      // (lib/sessionInterceptor.ts). No need to handle it here.
+      if (res.status === 401 || res.redirected) {
+        if (window.location.host.endsWith('3000')) {
+          window.location = '/user/login'; // for local dev thru node server
+        } else {
+          window.location.reload(); // for use with Go server
+        }
+      }
 
       let result;
       if (res.ok) {

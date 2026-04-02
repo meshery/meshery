@@ -67,7 +67,6 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
 import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
-import SessionExpiredModal from '@/components/General/SessionExpiredModal';
 
 export const mesheryExtensionRoute = '/extension/meshmap';
 function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
@@ -559,7 +558,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                       />
                     </RegistryModalContextProvider>
                   </WorkspaceModalContextProvider>
-                  <SessionExpiredModal />
                 </LoadSessionGuard>
               </ErrorBoundary>
             </NoSsr>
