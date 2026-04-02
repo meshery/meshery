@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 1st 2026, 4:31:34 pm
+- Testing started at: April 1st 2026, 11:37:10 pm
 
 **📦 Test Result Summary**
 
-- ✅ 57 passed
-- ❌ 4 failed
+- ✅ 58 passed
+- ❌ 3 failed
 - ⚠️ 0 flaked
 - ⏩ 11 skipped
 
-⌛ _Duration: 5 minutes and 14 seconds_
+⌛ _Duration: 6 minutes and 19 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -50,7 +50,7 @@
 | 27 | Meshery | chromium-meshery-provider | Test if Profile button is displayed |  | ✅ |
 | 28 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Performance Results&quot; |  | ✅ |
 | 29 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ✅ |
-| 30 | Meshery | chromium-meshery-provider | Verify Kanvas Details |  | ❌ |
+| 30 | Meshery | chromium-meshery-provider | Verify Kanvas Details |  | ✅ |
 | 31 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
 | 32 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
 | 33 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ✅ |
@@ -124,44 +124,68 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
 <summary>❌ Create a Model (Meshery - chromium-meshery-provider)</summary>
 
-**File Location:** `Not Found`
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/models.spec.js`
 
 **Error Message:**
 ```
-[31mTest timeout of 60000ms exceeded.[39m
+Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775086695682')
+Expected: visible
+Timeout: 120000ms
+Error: element(s) not found
+
+Call log:
+[2m  - Expect "toBeVisible" with timeout 120000ms[22m
+[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775086695682')[22m
+
 ```
 
-
+**Code Snippet:**
+```
+[0m [90m 67 |[39m     [36mawait[39m expect(
+ [90m 68 |[39m       page[33m.[39mgetByTestId([32m`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`[39m)[33m,[39m
+[31m[1m>[22m[39m[90m 69 |[39m     )[33m.[39mtoBeVisible({ timeout[33m:[39m [35m120[39m_000 })[33m;[39m
+ [90m    |[39m       [31m[1m^[22m[39m
+ [90m 70 |[39m     [36mawait[39m expect(page[33m.[39mgetByTestId([32m'ModelImportMessages-Wrapper'[39m))[33m.[39mtoBeVisible()[33m;[39m
+ [90m 71 |[39m
+ [90m 72 |[39m     [36mawait[39m page[33m.[39mgetByTestId([32m'UrlStepper-Button-Finish'[39m)[33m.[39mclick()[33m;[39m[0m
+```
 
 </details>
 
 <details>
 <summary>❌ Create a Model (None - chromium-local-provider)</summary>
 
-**File Location:** `Not Found`
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/models.spec.js`
 
 **Error Message:**
 ```
-[31mTest timeout of 60000ms exceeded.[39m
+Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775086864311')
+Expected: visible
+Timeout: 120000ms
+Error: element(s) not found
+
+Call log:
+[2m  - Expect "toBeVisible" with timeout 120000ms[22m
+[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775086864311')[22m
+
 ```
 
-
+**Code Snippet:**
+```
+[0m [90m 67 |[39m     [36mawait[39m expect(
+ [90m 68 |[39m       page[33m.[39mgetByTestId([32m`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`[39m)[33m,[39m
+[31m[1m>[22m[39m[90m 69 |[39m     )[33m.[39mtoBeVisible({ timeout[33m:[39m [35m120[39m_000 })[33m;[39m
+ [90m    |[39m       [31m[1m^[22m[39m
+ [90m 70 |[39m     [36mawait[39m expect(page[33m.[39mgetByTestId([32m'ModelImportMessages-Wrapper'[39m))[33m.[39mtoBeVisible()[33m;[39m
+ [90m 71 |[39m
+ [90m 72 |[39m     [36mawait[39m page[33m.[39mgetByTestId([32m'UrlStepper-Button-Finish'[39m)[33m.[39mclick()[33m;[39m[0m
+```
 
 </details>
 

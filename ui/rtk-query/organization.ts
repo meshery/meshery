@@ -1,4 +1,4 @@
-import { useGetOrgsQuery as useSchemasGetOrgsQuery } from '@meshery/schemas/dist/mesheryApi';
+import { useGetOrgsQuery as useSchemasGetOrgsQuery } from '@meshery/schemas/mesheryApi';
 
 export const useGetOrgsQuery = (queryArgs, options) =>
   useSchemasGetOrgsQuery(
