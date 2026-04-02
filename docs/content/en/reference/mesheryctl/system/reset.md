@@ -58,7 +58,7 @@ Usage of mesheryctl system reset
 ## Terminal Sessions
 
 Demonstration of `mesheryctl system reset`:
-{{< asciinema src="891569" rows="30" >}}
+{{< meshery-design-embed src="891569" >}}
 
 ## See Also
 

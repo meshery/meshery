@@ -80,7 +80,7 @@ mesheryctl system stop --force
 ## Terminal Sessions
 
 Demonstration of `mesheryctl system stop`:
-{{< asciinema src="891567" rows="30" >}}
+{{< meshery-design-embed src="891567" >}}
 
 ## See Also
 

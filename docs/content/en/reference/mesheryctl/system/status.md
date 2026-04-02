@@ -66,7 +66,7 @@ Usage of mesheryctl system status
 ## Terminal Sessions
 
 Demonstration of `mesheryctl system status`:
-{{< asciinema src="891568" rows="30" >}}
+{{< meshery-design-embed src="891568" >}}
 
 ## See Also
 

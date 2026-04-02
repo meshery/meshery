@@ -98,7 +98,7 @@ mesheryctl system start --provider Meshery
 ## Terminal Sessions
 
 Demonstration of `mesheryctl system start`:
-{{< asciinema src="891566" rows="30" >}}
+{{< meshery-design-embed src="891566" >}}
 
 ## See Also
 
