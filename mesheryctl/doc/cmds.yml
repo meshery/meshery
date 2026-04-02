@@ -4,3 +4,14 @@ display_title: false
 command: cmds.yml
 subcommand: nil
 ---
+---
+title: mesheryctl-cmds.yml
+display_title: false
+command: cmds.yml
+subcommand: nil
+---
+
+name: parent test
+description: ""
+usage: parent test [flags]
+example: // test_example
