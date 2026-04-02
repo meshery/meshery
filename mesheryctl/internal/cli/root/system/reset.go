@@ -19,10 +19,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
-
-	log "github.com/sirupsen/logrus"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -36,16 +32,20 @@ var linkDocReset = map[string]string{
 var resetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "Reset Meshery's configuration",
-	Long:  `Reset Meshery to it's default configuration.`,
+	Long: `Reset Meshery to it's default configuration.
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/reset`,
 	Example: `
 // Resets meshery.yaml file with a copy from Meshery repo
 mesheryctl system reset
 	`,
 	Annotations: linkDocReset,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "reset"))
+			return utils.ErrInvalidArgument(fmt.Errorf("this command takes no arguments. See '%s --help' for more information", cmd.CommandPath()))
 		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		return resetMesheryConfig()
 	},
 }
@@ -60,15 +60,14 @@ func resetMesheryConfig() error {
 		userResponse = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
 	}
 	if !userResponse {
-		log.Info("Reset aborted.")
+		utils.Log.Info("Reset aborted.")
 		return nil
 	}
 
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		utils.Log.Error(err)
-		return nil
+		return err
 	}
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
@@ -84,11 +83,11 @@ func resetMesheryConfig() error {
 		return ErrRetrievingCurrentContext(err)
 	}
 
-	log.Info("Meshery resetting...\n")
-	log.Printf("Current Context: %s", mctlCfg.GetCurrentContextName())
-	log.Printf("Channel: %s", currCtx.GetChannel())
-	log.Printf("Version: %s", currCtx.GetVersion())
-	log.Printf("Platform: %s\n", currCtx.GetPlatform())
+	utils.Log.Info("Meshery resetting...\n")
+	utils.Log.Infof("Current Context: %s", mctlCfg.GetCurrentContextName())
+	utils.Log.Infof("Channel: %s", currCtx.GetChannel())
+	utils.Log.Infof("Version: %s", currCtx.GetVersion())
+	utils.Log.Infof("Platform: %s\n", currCtx.GetPlatform())
 
 	// Reset the config file to the default context
 	defaultContext := utils.TemplateContext
@@ -111,7 +110,7 @@ func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
 	switch currCtx.GetPlatform() {
 	case platformDocker:
 
-		log.Printf("Fetching default docker-compose file as per current-context: %s...", mctlCfg.GetCurrentContextName())
+		utils.Log.Infof("Fetching default docker-compose file as per current-context: %s...", mctlCfg.GetCurrentContextName())
 		err = utils.DownloadDockerComposeFile(currCtx, true)
 		if err != nil {
 			return utils.ErrDownloadFile(err, utils.DockerComposeFile)
@@ -123,18 +122,18 @@ func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
 			return utils.ErrCreateManifestsFolder(err)
 		}
 
-		log.Printf("...fetching Meshery Operator manifests for Kubernetes...")
+		utils.Log.Infof("...fetching Meshery Operator manifests for Kubernetes...")
 		err = utils.DownloadOperatorManifest()
 
 		if err != nil {
 			return utils.ErrDownloadFile(err, "operator manifest")
 		}
 
-		log.Info("...meshconfig (" + utils.DockerComposeFile + ") now reset to default settings.")
+		utils.Log.Info("...meshconfig (" + utils.DockerComposeFile + ") now reset to default settings.")
 
 	case platformKubernetes:
 
-		log.Printf("Fetching Meshery Server and Meshery Operator manifests for  %s context...", mctlCfg.GetCurrentContextName())
+		utils.Log.Infof("Fetching Meshery Server and Meshery Operator manifests for  %s context...", mctlCfg.GetCurrentContextName())
 		// fetch the manifest files corresponding to the version specified
 		_, err := utils.FetchManifests(currCtx)
 
@@ -142,10 +141,10 @@ func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
 			return err
 		}
 
-		log.Info("...meshconfig has been reset to default settings.")
+		utils.Log.Info("...meshconfig has been reset to default settings.")
 
 	default:
-		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.Platform, utils.MesheryFolder)
+		return ErrUnsupportedPlatform(currCtx.Platform, utils.MesheryFolder)
 	}
 
 	return nil

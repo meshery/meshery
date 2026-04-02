@@ -75,6 +75,11 @@ var (
 	ErrMissingMesheryPodCode          = "mesheryctl-1216"
 	ErrK8sVersionInfoCode             = "mesheryctl-1217"
 	ErrK8sInvalidVersionFormatCode    = "mesheryctl-1218"
+	ErrDockerComposeFileMissingCode   = "mesheryctl-1223"
+	ErrDockerComposeClientCode        = "mesheryctl-1224"
+	ErrDockerComposeRemoveCode        = "mesheryctl-1225"
+	ErrDockerComposeLogsCode          = "mesheryctl-1226"
+	ErrMesheryCheckRunningStatusCode  = "mesheryctl-1227"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -900,4 +905,55 @@ func ErrK8sInvalidVersionFormat(err error) error {
 		[]string{"The Kubernetes version information retrieved is in an unexpected format"},
 		[]string{"Check the Kubernetes cluster for any issues and ensure it is running a supported version"},
 	)
+}
+
+func ErrDockerComposeClient(err error) error {
+	return errors.New(
+		ErrDockerComposeClientCode,
+		errors.Alert,
+		[]string{"Failed to create Docker Compose client"},
+		[]string{err.Error()},
+		[]string{"Unable to initialize the Docker Compose client, which is required for managing Docker-based Meshery deployments"},
+		[]string{"Ensure that Docker is installed and running on your system, and that you have the necessary permissions to access the Docker API"},
+	)
+}
+
+func ErrDockerComposeFileMissing(err error) error {
+	return errors.New(
+		ErrDockerComposeFileMissingCode,
+		errors.Fatal,
+		[]string{"Docker Compose file not found"},
+		[]string{err.Error()},
+		[]string{"Docker Compose file is missing from the Meshery folder"},
+		[]string{"Run `mesheryctl system start` again to download and generate docker-compose file based on your context"})
+}
+
+func ErrDockerComposeRemove(err error) error {
+	return errors.New(
+		ErrDockerComposeRemoveCode,
+		errors.Fatal,
+		[]string{"Failed to delete Meshery containers"},
+		[]string{err.Error()},
+		[]string{"An error occurred while trying to delete Meshery containers using Docker Compose"},
+		[]string{"Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder. If the issue persists, check the Docker and Docker Compose configuration and logs for more details."})
+}
+
+func ErrDockerComposeLog(err error) error {
+	return errors.New(
+		ErrDockerComposeLogsCode,
+		errors.Alert,
+		[]string{"Failed to fetch logs from Meshery containers"},
+		[]string{err.Error()},
+		[]string{"An error occurred while trying to fetch logs from Meshery containers using Docker Compose"},
+		[]string{"Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder. If the issue persists, check the Docker and Docker Compose configuration and logs for more details."})
+}
+
+func ErrMesheryCheckRunningStatus(err error) error {
+	return errors.New(
+		ErrMesheryCheckRunningStatusCode,
+		errors.Alert,
+		[]string{"Failed to check if Meshery is running"},
+		[]string{err.Error()},
+		[]string{"You are not on correct context. ", "Meshery is not reachable. ", "There might be some issue with your Docker or Kubernetes environment. "},
+		[]string{"Please ensure Meshery is installed. ", "Validate that you are in the correct context. "})
 }
