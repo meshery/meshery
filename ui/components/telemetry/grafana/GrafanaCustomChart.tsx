@@ -5,7 +5,7 @@ import moment from 'moment';
 import OpenInNewIcon from '@mui/icons-material/OpenInNewOutlined';
 import WarningIcon from '@mui/icons-material/Warning';
 import CachedIcon from '@mui/icons-material/Cached';
-import dataFetch from '../../../lib/data-fetch';
+import { useLazyQueryRangeQuery } from '@/rtk-query/telemetry';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 import bb, { area, line } from 'billboard.js';
 import {
@@ -71,6 +71,7 @@ function GrafanaCustomChart(props) {
     sparkline,
   } = props;
 
+  const [triggerQueryRange] = useLazyQueryRangeQuery();
   const chartRef = useRef(null);
   const [chart, setChart] = useState(null);
   const timeFormat = 'MM/DD/YYYY HH:mm:ss';
@@ -532,16 +533,12 @@ function GrafanaCustomChart(props) {
       queryParams += `&url=${encodeURIComponent(endpointURL)}&api-key=${encodeURIComponent(
         endpointAPIKey,
       )}`;
-      dataFetch(
-        `${queryRangeURL}?${queryParams}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-          // headers: headers,
-        },
-        processReceivedData,
-        handleError,
-      );
+      // Strip leading /api/ since RTK Query base URL already includes it
+      const rtkUrl = queryRangeURL.replace(/^\/api\//, '');
+      triggerQueryRange({ url: rtkUrl, queryParams })
+        .unwrap()
+        .then(processReceivedData)
+        .catch(handleError);
     }
   };
 

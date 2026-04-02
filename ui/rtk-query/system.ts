@@ -68,6 +68,30 @@ const systemApi = api.injectEndpoints({
       providesTags: [TAGS.SYSTEM],
     }),
 
+    adapterOperation: builder.mutation({
+      query: (queryArg) => ({
+        url: queryArg.url || 'system/adapter/operation',
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        body: queryArg.body,
+      }),
+    }),
+
+    getSmiResults: builder.query({
+      query: (queryArg) => ({
+        url: 'smi/results',
+        params: {
+          page: queryArg?.page,
+          pagesize: queryArg?.pagesize,
+          search: queryArg?.search,
+          order: queryArg?.order,
+        },
+        method: 'GET',
+        credentials: 'include',
+      }),
+    }),
+
     manageAdapter: builder.mutation({
       query: (queryArg) => {
         if (queryArg.method === 'DELETE') {
@@ -102,4 +126,6 @@ export const {
   useLazyGetSystemSyncQuery,
   useGetKubernetesContextsQuery,
   useLazyGetKubernetesContextsQuery,
+  useAdapterOperationMutation,
+  useLazyGetSmiResultsQuery,
 } = systemApi;

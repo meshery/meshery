@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@sistent/sistent';
 import { TextField, Grid2, Button, Chip, MenuItem, useTheme, styled, Box } from '@sistent/sistent';
-import dataFetch from '../../../lib/data-fetch';
 import { trueRandom } from '../../../lib/trueRandom';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { useLazyQueryTemplateVarsQuery } from '@/rtk-query/telemetry';
 
 const GrafanaRoot = styled(Box)(() => {
   const theme = useTheme();
@@ -59,6 +59,7 @@ function GrafanaSelectionComponent(props) {
     grafanaBoards: propGrafanaBoards,
   } = props;
 
+  const [triggerQueryVars] = useLazyQueryTemplateVarsQuery();
   const [grafanaBoards, setGrafanaBoards] = useState([]);
   const [grafanaBoard, setGrafanaBoard] = useState('');
   const [templateVars, setTemplateVars] = useState([]);
@@ -144,10 +145,12 @@ function GrafanaSelectionComponent(props) {
         )}`;
       }
       updateProgress({ showProgress: true });
-      dataFetch(
-        queryURL,
-        { credentials: 'include' },
-        (result) => {
+      // Extract query string portion from the full URL
+      const queryString =
+        queryURL.split(`/api/telemetry/metrics/grafana/query/${connectionID}?`)[1] || '';
+      triggerQueryVars({ connectionID, query: queryString })
+        .unwrap()
+        .then((result) => {
           updateProgress({ showProgress: false });
           if (typeof result !== 'undefined') {
             let tmpVarOpts = [];
@@ -185,16 +188,15 @@ function GrafanaSelectionComponent(props) {
               return newOptions;
             });
           }
-        },
-        (error) => {
+        })
+        .catch((error) => {
           setTemplateVarOptions((prev) => {
             const newOptions = [...prev];
             newOptions[ind] = [templateVars[ind].Value];
             return newOptions;
           });
           handleError(error);
-        },
-      );
+        });
     }
   };
 
