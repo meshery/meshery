@@ -17,11 +17,19 @@ package system
 import (
 	"fmt"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+type cmdSystemRestartFlags struct {
+	SkipUpdate bool   `json:"skip-update" validate:"boolean"`
+	Provider   string `json:"provider" validate:"omitempty"`
+}
+
+var systemRestartFlags cmdSystemRestartFlags
 
 var (
 	silentFlagSet bool
@@ -31,7 +39,7 @@ var (
 var restartCmd = &cobra.Command{
 	Use:   "restart",
 	Short: "Stop, then start Meshery",
-	Long:  `Restart all Meshery containers / pods.
+	Long: `Restart all Meshery containers / pods.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/restart`,
 	Example: `
 // Restart all Meshery containers, their instances and their connected volumes
@@ -50,6 +58,12 @@ mesheryctl system restart --skip-update
 	},
 
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Validate flags
+		err := mesheryctlflags.ValidateCmdFlags(cmd, &systemRestartFlags)
+		if err != nil {
+			return err
+		}
+
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
@@ -69,6 +83,8 @@ mesheryctl system restart --skip-update
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		skipUpdateFlag = systemRestartFlags.SkipUpdate
+		providerFlag = systemRestartFlags.Provider
 		return restart()
 	},
 }
@@ -138,6 +154,6 @@ func restart() error {
 }
 
 func init() {
-	restartCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
-	restartCmd.Flags().StringVar(&providerFlag, "provider", "", "Provider to use with the Meshery server")
+	restartCmd.Flags().BoolVarP(&systemRestartFlags.SkipUpdate, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
+	restartCmd.Flags().StringVar(&systemRestartFlags.Provider, "provider", "", "Provider to use with the Meshery server")
 }
