@@ -1,0 +1,30 @@
+version: 0.0.75
+name: clickhouse-otel-hyperdx-arch
+displayName: clickhouse-otel-hyperdx-arch
+createdAt: "2025-10-02T17:55:19Z"
+description: |-
+    Architecture design for ClickHouse with OpenTelemetry Collector, HyperDX, and MongoDB.
+
+    - OTLP (HTTP/gRPC) data is ingested by OpenTelemetry Collector.
+    - Collector exports telemetry to ClickHouse.
+    - HyperDX queries ClickHouse for analytics.
+    - MongoDB is used by HyperDX to maintain application state.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/10919143-fe49-419d-9022-7906e75fe1bf/0.0.75/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "HyperDX is represented as a Kubernetes Deployment since a dedicated MeshModel is not available.\nMongoDB and OpenTelemetry Collector are also modeled as Deployments for the same reason. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 985074f5-27a0-406c-b83a-7f247ba77746
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/10919143-fe49-419d-9022-7906e75fe1bf-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/10919143-fe49-419d-9022-7906e75fe1bf-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

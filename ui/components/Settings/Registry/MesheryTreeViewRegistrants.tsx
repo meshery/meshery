@@ -1,5 +1,5 @@
 import React from 'react';
-import { TreeView } from '@mui/x-tree-view/TreeView';
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { CircularProgress } from '@sistent/sistent';
 import { REGISTRANTS } from '@/constants/navigator';
 import MinusSquare from '../../../assets/icons/MinusSquare';
@@ -34,24 +34,21 @@ const MesheryTreeViewRegistrants = ({
   showDetailsData,
 }: MesheryTreeViewRegistrantsProps) => {
   return (
-    <TreeView
+    <SimpleTreeView
       aria-label="controlled"
-      defaultExpanded={['3']}
-      defaultCollapseIcon={<MinusSquare />}
-      defaultExpandIcon={<PlusSquare />}
-      defaultEndIcon={<DotSquare />}
-      onNodeToggle={handleToggle}
-      onNodeSelect={handleSelect}
+      slots={{ collapseIcon: MinusSquare, expandIcon: PlusSquare, endIcon: DotSquare }}
+      onExpandedItemsChange={handleToggle}
+      onSelectedItemsChange={handleSelect}
       multiSelect
-      expanded={expanded}
-      selected={selected}
+      expandedItems={expanded}
+      selectedItems={selected}
     >
       {data
         ?.filter((item) => item?.summary || item?.models)
         ?.map((registrant) => (
           <StyledTreeItem
             key={registrant.id}
-            nodeId={registrant.id}
+            itemId={registrant.id}
             data-id={registrant.id}
             top
             labelText={registrant?.name}
@@ -65,7 +62,7 @@ const MesheryTreeViewRegistrants = ({
           >
             <div>
               <StyledTreeItem
-                nodeId={`${registrant?.id || 'unknown'}.1`}
+                itemId={`${registrant?.id || 'unknown'}.1`}
                 data-id={`${registrant?.id || 'unknown'}.1`}
                 labelText={
                   registrant?.summary?.models !== undefined
@@ -95,7 +92,7 @@ const MesheryTreeViewRegistrants = ({
         ))}
       <div ref={lastRegistrantRef} style={{ height: '48px' }}></div>
       {isRegistrantFetching && <CircularProgress />}
-    </TreeView>
+    </SimpleTreeView>
   );
 };
 

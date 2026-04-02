@@ -1,12 +1,16 @@
 import { Box, List, ListItem, ListItemText, ListSubheader, styled, alpha } from '@sistent/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
 
-export const ValidationErrorListItem = styled(ListItem)(({ theme }) => ({
+export const ValidationErrorListItem = styled(ListItem, {
+  shouldForwardProp: (prop) => prop !== 'clickable',
+})(({ theme, clickable = true }) => ({
   gap: '0.5rem',
   backgroundColor: theme.palette.background.card,
-  cursor: 'pointer',
+  cursor: clickable ? 'pointer' : 'default',
   '&:hover': {
-    backgroundColor: alpha(NOTIFICATIONCOLORS.WARNING, 0.25),
+    backgroundColor: clickable
+      ? alpha(NOTIFICATIONCOLORS.WARNING, 0.25)
+      : theme.palette.background.card,
   },
 }));
 

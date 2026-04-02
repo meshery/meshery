@@ -114,7 +114,7 @@ func (l *RemoteProvider) Initialize() {
 
 func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProperties) {
 	l.ProviderProperties = providerProperties
-	l.ProviderProperties.ProviderURL = l.GetProviderURL()
+	l.ProviderURL = l.GetProviderURL()
 }
 
 func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (ProviderProperties, error) {
@@ -285,7 +285,7 @@ func (l *RemoteProvider) GetProviderType() ProviderType {
 func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
 
 	// If the provider properties are not loaded yet, load them
-	if (l.ProviderProperties.PackageVersion == "" || l.ProviderProperties.PackageURL == "" || len(l.ProviderProperties.Capabilities) == 0) && l.RemoteProviderURL != "" {
+	if (l.PackageVersion == "" || l.PackageURL == "" || len(l.Capabilities) == 0) && l.RemoteProviderURL != "" {
 		providerProperties, err := l.loadCapabilities("")
 		if err != nil {
 			l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderProperties] failed to load capabilities from remote provider: %v", err))
@@ -419,7 +419,11 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	flowResponse := AnonymousFlowResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&flowResponse)
@@ -1181,7 +1185,7 @@ func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, o
 		l.Log.Info("Retrieved results from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(err, string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1241,7 +1245,7 @@ func (l *RemoteProvider) FetchAllResults(tokenString string, page, pageSize, sea
 		l.Log.Info("Retrieved results from remote provider.")
 		return bdr, nil
 	}
-	err = ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(err, string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1405,9 +1409,9 @@ func (l *RemoteProvider) GetResult(tokenVal string, resultID uuid.UUID) (*Mesher
 		}
 		return res, nil
 	}
-	err = ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(err, string(bdr), resp.StatusCode)
 	l.Log.Error(err)
-	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, err
 }
 
 // PublishResults - publishes results to the provider backend synchronously
@@ -1466,7 +1470,7 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 		}
 		return "", nil
 	}
-	err = ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrPost(err, string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return "", err
 }
@@ -1519,7 +1523,7 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 		}
 		return "", nil
 	}
-	return "", ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+	return "", ErrPost(err, string(bdr), resp.StatusCode)
 }
 
 // IF the remote provider supports persisting events, this function will persist the event
@@ -1827,7 +1831,7 @@ func (l *RemoteProvider) BulkDeleteEvent(token string, eventIDs []*uuid.UUID) er
 	return nil
 }
 
-// PublishMetrics - publishes metrics to the provider backend asyncronously
+// PublishMetrics - publishes metrics to the provider backend asynchronously
 func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResult) error {
 	if !l.Capabilities.IsSupported(PersistMetrics) {
 		l.Log.Error(ErrInvalidCapability("PersistMetrics", l.ProviderName))
@@ -1856,19 +1860,21 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 		l.Log.Error(ErrPost(err, "metrics", resp.StatusCode))
 		return ErrPost(err, "metrics", resp.StatusCode)
 	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Warn(fmt.Errorf("error closing response body: %w", err))
+		}
+	}()
 	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("metrics published to remote provider")
 		return nil
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return ErrDataRead(err, "metrics Data")
 	}
-	l.Log.Error(ErrPost(err, fmt.Sprint(bdr), resp.StatusCode))
-	return ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+	l.Log.Error(ErrPost(err, string(bdr), resp.StatusCode))
+	return ErrPost(err, string(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error) {
@@ -1959,7 +1965,7 @@ func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*P
 	if err != nil {
 		return nil, ErrDataRead(err, "Design resource")
 	}
-	err = ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(err, string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -2043,7 +2049,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	if err != nil {
 		return nil, ErrDataRead(err, "design Page Resource")
 	}
-	err = ErrFetch(fmt.Errorf("failed to fetch design: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("failed to fetch design: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -2450,7 +2456,7 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 		l.Log.Info("design retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrDelete(fmt.Errorf("could not retrieve design from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrDelete(fmt.Errorf("could not retrieve design from remote provider"), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -2674,7 +2680,7 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 		l.Log.Info("design retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("could not retrieve design from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("could not retrieve design from remote provider"), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -2736,7 +2742,7 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(fmt.Errorf("could not send design to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("could not send design to remote provider: %s", string(bdr)), string(bdr), resp.StatusCode)
 }
 
 // SaveMesheryFilter saves given filter with the provider
@@ -2790,7 +2796,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(fmt.Errorf("could not send filter to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("could not send filter to remote provider: %s", string(bdr)), string(bdr), resp.StatusCode)
 }
 
 // GetMesheryFilters gives the filters stored with the provider
@@ -2946,7 +2952,7 @@ func (l *RemoteProvider) GetMesheryFilterFile(req *http.Request, filterID string
 		l.Log.Info("filter retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("could not retrieve filter from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("could not retrieve filter from remote provider"), string(bdr), resp.StatusCode)
 }
 
 // GetMesheryFilter gets filter for the given filterID
@@ -2987,7 +2993,7 @@ func (l *RemoteProvider) GetMesheryFilter(req *http.Request, filterID string) ([
 		l.Log.Info("filter retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("could not retrieve filter from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("could not retrieve filter from remote provider"), string(bdr), resp.StatusCode)
 }
 
 // DeleteMesheryFilter deletes a meshery filter with the given id
@@ -3030,7 +3036,7 @@ func (l *RemoteProvider) DeleteMesheryFilter(req *http.Request, filterID string)
 		l.Log.Info("filter retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrDelete(fmt.Errorf("error while fetching filter: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrDelete(fmt.Errorf("error while fetching filter: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -3260,7 +3266,7 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(fmt.Errorf("could not send filter to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("could not send filter to remote provider: %s", string(bdr)), string(bdr), resp.StatusCode)
 }
 
 // SaveMesheryApplication saves given application with the provider
@@ -3313,7 +3319,7 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(fmt.Errorf("failed to send application to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("failed to send application to remote provider: %s", string(bdr)), string(bdr), resp.StatusCode)
 }
 
 // SaveApplicationSourceContent saves given application source content with the provider after successful save of Application with the provider
@@ -3385,7 +3391,7 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 		l.Log.Info("applications retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("error while fetching applications: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("error while fetching applications: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -3427,7 +3433,7 @@ func (l *RemoteProvider) GetDesignSourceContent(token, designID string) ([]byte,
 		l.Log.Info("design source content retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("error while fetching designs: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("error while fetching designs: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 
 	return nil, err
@@ -3487,7 +3493,7 @@ func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSi
 		l.Log.Info("applications retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("error while fetching applications: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("error while fetching applications: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -3530,13 +3536,13 @@ func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID 
 		l.Log.Info("application retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("failed to retrieve application from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to retrieve application from remote provider"), string(bdr), resp.StatusCode)
 }
 
 // DeleteMesheryApplication deletes a meshery application with the given id
 func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
-l.Log.Error(ErrOperationNotAvailable)
+		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
 	}
 
@@ -3653,7 +3659,7 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(fmt.Errorf("failed to send performance profile to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("failed to send performance profile to remote provider: %s", string(bdr)), string(bdr), resp.StatusCode)
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
@@ -3704,7 +3710,7 @@ func (l *RemoteProvider) GetPerformanceProfiles(tokenString string, page, pageSi
 		l.Log.Info("performance profiles retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrPost(fmt.Errorf("failed to retrieve performance profile from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrPost(fmt.Errorf("failed to retrieve performance profile from remote provider"), string(bdr), resp.StatusCode)
 }
 
 // GetPerformanceProfile gets performance profile for the given the performanceProfileID
@@ -3747,7 +3753,7 @@ func (l *RemoteProvider) GetPerformanceProfile(req *http.Request, performancePro
 		l.Log.Info("performance profile retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("failed to retrieve performance profile from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to retrieve performance profile from remote provider"), string(bdr), resp.StatusCode)
 }
 
 // DeletePerformanceProfile deletes a performance profile with the given performanceProfileID
@@ -3838,7 +3844,7 @@ func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, 
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(fmt.Errorf("failed to send schedule to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("failed to send schedule to remote provider: %s", string(bdr)), string(bdr), resp.StatusCode)
 }
 
 // GetSchedules gives the schedules stored with the provider
@@ -3891,7 +3897,7 @@ func (l *RemoteProvider) GetSchedules(req *http.Request, page, pageSize, order s
 		l.Log.Info("schedules retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("error while fetching schedules: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("error while fetching schedules: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -3934,7 +3940,7 @@ func (l *RemoteProvider) GetSchedule(req *http.Request, scheduleID string) ([]by
 		l.Log.Info("schedule retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("could not retrieve schedule from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("could not retrieve schedule from remote provider"), string(bdr), resp.StatusCode)
 }
 
 // DeleteSchedule deletes a schedule with the given scheduleID
@@ -3977,7 +3983,7 @@ func (l *RemoteProvider) DeleteSchedule(req *http.Request, scheduleID string) ([
 		l.Log.Info("schedule retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrDelete(fmt.Errorf("could not retrieve schedule from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrDelete(fmt.Errorf("could not retrieve schedule from remote provider"), string(bdr), resp.StatusCode)
 }
 
 // RecordPreferences - records the user preference
@@ -3986,7 +3992,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 		l.Log.Error(ErrOperationNotAvailable)
 		return ErrInvalidCapability("SyncPrefs", l.ProviderName)
 	}
-	if err := l.SessionPreferencePersister.WriteToPersister(userID, data); err != nil {
+	if err := l.WriteToPersister(userID, data); err != nil {
 		return err
 	}
 	tokenVal, _ := l.GetToken(req)
@@ -4034,10 +4040,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		redirectURL = GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
 	}
 
-	refQueryParam := r.URL.Query().Get("ref")
-	if refQueryParam != "" {
-		redirectURL = refQueryParam
-	}
+	redirectURL = resolvePostLoginRedirect(r.URL.Query().Get("ref"), redirectURL)
 
 	go func() {
 		credential := make(map[string]interface{}, 0)
@@ -4137,7 +4140,7 @@ func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.P
 	if resp.StatusCode == http.StatusCreated || err != nil {
 		return string(bdr), err
 	}
-	return "", ErrPost(fmt.Errorf("could not send test profile details to remote provider: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+	return "", ErrPost(fmt.Errorf("could not send test profile details to remote provider: %d", resp.StatusCode), string(bdr), resp.StatusCode)
 }
 
 // SMPTestConfigGet - retrieve a single test profile details
@@ -4183,7 +4186,7 @@ func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*
 		}
 		return &testConfig, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("could not retrieve test profile details: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("could not retrieve test profile details: %d", resp.StatusCode), string(bdr), resp.StatusCode)
 }
 
 // SMPTestConfigFetch - retrieve list of test profiles
@@ -4225,7 +4228,7 @@ func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, s
 		return bdr, err
 	}
 
-	return nil, ErrFetch(fmt.Errorf("could not retrieve list of test profiles: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("could not retrieve list of test profiles: %d", resp.StatusCode), string(bdr), resp.StatusCode)
 }
 
 // SMPTestConfigDelete - tombstone a given test profile
@@ -4326,7 +4329,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 		l.Log.Info("response retrieved from remote provider.")
 		return response, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("failed to communicate with remote provider. "), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to communicate with remote provider. "), string(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
@@ -4426,11 +4429,15 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	if err != nil {
 		return nil, ErrFetch(err, "Connections Page", resp.StatusCode)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections: %d", resp.StatusCode), string(bdr), resp.StatusCode)
 	}
 
 	var cp connections.ConnectionPage
@@ -4551,7 +4558,11 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 	if err != nil {
 		return nil, ErrFetch(err, "Update Connection", resp.StatusCode)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4566,7 +4577,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 		return &conn, nil
 	}
 
-	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), string(bdr), resp.StatusCode)
 }
 
 // UpdateConnectionById - to update an existing connection using the connection id
@@ -4593,7 +4604,11 @@ func (l *RemoteProvider) UpdateConnectionById(token string, connection *connecti
 		}
 		return nil, ErrFetch(err, "Update Connection", resp.StatusCode)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4636,7 +4651,11 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.U
 		l.Log.Error(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4651,7 +4670,7 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.U
 		}
 		return &conn, nil
 	}
-	err = ErrDelete(fmt.Errorf("error while deleting connection: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrDelete(fmt.Errorf("error while deleting connection: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -4773,8 +4792,13 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 			if err != nil {
 				return err
 			}
-			defer outFile.Close()
 			if _, err := io.CopyN(outFile, tarReader, header.Size); err != nil {
+				if closeErr := outFile.Close(); closeErr != nil {
+					return fmt.Errorf("%w (close error: %v)", err, closeErr)
+				}
+				return err
+			}
+			if err := outFile.Close(); err != nil {
 				return err
 			}
 		default:
@@ -4828,7 +4852,11 @@ func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential
 	if err != nil {
 		return nil, ErrFetch(err, "Save Credential", http.StatusInternalServerError)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4843,7 +4871,7 @@ func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential
 		return &createdCredential, nil
 	}
 
-	return nil, ErrFetch(fmt.Errorf("failed to save the credential"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to save the credential"), string(bdr), resp.StatusCode)
 }
 
 // GetCredentials - to get saved credentials
@@ -4872,11 +4900,15 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	if err != nil {
 		return nil, ErrFetch(err, "Credentials Page", resp.StatusCode)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFetch(fmt.Errorf("could not retrieve list of test profiles: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+		return nil, ErrFetch(fmt.Errorf("could not retrieve list of test profiles: %d", resp.StatusCode), string(bdr), resp.StatusCode)
 	}
 
 	var cp CredentialsPage
@@ -4904,11 +4936,15 @@ func (l *RemoteProvider) GetCredentialByID(token string, credentialID uuid.UUID)
 		}
 		return nil, statusCode, ErrFetch(err, "Credentials Page", resp.StatusCode)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return nil, resp.StatusCode, ErrFetch(fmt.Errorf("could not retrieve credential with id %s", credentialID), fmt.Sprint(bdr), resp.StatusCode)
+		return nil, resp.StatusCode, ErrFetch(fmt.Errorf("could not retrieve credential with id %s", credentialID), string(bdr), resp.StatusCode)
 	}
 
 	var cp Credential
@@ -4942,7 +4978,11 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 	if err != nil {
 		return nil, ErrFetch(err, "Update Credential", http.StatusInternalServerError)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4957,7 +4997,7 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 		return &cred, nil
 	}
 
-	return nil, ErrFetch(fmt.Errorf("failed to update the credential"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to update the credential"), string(bdr), resp.StatusCode)
 }
 
 // DeleteUserCredential - to delete a saved credential
@@ -4988,7 +5028,11 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uu
 		l.Log.Error(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Error(err)
+		}
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -4999,7 +5043,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uu
 		l.Log.Info("credential deleted from remote provider")
 		return nil, nil
 	}
-	err = ErrDelete(fmt.Errorf("error while deleting credential: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrDelete(fmt.Errorf("error while deleting credential: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }

@@ -1,0 +1,314 @@
+{
+  "errors_export": {
+    "component_name": "meshery-istio",
+    "component_type": "adapter",
+    "errors": {
+      "1000": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1000",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1001": {
+        "name": "ErrGetLatestReleasesCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "Unable to get the latest release info from the GithubAPI",
+        "short_description": "unable to fetch release info",
+        "probable_cause": "Checkout https://docs.github.com/en/rest/reference/repos#releases for more info",
+        "suggested_remediation": ""
+      },
+      "1002": {
+        "name": "ErrGetLatestReleaseNamesCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to extract release names",
+        "probable_cause": "Invalid release format",
+        "suggested_remediation": ""
+      },
+      "1003": {
+        "name": "ErrInstallUsingIstioctlCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "Error occurred while installing istio mesh through istioctl",
+        "short_description": "Error with istio operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1004": {
+        "name": "ErrUnzipFileCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while unzipping",
+        "probable_cause": "File might be corrupt",
+        "suggested_remediation": ""
+      },
+      "1005": {
+        "name": "ErrTarXZFCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while extracting file",
+        "probable_cause": "/The gzip might be corrupt",
+        "suggested_remediation": ""
+      },
+      "1006": {
+        "name": "ErrMeshConfigCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "Error getting MeshSpecKey config from in-memory configuration",
+        "short_description": "Error configuration mesh",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1007": {
+        "name": "ErrRunIstioCtlCmdCode",
+        "code": "1007",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error running istioctl command",
+        "probable_cause": "Corrupted istioctl binary\nCommand might be invalid",
+        "suggested_remediation": ""
+      },
+      "1008": {
+        "name": "ErrSampleAppCode",
+        "code": "1008",
+        "severity": "Alert",
+        "long_description": "Error occurred while trying to install a sample application using manifests",
+        "short_description": "Error with sample app operation",
+        "probable_cause": "Invalid kubeclient config\nInvalid manifest",
+        "suggested_remediation": "Reconnect your adapter to meshery server to refresh the kubeclient"
+      },
+      "1009": {
+        "name": "ErrEnvoyFilterCode",
+        "code": "1009",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with envoy filter operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1010": {
+        "name": "ErrApplyPolicyCode",
+        "code": "1010",
+        "severity": "Alert",
+        "long_description": "Error occurred while trying to install a sample application using manifests",
+        "short_description": "Error with apply policy operation",
+        "probable_cause": "Invalid kubeclient config\nInvalid manifest",
+        "suggested_remediation": "Reconnect your adapter to meshery server to refresh the kubeclient"
+      },
+      "1011": {
+        "name": "ErrCustomOperationCode",
+        "code": "1011",
+        "severity": "Alert",
+        "long_description": "Error occurred while applying custom manifest to the cluster",
+        "short_description": "Error with custom operation",
+        "probable_cause": "Invalid kubeclient config\nInvalid manifest",
+        "suggested_remediation": ""
+      },
+      "1012": {
+        "name": "ErrAddonFromTemplateCode",
+        "code": "1012",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with addon install operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1013": {
+        "name": "ErrInvalidInstallationProfileCode",
+        "code": "1013",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while installing istio due to wrong profile",
+        "probable_cause": "Invalid profile passed",
+        "suggested_remediation": "Provide one of the profiles: \\\"demo\\\",\\\"minimal\\\",\\\"default\\\" profiles"
+      },
+      "1014": {
+        "name": "ErrCreatingIstioClientCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to create a new istio client",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrIstioVetSyncCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to sync",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1016": {
+        "name": "ErrIstioVetCode",
+        "code": "1016",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error while running Istio vet command",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1017": {
+        "name": "ErrParseOAMComponentCode",
+        "code": "1017",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing application component in the OAM request made by Meshery server",
+        "short_description": "error parsing the component",
+        "probable_cause": "Could not unmarshall configuration component received via ProcessOAM gRPC call into a valid Component struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid component for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also check if Meshery Server and adapters are referring to same component struct provided in MeshKit."
+      },
+      "1018": {
+        "name": "ErrParseOAMConfigCode",
+        "code": "1018",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing configuration in the request made by Meshery Server",
+        "short_description": "error parsing the configuration",
+        "probable_cause": "Could not unmarshall OAM config received via ProcessOAM gRPC call into a valid Config struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
+      },
+      "1019": {
+        "name": "ErrNilClientCode",
+        "code": "1019",
+        "severity": "Alert",
+        "long_description": "Kubernetes client is nil",
+        "short_description": "kubernetes client not initialized",
+        "probable_cause": "kubernetes client not initialized",
+        "suggested_remediation": "Reconnect the adaptor to Meshery server"
+      },
+      "1020": {
+        "name": "ErrParseIstioCoreComponentCode",
+        "code": "1020",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "istio core component manifest parsing failing",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1021": {
+        "name": "ErrInvalidOAMComponentTypeCode",
+        "code": "1021",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid OAM component name: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1022": {
+        "name": "ErrOpInvalidCode",
+        "code": "1022",
+        "severity": "Alert",
+        "long_description": "Istio adapter received an invalid operation from the meshey server",
+        "short_description": "Invalid operation",
+        "probable_cause": "The operation is not supported by the adapter\nInvalid operation name",
+        "suggested_remediation": "Check if the operation name is valid and supported by the adapter"
+      },
+      "1023": {
+        "name": "ErrIstioCoreComponentFailCode",
+        "code": "1023",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error in istio core component",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1024": {
+        "name": "ErrProcessOAMCode",
+        "code": "1024",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error performing OAM operations",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1025": {
+        "name": "ErrApplyHelmChartCode",
+        "code": "1025",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while applying Helm Chart",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1026": {
+        "name": "ErrGettingIstioReleaseCode",
+        "code": "1026",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while fetching Istio release artifacts",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1027": {
+        "name": "ErrUnsupportedPlatformCode",
+        "code": "1027",
+        "severity": "Alert",
+        "long_description": "Istio only supports Windows, Linux and Darwin",
+        "short_description": "requested platform is not supported by Istio",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1028": {
+        "name": "ErrIstioctlNotFoundCode",
+        "code": "1028",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to find Istioctl",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1029": {
+        "name": "ErrDownloadingTarCode",
+        "code": "1029",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while downloading Istio tar",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1030": {
+        "name": "ErrUnpackingTarCode",
+        "code": "1030",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while unpacking tar",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1031": {
+        "name": "ErrMakingBinExecutableCode",
+        "code": "1031",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while making istioctl an executable",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1032": {
+        "name": "ErrLoadNamespaceCode",
+        "code": "1032",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while labeling namespace:",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1033": {
+        "name": "ErrFetchIstioVersionsCode",
+        "code": "1033",
+        "severity": "Alert",
+        "long_description": "versions for istio could not be fetched",
+        "short_description": "could not get any istio versions",
+        "probable_cause": "could not reach github.com/istio/istio/releases\nno versions could be fetched from istio release page",
+        "suggested_remediation": "make sure adapter is reachable to github"
+      }
+    }
+  }
+}

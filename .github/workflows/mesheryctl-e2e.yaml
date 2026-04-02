@@ -34,14 +34,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: ['1.25']
-        k8s_version: ['v1.33.0', 'v1.34.3']
-        platform: ['kubernetes']
+        include:
+          - go: '1.25'
+            k8s_version: 'v1.33.0'
+            platform: 'kubernetes'
+            publish_to_qa: false
+          - go: '1.25'
+            k8s_version: 'v1.34.3'
+            platform: 'kubernetes'
+            publish_to_qa: true
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
       - name: Set up Docker
-        uses: docker/setup-buildx-action@v3.12.0
+        uses: docker/setup-buildx-action@v4
       - name: Setup BATS and BATS libs
         id: setup-bats
         uses: bats-core/bats-action@3.0.0
@@ -68,7 +74,7 @@ jobs:
         shell: bash
       - name: Get Date
         id: date
-        run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
+        run: echo "date=$(date +'%Y-%m-%d-%H.%M.%S')" >> $GITHUB_OUTPUT
       - name: Build mesheryctl and start Meshery
         run: |
           make build && \
@@ -94,20 +100,20 @@ jobs:
 
       - name: Checkout QA
         uses: actions/checkout@v6
-        if: ${{ !cancelled() && github.event_name == 'push' }}
+        if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
         with:
           repository: meshery/qa
           path: ./qa
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Sync results with qa
-        if: ${{ !cancelled() && github.event_name == 'push' }}
+        if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
         working-directory: qa
         run: |
           make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl/allure-results
 
       - name: Commit & push to qa
-        if: ${{ !cancelled() && github.event_name == 'push' }}
+        if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "[mesheryctl] Sync mesheryctl E2E Test Results - ${GITHUB_SHA}"
@@ -148,24 +154,64 @@ jobs:
 
       - name: Get Date
         id: date
-        run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
+        run: echo "date=$(date +'%Y-%m-%d-%H.%M.%S')" >> $GITHUB_OUTPUT
 
       - name: Checkout Code
-        uses: actions/checkout@master
+        uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25'
 
       - name: Run Performance Tests
-        uses: layer5io/meshery-smp-action@master
-        with:
-          provider_token: ${{ secrets.PROVIDER_TOKEN }}
-          platform: ${{ matrix.platform }}
-          profile_name: ${{ github.event.inputs.profile_name }}
-          profile_filename: ${{ github.event.inputs.profile_filename }}
-          test_name: '${{ steps.date.outputs.date }}'
+        env:
+          PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+          PROFILE_NAME: ${{ github.event.inputs.profile_name }}
+          PROFILE_FILENAME: ${{ github.event.inputs.profile_filename }}
+          TEST_NAME: ${{ steps.date.outputs.date }}
+        run: |
+          mkdir -p "$HOME/.meshery"
+          cat <<EOF > "$HOME/.meshery/config.yaml"
+          contexts:
+            local:
+              endpoint: http://localhost:9081
+              token: default
+              platform: ${{ matrix.platform }}
+              components: []
+              channel: stable
+              version: latest
+              provider: Layer5
+          current-context: local
+          tokens:
+            - location: auth.json
+              name: default
+          EOF
+          echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
+          cp "$HOME/.meshery/auth.json" "$RUNNER_TEMP/auth.json"
+          chmod 600 "$RUNNER_TEMP/auth.json"
+          make build
+          sudo install -m 755 ./mesheryctl /usr/local/bin/mesheryctl
+          mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update
+          for attempt in $(seq 1 30); do
+            if curl --silent --show-error --fail http://localhost:9081/api/system/version > /dev/null; then
+              break
+            fi
+            sleep 10
+          done
+          curl --silent --show-error --fail http://localhost:9081/api/system/version > /dev/null
+          mesheryctl system config minikube --token "$HOME/.meshery/auth.json"
+          if [ -n "$PROFILE_FILENAME" ]; then
+            mesheryctl perf apply "$PROFILE_NAME" -f "../.github/${PROFILE_FILENAME}" --name "$TEST_NAME" -y
+          else
+            mesheryctl perf apply "$PROFILE_NAME" --name "$TEST_NAME" -y
+          fi
+        shell: bash
+        working-directory: ${{ github.workspace }}/mesheryctl
 
       - name: Deploy Service Mesh
         run: |
-          cat ~/auth.json
-          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
+          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t "$RUNNER_TEMP/auth.json" ISTIO
           sleep 50
         shell: '/bin/bash {0}'
 
@@ -202,23 +248,60 @@ jobs:
 
       - name: Get Date
         id: date
-        run: echo "date=(date +'%Y-%m-%d-%H.%M.%S')" >> $GITHUB_OUTPUT
+        run: echo "date=$(date +'%Y-%m-%d-%H.%M.%S')" >> $GITHUB_OUTPUT
 
       - name: Checkout Code
-        uses: actions/checkout@master
+        uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25'
 
       - name: Run Performance Tests
-        uses: layer5io/meshery-smp-action@master
-        with:
-          provider_token: ${{ secrets.PROVIDER_TOKEN }}
-          platform: ${{ matrix.platform }}
-          profile_name: integration-e2e-workflow
-          profile_filename: integration-test-config.yaml
-          test_name: '${{ steps.date.outputs.date }}'
+        env:
+          PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+          PROFILE_NAME: smp-integration-e2e-workflow
+          PROFILE_FILENAME: integration-test-config.yaml
+          TEST_NAME: ${{ steps.date.outputs.date }}
+        run: |
+          mkdir -p "$HOME/.meshery"
+          cat <<EOF > "$HOME/.meshery/config.yaml"
+          contexts:
+            local:
+              endpoint: http://localhost:9081
+              token: default
+              platform: ${{ matrix.platform }}
+              components: []
+              channel: stable
+              version: latest
+              provider: Layer5
+          current-context: local
+          tokens:
+            - location: auth.json
+              name: default
+          EOF
+          echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
+          cp "$HOME/.meshery/auth.json" "$RUNNER_TEMP/auth.json"
+          chmod 600 "$RUNNER_TEMP/auth.json"
+          make build
+          sudo install -m 755 ./mesheryctl /usr/local/bin/mesheryctl
+          mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update
+          for attempt in $(seq 1 30); do
+            if curl --silent --show-error --fail http://localhost:9081/api/system/version > /dev/null; then
+              break
+            fi
+            sleep 10
+          done
+          curl --silent --show-error --fail http://localhost:9081/api/system/version > /dev/null
+          mesheryctl system config minikube --token "$HOME/.meshery/auth.json"
+          mesheryctl perf apply "$PROFILE_NAME" -f "../.github/${PROFILE_FILENAME}" --name "$TEST_NAME" -y
+        shell: bash
+        working-directory: ${{ github.workspace }}/mesheryctl
 
       - name: Deploy Service Mesh
         run: |
-          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
+          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t "$RUNNER_TEMP/auth.json" ISTIO
           sleep 50
         shell: '/bin/bash {0}'
 

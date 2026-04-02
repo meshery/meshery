@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -17,7 +16,6 @@ func ServeReactComponentFromPackage(
 	provider models.Provider,
 ) {
 	escPath := r.URL.EscapedPath()
-	fmt.Println("[package location] ", provider.PackageLocation())
 	assetPath := strings.Replace(escPath, reqBasePath, provider.PackageLocation(), 1)
 
 	http.ServeFile(w, r, assetPath)

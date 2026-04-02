@@ -83,13 +83,17 @@ func TestInitConfigUseCases(t *testing.T) {
 			origMesheryFolder := utils.MesheryFolder
 			origDefaultConfigPath := utils.DefaultConfigPath
 			origCfgFile := cfgFile
+			origLog := utils.Log
 
 			// Restore after each test
 			t.Cleanup(func() {
 				utils.MesheryFolder = origMesheryFolder
 				utils.DefaultConfigPath = origDefaultConfigPath
 				cfgFile = origCfgFile
+				utils.Log = origLog
 			})
+
+			utils.SetupMeshkitLoggerTesting(t, false)
 
 			tt.setup(t)
 

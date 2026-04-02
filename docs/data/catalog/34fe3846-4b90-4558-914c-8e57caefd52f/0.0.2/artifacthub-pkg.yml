@@ -1,0 +1,24 @@
+version: 0.0.2
+name: meshery-design-fixture.json
+displayName: meshery-design-fixture.json
+createdAt: "2025-12-09T16:51:32Z"
+description: '-'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/34fe3846-4b90-4558-914c-8e57caefd52f/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "- \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 969bfd5e-28fb-4c20-a020-ee9db65da812
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/34fe3846-4b90-4558-914c-8e57caefd52f-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/34fe3846-4b90-4558-914c-8e57caefd52f-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
