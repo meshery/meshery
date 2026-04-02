@@ -46,6 +46,8 @@ function showSessionExpiredAndRedirect() {
   }, 5000);
 }
 
+import { recordActivity } from './sessionTimer';
+
 const dataFetch = (url, options = {}, successFn, errorFn) => {
   if (errorFn === undefined) {
     errorFn = (err) => {
@@ -58,6 +60,9 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
         showSessionExpiredAndRedirect();
         return new Promise(() => {});
       }
+
+      // Successful response — session is alive, reset the timeout warning
+      recordActivity();
 
       let result;
       if (res.ok) {

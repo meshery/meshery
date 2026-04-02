@@ -403,7 +403,9 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   }, [dispatch, fetchSystemSync]);
 
   useEffect(() => {
-    // todo further refactoring required for data fetch
+    const { startSessionTimer } = require('../lib/sessionTimer');
+    startSessionTimer();
+
     const loadAll = async () => {
       try {
         loadConfigFromServer();
