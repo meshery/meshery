@@ -88,6 +88,12 @@ export default function CustomizedSteppers({
   connectionData,
   onClose,
   handleRegistrationComplete,
+}: {
+  sharedData: any;
+  setSharedData: (data: any) => void;
+  connectionData: any;
+  onClose: () => void;
+  handleRegistrationComplete: () => void;
 }) {
   const [activeStep, setActiveStep] = React.useState(0);
   const stepData = {
