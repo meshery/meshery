@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import { Search } from '@mui/icons-material';
-import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
 import { useLazyGetSystemSyncQuery } from '../rtk-query/system';
+import { useUpdateConnectionStatusMutation } from '../rtk-query/connection';
+import { CONNECTION_KINDS, CONNECTION_STATES } from '../utils/Enum';
 import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { createPathForRemoteComponent } from './ExtensionSandbox';
@@ -144,6 +145,7 @@ function K8sContextMenu({
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
+  const [updateConnectionStatus] = useUpdateConnectionStatusMutation();
   const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const { connectionMetadataState } = useSelector((state) => state.ui);
@@ -223,15 +225,19 @@ function K8sContextMenu({
           console.error('An error occurred while loading k8sconfig', e);
         }
       };
-      deleteKubernetesConfig(
-        successHandlerGenerator(notify, `Kubernetes connection "${name}" removed`, successCallback),
-        errorHandlerGenerator(
+      try {
+        await updateConnectionStatus({
+          kind: CONNECTION_KINDS.KUBERNETES,
+          body: { [connectionID]: CONNECTION_STATES.DELETED },
+        }).unwrap();
+        successHandlerGenerator(
           notify,
-          `Failed to remove Kubernetes connection "
-          ${name}"`,
-        ),
-        connectionID,
-      );
+          `Kubernetes connection "${name}" removed`,
+          successCallback,
+        )();
+      } catch (err) {
+        errorHandlerGenerator(notify, `Failed to remove Kubernetes connection "${name}"`)(err);
+      }
     }
   };
 
