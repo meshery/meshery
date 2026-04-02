@@ -474,6 +474,9 @@ func GetAuthRetryCount(req *http.Request) int {
 	}
 	count := 0
 	_, _ = fmt.Sscanf(ck.Value, "%d", &count)
+	if count < 0 {
+		count = 0
+	}
 	return count
 }
 

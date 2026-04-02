@@ -891,7 +891,9 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 	l.Log.Info(fmt.Sprintf("[AUTH_FLOW] step=HandleUnAuthenticated action=start path=%s retry=%d/%d", req.URL.Path, retries, MaxAuthRetries))
 	if retries >= MaxAuthRetries {
 		l.Log.Error(fmt.Errorf("[AUTH_FLOW] step=HandleUnAuthenticated action=loop_detected retry=%d, breaking the redirect loop", retries))
-		// Clear all auth cookies to give the user a clean slate
+		// Clear auth session cookies (JWT + provider session) to give the user a clean slate.
+		// The provider selection cookie (meshery-provider) is intentionally preserved
+		// so the user doesn't have to re-select their provider.
 		l.UnSetJWTCookie(w)
 		l.UnSetProviderSessionCookie(w)
 		ClearAuthRetryCookie(w)
