@@ -31,6 +31,25 @@ describe('dataFetch', () => {
     expect(errorFn).not.toHaveBeenCalled();
   });
 
+  it('does not call successFn or errorFn on 401', async () => {
+    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+      ok: false,
+      status: 401,
+      redirected: false,
+    });
+
+    const successFn = vi.fn();
+    const errorFn = vi.fn();
+
+    dataFetch('/api/test', {}, successFn, errorFn);
+
+    // Give the promise chain time to settle
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(successFn).not.toHaveBeenCalled();
+    expect(errorFn).not.toHaveBeenCalled();
+  });
+
   it('calls errorFn on non-ok response', async () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: false,
