@@ -13,7 +13,11 @@
         / {{ lower $root.Page.Title }}
       {{ else }}
         {{ $path := delimit (first (add $index 1) $crumbs) "/" }}
+<<<<<<< final-clean-branch
         / <a href="{{ $root.Site.BaseURL }}{{ $path }}">{{ replace (replace (lower $crumb) "-" " ") ".html" "" }}</a>
+=======
+       / <a href="{{ printf "%s/" $path | absURL }}">{{ replace (replace (lower $crumb) "-" " ") ".html" "" }}</a>
+>>>>>>> master
       {{ end }}
     {{ end }}
   {{ end }}
