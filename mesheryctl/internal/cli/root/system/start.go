@@ -32,7 +32,7 @@ import (
 
 	meshkitutils "github.com/meshery/meshkit/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
-	log "github.com/sirupsen/logrus"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -42,7 +42,6 @@ var (
 	skipBrowserFlag bool
 )
 
-// startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
@@ -68,7 +67,6 @@ mesheryctl system start -p docker
 mesheryctl system start --provider Meshery
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
 			PrintLogs:  false,
@@ -78,26 +76,21 @@ mesheryctl system start --provider Meshery
 		if err != nil {
 			return ErrHealthCheckFailed(err)
 		}
-		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
 		if err != nil {
 			cmd.SilenceUsage = true
-			return err
+			return errors.Wrap(err, utils.SystemError("preflight health checks failed"))
 		}
 		cfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return errors.Wrap(err, utils.SystemError("failed to get mesheryctl config"))
 		}
 		ctx, err := cfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
+		if err := ctx.ValidateVersion(); err != nil {
+			return errors.Wrap(err, utils.SystemError("failed to validate version"))
 		}
 		return nil
 	},
@@ -114,22 +107,22 @@ mesheryctl system start --provider Meshery
 
 func start() error {
 	if err := ensureMesheryFolder(); err != nil {
-		return err
+		return errors.Wrap(err, utils.SystemError("failed to ensure meshery folder"))
 	}
 
 	mctlCfg, currCtx, mesheryImageVersion, callbackURL, providerURL, err := prepareStartContext()
 	if err != nil {
-		return err
+		return errors.Wrap(err, utils.SystemError("failed to prepare start context"))
 	}
 
 	switch currCtx.GetPlatform() {
 	case platformDocker:
 		if err := startDockerDeployment(mctlCfg, currCtx, mesheryImageVersion, callbackURL); err != nil {
-			return err
+			return errors.Wrap(err, utils.SystemError("failed to start docker deployment"))
 		}
 	case platformKubernetes:
 		if err := startKubernetesDeployment(currCtx, mesheryImageVersion, callbackURL, providerURL); err != nil {
-			return err
+			return errors.Wrap(err, utils.SystemError("failed to start kubernetes deployment"))
 		}
 	default:
 		return unsupportedPlatformError(currCtx.GetPlatform())
@@ -151,18 +144,18 @@ func ensureMesheryFolder() error {
 func prepareStartContext() (*config.MesheryCtlConfig, *config.Context, string, string, string, error) {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return nil, nil, "", "", "", errors.Wrap(err, "error processing config")
+		return nil, nil, "", "", "", errors.Wrap(err, utils.SystemError("failed to process config"))
 	}
 
 	if tempContext != "" {
 		if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
-			return nil, nil, "", "", "", errors.Wrap(err, "failed to set temporary context")
+			return nil, nil, "", "", "", errors.Wrap(err, utils.SystemError("failed to set temporary context"))
 		}
 	}
 
 	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
-		return nil, nil, "", "", "", err
+		return nil, nil, "", "", "", ErrGetCurrentContext(err)
 	}
 
 	if utils.PlatformFlag != "" {
@@ -179,7 +172,7 @@ func prepareStartContext() (*config.MesheryCtlConfig, *config.Context, string, s
 	}
 
 	if err := config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName()); err != nil {
-		return nil, nil, "", "", "", err
+		return nil, nil, "", "", "", errors.Wrap(err, utils.SystemError("failed to update context"))
 	}
 
 	if utils.ResetFlag {
@@ -209,7 +202,7 @@ func startDockerDeployment(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 
 	utils.ViperCompose.SetConfigFile(utils.DockerComposeFile)
 	if err := utils.ViperCompose.ReadInConfig(); err != nil {
-		return err
+		return errors.Wrap(err, utils.SystemError("failed to read docker compose config"))
 	}
 
 	compose := &utils.DockerCompose{}
@@ -219,18 +212,18 @@ func startDockerDeployment(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 
 	userPort, err := configureDockerServices(currCtx, mesheryImageVersion, callbackURL)
 	if err != nil {
-		return err
+		return errors.Wrap(err, utils.SystemError("failed to configure docker services"))
 	}
 
 	if skipUpdateFlag {
-		log.Info("Skipping Meshery update...")
+		utils.Log.Info("Skipping Meshery update")
 	} else if err := utils.UpdateMesheryContainers(); err != nil {
 		return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
 	}
 
 	endpoint, err := resolveDockerEndpoint(mctlCfg, currCtx, userPort)
 	if err != nil {
-		return err
+		return errors.Wrap(err, utils.SystemError("failed to resolve docker endpoint"))
 	}
 
 	composeClient, err := utils.NewComposeClient()
@@ -239,11 +232,11 @@ func startDockerDeployment(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 	}
 
 	if err := startDockerCompose(composeClient); err != nil {
-		return err
+		return errors.Wrap(err, utils.SystemError("failed to start docker compose"))
 	}
 
 	if err := waitForMesheryContainer(composeClient); err != nil {
-		return err
+		return errors.Wrap(err, utils.SystemError("meshery container failed to start"))
 	}
 
 	waitForMesheryEndpoint(endpoint)
@@ -258,13 +251,13 @@ func configureDockerServices(currCtx *config.Context, mesheryImageVersion, callb
 
 	allowedServices, err := buildAllowedDockerServices(currCtx, mesheryImageVersion, callbackURL)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, utils.SystemError("failed to build docker services"))
 	}
 
 	for name, service := range allowedServices {
 		utils.ViperCompose.Set(fmt.Sprintf("services.%s", name), service)
 		if err := utils.ViperCompose.WriteConfig(); err != nil {
-			log.Errorf("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", name)
+			utils.Log.Errorf("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", name)
 		}
 	}
 
@@ -277,12 +270,18 @@ func buildAllowedDockerServices(currCtx *config.Context, mesheryImageVersion, ca
 
 	for _, component := range currCtx.GetComponents() {
 		if utils.Services[component].Image == "" {
-			log.Fatalf("Invalid component specified %s", component)
+			return nil, errors.Wrap(
+				fmt.Errorf("invalid component %s", component),
+				utils.SystemError("invalid component specified"),
+			)
 		}
 
 		service, ok := utils.Services[component]
 		if !ok {
-			return nil, errors.Errorf("No Docker Compose service exists for Meshery component `%s`.", component)
+			return nil, errors.Wrap(
+				fmt.Errorf("no Docker Compose service exists for Meshery component `%s`", component),
+				utils.SystemError("component service not found"),
+			)
 		}
 
 		spliter := strings.Split(service.Image, ":")
@@ -299,7 +298,10 @@ func buildAllowedDockerServices(currCtx *config.Context, mesheryImageVersion, ca
 
 		service, ok := utils.Services[serviceName]
 		if !ok {
-			return nil, errors.New("unable to extract meshery version")
+			return nil, errors.Wrap(
+				fmt.Errorf("unable to extract meshery version"),
+				utils.SystemError("service not found"),
+			)
 		}
 
 		spliter := strings.Split(service.Image, ":")
@@ -351,7 +353,7 @@ func resolveDockerEndpoint(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 		endpoint.Address = utils.EndpointProtocol + "://localhost"
 		currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
 		if err := config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName()); err != nil {
-			return endpoint, err
+			return endpoint, errors.Wrap(err, utils.SystemError("failed to update context"))
 		}
 	} else {
 		endpoint.Address = userPort[0]
@@ -359,7 +361,7 @@ func resolveDockerEndpoint(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 
 	tempPort, err := strconv.Atoi(userPort[len(userPort)-1])
 	if err != nil {
-		return endpoint, err
+		return endpoint, errors.Wrap(err, utils.SystemError("invalid port conversion"))
 	}
 	endpoint.Port = int32(tempPort)
 
@@ -408,30 +410,33 @@ func waitForMesheryContainer(composeClient *utils.ComposeClient) error {
 
 		if i > 0 && i%6 == 0 {
 			spinner.Stop()
-			log.Infof("Still waiting for Meshery to start... (%d seconds elapsed)", i*5)
+			utils.Log.Infof("Still waiting for Meshery to start... (%d seconds elapsed)", i*5)
 			spinner = utils.CreateDefaultSpinner("Waiting for Meshery containers to be ready...", "\nMeshery containers are ready.")
 			spinner.Start()
 		}
 	}
 
 	spinner.Stop()
-	log.Info("Timeout waiting for Meshery container to start. Checking container status...")
+	utils.Log.Info("Timeout waiting for Meshery container to start. Checking container status...")
 	containers, err := composeClient.Ps(context.Background(), utils.DockerComposeFile)
 	if err != nil {
 		return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
 	}
 
-	log.Info("Container status:")
+	utils.Log.Info("Container status:")
 	for _, container := range containers {
-		log.Infof("  %s: %s", container.Service, container.State)
+		utils.Log.Infof("  %s: %s", container.Service, container.State)
 	}
 
-	log.Info("\nShowing Meshery logs:")
+	utils.Log.Info("\nShowing Meshery logs:")
 	if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, false, os.Stdout); err != nil {
 		return errors.Wrap(err, utils.SystemError("failed to get logs"))
 	}
 
-	return errors.New("timeout: Meshery container did not start within the expected time. Please check the logs above for more details")
+	return errors.Wrap(
+		fmt.Errorf("timeout: Meshery container did not start within the expected time"),
+		utils.SystemError("please check the logs above for more details"),
+	)
 }
 
 func waitForMesheryEndpoint(endpoint meshkitutils.HostPort) {
@@ -443,49 +448,40 @@ func waitForMesheryEndpoint(endpoint meshkitutils.HostPort) {
 	for i := 0; i < maxEndpointRetries; i++ {
 		time.Sleep(2 * time.Second)
 		if meshkitutils.TcpCheck(&endpoint, nil) {
-			log.Info("Meshery is now running!")
+			utils.Log.Info("Meshery is now running!")
 			return
 		}
 	}
-
-	log.Warn("Warning: Meshery endpoint is not yet accessible. The server may still be initializing.")
-	log.Info("You can check the status later with: mesheryctl system status")
+	utils.Log.Warn("meshery endpoint is not yet accessible. The server may still be initializing")
+	utils.Log.Info("You can check the status later with: mesheryctl system status")
 }
 
 func startKubernetesDeployment(currCtx *config.Context, mesheryImageVersion, callbackURL, providerURL string) error {
 	kubeClient, err := meshkitkube.New([]byte(""))
 	if err != nil {
-		return err
+		return errors.Wrap(err, utils.SystemError("failed to create kubernetes client"))
 	}
-
 	spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
 	spinner.Start()
 	defer spinner.Stop()
-
 	if err := utils.CreateManifestsFolder(); err != nil {
-		utils.Log.Error(utils.ErrCreateManifestsFolder(err))
-		return err
+		return errors.Wrap(err, utils.SystemError("failed to create manifests folder"))
 	}
-
 	if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL, callbackURL, providerURL); err != nil {
-		return err
+		return errors.Wrap(err, utils.SystemError("failed to apply helm charts"))
 	}
-
 	time.Sleep(20 * time.Second)
 	ready, err := mesheryReadinessHealthCheck()
 	if err != nil {
-		log.Info(err)
+		utils.Log.Error(errors.Wrap(err, utils.SystemError("meshery readiness check failed")))
 	}
-
 	if !ready {
-		log.Info("\nTimeout. Meshery pod(s) is not running, yet.\nCheck status of Meshery pod(s) by executing “mesheryctl system status`. Expose Meshery UI with `mesheryctl system dashboard` as needed.")
+		utils.Log.Info("\nTimeout. Meshery pod(s) is not running, yet.\nCheck status of Meshery pod(s) by executing `mesheryctl system status`. Expose Meshery UI with `mesheryctl system dashboard` as needed.")
 		return nil
 	}
-	log.Info("Meshery is starting...")
-
+	utils.Log.Info("Meshery is starting...")
 	return nil
 }
-
 func init() {
 	startCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "", "platform to deploy Meshery to.")
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
@@ -493,13 +489,9 @@ func init() {
 	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
 	startCmd.PersistentFlags().StringVar(&providerFlag, "provider", "", "(optional) Defaults to the provider specified in the current context")
 }
-
-// Apply Meshery helm charts
 func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, callbackURL, providerURL string) error {
-	// get value overrides to install the helm chart
 	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion, callbackURL, providerURL)
 
-	// install the helm charts with specified override values
 	var chartVersion string
 	if mesheryImageVersion != "latest" {
 		chartVersion = mesheryImageVersion
@@ -517,9 +509,8 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 			Chart:      utils.HelmChartName,
 			Version:    chartVersion,
 		},
-		OverrideValues: overrideValues,
-		Action:         act,
-		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
+		OverrideValues:   overrideValues,
+		Action:           act,
 		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
 		DryRun:           dryRun,
 	})
@@ -532,19 +523,27 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 			Chart:      utils.HelmChartOperatorName,
 			Version:    chartVersion,
 		},
-		Action: act,
-		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
+		Action:           act,
 		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
 		DryRun:           dryRun,
 	})
 	if errServer != nil && errOperator != nil {
-		return fmt.Errorf("could not %s Meshery Server: %s\ncould not %s meshery-operator: %s", action, errServer.Error(), action, errOperator.Error())
+		return errors.Wrap(
+			fmt.Errorf("could not %s Meshery Server: %s\ncould not %s meshery-operator: %s", action, errServer.Error(), action, errOperator.Error()),
+			utils.SystemError("helm chart application failed"),
+		)
 	}
 	if errServer != nil {
-		return fmt.Errorf("%s success for Meshery Operator, but failed for Meshery Server: %s", action, errServer.Error())
+		return errors.Wrap(
+			fmt.Errorf("%s success for Meshery Operator, but failed for Meshery Server: %s", action, errServer.Error()),
+			utils.SystemError("helm chart application failed"),
+		)
 	}
 	if errOperator != nil {
-		return fmt.Errorf("%s success for Meshery Server, but failed for Meshery Operator: %s", action, errOperator.Error())
+		return errors.Wrap(
+			fmt.Errorf("%s success for Meshery Server, but failed for Meshery Operator: %s", action, errOperator.Error()),
+			utils.SystemError("helm chart application failed"),
+		)
 	}
 	return nil
 }
