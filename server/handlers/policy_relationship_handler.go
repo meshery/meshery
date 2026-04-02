@@ -14,7 +14,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1alpha1/capability"
-	"github.com/meshery/schemas/models/v1alpha1/core"
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
