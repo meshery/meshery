@@ -3,7 +3,7 @@ import {
   mesheryApi,
   useGetTeamsQuery as useSchemasGetTeamsQuery,
   useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery,
-} from '@meshery/schemas/dist/mesheryApi';
+} from '@meshery/schemas/mesheryApi';
 import { api } from './index';
 import { initiateQuery } from './utils';
 import { useGetOrgsQuery } from './organization';

@@ -73,7 +73,7 @@
         "long_description": "",
         "short_description": "Error in writing config",
         "probable_cause": "Unable to Update config file",
-        "suggested_remediation": "Ensure that you have the correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
+        "suggested_remediation": "Ensure that you have the correct context in your meshconfig at `$HOME/.meshery/config.yaml`."
       },
       "1010": {
         "name": "ErrProcessingConfigCode",
@@ -1694,6 +1694,204 @@
         "short_description": "Invalid edge release version",
         "probable_cause": "A wrong edge release version was specified",
         "suggested_remediation": "The edge release channel only supports 'latest' as version argument. "
+      },
+      "1207": {
+        "name": "ErrSystemCheckInvalidCliVersionCode",
+        "code": "1207",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Invalid CLI version",
+        "probable_cause": "The CLI version is incompatible with the Meshery Server version",
+        "suggested_remediation": "Please upgrade your CLI to the latest version or to a version compatible with your Meshery Server. "
+      },
+      "1208": {
+        "name": "ErrDockerNotRunningCode",
+        "code": "1208",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Docker is not running",
+        "probable_cause": "Docker daemon is not running",
+        "suggested_remediation": "Please start Docker and run the command again. "
+      },
+      "1209": {
+        "name": "ErrDockerContextCode",
+        "code": "1209",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Docker context issue",
+        "probable_cause": "The Docker context selected is not configured properly to connect to the Docker daemon",
+        "suggested_remediation": "Please ensure that the correct Docker context is selected and configured properly to connect to the Docker daemon. Use `docker context ls` to list all available contexts and `docker context inspect [context-name]` to inspect the configuration of a specific context."
+      },
+      "1210": {
+        "name": "ErrDockerStartCode",
+        "code": "1210",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to start Docker",
+        "probable_cause": "Docker daemon failed to start",
+        "suggested_remediation": "Please check the Docker installation and try starting Docker manually. If the issue persists, refer to Docker's documentation or support for troubleshooting steps."
+      },
+      "1211": {
+        "name": "ErrDockerUnknownCode",
+        "code": "1211",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Docker error",
+        "probable_cause": "An unknown error occurred while trying to connect / interact with Docker",
+        "suggested_remediation": "Please ensure Docker is installed and running. If the issue persists, check the Docker configuration and logs for more details."
+      },
+      "1212": {
+        "name": "ErrFailedToConnectAdapterCode",
+        "code": "1212",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The connection to the Meshery Adapter failed",
+        "suggested_remediation": "Ensure that the Meshery Adapter is running and accessible, and try again"
+      },
+      "1213": {
+        "name": "ErrAdapterNotReachableCode",
+        "code": "1213",
+        "severity": "Alert",
+        "long_description": "The Meshery Adapter is not responding to requests",
+        "short_description": "",
+        "probable_cause": "The adapter may be down or there may be network issues",
+        "suggested_remediation": "Check the status of the adapter and your network connection, and try again"
+      },
+      "1214": {
+        "name": "ErrListMesheryPodsCode",
+        "code": "1214",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to list Meshery pods",
+        "probable_cause": "Unable to retrieve the list of Meshery pods from the Kubernetes cluster",
+        "suggested_remediation": "Ensure your Kubernetes cluster is running and accessible, and that you have the necessary permissions to list pods"
+      },
+      "1215": {
+        "name": "ErrNoMesheryPodsCode",
+        "code": "1215",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": "Verify the namespace and ensure that Meshery pods are deployed and running"
+      },
+      "1216": {
+        "name": "ErrMissingMesheryPodCode",
+        "code": "1216",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The specified pod name may be incorrect or the pod may not be running",
+        "suggested_remediation": "Verify the pod name and ensure that the Meshery pod is deployed and running"
+      },
+      "1217": {
+        "name": "ErrK8sVersionInfoCode",
+        "code": "1217",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to get Kubernetes version information",
+        "probable_cause": "Unable to retrieve Kubernetes version information from the cluster",
+        "suggested_remediation": "Ensure your Kubernetes cluster is running and accessible, and that you have the necessary permissions to query version information"
+      },
+      "1218": {
+        "name": "ErrK8sInvalidVersionFormatCode",
+        "code": "1218",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Kubernetes version format",
+        "probable_cause": "The Kubernetes version information retrieved is in an unexpected format",
+        "suggested_remediation": "Check the Kubernetes cluster for any issues and ensure it is running a supported version"
+      },
+      "1219": {
+        "name": "ErrOperatorUnsupportedPlatformCode",
+        "code": "1219",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Operator unsupported platform",
+        "probable_cause": "The operator health checks can only be run on Kubernetes platform",
+        "suggested_remediation": "Please switch to a Kubernetes context to run operator health checks. "
+      },
+      "1220": {
+        "name": "ErrReadMesheryConfigCode",
+        "code": "1220",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error in reading config",
+        "probable_cause": "Unable to read config file",
+        "suggested_remediation": "Ensure that you have the correct context in your meshconfig at `$HOME/.meshery/config.yaml`."
+      },
+      "1221": {
+        "name": "ErrDuplicateContextCode",
+        "code": "1221",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Duplicate Context",
+        "probable_cause": "A context with the same name already exists in the config file",
+        "suggested_remediation": "Use a different name for the context or delete the existing context with the same name"
+      },
+      "1222": {
+        "name": "ErrWriteMeshConfigCode",
+        "code": "1222",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error in writing config",
+        "probable_cause": "Unable to write to config file",
+        "suggested_remediation": "Ensure that you have the correct permissions to write to the config file at `$HOME/.meshery/config.yaml`."
+      },
+      "1223": {
+        "name": "ErrDockerComposeFileMissingCode",
+        "code": "1223",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Docker Compose file not found",
+        "probable_cause": "Docker Compose file is missing from the Meshery folder",
+        "suggested_remediation": "Run `mesheryctl system start` again to download and generate docker-compose file based on your context"
+      },
+      "1224": {
+        "name": "ErrDockerComposeClientCode",
+        "code": "1224",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to create Docker Compose client",
+        "probable_cause": "Unable to initialize the Docker Compose client, which is required for managing Docker-based Meshery deployments",
+        "suggested_remediation": "Ensure that Docker is installed and running on your system, and that you have the necessary permissions to access the Docker API"
+      },
+      "1225": {
+        "name": "ErrDockerComposeRemoveCode",
+        "code": "1225",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to delete Meshery containers",
+        "probable_cause": "An error occurred while trying to delete Meshery containers using Docker Compose",
+        "suggested_remediation": "Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder. If the issue persists, check the Docker and Docker Compose configuration and logs for more details."
+      },
+      "1226": {
+        "name": "ErrDockerComposeLogsCode",
+        "code": "1226",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to fetch logs from Meshery containers",
+        "probable_cause": "An error occurred while trying to fetch logs from Meshery containers using Docker Compose",
+        "suggested_remediation": "Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder. If the issue persists, check the Docker and Docker Compose configuration and logs for more details."
+      },
+      "1227": {
+        "name": "ErrMesheryCheckRunningStatusCode",
+        "code": "1227",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to check if Meshery is running",
+        "probable_cause": "You are not on correct context. \nMeshery is not reachable. \nThere might be some issue with your Docker or Kubernetes environment. ",
+        "suggested_remediation": "Please ensure Meshery is installed. \nValidate that you are in the correct context. "
+      },
+      "1229": {
+        "name": "ErrLogoutCode",
+        "code": "1229",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Logout failed",
+        "probable_cause": "Unable to complete the logout operation",
+        "suggested_remediation": "Check the token file path and permissions. The underlying error will provide more details."
       }
     }
   }

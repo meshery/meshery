@@ -1,5 +1,5 @@
 import { urlEncodeParams } from '@/utils/utils';
-import { mesheryApi } from '@meshery/schemas/dist/mesheryApi';
+import { mesheryApi } from '@meshery/schemas/mesheryApi';
 import { api } from './index';
 import _ from 'lodash';
 

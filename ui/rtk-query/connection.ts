@@ -1,7 +1,7 @@
 import {
   mesheryApi,
   useGetConnectionsQuery as useSchemasGetConnectionsQuery,
-} from '@meshery/schemas/dist/mesheryApi';
+} from '@meshery/schemas/mesheryApi';
 import { api } from './index';
 
 const TAGS = {
