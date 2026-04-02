@@ -6,7 +6,7 @@ import { Search } from '@mui/icons-material';
 import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
-import { promisifiedDataFetch } from '../lib/data-fetch';
+import { useLazyGetSystemSyncQuery } from '../rtk-query/system';
 import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { createPathForRemoteComponent } from './ExtensionSandbox';
@@ -65,19 +65,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
 import { ErrorBoundary } from '@sistent/sistent';
 import { WorkspaceModalContext } from '../utils/context/WorkspaceModalContextProvider';
-
-async function loadActiveK8sContexts() {
-  try {
-    const res = await promisifiedDataFetch('/api/system/sync');
-    if (res?.k8sConfig) {
-      return res.k8sConfig;
-    } else {
-      throw new Error('No kubernetes configurations found');
-    }
-  } catch (e) {
-    console.error('An error occurred while loading k8sconfig', e);
-  }
-}
 
 const K8sContextConnectionChip_ = ({
   ctx,
@@ -156,6 +143,7 @@ function K8sContextMenu({
   const [transformProperty, setTransformProperty] = useState(100);
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
+  const [fetchSystemSync] = useLazyGetSystemSyncQuery();
   const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const { connectionMetadataState } = useSelector((state) => state.ui);
@@ -226,9 +214,13 @@ function K8sContextMenu({
     });
     if (responseOfDeleteK8sCtx === 'CONFIRM') {
       const successCallback = async () => {
-        const updatedConfig = await loadActiveK8sContexts();
-        if (Array.isArray(updatedConfig)) {
-          dispatch(updateK8SConfig({ k8sConfig: updatedConfig }));
+        try {
+          const res = await fetchSystemSync().unwrap();
+          if (Array.isArray(res?.k8sConfig)) {
+            dispatch(updateK8SConfig({ k8sConfig: res.k8sConfig }));
+          }
+        } catch (e) {
+          console.error('An error occurred while loading k8sconfig', e);
         }
       };
       deleteKubernetesConfig(
