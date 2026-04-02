@@ -12,12 +12,11 @@ const PROVIDER_SELECTION_URL = `${MESHERY_SERVER_URL}/provider`;
 const PROVIDER_TOKEN = process.env.PROVIDER_TOKEN;
 
 if (process.env.CI) {
-  const core = require('@actions/core');
-
   if (!USER_EMAIL && !USER_PASSWORD) {
-    core.warning('Using default email and password on auth');
+    console.warn('Using default email and password on auth');
   } else if (!USER_EMAIL || !USER_PASSWORD) {
-    core.setFailed("You're either email or password is empty");
+    console.error('Either your email or password is empty');
+    process.exit(1);
   }
 } else {
   if (!USER_EMAIL && !USER_PASSWORD) {

@@ -12,18 +12,18 @@
     }
   },
   "model": {
-    "version": "",
-    "name": "aws-elasticache-controller",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.2.3"
+    },
+    "name": "aws-elasticache-controller",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "v1.2.3"
-    }
+    "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -34,16 +34,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "ec2-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "ec2-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": null
           }
@@ -55,16 +55,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "elasticache-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "elasticache-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": null
           }

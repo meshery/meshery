@@ -12,18 +12,18 @@
     }
   },
   "model": {
-    "version": "",
-    "name": "azure-storage",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
+    },
+    "name": "azure-storage",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
-    }
+    "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -33,16 +33,16 @@
             "kind": "StorageAccountsTableServicesTable",
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "azure-storage",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "azure-storage",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
               "mutatedRef": [
@@ -63,16 +63,16 @@
             "kind": "StorageAccountTableService",
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "azure-storage",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "azure-storage",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
               "mutatorRef": [

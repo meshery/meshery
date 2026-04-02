@@ -37,7 +37,7 @@ import (
 	"github.com/meshery/meshkit/utils/catalog"
 
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
-	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
+	coreV1 "github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1alpha2"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
@@ -230,7 +230,7 @@ func (h *Handler) handlePatternPOST(
 		return
 	}
 
-	if requestPayload.DesignFile.Id != uuid.Nil {
+	if requestPayload.DesignFile.ID != uuid.Nil {
 		eventBuilder = eventBuilder.WithAction(models.Update)
 	} else {
 		eventBuilder = eventBuilder.WithAction(models.Create)
@@ -242,7 +242,7 @@ func (h *Handler) handlePatternPOST(
 
 		"design": map[string]interface{}{
 			"name": requestPayload.DesignFile.Name,
-			"id":   requestPayload.DesignFile.Id.String(),
+			"id":   requestPayload.DesignFile.ID.String(),
 		},
 		"doclink": "https://docs.meshery.io/concepts/logical/designs",
 	}
@@ -1832,7 +1832,7 @@ func (h *Handler) convertV1alpha2ToV1beta1(mesheryPattern *models.MesheryPattern
 		return nil, "", err
 	}
 
-	v1beta1PatternFile.Id = *mesheryPattern.ID
+	v1beta1PatternFile.ID = *mesheryPattern.ID
 	v1beta1PatternFile.Version = v1alpha1PatternFile.Version
 
 	h.log.Infof("Converted design file with id \"%s\" to v1beta1 format", *mesheryPattern.ID)
