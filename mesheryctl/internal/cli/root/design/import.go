@@ -28,7 +28,7 @@ import (
 	"github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 
-	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
+	coreV1 "github.com/meshery/schemas/models/core"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
