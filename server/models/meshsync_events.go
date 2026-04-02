@@ -1,8 +1,9 @@
 package models
 
 import (
+	"fmt"
 	"sync"
-
+	
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
@@ -20,7 +21,6 @@ const (
 	MeshsyncRequestSubject      = "meshery.meshsync.request"
 )
 
-// TODO: Create proper error codes for the functionalities this struct implements
 type MeshsyncDataHandler struct {
 	broker       broker.Handler
 	dbHandler    database.Handler
@@ -103,15 +103,18 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 				return
 			}
 		if event.EventType == broker.ErrorEvent {
-			// TODO: Handle errors accordingly
-			mh.log.Error(event.Object.(error))
+			if err, ok := event.Object.(error); ok {
+				mh.log.Error(ErrMeshsyncEvent(err))
+			} else {
+				mh.log.Error(ErrMeshsyncEvent(fmt.Errorf("received meshsync error event with non-error object: %T", event.Object)))
+			}
 			continue
 		}
 
 		// handle the events
 		err := mh.meshsyncEventsAccumulator(event)
 		if err != nil {
-			mh.log.Error(err)
+			mh.log.Error(ErrMeshsyncEvent(err))
 			continue
 		}
 		}
@@ -149,7 +152,11 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 				return
 			}
 		if storeUpdate.EventType == broker.ErrorEvent {
-			mh.log.Error(storeUpdate.Object.(error))
+			if err, ok := storeUpdate.Object.(error); ok {
+				mh.log.Error(ErrMeshsyncStoreUpdates(err))
+			} else {
+				mh.log.Error(ErrMeshsyncStoreUpdates(fmt.Errorf("received store update error event with non-error object: %T", storeUpdate.Object)))
+			}
 			continue
 		}
 
@@ -163,7 +170,7 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 
 			err = mh.persistStoreUpdate(&obj)
 			if err != nil {
-				mh.log.Error(err)
+				mh.log.Error(ErrMeshsyncStoreUpdates(err))
 				continue
 			}
 		}
