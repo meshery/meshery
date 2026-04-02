@@ -14,7 +14,7 @@ func TestSMPPerformanceTestConfigValidator(t *testing.T) {
 		wantError error
 	}{
 		{
-			name: "rejects invalid/relative endpoints",
+			name: "given relative or invalid endpoints, when validating config, then error is returned",
 			config: &SMP.PerformanceTestConfig{
 				Name:     "invalid endpoints",
 				Duration: "30s",
@@ -29,7 +29,7 @@ func TestSMPPerformanceTestConfigValidator(t *testing.T) {
 			wantError: ErrValidURL,
 		},
 		{
-			name: "accepts valid absolute endpoints",
+			name: "given valid absolute endpoints, when validating config, then no error is returned",
 			config: &SMP.PerformanceTestConfig{
 				Name:     "valid endpoints",
 				Duration: "30s",
