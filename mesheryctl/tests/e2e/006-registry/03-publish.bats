@@ -32,7 +32,7 @@ require_spreadsheet_credentials() {
 }
 
 @test "given invalid spreadsheet credentials when running mesheryctl registry publish then an error is displayed" {
-    run $MESHERYCTL_BIN registry publish website "invalid-cred" "invalid-id" "/tmp/out" "/tmp/imgs"
+    run $MESHERYCTL_BIN registry publish website "invalid-cred" "invalid-id" "$TESTDATA_DIR/models" "$TESTDATA_DIR/imgs"
     assert_failure
     assert_output --partial "Invalid JWT Token"
 }
