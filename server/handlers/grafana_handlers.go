@@ -90,7 +90,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 
 		userUUID := user.ID
 		credential, err := p.SaveUserCredential(token, &models.Credential{
-			UserID: &userUUID,
+			UserId: &userUUID,
 			Type:   "grafana",
 			Secret: grafanaCred,
 			Name:   credName,
@@ -112,7 +112,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			MetaData:         grafanaConn,
 			CredentialSecret: grafanaCred,
 			Name:             connName,
-			CredentialID:     &credential.ID,
+			CredentialID:     credential.ID,
 		}, token, false)
 
 		if err != nil {
