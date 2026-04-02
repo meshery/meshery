@@ -204,7 +204,13 @@ const getHyperLinkWithDescription = (description) => {
 };
 
 export const getHyperLinkDiv = (text) => (
-  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getHyperLinkWithDescription(text), { ADD_ATTR: ['target'] }) }} />
+  <div
+    dangerouslySetInnerHTML={{
+      __html: DOMPurify.sanitize(getHyperLinkWithDescription(text), {
+        ADD_ATTR: ['target'],
+      }),
+    }}
+  />
 );
 /**
  * Returns the schema for the credentials.
