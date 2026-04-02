@@ -186,6 +186,7 @@ export const getDesign = async ({ design_id }) => {
 export const {
   useGetPatternsQuery,
   useGetDesignQuery,
+  useLazyGetDesignQuery,
   useGetUserDesignsQuery,
   useDeployPatternMutation,
   useUndeployPatternMutation,
