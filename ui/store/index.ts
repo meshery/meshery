@@ -10,7 +10,7 @@ import sessionReducer from './slices/session';
 import { authMiddleware } from './middleware/authMiddleware';
 import { rtkErrorMiddleware } from './middleware/rtkErrorMiddleware';
 import { mesheryEventBus } from '@/utils/eventBus';
-import { setDataFetchStore } from '../lib/data-fetch';
+import { installSessionInterceptor } from '../lib/sessionInterceptor';
 
 export const store = configureStore({
   reducer: {
@@ -27,8 +27,9 @@ export const store = configureStore({
     getDefaultMiddleware().concat(api.middleware).concat(authMiddleware).concat(rtkErrorMiddleware),
 });
 
-// Wire up data-fetch store reference after store is created
-setDataFetchStore(store);
+// Install global fetch interceptor for 401/redirect -> SESSION_EXPIRED.
+// This catches ALL HTTP requests (dataFetch, RTK Query, Relay, raw fetch).
+installSessionInterceptor(store);
 
 mesheryEventBus.on('DISPATCH_TO_MESHERY_STORE').subscribe((event) => {
   console.log('Dispatching to Meshery Store:', event.data);

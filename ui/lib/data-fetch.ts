@@ -1,11 +1,3 @@
-// Store reference for dispatching SESSION_EXPIRED on 401.
-// Lazy-initialized to avoid circular dependency (data-fetch -> store -> rtk-query -> data-fetch).
-let _store: { dispatch: (action: unknown) => void } | null = null;
-
-export function setDataFetchStore(store: { dispatch: (action: unknown) => void }) {
-  _store = store;
-}
-
 const dataFetch = (url, options = {}, successFn, errorFn) => {
   if (errorFn === undefined) {
     errorFn = (err) => {
@@ -14,12 +6,8 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
   }
   fetch(url, options)
     .then((res) => {
-      if (res.status === 401 || res.redirected) {
-        if (_store) {
-          _store.dispatch({ type: 'SESSION_EXPIRED' });
-        }
-        return new Promise(() => {});
-      }
+      // 401/redirect handling is done by the global session interceptor
+      // (lib/sessionInterceptor.ts). No need to handle it here.
 
       let result;
       if (res.ok) {

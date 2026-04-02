@@ -1,13 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import dataFetch, { promisifiedDataFetch, setDataFetchStore } from '../data-fetch';
-
-const mockDispatch = vi.fn();
+import dataFetch, { promisifiedDataFetch } from '../data-fetch';
 
 describe('dataFetch', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     global.fetch = vi.fn();
-    setDataFetchStore({ dispatch: mockDispatch });
   });
 
   afterEach(() => {
@@ -32,38 +29,6 @@ describe('dataFetch', () => {
       expect(successFn).toHaveBeenCalledWith(mockData);
     });
     expect(errorFn).not.toHaveBeenCalled();
-  });
-
-  it('dispatches SESSION_EXPIRED on 401 instead of reloading', async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
-      ok: false,
-      status: 401,
-      redirected: false,
-    });
-
-    const successFn = vi.fn();
-    const errorFn = vi.fn();
-
-    dataFetch('/api/test', {}, successFn, errorFn);
-
-    await vi.waitFor(() => {
-      expect(mockDispatch).toHaveBeenCalledWith({ type: 'SESSION_EXPIRED' });
-    });
-    expect(successFn).not.toHaveBeenCalled();
-  });
-
-  it('dispatches SESSION_EXPIRED on redirected response', async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
-      ok: true,
-      status: 200,
-      redirected: true,
-    });
-
-    dataFetch('/api/test', {}, vi.fn(), vi.fn());
-
-    await vi.waitFor(() => {
-      expect(mockDispatch).toHaveBeenCalledWith({ type: 'SESSION_EXPIRED' });
-    });
   });
 
   it('calls errorFn on non-ok response', async () => {
@@ -104,7 +69,6 @@ describe('promisifiedDataFetch', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     global.fetch = vi.fn();
-    setDataFetchStore({ dispatch: mockDispatch });
   });
 
   it('resolves with data on success', async () => {
