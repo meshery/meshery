@@ -36,7 +36,7 @@ import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponentByName } from '../api/meshmodel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
 import CAN, { ability } from '../utils/can';
-import { getCredentialByID } from '@/api/credentials';
+import { useLazyGetCredentialByIdQuery } from '@/rtk-query/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
@@ -206,6 +206,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   const { k8sConfig } = useSelector((state) => state.ui);
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const { isDrawerCollapsed } = useSelector((state) => state.ui);
+  const [fetchCredentialById] = useLazyGetCredentialByIdQuery();
   const dispatch = useDispatch();
   const [state, setState] = useState({
     mobileOpen: false,
@@ -260,18 +261,20 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
           } else {
             const credentialID = connection?.credential_id;
 
-            getCredentialByID(credentialID).then((res) => {
-              const grafanaCfg = {
-                grafanaURL: connection?.metadata?.url || '',
-                grafanaAPIKey: res?.secret?.secret || '',
-                grafanaBoardSearch: '',
-                grafanaBoards: connection?.metadata['grafana_boards'] || [],
-                selectedBoardsConfigs: [],
-                connectionID: connection?.id,
-                connectionName: connection?.name,
-              };
-              dispatch(updateGrafanaConfig(grafanaCfg));
-            });
+            fetchCredentialById(credentialID)
+              .unwrap()
+              .then((res) => {
+                const grafanaCfg = {
+                  grafanaURL: connection?.metadata?.url || '',
+                  grafanaAPIKey: res?.secret?.secret || '',
+                  grafanaBoardSearch: '',
+                  grafanaBoards: connection?.metadata['grafana_boards'] || [],
+                  selectedBoardsConfigs: [],
+                  connectionID: connection?.id,
+                  connectionName: connection?.name,
+                };
+                dispatch(updateGrafanaConfig(grafanaCfg));
+              });
           }
         });
       },
