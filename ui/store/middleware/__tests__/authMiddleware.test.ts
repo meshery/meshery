@@ -1,6 +1,21 @@
 import { describe, it, expect, vi } from 'vitest';
 import { authMiddleware } from '../authMiddleware';
 
+function makeRejectedWithValueAction(payload) {
+  return {
+    type: 'api/executeQuery/rejected',
+    payload,
+    meta: {
+      rejectedWithValue: true,
+      requestId: 'test-req',
+      requestStatus: 'rejected',
+      aborted: false,
+      condition: false,
+    },
+    error: { message: 'Rejected' },
+  };
+}
+
 describe('authMiddleware', () => {
   const createFakeStore = () => ({
     dispatch: vi.fn(),
@@ -10,17 +25,7 @@ describe('authMiddleware', () => {
   it('dispatches SESSION_EXPIRED on 401 rejected action', () => {
     const store = createFakeStore();
     const next = vi.fn();
-
-    // RTK marks rejected-with-value actions with this meta shape
-    const action = {
-      type: 'api/executeQuery/rejected',
-      meta: { rejectedWithValue: true },
-      payload: { status: 401 },
-    };
-
-    Object.defineProperty(action, 'meta', {
-      value: { ...action.meta, rejectedWithValue: true },
-    });
+    const action = makeRejectedWithValueAction({ status: 401 });
 
     authMiddleware(store)(next)(action);
 
@@ -32,12 +37,7 @@ describe('authMiddleware', () => {
   it('passes through non-401 rejected actions without dispatching SESSION_EXPIRED', () => {
     const store = createFakeStore();
     const next = vi.fn();
-
-    const action = {
-      type: 'api/executeQuery/rejected',
-      payload: { status: 500 },
-      meta: { rejectedWithValue: true },
-    };
+    const action = makeRejectedWithValueAction({ status: 500 });
 
     authMiddleware(store)(next)(action);
 
@@ -48,7 +48,6 @@ describe('authMiddleware', () => {
   it('passes through fulfilled actions without dispatching', () => {
     const store = createFakeStore();
     const next = vi.fn();
-
     const action = {
       type: 'api/executeQuery/fulfilled',
       payload: { data: 'ok' },

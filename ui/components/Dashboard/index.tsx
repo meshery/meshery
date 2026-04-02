@@ -33,7 +33,7 @@ import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaul
 import Popup from '../General/Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
-import { tabsClasses } from '@sistent/sistent';
+import { tabsClasses } from '@mui/material';
 import { useSelector } from 'react-redux';
 import useUnsavedChanges from './useUnsavedChanges';
 import UnsavedChangesModal from './UnsavedChangesModal';

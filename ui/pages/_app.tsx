@@ -16,11 +16,8 @@ import getPageContext from '../components/PageContext';
 import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
-import {
-  useLazyGetOrganizationsQuery,
-  useLazyGetUserKeysQuery,
-  useGetUserPrefQuery,
-} from '../rtk-query/user';
+import { useGetUserPrefQuery } from '../rtk-query/user';
+import { api } from '../rtk-query';
 import { useLazyGetConnectionsQuery } from '../rtk-query/connection';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -92,8 +89,8 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   const [fetchCredentialById] = useLazyGetCredentialByIdQuery();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
   const [fetchKubernetesContexts] = useLazyGetKubernetesContextsQuery();
-  const [fetchOrganizations] = useLazyGetOrganizationsQuery();
-  const [fetchUserKeys] = useLazyGetUserKeysQuery();
+  const [fetchOrganizations] = api.endpoints.getOrgs.useLazyQuery();
+  const [fetchUserKeys] = api.endpoints.getUserKeys.useLazyQuery();
   const [fetchConnections] = useLazyGetConnectionsQuery();
   const { data: userPrefData } = useGetUserPrefQuery();
   const dispatch = useDispatch();
@@ -333,7 +330,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         updateAbility();
       } else {
         try {
-          const result = await fetchUserKeys(orgID).unwrap();
+          const result = await fetchUserKeys({ orgId: orgID }).unwrap();
           if (result) {
             setState((prevState) => ({ ...prevState, keys: result.keys }));
             dispatch(setKeys({ keys: result.keys }));
@@ -358,7 +355,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     }
 
     try {
-      const result = await fetchOrganizations().unwrap();
+      const result = await fetchOrganizations({}).unwrap();
       let organizationToSet;
       const sessionOrg = currentOrg ? JSON.parse(currentOrg) : null;
 

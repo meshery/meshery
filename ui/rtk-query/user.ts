@@ -227,20 +227,6 @@ export const userApi = api
           return response?.token;
         },
       }),
-      getOrganizations: builder.query({
-        query: () => ({
-          url: 'identity/orgs',
-          method: 'GET',
-          credentials: 'include',
-        }),
-      }),
-      getUserKeys: builder.query({
-        query: (orgID) => ({
-          url: `identity/orgs/${orgID}/users/keys`,
-          method: 'GET',
-          credentials: 'include',
-        }),
-      }),
     }),
   });
 
@@ -264,8 +250,6 @@ export const {
   useRemoveUserFromTeamMutation,
   useGetSystemVersionQuery,
   useGetUserProfileSummaryByIdQuery,
-  useLazyGetOrganizationsQuery,
-  useLazyGetUserKeysQuery,
 } = userApi;
 
 export const useGetUserByIdQuery = (id, options) =>
