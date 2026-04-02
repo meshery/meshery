@@ -61,7 +61,7 @@
     "axios": "^1.13.6",
     "billboard.js": "^3.18.0",
     "cross-env": "^10.1.0",
-"isomorphic-dompurify": "^2.21.0",
+    "isomorphic-dompurify": "^3.7.1",
     "graphql": "^16.13.1",
     "graphql-ws": "^6.0.7",
     "humanize-duration": "^3.33.2",
