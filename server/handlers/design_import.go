@@ -298,7 +298,7 @@ func (h *Handler) DesignFileImportHandler(
 
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &designRecord)
 	if err != nil {
-		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider, token)
+		h.handleProviderPatternActionError(rw, eventBuilder, userID, savedDesignByt, err, provider, token, "save")
 		return
 	}
 
