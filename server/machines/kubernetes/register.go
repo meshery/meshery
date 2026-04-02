@@ -21,9 +21,21 @@ func (ra *RegisterAction) ExecuteOnEntry(ctx context.Context, machineCtx interfa
 func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
-	userUUID := user.ID
+
+	var userUUID uuid.UUID
+	var userID string
+	if user != nil {
+		userUUID = user.ID
+		userID = user.ID.String()
+	}
+
+	var systemID uuid.UUID
+	if sysID != nil {
+		systemID = *sysID
+	}
+
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(systemID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
@@ -42,7 +54,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 
 	context := []*models.K8sContext{&machinectx.K8sContext}
 
-	machinectx.K8sCompRegHelper.UpdateContexts(context).RegisterComponents(context, []models.K8sRegistrationFunction{core.RegisterK8sMeshModelComponents}, machinectx.RegistryManager, machinectx.EventBroadcaster, provider, user.ID.String(), true)
+	machinectx.K8sCompRegHelper.UpdateContexts(context).RegisterComponents(context, []models.K8sRegistrationFunction{core.RegisterK8sMeshModelComponents}, machinectx.RegistryManager, machinectx.EventBroadcaster, provider, userID, true)
 
 	return machines.Connect, nil, nil
 }

@@ -527,6 +527,10 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 				"connectionName": k8scontext.Name,
 			})
 
+		if h.config == nil {
+			return *eventBuilder.WithSeverity(events.Error).WithDescription("Handler config is nil").Build(), fmt.Errorf("handler config is nil")
+		}
+
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         k8scontext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,

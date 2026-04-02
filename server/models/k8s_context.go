@@ -467,11 +467,16 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	userUUID, _ := uuid.FromString(userID)
 	// Gets all the available kubernetes contexts
 
+	var instanceID uuid.UUID
+	if mesheryInstanceID != nil {
+		instanceID = *mesheryInstanceID
+	}
+
 	ctxName := k8sContext.Name
 	serverURL := k8sContext.Server
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]*K8sContext)
 	if !ok || len(k8sctxs) == 0 {
-		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher").FromUser(userUUID).Build()
+		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(instanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher").FromUser(userUUID).Build()
 		err := provider.PersistEvent(*event, nil)
 		if err != nil {
 			err = ErrPersistEvent(err)
@@ -499,7 +504,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		if k8ctx == nil {
 			continue
 		}
-		if k8ctx.KubernetesServerID.String() == sid {
+		if k8ctx.KubernetesServerID != nil && k8ctx.KubernetesServerID.String() == sid {
 			refCount++
 		}
 	}
@@ -508,7 +513,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	if refCount == 1 {
 		if provider.GetGenericPersister() == nil {
 
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(instanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(errors.New("meshery Database handler is not accessible to perform operations"), ctxName, serverURL),
 			}).Build()
 			err := provider.PersistEvent(*event, nil)
@@ -523,7 +528,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesKeyValue{}).Error
 		if err != nil {
 
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(instanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
 			err := provider.PersistEvent(*event, nil)
@@ -539,7 +544,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceSpec{}).Error
 		if err != nil {
 
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(instanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
 			err := provider.PersistEvent(*event, nil)
@@ -555,7 +560,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceStatus{}).Error
 		if err != nil {
 
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(instanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
 
@@ -572,7 +577,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceObjectMeta{}).Error
 		if err != nil {
 
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(instanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
 			err := provider.PersistEvent(*event, nil)
@@ -588,7 +593,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.KubernetesResource{}).Error
 		if err != nil {
 
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(instanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
 			err := provider.PersistEvent(*event, nil)
@@ -601,7 +606,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			return
 		}
 
-		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Informational).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("MeshSync data flushed for context %s", ctxName)).FromUser(userUUID).Build()
+		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(instanceID).WithSeverity(events.Informational).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("MeshSync data flushed for context %s", ctxName)).FromUser(userUUID).Build()
 		// Also add context name, as id is not helpful
 		err = provider.PersistEvent(*event, nil)
 		if err != nil {
