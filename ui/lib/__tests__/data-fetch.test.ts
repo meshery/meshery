@@ -1,19 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import dataFetch, { promisifiedDataFetch, setDataFetchStore } from '../data-fetch';
 
-// Mock the store before importing data-fetch
-vi.mock('../../store', () => ({
-  store: {
-    dispatch: vi.fn(),
-  },
-}));
-
-import dataFetch, { promisifiedDataFetch } from '../data-fetch';
-import { store } from '../../store';
+const mockDispatch = vi.fn();
 
 describe('dataFetch', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     global.fetch = vi.fn();
+    setDataFetchStore({ dispatch: mockDispatch });
   });
 
   afterEach(() => {
@@ -34,7 +28,6 @@ describe('dataFetch', () => {
 
     dataFetch('/api/test', {}, successFn, errorFn);
 
-    // Wait for async chain
     await vi.waitFor(() => {
       expect(successFn).toHaveBeenCalledWith(mockData);
     });
@@ -54,7 +47,7 @@ describe('dataFetch', () => {
     dataFetch('/api/test', {}, successFn, errorFn);
 
     await vi.waitFor(() => {
-      expect(store.dispatch).toHaveBeenCalledWith({ type: 'SESSION_EXPIRED' });
+      expect(mockDispatch).toHaveBeenCalledWith({ type: 'SESSION_EXPIRED' });
     });
     expect(successFn).not.toHaveBeenCalled();
   });
@@ -69,7 +62,7 @@ describe('dataFetch', () => {
     dataFetch('/api/test', {}, vi.fn(), vi.fn());
 
     await vi.waitFor(() => {
-      expect(store.dispatch).toHaveBeenCalledWith({ type: 'SESSION_EXPIRED' });
+      expect(mockDispatch).toHaveBeenCalledWith({ type: 'SESSION_EXPIRED' });
     });
   });
 
@@ -111,6 +104,7 @@ describe('promisifiedDataFetch', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     global.fetch = vi.fn();
+    setDataFetchStore({ dispatch: mockDispatch });
   });
 
   it('resolves with data on success', async () => {
