@@ -1,5 +1,5 @@
 import React from 'react';
-import { TreeView } from '@mui/x-tree-view/TreeView';
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { CircularProgress } from '@sistent/sistent';
 import { COMPONENTS } from '../../../constants/navigator';
 import MinusSquare from '../../../assets/icons/MinusSquare';
@@ -29,12 +29,9 @@ const ComponentTree = ({
   isComponentFetching,
 }: ComponentTreeProps) => {
   return (
-    <TreeView
+    <SimpleTreeView
       aria-label="controlled"
-      defaultExpanded={['3']}
-      defaultCollapseIcon={<MinusSquare />}
-      defaultExpandIcon={<PlusSquare />}
-      defaultEndIcon={<DotSquare />}
+      slots={{ collapseIcon: MinusSquare, expandIcon: PlusSquare, endIcon: DotSquare }}
       onExpandedItemsChange={handleToggle}
       onSelectedItemsChange={handleSelect}
       multiSelect
@@ -57,7 +54,7 @@ const ComponentTree = ({
       ))}
       <div ref={lastComponentRef} style={{ height: '48px' }}></div>
       {isComponentFetching ? <CircularProgress /> : null}
-    </TreeView>
+    </SimpleTreeView>
   );
 };
 

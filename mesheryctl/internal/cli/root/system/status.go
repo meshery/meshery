@@ -185,7 +185,7 @@ mesheryctl system status --verbose
 
 				// Get the values from the pod status
 				name := utils.GetCleanPodName(pod.GetName())
-				ready := fmt.Sprintf("%v/%v", containerReady, containerReady)
+				ready := fmt.Sprintf("%d/%d", containerReady, totalContainers)
 				status := fmt.Sprintf("%v", podStatus.Phase)
 				restarts := fmt.Sprintf("%v", containerRestarts)
 				ageS := age.String()
