@@ -15,7 +15,9 @@
 package design
 
 import (
+	"archive/tar"
 	"bytes"
+	"compress/gzip"
 	"fmt"
 	"io"
 	"net/http"
@@ -23,13 +25,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	encoding "github.com/meshery/meshkit/encoding"
-	meshkitutils "github.com/meshery/meshkit/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -87,6 +89,8 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 		}
 
 		designType, _ := cmd.Flags().GetString("type")
+		designType = strings.ToLower(strings.TrimSpace(designType))
+
 		if designType == "" {
 			designType = "current"
 		}
@@ -155,7 +159,6 @@ func exportDesign(baseUrl, design, designType string) error {
 	case "original":
 		url += fmt.Sprintf("/%s", pattern.Type.String)
 	}
-
 	resp, err := makeRequest(http.MethodGet, url)
 	if err != nil {
 		return err
@@ -169,6 +172,39 @@ func exportDesign(baseUrl, design, designType string) error {
 	buf := new(bytes.Buffer)
 	if _, err = buf.ReadFrom(resp.Body); err != nil {
 		return utils.ErrReadFromBody(err)
+	}
+
+	if designType == "tar.gz" {
+		var tarGzBuf bytes.Buffer
+
+		gzWriter := gzip.NewWriter(&tarGzBuf)
+		tarWriter := tar.NewWriter(gzWriter)
+
+		// create tar header
+		safeName := strings.ReplaceAll(pattern.Name, " ", "_")
+		fileName := fmt.Sprintf("%s.yaml", safeName)
+
+		// 2. Create the better header
+		header := &tar.Header{
+			Name:     fileName,
+			Mode:     0600,
+			Size:     int64(buf.Len()),
+			ModTime:  time.Now(),  // This fixes the 1970 date!
+			Typeflag: tar.TypeReg, // Ensures it's seen as a regular file
+		}
+
+		if err := tarWriter.WriteHeader(header); err != nil {
+			return err
+		}
+
+		if _, err := tarWriter.Write(buf.Bytes()); err != nil {
+			return err
+		}
+
+		tarWriter.Close()
+		gzWriter.Close()
+
+		buf = &tarGzBuf
 	}
 
 	filename := generateFilename(pattern.Name, design, designType)
@@ -221,6 +257,8 @@ func generateFilename(patternName, design, designType string) string {
 	case "oci":
 	case "original":
 		filename += ".tar.gz"
+	case "tar.gz":
+		filename += ".tar.gz"
 	default:
 		filename += ".yaml"
 	}
@@ -228,7 +266,7 @@ func generateFilename(patternName, design, designType string) string {
 }
 
 func writeToFile(outputFilePath string, buf *bytes.Buffer) error {
-	err := meshkitutils.WriteToFile(outputFilePath, buf.String())
+	err := os.WriteFile(outputFilePath, buf.Bytes(), 0644)
 	if err != nil {
 		return err
 	}
