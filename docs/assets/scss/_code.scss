@@ -3,11 +3,15 @@ code {
   color: var(--code);
   word-break: break-word;
   & ::-webkit-scrollbar {
-    display: none;
+    width: 0;
+    height: 0;
+    background: transparent;
   }
 }
 code::-webkit-scrollbar {
-  display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
 }
 .td-content {
   p code,
@@ -65,11 +69,15 @@ pre {
   display: block;
   color: var(--color-grey-medium);
   & ::-webkit-scrollbar {
-    display: none;
+    width: 0;
+    height: 0;
+    background: transparent;
   }
 }
 pre::-webkit-scrollbar {
-  display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
 }
 
 .highlight pre {
@@ -88,8 +96,9 @@ pre::-webkit-scrollbar {
     overflow: hidden;
     
     & ::-webkit-scrollbar {
-      display: none;
+      width: 0;
+      height: 0;
+      background: transparent;
     }
   }
 }
-
