@@ -167,7 +167,13 @@ func (wp *WorkspacePersister) GetWorkspace(id uuid.UUID) (*workspace.Workspace, 
 	workspace := workspace.Workspace{}
 	query := wp.DB.Where("id = ?", id)
 	err := query.First(&workspace).Error
-	return &workspace, err
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, err
+	}
+	return &workspace, nil
 }
 
 // GetWorkspaceByID returns a single workspace by ID

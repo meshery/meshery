@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+
 	"fmt"
 	"io"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 )
 
@@ -109,16 +111,16 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 
 	bf, err := provider.SaveWorkspace(req, &workspace, "", false)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	description := fmt.Sprintf("Workspace %s created.", workspace.Name)
 
 	h.log.Info(description)
-	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	if _, err := fmt.Fprint(w, string(bf)); err != nil {
 		h.log.Error(err)
 	}
@@ -134,8 +136,13 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 	workspaceID := mux.Vars(r)["id"]
 	resp, err := provider.DeleteWorkspace(r, workspaceID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+
+		if errors.GetCode(err) == models.ErrResultNotFoundCode {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -173,15 +180,20 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 
 	resp, err := provider.UpdateWorkspace(req, &workspace, workspaceID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		if errors.GetCode(err) == models.ErrResultNotFoundCode {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	respJSON, err := json.Marshal(resp)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, "Failed to marshal response to JSON", http.StatusInternalServerError)
+		marshalErr := ErrFailToSave(err, "workspace")
+		h.log.Error(marshalErr)
+		http.Error(w, marshalErr.Error(), http.StatusInternalServerError)
 		return
 	}
 	description := fmt.Sprintf("Workspace %s updated.", workspace.Name)
@@ -191,9 +203,7 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(respJSON)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
-		return
+		h.log.Error(err)
 	}
 }
 
