@@ -22,7 +22,7 @@ const workspacesApi = api
           const { expandInfo, ...otherArgs } = queryArgs;
           const params = urlEncodeParams(otherArgs);
           const workspaces = await baseQuery({
-            url: `workspaces?${params}`,
+            url: `extensions/api/workspaces?${params}`,
             method: 'GET',
           });
 
@@ -81,7 +81,7 @@ const workspacesApi = api
 
       getEnvironmentsOfWorkspace: builder.query({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.workspaceId}/environments`,
+          url: `extensions/api/workspaces/${queryArg.workspaceId}/environments`,
           params: {
             search: queryArg.search,
             order: queryArg.order,
@@ -96,7 +96,7 @@ const workspacesApi = api
 
       assignEnvironmentToWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.workspaceId}/environments/${queryArg.environmentId}`,
+          url: `extensions/api/workspaces/${queryArg.workspaceId}/environments/${queryArg.environmentId}`,
           method: 'POST',
         }),
 
@@ -105,7 +105,7 @@ const workspacesApi = api
 
       unassignEnvironmentFromWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.workspaceId}/environments/${queryArg.environmentId}`,
+          url: `extensions/api/workspaces/${queryArg.workspaceId}/environments/${queryArg.environmentId}`,
           method: 'DELETE',
         }),
 
@@ -117,7 +117,7 @@ const workspacesApi = api
           const { expandUser, infiniteScroll: _infiniteScroll, ...otherArgs } = queryArgs;
           const params = urlEncodeParams(otherArgs);
           const designs = await baseQuery({
-            url: `workspaces/${queryArgs.workspaceId}/designs?${params}`,
+            url: `extensions/api/workspaces/${queryArgs.workspaceId}/designs?${params}`,
             method: 'GET',
           });
           if (expandUser && designs.data && !designs.error) {
@@ -171,7 +171,7 @@ const workspacesApi = api
       }),
       assignDesignToWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`,
+          url: `extensions/api/workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`,
           method: 'POST',
         }),
         invalidatesTags: () => [{ type: TAGS.DESIGNS }],
@@ -179,7 +179,7 @@ const workspacesApi = api
 
       unassignDesignFromWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`,
+          url: `extensions/api/workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`,
           method: 'DELETE',
         }),
         invalidatesTags: () => [{ type: TAGS.DESIGNS }],
@@ -302,7 +302,7 @@ const workspacesApi = api
 
       createWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces`,
+          url: `extensions/api/workspaces`,
           method: 'POST',
           body: {
             name: queryArg.name,
@@ -315,7 +315,7 @@ const workspacesApi = api
 
       updateWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.id}`,
+          url: `extensions/api/workspaces/${queryArg.id}`,
           method: 'PUT',
           body: {
             name: queryArg.name,
@@ -328,7 +328,7 @@ const workspacesApi = api
 
       deleteWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.id}`,
+          url: `extensions/api/workspaces/${queryArg.id}`,
           method: 'DELETE',
         }),
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
