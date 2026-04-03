@@ -116,8 +116,7 @@ func TestWalletPatching(t *testing.T) {
 	}
 }
 
-// TestWalletPatchingFullPipeline tests wallet patching through the full evaluation pipeline
-// including ApplyConfigurationPatches.
+// TestWalletPatchingFullPipeline tests wallet patching through the full evaluation pipeline.
 func TestWalletPatchingFullPipeline(t *testing.T) {
 	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
 	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
@@ -199,8 +198,6 @@ func TestWalletPatchingFullPipeline(t *testing.T) {
 	if err != nil {
 		t.Fatalf("EvaluateDesign failed: %v", err)
 	}
-
-	ApplyConfigurationPatches(log, &resp)
 
 	// Find PodTemplate in the result and verify configuration was patched.
 	for _, comp := range resp.Design.Components {
@@ -896,8 +893,6 @@ func TestInventoryPatchingFullPipeline(t *testing.T) {
 	if err != nil {
 		t.Fatalf("EvaluateDesign failed: %v", err)
 	}
-
-	ApplyConfigurationPatches(log, &resp)
 
 	// Verify the Deployment's namespace was patched to "production".
 	for _, comp := range resp.Design.Components {

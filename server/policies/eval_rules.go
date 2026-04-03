@@ -76,39 +76,26 @@ func approveRelationshipsAction(rels []*relationship.RelationshipDefinition, sta
 		if !statuses[getRelStatus(rel)] {
 			continue
 		}
-		actions = append(actions, PolicyAction{
-			Op: UpdateRelationshipOp,
-			Value: map[string]interface{}{
-				"id":    rel.ID.String(),
-				"path":  "/status",
-				"value": "approved",
-			},
-		})
+		actions = append(actions, newUpdateRelationshipAction(rel.ID.String(), "/status", StatusApproved))
 	}
 	return actions
 }
 
 // approveIdentifiedRelationshipsAction approves all identified relationships (up to limit).
 func approveIdentifiedRelationshipsAction(rels []*relationship.RelationshipDefinition, maxLimit int) []PolicyAction {
-	return approveRelationshipsAction(rels, map[string]bool{"identified": true}, maxLimit)
+	return approveRelationshipsAction(rels, map[string]bool{StatusIdentified: true}, maxLimit)
 }
 
 // cleanupDeletedRelationshipsActions creates delete actions for relationships with status "deleted".
 func cleanupDeletedRelationshipsActions(rels []*relationship.RelationshipDefinition) []PolicyAction {
 	var actions []PolicyAction
 	for _, rel := range rels {
-		if getRelStatus(rel) == "deleted" {
+		if getRelStatus(rel) == StatusDeleted {
 			relMap, err := toGenericMap(rel)
 			if err != nil {
 				continue
 			}
-			actions = append(actions, PolicyAction{
-				Op: DeleteRelationshipOp,
-				Value: map[string]interface{}{
-					"id":           rel.ID.String(),
-					"relationship": relMap,
-				},
-			})
+			actions = append(actions, newDeleteRelationshipAction(rel.ID.String(), relMap))
 		}
 	}
 	return actions
@@ -160,14 +147,7 @@ func patchMutatorsAction(rel *relationship.RelationshipDefinition, design *patte
 			if deepEqual(mutatorValue, oldValue) {
 				continue
 			}
-			actions = append(actions, PolicyAction{
-				Op: getComponentUpdateOp(mutatedRefs[i]),
-				Value: map[string]interface{}{
-					"id":    mutatedID,
-					"path":  mutatedRefs[i],
-					"value": mutatorValue,
-				},
-			})
+			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedRefs[i]), mutatedID, mutatedRefs[i], mutatorValue))
 		}
 	}
 	return actions
@@ -197,12 +177,7 @@ func configurationForComponentAtPath(path []string, comp *component.ComponentDef
 	}
 	if path[0] == "configuration" {
 		config := getComponentConfiguration(comp, design)
-		rest := popFirst(path)
-		val := objectGetNested(config, rest, nil)
-		if val == nil && len(rest) > 1 && rest[0] == "spec" {
-			val = objectGetNested(config, rest[1:], nil)
-		}
-		return val
+		return objectGetNested(config, popFirst(path), nil)
 	}
 	// For non-configuration paths, convert to map for nested access.
 	compMap, err := toGenericMap(comp)
@@ -283,7 +258,7 @@ func RelationshipsAreSame(relA, relB *relationship.RelationshipDefinition) bool 
 // relationshipAlreadyExists checks if a relationship already exists in the design.
 func relationshipAlreadyExists(design *pattern.PatternFile, rel *relationship.RelationshipDefinition) bool {
 	for _, existing := range design.Relationships {
-		if getRelStatus(existing) == "deleted" {
+		if getRelStatus(existing) == StatusDeleted {
 			continue
 		}
 		if RelationshipsAreSame(existing, rel) {
@@ -340,7 +315,7 @@ func objectSubset(toValue, fromValue interface{}) bool {
 
 // componentMatchesKind checks if a component matches the given kind selector.
 func componentMatchesKind(comp *component.ComponentDefinition, kind string) bool {
-	return kind == "*" || comp.Component.Kind == kind
+	return matchName(comp.Component.Kind, kind)
 }
 
 // buildIdentifiedRelationship builds an identified relationship declaration
@@ -369,7 +344,7 @@ func buildIdentifiedRelationship(
 	selectors := relationship.SelectorSet{selectorSet}
 	decl.Selectors = &selectors
 	decl.ID = staticUUID(selectorSet)
-	setRelStatus(decl, "identified")
+	setRelStatus(decl, StatusIdentified)
 	return decl
 }
 

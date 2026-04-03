@@ -42,10 +42,10 @@ func (p *AliasPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefi
 
 func (p *AliasPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
 	status := getRelStatus(rel)
-	if status == "identified" || status == "pending" {
+	if status == StatusIdentified || status == StatusPending {
 		return aliasAddComponentSideEffects(rel, design)
 	}
-	if status == "deleted" {
+	if status == StatusDeleted {
 		return aliasDeleteComponentSideEffects(rel, design)
 	}
 	return nil
@@ -61,10 +61,10 @@ func isAliasRelationship(rel *relationship.RelationshipDefinition) bool {
 // isAliasRelationshipValid checks if an alias relationship is still valid.
 func isAliasRelationshipValid(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
 	status := getRelStatus(rel)
-	if status == "pending" {
+	if status == StatusPending {
 		return true
 	}
-	if status != "approved" {
+	if status != StatusApproved {
 		return false
 	}
 
@@ -145,7 +145,7 @@ func identifyAliasRelationships(comp *component.ComponentDefinition, relDef *rel
 					selectors := relationship.SelectorSet{selectorSetItem}
 					decl.Selectors = &selectors
 					decl.ID = staticUUID(selectorSetItem)
-					setRelStatus(decl, "identified")
+					setRelStatus(decl, StatusIdentified)
 
 					identified = append(identified, decl)
 				}
@@ -191,7 +191,7 @@ func getArrayAwareConfigPaths(ref []string, comp *component.ComponentDefinition,
 // aliasRelationshipAlreadyExists checks for duplicate alias relationships.
 func aliasRelationshipAlreadyExists(design *pattern.PatternFile, rel *relationship.RelationshipDefinition) bool {
 	for _, existing := range design.Relationships {
-		if getRelStatus(existing) == "deleted" || !isAliasRelationship(existing) {
+		if getRelStatus(existing) == StatusDeleted || !isAliasRelationship(existing) {
 			continue
 		}
 		existingTo := getFirstToSelectorItem(existing)
@@ -236,23 +236,21 @@ func aliasAddComponentSideEffects(rel *relationship.RelationshipDefinition, _ *p
 				displayName = fmt.Sprintf("%s.%s", path[length-2], path[length-1])
 			}
 
-			comp := map[string]interface{}{
-				"id":          selectorItemID(fromSel),
-				"component":   map[string]interface{}{"kind": selectorItemKind(fromSel)},
-				"displayName": displayName,
-				"metadata":    map[string]interface{}{"isAnnotation": true},
+			newComp := component.ComponentDefinition{
+				ID:          *fromSel.ID,
+				DisplayName: displayName,
+				Component:   component.Component{Kind: selectorItemKind(fromSel)},
+				Metadata:    component.ComponentDefinition_Metadata{IsAnnotation: true},
 			}
 			if fromSel.Model != nil {
-				compMap, err := toGenericMap(fromSel.Model)
-				if err == nil {
-					comp["model"] = compMap
-				}
+				newComp.ModelReference = *fromSel.Model
+			}
+			compMap, err := toGenericMap(newComp)
+			if err != nil {
+				continue
 			}
 
-			actions = append(actions, PolicyAction{
-				Op:    AddComponentOp,
-				Value: map[string]interface{}{"item": comp},
-			})
+			actions = append(actions, newAddComponentAction(compMap))
 		}
 	}
 	return actions
@@ -272,13 +270,7 @@ func aliasDeleteComponentSideEffects(rel *relationship.RelationshipDefinition, d
 			if comp != nil {
 				compMap, _ = toGenericMap(comp)
 			}
-			actions = append(actions, PolicyAction{
-				Op: DeleteComponentOp,
-				Value: map[string]interface{}{
-					"id":        fID,
-					"component": compMap,
-				},
-			})
+			actions = append(actions, newDeleteComponentAction(fID, compMap))
 		}
 	}
 	return actions

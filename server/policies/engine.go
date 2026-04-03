@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/meshery/meshkit/logger"
-	"github.com/meshery/meshkit/utils"
-	patching "github.com/meshery/meshkit/utils/patching"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
@@ -89,49 +87,6 @@ func (e *GoEngine) EvaluateDesign(
 	resp.Trace = buildTrace(allActions, &design, resultDesign)
 
 	return resp, nil
-}
-
-type componentUpdatePayload struct {
-	ID    string      `json:"id"`
-	Value interface{} `json:"value"`
-	Path  []string    `json:"path"`
-}
-
-// ApplyConfigurationPatches applies component configuration update patches to the response.
-func ApplyConfigurationPatches(log logger.Handler, resp *pattern.EvaluationResponse) {
-	var updates []componentUpdatePayload
-	for _, action := range resp.Actions {
-		if action.Op == UpdateComponentConfigurationOp || action.Op == UpdateComponentOp {
-			pl, err := utils.MarshalAndUnmarshal[map[string]interface{}, componentUpdatePayload](action.Value)
-			if err != nil {
-				log.Warn(ErrParsePayload(err))
-				continue
-			}
-			updates = append(updates, pl)
-		}
-	}
-
-	for _, comp := range resp.Design.Components {
-		var patches []patching.Patch
-		for _, up := range updates {
-			if up.ID == comp.ID.String() {
-				path := up.Path
-				if len(path) > 0 && path[0] == "configuration" {
-					path = path[1:]
-				}
-				patches = append(patches, patching.Patch{Path: path, Value: up.Value})
-			}
-		}
-		if len(patches) == 0 {
-			continue
-		}
-		updatedConfig, err := patching.ApplyPatches(comp.Configuration, patches)
-		if err != nil {
-			log.Error(ErrApplyPatch(err))
-			continue
-		}
-		comp.Configuration = updatedConfig
-	}
 }
 
 // evaluate runs the full evaluation pipeline on a design.

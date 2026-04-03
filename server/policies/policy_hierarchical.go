@@ -25,7 +25,7 @@ func (p *HierarchicalParentChildPolicy) IsInvalid(rel *relationship.Relationship
 }
 
 func (p *HierarchicalParentChildPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
-	return false
+	return relationshipAlreadyExists(design, rel)
 }
 
 func (p *HierarchicalParentChildPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
@@ -58,14 +58,14 @@ func (p *HierarchicalParentChildPolicy) IdentifyRelationship(relDef *relationshi
 			continue
 		}
 
-		setRelStatus(rel, "approved")
+		setRelStatus(rel, StatusApproved)
 		result = append(result, rel)
 	}
 	return result
 }
 
 func (p *HierarchicalParentChildPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
-	if getRelStatus(rel) == "deleted" {
+	if getRelStatus(rel) == StatusDeleted {
 		return nil
 	}
 	return patchMutatorsAction(rel, design)

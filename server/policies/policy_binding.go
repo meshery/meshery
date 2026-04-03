@@ -25,7 +25,7 @@ func (p *EdgeBindingPolicy) IsInvalid(rel *relationship.RelationshipDefinition, 
 }
 
 func (p *EdgeBindingPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
-	return false
+	return relationshipAlreadyExists(design, rel)
 }
 
 func (p *EdgeBindingPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
@@ -33,7 +33,7 @@ func (p *EdgeBindingPolicy) IdentifyRelationship(relDef *relationship.Relationsh
 }
 
 func (p *EdgeBindingPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
-	if getRelStatus(rel) == "deleted" {
+	if getRelStatus(rel) == StatusDeleted {
 		return nil
 	}
 	actions := patchMutatorsAction(rel, design)
@@ -118,22 +118,13 @@ func patchBindingMatchFieldsForSelector(match *relationship.MatchSelector, comp 
 			mutatorPath := (*mSel.MutatorRef)[i]
 			mutatedPath := (*otherSel.MutatedRef)[i]
 
-			matchCompMap, _ := toGenericMap(matchComp)
-			otherCompMap, _ := toGenericMap(otherComp)
-			mutatorValue := objectGetNestedWithSpecFallback(matchCompMap, mutatorPath)
-			oldValue := objectGetNestedWithSpecFallback(otherCompMap, mutatedPath)
+			mutatorValue := configurationForComponentAtPath(mutatorPath, matchComp, design)
+			oldValue := configurationForComponentAtPath(mutatedPath, otherComp, design)
 
 			if deepEqual(mutatorValue, oldValue) || mutatorValue == nil {
 				continue
 			}
-			actions = append(actions, PolicyAction{
-				Op: getComponentUpdateOp(mutatedPath),
-				Value: map[string]interface{}{
-					"id":    otherComp.ID.String(),
-					"path":  mutatedPath,
-					"value": mutatorValue,
-				},
-			})
+			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), otherComp.ID.String(), mutatedPath, mutatorValue))
 		}
 	}
 	return actions
@@ -230,7 +221,7 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 						decl.ID = staticUUID(seed)
 						selectors := relationship.SelectorSet{selectorSetItem}
 						decl.Selectors = &selectors
-						setRelStatus(decl, "approved")
+						setRelStatus(decl, StatusApproved)
 
 						identified = append(identified, decl)
 					}
@@ -305,14 +296,14 @@ func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relati
 		return false
 	}
 
-	comp1Map, _ := toGenericMap(comp1)
-	comp2Map, _ := toGenericMap(comp2)
-
-	mutatorDecl, mutatorPaths := extractMutatorFromMatchTyped(sel.Match, comp1Map, comp2Map)
-	mutatedDecl, mutatedPaths := extractMutatedFromMatchTyped(sel.Match, comp1Map, comp2Map)
-	if mutatorDecl == nil || mutatedDecl == nil || len(mutatorPaths) == 0 || len(mutatedPaths) == 0 {
+	mutatorComp, mutatorPaths := extractMutatorFromMatch(sel.Match, comp1, comp2)
+	mutatedComp, mutatedPaths := extractMutatedFromMatch(sel.Match, comp1, comp2)
+	if mutatorComp == nil || mutatedComp == nil || len(mutatorPaths) == 0 || len(mutatedPaths) == 0 {
 		return false
 	}
+
+	mutatorMap, _ := toGenericMap(mutatorComp)
+	mutatedMap, _ := toGenericMap(mutatedComp)
 
 	count := len(mutatorPaths)
 	if len(mutatedPaths) < count {
@@ -320,10 +311,10 @@ func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relati
 	}
 
 	for i := 0; i < count; i++ {
-		resolvedFrom := resolvePath(mutatorPaths[i], mutatorDecl)
-		resolvedTo := resolvePath(mutatedPaths[i], mutatedDecl)
-		val1 := objectGetNestedWithSpecFallback(mutatorDecl, resolvedFrom)
-		val2 := objectGetNestedWithSpecFallback(mutatedDecl, resolvedTo)
+		resolvedFrom := resolvePath(mutatorPaths[i], mutatorMap)
+		resolvedTo := resolvePath(mutatedPaths[i], mutatedMap)
+		val1 := configurationForComponentAtPath(resolvedFrom, mutatorComp, design)
+		val2 := configurationForComponentAtPath(resolvedTo, mutatedComp, design)
 		if val1 != nil && val2 != nil && !deepEqual(val1, val2) {
 			return false
 		}
@@ -331,31 +322,31 @@ func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relati
 	return true
 }
 
-// extractMutatorFromMatchTyped finds the mutator declaration and ref paths from a match field.
-func extractMutatorFromMatchTyped(match *relationship.MatchSelector, comp1Map, comp2Map map[string]interface{}) (map[string]interface{}, [][]string) {
+// extractMutatorFromMatch finds the mutator component and ref paths from a match field.
+func extractMutatorFromMatch(match *relationship.MatchSelector, comp1, comp2 *component.ComponentDefinition) (*component.ComponentDefinition, [][]string) {
 	if match.From != nil && len(*match.From) > 0 {
 		if (*match.From)[0].MutatorRef != nil {
-			return comp1Map, *(*match.From)[0].MutatorRef
+			return comp1, *(*match.From)[0].MutatorRef
 		}
 	}
 	if match.To != nil && len(*match.To) > 0 {
 		if (*match.To)[0].MutatorRef != nil {
-			return comp2Map, *(*match.To)[0].MutatorRef
+			return comp2, *(*match.To)[0].MutatorRef
 		}
 	}
 	return nil, nil
 }
 
-// extractMutatedFromMatchTyped finds the mutated declaration and ref paths from a match field.
-func extractMutatedFromMatchTyped(match *relationship.MatchSelector, comp1Map, comp2Map map[string]interface{}) (map[string]interface{}, [][]string) {
+// extractMutatedFromMatch finds the mutated component and ref paths from a match field.
+func extractMutatedFromMatch(match *relationship.MatchSelector, comp1, comp2 *component.ComponentDefinition) (*component.ComponentDefinition, [][]string) {
 	if match.From != nil && len(*match.From) > 0 {
 		if (*match.From)[0].MutatedRef != nil {
-			return comp1Map, *(*match.From)[0].MutatedRef
+			return comp1, *(*match.From)[0].MutatedRef
 		}
 	}
 	if match.To != nil && len(*match.To) > 0 {
 		if (*match.To)[0].MutatedRef != nil {
-			return comp2Map, *(*match.To)[0].MutatedRef
+			return comp2, *(*match.To)[0].MutatedRef
 		}
 	}
 	return nil, nil

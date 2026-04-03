@@ -324,11 +324,6 @@ func (h *Handler) EvaluateDesign(
 		_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
 		evaluationResponse.Trace = savedTrace
 
-		// Apply configuration patches AFTER processEvaluationResponse.
-		if useGoEngine {
-			gopolicies.ApplyConfigurationPatches(h.log, &evaluationResponse)
-		}
-
 		evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
 		if evaluationResponse.Design.Metadata == nil {
 			evaluationResponse.Design.Metadata = &pattern.PatternFile_Metadata{}
@@ -390,16 +385,18 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 		compFilter := &regv1beta1.ComponentFilter{
 			Name:       _c.Component.Kind,
 			APIVersion: _c.Component.Version,
-			Version:    _c.Model.Model.Version,
-			ModelName:  _c.Model.Name,
 			Limit:      1,
 			Trim:       true,
 		}
 
-		// NOTE: this is not deterministic as any version of the component can be used.
-		// NOTE: Confirm that the registry returns the latest version in case version is not specified.
-		if _c.Model.Model.Version == "*" {
-			compFilter.Version = ""
+		if _c.Model != nil {
+			compFilter.Version = _c.Model.Model.Version
+			compFilter.ModelName = _c.Model.Name
+			if _c.Model.Model.Version == "*" {
+				compFilter.Version = ""
+			}
+		} else {
+			compFilter.ModelName = _c.ModelReference.Name
 		}
 
 		entities, _, _, _ := registryManager.GetEntitiesMemoized(compFilter, registryCache)

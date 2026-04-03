@@ -24,7 +24,7 @@ func (p *EdgeNonBindingPolicy) IsInvalid(rel *relationship.RelationshipDefinitio
 }
 
 func (p *EdgeNonBindingPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
-	return false
+	return relationshipAlreadyExists(design, rel)
 }
 
 func (p *EdgeNonBindingPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
@@ -32,7 +32,7 @@ func (p *EdgeNonBindingPolicy) IdentifyRelationship(relDef *relationship.Relatio
 }
 
 func (p *EdgeNonBindingPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
-	if getRelStatus(rel) == "deleted" {
+	if getRelStatus(rel) == StatusDeleted {
 		return nil
 	}
 	return patchMutatorsAction(rel, design)

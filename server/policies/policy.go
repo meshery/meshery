@@ -33,14 +33,7 @@ func validateRelationshipsInDesign(design *pattern.PatternFile, policy Relations
 	var actions []PolicyAction
 	for _, rel := range implicated {
 		if fromOrToComponentsDontExist(rel, design) && policy.IsInvalid(rel, design) {
-			actions = append(actions, PolicyAction{
-				Op: UpdateRelationshipOp,
-				Value: map[string]interface{}{
-					"id":    rel.ID.String(),
-					"path":  "/status",
-					"value": "deleted",
-				},
-			})
+			actions = append(actions, newUpdateRelationshipAction(rel.ID.String(), "/status", StatusDeleted))
 		}
 	}
 	return actions
@@ -61,9 +54,6 @@ func identifyRelationshipsInDesign(
 		identified := policy.IdentifyRelationship(relDef, design)
 
 		for _, rel := range identified {
-			if relationshipAlreadyExists(design, rel) {
-				continue
-			}
 			if policy.AlreadyExists(rel, design) {
 				continue
 			}
@@ -78,12 +68,7 @@ func identifyRelationshipsInDesign(
 			if err != nil {
 				continue
 			}
-			actions = append(actions, PolicyAction{
-				Op: AddRelationshipOp,
-				Value: map[string]interface{}{
-					"item": relMap,
-				},
-			})
+			actions = append(actions, newAddRelationshipAction(relMap))
 		}
 	}
 	return actions

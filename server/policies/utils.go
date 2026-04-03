@@ -15,22 +15,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
-// objectGetNestedWithSpecFallback tries objectGetNested with the full path,
-// and if nil, retries by skipping "spec" after "configuration".
-// This handles relationship definitions that include "spec" in paths
-// but components that store fields directly under "configuration".
-func objectGetNestedWithSpecFallback(obj interface{}, path []string) interface{} {
-	val := objectGetNested(obj, path, nil)
-	if val != nil {
-		return val
-	}
-	// Try skipping "spec" if path is like ["configuration", "spec", ...]
-	if len(path) > 2 && path[0] == "configuration" && path[1] == "spec" {
-		return objectGetNested(obj, append([]string{path[0]}, path[2:]...), nil)
-	}
-	return nil
-}
-
 // objectGetNested traverses a nested map following the given path segments.
 // Returns defaultValue if any segment is missing or the path is invalid.
 func objectGetNested(obj interface{}, path []string, defaultValue interface{}) interface{} {
@@ -143,22 +127,6 @@ func getMapString(m map[string]interface{}, key string) string {
 	return s
 }
 
-// getMapSlice safely retrieves a []interface{} value from a map.
-func getMapSlice(m map[string]interface{}, key string) []interface{} {
-	if m == nil {
-		return nil
-	}
-	v, ok := m[key]
-	if !ok {
-		return nil
-	}
-	s, ok := v.([]interface{})
-	if !ok {
-		return nil
-	}
-	return s
-}
-
 // getMapMap safely retrieves a map[string]interface{} value from a map.
 func getMapMap(m map[string]interface{}, key string) map[string]interface{} {
 	if m == nil {
@@ -173,57 +141,6 @@ func getMapMap(m map[string]interface{}, key string) map[string]interface{} {
 		return nil
 	}
 	return s
-}
-
-// toStringSlice converts []interface{} to []string.
-func toStringSlice(arr []interface{}) []string {
-	result := make([]string, 0, len(arr))
-	for _, v := range arr {
-		if s, ok := v.(string); ok {
-			result = append(result, s)
-		} else {
-			result = append(result, fmt.Sprintf("%v", v))
-		}
-	}
-	return result
-}
-
-// deepCopyMap creates a deep copy of a map[string]interface{}.
-func deepCopyMap(m map[string]interface{}) map[string]interface{} {
-	if m == nil {
-		return nil
-	}
-	result := make(map[string]interface{}, len(m))
-	for k, v := range m {
-		switch val := v.(type) {
-		case map[string]interface{}:
-			result[k] = deepCopyMap(val)
-		case []interface{}:
-			result[k] = deepCopySlice(val)
-		default:
-			result[k] = v
-		}
-	}
-	return result
-}
-
-// deepCopySlice creates a deep copy of a []interface{}.
-func deepCopySlice(s []interface{}) []interface{} {
-	if s == nil {
-		return nil
-	}
-	result := make([]interface{}, len(s))
-	for i, v := range s {
-		switch val := v.(type) {
-		case map[string]interface{}:
-			result[i] = deepCopyMap(val)
-		case []interface{}:
-			result[i] = deepCopySlice(val)
-		default:
-			result[i] = v
-		}
-	}
-	return result
 }
 
 // resolvePath resolves wildcards ("_") in a path against an object.
@@ -259,15 +176,6 @@ func resolvePath(path []string, obj map[string]interface{}) []string {
 }
 
 
-// stringSliceToInterface converts []string to []interface{}.
-func stringSliceToInterface(ss []string) []interface{} {
-	result := make([]interface{}, len(ss))
-	for i, s := range ss {
-		result[i] = s
-	}
-	return result
-}
-
 // deepEqual does a deep comparison of two interface{} values.
 func deepEqual(a, b interface{}) bool {
 	return reflect.DeepEqual(a, b)
@@ -276,14 +184,6 @@ func deepEqual(a, b interface{}) bool {
 // uuidFromString parses a UUID from a string, returning zero UUID on error.
 func uuidFromString(s string) (uuid.UUID, error) {
 	return uuid.FromString(s)
-}
-
-// relationshipPreferenceKey builds the preference key for a relationship map.
-func relationshipPreferenceKey(rel map[string]interface{}) string {
-	kind := strings.ToLower(getMapString(rel, "kind"))
-	relType := strings.ToLower(getMapString(rel, "type"))
-	subType := strings.ToLower(getMapString(rel, "subType"))
-	return kind + "-" + relType + "-" + subType
 }
 
 // deepCopyDesign creates a deep copy of a PatternFile via JSON round-trip.
@@ -311,6 +211,14 @@ func deepCopyRelDef(rel *relationship.RelationshipDefinition) *relationship.Rela
 	}
 	return &cp
 }
+
+// Relationship status constants. Uses schema-defined values where available.
+const (
+	StatusApproved   = string(relationship.Approved)
+	StatusDeleted    = string(relationship.Deleted)
+	StatusPending    = string(relationship.Pending)
+	StatusIdentified = "identified"
+)
 
 // getRelStatus returns the status string of a relationship, or empty if nil.
 func getRelStatus(rel *relationship.RelationshipDefinition) string {

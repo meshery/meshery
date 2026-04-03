@@ -112,11 +112,7 @@ func anySelectorMatches(comp *component.ComponentDefinition, sel relationship.Se
 }
 
 func selectorAndComponentKindMatches(sel relationship.SelectorItem, comp *component.ComponentDefinition) bool {
-	k := selectorItemKind(sel)
-	if k == "*" {
-		return true
-	}
-	return k == comp.Component.Kind
+	return matchName(comp.Component.Kind, selectorItemKind(sel))
 }
 
 func selectorAndComponentModelMatches(sel relationship.SelectorItem, comp *component.ComponentDefinition) bool {

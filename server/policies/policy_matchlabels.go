@@ -27,7 +27,7 @@ func (p *MatchLabelsPolicy) IsInvalid(rel *relationship.RelationshipDefinition, 
 }
 
 func (p *MatchLabelsPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
-	return false
+	return relationshipAlreadyExists(design, rel)
 }
 
 func (p *MatchLabelsPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
@@ -171,7 +171,7 @@ func identifyMatchlabelRelationships(relDef *relationship.RelationshipDefinition
 		selectors := relationship.SelectorSet{ss}
 		decl.Selectors = &selectors
 		decl.ID = staticUUID(fmt.Sprintf("%v%s", ss, "sibling_match_labels_policy"))
-		setRelStatus(decl, "identified")
+		setRelStatus(decl, StatusIdentified)
 
 		identified = append(identified, decl)
 	}

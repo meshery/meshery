@@ -25,7 +25,7 @@ func (p *HierarchicalWalletPolicy) IsInvalid(rel *relationship.RelationshipDefin
 }
 
 func (p *HierarchicalWalletPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
-	return false
+	return relationshipAlreadyExists(design, rel)
 }
 
 func (p *HierarchicalWalletPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
@@ -33,7 +33,7 @@ func (p *HierarchicalWalletPolicy) IdentifyRelationship(relDef *relationship.Rel
 }
 
 func (p *HierarchicalWalletPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
-	if getRelStatus(rel) == "deleted" {
+	if getRelStatus(rel) == StatusDeleted {
 		return nil
 	}
 	return patchMutatorsAction(rel, design)
