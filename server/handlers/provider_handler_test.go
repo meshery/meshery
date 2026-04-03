@@ -230,28 +230,28 @@ func TestLoginHandler_NoneProviderFromMiddleware(t *testing.T) {
 func TestDeleteMeshSyncResource(t *testing.T) {
 	handler := newTestHandler(t, map[string]models.Provider{}, "")
 
-	tests := []struct {
-		name                 string
-		migrateResourceTable bool
-		expectedStatus       int
-		expectedContentType  string
-		expectedBody         string
-	}{
-		{
-			name:                 "returns 200 and deleted true when delete succeeds",
-			migrateResourceTable: true,
-			expectedStatus:       http.StatusOK,
-			expectedContentType:  "application/json",
-			expectedBody:         `"deleted":true`,
-		},
-		{
-			name:                 "returns 500 when delete fails",
-			migrateResourceTable: false,
-			expectedStatus:       http.StatusInternalServerError,
-			expectedContentType:  "text/plain",
-			expectedBody:         "Failed to Delete",
-		},
-	}
+		tests := []struct {
+			name                 string
+			migrateResourceTable bool
+			expectedStatus       int
+			expectedContentType  string
+			expectedBody         string
+		}{
+			{
+				name: "given resource table migrated when DeleteMeshSyncResource then return status 200 and deleted true",
+				migrateResourceTable: true,
+				expectedStatus:       http.StatusOK,
+				expectedContentType:  "application/json",
+				expectedBody:         `"deleted":true`,
+			},
+			{
+				name: "given resource table not migrated when DeleteMeshSyncResource then return status 500 and failed to delete",
+				migrateResourceTable: false,
+				expectedStatus:       http.StatusInternalServerError,
+				expectedContentType:  "text/plain",
+				expectedBody:         "Failed to Delete",
+			},
+		}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
