@@ -56,6 +56,11 @@ mesheryctl system reset
 Usage of mesheryctl system reset
 ![reset-usage](/reference/images/reset.png)
 
+## Terminal Sessions
+
+Demonstration of `mesheryctl system reset`:
+{{< meshery-design-embed src="891569" >}}
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
