@@ -20,7 +20,6 @@ import (
 
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
@@ -134,6 +133,7 @@ func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
 }
 
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request, _ string) {
+	w.Header().Set("Content-Type", "application/json")
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
 		obj := "provider capabilities"
@@ -152,27 +152,8 @@ func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Requ
 	if fromMiddleWare {
 		return
 	}
-	redirectURL := "/"
-	if ref := r.URL.Query().Get("ref"); ref != "" {
-		if decoded, err := core.DecodeRefURL(ref); err == nil && isSafeRedirect(decoded) {
-			redirectURL = decoded
-		}
-	}
+	redirectURL := resolvePostLoginRedirect(r.URL.Query().Get("ref"), "/")
 	http.Redirect(w, r, redirectURL, http.StatusFound)
-}
-
-// isSafeRedirect validates that a decoded ref URL is a relative in-app path
-// to prevent open redirects. It rejects absolute URLs (with scheme/host) and
-// protocol-relative URLs (starting with //).
-func isSafeRedirect(rawURL string) bool {
-	if rawURL == "" || strings.HasPrefix(rawURL, "//") {
-		return false
-	}
-	parsed, err := url.Parse(rawURL)
-	if err != nil {
-		return false
-	}
-	return parsed.Scheme == "" && parsed.Host == ""
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
@@ -215,7 +196,7 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 }
 
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ := uuid.FromString(environmentPayload.OrgId)
+	orgId := uuid.UUID(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
@@ -229,7 +210,7 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	id, _ := uuid.FromString(environmentID)
-	orgId, _ := uuid.FromString(environmentPayload.OrgId)
+	orgId := uuid.UUID(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
@@ -574,11 +555,11 @@ func (l *DefaultLocalProvider) PublishEventToProvider(_ string, _ events.Event) 
 	return nil
 }
 
-// PublishMetrics - publishes metrics to the provider backend asyncronously
+// PublishMetrics - publishes metrics to the provider backend asynchronously
 func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
 	data, err := json.Marshal(result)
 	if err != nil {
-		return ErrMarshal(err, "Meshery Matrics for shipping")
+		return ErrMarshal(err, "Meshery Metrics for shipping")
 	}
 
 	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
@@ -593,13 +574,15 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		l.Log.Warn(ErrDoRequest(err, cReq.Method, remoteProviderURL.String()))
 		return nil
 	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Warn(fmt.Errorf("error closing response body: %w", err))
+		}
+	}()
 	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("metrics published to remote provider")
 		return nil
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
 	_, err = io.ReadAll(resp.Body)
 	if err != nil {
 		l.Log.Warn(ErrDataRead(err, "body"))
@@ -1199,8 +1182,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 }
 
 func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
-	connection := connections.Connection{ID: connectionID}
-	return l.ConnectionPersister.DeleteConnection(&connection)
+	return l.ConnectionPersister.DeleteConnectionById(connectionID)
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
@@ -1313,25 +1295,23 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		}(seedContent, log, &seededUUIDs)
 	}
 
-	// Seed default organization
-	go func() {
-		id, _ := uuid.NewV4()
-		org := &organization.Organization{
-			Id:          id,
-			Name:        "My Org",
-			Country:     "",
-			Region:      "",
-			Description: "This is default organization",
-			Owner:       uuid.Nil,
+	// Seed default organization before the UI requests organizations.
+	id, _ := uuid.NewV4()
+	org := &organization.Organization{
+		ID:          id,
+		Name:        "My Org",
+		Country:     "",
+		Region:      "",
+		Description: "This is default organization",
+		Owner:       uuid.Nil,
+	}
+	count, _ := l.OrganizationPersister.GetOrganizationsCount()
+	if count == 0 {
+		_, err := l.OrganizationPersister.SaveOrganization(org)
+		if err != nil {
+			log.Error(ErrGettingSeededComponents(err, "organization"))
 		}
-		count, _ := l.OrganizationPersister.GetOrganizationsCount()
-		if count == 0 {
-			_, err := l.OrganizationPersister.SaveOrganization(org)
-			if err != nil {
-				log.Error(ErrGettingSeededComponents(err, "organization"))
-			}
-		}
-	}()
+	}
 }
 
 func (l *DefaultLocalProvider) Cleanup() error {
@@ -1384,7 +1364,7 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 		return nil, fmt.Errorf("error retrieving count of credentials for user id: %s - %v", userID, err)
 	}
 
-	var credentialsList []*Credential
+	var credentialsList []Credential
 	if count > 0 {
 		if err := result.Offset(page * pageSize).Limit(pageSize).Find(&credentialsList).Error; err != nil {
 			if err != gorm.ErrRecordNotFound {
@@ -1408,11 +1388,12 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
-	if err := l.GetGenericPersister().Model(*updatedCredential).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserID, credential.ID).Updates(credential); err != nil {
-		return nil, fmt.Errorf("error updating user credential: %v", err)
+	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential)
+	if db.Error != nil {
+		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
 	}
 
-	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserID, credential.ID).First(updatedCredential).Error; err != nil {
+	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserId, credential.ID).First(updatedCredential).Error; err != nil {
 		return nil, fmt.Errorf("error getting updated user credential: %v", err)
 	}
 	return updatedCredential, nil
@@ -1466,9 +1447,8 @@ func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byt
 	return l.KeyPersister.GetUsersKey(id)
 }
 
-// SaveKey saves the given key with the provider
-func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []*Key) ([]*Key, error) {
-	// fmt.Printf(keys)
+// SaveUsersKey saves the given keys with the provider
+func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []Key) ([]Key, error) {
 	return l.KeyPersister.SaveUsersKeys(keys)
 }
 
@@ -1487,12 +1467,12 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID stri
 }
 
 func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	orgID := workspacePayload.OrganizationID
 	workspace := &workspace.Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationId: orgId,
+		OrganizationID: &orgID,
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}
@@ -1501,13 +1481,13 @@ func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *
 
 func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
 	id, _ := uuid.FromString(workspaceID)
-	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	orgID := workspacePayload.OrganizationID
 	workspace := &workspace.Workspace{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationId: orgId,
+		OrganizationID: &orgID,
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}
@@ -1787,12 +1767,22 @@ func downloadContent(comp string, downloadpath string) error {
 			if err != nil {
 				return err
 			}
-			defer file.Close()
 			content, err := base64.StdEncoding.DecodeString(gca.Content)
 			if err != nil {
+				if closeErr := file.Close(); closeErr != nil {
+					return fmt.Errorf("%w (close error: %v)", err, closeErr)
+				}
 				return err
 			}
-			fmt.Fprintf(file, "%s", content)
+			if _, err := fmt.Fprintf(file, "%s", content); err != nil {
+				if closeErr := file.Close(); closeErr != nil {
+					return fmt.Errorf("%w (close error: %v)", err, closeErr)
+				}
+				return err
+			}
+			if err := file.Close(); err != nil {
+				return err
+			}
 			return nil
 		}).Walk()
 	case "Filter":
@@ -1840,9 +1830,14 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 					return err
 				}
 				if _, err := io.Copy(outFile, tarReader); err != nil {
+					if closeErr := outFile.Close(); closeErr != nil {
+						return fmt.Errorf("%w (close error: %v)", err, closeErr)
+					}
 					return err
 				}
-				outFile.Close()
+				if err := outFile.Close(); err != nil {
+					return err
+				}
 			}
 		}
 	}

@@ -14,15 +14,17 @@ model:
     registrant:
         id: fda1c4e7-14ae-4435-8236-adfb9cea0395
         name: Artifact Hub
-        credential_id: 00000000-0000-0000-0000-000000000000
+        credentialId: 00000000-0000-0000-0000-000000000000
         type: registry
-        sub_type: ""
+        subType: ""
         kind: artifacthub
+        metadata: {}
         status: registered
         user_id: 00000000-0000-0000-0000-000000000000
         created_at: 2025-03-30T19:59:46.350667005Z
         updated_at: 2025-03-30T19:59:46.350667005Z
-        deleted_at: "0001-01-01T00:00:00Z"
+        deleted_at: null
+        environments: []
         schemaVersion: ""
     connection_id: fd01c4e7-14ae-4435-8236-adfb9cea0395
     category:
@@ -44,14 +46,14 @@ model:
     components: null
     relationships: null
 modelReference:
-    version: ""
-    name: ""
     displayName: ""
     id: 00000000-0000-0000-0000-000000000000
-    registrant:
-        kind: ""
     model:
         version: ""
+    name: ""
+    registrant:
+        kind: ""
+    version: ""
 styles:
     primaryColor: '#ff9900'
     secondaryColor: '#F4BC79'

@@ -24,8 +24,10 @@ const meshSyncApi = api
             ...(queryArg.namespace ? { namespace: queryArg.namespace } : {}),
             clusterIds: queryArg.clusterIds,
             label: queryArg.label,
+            labels: queryArg.labels,
             status: queryArg.status,
             annotation: queryArg.annotation,
+            annotations: queryArg.annotations,
             spec: queryArg.spec,
             apiVersion: queryArg.apiVersion,
           },
@@ -60,6 +62,7 @@ const meshSyncApi = api
 
 export const {
   useGetMeshSyncResourcesQuery,
+  useLazyGetMeshSyncResourcesQuery,
   useGetMeshSyncResourceKindsQuery,
   useDeleteMeshsyncResourceMutation,
 } = meshSyncApi;

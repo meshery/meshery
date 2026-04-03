@@ -21,7 +21,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
-	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
+	coreV1 "github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
@@ -122,12 +122,14 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	}
 
 	tempDir, err := os.MkdirTemp("", "temp-import")
-
-	defer os.RemoveAll(tempDir)
-
 	if err != nil {
 		return emptyDesign, "", fmt.Errorf("failed to create tmp directory %w", err)
 	}
+	defer func() {
+		if err := os.RemoveAll(tempDir); err != nil {
+			logger.Error(err)
+		}
+	}()
 
 	now := time.Now()
 	// NOTE: the FileName must also have extension
@@ -302,9 +304,7 @@ func (h *Handler) DesignFileImportHandler(
 	}
 
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &designRecord)
-
 	if err != nil {
-
 		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider)
 		return
 	}

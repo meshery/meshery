@@ -1,0 +1,24 @@
+version: 0.0.15
+name: mern-
+displayName: 'MERN '
+createdAt: "2025-10-02T17:22:09Z"
+description: A foundational, three-tier MERN stack architecture designed for full-stack application deployment. It includes a React frontend, an Express/Node.js backend, and a MongoDB database, illustrating the data flow between them.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/80181f03-ff56-4c63-bfb1-0686fc50fee5/0.0.15/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a conceptual architecture diagram created with Kanvas shapes and images. It does not contain deployable configuration logic (Kubernetes YAML, deployment ports, environment variables, etc.) and is intended for visualization purposes only. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 78c61ec2-29bf-43ba-935e-c400fbe8fd8c
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/80181f03-ff56-4c63-bfb1-0686fc50fee5-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/80181f03-ff56-4c63-bfb1-0686fc50fee5-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

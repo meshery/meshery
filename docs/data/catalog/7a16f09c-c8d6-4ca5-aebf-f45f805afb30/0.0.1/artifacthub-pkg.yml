@@ -1,0 +1,24 @@
+version: 0.0.1
+name: mattermost-operator-1.0.4.tgz
+displayName: mattermost-operator-1.0.4.tgz
+createdAt: "2025-10-08T19:12:54Z"
+description: This Helm chart provides an easy and recommended way to deploy the Mattermost Operator on a Kubernetes cluster. It manages the lifecycle of Mattermost deployments and related resources, simplifying setup and upgrades.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7a16f09c-c8d6-4ca5-aebf-f45f805afb30/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Kubernetes v1.22+ required; Helm v3+ recommended.\n  \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4fb65012-abb5-4098-9df4-43e0eb380132
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7a16f09c-c8d6-4ca5-aebf-f45f805afb30-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7a16f09c-c8d6-4ca5-aebf-f45f805afb30-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

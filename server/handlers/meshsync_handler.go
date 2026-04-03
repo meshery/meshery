@@ -11,7 +11,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/meshsync/pkg/model"
-	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"gorm.io/gorm"
@@ -66,7 +66,7 @@ func KubernetesResourceToComponentDef(resource model.KubernetesResource, stripSc
 		return nil, fmt.Errorf("failed to map component metadata: %w", err)
 	}
 
-	componentDef.Id = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
+	componentDef.ID = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
 	componentDef.DisplayName = resource.KubernetesResourceMeta.Name
 
 	var spec interface{}
@@ -140,7 +140,7 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 
 	return pattern.PatternFile{
 		Name:          "ClusterSnapshot",
-		Id:            emptyUUID,
+		ID:            emptyUUID,
 		SchemaVersion: "designs.meshery.io/v1beta1",
 		Version:       "v1",
 		Components:    components,

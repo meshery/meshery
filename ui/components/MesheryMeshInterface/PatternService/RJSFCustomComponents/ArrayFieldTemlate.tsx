@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Grid2, Paper, Button, IconButton, Typography, useTheme } from '@sistent/sistent';
 import AddIcon from '@mui/icons-material/Add';
@@ -24,11 +23,13 @@ function getTitle(props) {
 
 const ArrayFieldTemplate = (props) => {
   const { schema, registry = getDefaultFormState(), classes } = props;
+  const safeId = props.idSchema?.$id ?? 'array-field';
+  const safeProps = { ...props, idSchema: props.idSchema ?? { $id: safeId } };
   // TODO: update types so we don't have to cast registry as any
   if (isMultiSelect(schema, registry.rootSchema)) {
-    return <DefaultFixedArrayFieldTemplate {...props} />;
+    return <DefaultFixedArrayFieldTemplate {...safeProps} />;
   } else {
-    return <DefaultNormalArrayFieldTemplate {...props} />;
+    return <DefaultNormalArrayFieldTemplate {...safeProps} />;
   }
 };
 
@@ -99,12 +100,14 @@ const DefaultArrayItem = (props) => {
 
 const DefaultFixedArrayFieldTemplate = (props) => {
   const { classes } = props;
+  const safeId = props.idSchema?.$id ?? 'array-field';
+
   return (
     <fieldset className={props.className}>
       {props.canAdd && (
         <Button
           className="array-item-add"
-          onClick={props.onAddClick}
+          onClick={typeof props.onAddClick === 'function' ? props.onAddClick : undefined}
           disabled={props.disabled || props.readonly}
         >
           Add
@@ -112,7 +115,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
       )}
 
       <ArrayFieldTitle
-        key={`array-field-title-${props.idSchema.$id}`}
+        key={`array-field-title-${safeId}`}
         TitleField={props.TitleField}
         idSchema={props.idSchema}
         title={getTitle(props)}
@@ -121,12 +124,12 @@ const DefaultFixedArrayFieldTemplate = (props) => {
       />
 
       {(props.uiSchema['ui:description'] ?? props.schema?.description) != null && (
-        <div className="field-description" key={`field-description-${props.idSchema.$id}`}>
+        <div className="field-description" key={`field-description-${safeId}`}>
           {safeDisplayValue(props.uiSchema['ui:description'] ?? props.schema?.description)}
         </div>
       )}
 
-      <div className="row array-item-list" key={`array-item-list-${props.idSchema.$id}`}>
+      <div className="row array-item-list" key={`array-item-list-${safeId}`}>
         {props.items &&
           props.items.map((item, idx) => {
             return (
@@ -145,6 +148,8 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 const DefaultNormalArrayFieldTemplate = (props) => {
   const theme = useTheme();
   const { classes } = props;
+  const safeId = props.idSchema?.$id ?? 'array-field';
+
   return (
     <Paper elevation={0}>
       <Box p={1}>
@@ -156,7 +161,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
         >
           <Grid2 size={{ xs: 4 }}>
             <ArrayFieldTitle
-              key={`array-field-title-${props.idSchema.$id}`}
+              key={`array-field-title-${safeId}`}
               TitleField={props.TitleField}
               idSchema={props.idSchema}
               title={getTitle(props)}
@@ -211,7 +216,9 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                   <Box mt={2}>
                     <IconButton
                       className="array-item-add"
-                      onClick={props.onAddClick}
+                      onClick={
+                        typeof props.onAddClick === 'function' ? props.onAddClick : undefined
+                      }
                       disabled={props.disabled || props.readonly}
                     >
                       <AddIcon width="18px" height="18px" fill="gray" />
@@ -223,7 +230,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
           </Grid2>
         </Grid2>
 
-        <Grid2 container={true} key={`array-item-list-${props.idSchema.$id}`} size={'grow'}>
+        <Grid2 container={true} key={`array-item-list-${safeId}`} size={'grow'}>
           {props.items &&
             props.items.map((item, idx) => {
               return (

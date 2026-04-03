@@ -227,11 +227,18 @@ const ExtensionSandbox = React.memo<ExtensionSandboxProps>(
     const { capabilitiesRegistry, isDrawerCollapsed } = useSelector((state: RootState) => state.ui);
     const dispatch = useDispatch();
 
-    useEffect(() => {
-      if (type === 'navigator' && !isDrawerCollapsed) {
-        dispatch(toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed }));
-      }
+    // close the drawer when extension is loaded/mounted
+    useEffect(
+      () => {
+        if (type === 'navigator' && !isDrawerCollapsed) {
+          dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+        }
+      },
+      // no dependencies  is intentional as this needs to only run on component mount .
+      [],
+    );
 
+    useEffect(() => {
       if (capabilitiesRegistry && capabilitiesRegistry.extensions) {
         try {
           const extensionData = capabilitiesRegistry.extensions[type];
@@ -251,7 +258,7 @@ const ExtensionSandbox = React.memo<ExtensionSandboxProps>(
         setExtension([]);
         setIsLoading(true);
       };
-    }, [type, capabilitiesRegistry, isDrawerCollapsed, dispatch]);
+    }, [type, capabilitiesRegistry]);
 
     const renderContent = (): React.ReactNode => {
       if (isLoading) {

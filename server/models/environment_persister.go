@@ -34,7 +34,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	query := ep.DB.Model(&environment.Environment{})
@@ -190,7 +190,7 @@ func (ep *EnvironmentPersister) UpdateEnvironment(environmentID uuid.UUID, paylo
 
 	env.Name = payload.Name
 	env.Description = payload.Description
-	env.OrganizationID = uuid.FromStringOrNil(payload.OrgId)
+	env.OrganizationID = uuid.UUID(payload.OrgId)
 
 	return ep.UpdateEnvironmentByID(env)
 }

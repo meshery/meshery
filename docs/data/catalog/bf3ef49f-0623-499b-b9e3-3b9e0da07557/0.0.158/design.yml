@@ -1,0 +1,3237 @@
+{
+  "id": "bf3ef49f-0623-499b-b9e3-3b9e0da07557",
+  "name": "meshery-design-at-a-glance",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.159",
+  "metadata": {
+    "resolvedAliases": {}
+  },
+  "components": [
+    {
+      "id": "78bd4e53-2a38-45ae-ad0f-e0bb336f3f92",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "custom-resource-definition-bj",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "locked": true,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -34.30430432301566,
+          "y": 460.59616952827815
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg",
+        "width": 24,
+        "z-index": 9
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "spec": {}
+      },
+      "component": {
+        "version": "apiextensions.k8s.io/v1",
+        "kind": "CustomResourceDefinition",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:40.012040805Z",
+      "updated_at": "2026-03-24T15:03:40.012040805Z"
+    },
+    {
+      "id": "85e8e4fd-7739-4719-a09e-6c8a390e7b45",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "custom-resource-definition-qi",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "locked": true,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -1190.8943436420861,
+          "y": 477.2866396543296
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg",
+        "width": 24,
+        "z-index": 2
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "spec": {}
+      },
+      "component": {
+        "version": "apiextensions.k8s.io/v1",
+        "kind": "CustomResourceDefinition",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:40.012040805Z",
+      "updated_at": "2026-03-24T15:03:40.012040805Z"
+    },
+    {
+      "id": "23bb807d-4e80-4fa5-b447-cdcb70644605",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "data:image/png;base64,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",
+        "background-opacity": 0,
+        "body-text": "         ",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 50,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -1179.4585187607233,
+          "y": 412.988002144955
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/picture-color.svg",
+        "svgComplete": "data:image/png;base64,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",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/picture-white.svg",
+        "width": 297.1403,
+        "z-index": 28
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.02691514Z",
+      "updated_at": "2026-03-24T15:03:41.02691514Z"
+    },
+    {
+      "id": "5d203eda-db04-428f-8356-ae4e509c4dee",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMUAAAAjCAYAAAAkJc5vAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAc1SURBVHhe7dxdTFRnHsfx7znjDMMMkIGM47KFHUoWI9S4aCO63tilpkqTKvK2wI0m24u6tl5svTB1azYxJsbUmJhoxa7KXpRGRagVDSnGvagBc9a4dAMIOILJ7DiFARkczrxwZubsxU6PzqjJbtJe8XwSQvL8n/McJnl+c57n5Byk7u5u3Z6Tw8aNGzGbzQjCUqIoCj6fj507dxptcloPQRBEKAQhkwiFIGQQoRCEDCIUgpBBhEIQMohQCEIGEQpByCBCIQgZRCheIplMsri4SCwWI5lMZpaN+uLiYlpd13WSySS6rhttiUTCqGmaZhynaRq6rhv1H71qbIB4PJ42Nqn+Lxsj89gfz61p2gs1IZ2pubn5LxaLhaKiIkwmU2Z9SdF1nSdPnjA8PMydO3cYGhoirKpkZ2djs9nQdZ1gMMjIyAgDAwOMjo6yEAphTdVDoRBjY2NIkkROTg4At2/fxuVyEVZVvrl2jYmJCR48eEAgECA/Px9FUXC73aDrBAIB/vX99yiKwujYGLFYjNzcXLKysojH43xz9SpOpxO73W78zcPDw4yPj1NcXIwkScRiMYaGhpiZmcHlciFJEolEgs7OTiYmJvB4PMzPzxufaanz+XyEQiHKy8uNNnGleI7P5+PixYv09vYCkJuby/Xr12m/cIHp6Wmmp6e5cuUK13t6SCYSyLLM11ev8rf2dqamppj64QfOtrXR09NDJBIB4Ny5c/89NhDgq44O4vG48RONRvn89Gl0XWc6EKC9vZ2+mzeRTSYS8Tidly9zpbOTaDSKpmkcOnSIzs5O45teVVXa2tpoO3PGaJuamuLEiRP0XLtGKBQCIBaL8fnp08TjccLhMDf7+rh06RLhcNj47MIzIhQpmqZx+7vvsJjN7Nu3j6amJrZv386fP/2UX772GuNjYyiKQjQSYe+HH9Lc0kJDQwNHjhzB4XBw+fJlAHJycrh79y4ej8dY6ui6jizL/MrtprGxkcbGRrZs2UJeXp5x/t7eXmzZ2Rw4cICGhgZaWlv508cfMzs7SyQcRpIkbHY7/seP8fl8kHqYzWKxYLFYILVU83q95Ofn43Q6uT8yYoxfUFBAY2MjLS0t/L65GXVhAb/fb9SFZ0QoUubm5gjOz7OqvByHw2G0W61W6urqKCwsJBAIULZyJU6n06ibTCa2bt3K/ZERotEoJSUluN1uFEXh6dOnRj9d1wmrKl6vF6/Xy+zsbNpeoO/bb2lsaiIrK4tEIkEwGCSRSLCtpgZLVhakJvZvKiu5desWqqryz3v3qKysJDc3F4BoNMo/FIXaHTtw5Ocz+egRmqZBKjChUIhgMMijyUkWNc1Y4gnpRChSNE1DlmWsqQn4PKvVSm7qWz07OzuzjNliQZJlEskksiyzefNmpqamuH//vrGs0XUdr9dLd1cX3V1dDAwMoKqqMYaqqsaVY35+nr/fusVXHR389YsvGBkehtS5V61axczMDDdu3MBmt1NaWmrsBYPBIA88Hqo2bKC0tJT5YNC4GgQCAU6dOsWZM2cYGx/nd2+9lRZu4RkRihSHw0E8Hsfv96fdnUkmk3g8HkZHRzGZTPzb633h7o3f70eWZSMwDoeD7e+9x5XOTmNvIUkSRcXF7KitZUdtLVVVVWkb3V+XlXHv3j1I7WV+u2kTtTt3srCwwHQgYPQrKSnB6XTS8eWXFBcV4XK5jFpfXx+KorB//35OnjxJV1cXDx8+RNd1HA4HdXV11NfXU19fz/qqqiV/Y+VVRChSbDYblZWV9A8MMDg4aEz8iYkJjh49SkFBAWvWrGF4ZIT+/n5j6TM5OcmxY8fYvXs3siQZ41W88QalpaUoigKpUNjtdtxuN263G5fLxbJly4z+u3bt4uzZs4yOjmI2m1mxYgV+v5/BwUHi8bjRz263s379elpbW1n35ptpY/T09NDR0cHhw4c5fvw4La2t+B8/Rl1YwGq1snLlSsrKyigsLEw7TkgnQpEiSRKbNm2ioaGB4599Rs22bdTU1LDvo4/44549rF69mrVr19LS3MyF8+d5t6aGLW+/zZ4PPuDgwYOsW7cO2WTCarViMpmQZZk/vP8+pa+/jsViQZbltFupQFpbRUUFe/fu5eAnn7D1nXd4t6aG8+fOUV1dTV5eHpIkGb8rKipobGoyJrfVasXj8fCLFSsoKyvD6XSyfPlyqqureez3Mzc398K5hVeTxOuoL6eqKslk0tjEZlJVNW3J9FPRdZ1IJIIkST/52MKLxOuo/we73f7KQJCq/xyTVpIkbDbbzzK28L8RoRCEDCIUgpBBhEIQMohQCEIGEQpByCBCIQgZRCgEIYMIhSBkEKEQhAwiFIKQQeru7tbjiQTl5eUsE48SC0vM6NgY4XA47dknqb+/Xw/MzJCdnY303KPPgrAURCIR8vLy2LBhg9EmPZmb0xcXF9M6CsJSYjab0174kiLRaPo/EhKEJe4/nq4twKM3AysAAAAASUVORK5CYII=",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 50,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -42.41091052936881,
+          "y": 179.45588798210127
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/picture-color.svg",
+        "svgComplete": "data:image/png;base64,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",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/picture-white.svg",
+        "width": 232.11761,
+        "z-index": 27
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.02691514Z",
+      "updated_at": "2026-03-24T15:03:41.02691514Z"
+    },
+    {
+      "id": "64c03041-d280-4596-9e71-f43938dd7aa4",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "data:image/png;base64,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",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 50,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -1163.0471594708447,
+          "y": 55.17457669608912
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/picture-color.svg",
+        "svgComplete": "data:image/png;base64,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",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/picture-white.svg",
+        "width": 371.97525,
+        "z-index": 23
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.02691514Z",
+      "updated_at": "2026-03-24T15:03:41.02691514Z"
+    },
+    {
+      "id": "740ef3b8-4e77-49ef-8e35-a164e02e0c1c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "data:image/png;base64,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",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 50,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -25.117637461817964,
+          "y": 405.25299983567754
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/picture-color.svg",
+        "svgComplete": "data:image/png;base64,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",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/picture-white.svg",
+        "width": 333.29224,
+        "z-index": 29
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.02691514Z",
+      "updated_at": "2026-03-24T15:03:41.02691514Z"
+    },
+    {
+      "id": "8267a809-5ccc-49ff-b37d-0da614e8f659",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "data:image/png;base64,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",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 50,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -328.7965108079528,
+          "y": -24.36268294840403
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/picture-color.svg",
+        "svgComplete": "data:image/png;base64,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",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/picture-white.svg",
+        "width": 331.22925,
+        "z-index": 24
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.02691514Z",
+      "updated_at": "2026-03-24T15:03:41.02691514Z"
+    },
+    {
+      "id": "b877c632-4268-41e6-b428-e33e43853cc2",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "data:image/png;base64,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",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 50,
+        "locked": false,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -532.2004803942202,
+          "y": 445.4079253334018
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/picture-color.svg",
+        "svgComplete": "data:image/png;base64,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",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/picture-white.svg",
+        "width": 362.5846,
+        "z-index": 26
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.02691514Z",
+      "updated_at": "2026-03-24T15:03:41.02691514Z"
+    },
+    {
+      "id": "ce7a0634-cc9e-428d-b03e-a7afb6c8dbe2",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "data:image/png;base64,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",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 50,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -40.556843964955405,
+          "y": 600.2166737086679
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/picture-color.svg",
+        "svgComplete": "data:image/png;base64,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",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/picture-white.svg",
+        "width": 282.82584,
+        "z-index": 30
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.02691514Z",
+      "updated_at": "2026-03-24T15:03:41.02691514Z"
+    },
+    {
+      "id": "dfbc3f12-aac2-4661-9861-940a4ef861da",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMkAAAArCAYAAADSSqyMAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAVpSURBVHhe7dxPbJN1HMfx99NnT91YcTgYtMxtJE3GwW0wkcSFAxLBuLgElCW0XNCTkAgJgYPKQQ6ANwxRPKEmEA0Xss6JaTIMhoyhZOuGUdJtbdn/AdK12bMF9tCnjwdYwzOcD4nVy76vpIf9nu++bZp+8jy/X375KfrMjIUQYkGu+QNCCDvlyTuJZVlks1l7hRCLiKIouFz2e4ctJKlUirt379oKhFhMPB4PK1euRNO03JgtMslkklu3bj05JMSiYFkWU1NTDA8Pk8lkbNdsd5JYLMbY2BibN2+2FQmxGExMTDA4OMj69espKirKjcvEXQgHEhIhHEhIhHAgIRHCgYRECAcSEiEcSEiEcCAhEcKBhEQIBxISIRxISIRwIHu38mRqaooTx4/T0dFBdXU1H+zfT319Pd98/TUXLlwg8/AhLpeLVxsa+OToUWZmZmgNhQi1tJBMJvH6fBw8eJCXN2xgZGSEL0+fpicSwe12s+GVV9h/4AArVqygp6eHw4cOUaCqAGx+7TV8Ph8/XrxIKp3GsiyWejzsePtt3n3vvfkfU/yDhfZuSUjy5Ny5c9z780/e37uXzs5OEokE27dv54vPP+ednTupr6/P1aYmJzl79ixZyyIYDLJq1SoSiQTHjx1jVyBARUUFP1++zFtNTaxevZrWUIhIJMLxEye41tnJlStX+PCjj2zvD9DW1kZ/Xx+HDh+ef0k8g4VCIo9beZI1TUqefx7DMNi0aRONjY0UFxcDYJommUyGTCZDNpulp7cXgD179uD1elEUBb/fz4lPP2VifNzWV9M03mxsJBqN5say8/qJ/5aEJE+2bNnC6NgY37e20t3VRfGSJXg8HgB+/eUXwuEwP126RGxgAF3XKSkpobS01NbD6/XmHpFSqRQ3enu5du0aLS0tbNy4EYCMaRKLxQiHw4TDYRLxOKZp2vqI/JKQ5ElFZSX79u3jhdJSuru7aW9vJ3nvHgD3799nWteZnp5mdnYWLAvr8etJlmVhGAYAuq4Ti8X4oa2Nqx0d7AoEcnWGYTzqp+vMzs4+1Ufkl4QkT1pDIZ4rLKSpqYntO3YwMjLC0PAwAK9v3UogGGRnczO1dXWsKCsjnU4zPu/Rqr+vj+++/RYAr8/H1m3b2BUI4PP5uD0xAUCBqlJTW0sgGCQQDPJSTQ0FBQW2PiK/JCR5kkqnOXXqFN1dXfx24waGYeB5PCfp7+ujJxKhJxIhHo9TU1PD8uXL+erMGS61txONRgmFQnx28iR+vx8At6ZRUlJCbW0tzc3NnD9/nmg0SjabZWJ8PNcvkUg8ujuJ/4z68ZEjR+f+mJycRNd11qxZY68SjqqqqtB1nc6rVzEMg21vvEF1dTUZ0yQeizE0NMTg4CAPHjygrq4Ov99PcXExN2/e5Pr166guF7t376amthaXolBYVERFRQWFhYWUlZVRWVnJH7//ztq1axkYGMitxBiGwYvl5RQ+Xo1ZtmwZVVVV8z+eeAbT09Ok02m8Xq/tIAhZAs4j0zQxTRNFUSgoKEBRFEzTtK1AzV0DyGazmKaJZVm4XK7c+Nx8RVEUFEXJjZmmiaqqtoMKFEVBVVUURcn93/wjccSzkSXg/4GqqrjdbjRNy/24VVVF07Tc68n5g8vlQtM03G63bXzu7Ke5HnNjc8Gb32+u7u/OjBL/nnyjQjiQkAjhQEIihAMJiRAOJCRCOJCQCOFAQiKEAwmJEA4kJEI4eGpbyujoKA0NDfYqIRaBO3fuMDY29tS2FFtI4vE4/f39lJeX5wqEWCxmZmZQFIV169YtHJJkMsnt27dzF4VYbJYuXYrP51t4F7AQ4mkycRfCgYRECAcSEiEc/AWDFVH53KgskwAAAABJRU5ErkJggg==",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 50,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -538.1053702288534,
+          "y": 219.62987897984604
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/picture-color.svg",
+        "svgComplete": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMkAAAArCAYAAADSSqyMAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAVpSURBVHhe7dxPbJN1HMfx99NnT91YcTgYtMxtJE3GwW0wkcSFAxLBuLgElCW0XNCTkAgJgYPKQQ6ANwxRPKEmEA0Xss6JaTIMhoyhZOuGUdJtbdn/AdK12bMF9tCnjwdYwzOcD4nVy76vpIf9nu++bZp+8jy/X375KfrMjIUQYkGu+QNCCDvlyTuJZVlks1l7hRCLiKIouFz2e4ctJKlUirt379oKhFhMPB4PK1euRNO03JgtMslkklu3bj05JMSiYFkWU1NTDA8Pk8lkbNdsd5JYLMbY2BibN2+2FQmxGExMTDA4OMj69espKirKjcvEXQgHEhIhHEhIhHAgIRHCgYRECAcSEiEcSEiEcCAhEcKBhEQIBxISIRxISIRwIHu38mRqaooTx4/T0dFBdXU1H+zfT319Pd98/TUXLlwg8/AhLpeLVxsa+OToUWZmZmgNhQi1tJBMJvH6fBw8eJCXN2xgZGSEL0+fpicSwe12s+GVV9h/4AArVqygp6eHw4cOUaCqAGx+7TV8Ph8/XrxIKp3GsiyWejzsePtt3n3vvfkfU/yDhfZuSUjy5Ny5c9z780/e37uXzs5OEokE27dv54vPP+ednTupr6/P1aYmJzl79ixZyyIYDLJq1SoSiQTHjx1jVyBARUUFP1++zFtNTaxevZrWUIhIJMLxEye41tnJlStX+PCjj2zvD9DW1kZ/Xx+HDh+ef0k8g4VCIo9beZI1TUqefx7DMNi0aRONjY0UFxcDYJommUyGTCZDNpulp7cXgD179uD1elEUBb/fz4lPP2VifNzWV9M03mxsJBqN5say8/qJ/5aEJE+2bNnC6NgY37e20t3VRfGSJXg8HgB+/eUXwuEwP126RGxgAF3XKSkpobS01NbD6/XmHpFSqRQ3enu5du0aLS0tbNy4EYCMaRKLxQiHw4TDYRLxOKZp2vqI/JKQ5ElFZSX79u3jhdJSuru7aW9vJ3nvHgD3799nWteZnp5mdnYWLAvr8etJlmVhGAYAuq4Ti8X4oa2Nqx0d7AoEcnWGYTzqp+vMzs4+1Ufkl4QkT1pDIZ4rLKSpqYntO3YwMjLC0PAwAK9v3UogGGRnczO1dXWsKCsjnU4zPu/Rqr+vj+++/RYAr8/H1m3b2BUI4PP5uD0xAUCBqlJTW0sgGCQQDPJSTQ0FBQW2PiK/JCR5kkqnOXXqFN1dXfx24waGYeB5PCfp7+ujJxKhJxIhHo9TU1PD8uXL+erMGS61txONRgmFQnx28iR+vx8At6ZRUlJCbW0tzc3NnD9/nmg0SjabZWJ8PNcvkUg8ujuJ/4z68ZEjR+f+mJycRNd11qxZY68SjqqqqtB1nc6rVzEMg21vvEF1dTUZ0yQeizE0NMTg4CAPHjygrq4Ov99PcXExN2/e5Pr166guF7t376amthaXolBYVERFRQWFhYWUlZVRWVnJH7//ztq1axkYGMitxBiGwYvl5RQ+Xo1ZtmwZVVVV8z+eeAbT09Ok02m8Xq/tIAhZAs4j0zQxTRNFUSgoKEBRFEzTtK1AzV0DyGazmKaJZVm4XK7c+Nx8RVEUFEXJjZmmiaqqtoMKFEVBVVUURcn93/wjccSzkSXg/4GqqrjdbjRNy/24VVVF07Tc68n5g8vlQtM03G63bXzu7Ke5HnNjc8Gb32+u7u/OjBL/nnyjQjiQkAjhQEIihAMJiRAOJCRCOJCQCOFAQiKEAwmJEA4kJEI4eGpbyujoKA0NDfYqIRaBO3fuMDY29tS2FFtI4vE4/f39lJeX5wqEWCxmZmZQFIV169YtHJJkMsnt27dzF4VYbJYuXYrP51t4F7AQ4mkycRfCgYRECAcSEiEc/AWDFVH53KgskwAAAABJRU5ErkJggg==",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/picture-white.svg",
+        "width": 209.8214,
+        "z-index": 25
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.02691514Z",
+      "updated_at": "2026-03-24T15:03:41.02691514Z"
+    },
+    {
+      "id": "05e6dcf6-9927-42cf-94de-663d644b8d43",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "      dapr-scheduler",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 16,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -520.6345650433849,
+          "y": 103.51363687996172
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 129.67616,
+        "z-index": 18
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.027657419Z",
+      "updated_at": "2026-03-24T15:03:41.027657419Z"
+    },
+    {
+      "id": "103c5629-3fae-4f14-a3b4-ceee86fa574b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "   dapr-schedular-server",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 16,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -33.5688883783128,
+          "y": 738.9510359148143
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 142.06877,
+        "z-index": 21
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.027657419Z",
+      "updated_at": "2026-03-24T15:03:41.027657419Z"
+    },
+    {
+      "id": "4bb7804b-b855-4ccc-873f-a05537e40332",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "dapr-operator",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 16,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -1313.5278712164823,
+          "y": 192.62299216384227
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 80,
+        "z-index": 13
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.027657419Z",
+      "updated_at": "2026-03-24T15:03:41.027657419Z"
+    },
+    {
+      "id": "5ea06237-cece-4aab-a795-620550d5ef67",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "    dapr-api",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 16,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -991.5365043016175,
+          "y": 192.9693793773064
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 80,
+        "z-index": 15
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.027657419Z",
+      "updated_at": "2026-03-24T15:03:41.027657419Z"
+    },
+    {
+      "id": "926dc0a2-3b95-46e2-9534-2d3205b2023b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "    configurations.dapr.io",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 16,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -1191.0728236446946,
+          "y": 567.1771882075611
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 142.0569,
+        "z-index": 19
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.027657419Z",
+      "updated_at": "2026-03-24T15:03:41.027657419Z"
+    },
+    {
+      "id": "c1da86ff-96cf-48bb-9b5e-25471a494f90",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "      dapr-scheduler",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 16,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -109.86527668509876,
+          "y": 103.92347883464228
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 129.67616,
+        "z-index": 31
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.027657419Z",
+      "updated_at": "2026-03-24T15:03:41.027657419Z"
+    },
+    {
+      "id": "c9ff7f71-121a-4c3a-bcef-6ae8c752721a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "      dapr-scheduler",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 16,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -311.0503358864271,
+          "y": 104.31849856841839
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 129.67616,
+        "z-index": 32
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.027657419Z",
+      "updated_at": "2026-03-24T15:03:41.027657419Z"
+    },
+    {
+      "id": "cfc797d2-6870-4abd-a1ab-564a9599db06",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "      dapr-trust-bundle",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 16,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -31.321296429035446,
+          "y": 303.27131561185223
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 142.7893,
+        "z-index": 16
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.027657419Z",
+      "updated_at": "2026-03-24T15:03:41.027657419Z"
+    },
+    {
+      "id": "dac34372-7ff4-4b31-90d1-ae07cc780ce8",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "     dapr-sidecar-injector",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 16,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -523.0401029183918,
+          "y": 584.7837154489557
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 143.09259,
+        "z-index": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.027657419Z",
+      "updated_at": "2026-03-24T15:03:41.027657419Z"
+    },
+    {
+      "id": "dce9d945-636a-42ce-9852-e08aca1ca41c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "  dapr system",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 16,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -36.53643706939568,
+          "y": 528.8249885312962
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 80,
+        "z-index": 22
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.027657419Z",
+      "updated_at": "2026-03-24T15:03:41.027657419Z"
+    },
+    {
+      "id": "e5303362-1468-4b0b-963f-96f58c6aa8cd",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "      dapr-trust-bundle",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 16,
+        "locked": true,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": -524.1393168934909,
+          "y": 339.0329506203699
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 142.7893,
+        "z-index": 33
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:41.027657419Z",
+      "updated_at": "2026-03-24T15:03:41.027657419Z"
+    },
+    {
+      "id": "e572b829-6da4-4388-8622-cbde7e6b14a8",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "cluster-role-li",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 22,
+        "locked": false,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -526.329760446331,
+          "y": 44.26499965125265
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg",
+        "width": 22,
+        "x": 8.5,
+        "y": 7.5,
+        "z-index": 3
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {},
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRole",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:39.995816652Z",
+      "updated_at": "2026-03-24T15:03:39.995816652Z"
+    },
+    {
+      "id": "7886bc2b-7a77-44b2-908d-715d91b8a49f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "cluster-role-binding-gb",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 25,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -319.1857661055844,
+          "y": 42.60699203952542
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg",
+        "width": 25,
+        "x": 7,
+        "y": 7,
+        "z-index": 4
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "roleRef": {}
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRoleBinding",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:39.996253782Z",
+      "updated_at": "2026-03-24T15:03:39.996253782Z"
+    },
+    {
+      "id": "59e3b41e-e655-48dd-98e3-1525e5b31607",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "config-map-my",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "locked": true,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -37.15071676178256,
+          "y": 240.62968806769163
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg",
+        "width": 24,
+        "z-index": 8
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:39.999824867Z",
+      "updated_at": "2026-03-24T15:03:39.999824867Z"
+    },
+    {
+      "id": "939205ff-c890-457f-adab-5eb55b402d95",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "deployment-lw",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 2,
+        "height": 24,
+        "locked": true,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -1312.7148017326324,
+          "y": 135.31824237238396
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg",
+        "width": 24,
+        "z-index": 0
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:40.026383535Z",
+      "updated_at": "2026-03-24T15:03:40.026383535Z"
+    },
+    {
+      "id": "52150527-417d-4f9e-9413-0304e13041a5",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "default",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-style": "dashed",
+        "border-width": 2,
+        "height": 80,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg",
+        "width": 80,
+        "z-index": 14
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {},
+      "component": {
+        "version": "v1",
+        "kind": "Namespace",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:40.074226224Z",
+      "updated_at": "2026-03-24T15:03:40.074226224Z"
+    },
+    {
+      "id": "df201d98-be4c-4658-b058-1452b6e77f07",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "pod-disruption-budget-mo",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "locked": true,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -39.90632781594148,
+          "y": 663.1004299457027
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "concave-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg",
+        "width": 24,
+        "z-index": 10
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:40.087991057Z",
+      "updated_at": "2026-03-24T15:03:40.087991057Z"
+    },
+    {
+      "id": "bd31a11a-1c3c-464e-805e-1e8aa86f70f0",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "secret-sy",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 32,
+        "locked": true,
+        "opacity": 1,
+        "padding": 1,
+        "position": {
+          "x": -530.9573457302816,
+          "y": 279.22654293009435
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32,
+        "z-index": 17
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:40.145387884Z",
+      "updated_at": "2026-03-24T15:03:40.145387884Z"
+    },
+    {
+      "id": "e0864703-2509-4f79-a7e0-7ac1352fde2b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "service-ou",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "background-position-y": "4.5",
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 20,
+        "locked": true,
+        "opacity": 1,
+        "padding": 12,
+        "position": {
+          "x": -994.6995849620215,
+          "y": 134.7409920871378
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20,
+        "z-index": 1
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:40.157395684Z",
+      "updated_at": "2026-03-24T15:03:40.157395684Z"
+    },
+    {
+      "id": "a2ee5326-518b-4a25-8585-03955a90f6fc",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "service-account-td",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "locked": true,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -110.99775106053013,
+          "y": 44.99547210516102
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg",
+        "width": 24,
+        "z-index": 5
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:40.157928241Z",
+      "updated_at": "2026-03-24T15:03:40.157928241Z"
+    },
+    {
+      "id": "ede1a149-fcba-40f7-93f7-e3e3ee3874b3",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "validating-webhook-configuration-uv",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "locked": true,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -524.2164310214247,
+          "y": 508.1894931575798
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "heptagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/validatingwebhookconfiguration-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/validatingwebhookconfiguration-white.svg",
+        "width": 24,
+        "z-index": 7
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {},
+      "component": {
+        "version": "admissionregistration.k8s.io/v1",
+        "kind": "ValidatingWebhookConfiguration",
+        "schema": ""
+      },
+      "created_at": "2026-03-24T15:03:40.17910725Z",
+      "updated_at": "2026-03-24T15:03:40.17910725Z"
+    }
+  ],
+  "preferences": {
+    "layers": {
+      "badges": {
+        "Deployment Errors": false
+      },
+      "components": {
+        "Namespace-kubernetes": false
+      },
+      "relationships": {
+        "edge-non-binding-reference": false
+      }
+    }
+  },
+  "relationships": [
+    {
+      "id": "0a1710d7-3e3a-45f3-8538-caf0a1e7c3e6",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "label": "443/TCP",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "e0864703-2509-4f79-a7e0-7ac1352fde2b",
+                "kind": "Service",
+                "match": {},
+                "match_strategy_matrix": [
+                  [
+                    "to_contains_from",
+                    "not_null"
+                  ],
+                  [
+                    "equal_as_strings",
+                    "not_null"
+                  ],
+                  [
+                    "equal"
+                  ]
+                ],
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "selector"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "targetPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "939205ff-c890-457f-adab-5eb55b402d95",
+                "kind": "Deployment",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "selector",
+                      "matchLabels"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "containerPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": [
+              {
+                "id": null,
+                "kind": "Service",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": null,
+                "kind": "Service",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": null
+              },
+              {
+                "id": null,
+                "kind": "Pod",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "network",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "7c1a9a31-989e-4088-941e-3b49bb8fed2d",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "line-color": "rgb(122,132,142)",
+          "line-style": "dotted",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "rgb(122,132,142)",
+          "target-arrow-shape": "vee"
+        }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "e572b829-6da4-4388-8622-cbde7e6b14a8",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "a2ee5326-518b-4a25-8585-03955a90f6fc",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "4cb83c68-06d8-4840-98b1-470610ffad4d",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "a2ee5326-518b-4a25-8585-03955a90f6fc",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "52150527-417d-4f9e-9413-0304e13041a5",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "639a159e-1952-4f69-91de-c90a3644cdfc",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "e0864703-2509-4f79-a7e0-7ac1352fde2b",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "52150527-417d-4f9e-9413-0304e13041a5",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "6a8253af-f2d8-45e1-8106-f995e48c17f7",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "939205ff-c890-457f-adab-5eb55b402d95",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "52150527-417d-4f9e-9413-0304e13041a5",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "8b947663-3220-4086-8fc9-9deea5e8a4da",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "df201d98-be4c-4658-b058-1452b6e77f07",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "52150527-417d-4f9e-9413-0304e13041a5",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "8cd34bc4-b687-40af-ad4a-8a9a023072c5",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "59e3b41e-e655-48dd-98e3-1525e5b31607",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "52150527-417d-4f9e-9413-0304e13041a5",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "d5a304a7-b97a-4c14-a3f0-1f54df12e5e6",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "bd31a11a-1c3c-464e-805e-1e8aa86f70f0",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "52150527-417d-4f9e-9413-0304e13041a5",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "f7d6cca4-d053-42dd-8595-1b5ba31a22a6",
+      "evaluationQuery": "",
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.0-alpha.2"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "7886bc2b-7a77-44b2-908d-715d91b8a49f",
+                "kind": "ClusterRoleBinding",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "roleRef",
+                      "name"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "e572b829-6da4-4388-8622-cbde7e6b14a8",
+                "kind": "ClusterRole",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "metadata",
+                      "name"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "reference",
+      "status": "approved",
+      "type": "non-binding",
+      "version": "v1.0.0"
+    }
+  ]
+}

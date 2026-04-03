@@ -74,6 +74,7 @@ export default function KubernetesConnectionStatsChart() {
     <Link
       href="/management/connections"
       style={{
+        textDecoration: 'none',
         pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
           ? 'none'
           : 'auto',
@@ -95,7 +96,7 @@ export default function KubernetesConnectionStatsChart() {
             </Typography>
           </div>
           <div onClick={(e) => e.stopPropagation()}>
-            <CustomTextTooltip title="This chart shows the status of the connections status to your Kubernetes clusters.">
+            <CustomTextTooltip title="This chart shows the status of connections to your Kubernetes clusters.">
               <div>
                 <InfoOutlined
                   color={theme.palette.icon.default}

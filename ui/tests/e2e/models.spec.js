@@ -30,6 +30,11 @@ test.describe.serial('Model Workflow Tests', () => {
   });
 
   test('Create a Model', async ({ page }) => {
+    // Model generation downloads from GitHub and can be very slow in CI.
+    // test.slow() triples the default timeout (60s → 180s).
+    test.slow();
+    test.setTimeout(240_000);
+
     await page.getByTestId('TabBar-Button-CreateModel').click();
 
     await page.locator('#model-name').fill(model.MODEL_NAME);
@@ -60,9 +65,10 @@ test.describe.serial('Model Workflow Tests', () => {
 
     await page.getByTestId('UrlStepper-Button-Generate').click();
 
+    // Model generation fetches from GitHub — wait with extended timeout
     await expect(
       page.getByTestId(`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 180_000 });
     await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible();
 
     await page.getByTestId('UrlStepper-Button-Finish').click();

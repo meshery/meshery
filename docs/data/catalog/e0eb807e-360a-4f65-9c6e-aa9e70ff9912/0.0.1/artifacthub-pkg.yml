@@ -1,0 +1,24 @@
+version: 0.0.1
+name: nexus3-5.15.0.tgz
+displayName: nexus3-5.15.0.tgz
+createdAt: "2025-10-08T22:23:27Z"
+description: ' Sonatype Nexus 3 OSS.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e0eb807e-360a-4f65-9c6e-aa9e70ff9912/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "  \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: ecda1326-9f22-4ccb-8090-d6b89fa06ec8
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e0eb807e-360a-4f65-9c6e-aa9e70ff9912-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e0eb807e-360a-4f65-9c6e-aa9e70ff9912-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

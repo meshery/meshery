@@ -1,0 +1,141 @@
+.content-table-wrapper {
+  padding: 0rem;
+  background: var(--background-grey);
+  box-shadow: var(--box-shadow-primary);
+  z-index: 9;
+  height: fit-content;
+  max-height: calc(100vh - var(--navbar-height) - 6rem);
+  overflow-y: auto;
+  scrollbar-width: none; // Firefox
+  top: calc(var(--navbar-height) + 5rem);
+  position: sticky;
+  margin: 0 0 0 auto;
+  margin-right: 2rem;
+  border-radius: 7px;
+  width: 90%;
+  max-width: 200px;
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari, Edge
+  }
+}
+
+.content-table {
+  height: fit-content;
+  padding: 1rem 1.25rem;
+  transition: all 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-size: .9rem;
+  overflow-y: auto;
+  overflow-wrap: break-word;
+
+  @media (max-width: 75em) {
+    flex: 0 0 23%;
+    // overflow-x: scroll;
+  }
+
+  @media (max-width: 56.25em) {
+    display: none;
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    width: 0.5rem;
+    border-radius: 11px;
+    overflow: hidden;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #868e96;
+    width: 0.2rem;
+    border-radius: 11px;
+  }
+
+  & strong {
+    margin-bottom: 8px;
+  }
+
+  & .td-page-meta {
+    display: flex;
+    flex-direction: column;
+
+    & a {
+      color: var(--color-secondary-medium);
+      padding: 0.2rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+
+      &:hover {
+        text-decoration: underline;
+        color: var(--color-secondary-dark);
+      }
+
+      & i {
+        width: 1.25rem;
+        text-align: center;
+      }
+    }
+  }
+
+  & #TableOfContents {
+    display: flex;
+    flex-direction: column;
+
+    // gap: 10px;
+    & ul {
+      font-size: .9rem;
+      padding-inline-start: 1rem;
+      margin-bottom: 0;
+
+      &:first-child {
+        padding-inline-start: 0;
+      }
+
+      & li {
+        list-style: none !important;
+        margin: 4px 0;
+
+        & a {
+          color: var(--color-secondary-medium);
+          display: block;
+          position: relative;
+          padding-left: 0.85rem;
+          line-height: 1.2;
+
+          &::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.1rem;
+            font-weight: 900;
+          }
+
+          & strong {
+            color: inherit;
+          }
+
+          &:hover {
+            color: var(--color-secondary-dark);
+            text-decoration: underline;
+
+            & strong {
+              color: inherit;
+            }
+          }
+
+          &.active {
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+}
