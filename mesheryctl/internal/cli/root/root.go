@@ -213,6 +213,13 @@ func setupLogger() {
 
 func setupLogger() {
 
-	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, RootCmd.OutOrStdout())
+// default log level is info
+	logLevel := logrus.InfoLevel
 
+	// log level to debug if the -v flag is set
+	if verbose {
+		logLevel = logrus.DebugLevel
+	}
+
+	utils.Log = mesheryctllogger.GetMeshkitLogger(logLevel)
 }
