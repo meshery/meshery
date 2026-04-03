@@ -386,6 +386,13 @@ func GenYamlTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandle
 	basename := "cmds.yml"
 	filename := filepath.Join(dir, basename)
 	f, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	defer func() {
+		err = f.Close()
+		if err != nil {
+			fmt.Println("Error closing file:", err)
+			os.Exit(1)
+		}
+	}()
 	if err != nil {
 		return err
 	}
@@ -397,11 +404,6 @@ func GenYamlTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandle
 
 	err = GenYamlCustom(cmd, f)
 	if err != nil {
-		return err
-	}
-
-	// check error before closing
-	if err = f.Close(); err != nil {
 		return err
 	}
 
