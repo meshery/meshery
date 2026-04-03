@@ -1,5 +1,5 @@
 import { urlEncodeParams } from '@/utils/utils';
-import { mesheryApi } from '@meshery/schemas/dist/mesheryApi';
+import { mesheryApi } from '@meshery/schemas/mesheryApi';
 import { api } from './index';
 import _ from 'lodash';
 
@@ -174,6 +174,7 @@ const workspacesApi = api
           url: `workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`,
           method: 'POST',
         }),
+        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
 
       unassignDesignFromWorkspace: builder.mutation({
@@ -181,6 +182,7 @@ const workspacesApi = api
           url: `workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`,
           method: 'DELETE',
         }),
+        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       getViewsOfWorkspace: builder.query({
         queryFn: async (queryArg, { dispatch }, _extraOptions, baseQuery) => {
@@ -237,13 +239,13 @@ const workspacesApi = api
           return !_.eq(currentArg, previousArg);
         },
         providesTags: () => [{ type: TAGS.VIEWS }],
-        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
       assignViewToWorkspace: builder.mutation({
         query: (queryArg) => ({
           url: `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
           method: 'POST',
         }),
+        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
 
       unassignViewFromWorkspace: builder.mutation({
@@ -251,6 +253,7 @@ const workspacesApi = api
           url: `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
           method: 'DELETE',
         }),
+        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
 
       getTeamsOfWorkspace: builder.query({
