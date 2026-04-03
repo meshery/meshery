@@ -396,7 +396,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	case err := <-evalErrChan:
 		h.log.Debug(err)
 		// log an event
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		rw.Header().Set("Content-Type", "application/json")
+		rw.WriteHeader(http.StatusInternalServerError)
+
+		_ = json.NewEncoder(rw).Encode(map[string]string{
+    		"error": err.Error(),
+})
 		return
 
 	case evaluationResponse := <-evalRespChan:
@@ -515,7 +520,12 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 
 	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+		rw.Header().Set("Content-Type", "application/json")
+		rw.WriteHeader(http.StatusInternalServerError)
+
+		_ = json.NewEncoder(rw).Encode(map[string]string{
+    		"error": ErrWorkloadDefinition(err).Error(),
+})
 	}
 }
 
