@@ -12,13 +12,22 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - name: Check if handlers were modified
-        uses: dorny/paths-filter@v3
-        id: changes
         with:
-          filters: |
-            modified:
-              - added|modified: "server/handlers/**"
+          ref: master
+      - name: Check if handlers were modified
+        id: changes
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { data } = await github.rest.repos.getCommit({
+              ...context.repo,
+              ref: context.sha,
+            });
+
+            const modified = (data.files ?? []).some((file) => file.filename.startsWith('server/handlers/'));
+
+            core.info(`Tagged commit ${context.sha} modified handlers: ${modified}`);
+            core.setOutput('modified', String(modified));
       - name: Setup go-swagger
         if: steps.changes.outputs.modified == 'true'
         uses: minchao/setup-go-swagger@v1
@@ -54,14 +63,21 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 1
+          ref: master
       - name: Check if schema was modified
-        uses: dorny/paths-filter@v3
         id: filter
+        uses: actions/github-script@v8
         with:
-          filters: |
-            modified:
-              - added|modified: 'server/internal/graphql/schema/schema.graphql'
+          script: |
+            const { data } = await github.rest.repos.getCommit({
+              ...context.repo,
+              ref: context.sha,
+            });
+
+            const modified = (data.files ?? []).some((file) => file.filename === 'server/internal/graphql/schema/schema.graphql');
+
+            core.info(`Tagged commit ${context.sha} modified GraphQL schema: ${modified}`);
+            core.setOutput('modified', String(modified));
       - name: Set up Ruby
         if: steps.filter.outputs.modified == 'true'
         uses: ruby/setup-ruby@v1.162.0
