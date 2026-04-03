@@ -11,7 +11,7 @@ Before contributing, please review the [Documentation Contribution Flow](https:/
 Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally.  You can then make changes, test locally, sign-off and commit, and push the changes made for review.
 
 {{% alert color="info" title="Meshery Documentation Design Specification" %}}
-See the [Meshery Documentation Design Specification](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit#) which serves to provide an overview of the tooling and approach used to create Meshery's documentation and its information architecture.
+See the [Meshery Documentation Design Specification](/project/design-spec) which serves to provide an overview of the tooling and approach used to create Meshery's documentation and its information architecture.
 {{% /alert %}}
 
 ## Documentation Framework
