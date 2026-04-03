@@ -8,7 +8,7 @@ components: []
 `;
 
 test.describe('Design Configurator Tests', () => {
-  let designConfigPage;
+  let designConfigPage: DesignConfiguratorPage;
 
   test.beforeEach(async ({ page }) => {
     await page.route(`**/api/pattern/${DESIGN_ID}`, async (route) => {
