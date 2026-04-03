@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	pCore "github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshkit/encoding"
@@ -172,36 +171,6 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	return design, identifiedFile.Type, err
 }
 
-func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID uuid.UUID, eventBuilder *events.EventBuilder) {
-
-	h.log.Error(ErrRetrieveUserToken(err))
-	http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
-
-	if eventBuilder != nil {
-		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
-			"error": ErrRetrieveUserToken(err),
-		}).WithDescription("No auth token provided in the request.").Build()
-
-		_ = provider.PersistEvent(*event, nil)
-		go h.config.EventBroadcaster.Publish(userID, event)
-	}
-
-}
-
-func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider models.Provider, err error, userID uuid.UUID, eventBuilder *events.EventBuilder) {
-
-	h.log.Error(ErrRequestBody(err))
-	http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-
-	if eventBuilder != nil {
-		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrRequestBody(err),
-		}).WithDescription("Unable to parse request body").Build()
-
-		_ = provider.PersistEvent(*event, nil)
-		go h.config.EventBroadcaster.Publish(userID, event)
-	}
-}
 
 func ImportErrorEvent(eventBuilder events.EventBuilder, importPayload MesheryDesignImportPayload, err error) *events.Event {
 

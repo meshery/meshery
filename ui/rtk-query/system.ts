@@ -3,6 +3,7 @@ import { api } from './index';
 const TAGS = {
   SYSTEM: 'system',
   ADAPTERS: 'adapters',
+  SYNC: 'sync',
 };
 
 const systemApi = api.injectEndpoints({
@@ -46,6 +47,51 @@ const systemApi = api.injectEndpoints({
       }),
       providesTags: (result, error, adapterLoc) => [{ type: TAGS.ADAPTERS, id: adapterLoc }],
     }),
+    getSystemSync: builder.query({
+      query: () => ({
+        url: 'system/sync',
+        method: 'GET',
+        credentials: 'include',
+      }),
+      providesTags: [TAGS.SYNC],
+    }),
+
+    getKubernetesContexts: builder.query({
+      query: (queryArg) => ({
+        url: 'system/kubernetes/contexts',
+        params: {
+          pagesize: queryArg?.pagesize || 10,
+          search: queryArg?.search || '',
+        },
+        method: 'GET',
+      }),
+      providesTags: [TAGS.SYSTEM],
+    }),
+
+    adapterOperation: builder.mutation({
+      query: (queryArg) => ({
+        url: queryArg.url || 'system/adapter/operation',
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        body: queryArg.body,
+      }),
+    }),
+
+    getSmiResults: builder.query({
+      query: (queryArg) => ({
+        url: 'smi/results',
+        params: {
+          page: queryArg?.page,
+          pagesize: queryArg?.pagesize,
+          search: queryArg?.search,
+          order: queryArg?.order,
+        },
+        method: 'GET',
+        credentials: 'include',
+      }),
+    }),
+
     manageAdapter: builder.mutation({
       query: (queryArg) => {
         if (queryArg.method === 'DELETE') {
@@ -76,4 +122,10 @@ export const {
   useGetAvailableAdaptersQuery,
   useLazyPingAdapterQuery,
   useManageAdapterMutation,
+  useGetSystemSyncQuery,
+  useLazyGetSystemSyncQuery,
+  useGetKubernetesContextsQuery,
+  useLazyGetKubernetesContextsQuery,
+  useAdapterOperationMutation,
+  useLazyGetSmiResultsQuery,
 } = systemApi;

@@ -84,6 +84,13 @@ const telemetryApi = api.injectEndpoints({
         credentials: 'include',
       }),
     }),
+    queryRange: builder.query({
+      query: ({ type, connectionID, queryParams }) => ({
+        url: `${type}/query_range/${connectionID}?${queryParams}`,
+        method: 'GET',
+        credentials: 'include',
+      }),
+    }),
     pingGrafana: builder.query({
       query: ({ connectionId }) => ({
         url: `telemetry/metrics/grafana/ping/${connectionId}`,
@@ -106,4 +113,5 @@ export const {
   useLazyQueryTemplateVarsQuery,
   useLazyPingPrometheusQuery,
   useLazyPingGrafanaQuery,
+  useLazyQueryRangeQuery,
 } = telemetryApi;

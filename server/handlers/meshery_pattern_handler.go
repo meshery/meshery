@@ -102,14 +102,21 @@ func (h *Handler) handleProviderPatternActionError(rw http.ResponseWriter, event
 	errorParsingToMeshkitError := json.Unmarshal(body, &meshkitErr)
 
 	description := ""
-	if action == "save" {
-		if len(meshkitErr.ShortDescription) > 0 {
+	switch action {
+	case "save":
+		if errorParsingToMeshkitError == nil && len(meshkitErr.ShortDescription) > 0 {
 			description = fmt.Sprintf("Failed To Save Design, %s", meshkitErr.ShortDescription[0])
 		} else {
 			description = "Failed to save design"
 		}
-	} else {
-		if len(meshkitErr.ShortDescription) > 0 {
+	case "delete":
+		if errorParsingToMeshkitError == nil && len(meshkitErr.ShortDescription) > 0 {
+			description = fmt.Sprintf("Failed To Delete Design, %s", meshkitErr.ShortDescription[0])
+		} else {
+			description = "Failed to delete design"
+		}
+	default:
+		if errorParsingToMeshkitError == nil && len(meshkitErr.ShortDescription) > 0 {
 			description = fmt.Sprintf("Failed to fetch Design, %s", meshkitErr.ShortDescription[0])
 		} else {
 			description = "Failed to fetch design"
@@ -117,7 +124,7 @@ func (h *Handler) handleProviderPatternActionError(rw http.ResponseWriter, event
 	}
 
 	if errorParsingToMeshkitError == nil {
-		rw.WriteHeader(http.StatusBadRequest)
+		rw.WriteHeader(http.StatusInternalServerError)
 		_, _ = rw.Write(body)
 		h.log.Error(&meshkitErr)
 		event = eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
@@ -126,13 +133,16 @@ func (h *Handler) handleProviderPatternActionError(rw http.ResponseWriter, event
 
 	} else {
 		var finalErr error
-		if action == "save" {
+		switch action {
+		case "save":
 			finalErr = ErrSavePattern(err)
-		} else {
+		case "delete":
+			finalErr = ErrDeletePattern(err)
+		default:
 			finalErr = ErrGetPattern(err)
 		}
 		h.log.Error(finalErr)
-		http.Error(rw, finalErr.Error(), http.StatusBadRequest)
+		http.Error(rw, finalErr.Error(), http.StatusInternalServerError)
 		event = eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": finalErr,
 		}).WithDescription(finalErr.Error()).Build()
@@ -141,6 +151,35 @@ func (h *Handler) handleProviderPatternActionError(rw http.ResponseWriter, event
 	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
+
+func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID uuid.UUID, eventBuilder *events.EventBuilder) {
+	h.log.Error(ErrRetrieveUserToken(err))
+	http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+
+	if eventBuilder != nil {
+		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
+			"error": ErrRetrieveUserToken(err),
+		}).WithDescription("No auth token provided in the request.").Build()
+
+		_ = provider.PersistEvent(*event, nil)
+		go h.config.EventBroadcaster.Publish(userID, event)
+	}
+}
+
+func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider models.Provider, err error, userID uuid.UUID, eventBuilder *events.EventBuilder) {
+	h.log.Error(ErrRequestBody(err))
+	http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+
+	if eventBuilder != nil {
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrRequestBody(err),
+		}).WithDescription("Unable to parse request body").Build()
+
+		_ = provider.PersistEvent(*event, nil)
+		go h.config.EventBroadcaster.Publish(userID, event)
+	}
+}
+
 
 // swagger:route POST /api/pattern PatternsAPI idPostPatternFile
 // Handle POST requests for patterns
@@ -627,15 +666,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 
 	resp, err := provider.DeleteMesheryPattern(r, patternID)
 	if err != nil {
-		errPatternDelete := ErrDeletePattern(err)
-
-		h.log.Error(errPatternDelete)
-		http.Error(rw, errPatternDelete.Error(), http.StatusInternalServerError)
-		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": errPatternDelete,
-		}).WithDescription("Error: Could not delete design.").Build()
-		_ = provider.PersistEvent(*event, nil)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.handleProviderPatternActionError(rw, eventBuilder, userID, resp, err, provider, "delete")
 		return
 	}
 

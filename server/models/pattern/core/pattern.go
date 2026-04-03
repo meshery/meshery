@@ -14,7 +14,7 @@ import (
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshkit/utils/manifests"
-	"github.com/meshery/schemas/models/v1alpha1/capability"
+	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
