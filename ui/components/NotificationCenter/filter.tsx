@@ -2,6 +2,8 @@
 import { useGetEventFiltersQuery } from '../../rtk-query/notificationCenter';
 import TypingFilter from '../TypingFilter';
 import { SEVERITY, STATUS } from './constants';
+import { useSelector } from 'react-redux';
+import { selectCurrentFilters } from '../../store/slices/events';
 
 const useFilterSchema = () => {
   const { data } = useGetEventFiltersQuery();
@@ -41,6 +43,8 @@ const useFilterSchema = () => {
 
 const Filter = ({ handleFilter }) => {
   const filterSchema = useFilterSchema();
+  const currentFilters = useSelector(selectCurrentFilters);
+
   return (
     <TypingFilter
       handleFilter={handleFilter}
@@ -52,6 +56,7 @@ const Filter = ({ handleFilter }) => {
           label: 'status: unread',
         },
       ]}
+      currentFilters={currentFilters}
       placeholder="Filter Notifications"
     />
   );

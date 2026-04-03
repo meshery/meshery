@@ -1,4 +1,4 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice, createSelector } from '@reduxjs/toolkit';
 import { SEVERITY, STATUS } from '../../components/NotificationCenter/constants';
 import { BellIcon } from '@sistent/sistent';
 
@@ -261,3 +261,11 @@ export const selectSeverity = (state) => {
   const currentSeverityList = state.events?.current_view?.filters?.severity;
   return currentSeverityList ? currentSeverityList[0] : undefined;
 };
+
+export const selectCurrentFilters = createSelector(
+  (state) => state.events?.current_view?.filters || {},
+  (filters) => {
+    const { initial: _initial, ...cleaned } = filters;
+    return cleaned;
+  },
+);
