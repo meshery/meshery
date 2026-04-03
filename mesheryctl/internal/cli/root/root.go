@@ -18,7 +18,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
@@ -66,7 +65,6 @@ mesheryctl
 // Display help about command/subcommand:
 mesheryctl --help
 mesheryctl system start --help
-
 // For viewing verbose output:
 mesheryctl -v [or] --verbose
 `,
@@ -91,6 +89,7 @@ mesheryctl -v [or] --verbose
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the RootCmd.
+// Execute adds all child commands
 func Execute() error {
 	//log formatter for improved UX
 	// Removing printing command usage on error
@@ -163,56 +162,38 @@ func TreePath() *cobra.Command {
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	utils.CfgFile = cfgFile
-	// initialize the path to the kubeconfig file
+
 	utils.SetKubeConfig()
-	// Allow user to override config file with use of --config global flag
+
 	if cfgFile != utils.DefaultConfigPath {
-		// Use config file from the flag.
+
 		viper.SetConfigFile(cfgFile)
-		// Otherwise, use the default `config.yaml` config file
+
 	} else {
-		stat, err := os.Stat(utils.DefaultConfigPath)
-		createDefaultConfig := false
 
-		switch {
-		case os.IsNotExist(err):
-			utils.Log.Info("Missing Meshery config file.")
-			createDefaultConfig = true
-
-		case err == nil && stat.Size() == 0:
-			utils.Log.Info("Empty meshconfig. Please populate it before running a command")
-			createDefaultConfig = true
-
-		case err != nil:
-			utils.Log.Infof("Cannot access Meshery config file. Please check permissions. Error: %v", err)
-			return
+		needsMutation, err := config.NeedsMutation(utils.DefaultConfigPath)
+		if err != nil {
+			utils.Log.Fatal(err)
 		}
 
-		// Only create + mutate config when needed
-		if createDefaultConfig {
-			if err := os.MkdirAll(utils.MesheryFolder, 0o775); err != nil {
+		if needsMutation {
+			err = config.InitDefaultConfig(
+				utils.DefaultConfigPath,
+				utils.MesheryFolder,
+				utils.TemplateToken,
+				utils.TemplateContext,
+				utils.CreateConfigFile,
+			)
+
+			if err != nil {
 				utils.Log.Fatal(err)
 			}
-
-			if err := utils.CreateConfigFile(); err != nil {
-				utils.Log.Fatal(err)
-			}
-
-			if err := config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath); err != nil {
-				utils.Log.Fatal(err)
-			}
-
-			if err := config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false); err != nil {
-				utils.Log.Fatal(err)
-			}
-
-			utils.Log.Infof("Default config file created at %s", utils.DefaultConfigPath)
 		}
 	}
 
 	viper.SetConfigFile(cfgFile)
 
-	viper.AutomaticEnv() // read in environment variables that match
+	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
 		utils.Log.Debugf("unable to read config file: %v", err)
@@ -223,6 +204,16 @@ func initConfig() {
 
 func setupLogger() {
 	// default log level is info
+	logLevel := logrus.InfoLevel
+
+	// log level to debug if the -v flag is set
+	if verbose {
+		logLevel = logrus.DebugLevel
+	}
+
+func setupLogger() {
+
+// default log level is info
 	logLevel := logrus.InfoLevel
 
 	// log level to debug if the -v flag is set
