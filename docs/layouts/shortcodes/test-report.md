@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 3rd 2026, 3:11:38 pm
+- Testing started at: April 3rd 2026, 10:17:17 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 11 skipped
 
-⌛ _Duration: 6 minutes and 27 seconds_
+⌛ _Duration: 7 minutes and 31 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -126,6 +126,41 @@ The following tests failed. Click on each to see the failure reason:
 <details>
 <summary>❌ Delete Kubernetes cluster connections (Meshery - chromium-meshery-provider)</summary>
 
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/utils/waitForSnackBar.ts`
+
+**Error Message:**
+```
+Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+Locator: locator('text=Connection status updated').first()
+Expected: visible
+Timeout: 60000ms
+Error: element(s) not found
+
+Call log:
+[2m  - Expect "toBeVisible" with timeout 60000ms[22m
+[2m  - waiting for locator('text=Connection status updated').first()[22m
+
+```
+
+**Code Snippet:**
+```
+   at utils/waitForSnackBar.ts:5
+
+[0m [90m 3 |[39m [36mexport[39m [36mconst[39m waitForSnackBar [33m=[39m [36masync[39m (page[33m:[39m [33mPage[39m[33m,[39m message[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[36mvoid[39m[33m>[39m [33m=>[39m {
+ [90m 4 |[39m   [36mconst[39m snackbar [33m=[39m page[33m.[39mlocator([32m`text=${message}`[39m)[33m.[39mfirst()[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m   [36mawait[39m expect(snackbar)[33m.[39mtoBeVisible()[33m;[39m
+ [90m   |[39m                          [31m[1m^[22m[39m
+ [90m 6 |[39m   [36mawait[39m snackbar[33m.[39mwaitFor({ state[33m:[39m [32m'detached'[39m[33m,[39m timeout[33m:[39m [35m10000[39m })[33m;[39m
+ [90m 7 |[39m }[33m;[39m
+ [90m 8 |[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
+
 **File Location:** `Not Found`
 
 **Error Message:**
@@ -146,41 +181,27 @@ The following tests failed. Click on each to see the failure reason:
 ```
 Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
 
-Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775229182132')
+Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775254714183')
 Expected: visible
-Timeout: 120000ms
+Timeout: 180000ms
 Error: element(s) not found
 
 Call log:
-[2m  - Expect "toBeVisible" with timeout 120000ms[22m
-[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775229182132')[22m
+[2m  - Expect "toBeVisible" with timeout 180000ms[22m
+[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775254714183')[22m
 
 ```
 
 **Code Snippet:**
 ```
-[0m [90m 67 |[39m     [36mawait[39m expect(
- [90m 68 |[39m       page[33m.[39mgetByTestId([32m`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`[39m)[33m,[39m
-[31m[1m>[22m[39m[90m 69 |[39m     )[33m.[39mtoBeVisible({ timeout[33m:[39m [35m120[39m_000 })[33m;[39m
+[0m [90m 69 |[39m     [36mawait[39m expect(
+ [90m 70 |[39m       page[33m.[39mgetByTestId([32m`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`[39m)[33m,[39m
+[31m[1m>[22m[39m[90m 71 |[39m     )[33m.[39mtoBeVisible({ timeout[33m:[39m [35m180[39m_000 })[33m;[39m
  [90m    |[39m       [31m[1m^[22m[39m
- [90m 70 |[39m     [36mawait[39m expect(page[33m.[39mgetByTestId([32m'ModelImportMessages-Wrapper'[39m))[33m.[39mtoBeVisible()[33m;[39m
- [90m 71 |[39m
- [90m 72 |[39m     [36mawait[39m page[33m.[39mgetByTestId([32m'UrlStepper-Button-Finish'[39m)[33m.[39mclick()[33m;[39m[0m
+ [90m 72 |[39m     [36mawait[39m expect(page[33m.[39mgetByTestId([32m'ModelImportMessages-Wrapper'[39m))[33m.[39mtoBeVisible()[33m;[39m
+ [90m 73 |[39m
+ [90m 74 |[39m     [36mawait[39m page[33m.[39mgetByTestId([32m'UrlStepper-Button-Finish'[39m)[33m.[39mclick()[33m;[39m[0m
 ```
-
-</details>
-
-<details>
-<summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
 
 </details>
 
@@ -193,26 +214,26 @@ Call log:
 ```
 Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
 
-Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775229341780')
+Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775254888393')
 Expected: visible
-Timeout: 120000ms
+Timeout: 180000ms
 Error: element(s) not found
 
 Call log:
-[2m  - Expect "toBeVisible" with timeout 120000ms[22m
-[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775229341780')[22m
+[2m  - Expect "toBeVisible" with timeout 180000ms[22m
+[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775254888393')[22m
 
 ```
 
 **Code Snippet:**
 ```
-[0m [90m 67 |[39m     [36mawait[39m expect(
- [90m 68 |[39m       page[33m.[39mgetByTestId([32m`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`[39m)[33m,[39m
-[31m[1m>[22m[39m[90m 69 |[39m     )[33m.[39mtoBeVisible({ timeout[33m:[39m [35m120[39m_000 })[33m;[39m
+[0m [90m 69 |[39m     [36mawait[39m expect(
+ [90m 70 |[39m       page[33m.[39mgetByTestId([32m`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`[39m)[33m,[39m
+[31m[1m>[22m[39m[90m 71 |[39m     )[33m.[39mtoBeVisible({ timeout[33m:[39m [35m180[39m_000 })[33m;[39m
  [90m    |[39m       [31m[1m^[22m[39m
- [90m 70 |[39m     [36mawait[39m expect(page[33m.[39mgetByTestId([32m'ModelImportMessages-Wrapper'[39m))[33m.[39mtoBeVisible()[33m;[39m
- [90m 71 |[39m
- [90m 72 |[39m     [36mawait[39m page[33m.[39mgetByTestId([32m'UrlStepper-Button-Finish'[39m)[33m.[39mclick()[33m;[39m[0m
+ [90m 72 |[39m     [36mawait[39m expect(page[33m.[39mgetByTestId([32m'ModelImportMessages-Wrapper'[39m))[33m.[39mtoBeVisible()[33m;[39m
+ [90m 73 |[39m
+ [90m 74 |[39m     [36mawait[39m page[33m.[39mgetByTestId([32m'UrlStepper-Button-Finish'[39m)[33m.[39mclick()[33m;[39m[0m
 ```
 
 </details>
