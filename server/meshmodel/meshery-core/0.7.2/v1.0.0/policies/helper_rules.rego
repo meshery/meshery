@@ -139,9 +139,7 @@ extract_components_by_type(declarations, selector) := {result |
 	result := declaration
 }
 
-# TODO: Add checks for
-# 1. when operators/regex are used in the version fields
-# 2. deny selctor
+# TODO: Add checks for when operators/regex are used in the version fields
 
 is_relationship_feasible_from(fromComponent, relationship) := from if {
 	some selector in relationship.selectors
