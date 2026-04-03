@@ -11,6 +11,7 @@ categories: [contributing]
     <li><a href="https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=1907616946#gid=1907616946">Meshery Test Plan</a>: Test cases for end-to-end testing of Meshery functionality.</li>
 	<li><a href="https://github.com/meshery/meshery/labels/component%2Fmesheryctl">mesheryctl open issues and pull requests</a>: Matching the "component/mesheryctl" label.</li></ul>{{% /alert %}}
 
+{{< member-form >}}
 
 ### Designing Commands
 
