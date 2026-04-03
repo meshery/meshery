@@ -495,11 +495,14 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 	// Inform user of the latest release version
 	versions, err := utils.GetLatestReleaseTagsSorted("meshery", "meshery")
-	latestVersion := versions[len(versions)-1]
-	isOutdated := false
 	if err != nil {
 		return nil, "", ErrCreateOperatorDeploymentConfig(err)
 	}
+	if len(versions) == 0 {
+		return nil, "", ErrCreateOperatorDeploymentConfig(fmt.Errorf("no release tags found for meshery/meshery"))
+	}
+	latestVersion := versions[len(versions)-1]
+	isOutdated := false
 	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
 	if latestVersion != serverVersion {
 		isOutdated = true
