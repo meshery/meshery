@@ -64,6 +64,7 @@ module.exports = {
     '@mui/icons-material/LibraryAdd': require('@mui/icons-material/LibraryAdd'),
     '@mui/icons-material/DoneAll': require('@mui/icons-material/DoneAll'),
     '@mui/icons-material': require('@mui/icons-material'),
+    '@mui/icons-material/KeyboardArrowDownRounded': require('@mui/icons-material/KeyboardArrowDownRounded'),
     '@mui/icons-material/InsertChart': require('@mui/icons-material/InsertChart'),
     '@mui/icons-material/TouchApp': require('@mui/icons-material/TouchApp'),
     '@mui/icons-material/CheckCircle': require('@mui/icons-material/CheckCircle'),
