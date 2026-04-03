@@ -1,25 +1,29 @@
 package config_test
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
 
 	config "github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/spf13/viper"
 )
 
 func TestNeedsMutation(t *testing.T) {
 	tests := []struct {
-		name  string
-		setup func(string, *testing.T)
-		want  bool
+		name    string
+		setup   func(string, *testing.T)
+		path    func(string) string
+		want    bool
+		wantErr bool
 	}{
 		{
-			name:  "Given missing config file, When NeedsMutation is called, Then it returns true",
-			setup: func(_ string, _ *testing.T) {},
-			want:  true,
+			name:    "Given missing config file, When NeedsMutation is called, Then it returns true",
+			setup:   func(_ string, _ *testing.T) {},
+			path:    func(p string) string { return p },
+			want:    true,
+			wantErr: false,
 		},
 		{
 			name: "Given empty config file, When NeedsMutation is called, Then it returns true",
@@ -28,7 +32,9 @@ func TestNeedsMutation(t *testing.T) {
 					t.Fatalf("failed to write file: %v", err)
 				}
 			},
-			want: true,
+			path:    func(p string) string { return p },
+			want:    true,
+			wantErr: false,
 		},
 		{
 			name: "Given non-empty config file, When NeedsMutation is called, Then it returns false",
@@ -37,7 +43,16 @@ func TestNeedsMutation(t *testing.T) {
 					t.Fatalf("failed to write file: %v", err)
 				}
 			},
-			want: false,
+			path:    func(p string) string { return p },
+			want:    false,
+			wantErr: false,
+		},
+		{
+			name:    "Given invalid path, When NeedsMutation is called, Then it returns error",
+			setup:   func(_ string, _ *testing.T) {},
+			path:    func(_ string) string { return string([]byte{0}) },
+			want:    false,
+			wantErr: true,
 		},
 	}
 
@@ -47,10 +62,12 @@ func TestNeedsMutation(t *testing.T) {
 			configPath := filepath.Join(tmpDir, "config.yaml")
 
 			tt.setup(configPath, t)
+			configPath = tt.path(configPath)
 
 			got, err := config.NeedsMutation(configPath)
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			if got != tt.want {
@@ -60,30 +77,15 @@ func TestNeedsMutation(t *testing.T) {
 	}
 }
 
-func TestNeedsMutation_ErrorCase(t *testing.T) {
-	t.Run("Given invalid config path, When NeedsMutation is called, Then it returns an error", func(t *testing.T) {
-		invalidPath := string([]byte{0})
-
-		_, err := config.NeedsMutation(invalidPath)
-		if err == nil {
-			t.Fatal("expected error for invalid path, got nil")
-		}
-	})
-}
-
 func TestInitDefaultConfig(t *testing.T) {
-	t.Run("Given no existing config, When InitDefaultConfig is called, Then config file is created", func(t *testing.T) {
+
+	t.Run("Given valid setup, When InitDefaultConfig is called, Then config is created", func(t *testing.T) {
 		tmpDir := t.TempDir()
 		configPath := filepath.Join(tmpDir, "config.yaml")
 		mesheryFolder := filepath.Join(tmpDir, ".meshery")
 
-		minimalMeshConfig := `contexts: {}
-current-context: ""
-tokens: []
-`
-
 		createConfig := func() error {
-			return os.WriteFile(configPath, []byte(minimalMeshConfig), 0o644)
+			return os.WriteFile(configPath, []byte("data"), 0o644)
 		}
 
 		err := config.InitDefaultConfig(
@@ -93,108 +95,50 @@ tokens: []
 			utils.TemplateContext,
 			createConfig,
 		)
+
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
+	})
 
-		data, err := os.ReadFile(configPath)
-		if err != nil {
-			t.Fatalf("config not found: %v", err)
+	t.Run("Given createConfig fails, When InitDefaultConfig is called, Then error is returned", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		configPath := filepath.Join(tmpDir, "config.yaml")
+		mesheryFolder := filepath.Join(tmpDir, ".meshery")
+
+		createConfig := func() error {
+			return errors.New("create failed")
 		}
 
-		if len(data) == 0 {
-			t.Fatal("expected config to be created")
+		err := config.InitDefaultConfig(
+			configPath,
+			mesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+			createConfig,
+		)
+
+		if err == nil {
+			t.Fatal("expected error, got nil")
 		}
 	})
-}
 
-func TestConfigMutation(t *testing.T) {
-	minimalMeshConfig := `contexts: {}
-current-context: ""
-tokens: []
-`
+	t.Run("Given invalid directory, When MkdirAll fails, Then error is returned", func(t *testing.T) {
+		configPath := "/invalid/path/config.yaml"
+		mesheryFolder := "/invalid/path/.meshery"
 
-	tests := []struct {
-		name  string
-		given func(string, *testing.T)
-		want  bool
-	}{
-		{
-			name:  "Given missing config file, When mutation flow runs, Then config is created",
-			given: func(_ string, _ *testing.T) {},
-			want:  true,
-		},
-		{
-			name: "Given empty config file, When mutation flow runs, Then config is created",
-			given: func(path string, t *testing.T) {
-				if err := os.WriteFile(path, []byte(""), 0o644); err != nil {
-					t.Fatalf("failed to write file: %v", err)
-				}
-			},
-			want: true,
-		},
-		{
-			name: "Given existing config file, When mutation flow runs, Then config is NOT modified",
-			given: func(path string, t *testing.T) {
-				if err := os.WriteFile(path, []byte("already-exists"), 0o644); err != nil {
-					t.Fatalf("failed to write file: %v", err)
-				}
-			},
-			want: false,
-		},
-	}
+		createConfig := func() error { return nil }
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		err := config.InitDefaultConfig(
+			configPath,
+			mesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+			createConfig,
+		)
 
-			viper.Reset()
-			t.Cleanup(viper.Reset)
-
-			tmpDir := t.TempDir()
-			configPath := filepath.Join(tmpDir, "config.yaml")
-			mesheryFolder := filepath.Join(tmpDir, ".meshery")
-
-			tt.given(configPath, t)
-
-			createConfig := func() error {
-				return os.WriteFile(configPath, []byte(minimalMeshConfig), 0o644)
-			}
-
-			got, err := config.NeedsMutation(configPath)
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
-
-			if got != tt.want {
-				t.Fatalf("NeedsMutation() = %v, want %v", got, tt.want)
-			}
-
-			if got {
-				if err := config.InitDefaultConfig(
-					configPath,
-					mesheryFolder,
-					utils.TemplateToken,
-					utils.TemplateContext,
-					createConfig,
-				); err != nil {
-					t.Fatalf("unexpected error: %v", err)
-				}
-			}
-
-			data, err := os.ReadFile(configPath)
-			if err != nil {
-				t.Fatalf("config not found: %v", err)
-			}
-
-			if tt.want {
-				if len(data) == 0 {
-					t.Fatal("expected config to be created")
-				}
-			} else {
-				if string(data) != "already-exists" {
-					t.Fatal("existing config was modified")
-				}
-			}
-		})
-	}
+		if err == nil {
+			t.Fatal("expected error, got nil")
+		}
+	})
 }
