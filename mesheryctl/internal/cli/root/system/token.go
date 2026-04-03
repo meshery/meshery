@@ -54,8 +54,8 @@ var tokenCmd = &cobra.Command{
 
 func checkTokenName(n int) cobra.PositionalArgs {
 	return func(cmd *cobra.Command, args []string) error {
-		if len(args) != n || args[0] == "" {
-			return fmt.Errorf("token name is required in command, accepts %d arg(s), received %d or empty string", n, len(args))
+		if len(args) != n || (len(args) > 0 && args[0] == "") {
+			return utils.ErrInvalidArgument(fmt.Errorf("token name is required in command, accepts %d arg(s), received %d or empty string", n, len(args)))
 		}
 		return nil
 	}
