@@ -105,8 +105,13 @@ const DatabaseSummary = (props) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : '');
     }),
-    onColumnSortChange: (_, direction) => {
-      setSortOrder(`name ${direction}`);
+    onColumnSortChange: (column, direction) => {
+      const sortColumn =
+        typeof column == 'string' ? column : column?.name || column?.field || column?.id;
+      const allowedSortColumns = ['name', 'count'];
+      if (sortColumn && allowedSortColumns.includes(sortColumn)) {
+        setSortOrder(`${sortColumn} ${direction}`);
+      }
     },
   };
 
