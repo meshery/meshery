@@ -3,10 +3,13 @@ package graphql
 import (
 	"context"
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/websocket"
@@ -54,7 +57,18 @@ func New(opts Options) http.Handler {
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(config))
-
+	debugMode := false
+	if debugEnv := os.Getenv("DEBUG"); debugEnv != "" {
+		if parsed, err := strconv.ParseBool(debugEnv); err == nil {
+			debugMode = parsed
+		}
+	}
+	if debugMode {
+		srv.Use(extension.Introspection{})
+		opts.Logger.Info("GraphQL introspection enabled (DEBUG=true)")
+	} else {
+		opts.Logger.Info("GraphQL introspection disabled (production mode)")
+	}
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.Websocket{
