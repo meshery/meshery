@@ -15,9 +15,9 @@ import (
 	"github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/capability"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 
 	"github.com/meshery/meshkit/models/events"
 
