@@ -367,8 +367,13 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-		rw.WriteHeader((http.StatusBadRequest))
+		rw.Header().Set("Content-Type", "application/json")
+		rw.WriteHeader(http.StatusBadRequest)
+
+		_ = json.NewEncoder(rw).Encode(map[string]string{
+    		"error": ErrRequestBody(err).Error(),
+})
+
 		return
 	}
 
@@ -376,7 +381,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
 
 	if err != nil {
-		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
+		rw.Header().Set("Content-Type", "application/json")
+		rw.WriteHeader(http.StatusInternalServerError)
+
+		_ = json.NewEncoder(rw).Encode(map[string]string{
+			"error": ErrDecoding(err, "design file").Error(),
+})
 		return
 	}
 	// decode the pattern file
@@ -403,7 +413,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	case err := <-evalErrChan:
 		h.log.Debug(err)
 		// log an event
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		rw.Header().Set("Content-Type", "application/json")
+		rw.WriteHeader(http.StatusInternalServerError)
+
+		_ = json.NewEncoder(rw).Encode(map[string]string{
+   			 "error": err.Error(),
+})
 		return
 
 	case evaluationResponse := <-evalRespChan:
