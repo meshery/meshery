@@ -10,6 +10,11 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
+const minimalMeshConfig = `contexts: {}
+current-context: ""
+tokens: []
+`
+
 func TestNeedsMutation(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -28,9 +33,7 @@ func TestNeedsMutation(t *testing.T) {
 		{
 			name: "Given empty config file, When NeedsMutation is called, Then it returns true",
 			setup: func(path string, t *testing.T) {
-				if err := os.WriteFile(path, []byte(""), 0o644); err != nil {
-					t.Fatalf("failed to write file: %v", err)
-				}
+				_ = os.WriteFile(path, []byte(""), 0o644)
 			},
 			path:    func(p string) string { return p },
 			want:    true,
@@ -39,9 +42,7 @@ func TestNeedsMutation(t *testing.T) {
 		{
 			name: "Given non-empty config file, When NeedsMutation is called, Then it returns false",
 			setup: func(path string, t *testing.T) {
-				if err := os.WriteFile(path, []byte("data"), 0o644); err != nil {
-					t.Fatalf("failed to write file: %v", err)
-				}
+				_ = os.WriteFile(path, []byte("data"), 0o644)
 			},
 			path:    func(p string) string { return p },
 			want:    false,
@@ -85,7 +86,7 @@ func TestInitDefaultConfig(t *testing.T) {
 		mesheryFolder := filepath.Join(tmpDir, ".meshery")
 
 		createConfig := func() error {
-			return os.WriteFile(configPath, []byte("data"), 0o644)
+			return os.WriteFile(configPath, []byte(minimalMeshConfig), 0o644)
 		}
 
 		err := config.InitDefaultConfig(
@@ -124,8 +125,12 @@ func TestInitDefaultConfig(t *testing.T) {
 	})
 
 	t.Run("Given invalid directory, When MkdirAll fails, Then error is returned", func(t *testing.T) {
-		configPath := "/invalid/path/config.yaml"
-		mesheryFolder := "/invalid/path/.meshery"
+		tmpDir := t.TempDir()
+		configPath := filepath.Join(tmpDir, "config.yaml")
+
+		// create file instead of dir to force failure
+		mesheryFolder := filepath.Join(tmpDir, "not-a-dir")
+		_ = os.WriteFile(mesheryFolder, []byte("data"), 0o644)
 
 		createConfig := func() error { return nil }
 
