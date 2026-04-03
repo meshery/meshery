@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
@@ -47,6 +48,18 @@ var (
 	mx        sync.Mutex
 )
 
+const (
+	// maxOpenConns sets the maximum number of open connections to the database.
+	// Setting this to 1 is crucial for SQLite to prevent "database is locked" errors.
+	maxOpenConns = 1
+	// maxIdleConns sets the maximum number of connections in the idle connection pool.
+	// ensures that the one connection is retained in the pool after use
+	maxIdleConns = 1
+	// connMaxLifetime sets the maximum amount of time a connection may be reused.
+	// A value of 0 means that connections are not closed due to a connection's age.
+	connMaxLifetime time.Duration = 0
+)
+
 func setNewDBInstance() {
 	mx.Lock()
 	defer mx.Unlock()
@@ -71,6 +84,14 @@ func setNewDBInstance() {
 		err = ErrInitializeDBHandler(err)
 		log.Error(err)
 	}
+	sqlDB, err := dbHandler.DB.DB()
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	sqlDB.SetMaxOpenConns(maxOpenConns)
+	sqlDB.SetMaxIdleConns(maxIdleConns)
+	sqlDB.SetConnMaxLifetime(connMaxLifetime)
 }
 
 func GetNewDBInstance() *database.Handler {
