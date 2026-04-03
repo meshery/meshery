@@ -137,6 +137,7 @@ func restart() error {
 			utils.SilentFlag = true
 		}
 
+		silentFlagSet = utils.SilentFlag
 		utils.Log.Info("Restarting Meshery...")
 
 		if err := stop(); err != nil {
