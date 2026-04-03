@@ -17,6 +17,9 @@ on:
       bats_test: 
         description: "run only bats suite test"
         required: false
+      verbose: 
+        description: "enable verbose logging for manual test"
+        required: false
   push:
     branches:
       - "master"
@@ -77,10 +80,13 @@ jobs:
       - name: Get Date
         id: date
         run: echo "date=$(date +'%Y-%m-%d-%H.%M.%S')" >> $GITHUB_OUTPUT
-      - name: Build mesheryctl and start Meshery
+      - name: Build mesheryctl
+        run: make build
+        shell: bash
+        working-directory: ./mesheryctl
+      - name: Start Meshery
         run: |
-          make build && \
-          ./mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update
+          ./mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update ${{ inputs.verbose == 'true' && '--verbose' || '' }} 
         shell: bash
         working-directory: ./mesheryctl
       - name: Run mesheryctl end2end tests
