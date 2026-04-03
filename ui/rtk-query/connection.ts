@@ -82,6 +82,23 @@ const connectionsApi = api.injectEndpoints({
         body: queryArg.body,
       }),
     }),
+    pingKubernetes: builder.query({
+      query: (connectionId) => ({
+        url: `system/kubernetes/ping`,
+        params: { connection_id: connectionId },
+        credentials: 'include',
+      }),
+    }),
+    updateConnectionStatus: builder.mutation({
+      query: ({ kind, body }) => ({
+        url: `integrations/connections/${kind}/status`,
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }),
+      invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
+    }),
     addKubernetesConfig: builder.mutation({
       query: (queryArg) => ({
         url: `system/kubernetes`,
@@ -104,6 +121,8 @@ export const {
   useUpdateConnectionByIdMutation,
   useCancelConnectionRegisterMutation,
   useAddKubernetesConfigMutation,
+  useLazyPingKubernetesQuery,
+  useUpdateConnectionStatusMutation,
 } = connectionsApi;
 
 export const useGetConnectionsQuery = (queryArg, options) =>

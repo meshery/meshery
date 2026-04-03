@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 2nd 2026, 9:41:30 am
+- Testing started at: April 3rd 2026, 3:11:38 pm
 
 **📦 Test Result Summary**
 
-- ✅ 58 passed
-- ❌ 3 failed
+- ✅ 56 passed
+- ❌ 5 failed
 - ⚠️ 0 flaked
 - ⏩ 11 skipped
 
-⌛ _Duration: 6 minutes and 28 seconds_
+⌛ _Duration: 6 minutes and 27 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -36,7 +36,7 @@
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ➖ |
-| 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ✅ |
+| 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ❌ |
 | 17 | Meshery | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 18 | Meshery | chromium-meshery-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 19 | Meshery | chromium-meshery-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
@@ -73,7 +73,7 @@
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 51 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 52 | None | chromium-local-provider | Search a Model and Export it |  | ➖ |
-| 53 | None | chromium-local-provider | should edit design in Design Configurator |  | ✅ |
+| 53 | None | chromium-local-provider | should edit design in Design Configurator |  | ❌ |
 | 54 | None | chromium-local-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 55 | None | chromium-local-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 56 | None | chromium-local-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
@@ -110,6 +110,20 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
+<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
 <summary>❌ Delete Kubernetes cluster connections (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
@@ -132,14 +146,14 @@ The following tests failed. Click on each to see the failure reason:
 ```
 Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
 
-Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775122962562')
+Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775229182132')
 Expected: visible
 Timeout: 120000ms
 Error: element(s) not found
 
 Call log:
 [2m  - Expect "toBeVisible" with timeout 120000ms[22m
-[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775122962562')[22m
+[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775229182132')[22m
 
 ```
 
@@ -157,6 +171,20 @@ Call log:
 </details>
 
 <details>
+<summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
 <summary>❌ Create a Model (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/models.spec.js`
@@ -165,14 +193,14 @@ Call log:
 ```
 Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
 
-Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775123128737')
+Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775229341780')
 Expected: visible
 Timeout: 120000ms
 Error: element(s) not found
 
 Call log:
 [2m  - Expect "toBeVisible" with timeout 120000ms[22m
-[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775123128737')[22m
+[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775229341780')[22m
 
 ```
 

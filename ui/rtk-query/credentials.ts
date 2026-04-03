@@ -46,6 +46,7 @@ const credentialsApi = api.injectEndpoints({
 export const {
   useGetCredentialsQuery,
   useGetCredentialByIdQuery,
+  useLazyGetCredentialByIdQuery,
   useCreateCredentialMutation,
   useUpdateCredentialMutation,
   useDeleteCredentialMutation,
