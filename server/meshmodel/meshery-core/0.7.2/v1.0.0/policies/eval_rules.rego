@@ -5,6 +5,7 @@ import rego.v1
 import data.actions
 import data.core_utils
 import data.core_utils.truncate_set
+import data.feasibility_evaluation_utils
 
 approve_relationships_action(relationships, status, max_limit) := update_actions if {
 	update_actions := truncate_set(
@@ -187,6 +188,11 @@ identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship
 
 	component_from.component.kind == from_selector.kind
 	component_to.component.kind == to_selector.kind
+
+	# Skip if this component pair is denied by the selector set's deny selectors.
+	deny_from := object.get(selector_set, ["deny", "from"], [])
+	deny_to := object.get(selector_set, ["deny", "to"], [])
+	not feasibility_evaluation_utils.is_selector_set_feasible_between(component_to, component_from, deny_to, deny_from)
 
 	matching_selectors := matching_mutators(component_from, component_to, from_selector, to_selector, design_file)
 
