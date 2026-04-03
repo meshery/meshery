@@ -98,6 +98,8 @@ const (
 	ErrPersistEventCode                   = "meshery-server-1303"
 	ErrInvalidEventDataCode               = "meshery-server-1357"
 	ErrUnreachableKubeAPICode             = "meshery-server-1304"
+	ErrMeshsyncEventCode                  = "meshery-server-1378"
+	ErrMeshsyncStoreUpdatesCode           = "meshery-server-1379"
 	ErrFlushMeshSyncDataCode              = "meshery-server-1305"
 	ErrUpdateConnectionStatusCode         = "meshery-server-1306"
 	ErrResultNotFoundCode                 = "meshery-server-1307"
@@ -614,6 +616,14 @@ func ErrMarshallingDesignIntoYAML(err error) error {
 
 func ErrMeshsyncDataHandler(err error) error {
 	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
+}
+
+func ErrMeshsyncEvent(err error) error {
+	return errors.New(ErrMeshsyncEventCode, errors.Alert, []string{"Error processing MeshSync event"}, []string{err.Error()}, []string{"MeshSync encountered an error while processing a broker event"}, []string{"Check MeshSync logs for details. Ensure the Kubernetes cluster is reachable and MeshSync is running correctly."})
+}
+
+func ErrMeshsyncStoreUpdates(err error) error {
+	return errors.New(ErrMeshsyncStoreUpdatesCode, errors.Alert, []string{"Error processing MeshSync store update"}, []string{err.Error()}, []string{"MeshSync encountered an error while processing a store update event"}, []string{"Check MeshSync store logs. Verify that the database connection is active and the store is not corrupted."})
 }
 
 func ErrWorkspaceMissingInput() error {
