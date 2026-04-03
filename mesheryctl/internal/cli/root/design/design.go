@@ -15,12 +15,15 @@
 package design
 
 import (
+	"fmt"
 	"slices"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/pattern/core"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/spf13/cobra"
 )
 
@@ -71,7 +74,7 @@ mesheryctl design list
 func init() {
 	DesignCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, deployDesignCmd, exportCmd, designUndeployCmd}
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, deployDesignCmd, exportCmd, designUndeployCmd, evaluateCmd}
 	DesignCmd.AddCommand(availableSubcommands...)
 }
 
@@ -95,4 +98,19 @@ func retrieveProvidedSourceType(sType string, validDesignSourceTypes []string) (
 		return sType, nil
 	}
 	return "", ErrInValidSource(sType, validDesignSourceTypes)
+}
+
+// fetchDesignByID fetches a design from the server by ID and parses it into a PatternFile.
+func fetchDesignByID(baseUrl, designID string) (pattern.PatternFile, error) {
+	dataURL := fmt.Sprintf("%s/api/pattern/%s", baseUrl, designID)
+	patternData, err := fetchPatternData(dataURL)
+	if err != nil {
+		return pattern.PatternFile{}, err
+	}
+
+	pf, err := core.NewPatternFile([]byte(patternData.PatternFile))
+	if err != nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(err)
+	}
+	return pf, nil
 }

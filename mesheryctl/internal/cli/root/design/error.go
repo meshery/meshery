@@ -38,6 +38,8 @@ const (
 	ErrInvalidCommandCode             = "mesheryctl-1191"
 	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1192"
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
+	ErrEvaluateDesignCode             = "mesheryctl-1200"
+	ErrEvaluateDesignResponseCode     = "mesheryctl-1202"
 )
 
 const (
@@ -171,4 +173,20 @@ func ErrDesignInvalidApiResponse(message string) error {
 		[]string{message},
 		[]string{"The API response is missing expected fields or has an unexpected format"},
 		[]string{"Ensure the Meshery server is running a compatible version", "Check for any issues with the Meshery server that may cause it to return malformed responses"})
+}
+
+func ErrEvaluateDesign() error {
+	return errors.New(ErrEvaluateDesignCode, errors.Alert,
+		[]string{"Design not specified for evaluation"},
+		[]string{"Exactly one of a design file path (-f) or a design ID must be provided, not both"},
+		[]string{"A design must be specified either by file path (-f) or by ID as an argument, but not both simultaneously"},
+		[]string{"Provide a design file using '-f' flag or pass a design ID as an argument (not both).\n\nUsage: mesheryctl design evaluate [ID] -o [output-file]\n       mesheryctl design evaluate -f [file] -o [output-file]"})
+}
+
+func ErrEvaluateDesignResponse(err error) error {
+	return errors.New(ErrEvaluateDesignResponseCode, errors.Alert,
+		[]string{"Failed to evaluate design"},
+		[]string{err.Error()},
+		[]string{"The Meshery server returned an error while evaluating the design", "The design file may be invalid or the server may be experiencing issues"},
+		[]string{"Ensure the design file is valid", "Check that the Meshery server is running and accessible", "Verify that the server has the required policies loaded"})
 }
