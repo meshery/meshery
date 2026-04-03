@@ -180,15 +180,19 @@ func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Reques
 	w.Header().Set("content-type", "application/json")
 	err := req.ParseForm()
 	if err != nil {
-		h.log.Error(ErrParseForm(err))
-		http.Error(w, ErrParseForm(err).Error(), http.StatusForbidden)
+		e := ErrParseForm(err)
+		h.log.Error(e)
+		http.Error(w, e.Error(), http.StatusForbidden)
+		return
 	}
 	q := req.Form
 
 	bdr, err := p.FetchSmiResults(req, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
-		h.log.Error(ErrFetchSMIResults(err))
-		http.Error(w, ErrFetchSMIResults(err).Error(), http.StatusInternalServerError)
+		e := ErrFetchSMIResults(err)
+		h.log.Error(e)
+		http.Error(w, e.Error(), http.StatusInternalServerError)
+		return
 	}
 	_, _ = w.Write(bdr)
 }
@@ -198,8 +202,10 @@ func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.R
 	w.Header().Set("content-type", "application/json")
 	err := req.ParseForm()
 	if err != nil {
-		h.log.Error(ErrParseForm(err))
-		http.Error(w, ErrParseForm(err).Error(), http.StatusForbidden)
+		e := ErrParseForm(err)
+		h.log.Error(e)
+		http.Error(w, e.Error(), http.StatusForbidden)
+		return
 	}
 	q := req.Form
 	id := mux.Vars(req)["id"]
@@ -211,8 +217,10 @@ func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.R
 	}
 	bdr, err := p.FetchSmiResult(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), key)
 	if err != nil {
-		h.log.Error(ErrFetchSMIResults(err))
-		http.Error(w, ErrFetchSMIResults(err).Error(), http.StatusInternalServerError)
+		e := ErrFetchSMIResults(err)
+		h.log.Error(e)
+		http.Error(w, e.Error(), http.StatusInternalServerError)
+		return
 	}
 	_, _ = w.Write(bdr)
 }
