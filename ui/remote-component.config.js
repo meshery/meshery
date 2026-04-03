@@ -153,5 +153,10 @@ module.exports = {
     'ajv/dist/runtime/ucs2length': require('ajv/dist/runtime/ucs2length'),
     'ajv/dist/runtime/uri': require('ajv/dist/runtime/uri'),
     'ajv/dist/runtime/validation_error': require('ajv/dist/runtime/validation_error'),
+    '@mui/material': require('@mui/material'),
+    ajv: require('ajv'),
+    '@rjsf/core': require('@rjsf/core'),
+    '@rjsf/utils': require('@rjsf/utils'),
+    '@rjsf/validator-ajv8': require('@rjsf/validator-ajv8'),
   },
 };
