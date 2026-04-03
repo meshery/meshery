@@ -1,0 +1,64 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Edge",
+  "metadata": {
+    "description": "Binding relationship where an APIMapping grabs the Stage name configuration."
+  },
+  "model": {
+    "name": "aws-apigatewayv2-controller",
+    "version": "v1.2.1",
+    "displayName": "AWS API Gateway v2",
+    "category": {
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Service Proxy"
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Stage",
+            "model": {
+              "name": "aws-apigatewayv2-controller"
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "stageName"
+                ]
+              ],
+              "description": "Extracts the stageName string from the Stage component."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "APIMapping",
+            "model": {
+              "name": "aws-apigatewayv2-controller"
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "stage"
+                ]
+              ],
+              "description": "Injects the Stage name string into the APIMapping configuration."
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "subType": "Binding",
+  "type": "Edge",
+  "version": "v1.0.0"
+} 
