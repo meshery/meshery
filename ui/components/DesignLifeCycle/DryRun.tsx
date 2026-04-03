@@ -3,6 +3,7 @@ import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { useState } from 'react';
 import { ComponentIcon, DEPLOYMENT_TYPE, Loading, processDesign } from './common';
+import { FALLBACK_COMPONENT_ICON_PATH } from '@/constants/common';
 import {
   designValidatorCommands,
   designValidatorEvents,
@@ -58,7 +59,9 @@ const ExpandableComponentErrors = ({
   validationMachine,
   currentComponentName, // if dry run is initiated by clicking on node's error badge
 }) => {
-  const componentIcon = component ? `/${component?.styles?.svgWhite}` : null;
+  const componentIcon = component?.styles?.svgWhite
+    ? `/${component.styles.svgWhite}`
+    : FALLBACK_COMPONENT_ICON_PATH;
 
   const isCurrentComponent = (name) => name == currentComponentName;
   const [isComponentAccordionOpen, setIsComponentAccordionOpen] = useState(
