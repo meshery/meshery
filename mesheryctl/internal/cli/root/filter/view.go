@@ -15,7 +15,6 @@
 package filter
 
 import (
-	"errors"
 	"fmt"
 	"net/url"
 	"path/filepath"
@@ -61,15 +60,20 @@ mesheryctl filter view --all --output-format json -s
 //View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 mesheryctl filter view "filter name"
         `,
-	Args: cobra.MaximumNArgs(1),
-	PreRunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl filter view [filter-name | ID]\nRun 'mesheryctl filter view --help' to see detailed help message"
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("accepts at most 1 arg, received %d\n\n%s", len(args), errMsg))
+		}
 		if len(args) > 0 && filterViewFlagsProvided.viewAllFlag {
-			return ErrViewAllWithName(cmd.Use)
+			return ErrViewAllWithName("view")
 		}
 		if len(args) == 0 && !filterViewFlagsProvided.viewAllFlag {
-			return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
+			return utils.ErrInvalidArgument(fmt.Errorf("filter name or ID is required\n\n%s", errMsg))
 		}
-		// Validate output-format
+		return nil
+	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return display.ValidateOutputFormat(filterViewFlagsProvided.outputFormat)
 	},
 
