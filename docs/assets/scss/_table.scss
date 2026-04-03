@@ -26,7 +26,7 @@ table td {
   padding: 8px;
   text-align: left;
   max-width: 300px;
-  word-wrap: break-word;
+  overflow-wrap:break-word;
 }
 table td img {
   text-align: center;
