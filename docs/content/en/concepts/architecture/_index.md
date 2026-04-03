@@ -138,7 +138,7 @@ See the [**Adapters**](/concepts/architecture/adapters) section for more informa
 ### **Meshery Connections and their Actions**
 
 | Connection Type | **Connect mesheryctl** | **Connect Meshery UI** | **Disconnect** | **Ad hoc Connectivity Test** | **Ongoing Connectivity Test** | **Synthetic Check** | **Deploy mesheryctl** | **Undeploy mesheryctl** | **Deploy Meshery UI** | **Undeploy Meshery UI** |
-|---|---|---|---|---|---|---|---|---|---|---|---|
+|---|---|---|---|---|---|---|---|---|---|---|
 | Kubernetes clusters | `system start` | Upload kubeconfig | Click "X" on chip | On click of connection chip | Yes, via MeshSync | No | No | No | No | No |
 | Grafana Servers | No | Enter IP/hostname into Meshery UI | Click "X" on chip | On click of connection chip | No | No | No | No | No | No |
 | Prometheus Servers | No | Enter IP/hostname into Meshery UI | Click "X" on chip | On click of connection chip | Yes, when metrics are configured in a dashboard | Yes | No | No | No | No |
