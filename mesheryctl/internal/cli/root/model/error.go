@@ -16,6 +16,7 @@ const (
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
 	ErrModelBuildCode                   = "mesheryctl-1151"
 	ErrDeleteModelCode                  = "mesheryctl-1200"
+	ErrValidateModelCode                = "mesheryctl-1205"
 
 	// Error Constants
 	errBuildUsage                    = "Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message"
@@ -76,6 +77,14 @@ func ErrModelBuildFromStrings(message ...string) error {
 
 func ErrModelBuild(err error) error {
 	return errors.New(ErrModelBuildCode, errors.Fatal, []string{"Error model build"}, []string{err.Error()}, []string{"Error during run of model build command"}, []string{"Ensure passing all params according to the command description"})
+}
+
+func ErrValidateModel(err error) error {
+	return errors.New(ErrValidateModelCode, errors.Alert,
+		[]string{"Error validating model"},
+		[]string{err.Error()},
+		[]string{"The model definition file may be malformed or contain invalid data"},
+		[]string{"Ensure the file contains a valid model, component, or relationship definition with all required fields"})
 }
 
 func ErrDeleteModel(err error, nameOrID string) error {
