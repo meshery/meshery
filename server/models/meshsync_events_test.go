@@ -226,11 +226,20 @@ func TestMeshsyncDataHandlerStopIsIdempotent(t *testing.T) {
 
 type fakeMeshsyncLogger struct {
 	logger.Handler
+	mu     sync.Mutex
 	logged []error
 }
 
 func (f *fakeMeshsyncLogger) Error(err error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
 	f.logged = append(f.logged, err)
+}
+
+func (f *fakeMeshsyncLogger) getLogged() []error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	return append([]error(nil), f.logged...)
 }
 
 func (f *fakeMeshsyncLogger) Info(description ...interface{}) {}
@@ -273,17 +282,18 @@ func TestMeshsyncEventErrorWrappedWithMeshKit(t *testing.T) {
 	handler.StopFunc = func() {}
 	close(handler.stopCh)
 
-	if len(logger.logged) == 0 {
+	logged := logger.getLogged()
+	if len(logged) == 0 {
 		t.Fatalf("expected error to be logged by meshsync handler")
 	}
 
 	// Check if the error is wrapped with the correct MeshKit code
-	if mkErr, ok := logger.logged[0].(*meshkitErrors.Error); ok {
+	if mkErr, ok := logged[0].(*meshkitErrors.Error); ok {
 		if mkErr.Code != ErrMeshsyncEventCode {
 			t.Errorf("expected code %s, got %s", ErrMeshsyncEventCode, mkErr.Code)
 		}
 	} else {
-		t.Fatalf("expected logged error to be a *meshkitErrors.Error, got %T", logger.logged[0])
+		t.Fatalf("expected logged error to be a *meshkitErrors.Error, got %T", logged[0])
 	}
 }
 
@@ -322,17 +332,18 @@ func TestMeshsyncStoreUpdatesErrorWrappedWithMeshKit(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 	close(handler.stopCh)
 
-	if len(logger.logged) == 0 {
+	logged := logger.getLogged()
+	if len(logged) == 0 {
 		t.Fatalf("expected error to be logged by meshsync handler")
 	}
 
 	// Check if the error is wrapped with the correct MeshKit code
-	if mkErr, ok := logger.logged[0].(*meshkitErrors.Error); ok {
+	if mkErr, ok := logged[0].(*meshkitErrors.Error); ok {
 		if mkErr.Code != ErrMeshsyncStoreUpdatesCode {
 			t.Errorf("expected code %s, got %s", ErrMeshsyncStoreUpdatesCode, mkErr.Code)
 		}
 	} else {
-		t.Fatalf("expected logged error to be a *meshkitErrors.Error, got %T", logger.logged[0])
+		t.Fatalf("expected logged error to be a *meshkitErrors.Error, got %T", logged[0])
 	}
 }
 
@@ -371,16 +382,17 @@ func TestMeshsyncStoreUpdatesNonErrorObjectWrapped(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 	close(handler.stopCh)
 
-	if len(logger.logged) == 0 {
+	logged := logger.getLogged()
+	if len(logged) == 0 {
 		t.Fatalf("expected error to be logged by meshsync handler")
 	}
 
 	// Check if the error is wrapped with the correct MeshKit code
-	if mkErr, ok := logger.logged[0].(*meshkitErrors.Error); ok {
+	if mkErr, ok := logged[0].(*meshkitErrors.Error); ok {
 		if mkErr.Code != ErrMeshsyncStoreUpdatesCode {
 			t.Errorf("expected code %s, got %s", ErrMeshsyncStoreUpdatesCode, mkErr.Code)
 		}
 	} else {
-		t.Fatalf("expected logged error to be a *meshkitErrors.Error, got %T", logger.logged[0])
+		t.Fatalf("expected logged error to be a *meshkitErrors.Error, got %T", logged[0])
 	}
 }
