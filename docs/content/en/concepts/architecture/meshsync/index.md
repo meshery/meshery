@@ -31,11 +31,11 @@ The resources that are present inside the cluster are discovered efficiently wit
 
 ### Greenfield: Tracking newly created resources
 
-Meshery earmarks infrastucture for which it is the original lifecycle manager. In other words, Meshery tags the resources it creates. In Kubernetes deployments, earmarking is performed using annotations, notably the key/value pair:
+Meshery earmarks infrastructure for which it is the original lifecycle manager. In other words, Meshery tags the resources it creates. In Kubernetes deployments, earmarking is performed using annotations, notably the key/value pair:
 
 `designs.meshery.io: <design-id>`
 
-The propagation of the labels and annotations to the native k8s resources would be the responsibility of the workload/trait implementor.
+The propagation of the labels and annotations to the native k8s resources would be the responsibility of the workload/trait implementer.
 The following annotations are added to resources that are created by Meshery Server.
 
 ```yaml
@@ -54,11 +54,11 @@ Fingerprinting, the process of positively identifying and classifying resources,
 - Prometheus typically offers metrics on 9090/tcp, but not always.
 - Prometheus is typically deployed from a prebuilt container offered by the open source project, but not always.
 
-See Connnection State Management for additional information.
+See Connection State Management for additional information.
 
 Fingerprinting is the act of uniquely identifying managed infrastructure, their versions and other specific characteristics.
 
-As a guiding principal, each set of composite fingerprints uses the same identifiers that each element management tool uses to identify itself (e.g., istioctl version).
+As a guiding principle, each set of composite fingerprints uses the same identifiers that each element management tool uses to identify itself (e.g., istioctl version).
 
 Creating a composite set of keys involves using the builder pattern. For example:
 
@@ -76,13 +76,35 @@ The informer in MeshSync actively listens to changes in resources and updates th
 
 ### Flushing MeshSync
 
-### Sythentic Test of MeshSync
+### Synthetic Test of MeshSync
 
-_TODO: Include example of how to invoke this built-in check._
+MeshSync health can be verified using Meshery's built-in system checks. For example, run:
+
+```bash
+mesheryctl system check --operator
+```
+
+This check reports the status of Meshery Operator and its controllers, including MeshSync and Broker.
+This check can also be triggered in the UI from the **Connections** view by clicking the **connection chip**.
+
+Example output:
+
+```text
+Meshery Operators
+--------------
+OK Meshery Operator is running
+OK Meshsync is running
+OK Meshery Broker is running
+OK Meshery Broker CR contains Status.Endpoint (External: <public-endpoint>, Internal: <cluster-endpoint>)
+```
+
+How to interpret:
+- An OK line means that component is healthy and reachable.
+- A "!!" line indicates the component is not running or a required status field is missing.
 
 # Scalability and Performance
 
-One Meshery Operator and one MeshSync are deployed to each Kuberentes cluster under management.
+One Meshery Operator and one MeshSync are deployed to each Kubernetes cluster under management.
 
 ## Tiered Discovery
 
@@ -122,9 +144,9 @@ When the deployment mode is switched from embedded to operator: the MeshSync lib
 
 MeshSync is managed by [Meshery Operator](/concepts/architecture/operator), which watches for changes on the meshsync CRD for changes and updates the deployed MeshSync instance accordingly. You can blacklist specific Kubernetes resources from being discovered and watched by MeshSync. In order to identify the list of one or more resources for MeshSync to ignore, update the meshsync CRD using kubectl:
 
-- Download the CRD with kubectl get crd meshsyncs.meshery.io -o yaml > meshsync.yaml
-- Open the downloaded file and edit the field informer_config to blacklist all the types of resources that you don't want updates from.
-- Apply the new definition with kubectl apply -f meshsync.yaml
+- Download the CRD with `kubectl get crd meshsyncs.meshery.io -o yaml > meshsync.yaml`
+- Open the downloaded file and edit the field `informer_config` to blacklist all the types of resources that you don't want updates from.
+- Apply the new definition with `kubectl apply -f meshsync.yaml`
 
 
 {{% alert color="info" title="Still seeing issues?" %}}
@@ -141,4 +163,6 @@ Even if you're not using Kubernetes, Meshery empowers you to manage your infrast
 # Recap
 
 MeshSync maintains an up-to-date snapshot of your cluster, ensuring you always have an accurate view of your infrastructure. This snapshot is refreshed in real-time through event-based updates. Whether you're starting fresh or adopting Meshery into existing setups, MeshSync supports both greenfield and brownfield discovery of your environment.
+
+
 
