@@ -59,7 +59,7 @@ jobs:
         uses: actions/checkout@v6
       - 
         name: Identify Release Values
-        if: "${{ github.event.inputs.release-ver}} != 'v' }}"
+        if: ${{ github.event.inputs.release-ver != 'v' }}
         run: |
           if [[ ${GITHUB_REF} = refs/tags* ]]
           then
