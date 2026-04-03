@@ -1,10 +1,10 @@
 package models
 
 import (
+	"errors"
 	"testing"
 
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestSMPPerformanceTestConfigValidator(t *testing.T) {
@@ -54,7 +54,9 @@ func TestSMPPerformanceTestConfigValidator(t *testing.T) {
 			t.Run(tc.name, func(t *testing.T) {
 				err := SMPPerformanceTestConfigValidator(tc.config)
 				if tc.wantError != nil {
-					utils.AssertMeshkitErrorsEqual(t, err, tc.wantError)
+					if !errors.Is(err, tc.wantError) {
+						t.Errorf("expected error %v, got %v", tc.wantError, err)
+					}
 					return
 				}
 
