@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -22,6 +23,7 @@ func createTempCSVFile(t *testing.T, dir, fileName string) string {
 
 // resetGenerateFlags resets all flags to their default values
 func resetGenerateFlags(cmd *cobra.Command) {
+	mesheryctlflags.InitValidators(cmd)
 	cmd.PersistentFlags().VisitAll(func(f *pflag.Flag) {
 		_ = f.Value.Set(f.DefValue)
 	})
