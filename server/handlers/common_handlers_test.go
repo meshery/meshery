@@ -23,20 +23,31 @@ func TestIsValidPath(t *testing.T) {
 	if err != nil {
 		mesheryHome = tmpDir
 	}
-	mesheryHome, _ = filepath.Abs(mesheryHome)
+	mesheryHome, err = filepath.Abs(mesheryHome)
+	if err != nil {
+		t.Fatalf("failed to get absolute path: %v", err)
+	}
 
 	// Create some files for EvalSymlinks to work with
 	testFile := filepath.Join(mesheryHome, "test.log")
-	_ = os.WriteFile(testFile, []byte("test"), 0644)
+	if err := os.WriteFile(testFile, []byte("test"), 0644); err != nil {
+		t.Fatalf("failed to create test file: %v", err)
+	}
 
 	configDir := filepath.Join(mesheryHome, "config")
-	_ = os.Mkdir(configDir, 0755)
+	if err := os.Mkdir(configDir, 0755); err != nil {
+		t.Fatalf("failed to create config dir: %v", err)
+	}
 	configFile := filepath.Join(configDir, "mesherydb.sql")
-	_ = os.WriteFile(configFile, []byte("sensitive"), 0644)
+	if err := os.WriteFile(configFile, []byte("sensitive"), 0644); err != nil {
+		t.Fatalf("failed to create config file: %v", err)
+	}
 
 	// Create a symlink that points outside
 	outsideFile := filepath.Join(os.TempDir(), "outside.txt")
-	_ = os.WriteFile(outsideFile, []byte("outside"), 0644)
+	if err := os.WriteFile(outsideFile, []byte("outside"), 0644); err != nil {
+		t.Fatalf("failed to create outside file: %v", err)
+	}
 	defer func() {
 		if err := os.Remove(outsideFile); err != nil {
 			t.Logf("failed to remove temporary file: %v", err)
@@ -44,17 +55,25 @@ func TestIsValidPath(t *testing.T) {
 	}()
 
 	evilSymlink := filepath.Join(mesheryHome, "evil_link")
-	_ = os.Symlink(outsideFile, evilSymlink)
+	if err := os.Symlink(outsideFile, evilSymlink); err != nil {
+		t.Fatalf("failed to create symlink: %v", err)
+	}
 
 	// Create a directory that could cause a partial prefix bypass
 	// We use the same parent directory as mesheryHome
 	parentDir := filepath.Dir(mesheryHome)
 	backupDir := filepath.Join(parentDir, filepath.Base(mesheryHome)+"-backup")
-	_ = os.MkdirAll(backupDir, 0755)
+	if err := os.MkdirAll(backupDir, 0755); err != nil {
+		t.Fatalf("failed to create backup dir: %v", err)
+	}
 	backupFile := filepath.Join(backupDir, "secret.txt")
-	_ = os.WriteFile(backupFile, []byte("secret"), 0644)
+	if err := os.WriteFile(backupFile, []byte("secret"), 0644); err != nil {
+		t.Fatalf("failed to create backup file: %v", err)
+	}
 	defer func() {
-		_ = os.RemoveAll(backupDir)
+		if err := os.RemoveAll(backupDir); err != nil {
+			t.Logf("failed to remove backup dir: %v", err)
+		}
 	}()
 
 	tests := []struct {
@@ -63,27 +82,27 @@ func TestIsValidPath(t *testing.T) {
 		expected bool
 	}{
 		{
-			name:     "Valid path in mesheryHome",
+			name:     "Given a valid path in mesheryHome, When isValidPath is called, Then it should return true",
 			path:     testFile,
 			expected: true,
 		},
 		{
-			name:     "Invalid path - sensitive config",
+			name:     "Given an invalid path to a sensitive config file, When isValidPath is called, Then it should return false",
 			path:     configFile,
 			expected: false,
 		},
 		{
-			name:     "Invalid path - etc passwd",
+			name:     "Given an invalid path to an external file like etc/passwd, When isValidPath is called, Then it should return false",
 			path:     "/etc/passwd",
 			expected: false,
 		},
 		{
-			name:     "Invalid path - symlink traversal",
+			name:     "Given an invalid path with symlink traversal, When isValidPath is called, Then it should return false",
 			path:     evilSymlink,
 			expected: false,
 		},
 		{
-			name:     "Invalid path - partial prefix match bypass",
+			name:     "Given an invalid path with a partial prefix match bypass, When isValidPath is called, Then it should return false",
 			path:     backupFile,
 			expected: false,
 		},
@@ -110,13 +129,20 @@ func TestViewHandler_Validation(t *testing.T) {
 	if err != nil {
 		mesheryHome = tmpDir
 	}
-	mesheryHome, _ = filepath.Abs(mesheryHome)
+	mesheryHome, err = filepath.Abs(mesheryHome)
+	if err != nil {
+		t.Fatalf("failed to get absolute path: %v", err)
+	}
 
 	// Create a dummy log file for testing
 	testLogDir := filepath.Join(mesheryHome, "test_logs")
-	_ = os.MkdirAll(testLogDir, 0755)
+	if err := os.MkdirAll(testLogDir, 0755); err != nil {
+		t.Fatalf("failed to create log dir: %v", err)
+	}
 	testLogFile := filepath.Join(testLogDir, "access.log")
-	_ = os.WriteFile(testLogFile, []byte("test log content"), 0644)
+	if err := os.WriteFile(testLogFile, []byte("test log content"), 0644); err != nil {
+		t.Fatalf("failed to create log file: %v", err)
+	}
 
 	tests := []struct {
 		name           string
@@ -124,17 +150,17 @@ func TestViewHandler_Validation(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name:           "Allowed file",
+			name:           "Given an allowed file, When ViewHandler is called, Then it should return StatusOK",
 			fileParam:      testLogFile,
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name:           "Forbidden file - outside home",
+			name:           "Given a forbidden file outside mesheryHome, When ViewHandler is called, Then it should return StatusForbidden",
 			fileParam:      "/etc/passwd",
 			expectedStatus: http.StatusForbidden,
 		},
 		{
-			name:           "Forbidden file - sensitive config",
+			name:           "Given a forbidden sensitive config file, When ViewHandler is called, Then it should return StatusForbidden",
 			fileParam:      filepath.Join(mesheryHome, "config", "mesherydb.sql"),
 			expectedStatus: http.StatusForbidden,
 		},

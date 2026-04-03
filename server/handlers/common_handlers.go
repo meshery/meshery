@@ -112,14 +112,20 @@ func (h *Handler) isValidPath(filePath string) bool {
 			return false
 		}
 	}
-	mesheryHome, _ = filepath.Abs(mesheryHome)
+	mesheryHome, err = filepath.Abs(mesheryHome)
+	if err != nil {
+		return false
+	}
 
 	// Resolve symlinks and get absolute path to prevent traversal via symlinks
 	absPath, err := filepath.EvalSymlinks(filePath)
 	if err != nil {
 		return false
 	}
-	absPath, _ = filepath.Abs(absPath)
+	absPath, err = filepath.Abs(absPath)
+	if err != nil {
+		return false
+	}
 
 	// Check if the resolved path is within mesheryHome
 	rel, err := filepath.Rel(mesheryHome, absPath)
