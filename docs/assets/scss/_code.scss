@@ -6,9 +6,8 @@ code {
     display: none;
   }
 }
-code::-webkit-scrollbar {
-  display: none;
-}
+
+
 .td-content {
   p code,
   li > code,
@@ -64,9 +63,13 @@ code::-webkit-scrollbar {
 pre {
   display: block;
   color: var(--color-grey-medium);
-  & ::-webkit-scrollbar {
-    display: none;
-  }
+  code::-webkit-scrollbar {
+  height: 4px;
+}
+code::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
 }
 pre::-webkit-scrollbar {
   display: none;
@@ -87,9 +90,6 @@ pre::-webkit-scrollbar {
     padding: 1rem;
     overflow: hidden;
     
-    & ::-webkit-scrollbar {
-      display: none;
-    }
   }
 }
 
