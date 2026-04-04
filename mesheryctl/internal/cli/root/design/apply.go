@@ -1,3 +1,4 @@
+
 // Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -100,7 +101,7 @@ mesheryctl design apply [design-name]
 			index := 0
 			if len(response.Patterns) == 0 {
 				utils.Log.Error(ErrDesignNotFound(patternName))
-				return nil
+				return err
 			} else if len(response.Patterns) == 1 {
 				designFile = response.Patterns[0].PatternFile
 			} else {

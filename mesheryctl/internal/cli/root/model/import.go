@@ -78,7 +78,7 @@ mesheryctl model import --file [path-to-csv-directory]
 			err := registerModel(nil, nil, nil, "", "urlImport", path, true)
 			if err != nil {
 				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			return nil
 		}
