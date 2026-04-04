@@ -21,8 +21,12 @@ const SessionExpiringModal = () => {
   const handleStayLoggedIn = () => {
     setIsRefreshing(true);
     fetch('/api/user/prefs', { credentials: 'include' })
-      .then(() => {
-        recordActivity();
+      .then((res) => {
+        if (res.ok) {
+          recordActivity();
+        } else {
+          triggerSessionExpired();
+        }
       })
       .catch(() => {
         triggerSessionExpired();
