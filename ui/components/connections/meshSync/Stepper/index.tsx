@@ -9,7 +9,12 @@ import {
 } from './constants';
 import { ColorlibConnector, CustomLabelStyle, StepperContainer } from '../../styles';
 
-const StepIconWrapper = styled('div')(({ theme, active, completed }) => ({
+interface StepIconWrapperProps {
+  active?: boolean;
+  completed?: boolean;
+}
+
+const StepIconWrapper = styled('div')<StepIconWrapperProps>(({ theme, active, completed }) => ({
   backgroundColor: theme.palette.background.card,
   zIndex: 1,
   color: '#fff',
@@ -56,7 +61,15 @@ const StepperContent = styled(Box)({
   width: '100%',
 });
 
-function StepperIcon({ active, completed, stepIcons, icon }) {
+function StepperIcon({
+  active,
+  completed,
+  stepIcons,
+  icon,
+}: StepIconWrapperProps & {
+  stepIcons: Record<string, React.ReactElement>;
+  icon: React.ReactNode;
+}) {
   const iconComponent = stepIcons[String(icon)];
   const additionalProps = {
     fill: completed ? 'white' : 'currentColor',
@@ -69,7 +82,19 @@ function StepperIcon({ active, completed, stepIcons, icon }) {
   );
 }
 
-export default function CustomizedSteppers({ sharedData, setSharedData, connectionData, onClose }) {
+export default function CustomizedSteppers({
+  sharedData,
+  setSharedData,
+  connectionData,
+  onClose,
+  handleRegistrationComplete,
+}: {
+  sharedData: any;
+  setSharedData: (data: any) => void;
+  connectionData: any;
+  onClose: () => void;
+  handleRegistrationComplete: () => void;
+}) {
   const [activeStep, setActiveStep] = React.useState(0);
   const stepData = {
     stepContent: registerConnectionContent,
@@ -99,8 +124,15 @@ export default function CustomizedSteppers({ sharedData, setSharedData, connecti
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
+  const propHandlerMap = {
+    handleNext,
+    sharedData,
+    setSharedData,
+    handleRegistrationComplete,
+  };
+
   const stepProps = stepContent[String(activeStep + 1)]?.props?.reduce((props, propName) => {
-    props[propName] = propName === 'handleNext' ? handleNext : eval(propName);
+    props[propName] = propHandlerMap[propName];
     return props;
   }, {});
 

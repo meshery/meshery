@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
+import { FormControlLabel, FormLabel, Radio, RadioGroup } from '@sistent/sistent';
 import {
   ariaDescribedByIds,
   enumOptionsIndexForValue,
