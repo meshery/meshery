@@ -364,27 +364,21 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userUUID).WithCategory("relationship").WithAction("evaluation")
 
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		h.log.Error(ErrRequestBody(err))
-		rw.Header().Set("Content-Type", "application/json")
-		rw.WriteHeader(http.StatusBadRequest)
+body, err := io.ReadAll(r.Body)
+if err != nil {
+	errResponse := ErrRequestBody(err)
+	h.log.Error(errResponse)
 
-		_ = json.NewEncoder(rw).Encode(ErrRequestBody(err))
-		return
-	}
-
+	http.Error(rw, errResponse.Error(), http.StatusBadRequest)
+	return
+}
 	relationshipPolicyEvalPayload := pattern.EvaluationRequest{}
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
-
 if err != nil {
 	errResponse := ErrDecoding(err, "design file")
 	h.log.Error(errResponse)
 
-	rw.Header().Set("Content-Type", "application/json")
-	rw.WriteHeader(http.StatusInternalServerError)
-
-	_ = json.NewEncoder(rw).Encode(errResponse)
+	http.Error(rw, errResponse.Error(), http.StatusInternalServerError)
 	return
 }
 	// decode the pattern file
@@ -412,7 +406,7 @@ case err := <-evalErrChan:
 	h.log.Debug(err)
 	http.Error(rw, err.Error(), http.StatusInternalServerError)
 	return
-	
+
 	case evaluationResponse := <-evalRespChan:
 		// include trace instead of design file in the event
 		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
