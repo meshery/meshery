@@ -22,7 +22,7 @@ func TestRemoteProviderGetWorkspaces_ReturnsEmptyPageForNoContent(t *testing.T) 
 	defer server.Close()
 
 	provider := newTestRemoteProvider(t, server.URL)
-	provider.Capabilities = ProviderCapabilities{Features: []Feature{{Name: PersistWorkspaces, EndpointURI: "/workspaces"}}}
+	provider.Capabilities = Capabilities{{Feature: PersistWorkspaces, Endpoint: "/workspaces"}}
 
 	data, err := provider.GetWorkspaces("token", "2", "10", "", "", "", "")
 	if err != nil {
@@ -62,7 +62,7 @@ func TestRemoteProviderGetWorkspaces_PreservesJSONBodyForOK(t *testing.T) {
 	defer server.Close()
 
 	provider := newTestRemoteProvider(t, server.URL)
-	provider.Capabilities = ProviderCapabilities{Features: []Feature{{Name: PersistWorkspaces, EndpointURI: "/workspaces"}}}
+	provider.Capabilities = Capabilities{{Feature: PersistWorkspaces, Endpoint: "/workspaces"}}
 
 	data, err := provider.GetWorkspaces("token", "1", "10", "", "", "", "")
 	if err != nil {
