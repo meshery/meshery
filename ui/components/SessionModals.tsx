@@ -69,7 +69,7 @@ const SessionExpiringModal = () => {
           <ModalButtonPrimary onClick={handleStayLoggedIn} disabled={isRefreshing} autoFocus>
             {isRefreshing ? (
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <CircularProgress size={20} style={{ marginRight: '0.5rem', color: '#fff' }} />
+                <CircularProgress size={20} color="inherit" style={{ marginRight: '0.5rem' }} />
                 <Typography variant="body1">Refreshing...</Typography>
               </div>
             ) : (
