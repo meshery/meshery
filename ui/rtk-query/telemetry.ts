@@ -27,7 +27,7 @@ const telemetryApi = api.injectEndpoints({
 
     getStaticPrometheusBoardConfig: builder.query({
       query: () => ({
-        url: mesheryApiPath(`telemetry/metrics/static-board`),
+        url: mesheryApiPath(`telemetry/metrics/static-board/${connectionID}`),
         method: 'GET',
         credentials: 'include',
       }),
