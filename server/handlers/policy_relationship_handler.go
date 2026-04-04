@@ -415,7 +415,9 @@ if err != nil {
 		rw.Header().Set("Content-Type", "application/json")
 		rw.WriteHeader(http.StatusInternalServerError)
 
-		_ = json.NewEncoder(rw).Encode(errResponse)
+		_ = json.NewEncoder(rw).Encode(map[string]interface{}{
+			"error": errResponse.Error(),
+})
 		return
 
 	case evaluationResponse := <-evalRespChan:
