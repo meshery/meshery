@@ -115,7 +115,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		if err != nil {
 			return ErrGetCurrentContext(err)
 		}
-		utils.Log.Debug("Fetching Meshery-UI endpoint")
+		utils.Log.Debugf("Fetching Meshery-UI endpoint for platform: %s", currCtx.GetPlatform())
 		switch currCtx.GetPlatform() {
 		case platformDocker:
 			if dashboardCmdFlags.PortForward {
@@ -185,6 +185,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 			var mesheryEndpoint string
 			endpoint, err := utils.GetMesheryEndpoint(context.TODO(), client)
+			utils.Log.Debugf("Meshery Endpoint: %v", endpoint)
 			if err != nil {
 				return err //the func return a meshkit error
 			}

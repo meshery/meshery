@@ -104,8 +104,13 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'push' }}
         working-directory: ./mesheryctl
         run: |
+          if [ ! -f tests/e2e/bats.tap ]; then
+            echo "TAP file not found!"
+            exit 1
+          fi
           node bats-to-allure.js tests/e2e/bats.tap
-
+        shell: bash
+        
       - name: Checkout QA
         uses: actions/checkout@v6
         if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
