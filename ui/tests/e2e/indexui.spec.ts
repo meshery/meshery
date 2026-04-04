@@ -2,7 +2,8 @@ import { expect, test } from '@playwright/test';
 import { DashboardPage } from './pages/DashboardPage';
 
 test.describe('Index Page UI Tests', () => {
-  let dashboardPage;
+  let dashboardPage: DashboardPage;
+
   test.beforeEach(async ({ page }) => {
     dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
