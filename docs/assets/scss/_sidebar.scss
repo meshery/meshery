@@ -1,33 +1,60 @@
 .left-container {
+  --docs-sidebar-panel-width: 336px;
+  --docs-sidebar-handle-width: 2rem;
   position: sticky;
   z-index: 9;
   height: calc(100vh - var(--navbar-height));
-  transition: all 0.5s ease-in-out;
+  transition: width 0.5s ease-in-out, flex-basis 0.5s ease-in-out,
+    transform 0.5s ease-in-out;
   margin-top: calc(var(--navbar-height));
   top: calc(var(--navbar-height));
-  & .sidebar-container-wrapper {
+  width: calc(var(--docs-sidebar-panel-width) + var(--docs-sidebar-handle-width));
+  flex: 0 0 calc(var(--docs-sidebar-panel-width) + var(--docs-sidebar-handle-width));
+  overflow: visible;
+  & .sidebar-shell {
+    display: flex;
+    align-items: stretch;
+    position: relative;
+    overflow: visible;
+    width: calc(var(--docs-sidebar-panel-width) + var(--docs-sidebar-handle-width));
     height: 100%;
+    transition: transform 0.5s ease-in-out;
+  }
+  & .sidebar-container-wrapper {
+    display: flex;
+    flex: 0 0 var(--docs-sidebar-panel-width);
+    height: 100%;
+    min-height: 100%;
+    width: var(--docs-sidebar-panel-width);
     padding: 0.5rem;
     background: var(--background-grey);
     box-shadow: var(--box-shadow-primary);
+    box-sizing: border-box;
   }
   & .icon-container {
     height: fit-content;
     z-index: 9;
-    display: none;
+    display: block;
+    position: absolute;
+    left: var(--docs-sidebar-panel-width);
+    bottom: 4rem;
     @media (max-width: 75em) {
+      bottom: auto;
       margin-top: 3rem;
       position: absolute;
       right: -3rem;
+      left: auto;
       display: block;
     }
   }
   @media (max-width: 75em) {
+    --docs-sidebar-panel-width: 320px;
     margin-top: 0;
     transform: translateX(-100%);
     position: fixed;
     display: flex;
-    width: 320px;
+    width: var(--docs-sidebar-panel-width);
+    flex: none;
     left: -1rem;
   }
   &--active {
@@ -35,11 +62,82 @@
     & .nav-toggle-btn--document svg {
       transform: rotate(180deg);
     }
+    @media (max-width: 75em) {
+      transform: translateX(0%);
+    }
   }
 
   @media (max-width: 37.5em) {
     top: calc(var(--navbar-height) - 10);
     height: 100vh;
+  }
+}
+
+.left-container--collapsed {
+  width: var(--docs-sidebar-handle-width);
+  flex-basis: var(--docs-sidebar-handle-width);
+}
+
+.left-container--collapsed .sidebar-shell {
+  transform: translateX(calc(-1 * var(--docs-sidebar-panel-width)));
+}
+
+.left-container--collapsed .sidebar-container-wrapper {
+  pointer-events: none;
+}
+
+.left-container--collapsed .nav-toggle-btn--document svg {
+  transform: rotate(0deg);
+}
+
+html.docs-sidebar-collapsed .left-container {
+  width: var(--docs-sidebar-handle-width);
+  flex-basis: var(--docs-sidebar-handle-width);
+}
+
+html.docs-sidebar-collapsed .left-container .sidebar-shell {
+  transform: translateX(calc(-1 * var(--docs-sidebar-panel-width)));
+}
+
+html.docs-sidebar-collapsed .left-container .sidebar-container-wrapper {
+  pointer-events: none;
+}
+
+html.docs-sidebar-collapsed .left-container .nav-toggle-btn--document svg {
+  transform: rotate(0deg);
+}
+
+html.docs-sidebar-preload .left-container,
+html.docs-sidebar-preload .left-container .sidebar-shell,
+html.docs-sidebar-preload .left-container .sidebar-container-wrapper,
+html.docs-sidebar-preload .left-container .nav-toggle-btn--document svg {
+  transition: none !important;
+}
+
+@media (max-width: 75em) {
+  .left-container--collapsed {
+    width: var(--docs-sidebar-panel-width);
+  }
+
+  .left-container--collapsed .sidebar-shell {
+    transform: none;
+  }
+
+  .left-container--collapsed .sidebar-container-wrapper {
+    pointer-events: auto;
+  }
+
+  html.docs-sidebar-collapsed .left-container {
+    width: var(--docs-sidebar-panel-width);
+    flex-basis: auto;
+  }
+
+  html.docs-sidebar-collapsed .left-container .sidebar-shell {
+    transform: none;
+  }
+
+  html.docs-sidebar-collapsed .left-container .sidebar-container-wrapper {
+    pointer-events: auto;
   }
 }
 
@@ -54,6 +152,11 @@
   padding: 5px;
   cursor: pointer;
   justify-content: center;
+
+  & svg {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+  }
 }
 #document-nav-toggle-btn {
   width: 2.2rem;
@@ -62,6 +165,7 @@
 }
 
 .sidebar-container {
+  flex: 1 1 auto;
   overscroll-behavior: contain;
   padding: .25rem min(2vh, 2vw);
   overflow-y: scroll;

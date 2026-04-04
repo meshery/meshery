@@ -89,27 +89,87 @@ clipboard.on("success", (e)=>{
     },2000)
 })
 
-const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
+document.addEventListener("DOMContentLoaded", function() {
+    const root = document.documentElement;
+    const toggleBtnSidebarNav = document.querySelector(".nav-toggle-btn--document");
+    const sidebarNav = document.querySelector(".left-container");
+    const desktopSidebarMedia = window.matchMedia("(min-width: 75.0625em)");
+    const sidebarStorageKey = "meshery-docs-sidebar-hidden";
 
-toggleBtnSidebarNav.addEventListener("click",()=>{
-    let sidebarNav=document.querySelector(".left-container")
-    if(sidebarNav){
-        sidebarNav.classList.toggle("left-container--active")
+    function syncSidebarButton(isExpanded) {
+        if (!toggleBtnSidebarNav) {
+            return;
+        }
+
+        toggleBtnSidebarNav.setAttribute("aria-expanded", String(isExpanded));
+        toggleBtnSidebarNav.setAttribute(
+            "aria-label",
+            isExpanded ? "Collapse sidebar" : "Expand sidebar"
+        );
     }
-})
+
+    function setDesktopSidebarState(isHidden) {
+        root.classList.toggle("docs-sidebar-collapsed", isHidden);
+        sidebarNav.classList.toggle("left-container--collapsed", isHidden);
+        sidebarNav.setAttribute("data-testid", isHidden ? "sidebar-collapsed" : "sidebar-expanded");
+        syncSidebarButton(!isHidden);
+    }
+
+    function setSidebarView() {
+        if (!sidebarNav) {
+            return;
+        }
+
+        if (desktopSidebarMedia.matches) {
+            sidebarNav.classList.remove("left-container--active");
+            setDesktopSidebarState(localStorage.getItem(sidebarStorageKey) === "true");
+            root.classList.remove("docs-sidebar-preload");
+            return;
+        }
+
+        root.classList.remove("docs-sidebar-collapsed");
+        sidebarNav.classList.remove("left-container--collapsed");
+        const isActive = sidebarNav.classList.contains("left-container--active");
+        sidebarNav.setAttribute("data-testid", isActive ? "sidebar-active" : "sidebar-inactive");
+        syncSidebarButton(isActive);
+        root.classList.remove("docs-sidebar-preload");
+    }
+
+    if (toggleBtnSidebarNav && sidebarNav) {
+        setSidebarView();
+
+        toggleBtnSidebarNav.addEventListener("click", () => {
+            if (desktopSidebarMedia.matches) {
+                const isHidden = !sidebarNav.classList.contains("left-container--collapsed");
+                setDesktopSidebarState(isHidden);
+                localStorage.setItem(sidebarStorageKey, String(isHidden));
+                return;
+            }
+
+            sidebarNav.classList.toggle("left-container--active");
+            const isActive = sidebarNav.classList.contains("left-container--active");
+            sidebarNav.setAttribute("data-testid", isActive ? "sidebar-active" : "sidebar-inactive");
+            syncSidebarButton(isActive);
+        });
+
+        desktopSidebarMedia.addEventListener("change", setSidebarView);
+    }
+});
 
 const toggleBtnMainNav=document.querySelector(".nav-toggle-btn--main");
 
-toggleBtnMainNav.addEventListener("click",()=>{
-    let sidebarNav=document.getElementById("main_navbar")
-    if(sidebarNav){
-        sidebarNav.classList.toggle("main-navbar--active")
-    }
-})
+if (toggleBtnMainNav) {
+    toggleBtnMainNav.addEventListener("click",()=>{
+        let sidebarNav=document.getElementById("main_navbar")
+        if(sidebarNav){
+            sidebarNav.classList.toggle("main-navbar--active")
+        }
+    })
+}
 
 document.addEventListener("click", (event) => {
     let sidebarNav = document.getElementById("main_navbar")
-    if (sidebarNav) {
+    if (sidebarNav && toggleBtnMainNav) {
         let isClickInsideSidebar = sidebarNav.contains(event.target)
         let isClickOnToggleButton = toggleBtnMainNav.contains(event.target)
 
