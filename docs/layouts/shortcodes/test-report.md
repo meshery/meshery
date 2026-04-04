@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 4th 2026, 6:21:04 pm
+- Testing started at: April 4th 2026, 7:30:18 pm
 
 **📦 Test Result Summary**
 
-- ✅ 63 passed
-- ❌ 3 failed
+- ✅ 67 passed
+- ❌ 2 failed
 - ⚠️ 0 flaked
-- ⏩ 6 skipped
+- ⏩ 3 skipped
 
-⌛ _Duration: 6 minutes and 7 seconds_
+⌛ _Duration: 6 minutes and 13 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -30,12 +30,12 @@
 | 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
 | 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
-| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
+| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
+| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
+| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
-| 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ❌ |
+| 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
 | 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ❌ |
 | 17 | Meshery | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 18 | Meshery | chromium-meshery-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
@@ -111,20 +111,6 @@ The following tests failed. Click on each to see the failure reason:
 
 <details>
 <summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ Search a Model and Export it (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
