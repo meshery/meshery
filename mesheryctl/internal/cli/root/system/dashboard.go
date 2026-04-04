@@ -185,12 +185,12 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 			var mesheryEndpoint string
 			endpoint, err := utils.GetMesheryEndpoint(context.TODO(), client)
-			utils.Log.Debugf("Meshery Endpoint: %v", endpoint)
 			if err != nil {
 				return err //the func return a meshkit error
 			}
 
 			mesheryEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.Internal.Address, endpoint.Internal.Port)
+			utils.Log.Debugf("Set Meshery Endpoint: %s", mesheryEndpoint)
 			currCtx.SetEndpoint(mesheryEndpoint)
 			if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
 				Address: endpoint.Internal.Address,
