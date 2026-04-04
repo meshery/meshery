@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/models"
@@ -66,9 +67,37 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	tableFinder.Find(&tables)
 
-	for _, table := range tables {
-		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
-		recordCount += int(table.Count)
+	// Fetch row counts for all tables in a single UNION ALL query instead of
+	// one COUNT query per table (avoids N+1 query problem).
+	if len(tables) > 0 {
+		type tableCount struct {
+			Name string
+			Cnt  int64
+		}
+
+		parts := make([]string, 0, len(tables))
+		for _, table := range tables {
+			// Escape double quotes in the identifier to prevent SQL injection
+			// (e.g. a table named `foo"bar` becomes `"foo""bar"`).
+			safeName := strings.ReplaceAll(table.Name, `"`, `""`)
+			parts = append(parts, fmt.Sprintf(`SELECT '%s' AS name, COUNT(*) AS cnt FROM "%s"`, table.Name, safeName))
+		}
+
+		var counts []tableCount
+		if err := h.dbHandler.DB.Raw(strings.Join(parts, " UNION ALL ")).Scan(&counts).Error; err != nil {
+			h.log.Error(fmt.Errorf("could not fetch table counts: %w", err))
+			http.Error(w, "error fetching database summary", http.StatusInternalServerError)
+			return
+		}
+
+		countMap := make(map[string]int64, len(counts))
+		for _, c := range counts {
+			countMap[c.Name] = c.Cnt
+			recordCount += int(c.Cnt)
+		}
+		for _, table := range tables {
+			table.Count = countMap[table.Name]
+		}
 	}
 
 	databaseSummary := &models.DatabaseSummary{
