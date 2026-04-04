@@ -380,15 +380,18 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	relationshipPolicyEvalPayload := pattern.EvaluationRequest{}
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
 
-	if err != nil {
-		rw.Header().Set("Content-Type", "application/json")
-		rw.WriteHeader(http.StatusInternalServerError)
+if err != nil {
+	errResponse := ErrDecoding(err, "design file")
+	h.log.Error(errResponse)
 
-		_ = json.NewEncoder(rw).Encode(map[string]string{
-			"error": ErrDecoding(err, "design file").Error(),
-})
-		return
-	}
+	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusInternalServerError)
+
+	_ = json.NewEncoder(rw).Encode(map[string]string{
+		"error": errResponse.Error(),
+	})
+	return
+}
 	// decode the pattern file
 	patternUUID := relationshipPolicyEvalPayload.Design.ID
 	eventBuilder.ActedUpon(patternUUID)
