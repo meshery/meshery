@@ -1767,25 +1767,38 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	if fileTypes == "oci" {
 		img, err := meshkitOci.BuildImage(modelDir)
 		if err != nil {
-			h.log.Error(err) // TODO: Add appropriate meshkit error
+			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		// Save OCI artifact into a tar file
-		tarfileName := filepath.Join(modelDir, "model.tar")
+		// Step 1: create temporary .tar
+		tarfileName = filepath.Join(modelDir, "model.tar")
 		err = meshkitOci.SaveOCIArtifact(img, tarfileName, model.Name)
 		if err != nil {
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		// 3. Send response
-		byt, _ = os.ReadFile(tarfileName)
-		rw.Header().Add("Content-Type", "application/x-tar")
-		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar\"", model.Name))
-		rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt)))
+		// Step 2: compress to .tar.gz
+		var gzipBuffer bytes.Buffer
+		err = meshkitutils.Compress(modelDir, &gzipBuffer)
+		if err != nil {
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// Step 3: write compressed file
+		tarGzFile := filepath.Join(modelDir, "model.tar.gz")
+		err = os.WriteFile(tarGzFile, gzipBuffer.Bytes(), 0644)
+		if err != nil {
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// Step 4: prepare response
+		byt, _ = os.ReadFile(tarGzFile)
+		rw.Header().Set("Content-Type", "application/gzip")
+		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar.gz\"", model.Name))
 	} else {
 		var tarData bytes.Buffer
 		err := meshkitutils.Compress(modelDir, &tarData)
@@ -1802,9 +1815,8 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 			return
 		}
 		byt, _ = os.ReadFile(tarfileName)
-		rw.Header().Add("Content-Type", "application/gzip")
+		rw.Header().Set("Content-Type", "application/gzip")
 		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar.gz\"", model.Name))
-
 	}
 
 	// 3. Send response
