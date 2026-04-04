@@ -63,6 +63,7 @@ const (
 	ErrDockerUnknownCode                  = "mesheryctl-1211"
 	ErrOperatorUnsupportedPlatformCode    = "mesheryctl-1219"
 	ErrLogoutCode                         = "mesheryctl-1229"
+	ErrTokenNotProvidedCode 			  = "mesheryctl-1230"
 )
 
 var (
@@ -436,4 +437,15 @@ func ErrLogout(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to complete the logout operation"},
 		[]string{"Check the token file path and permissions. The underlying error will provide more details."})
+}
+
+func ErrTokenNotProvided() error {
+	return errors.New(
+		ErrTokenNotProvidedCode,
+		errors.Alert,
+		[]string{"Token name not provided"},
+		[]string{"No token name argument was passed"},
+		[]string{"The required token name argument is missing"},
+		[]string{"Provide a valid token name while running the command"},
+	)
 }
