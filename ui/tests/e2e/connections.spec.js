@@ -169,6 +169,9 @@ test.describe.serial('Connection Management Tests', () => {
     });
   });
   test('Delete Kubernetes cluster connections', async ({ page, clusterMetaData }) => {
+    // The full search → delete → confirm → snackbar flow can be slow in CI
+    test.slow();
+
     // beforeEach already navigates to the connections page
     // Find the row with the connection to be deleted
     await page.getByTestId('ConnectionTable-search').getByRole('button').click();
