@@ -73,6 +73,7 @@ function MeshModelContructs() {
     <Link
       href="/settings?settingsCategory=Registry"
       style={{
+        textDecoration: 'none',
         pointerEvents: !CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)
           ? 'none'
           : 'auto',
@@ -156,7 +157,7 @@ function MeshModelCategories() {
   );
 
   return (
-    <Link href="/settings?settingsCategory=Registry&tab=Models">
+    <Link href="/settings?settingsCategory=Registry&tab=Models" style={{ textDecoration: 'none' }}>
       <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom>
