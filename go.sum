@@ -1462,8 +1462,8 @@ github.com/lestrrat-go/option/v2 v2.0.0 h1:XxrcaJESE1fokHy3FpaQ/cXW8ZsIdWcdFzzLO
 github.com/lestrrat-go/option/v2 v2.0.0/go.mod h1:oSySsmzMoR0iRzCDCaUfsCzxQHUEuhOViQObyy7S6Vg=
 github.com/lib/pq v0.0.0-20150723085316-0dad96c0b94f/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
 github.com/lib/pq v1.10.9/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
-github.com/lib/pq v1.11.2 h1:x6gxUeu39V0BHZiugWe8LXZYZ+Utk7hSJGThs8sdzfs=
-github.com/lib/pq v1.11.2/go.mod h1:/p+8NSbOcwzAEI7wiMXFlgydTwcgTr3OSKMsD2BitpA=
+github.com/lib/pq v1.12.1 h1:x1nbl/338GLqeDJ/FAiILallhAsqubLzEZu/pXtHUow=
+github.com/lib/pq v1.12.1/go.mod h1:/p+8NSbOcwzAEI7wiMXFlgydTwcgTr3OSKMsD2BitpA=
 github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de h1:9TO3cAIGXtEhnIaL+V+BEER86oLrvS+kWobKpbJuye0=
 github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de/go.mod h1:zAbeS9B/r2mtpb6U+EI2rYA5OAXxsYw6wTamcNW+zcE=
 github.com/lithammer/dedent v1.1.0 h1:VNzHMVCBNG1j0fh3OrsFRkVUwStdDArbgBWoPAffktY=
@@ -1498,12 +1498,12 @@ github.com/maxatome/go-testdeep v1.14.0 h1:rRlLv1+kI8eOI3OaBXZwb3O7xY3exRzdW5QyX
 github.com/maxatome/go-testdeep v1.14.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
 github.com/meshery/meshery-operator v0.8.11 h1:eDo2Sw0jjVrXsvvhF8LenADM58pK+7Z68ROPVIejTPc=
 github.com/meshery/meshery-operator v0.8.11/go.mod h1:hQEtFKKa5Fr/Mskk6bV5ip3bQ0+3F0u1voYS3XisBp4=
-github.com/meshery/meshkit v1.0.1 h1:Mj8Ptn+7eM+2yok3jNnKXsEhK9EhPofSvz7NfKY/mmw=
-github.com/meshery/meshkit v1.0.1/go.mod h1:AIT2uowBbRZS8YLjOvBnDLtVS++eWedZGruM3UjqQLk=
+github.com/meshery/meshkit v1.0.2 h1:B4l624AapuSeM7aFYyxA+jYxx4YZRZNPPgDhzjnpZH0=
+github.com/meshery/meshkit v1.0.2/go.mod h1:otsT6pbFm6npq2Tfjk6A0Nhv4c9UgzPyhPLVDS9Hhug=
 github.com/meshery/meshsync v0.8.26 h1:GM5jzECZMCQGx3BMNo9cahcAfD/TXYue/DPWFGpjnho=
 github.com/meshery/meshsync v0.8.26/go.mod h1:RNQnmmg/hq/TaGbu6hIVAPCnjB4dIMm9Nmi729OgmFM=
-github.com/meshery/schemas v1.0.1 h1:voyeQxpMlWJd+gI/5pl1xQmAWCd59HeieTcMevmNJ6o=
-github.com/meshery/schemas v1.0.1/go.mod h1:/eO94KQC21suWzT5sIAJB6LKZx+oyAOr98vpomsD0TQ=
+github.com/meshery/schemas v1.0.3 h1:s9oYAJB5DnfrkwS6KjXBsqKB3HHLFwL4GcypOyrUHoM=
+github.com/meshery/schemas v1.0.3/go.mod h1:iwGksna9cB7RZHehNUVtjHvSiB+C6SSib7TfPOy+cjQ=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
 github.com/miekg/pkcs11 v1.0.2/go.mod h1:XsNlhZGX73bx86s2hdc/FuaLm2CPZJemRLMA+WTFxgs=
