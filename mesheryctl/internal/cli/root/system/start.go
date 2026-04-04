@@ -135,6 +135,7 @@ func start() error {
 		return unsupportedPlatformError(currCtx.GetPlatform())
 	}
 
+	dashboardCmdFlags.SkipBrowser = skipBrowserFlag
 	return dashboardCmd.RunE(nil, nil)
 }
 
