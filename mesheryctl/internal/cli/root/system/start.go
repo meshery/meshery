@@ -87,17 +87,17 @@ mesheryctl system start --provider Meshery
 		cfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		ctx, err := cfg.GetCurrentContext()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return err
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		return nil
 	},
