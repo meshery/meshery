@@ -140,7 +140,10 @@ func start() error {
 		utils.Log.Info("Meshery deployed. Use `mesheryctl system dashboard` to access the UI.")
 		return nil
 	}
-	return dashboardCmd.RunE(nil, nil)
+	if err := dashboardCmd.RunE(nil, nil); err != nil {
+		utils.Log.Warnf("Meshery deployed successfully, but could not open dashboard: %v\nRun `mesheryctl system dashboard` to access the UI.", err)
+	}
+	return nil
 }
 
 func ensureMesheryFolder() error {
