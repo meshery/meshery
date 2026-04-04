@@ -2,13 +2,29 @@ import { test, expect } from '@playwright/test';
 import path from 'path';
 import { DashboardPage } from './pages/DashboardPage';
 
-const model = {
+// Strongly typed inline to avoid JS linter false positives
+const model: {
+  MODEL_URL: string;
+  MODEL_NAME: string;
+  MODEL_DISPLAY_NAME: string;
+} = {
   MODEL_URL: 'git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm',
   MODEL_NAME: `test-model-${Date.now()}`,
   MODEL_DISPLAY_NAME: `Test Model ${Date.now()}`,
 };
 
-const model_import = {
+// Strongly typed inline
+const model_import: {
+  MODEL_NAME: string;
+  MODEL_URL_IMPORT: string;
+  MODEL_FILE_IMPORT: string;
+  MODEL_CSV_IMPORT: {
+    Model_Name: string;
+    Models: string;
+    Components: string;
+    Relationships: string;
+  };
+} = {
   MODEL_NAME: `test`,
   MODEL_URL_IMPORT:
     'https://raw.githubusercontent.com/meshery/meshery/master/ui/tests/e2e/assets/test.tar',
@@ -30,8 +46,10 @@ test.describe.serial('Model Workflow Tests', () => {
   });
 
   test('Create a Model', async ({ page }) => {
-    // Model generation downloads from GitHub and can be slow in CI
+    // Model generation downloads from GitHub and can be very slow in CI.
+    // test.slow() triples the default timeout (60s → 180s).
     test.slow();
+    test.setTimeout(240_000);
 
     await page.getByTestId('TabBar-Button-CreateModel').click();
 
@@ -66,7 +84,7 @@ test.describe.serial('Model Workflow Tests', () => {
     // Model generation fetches from GitHub — wait with extended timeout
     await expect(
       page.getByTestId(`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`),
-    ).toBeVisible({ timeout: 120_000 });
+    ).toBeVisible({ timeout: 180_000 });
     await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible();
 
     await page.getByTestId('UrlStepper-Button-Finish').click();

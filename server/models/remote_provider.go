@@ -5587,11 +5587,34 @@ func (l *RemoteProvider) GetWorkspaces(token, page, pageSize, search, order, fil
 		return nil, ErrDataRead(err, "Workspaces")
 	}
 
-	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+	if resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("No workspaces returned from remote provider")
+		return emptyWorkspacePageResponse(page)
+	}
+
+	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("Workspaces data retrieved from remote provider")
 		return bd, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get workspaces"), "Workspaces", resp.StatusCode)
+}
+
+func emptyWorkspacePageResponse(page string) ([]byte, error) {
+	pageNumber := 0
+	if page != "" {
+		parsedPage, err := strconv.Atoi(page)
+		if err != nil {
+			return nil, err
+		}
+		pageNumber = parsedPage
+	}
+
+	return json.Marshal(&workspace.WorkspacePage{
+		Page:       pageNumber,
+		PageSize:   0,
+		TotalCount: 0,
+		Workspaces: []workspace.Workspace{},
+	})
 }
 
 func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID string) ([]byte, error) {
