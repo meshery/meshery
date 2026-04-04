@@ -1,4 +1,4 @@
-import { api } from './index';
+import { api, mesheryApiPath } from './index';
 
 const TAGS = {
   CREDENTIALS: 'credentials',
@@ -7,18 +7,18 @@ const credentialsApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getCredentials: builder.query({
       query: () => ({
-        url: 'integrations/credentials',
+        url: mesheryApiPath('integrations/credentials'),
         method: 'GET',
       }),
       providesTags: [TAGS.CREDENTIALS],
     }),
     getCredentialById: builder.query({
-      query: (credentialId) => `integrations/credentials/${credentialId}`,
+      query: (credentialId) => mesheryApiPath(`integrations/credentials/${credentialId}`),
       providesTags: (result, error, id) => [{ type: TAGS.CREDENTIALS, id }],
     }),
     createCredential: builder.mutation({
       query: (credential) => ({
-        url: 'integrations/credentials',
+        url: mesheryApiPath('integrations/credentials'),
         method: 'POST',
         body: credential,
       }),
@@ -26,7 +26,7 @@ const credentialsApi = api.injectEndpoints({
     }),
     updateCredential: builder.mutation({
       query: (credential) => ({
-        url: 'integrations/credentials',
+        url: mesheryApiPath('integrations/credentials'),
         method: 'PUT',
         body: credential,
       }),
@@ -34,7 +34,7 @@ const credentialsApi = api.injectEndpoints({
     }),
     deleteCredential: builder.mutation({
       query: (credentialId) => ({
-        url: `integrations/credentials?credential_id=${credentialId}`,
+        url: mesheryApiPath(`integrations/credentials?credential_id=${credentialId}`),
         method: 'DELETE',
       }),
       invalidatesTags: [TAGS.CREDENTIALS],
@@ -46,6 +46,7 @@ const credentialsApi = api.injectEndpoints({
 export const {
   useGetCredentialsQuery,
   useGetCredentialByIdQuery,
+  useLazyGetCredentialByIdQuery,
   useCreateCredentialMutation,
   useUpdateCredentialMutation,
   useDeleteCredentialMutation,
