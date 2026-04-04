@@ -53,7 +53,7 @@ mesheryctl system provider view
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		focusedContext := focusedSystemContext(cmd, mctlCfg.CurrentContext)
 
@@ -74,13 +74,13 @@ mesheryctl system provider view
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
 			utils.Log.Error(ErrSetCurrentContext(err))
-			return nil
+			return err
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return err
 		}
 		utils.Log.Infof("%s\n", PrintProviderToStdout(*currCtx, focusedContext))
 		return nil
@@ -105,7 +105,7 @@ mesheryctl system provider list
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		focusedContext := tempContext
@@ -116,13 +116,13 @@ mesheryctl system provider list
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
 			utils.Log.Error(ErrSetCurrentContext(err))
-			return nil
+			return err
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return err
 		}
 
 		utils.Log.Infof("Current provider: %s", currCtx.Provider)
@@ -188,13 +188,13 @@ mesheryctl system provider set [provider]
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
 			utils.Log.Error(ErrSetCurrentContext(err))
-			return nil
+			return err
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return err
 		}
 
 		provider := args[0]
@@ -236,7 +236,7 @@ mesheryctl system provider set [provider]
 		err = viper.WriteConfig()
 		if err != nil {
 			utils.Log.Error(ErrWriteConfig(err))
-			return nil
+			return err
 		}
 
 		utils.Log.Infof("Provider set to %s", currCtx.Provider)
@@ -271,7 +271,7 @@ mesheryctl system provider switch [provider]
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		return hc.RunPreflightHealthChecks()
 	},
@@ -340,13 +340,13 @@ mesheryctl system provider reset
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
 			utils.Log.Error(ErrSetCurrentContext(err))
-			return nil
+			return err
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return err
 		}
 
 		currCtx.Provider = ""
@@ -356,7 +356,7 @@ mesheryctl system provider reset
 		err = viper.WriteConfig()
 		if err != nil {
 			utils.Log.Error(ErrWriteConfig(err))
-			return nil
+			return err
 		}
 
 		utils.Log.Info("Provider has been reset. You will be prompted to select a provider on next Meshery start. If not, log out or clear existing browser sessions.")
