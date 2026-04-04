@@ -77,6 +77,7 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "configuration",
                   "metadata",
                   "labels",
                   "kubernetes.io/service-name"
