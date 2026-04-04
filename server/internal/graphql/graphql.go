@@ -2,7 +2,9 @@ package graphql
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"runtime/debug"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -55,6 +57,10 @@ func New(opts Options) http.Handler {
 
 	srv := handler.New(generated.NewExecutableSchema(config))
 
+	srv.SetRecoverFunc(func(ctx context.Context, p interface{}) error {
+		opts.Logger.Errorf("recovered from graphql panic: %v\n%s", p, debug.Stack())
+		return fmt.Errorf("internal server error")
+	})
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.Websocket{
