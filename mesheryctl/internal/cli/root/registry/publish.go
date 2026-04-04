@@ -167,7 +167,6 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		}
 
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
