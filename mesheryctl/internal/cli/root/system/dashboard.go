@@ -186,7 +186,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			var mesheryEndpoint string
 			endpoint, err := utils.GetMesheryEndpoint(context.TODO(), client)
 			if err != nil {
-				utils.Log.Debugf("Error while GetMesheryEndpoint\n: Endpoint: %v\nError: %v", endpoint, err)
+				utils.Log.Debugf("Error while GetMesheryEndpoint\n- Endpoint: %v\n- Error: %v", endpoint, err)
 				return err //the func return a meshkit error
 			}
 

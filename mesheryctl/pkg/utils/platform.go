@@ -974,6 +974,6 @@ func GetMesheryEndpoint(ctx context.Context, client *meshkitkube.Client) (*meshk
 	opts.Name = "meshery"
 	opts.Namespace = MesheryNamespace
 	opts.APIServerURL = client.RestConfig.Host
-
+	Log.Debugf("Discovering Meshery service endpoint from Kubernetes...\nOptions: %v", opts)
 	return meshkitkube.GetServiceEndpoint(ctx, client.KubeClient, &opts)
 }
