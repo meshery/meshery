@@ -96,21 +96,35 @@ func (h *Handler) PatternFileRequestHandler(
 	}
 }
 
-func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID uuid.UUID, body []byte, err error, provider models.Provider) {
-
+func (h *Handler) handleProviderPatternActionError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID uuid.UUID, body []byte, err error, provider models.Provider, action string) {
 	var meshkitErr errors.Error
 	var event *events.Event
 	errorParsingToMeshkitError := json.Unmarshal(body, &meshkitErr)
 
 	description := ""
-	if len(meshkitErr.ShortDescription) > 0 {
-		description = fmt.Sprintf("Failed To Save Design, %s", meshkitErr.ShortDescription[0])
-	} else {
-		description = "Failed to save design"
+	switch action {
+	case "save":
+		if errorParsingToMeshkitError == nil && len(meshkitErr.ShortDescription) > 0 {
+			description = fmt.Sprintf("Failed To Save Design, %s", meshkitErr.ShortDescription[0])
+		} else {
+			description = "Failed to save design"
+		}
+	case "delete":
+		if errorParsingToMeshkitError == nil && len(meshkitErr.ShortDescription) > 0 {
+			description = fmt.Sprintf("Failed To Delete Design, %s", meshkitErr.ShortDescription[0])
+		} else {
+			description = "Failed to delete design"
+		}
+	default:
+		if errorParsingToMeshkitError == nil && len(meshkitErr.ShortDescription) > 0 {
+			description = fmt.Sprintf("Failed to fetch Design, %s", meshkitErr.ShortDescription[0])
+		} else {
+			description = "Failed to fetch design"
+		}
 	}
 
 	if errorParsingToMeshkitError == nil {
-		rw.WriteHeader(http.StatusBadRequest)
+		rw.WriteHeader(http.StatusInternalServerError)
 		_, _ = rw.Write(body)
 		h.log.Error(&meshkitErr)
 		event = eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
@@ -118,49 +132,54 @@ func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBu
 		}).Build()
 
 	} else {
-		h.log.Error(ErrSavePattern(err))
-		http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
+		var finalErr error
+		switch action {
+		case "save":
+			finalErr = ErrSavePattern(err)
+		case "delete":
+			finalErr = ErrDeletePattern(err)
+		default:
+			finalErr = ErrGetPattern(err)
+		}
+		h.log.Error(finalErr)
+		http.Error(rw, finalErr.Error(), http.StatusInternalServerError)
 		event = eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(err),
-		}).WithDescription(ErrSavePattern(err).Error()).Build()
+			"error": finalErr,
+		}).WithDescription(finalErr.Error()).Build()
 	}
 
 	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 
-func (h *Handler) handleProviderPatternGetError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID uuid.UUID, body []byte, err error, provider models.Provider) {
+func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID uuid.UUID, eventBuilder *events.EventBuilder) {
+	h.log.Error(ErrRetrieveUserToken(err))
+	http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 
-	var meshkitErr errors.Error
-	var event *events.Event
-	errorParsingToMeshkitError := json.Unmarshal(body, &meshkitErr)
+	if eventBuilder != nil {
+		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
+			"error": ErrRetrieveUserToken(err),
+		}).WithDescription("No auth token provided in the request.").Build()
 
-	description := ""
-	if len(meshkitErr.ShortDescription) > 0 {
-		description = fmt.Sprintf("Failed to fetch Design, %s", meshkitErr.ShortDescription[0])
-	} else {
-		description = "Failed to fetch design"
+		_ = provider.PersistEvent(*event, nil)
+		go h.config.EventBroadcaster.Publish(userID, event)
 	}
-
-	if errorParsingToMeshkitError == nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		_, _ = rw.Write(body)
-		h.log.Error(&meshkitErr)
-		event = eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
-			"error": meshkitErr,
-		}).Build()
-
-	} else {
-		h.log.Error(ErrGetPattern(err))
-		http.Error(rw, err.Error(), http.StatusBadRequest)
-		event = eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrGetPattern(err),
-		}).WithDescription(ErrGetPattern(err).Error()).Build()
-	}
-
-	_ = provider.PersistEvent(*event, nil)
-	go h.config.EventBroadcaster.Publish(userID, event)
 }
+
+func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider models.Provider, err error, userID uuid.UUID, eventBuilder *events.EventBuilder) {
+	h.log.Error(ErrRequestBody(err))
+	http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+
+	if eventBuilder != nil {
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrRequestBody(err),
+		}).WithDescription("Unable to parse request body").Build()
+
+		_ = provider.PersistEvent(*event, nil)
+		go h.config.EventBroadcaster.Publish(userID, event)
+	}
+}
+
 
 // swagger:route POST /api/pattern PatternsAPI idPostPatternFile
 // Handle POST requests for patterns
@@ -226,7 +245,7 @@ func (h *Handler) handlePatternPOST(
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &mesheryPatternRecord)
 
 	if err != nil {
-		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider)
+		h.handleProviderPatternActionError(rw, eventBuilder, userID, savedDesignByt, err, provider, "save")
 		return
 	}
 
@@ -647,16 +666,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 
 	resp, err := provider.DeleteMesheryPattern(r, patternID)
 	if err != nil {
-		errPatternDelete := ErrDeletePattern(err)
-
-		h.log.Error(errPatternDelete)
-		http.Error(rw, errPatternDelete.Error(), http.StatusInternalServerError)
-		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": errPatternDelete,
-		}).WithDescription("Error: Could not delete design.").Build()
-		http.Error(rw, errPatternDelete.Error(), http.StatusInternalServerError)
-		_ = provider.PersistEvent(*event, nil)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.handleProviderPatternActionError(rw, eventBuilder, userID, resp, err, provider, "delete")
 		return
 	}
 
@@ -1438,7 +1448,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)
 	resp, err := provider.GetMesheryPattern(r, patternID, r.URL.Query().Get("metrics"))
 	if err != nil {
-		h.handleProviderPatternGetError(rw, eventBuilder, userID, resp, err, provider)
+		h.handleProviderPatternActionError(rw, eventBuilder, userID, resp, err, provider, "get")
 		return
 	}
 
