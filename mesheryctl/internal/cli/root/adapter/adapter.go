@@ -55,7 +55,7 @@ var (
 			mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				utils.Log.Error(err)
-				return nil
+				return err
 			}
 
 			if len(args) > 0 {

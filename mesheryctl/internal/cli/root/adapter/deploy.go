@@ -65,14 +65,14 @@ mesheryctl adapter deploy linkerd --watch
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Deploying %s", meshName), fmt.Sprintf("\n%s infrastructure deployed", meshName))
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false, "null")
 			if err != nil {
 				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			s.Stop()
 
@@ -81,7 +81,7 @@ mesheryctl adapter deploy linkerd --watch
 				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
 				if err != nil {
 					utils.Log.Error(err)
-					return nil
+					return err
 				}
 			}
 
