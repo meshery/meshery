@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 3rd 2026, 11:26:43 pm
+- Testing started at: April 3rd 2026, 11:56:42 pm
 
 **📦 Test Result Summary**
 
@@ -181,14 +181,14 @@ Call log:
 ```
 Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
 
-Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775258882210')
+Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775260678438')
 Expected: visible
 Timeout: 180000ms
 Error: element(s) not found
 
 Call log:
 [2m  - Expect "toBeVisible" with timeout 180000ms[22m
-[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775258882210')[22m
+[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775260678438')[22m
 
 ```
 
@@ -214,14 +214,14 @@ Call log:
 ```
 Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
 
-Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775259062233')
+Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775260861433')
 Expected: visible
 Timeout: 180000ms
 Error: element(s) not found
 
 Call log:
 [2m  - Expect "toBeVisible" with timeout 180000ms[22m
-[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775259062233')[22m
+[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775260861433')[22m
 
 ```
 
