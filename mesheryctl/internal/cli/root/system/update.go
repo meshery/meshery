@@ -56,7 +56,7 @@ mesheryctl system update --skip-reset
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		return hc.RunPreflightHealthChecks()
 	},
@@ -69,7 +69,7 @@ mesheryctl system update --skip-reset
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		// get the platform, channel and the version of the current context
 		// if a temp context is set using the -c flag, use it as the current context
@@ -77,13 +77,13 @@ mesheryctl system update --skip-reset
 			err = mctlCfg.SetCurrentContext(tempContext)
 			if err != nil {
 				utils.Log.Error(ErrSetCurrentContext(err))
-				return nil
+				return err
 			}
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		err = currCtx.ValidateVersion()
 		if err != nil {
@@ -149,7 +149,7 @@ mesheryctl system update --skip-reset
 			hc, err := NewHealthChecker(hcOptions)
 			if err != nil {
 				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			// If k8s is available in case of platform docker than we deploy operator
 			if err = hc.Run(); err != nil {
@@ -159,7 +159,7 @@ mesheryctl system update --skip-reset
 			running, err := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 			if err != nil {
 				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			if !running {
 				// Meshery is not running, run the start command
