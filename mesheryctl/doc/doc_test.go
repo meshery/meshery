@@ -109,7 +109,7 @@ func TestDoc(t *testing.T) {
 		cmd.AddCommand(&cobra.Command{
 			Use: "sub",
 		})
-		markDownPath := "../../docs/content/en/reference/mesheryctl/"
+		markDownPath := t.TempDir()
 		err := GenMarkdownTreeCustom(cmd, markDownPath, prepender, linkHandler)
 		assert.NoError(t, err)
 	})
@@ -169,7 +169,7 @@ func TestDoc(t *testing.T) {
 		cmd.AddCommand(&cobra.Command{
 			Use: "sub",
 		})
-		yamlPath := "../../docs/content/en/reference/mesheryctl/"
+		yamlPath := t.TempDir()
 		err := GenYamlTreeCustom(cmd, yamlPath, prepender, linkHandler)
 		assert.NoError(t, err)
 	})
