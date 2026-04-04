@@ -86,7 +86,7 @@ jobs:
         working-directory: ./mesheryctl
       - name: Start Meshery
         run: |
-          ./mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update ${{ inputs.verbose == 'true' && '--verbose' || '' }} --port-forward
+          ./mesheryctl system start --platform ${{ matrix.platform }} --skip-update ${{ inputs.verbose == 'true' && '--verbose' || '' }}
         shell: bash
         working-directory: ./mesheryctl
       - name: Run mesheryctl end2end tests
