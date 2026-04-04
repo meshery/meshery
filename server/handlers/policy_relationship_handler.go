@@ -409,12 +409,13 @@ if err != nil {
 	select {
 
 	case err := <-evalErrChan:
-		h.log.Debug(err)
-		// log an event
+		errResponse := models.ErrInternalServer(err)
+		h.log.Error(errResponse)
+
 		rw.Header().Set("Content-Type", "application/json")
 		rw.WriteHeader(http.StatusInternalServerError)
 
-		_ = json.NewEncoder(rw).Encode(err)
+		_ = json.NewEncoder(rw).Encode(errResponse)
 		return
 
 	case evaluationResponse := <-evalRespChan:
