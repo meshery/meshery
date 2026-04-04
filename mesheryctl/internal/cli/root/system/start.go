@@ -138,8 +138,8 @@ func start() error {
 
 	if skipBrowserFlag {
 		utils.Log.Debug("Skipping opening Meshery UI in browser...")
-		dashboardCmdFlags.SkipBrowser = skipBrowserFlag
 	}
+	dashboardCmdFlags.SkipBrowser = skipBrowserFlag
 	return dashboardCmd.RunE(nil, nil)
 }
 
