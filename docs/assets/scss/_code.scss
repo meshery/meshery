@@ -3,15 +3,23 @@ code {
   color: var(--code);
   word-break: break-word;
   & ::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    width: 6px;
+    height: 6px;
     background: transparent;
+  }
+  & ::-webkit-scrollbar-thumb {
+    background: var(--color-grey-light);
+    border-radius: 4px;
   }
 }
 code::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+  width: 6px;
+  height: 6px;
   background: transparent;
+}
+code::-webkit-scrollbar-thumb {
+  background: var(--color-grey-light);
+  border-radius: 4px;
 }
 .td-content {
   p code,
@@ -69,15 +77,23 @@ pre {
   display: block;
   color: var(--color-grey-medium);
   & ::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    width: 6px;
+    height: 6px;
     background: transparent;
+  }
+  & ::-webkit-scrollbar-thumb {
+    background: var(--color-grey-light);
+    border-radius: 4px;
   }
 }
 pre::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+  width: 6px;
+  height: 6px;
   background: transparent;
+}
+pre::-webkit-scrollbar-thumb {
+  background: var(--color-grey-light);
+  border-radius: 4px;
 }
 
 .highlight pre {
@@ -96,9 +112,13 @@ pre::-webkit-scrollbar {
     overflow: hidden;
     
     & ::-webkit-scrollbar {
-      width: 0;
-      height: 0;
+      width: 6px;
+      height: 6px;
       background: transparent;
+    }
+    & ::-webkit-scrollbar-thumb {
+      background: var(--color-grey-light);
+      border-radius: 4px;
     }
   }
 }
