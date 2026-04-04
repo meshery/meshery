@@ -13,7 +13,7 @@
     },
     "model": {
         "displayName": "API Gateway V2 to Lambda Relationship",
-        "id": "d15eca81-202e-4ba4-9086-995fba1c68ba",
+        "id": "53a892d2-377e-43ca-9b6b-55a86efe9218",
         "model": {
             "version": "v1.0.25"
         },
@@ -35,7 +35,7 @@
                         "match_strategy_matrix": null,
                         "model": {
                             "displayName": "API Gateway Integration",
-                            "id": "3c5bbee5-537b-42b1-9d38-2fe1aab4b022",
+                            "id": "53a892d2-377e-43ca-9b6b-55a86efe9218",
                             "model": {
                                 "version": "v1.0.25"
                             },
@@ -46,7 +46,7 @@
                             "version": "v1.0.0"
                         },
                         "patch": {
-                            "mutatorRef": [
+                            "mutatedRef": [
                                 [
                                     "configuration",
                                     "spec",
@@ -65,7 +65,7 @@
                         "match_strategy_matrix": null,
                         "model": {
                             "displayName": "Lambda Function",
-                            "id": "c663d552-98d3-449f-9595-e6f6a827d0f9",
+                            "id": "a9f1ee45-b0f8-4dce-a6a5-a1567079313b",
                             "model": {
                                 "version": "v1.7.1"
                             },
@@ -76,7 +76,7 @@
                             "version": "v1.0.0"
                         },
                         "patch": {
-                            "mutatedRef": [
+                            "mutatorRef": [
                                 [
                                     "configuration",
                                     "status",
