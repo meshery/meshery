@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
+  Box,
   Modal,
   ModalBody,
   ModalButtonPrimary,
@@ -8,14 +9,23 @@ import {
   ModalFooter,
   Typography,
   CircularProgress,
+  styled,
 } from '@sistent/sistent';
 import { SessionState } from '@/store/slices/sessions';
 import { recordActivity, triggerSessionExpired } from 'lib/sessionTimer';
 
+const selectSessionStatus = (state: { sessions: { status: SessionState } }) =>
+  state.sessions.status;
+
+const FooterActions = styled(Box)({
+  display: 'flex',
+  justifyContent: 'center',
+  gap: '1rem',
+  width: '100%',
+});
+
 const SessionExpiringModal = () => {
-  const sessionStatus = useSelector(
-    (state: { sessions: { status: SessionState } }) => state.sessions.status,
-  );
+  const sessionStatus = useSelector(selectSessionStatus);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleStayLoggedIn = () => {
@@ -57,39 +67,30 @@ const SessionExpiringModal = () => {
         </Typography>
       </ModalBody>
       <ModalFooter variant="filled">
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '1rem',
-            width: '100%',
-          }}
-        >
+        <FooterActions>
           <ModalButtonSecondary onClick={handleLogout}>Log Out</ModalButtonSecondary>
           <ModalButtonPrimary onClick={handleStayLoggedIn} disabled={isRefreshing} autoFocus>
             {isRefreshing ? (
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <CircularProgress size={20} color="inherit" style={{ marginRight: '0.5rem' }} />
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <CircularProgress size={20} sx={{ mr: '0.5rem', color: 'common.white' }} />
                 <Typography variant="body1">Refreshing...</Typography>
-              </div>
+              </Box>
             ) : (
               'Stay Logged In'
             )}
           </ModalButtonPrimary>
-        </div>
+        </FooterActions>
       </ModalFooter>
     </Modal>
   );
 };
 
 const SessionExpiredModal = () => {
-  const sessionStatus = useSelector(
-    (state: { sessions: { status: SessionState } }) => state.sessions.status,
-  );
+  const sessionStatus = useSelector(selectSessionStatus);
   const isExpired = sessionStatus === 'expired';
 
   const redirectTo =
-    typeof window !== 'undefined' && window.location.host.endsWith('3000')
+    typeof window !== 'undefined' && process.env.NODE_ENV === 'development'
       ? '/user/login'
       : typeof window !== 'undefined'
         ? window.location.href
@@ -126,17 +127,11 @@ const SessionExpiredModal = () => {
         </Typography>
       </ModalBody>
       <ModalFooter variant="filled">
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-          }}
-        >
+        <FooterActions>
           <ModalButtonPrimary onClick={handleLogin} autoFocus>
             Log In
           </ModalButtonPrimary>
-        </div>
+        </FooterActions>
       </ModalFooter>
     </Modal>
   );
