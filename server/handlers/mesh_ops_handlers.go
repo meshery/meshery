@@ -104,7 +104,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 	defer func() {
 		_ = mClient.Close()
 	}()
-	_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
+	_, err = mClient.MClient.AdapterName(req.Context(), &meshes.AdapterNameRequest{})
 	if err != nil {
 		h.log.Error(ErrMeshClient)
 		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
