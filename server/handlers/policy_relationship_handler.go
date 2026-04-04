@@ -370,10 +370,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		rw.Header().Set("Content-Type", "application/json")
 		rw.WriteHeader(http.StatusBadRequest)
 
-		_ = json.NewEncoder(rw).Encode(map[string]string{
-    		"error": ErrRequestBody(err).Error(),
-})
-
+		_ = json.NewEncoder(rw).Encode(ErrRequestBody(err))
 		return
 	}
 
@@ -387,9 +384,7 @@ if err != nil {
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusInternalServerError)
 
-	_ = json.NewEncoder(rw).Encode(map[string]string{
-		"error": errResponse.Error(),
-	})
+	_ = json.NewEncoder(rw).Encode(errResponse)
 	return
 }
 	// decode the pattern file
@@ -419,9 +414,7 @@ if err != nil {
 		rw.Header().Set("Content-Type", "application/json")
 		rw.WriteHeader(http.StatusInternalServerError)
 
-		_ = json.NewEncoder(rw).Encode(map[string]string{
-   			 "error": err.Error(),
-})
+		_ = json.NewEncoder(rw).Encode(err)
 		return
 
 	case evaluationResponse := <-evalRespChan:
