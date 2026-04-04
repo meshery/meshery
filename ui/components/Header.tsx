@@ -454,7 +454,7 @@ const Header = ({
   const remoteProviderUrl = providerCapabilities?.provider_url;
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
   const collaboratorAccessTokenGetter =
-    currentUser?.status === 'anonymous' ? undefined : getUserAccessToken;
+    currentUser?.status && currentUser.status !== 'anonymous' ? getUserAccessToken : undefined;
 
   const loaderType = 'circular';
   return (

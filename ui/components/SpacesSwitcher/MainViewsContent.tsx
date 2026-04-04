@@ -204,7 +204,7 @@ const MainViewsContent = ({
   const { organization: currentOrganization } = useSelector((state) => state.ui);
   const providerUrl = capabilitiesRegistry?.provider_url;
   const roomActivityAccessTokenGetter =
-    currentUser?.status === 'anonymous' ? undefined : getUserAccessToken;
+    currentUser?.status && currentUser.status !== 'anonymous' ? getUserAccessToken : undefined;
   const [activeUsers] = useRoomActivity({
     provider_url: providerUrl,
     getUserAccessToken: roomActivityAccessTokenGetter,
