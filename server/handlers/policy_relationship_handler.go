@@ -408,18 +408,11 @@ if err != nil {
 
 	select {
 
-	case err := <-evalErrChan:
-		errResponse := models.ErrInternalServer(err)
-		h.log.Error(errResponse)
-
-		rw.Header().Set("Content-Type", "application/json")
-		rw.WriteHeader(http.StatusInternalServerError)
-
-		_ = json.NewEncoder(rw).Encode(map[string]interface{}{
-			"error": errResponse.Error(),
-})
-		return
-
+case err := <-evalErrChan:
+	h.log.Debug(err)
+	http.Error(rw, err.Error(), http.StatusInternalServerError)
+	return
+	
 	case evaluationResponse := <-evalRespChan:
 		// include trace instead of design file in the event
 		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
