@@ -137,9 +137,9 @@ func start() error {
 	}
 
 	if skipBrowserFlag {
-		utils.Log.Debug("Skipping opening Meshery UI in browser...")
+		utils.Log.Info("Meshery deployed. Use `mesheryctl system dashboard` to access the UI.")
+		return nil
 	}
-	dashboardCmdFlags.SkipBrowser = skipBrowserFlag
 	return dashboardCmd.RunE(nil, nil)
 }
 
