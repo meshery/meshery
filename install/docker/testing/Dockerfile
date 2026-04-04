@@ -122,7 +122,6 @@ COPY ./server/meshmodel /app/server/meshmodel
 COPY ./server/permissions /app/server/permissions/
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
-COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
 COPY --from=ui-builder /app/out /app/ui/out
 COPY --from=ui-builder /app/public /app/ui/public
 COPY --from=ui-provider-builder /app/out /app/provider-ui/out

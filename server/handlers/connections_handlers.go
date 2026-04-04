@@ -131,12 +131,6 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 	}
 }
 
-// swagger:route POST /api/integrations/connections PostConnection idPostConnection
-// Handle POST request for creating a new connection
-//
-// Creates a new connection
-// responses:
-// 201: noContentWrapper
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	userID := user.ID
@@ -190,28 +184,6 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	w.WriteHeader(http.StatusCreated)
 }
 
-// swagger:route GET /api/integrations/connections GetConnections idGetConnections
-// Handle GET request for getting all connections
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={}``` If search is non empty then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-//
-// ```?filter={filter}``` Filter connections with type or sub_type, eg /api/integrations/connections?filter=type%20platform or /api/integrations/connections?filter=sub_type%20management
-//
-// ```?status={status}``` Status takes array as param to filter connections based on status, eg /api/integrations/connections?status=["connected", "deleted"]
-//
-// ```?kind={kind}``` Kind takes array as param to filter connections based on kind, eg /api/integrations/connections?kind=["meshery", "kubernetes"]
-//
-// ```?type={type}``` Type takes array as param to filter connections based on type, eg /api/integrations/connections?type=["platform", "observability"]
-//
-// ```?name={name}``` Name filters connections by name (partial match), eg /api/integrations/connections?name=my-cluster
-// responses:
-// 200: mesheryConnectionsResponseWrapper
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 	page, _ := strconv.Atoi(q.Get("page"))
@@ -300,9 +272,6 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	}
 }
 
-// GetConnectionsByKind is an internal handler that fetches connections filtered by kind.
-// Note: This handler is used internally by other handlers (e.g., GrafanaConfigHandler, PrometheusConfigHandler)
-// and is not exposed as an HTTP route since the route was deprecated in schemas v0.8.115.
 func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 	connectionKind := mux.Vars(req)["connectionKind"]
@@ -343,12 +312,6 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-// swagger:route GET /api/integrations/connections/{connectionId} GetConnectionById idGetConnectionById
-// Handle GET request for getting a single connection by its ID
-//
-// Fetches a single connection by its ID
-// responses:
-// 200: mesheryConnectionResponseWrapper
 func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	if connectionID == uuid.Nil {
@@ -374,12 +337,6 @@ func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ 
 	}
 }
 
-// swagger:route PUT /api/integrations/connections/{connectionId} PutConnectionById idPutConnectionById
-// Handle PUT request for updating an existing connection by connection ID
-//
-// Updates existing connection using ID
-// responses:
-// 200: mesheryConnectionResponseWrapper
 func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	userID := user.ID
@@ -566,12 +523,6 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 	return *eventBuilder.Build(), nil
 }
 
-// swagger:route DELETE /api/integrations/connections/{connectionId} DeleteConnection idDeleteConnection
-// Handle DELETE request for deleting an existing connection by connection ID
-//
-// Deletes existing connection
-// responses:
-// 200: noContentWrapper
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	userID := user.ID
@@ -608,9 +559,6 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	w.WriteHeader(http.StatusOK)
 }
 
-// handleMeshSyncDeploymentModeChange retrieves existing connection, compares meshsync deployment modes
-// between existing and new connections, and performs necessary actions when they differ
-// Returns: oldMode, newMode, changed, error
 func (h *Handler) handleMeshSyncDeploymentModeChange(
 	ctx context.Context,
 	connectionID uuid.UUID,

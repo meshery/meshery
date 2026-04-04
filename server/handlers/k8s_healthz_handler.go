@@ -8,11 +8,6 @@ import (
 	"strings"
 )
 
-// K8sHealthzHandler implements Kubernetes-style health check endpoints (/healthz/live and /healthz/ready).
-// Following Kubernetes best practices, it returns:
-// - HTTP 200 with plain text "ok" when healthy
-// - HTTP 503 with plain text error details when unhealthy
-// - Supports ?verbose=1 query parameter for detailed check results
 func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse verbose flag from query parameters
 	verbose := r.URL.Query().Get("verbose") == "1"

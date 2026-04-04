@@ -126,11 +126,7 @@ make docs-docker
 ### API Specifications
 
 ```bash
-# Build Swagger/OpenAPI specs
-make swagger-build
-
-# Serve Swagger UI
-make swagger
+# REST API docs consume the published OpenAPI spec at docs/data/openapi.yml
 
 # Build GraphQL schema
 make graphql-build
