@@ -57,6 +57,7 @@ import {
 import {
   getUserAccessToken,
   getUserProfile,
+  useGetLoggedInUserQuery,
   useGetProviderCapabilitiesQuery,
 } from '@/rtk-query/user';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
@@ -440,6 +441,7 @@ const Header = ({
     isError: isProviderCapabilitiesError,
     error: providerCapabilitiesError,
   } = useGetProviderCapabilitiesQuery();
+  const { data: currentUser } = useGetLoggedInUserQuery();
 
   if (isProviderCapabilitiesError) {
     notify({
@@ -451,6 +453,8 @@ const Header = ({
 
   const remoteProviderUrl = providerCapabilities?.provider_url;
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
+  const collaboratorAccessTokenGetter =
+    currentUser?.status === 'anonymous' ? undefined : getUserAccessToken;
 
   const loaderType = 'circular';
   return (
@@ -497,7 +501,7 @@ const Header = ({
                       url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
                       loaderType={loaderType}
                       providerUrl={remoteProviderUrl}
-                      getUserAccessToken={getUserAccessToken}
+                      getUserAccessToken={collaboratorAccessTokenGetter}
                       getUserProfile={getUserProfile}
                       onOpenWorkspace={openModal}
                     />

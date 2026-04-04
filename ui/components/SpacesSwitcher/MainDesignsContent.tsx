@@ -268,9 +268,11 @@ const MainDesignsContent = ({
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
   const providerUrl = capabilitiesRegistry?.provider_url;
+  const roomActivityAccessTokenGetter =
+    currentUser?.status === 'anonymous' ? undefined : getUserAccessToken;
   const [activeUsers] = useRoomActivity({
     provider_url: providerUrl,
-    getUserAccessToken: getUserAccessToken,
+    getUserAccessToken: roomActivityAccessTokenGetter,
     getUserProfile: getUserProfile,
   });
   const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
