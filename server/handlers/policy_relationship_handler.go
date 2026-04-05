@@ -420,15 +420,13 @@ case err := <-evalErrChan:
 		_ = provider.PersistEvent(*event, nil)
 
 		// write the response
-		ec := json.NewEncoder(rw)
-		err = ec.Encode(evaluationResponse)
-		if err != nil {
-			h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
-			http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
-			return
-		}
-	case <-evalCtx.Done():
-		h.log.Info("Evaluation terminated: request context closed")
+	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusOK)
+
+	err = json.NewEncoder(rw).Encode(evaluationResponse)
+	if err != nil {
+		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
 		return
 	}
 }
