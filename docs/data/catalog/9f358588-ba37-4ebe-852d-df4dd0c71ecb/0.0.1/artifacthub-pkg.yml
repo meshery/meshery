@@ -1,0 +1,20 @@
+version: 0.0.1
+name: hierarchical-parent-inventory-relationship
+displayName: Hierarchical-Parent-Inventory-Relationship
+createdAt: "2024-10-27T23:37:59Z"
+description: Hierarchical-Parent-Inventory-Relationship
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/9f358588-ba37-4ebe-852d-df4dd0c71ecb/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 27896d35-9e3d-4242-9cf5-aeba4ebd24e8
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
