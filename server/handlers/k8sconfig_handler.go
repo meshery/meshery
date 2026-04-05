@@ -199,6 +199,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			)
 			if err != nil {
 				h.log.Error(err)
+				continue
 			}
 
 			go func(inst *machines.StateMachine) {

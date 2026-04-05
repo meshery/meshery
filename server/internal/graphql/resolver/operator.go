@@ -193,7 +193,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, con
 	}
 
 	controllerhandler := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
-	if !ok {
+	if controllerhandler == nil || controllerhandler[models.MesheryOperator] == nil {
 		return unknowStatus, nil
 	}
 	status := controllerhandler[models.MesheryOperator].GetStatus()

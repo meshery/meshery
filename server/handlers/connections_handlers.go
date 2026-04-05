@@ -93,9 +93,21 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 	}
 	smInstancetracker := h.ConnectionToStateMachineInstanceTracker
 
-	id, ok := body["id"]
+	idStr, ok := body["id"]
 	if ok {
-		smInstancetracker.Remove(uuid.FromStringOrNil(id))
+		connectionID := uuid.FromStringOrNil(idStr)
+		if inst, found := smInstancetracker.Get(connectionID); found {
+			go func(inst *machines.StateMachine) {
+				event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
+				if err != nil {
+					h.log.Error(err)
+					h.log.Debug(event)
+				}
+				smInstancetracker.Remove(connectionID)
+			}(inst)
+		} else {
+			smInstancetracker.Remove(connectionID)
+		}
 	}
 }
 
@@ -515,6 +527,10 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 				"connectionName": k8scontext.Name,
 			})
 
+		if h.config == nil {
+			return *eventBuilder.WithSeverity(events.Error).WithDescription("Handler config is nil").Build(), fmt.Errorf("handler config is nil")
+		}
+
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         k8scontext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
@@ -605,6 +621,18 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info("connection deleted.")
+	if inst, found := h.ConnectionToStateMachineInstanceTracker.Get(connectionID); found {
+		go func(inst *machines.StateMachine) {
+			event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
+			if err != nil {
+				h.log.Error(err)
+				h.log.Debug(event)
+			}
+			h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+		}(inst)
+	} else {
+		h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+	}
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -689,7 +717,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		// connect
 		{
 			ctrlHelper.
-				AddCtxControllerHandlers(machineCtx.K8sContext).
+				AddCtxControllerHandlers(machineCtx.K8sContext, userID).
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
 				DeployUndeployedOperators(machineCtx.OperatorTracker).
