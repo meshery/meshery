@@ -350,15 +350,20 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	}()
 	go listenForCoreEvents(req.Context(), h.EventsBuffer, respChan, h.log, p)
 	go func(flusher http.Flusher) {
-		for data := range respChan {
-			h.log.Debug("received new data on response channel")
-			_, _ = fmt.Fprintf(w, "data: %s\n\n", data)
-			if flusher != nil {
-				flusher.Flush()
-				h.log.Debug("Flushed the messages on the wire...")
+		for {
+			select {
+			case data := <-respChan:
+				h.log.Debug("received new data on response channel")
+				_, _ = fmt.Fprintf(w, "data: %s\n\n", data)
+				if flusher != nil {
+					flusher.Flush()
+					h.log.Debug("Flushed the messages on the wire...")
+				}
+			case <-notify.Done():
+				h.log.Debug("response channel closed/context cancelled")
+				return
 			}
 		}
-		h.log.Debug("response channel closed")
 	}(flusherMap[client])
 
 STOP:
@@ -405,7 +410,6 @@ STOP:
 		}
 		time.Sleep(5 * time.Second)
 	}
-	close(respChan)
 	defer h.log.Debug("events handler closed")
 }
 func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp chan []byte, log logger.Handler, _ models.Provider) {
@@ -423,7 +427,11 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 				log.Error(models.ErrMarshal(err, "event"))
 				continue
 			}
-			resp <- data
+			select {
+			case resp <- data:
+			case <-ctx.Done():
+				return
+			}
 
 		case <-ctx.Done():
 			return
@@ -477,7 +485,11 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 			log.Error(models.ErrMarshal(err, "event"))
 			return
 		}
-		respChan <- data
+		select {
+		case respChan <- data:
+		case <-ctx.Done():
+			return
+		}
 	}
 }
 
