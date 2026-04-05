@@ -104,7 +104,7 @@ func (fv *FlagValidator) ReadValidationErrorMessages(err validator.ValidationErr
 		case "oneof":
 			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': valid values are %s", strings.ToLower(e.Field()), e.Value(), e.Param()))
 		case "uuid":
-			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': must be a valid UUID", strings.ToLower(e.Field()), e.Value()))
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': must be a valid UUID", e.Field(), e.Value()))
 		case "dir", "dirpath":
 			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': directory does not exist", e.Field(), e.Value()))
 		case "relpath":
