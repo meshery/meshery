@@ -201,9 +201,7 @@ type HandlerInterface interface {
 	SaveConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetConnections(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetConnectionsByKind(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetConnectionsStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	UpdateConnectionStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	UpdateConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetConnectionByID(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateConnectionById(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -223,6 +221,8 @@ type HandlerInterface interface {
 	GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Request, _ *Preference, _ *User, provider Provider)
 	GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	DeleteModel(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetOrganizations(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 

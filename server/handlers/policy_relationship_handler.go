@@ -13,9 +13,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
-	"github.com/meshery/schemas/models/v1alpha1/capability"
-	"github.com/meshery/schemas/models/v1alpha1/core"
-	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/capability"
+	"github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 
@@ -44,6 +44,9 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 		return alias, false
 	}
 
+	if relationshipDeclaration.Selectors == nil {
+		return alias, false
+	}
 	selectors := *relationshipDeclaration.Selectors
 
 	if len(selectors) == 0 {
@@ -60,18 +63,22 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 	from := fromSet[0]
 	to := toSet[0]
-	if from.Patch == nil || from.Patch.MutatedRef == nil {
+	if from.RelationshipDefinitionSelectorsPatch == nil || from.RelationshipDefinitionSelectorsPatch.MutatedRef == nil {
 		return alias, false
 	}
-	mutatedRefs := *from.Patch.MutatedRef
+	mutatedRefs := *from.RelationshipDefinitionSelectorsPatch.MutatedRef
 
 	if len(mutatedRefs) == 0 {
 		return alias, false
 	}
 
-	alias.ImmediateParentId = *to.Id
-	alias.AliasComponentId = *from.Id
-	alias.RelationshipId = relationshipDeclaration.Id
+	if to.ID == nil || from.ID == nil {
+		return alias, false
+	}
+
+	alias.ImmediateParentId = *to.ID
+	alias.AliasComponentId = *from.ID
+	alias.RelationshipId = relationshipDeclaration.ID
 	alias.ImmediateRefFieldPath = mutatedRefs[0]
 
 	return alias, true
@@ -86,7 +93,7 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 			continue
 		}
 
-		if alias.AliasComponentId == component.Id {
+		if alias.AliasComponentId == component.ID {
 			return alias, true
 		}
 	}
@@ -97,7 +104,7 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 // getComponentById retrieves a component from the design by its ID
 func getComponentById(design pattern.PatternFile, id uuid.UUID) *component.ComponentDefinition {
 	for _, comp := range design.Components {
-		if comp.Id == id {
+		if comp.ID == id {
 			return comp
 		}
 	}
@@ -205,8 +212,8 @@ func (h *Handler) EvaluateDesign(
 			break
 		}
 		if i == (MAX_RE_EVALUATION_DEPTH - 1) {
-			h.log.Info("Evaluation depth exceeded")
-			return lastEvaluationResponse, fmt.Errorf("Evaluation depth exceeded")
+			h.log.Warnf("Evaluation depth limit of %d reached; returning partial result", MAX_RE_EVALUATION_DEPTH)
+			break
 		}
 
 	}
@@ -267,7 +274,7 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 		}
 		_component, _ := entities[0].(*component.ComponentDefinition)
 
-		_component.Id = _c.Id
+		_component.ID = _c.ID
 		if _c.DisplayName != "" {
 			_component.DisplayName = _c.DisplayName
 		} else {
@@ -323,7 +330,7 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 		_c := cmp
 
 		for _, c := range cmps {
-			if c.Id == _c.Id {
+			if c.ID == _c.ID {
 				_c = &c
 				break
 			}
@@ -373,7 +380,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 	}
 	// decode the pattern file
-	patternUUID := relationshipPolicyEvalPayload.Design.Id
+	patternUUID := relationshipPolicyEvalPayload.Design.ID
 	eventBuilder.ActedUpon(patternUUID)
 
 	evalRespChan := make(chan pattern.EvaluationResponse)
@@ -486,7 +493,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 	var greedy bool
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 
@@ -514,8 +521,11 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -543,7 +553,7 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	typ := mux.Vars(r)["model"]
 
 	var greedy bool
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 
@@ -571,7 +581,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }

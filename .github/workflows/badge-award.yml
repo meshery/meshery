@@ -1,0 +1,126 @@
+name: Badge Award Automation
+
+on:
+  workflow_dispatch:
+    inputs:
+      badge_name:
+        description: 'Badge name (e.g., hacktoberfest25, Meshmate etc etc)'
+        required: true
+        type: string
+      issue_numbers:
+        description: 'Comma-separated issue numbers (e.g., 16100,16101,16102)'
+        required: true
+        type: string
+
+jobs:
+  award-badges:
+    name: Award Badges
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Process issues and extract emails
+        id: extract
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BADGE_NAME: ${{ github.event.inputs.badge_name }}
+          ISSUE_NUMBERS: ${{ github.event.inputs.issue_numbers }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "=== Badge Award Automation ==="
+          echo "Badge: $BADGE_NAME"
+          echo "Issues: $ISSUE_NUMBERS"
+          echo ""
+          
+          # Create temp file for emails
+          emails_file="emails.txt"
+          > "$emails_file"
+          
+          # Process each issue
+          IFS=',' read -ra ISSUES <<< "$ISSUE_NUMBERS"
+          for issue in "${ISSUES[@]}"; do
+            issue=$(echo "$issue" | xargs)
+            echo "Processing issue #$issue"
+            
+            # Get timeline and extract cross-referenced PRs
+            prs=$(gh api "/repos/$REPO/issues/$issue/timeline" \
+              --paginate \
+              --jq '.[] | select(.event=="cross-referenced") | select(.source.issue.pull_request != null) | .source.issue.number' \
+              2>/dev/null | sort -u || echo "")
+            
+            if [ -z "$prs" ]; then
+              echo "  No linked PRs found"
+              continue
+            fi
+            
+            echo "  Found PRs: $(echo $prs | tr '\n' ' ')"
+            
+            # Check each PR
+            for pr in $prs; do
+              # Check if merged
+              merged_at=$(gh pr view "$pr" --json mergedAt --jq '.mergedAt' 2>/dev/null || echo "null")
+              
+              if [ "$merged_at" != "null" ] && [ -n "$merged_at" ]; then
+                echo "  PR #$pr: merged at $merged_at"
+                
+                # Extract emails from commit messages
+                gh pr view "$pr" --json commits \
+                  --jq '.commits[].commit.message' | \
+                  grep -i "Signed-off-by:" | \
+                  sed -n 's/.*<\([^>]*\)>.*/\1/p' | \
+                  tr '[:upper:]' '[:lower:]' >> "$emails_file"
+              else
+                echo "  PR #$pr: not merged"
+              fi
+            done
+          done
+          
+          # Process results
+          if [ -s "$emails_file" ]; then
+            # Remove duplicates
+            sort -u "$emails_file" -o "$emails_file"
+            
+            count=$(wc -l < "$emails_file" | xargs)
+            echo ""
+            echo "=== Found $count email(s) ==="
+            cat "$emails_file"
+            
+            # Build award commands
+            commands=""
+            while IFS= read -r email; do
+              [ -n "$email" ] && commands="${commands}/award-badge ${email} ${BADGE_NAME}"$'\n'
+            done < "$emails_file"
+            
+            # Set outputs
+            {
+              echo "found=true"
+              echo "count=$count"
+              echo "commands<<EOF"
+              echo "$commands"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+            echo ""
+            echo "=== No emails found ==="
+          fi
+      
+      - name: Notify Slack
+        if: steps.extract.outputs.found == 'true'
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: CLDRKJZ0T
+            text: ":trophy: *Badge Award Request*\n\nAward `${{ github.event.inputs.badge_name }}` to ${{ steps.extract.outputs.count }} contributor(s):\n```\n${{ steps.extract.outputs.commands }}```\n_Triggered by @${{ github.actor }}_"
+      
+      - name: Upload results
+        if: steps.extract.outputs.found == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: badge-award-results
+          path: emails.txt
+          retention-days: 30

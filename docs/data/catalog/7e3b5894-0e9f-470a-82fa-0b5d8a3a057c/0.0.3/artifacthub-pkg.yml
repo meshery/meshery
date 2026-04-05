@@ -1,0 +1,24 @@
+version: 0.0.3
+name: untitled-design
+displayName: Untitled Design
+createdAt: "2024-12-18T13:32:32Z"
+description: asdasda
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7e3b5894-0e9f-470a-82fa-0b5d8a3a057c/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "asdasd \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c6efdf65-2280-4bc2-a61c-73c36af20fa8
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7e3b5894-0e9f-470a-82fa-0b5d8a3a057c-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7e3b5894-0e9f-470a-82fa-0b5d8a3a057c-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -252,11 +252,14 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 	}
 
 	newMeshAdapters := []*models.Adapter{}
-	if aID == 0 {
+	switch aID {
+	case 0:
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[1:]...)
-	} else if aID == adaptersLen-1 {
+
+	case adaptersLen - 1:
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[:adaptersLen-1]...)
-	} else {
+
+	default:
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[0:aID]...)
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[aID+1:]...)
 	}

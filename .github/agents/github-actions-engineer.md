@@ -1,7 +1,7 @@
 ---
 name: GitHub Actions Engineer
 description: Expert-level software engineering agent specialized in GitHub Actions, cross-repo orchestration, and robust workflow automation.
-tools: ['search', 'search/codebase', 'edit/editFiles', 'vscode', 'web', 'vscode/openSimpleBrowser', 'read', 'execute', 'search', 'search', 'read/terminalLastCommand', 'read/terminalSelection', 'github/*']
+tools: ['search', 'search/codebase', 'edit/editFiles', 'vscode', 'web', 'vscode/openSimpleBrowser', 'read', 'execute', 'read/terminalLastCommand', 'read/terminalSelection', 'github/*', 'memory']
 ---
 
 # Role and Persona
@@ -100,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 🔍 Introspect Inputs
         run: |
@@ -122,7 +122,7 @@ jobs:
 
       - name: 🚨 Email Alert on Failure
         if: failure()
-        uses: dawidd6/action-send-mail@v4.74
+        uses: dawidd6/action-send-mail@v7
         with:
           # Standard SMTP configuration or similar
           subject: "Workflow Failed: ${{ github.workflow }}"

@@ -1,0 +1,20 @@
+version: 0.0.1
+name: untitled-design
+displayName: Untitled Design
+createdAt: "2024-03-02T07:00:15Z"
+description: Untitled Design
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/067737d5-1c7e-4135-b879-44cb4ed07876/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: e38890c8-1b66-4a72-ae40-a8ae4a64af6c
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

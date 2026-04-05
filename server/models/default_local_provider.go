@@ -29,8 +29,10 @@ import (
 	"github.com/meshery/meshkit/utils/walker"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/organization"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
+	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -130,25 +132,38 @@ func (l *DefaultLocalProvider) SetJWTCookie(_ http.ResponseWriter, _ string) {
 func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
 }
 
-// GetProviderCapabilities returns all of the provider properties
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request, _ string) {
+	w.Header().Set("Content-Type", "application/json")
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
-		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
+		obj := "provider capabilities"
+		errObj := ErrEncoding(err, obj)
+		l.Log.Error(errObj)
+		http.Error(w, errObj.Error(), http.StatusInternalServerError)
 	}
 }
 
-// InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Request, _ bool) {
-	// l.issueSession(w, r, fromMiddleWare)
+// InitiateLogin - initiates login flow and redirects to home for local provider.
+// When called from AuthMiddleware (fromMiddleWare=true), it's a no-op since the
+// local provider doesn't require authentication — the middleware will allow the
+// request to proceed. When called from the /user/login route (fromMiddleWare=false),
+// it redirects to / or to the deep-link target from the ref query param.
+func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+	if fromMiddleWare {
+		return
+	}
+	redirectURL := resolvePostLoginRedirect(r.URL.Query().Get("ref"), "/")
+	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
 	avatarUrl := ""
+	localEmail := types.Email("meshery@meshery.local")
 	return &User{
 		UserId:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
+		Email:     localEmail,
 		AvatarUrl: &avatarUrl,
 	}
 }
@@ -181,7 +196,7 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 }
 
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ := uuid.FromString(environmentPayload.OrgId)
+	orgId := uuid.UUID(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
@@ -195,7 +210,7 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	id, _ := uuid.FromString(environmentID)
-	orgId, _ := uuid.FromString(environmentPayload.OrgId)
+	orgId := uuid.UUID(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
@@ -540,11 +555,11 @@ func (l *DefaultLocalProvider) PublishEventToProvider(_ string, _ events.Event) 
 	return nil
 }
 
-// PublishMetrics - publishes metrics to the provider backend asyncronously
+// PublishMetrics - publishes metrics to the provider backend asynchronously
 func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
 	data, err := json.Marshal(result)
 	if err != nil {
-		return ErrMarshal(err, "Meshery Matrics for shipping")
+		return ErrMarshal(err, "Meshery Metrics for shipping")
 	}
 
 	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
@@ -559,13 +574,15 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		l.Log.Warn(ErrDoRequest(err, cReq.Method, remoteProviderURL.String()))
 		return nil
 	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			l.Log.Warn(fmt.Errorf("error closing response body: %w", err))
+		}
+	}()
 	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("metrics published to remote provider")
 		return nil
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
 	_, err = io.ReadAll(resp.Body)
 	if err != nil {
 		l.Log.Warn(ErrDataRead(err, "body"))
@@ -577,7 +594,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 
 // RecordPreferences - records the user preference
 func (l *DefaultLocalProvider) RecordPreferences(_ *http.Request, userID string, data *Preference) error {
-	return l.MapPreferencePersister.WriteToPersister(userID, data)
+	return l.WriteToPersister(userID, data)
 }
 
 // UpdateToken - specific to remote auth
@@ -1117,8 +1134,8 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 	return connectionCreated, nil
 }
 
-func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error) {
-	connectionsPage, err := l.ConnectionPersister.GetConnections(search, order, page, pageSize, filter, status, kind)
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
+	connectionsPage, err := l.ConnectionPersister.GetConnections(search, order, page, pageSize, filter, status, kind, connType, name)
 	if err != nil {
 		return nil, err
 	}
@@ -1126,11 +1143,7 @@ func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, pa
 }
 
 func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
-	return nil, http.StatusForbidden, ErrLocalProviderSupport
-}
-
-func (l *DefaultLocalProvider) GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
-	connection, err := l.ConnectionPersister.GetConnection(connectionID, kind)
+	connection, err := l.ConnectionPersister.GetConnection(connectionID, "")
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, http.StatusNotFound, err
@@ -1140,14 +1153,6 @@ func (l *DefaultLocalProvider) GetConnectionByIDAndKind(token string, connection
 	return connection, http.StatusOK, err
 }
 
-func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _, _ int, _, _, _ string) (*map[string]interface{}, error) {
-	return nil, ErrLocalProviderSupport
-}
-
-func (l *DefaultLocalProvider) GetConnectionsStatus(_ *http.Request, _ string) (*connections.ConnectionsStatusPage, error) {
-	return nil, ErrLocalProviderSupport
-}
-
 func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, connection *connections.Connection) (*connections.Connection, error) {
 	return l.ConnectionPersister.UpdateConnectionByID(connection)
 }
@@ -1155,13 +1160,12 @@ func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, connection *con
 func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
 	updatedConnection, err := l.ConnectionPersister.UpdateConnectionStatusByID(connectionID, connectionStatus)
 	if err != nil {
-		fmt.Println("on update connection error", err)
 		return nil, http.StatusInternalServerError, err
 	}
 	return updatedConnection, http.StatusOK, nil
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
 	connection := connections.Connection{
 		ID:           conn.ID,
 		Name:         conn.Name,
@@ -1174,12 +1178,11 @@ func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *con
 		UpdatedAt:    time.Now(),
 		CredentialID: conn.CredentialID,
 	}
-	return l.UpdateConnection(req, &connection)
+	return l.UpdateConnection(nil, &connection)
 }
 
 func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
-	connection := connections.Connection{ID: connectionID}
-	return l.ConnectionPersister.DeleteConnection(&connection)
+	return l.ConnectionPersister.DeleteConnectionById(connectionID)
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
@@ -1292,25 +1295,23 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		}(seedContent, log, &seededUUIDs)
 	}
 
-	// Seed default organization
-	go func() {
-		id, _ := uuid.NewV4()
-		org := &Organization{
-			ID:          &id,
-			Name:        "My Org",
-			Country:     "",
-			Region:      "",
-			Description: "This is default organization",
-			Owner:       uuid.Nil,
+	// Seed default organization before the UI requests organizations.
+	id, _ := uuid.NewV4()
+	org := &organization.Organization{
+		ID:          id,
+		Name:        "My Org",
+		Country:     "",
+		Region:      "",
+		Description: "This is default organization",
+		Owner:       uuid.Nil,
+	}
+	count, _ := l.OrganizationPersister.GetOrganizationsCount()
+	if count == 0 {
+		_, err := l.OrganizationPersister.SaveOrganization(org)
+		if err != nil {
+			log.Error(ErrGettingSeededComponents(err, "organization"))
 		}
-		count, _ := l.OrganizationPersister.GetOrganizationsCount()
-		if count == 0 {
-			_, err := l.OrganizationPersister.SaveOrganization(org)
-			if err != nil {
-				log.Error(ErrGettingSeededComponents(err, "organization"))
-			}
-		}
-	}()
+	}
 }
 
 func (l *DefaultLocalProvider) Cleanup() error {
@@ -1363,7 +1364,7 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 		return nil, fmt.Errorf("error retrieving count of credentials for user id: %s - %v", userID, err)
 	}
 
-	var credentialsList []*Credential
+	var credentialsList []Credential
 	if count > 0 {
 		if err := result.Offset(page * pageSize).Limit(pageSize).Find(&credentialsList).Error; err != nil {
 			if err != gorm.ErrRecordNotFound {
@@ -1387,11 +1388,12 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
-	if err := l.GetGenericPersister().Model(*updatedCredential).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserID, credential.ID).Updates(credential); err != nil {
-		return nil, fmt.Errorf("error updating user credential: %v", err)
+	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential)
+	if db.Error != nil {
+		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
 	}
 
-	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserID, credential.ID).First(updatedCredential).Error; err != nil {
+	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserId, credential.ID).First(updatedCredential).Error; err != nil {
 		return nil, fmt.Errorf("error getting updated user credential: %v", err)
 	}
 	return updatedCredential, nil
@@ -1445,9 +1447,8 @@ func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byt
 	return l.KeyPersister.GetUsersKey(id)
 }
 
-// SaveKey saves the given key with the provider
-func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []*Key) ([]*Key, error) {
-	// fmt.Printf(keys)
+// SaveUsersKey saves the given keys with the provider
+func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []Key) ([]Key, error) {
 	return l.KeyPersister.SaveUsersKeys(keys)
 }
 
@@ -1466,12 +1467,12 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID stri
 }
 
 func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	orgID := workspacePayload.OrganizationID
 	workspace := &workspace.Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationId: orgId,
+		OrganizationID: &orgID,
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}
@@ -1480,13 +1481,13 @@ func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *
 
 func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
 	id, _ := uuid.FromString(workspaceID)
-	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	orgID := workspacePayload.OrganizationID
 	workspace := &workspace.Workspace{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationId: orgId,
+		OrganizationID: &orgID,
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}
@@ -1528,7 +1529,7 @@ func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationId s
 }
 
 // SaveOrganization saves given organization with the provider
-func (l *DefaultLocalProvider) SaveOrganization(_ string, organization *Organization) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveOrganization(_ string, organization *organization.Organization) ([]byte, error) {
 	return l.OrganizationPersister.SaveOrganization(organization)
 }
 
@@ -1766,12 +1767,22 @@ func downloadContent(comp string, downloadpath string) error {
 			if err != nil {
 				return err
 			}
-			defer file.Close()
 			content, err := base64.StdEncoding.DecodeString(gca.Content)
 			if err != nil {
+				if closeErr := file.Close(); closeErr != nil {
+					return fmt.Errorf("%w (close error: %v)", err, closeErr)
+				}
 				return err
 			}
-			fmt.Fprintf(file, "%s", content)
+			if _, err := fmt.Fprintf(file, "%s", content); err != nil {
+				if closeErr := file.Close(); closeErr != nil {
+					return fmt.Errorf("%w (close error: %v)", err, closeErr)
+				}
+				return err
+			}
+			if err := file.Close(); err != nil {
+				return err
+			}
 			return nil
 		}).Walk()
 	case "Filter":
@@ -1819,9 +1830,14 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 					return err
 				}
 				if _, err := io.Copy(outFile, tarReader); err != nil {
+					if closeErr := outFile.Close(); closeErr != nil {
+						return fmt.Errorf("%w (close error: %v)", err, closeErr)
+					}
 					return err
 				}
-				outFile.Close()
+				if err := outFile.Close(); err != nil {
+					return err
+				}
 			}
 		}
 	}

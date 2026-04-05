@@ -17,6 +17,7 @@
 .vscode/
 .cusorignore
 *.config
+.claude
 
 Chart.min.js
 
@@ -29,12 +30,14 @@ fortio_chart.js
 **/ui/playground/
 ui/.next/
 ui/out/
+ui/.eslintcache
 ui/node_modules/
 ui/tests/e2e/.env
 
 provider-ui/out/
 provider-ui/.next/
 provider-ui/node_modules/
+provider-ui/.eslintcache
 
 # mesheryctl
 mesheryctl/cmd/mesheryctl/mesheryctl
@@ -49,15 +52,12 @@ cmd/meshery
 log.txt
 
 # Docs
-docs/_site
-docs/.sass-cache
-docs/.jekyll-metadata
-docs/.jekyll-cache
+docs/public
+docs/resources/
+docs/.hugo_build.lock
+docs/hugo_stats.json
 
-docs/v0.4
-docs/v0.5
-docs/v0.6
-docs/v0.*
+docs/static/v0.*/
 
 dist/
 
@@ -80,8 +80,12 @@ default.profraw
 wasm/policies/temp-bundle-extract-dir/**
 .nvim.lua
 
+allure-results/
+playwright-report/
+
 install/docker-extension/vm/vm
 .env
 ui/.env
 *.env
 */.env
+docs/hugo_stats.json

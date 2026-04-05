@@ -15,7 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -41,7 +40,7 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	if tokenPath == "" { // token was not passed with the flag
 		tokenPath, err = GetCurrentAuthToken()
 		if err != nil {
-			return nil, err
+			return nil, ErrAttachAuthToken(err)
 		}
 		// set TokenFlag value equals tokenPath
 		TokenFlag = tokenPath
@@ -84,8 +83,32 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		return nil, ErrUnauthenticated()
 	}
 
+	// failsafe for data not found on the server
+	if resp.StatusCode == http.StatusNotFound {
+		defer func() { _ = resp.Body.Close() }()
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, ErrReadResponseBody(err)
+		}
+		Log.Debugf("Response body for 404 Not Found: %s", string(bodyBytes))
+		return nil, ErrNotFound(errors.New(string(bodyBytes)))
+	}
+
+	if resp.StatusCode == http.StatusInternalServerError {
+		defer func() { _ = resp.Body.Close() }()
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, ErrReadResponseBody(err)
+		}
+		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
+	}
+
 	// failsafe for bad api call
-	if resp.StatusCode != 200 && resp.StatusCode != 201 {
+	isNotSuccess := resp.StatusCode != http.StatusOK &&
+		resp.StatusCode != http.StatusCreated &&
+		resp.StatusCode != http.StatusNoContent
+	if isNotSuccess {
+		defer func() { _ = resp.Body.Close() }()
 		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
@@ -263,7 +286,7 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 		provider, err = chooseDirectProvider(providers, option)
 	} else {
 		// Trigger prompt
-		provider = selectProviderPrompt(providers)
+		provider, err = selectProviderPrompt(providers)
 	}
 
 	if err != nil {
@@ -362,7 +385,7 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	return token, nil
 }
 
-func selectProviderPrompt(provs map[string]Provider) Provider {
+func selectProviderPrompt(provs map[string]Provider) (Provider, error) {
 	provArray := []Provider{}
 	provNames := []string{}
 
@@ -374,19 +397,12 @@ func selectProviderPrompt(provs map[string]Provider) Provider {
 		provNames = append(provNames, prov.ProviderName)
 	}
 
-	prompt := promptui.Select{
-		Label: "Select a Provider",
-		Items: provNames,
+	i, err := RunSelectPrompt("Select a Provider", provNames)
+	if err != nil {
+		return Provider{}, err
 	}
 
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return provArray[i]
-	}
+	return provArray[i], nil
 }
 
 func chooseDirectProvider(provs map[string]Provider, option string) (Provider, error) {

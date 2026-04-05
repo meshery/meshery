@@ -1,0 +1,20 @@
+version: 0.0.1
+name: my-first-app-design
+displayName: my first app design
+createdAt: "2023-08-16T20:58:06Z"
+description: my first app design
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/114c94c9-052b-46a2-86fe-4cdd2e88c746/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4d90d649-c4b8-42b8-adc6-51702129cb05
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

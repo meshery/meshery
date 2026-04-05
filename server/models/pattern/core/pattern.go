@@ -14,7 +14,7 @@ import (
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshkit/utils/manifests"
-	"github.com/meshery/schemas/models/v1alpha1/capability"
+	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -152,7 +152,7 @@ func NewPatternFile(yml []byte) (patternFile pattern.PatternFile, err error) {
 		// If an explicit name is not given to the service then use
 		// the service identifier as its name
 		if component.DisplayName == "" {
-			component.DisplayName = component.Id.String()
+			component.DisplayName = component.ID.String()
 		}
 
 		component.Configuration = utils.RecursiveCastMapStringInterfaceToMapStringInterface(component.Configuration)
@@ -178,7 +178,7 @@ func ToCytoscapeJS(patternFile *pattern.PatternFile, log logger.Handler) (cytosc
 	// Set up the nodes
 	for _, cmp := range patternFile.Components {
 		elemData := cytoscapejs.ElemData{
-			ID: getCytoscapeElementID(cmp.Id.String(), cmp, log),
+			ID: getCytoscapeElementID(cmp.ID.String(), cmp, log),
 		}
 
 		elemPosition, err := getCytoscapeJSPosition(cmp, log)
@@ -219,7 +219,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (pattern.Pattern
 	id, _ := uuid.NewV4()
 	// Convert cytoscape struct to patternfile
 	pf := pattern.PatternFile{
-		Id:         id,
+		ID:         id,
 		Name:       name,
 		Components: []*component.ComponentDefinition{},
 	}
@@ -455,7 +455,7 @@ func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager
 	uuidV4, _ := uuid.NewV4()
 	defaultCapabilities := []capability.Capability{} // only assign empty capabilities for component declarations
 	declaration := component.ComponentDefinition{
-		Id:            uuidV4,
+		ID:            uuidV4,
 		SchemaVersion: comp.SchemaVersion,
 		Version:       comp.Version,
 		DisplayName:   name,
@@ -496,7 +496,7 @@ func isNamespacedComponent(comp *component.ComponentDefinition) bool {
 
 // getCytoscapeElementID returns the element id for a given service
 func getCytoscapeElementID(name string, component *component.ComponentDefinition, log logger.Handler) string {
-	return component.Id.String()
+	return component.ID.String()
 }
 
 func getCytoscapeJSPosition(component *component.ComponentDefinition, log logger.Handler) (cytoscapejs.Position, error) {

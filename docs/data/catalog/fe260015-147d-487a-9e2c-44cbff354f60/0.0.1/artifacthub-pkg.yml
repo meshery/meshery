@@ -1,0 +1,20 @@
+version: 0.0.1
+name: kubernetes-deployment-with-azure-file-storage
+displayName: Kubernetes Deployment with Azure File Storage
+createdAt: "2023-11-03T07:47:06Z"
+description: Kubernetes Deployment with Azure File Storage
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/fe260015-147d-487a-9e2c-44cbff354f60/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9cb4bfce-ad8f-4a8e-8647-bb138fa07e7f
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

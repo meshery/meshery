@@ -1,0 +1,20 @@
+version: 0.0.1
+name: redis_using_configmap
+displayName: Redis_using_configmap
+createdAt: "2023-11-10T18:30:27Z"
+description: Redis_using_configmap
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/6d4bb838-2a05-447e-bba4-b59104ace089/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4a508c2f-5bdf-41ba-b00f-8b81953b86e0
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

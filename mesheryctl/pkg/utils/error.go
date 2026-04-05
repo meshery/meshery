@@ -11,51 +11,75 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 var (
-	ErrFailRequestCode             = "mesheryctl-1090"
-	ErrInvalidTokenCode            = "mesheryctl-1091"
-	ErrFailReqStatusCode           = "mesheryctl-1092"
-	ErrAttachAuthTokenCode         = "mesheryctl-1093"
-	ErrUnmarshalCode               = "mesheryctl-1094"
-	ErrFileReadCode                = "mesheryctl-1095"
-	ErrCreatingRequestCode         = "mesheryctl-1096"
-	ErrMarshalCode                 = "mesheryctl-1097"
-	ErrReadResponseBodyCode        = "mesheryctl-1098"
-	ErrParsingUrlCode              = "mesheryctl-1099"
-	ErrNotFoundCode                = "mesheryctl-1100"
-	ErrUnauthenticatedCode         = "mesheryctl-1101"
-	ErrInvalidFileCode             = "mesheryctl-1102"
-	ErrInvalidNameOrIDCode         = "mesheryctl-1103"
-	ErrInvalidAPIResponseCode      = "mesheryctl-1104"
-	ErrReadConfigFileCode          = "mesheryctl-1105"
-	ErrMarshalIndentCode           = "mesheryctl-1106"
-	ErrLoadConfigCode              = "mesheryctl-1107"
-	ErrResponseStatusBodyCode      = "mesheryctl-1108"
-	ErrResponseStatusCode          = "mesheryctl-1109"
-	ErrJSONToYAMLCode              = "mesheryctl-1110"
-	ErrOutFormatFlagCode           = "mesheryctl-1111"
-	ErrParseGithubFileCode         = "mesheryctl-1112"
-	ErrReadTokenCode               = "mesheryctl-1113"
-	ErrRequestResponseCode         = "mesheryctl-1114"
-	ErrBadRequestCode              = "mesheryctl-1117"
-	ErrInvalidArgumentCode         = "mesheryctl-1118"
-	ErrGeneratingIconsCode         = "mesheryctl-1119"
-	ErrClearLineCode               = "mesheryctl-1120"
-	ErrGeneratesModelCode          = "mesheryctl-1132"
-	ErrUpdateComponentsCode        = "mesheryctl-1134"
-	ErrMissingCommandsCode         = "mesheryctl-1137"
-	ErrKubernetesConnectivityCode  = "mesheryctl-1138"
-	ErrKubernetesQueryCode         = "mesheryctl-1139"
-	ErrCreateManifestsFolderCode   = "mesheryctl-1141"
-	ErrDownloadFileCode            = "mesheryctl-1142"
-	ErrNoManifestFilesFoundCode    = "mesheryctl-1143"
-	ErrWalkManifestsCode           = "mesheryctl-1144"
-	ErrGetChannelVersionCode       = "mesheryctl-1145"
-	ErrInvalidModelCode            = "mesheryctl-1150"
-	ErrInvalidOrgIDCode            = "mesheryctl-1152"
-	ErrFetchEnvironmentsCode       = "mesheryctl-1153"
-	ErrTableRenderCode             = "mesheryctl-1154"
-	ErrFlagsInvalidCode            = "mesheryctl-1155"
-	ErrMesheryServerNotRunningCode = "mesheryctl-1156"
+	ErrFailRequestCode                = "mesheryctl-1090"
+	ErrInvalidTokenCode               = "mesheryctl-1091"
+	ErrFailReqStatusCode              = "mesheryctl-1092"
+	ErrAttachAuthTokenCode            = "mesheryctl-1093"
+	ErrUnmarshalCode                  = "mesheryctl-1094"
+	ErrFileReadCode                   = "mesheryctl-1095"
+	ErrCreatingRequestCode            = "mesheryctl-1096"
+	ErrMarshalCode                    = "mesheryctl-1097"
+	ErrReadResponseBodyCode           = "mesheryctl-1098"
+	ErrParsingUrlCode                 = "mesheryctl-1099"
+	ErrNotFoundCode                   = "mesheryctl-1100"
+	ErrUnauthenticatedCode            = "mesheryctl-1101"
+	ErrInvalidFileCode                = "mesheryctl-1102"
+	ErrInvalidNameOrIDCode            = "mesheryctl-1103"
+	ErrInvalidAPIResponseCode         = "mesheryctl-1104"
+	ErrReadConfigFileCode             = "mesheryctl-1105"
+	ErrMarshalIndentCode              = "mesheryctl-1106"
+	ErrLoadConfigCode                 = "mesheryctl-1107"
+	ErrResponseStatusBodyCode         = "mesheryctl-1108"
+	ErrResponseStatusCode             = "mesheryctl-1109"
+	ErrJSONToYAMLCode                 = "mesheryctl-1110"
+	ErrOutFormatFlagCode              = "mesheryctl-1111"
+	ErrParseGithubFileCode            = "mesheryctl-1112"
+	ErrReadTokenCode                  = "mesheryctl-1113"
+	ErrRequestResponseCode            = "mesheryctl-1114"
+	ErrBadRequestCode                 = "mesheryctl-1117"
+	ErrInvalidArgumentCode            = "mesheryctl-1118"
+	ErrGeneratingIconsCode            = "mesheryctl-1119"
+	ErrClearLineCode                  = "mesheryctl-1120"
+	ErrGeneratesModelCode             = "mesheryctl-1132"
+	ErrUpdateComponentsCode           = "mesheryctl-1134"
+	ErrMissingCommandsCode            = "mesheryctl-1137"
+	ErrKubernetesConnectivityCode     = "mesheryctl-1138"
+	ErrKubernetesQueryCode            = "mesheryctl-1139"
+	ErrCreateManifestsFolderCode      = "mesheryctl-1141"
+	ErrDownloadFileCode               = "mesheryctl-1142"
+	ErrNoManifestFilesFoundCode       = "mesheryctl-1143"
+	ErrWalkManifestsCode              = "mesheryctl-1144"
+	ErrGetChannelVersionCode          = "mesheryctl-1145"
+	ErrInvalidModelCode               = "mesheryctl-1150"
+	ErrInvalidUUIDCode                = "mesheryctl-1152"
+	ErrFetchEnvironmentsCode          = "mesheryctl-1153"
+	ErrTableRenderCode                = "mesheryctl-1154"
+	ErrFlagsInvalidCode               = "mesheryctl-1155"
+	ErrMesheryServerNotRunningCode    = "mesheryctl-1156"
+	ErrHandlePaginationCode           = "mesheryctl-1172"
+	ErrCreateFileCode                 = "mesheryctl-1123"
+	ErrRetrieveHomeDirCode            = "mesheryctl-1124"
+	ErrReadFromBodyCode               = "mesheryctl-1125"
+	ErrMarkFlagRequireCode            = "mesheryctl-1126"
+	ErrGetKubernetesContextsCode      = "mesheryctl-1165"
+	ErrSetKubernetesContextCode       = "mesheryctl-1166"
+	ErrReadInputCode                  = "mesheryctl-1193"
+	ErrUploadFileWithParamsCode       = "mesheryctl-1185"
+	ErrCommandContextMissingCode      = "mesheryctl-1201"
+	ErrPromptCancelledCode            = "mesheryctl-1202"
+	ErrMesheryServerInternalErrorCode = "mesheryctl-1203"
+	ErrFailedToConnectAdapterCode     = "mesheryctl-1212"
+	ErrAdapterNotReachableCode        = "mesheryctl-1213"
+	ErrListMesheryPodsCode            = "mesheryctl-1214"
+	ErrNoMesheryPodsCode              = "mesheryctl-1215"
+	ErrMissingMesheryPodCode          = "mesheryctl-1216"
+	ErrK8sVersionInfoCode             = "mesheryctl-1217"
+	ErrK8sInvalidVersionFormatCode    = "mesheryctl-1218"
+	ErrDockerComposeFileMissingCode   = "mesheryctl-1223"
+	ErrDockerComposeClientCode        = "mesheryctl-1224"
+	ErrDockerComposeRemoveCode        = "mesheryctl-1225"
+	ErrDockerComposeLogsCode          = "mesheryctl-1226"
+	ErrMesheryCheckRunningStatusCode  = "mesheryctl-1227"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -194,11 +218,11 @@ func EnvironmentSubError(msg string, cmd string) string {
 func WorkspaceSubError(msg string, cmd string) string {
 	switch cmd {
 	case "list":
-		return formatError(msg, cmdExpWorkspaceList)
+		return formatError(msg, cmdWorkspaceList)
 	case "create":
-		return formatError(msg, cmdExpWorkspaceCreate)
+		return formatError(msg, cmdWorkspaceCreate)
 	default:
-		return formatError(msg, cmdExpWorkspace)
+		return formatError(msg, cmdWorkspace)
 	}
 }
 
@@ -275,138 +299,79 @@ func DesignViewError(msg string) string {
 	return formatError(msg, cmdDesignView)
 }
 
+var cmdUsageURLs = map[cmdType]string{
+	cmdRoot:                     rootUsageURL,
+	cmdPerf:                     perfUsageURL,
+	cmdMesh:                     meshUsageURL,
+	cmdSystem:                   systemUsageURL,
+	cmdSystemStop:               systemStopURL,
+	cmdSystemUpdate:             systemUpdateURL,
+	cmdSystemReset:              systemResetURL,
+	cmdSystemStatus:             systemStatusURL,
+	cmdSystemRestart:            systemRestartURL,
+	cmdExp:                      expUsageURL,
+	cmdFilter:                   filterUsageURL,
+	cmdFilterImport:             filterImportURL,
+	cmdFilterDelete:             filterDeleteURL,
+	cmdFilterList:               filterListURL,
+	cmdFilterView:               filterViewURL,
+	cmdDesign:                   designUsageURL,
+	cmdDesignView:               designViewURL,
+	cmdDesignExport:             designExportURL,
+	cmdContextDelete:            contextDeleteURL,
+	cmdContextCreate:            contextCreateURL,
+	cmdContextView:              contextViewURL,
+	cmdContext:                  contextUsageURL,
+	cmdChannelSwitch:            channelSwitchURL,
+	cmdChannelView:              channelViewURL,
+	cmdChannelSet:               channelSetURL,
+	cmdChannel:                  channelUsageURL,
+	cmdProviderView:             providerViewURL,
+	cmdProviderList:             providerListURL,
+	cmdProviderSet:              providerSetURL,
+	cmdProviderSwitch:           providerSwitchURL,
+	cmdProviderReset:            providerResetURL,
+	cmdProvider:                 providerUsageURL,
+	cmdToken:                    tokenUsageURL,
+	cmdModel:                    modelUsageURL,
+	cmdModelList:                modelListURL,
+	cmdModelImport:              modelImportURl,
+	cmdModelView:                modelViewURL,
+	cmdRegistry:                 registryUsageURL,
+	cmdRegistryPublish:          registryPublishURL,
+	cmdRegistryGenerate:         registryGenerateURL,
+	cmdRegistryUpdate:           registryUpdateURL,
+	cmdEnvironment:              environmentUsageURL,
+	cmdEnvironmentCreate:        environmentCreateURL,
+	cmdEnvironmentDelete:        environmentDeleteURL,
+	cmdEnvironmentList:          environmentListURL,
+	cmdEnvironmentView:          environmentViewURL,
+	cmdWorkspace:                workspaceUsageURL,
+	cmdWorkspaceCreate:          workspaceCreateURL,
+	cmdWorkspaceList:            workspaceListURL,
+	cmdRelationshipView:         relationshipViewURL,
+	cmdRelationships:            relationshipUsageURL,
+	cmdRelationshipGenerateDocs: cmdRelationshipGenerateDocsURL,
+	cmdComponent:                componentUsageURL,
+	cmdComponentList:            componentListURL,
+	cmdComponentSearch:          componentSearchURL,
+	cmdComponentView:            componentViewURL,
+	cmdConnection:               connectionUsageURL,
+	cmdConnectionDelete:         connectionDeleteURL,
+	cmdConnectionList:           connectionListURL,
+	cmdExpRelationship:          expRelationshipUsageURL,
+	cmdExpRelationshipGenerate:  expRelationshipGenerateURL,
+	cmdExpRelationshipView:      expRelationshipViewURL,
+	cmdExpRelationshipList:      expRelationshipListURL,
+}
+
 // formatError returns a formatted error message with a link to the meshery command URL
 func formatError(msg string, cmd cmdType) string {
-	switch cmd {
-	case cmdRoot:
-		return formatUsageDetails(msg, rootUsageURL)
-	case cmdPerf:
-		return formatUsageDetails(msg, perfUsageURL)
-	case cmdMesh:
-		return formatUsageDetails(msg, meshUsageURL)
-	case cmdSystem:
-		return formatUsageDetails(msg, systemUsageURL)
-	case cmdSystemStop:
-		return formatUsageDetails(msg, systemStopURL)
-	case cmdSystemUpdate:
-		return formatUsageDetails(msg, systemUpdateURL)
-	case cmdSystemReset:
-		return formatUsageDetails(msg, systemResetURL)
-	case cmdSystemStatus:
-		return formatUsageDetails(msg, systemStatusURL)
-	case cmdSystemRestart:
-		return formatUsageDetails(msg, systemRestartURL)
-	case cmdExp:
-		return formatUsageDetails(msg, expUsageURL)
-	case cmdFilter:
-		return formatUsageDetails(msg, filterUsageURL)
-	case cmdFilterImport:
-		return formatUsageDetails(msg, filterImportURL)
-	case cmdFilterDelete:
-		return formatUsageDetails(msg, filterDeleteURL)
-	case cmdFilterList:
-		return formatUsageDetails(msg, filterListURL)
-	case cmdFilterView:
-		return formatUsageDetails(msg, filterViewURL)
-	case cmdDesign:
-		return formatUsageDetails(msg, designUsageURL)
-	case cmdDesignView:
-		return formatUsageDetails(msg, designViewURL)
-	case cmdDesignExport:
-		return formatUsageDetails(msg, designExportURL)
-	case cmdContextDelete:
-		return formatUsageDetails(msg, contextDeleteURL)
-	case cmdContextCreate:
-		return formatUsageDetails(msg, contextCreateURL)
-	case cmdContextView:
-		return formatUsageDetails(msg, contextViewURL)
-	case cmdContext:
-		return formatUsageDetails(msg, contextUsageURL)
-	case cmdChannelSwitch:
-		return formatUsageDetails(msg, channelSwitchURL)
-	case cmdChannelView:
-		return formatUsageDetails(msg, channelViewURL)
-	case cmdChannelSet:
-		return formatUsageDetails(msg, channelSetURL)
-	case cmdChannel:
-		return formatUsageDetails(msg, channelUsageURL)
-	case cmdProviderView:
-		return formatUsageDetails(msg, providerViewURL)
-	case cmdProviderList:
-		return formatUsageDetails(msg, providerListURL)
-	case cmdProviderSet:
-		return formatUsageDetails(msg, providerSetURL)
-	case cmdProviderSwitch:
-		return formatUsageDetails(msg, providerSwitchURL)
-	case cmdProviderReset:
-		return formatUsageDetails(msg, providerResetURL)
-	case cmdProvider:
-		return formatUsageDetails(msg, providerUsageURL)
-	case cmdToken:
-		return formatUsageDetails(msg, tokenUsageURL)
-	case cmdModel:
-		return formatUsageDetails(msg, modelUsageURL)
-	case cmdModelList:
-		return formatUsageDetails(msg, modelListURL)
-	case cmdModelImport:
-		return formatUsageDetails(msg, modelImportURl)
-	case cmdModelView:
-		return formatUsageDetails(msg, modelViewURL)
-	case cmdRegistry:
-		return formatUsageDetails(msg, registryUsageURL)
-	case cmdRegistryPublish:
-		return formatUsageDetails(msg, registryPublishURL)
-	case cmdRegistryGenerate:
-		return formatUsageDetails(msg, registryGenerateURL)
-	case cmdRegistryUpdate:
-		return formatUsageDetails(msg, registryUpdateURL)
-	case cmdEnvironment:
-		return formatUsageDetails(msg, environmentUsageURL)
-	case cmdEnvironmentCreate:
-		return formatUsageDetails(msg, environmentCreateURL)
-	case cmdEnvironmentDelete:
-		return formatUsageDetails(msg, environmentDeleteURL)
-	case cmdEnvironmentList:
-		return formatUsageDetails(msg, environmentListURL)
-	case cmdEnvironmentView:
-		return formatUsageDetails(msg, environmentViewURL)
-	case cmdExpWorkspace:
-		return formatUsageDetails(msg, workspaceUsageURL)
-	case cmdExpWorkspaceCreate:
-		return formatUsageDetails(msg, workspaceCreateURL)
-	case cmdExpWorkspaceList:
-		return formatUsageDetails(msg, workspaceListURL)
-	case cmdRelationshipView:
-		return formatUsageDetails(msg, relationshipViewURL)
-	case cmdRelationships:
-		return formatUsageDetails(msg, relationshipUsageURL)
-	case cmdRelationshipGenerateDocs:
-		return formatUsageDetails(msg, cmdRelationshipGenerateDocsURL)
-	case cmdComponent:
-		return formatUsageDetails(msg, componentUsageURL)
-	case cmdComponentList:
-		return formatUsageDetails(msg, componentListURL)
-	case cmdComponentSearch:
-		return formatUsageDetails(msg, componentSearchURL)
-	case cmdComponentView:
-		return formatUsageDetails(msg, componentViewURL)
-	case cmdConnection:
-		return formatUsageDetails(msg, connectionUsageURL)
-	case cmdConnectionDelete:
-		return formatUsageDetails(msg, connectionDeleteURL)
-	case cmdConnectionList:
-		return formatUsageDetails(msg, connectionListURL)
-	case cmdExpRelationship:
-		return formatUsageDetails(msg, expRelationshipUsageURL)
-	case cmdExpRelationshipGenerate:
-		return formatUsageDetails(msg, expRelationshipGenerateURL)
-	case cmdExpRelationshipView:
-		return formatUsageDetails(msg, expRelationshipViewURL)
-	case cmdExpRelationshipList:
-		return formatUsageDetails(msg, expRelationshipListURL)
-	default:
-		return fmt.Sprintf("%s\n", msg)
+	if docURL, ok := cmdUsageURLs[cmd]; ok {
+		return formatUsageDetails(msg, docURL)
 	}
+
+	return fmt.Sprintf("%s\n", msg)
 }
 
 func formatUsageDetails(msg string, docURL string) string {
@@ -485,7 +450,7 @@ func ErrParsingUrl(err error) error {
 }
 
 func ErrNotFound(err error) error {
-	return errors.New(ErrNotFoundCode, errors.Fatal,
+	return errors.New(ErrNotFoundCode, errors.Alert,
 		[]string{"Item Not Found"},
 		[]string{err.Error()},
 		[]string{"The item you are searching for is not present."},
@@ -515,6 +480,7 @@ func ErrAttachAuthToken(err error) error {
 		[]string{"The user is not logged in to generate a token."},
 		[]string{"Log in with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."})
 }
+
 func ErrCreateManifestsFolder(err error) error {
 	return errors.New(ErrCreateManifestsFolderCode, errors.Alert, []string{"Error creating manifest folder"}, []string{err.Error()}, []string{"system error in creating manifest folder"}, []string{"Make sure manifest folder (.meshery/manifests) is created properly"})
 }
@@ -526,6 +492,7 @@ func ErrFailReqStatus(statusCode int, obj string) error {
 		[]string{"Invalid API call"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
+
 func ErrGenerateModel(err error, modelName string) error {
 	return errors.New(ErrGeneratesModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
 }
@@ -555,6 +522,7 @@ func ErrNoManifestFilesFound(path string) error {
 		[]string{"Verify the specified path contains valid manifest files."},
 	)
 }
+
 func ErrGetChannelVersion(err error) error {
 	return errors.New(
 		ErrGetChannelVersionCode,
@@ -565,6 +533,7 @@ func ErrGetChannelVersion(err error) error {
 		[]string{"Check your network connection and context configuration; ensure GitHub is accessible."},
 	)
 }
+
 func ErrMarshalIndent(err error) error {
 	return errors.New(ErrMarshalIndentCode, errors.Alert,
 		[]string{"Error indenting JSON body"},
@@ -684,12 +653,12 @@ func ErrClearLine(err error) error {
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
 }
 
-func ErrInvalidOrgID(err error) error {
-	return errors.New(ErrInvalidOrgIDCode, errors.Alert,
-		[]string{"Invalid organization ID format"},
+func ErrInvalidUUID(err error) error {
+	return errors.New(ErrInvalidUUIDCode, errors.Alert,
+		[]string{"Invalid ID format"},
 		[]string{err.Error()},
-		[]string{"Organization ID is not a valid UUID format", "Organization ID contains invalid characters"},
-		[]string{"Ensure the organization ID is a valid UUID format", "Check the orgID parameter for typos or formatting issues"})
+		[]string{"ID is not a valid UUID format", "ID contains invalid characters"},
+		[]string{"Ensure the ID is a valid UUID format", "Check the ID parameter for typos or formatting issues"})
 }
 
 func ErrFetchEnvironments(err error) error {
@@ -728,12 +697,12 @@ func ErrTableRender(err error) error {
 		[]string{"Ensure the data being rendered is valid and properly structured."})
 }
 
-func ErrFlagsInvalid(msg string) error {
+func ErrFlagsInvalid(err error) error {
 	return errors.New(ErrFlagsInvalidCode, errors.Alert,
-		[]string{"Invalid flag provided"},
-		[]string{msg},
-		[]string{"The flag provided is invalid."},
-		[]string{"Provide a valid flag"})
+		[]string{"Invalid flag(s) provided"},
+		[]string{err.Error()},
+		[]string{"The value for one or more flags provided is invalid."},
+		[]string{"Provide valid flag value and try again."})
 }
 
 func ErrMesheryServerNotRunning(platform string) error {
@@ -742,4 +711,249 @@ func ErrMesheryServerNotRunning(platform string) error {
 		[]string{fmt.Sprintf("Meshery Server is not available on platform: %s", platform)},
 		[]string{"Meshery Server is not running or is unreachable", "Docker or Kubernetes environment is not ready", "Network connectivity issues"},
 		[]string{"Start Meshery Server with `mesheryctl system start`", "Verify system readiness with `mesheryctl system check --preflight`", "Check your network connection and firewall settings"})
+}
+
+func ErrHandlePagination(err error) error {
+	return errors.New(ErrHandlePaginationCode, errors.Alert,
+		[]string{"Unable to display paginated results"},
+		[]string{err.Error()},
+		[]string{"Interactive pagination requires keyboard input support"},
+		[]string{
+			"Ensure you are running in an interactive terminal",
+			"If running in a non-interactive environment, use '--page' flag to skip pagination",
+		})
+}
+
+func ErrCreateFile(filepath string, err error) error {
+	return errors.New(ErrCreateFileCode, errors.Alert,
+		[]string{"Error creating file"},
+		[]string{fmt.Sprintf("Failed to create the file at path: %s", filepath), err.Error()},
+		[]string{"Insufficient disk space", " Filepath could be invalid", " Lack of permissions to create file at the specified path"},
+		[]string{"Verify that the file path is valid", " Ensure there is sufficient disk space available", " Check your permissions for the specified path"})
+}
+
+func ErrRetrieveHomeDir(err error) error {
+	return errors.New(ErrRetrieveHomeDirCode, errors.Alert,
+		[]string{"Error retrieving user home/root directory"},
+		[]string{"Failed to retrieve the home/root directory,", err.Error()},
+		[]string{"Operating system environment issue or insufficient permissions."},
+		[]string{"Ensure that the operating system environment is set up correctly and run the application with elevated privileges."})
+}
+
+func ErrMarkFlagRequire(flagName string, err error) error {
+	return errors.New(ErrMarkFlagRequireCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to mark the flag '%s' as required", flagName)},
+		[]string{err.Error()},
+		[]string{"The flag may not exist or there was some error while specifying the flag."},
+		[]string{"Please ensure that the required flag '%s' is correctly specified and set before running the command."})
+}
+
+func ErrReadFromBody(err error) error {
+	return errors.New(ErrReadFromBodyCode, errors.Alert,
+		[]string{"Unable to read data from the response body"},
+		[]string{err.Error()},
+		[]string{"The data for the pattern (design) file might be corrupted."},
+		[]string{"Please ensure that your network connection is stable. If the issue continues, check the server response or data format for potential problems."})
+}
+
+func ErrGetKubernetesContexts(err error) error {
+	return errors.New(
+		ErrGetKubernetesContextsCode,
+		errors.Fatal,
+		[]string{"Unable to get kubernetes contexts"},
+		[]string{err.Error()},
+		[]string{"No kubernetes contexts found"},
+		[]string{"Ensure you have at least one valid context in your meshconfig file."})
+}
+
+func ErrSetKubernetesContext(err error) error {
+	return errors.New(
+		ErrSetKubernetesContextCode,
+		errors.Fatal,
+		[]string{"Unable to set kubernetes context"},
+		[]string{err.Error()},
+		[]string{"The specified Kubernetes context does not exist. "},
+		[]string{"Verify that the Kubernetes context provided is valid and try again."})
+}
+
+func ErrReadInput(err error) error {
+	return errors.New(
+		ErrReadInputCode,
+		errors.Fatal,
+		[]string{"Unable to read the input"},
+		[]string{err.Error()},
+		[]string{"The provided input was invalid or could not be read"},
+		[]string{"Validate the input and try again."})
+}
+
+func ErrUploadFileWithParams(err error, fileName string) error {
+	return errors.New(
+		ErrUploadFileWithParamsCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Failed to upload file: %s", fileName)},
+		[]string{err.Error()},
+		[]string{"File upload failed due to network issues or server errors"},
+		[]string{"Check your network connection and ensure the server is reachable."},
+	)
+}
+
+func ErrCommandContextMissing(contextName string) error {
+	return errors.New(
+		ErrCommandContextMissingCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Missing context with value %s as not been set", contextName)},
+		[]string{"A required context for command is missing or not specified"},
+		[]string{"The command may require a specific context to be set in order to function properly"},
+		[]string{"Ensure that the necessary contextis defined in the root command file and try again"},
+	)
+}
+
+func ErrPromptCancelled() error {
+	return errors.New(
+		ErrPromptCancelledCode,
+		errors.Alert,
+		[]string{"Selection cancelled"},
+		[]string{"Selection prompt has been cancelled"},
+		[]string{"The selection prompt was interrupted"},
+		[]string{"Run the command again and complete the selection"},
+	)
+}
+
+func ErrMesheryServerInternalError(err error) error {
+	return errors.New(
+		ErrMesheryServerInternalErrorCode,
+		errors.Alert,
+		[]string{"Internal Server Error"},
+		[]string{err.Error()},
+		[]string{"An unexpected error occurred on the server side"},
+		[]string{"Check the server logs using 'mesheryctl system logs' for more details and try again later"},
+	)
+}
+
+func ErrFailedToConnectAdapter(name string, err error) error {
+	return errors.New(
+		ErrFailedToConnectAdapterCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("!! Failed to connect to Meshery Adapter for %s adapter", name)},
+		[]string{err.Error()},
+		[]string{"The connection to the Meshery Adapter failed"},
+		[]string{"Ensure that the Meshery Adapter is running and accessible, and try again"},
+	)
+}
+
+func ErrAdapterNotReachable(name string) error {
+	return errors.New(
+		ErrAdapterNotReachableCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("!! Meshery Adapter for %s is not reachable", name)},
+		[]string{"The Meshery Adapter is not responding to requests"},
+		[]string{"The adapter may be down or there may be network issues"},
+		[]string{"Check the status of the adapter and your network connection, and try again"},
+	)
+}
+
+func ErrListMesheryPods(err error) error {
+	return errors.New(
+		ErrListMesheryPodsCode,
+		errors.Alert,
+		[]string{"Failed to list Meshery pods"},
+		[]string{err.Error()},
+		[]string{"Unable to retrieve the list of Meshery pods from the Kubernetes cluster"},
+		[]string{"Ensure your Kubernetes cluster is running and accessible, and that you have the necessary permissions to list pods"},
+	)
+}
+
+func ErrNoMesheryPodsFound(namespace string) error {
+	return errors.New(
+		ErrNoMesheryPodsCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("No Meshery pods found in namespace %s", namespace)},
+		[]string{fmt.Sprintf("Unable to find any Meshery pods in %s namespace", namespace)},
+		[]string{fmt.Sprintf("The namespace %s may be incorrect or there may be no Meshery pods running", namespace)},
+		[]string{"Verify the namespace and ensure that Meshery pods are deployed and running"},
+	)
+}
+
+func ErrMissingMesheryPod(podName string) error {
+	return errors.New(
+		ErrMissingMesheryPodCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("pod with name %s not found", podName)},
+		[]string{fmt.Sprintf("Unable to find pod with name %s", podName)},
+		[]string{"The specified pod name may be incorrect or the pod may not be running"},
+		[]string{"Verify the pod name and ensure that the Meshery pod is deployed and running"},
+	)
+}
+
+func Errk8sVersionInfo(err error) error {
+	return errors.New(
+		ErrK8sVersionInfoCode,
+		errors.Alert,
+		[]string{"Failed to get Kubernetes version information"},
+		[]string{err.Error()},
+		[]string{"Unable to retrieve Kubernetes version information from the cluster"},
+		[]string{"Ensure your Kubernetes cluster is running and accessible, and that you have the necessary permissions to query version information"},
+	)
+}
+
+func ErrK8sInvalidVersionFormat(err error) error {
+	return errors.New(
+		ErrK8sInvalidVersionFormatCode,
+		errors.Alert,
+		[]string{"Invalid Kubernetes version format"},
+		[]string{err.Error()},
+		[]string{"The Kubernetes version information retrieved is in an unexpected format"},
+		[]string{"Check the Kubernetes cluster for any issues and ensure it is running a supported version"},
+	)
+}
+
+func ErrDockerComposeClient(err error) error {
+	return errors.New(
+		ErrDockerComposeClientCode,
+		errors.Alert,
+		[]string{"Failed to create Docker Compose client"},
+		[]string{err.Error()},
+		[]string{"Unable to initialize the Docker Compose client, which is required for managing Docker-based Meshery deployments"},
+		[]string{"Ensure that Docker is installed and running on your system, and that you have the necessary permissions to access the Docker API"},
+	)
+}
+
+func ErrDockerComposeFileMissing(err error) error {
+	return errors.New(
+		ErrDockerComposeFileMissingCode,
+		errors.Fatal,
+		[]string{"Docker Compose file not found"},
+		[]string{err.Error()},
+		[]string{"Docker Compose file is missing from the Meshery folder"},
+		[]string{"Run `mesheryctl system start` again to download and generate docker-compose file based on your context"})
+}
+
+func ErrDockerComposeRemove(err error) error {
+	return errors.New(
+		ErrDockerComposeRemoveCode,
+		errors.Fatal,
+		[]string{"Failed to delete Meshery containers"},
+		[]string{err.Error()},
+		[]string{"An error occurred while trying to delete Meshery containers using Docker Compose"},
+		[]string{"Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder. If the issue persists, check the Docker and Docker Compose configuration and logs for more details."})
+}
+
+func ErrDockerComposeLog(err error) error {
+	return errors.New(
+		ErrDockerComposeLogsCode,
+		errors.Alert,
+		[]string{"Failed to fetch logs from Meshery containers"},
+		[]string{err.Error()},
+		[]string{"An error occurred while trying to fetch logs from Meshery containers using Docker Compose"},
+		[]string{"Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder. If the issue persists, check the Docker and Docker Compose configuration and logs for more details."})
+}
+
+func ErrMesheryCheckRunningStatus(err error) error {
+	return errors.New(
+		ErrMesheryCheckRunningStatusCode,
+		errors.Alert,
+		[]string{"Failed to check if Meshery is running"},
+		[]string{err.Error()},
+		[]string{"You are not on correct context. ", "Meshery is not reachable. ", "There might be some issue with your Docker or Kubernetes environment. "},
+		[]string{"Please ensure Meshery is installed. ", "Validate that you are in the correct context. "})
 }

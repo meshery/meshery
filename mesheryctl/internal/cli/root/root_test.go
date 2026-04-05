@@ -1,15 +1,12 @@
 package root
 
 import (
-	"bytes"
-	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -60,12 +57,12 @@ func TestRootCmdIntegration(t *testing.T) {
 		{
 			Name:             "view the channel with verbose flag",
 			Args:             []string{"system", "channel", "view", "--verbose"},
-			ExpectedResponse: fmt.Sprintf("Using config file:%s\nContext: local\nChannel: stable\nVersion: latest\n\n", utils.DefaultConfigPath),
+			ExpectedResponse: "Context: local\nChannel: stable\nVersion: latest\n\n",
 		},
 		{
 			Name:             "view the channel with short verbose flag and different config",
 			Args:             []string{"system", "channel", "view", "-v", "--config", testConfigPath},
-			ExpectedResponse: fmt.Sprintf("Using config file:%s\nContext: local2\nChannel: edge\nVersion: latest\n\n", testConfigPath),
+			ExpectedResponse: "Context: local2\nChannel: edge\nVersion: latest\n\n",
 		},
 	}
 
@@ -75,9 +72,7 @@ func TestRootCmdIntegration(t *testing.T) {
 			resetFlags()
 			viper.Reset()
 
-			b := bytes.NewBufferString("")
-			logrus.SetOutput(b)
-			utils.SetupLogrusFormatter()
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 			RootCmd.SetOut(b)
 			RootCmd.SetArgs(tt.Args)
 

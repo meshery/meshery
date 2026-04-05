@@ -11,7 +11,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/meshsync/pkg/model"
-	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"gorm.io/gorm"
@@ -66,7 +66,7 @@ func KubernetesResourceToComponentDef(resource model.KubernetesResource, stripSc
 		return nil, fmt.Errorf("failed to map component metadata: %w", err)
 	}
 
-	componentDef.Id = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
+	componentDef.ID = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
 	componentDef.DisplayName = resource.KubernetesResourceMeta.Name
 
 	var spec interface{}
@@ -140,7 +140,7 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 
 	return pattern.PatternFile{
 		Name:          "ClusterSnapshot",
-		Id:            emptyUUID,
+		ID:            emptyUUID,
 		SchemaVersion: "designs.meshery.io/v1beta1",
 		Version:       "v1",
 		Components:    components,
@@ -377,7 +377,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 
 		if error != nil {
 			design = rawDesign
-			h.log.Error(fmt.Errorf("Error evaluating design: %v", error))
+			h.log.Error(fmt.Errorf("error evaluating design: %v", error))
 		} else {
 			design = evalResponse.Design // use the evaluated design
 		}
@@ -403,8 +403,11 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	rw.Header().Set("Content-Type", "application/json")
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
-		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -446,8 +449,11 @@ func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Reques
 	}
 
 	if err := enc.Encode(componentDef); err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
-		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -525,7 +531,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 
 	// only return error if both queries failed
 	if err1 != nil && err2 != nil {
-		combinedErr := fmt.Errorf("Error fetching meshsync resources summary: %v, %v", err1, err2)
+		combinedErr := fmt.Errorf("error fetching meshsync resources summary: %v, %v", err1, err2)
 		http.Error(rw, ErrFetchMeshSyncResources(combinedErr).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -537,8 +543,11 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
-		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 

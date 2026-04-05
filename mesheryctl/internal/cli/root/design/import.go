@@ -25,13 +25,16 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/patterns"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 
-	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
+	coreV1 "github.com/meshery/schemas/models/core"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var name string
+var sourceType string
 
 var importCmd = &cobra.Command{
 	Use:   "import",
@@ -62,25 +65,23 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 		return nil
 	},
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return getSourceTypes()
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/import"
 
 		// If pattern file is passed via flags
 		if sourceType != "" {
-			if sourceType, err = getFullSourceType(sourceType); err != nil {
-				utils.Log.Debugf("%s is not a valid source type. Valid types are Helm Chart, Kubernetes Manifest, Docker Compose, Meshery Design", sourceType)
-				validSourceTypes := []string{"Helm Chart", "Kubernetes Manifest", "Docker Compose", "Meshery Design"}
-				return ErrInValidSource(sourceType, validSourceTypes)
+			validSourceTypes, err := getDesignSourceTypes()
+			if err != nil {
+				return err
+			}
+			if sourceType, err = retrieveProvidedSourceType(sourceType, validSourceTypes); err != nil {
+				return err
 			}
 		}
 
@@ -97,8 +98,7 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 		pattern, err := importPattern(sourceType, file, patternURL, true)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		utils.Log.Infof("The design file '%s' has been imported. Design ID: %s", pattern.Name, utils.TruncateID(pattern.ID.String()))
@@ -133,6 +133,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 			"name":      patternName,
 			"file":      content,
 			"file_name": fileName,
+			"save":      save,
 		})
 		if err != nil {
 			return nil, utils.ErrMarshal(err)
@@ -165,10 +166,14 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 	} else {
 		var jsonValues []byte
 
-		jsonValues, _ = json.Marshal(map[string]interface{}{
+		jsonValues, err := json.Marshal(map[string]interface{}{
 			"url":  file,
 			"name": patternName,
+			"save": save,
 		})
+		if err != nil {
+			return nil, utils.ErrMarshal(err)
+		}
 
 		req, err := utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 		if err != nil {
@@ -205,4 +210,18 @@ func init() {
 	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to design file")
 	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / design)")
 	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the design file")
+}
+
+func readPatternFromFile(filePath string) (*pattern.PatternFile, error) {
+	fileContent, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, utils.ErrFileRead(err)
+	}
+
+	patternFile, err := patterns.GetPatternFormat(string(fileContent))
+	if err != nil {
+		return nil, err
+	}
+
+	return patternFile, nil
 }
