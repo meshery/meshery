@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node ui_dev_server.js",
-    "build": "npm run clean && next build",
+    "build": "npm run clean && next build --webpack",
     "start": "NODE_ENV=production node server.js",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix",
