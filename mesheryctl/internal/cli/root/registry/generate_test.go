@@ -1,17 +1,29 @@
 package registry
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 )
 
+func createTempCSVFile(t *testing.T, dir, fileName string) string {
+	t.Helper()
+	filePath := filepath.Join(dir, fileName)
+	err := os.WriteFile(filePath, []byte("header\nvalue\n"), 0o600)
+	assert.NoError(t, err)
+	return filePath
+}
+
 // resetGenerateFlags resets all flags to their default values
 func resetGenerateFlags(cmd *cobra.Command) {
+	mesheryctlflags.InitValidators(cmd)
 	cmd.PersistentFlags().VisitAll(func(f *pflag.Flag) {
 		_ = f.Value.Set(f.DefValue)
 	})
@@ -301,7 +313,7 @@ func TestPreRunEValidation(t *testing.T) {
 		errorMsg    string
 	}{
 		{
-			name:        "No input source specified",
+			name:        "given_no_input_source_when_prerune_then_returns_error",
 			args:        []string{},
 			setup:       func() { resetGenerateFlags(generateCmd) },
 			expectError: true,
@@ -328,4 +340,99 @@ func TestPreRunEValidation(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestPreRunEValidationPartialCSVInputs(t *testing.T) {
+	tests := []struct {
+		name        string
+		flagValues  map[string]string
+		expectError bool
+		errorMsg    string
+	}{
+		{
+			name: "given_model_csv_without_component_csv_when_prerune_then_returns_missing_component_csv_error",
+			flagValues: map[string]string{
+				"model-csv": "models.csv",
+			},
+			expectError: true,
+			errorMsg:    "--component-csv is required when --model-csv is provided",
+		},
+		{
+			name: "given_component_csv_without_model_csv_when_prerune_then_returns_missing_model_csv_error",
+			flagValues: map[string]string{
+				"component-csv": "components.csv",
+			},
+			expectError: true,
+			errorMsg:    "--model-csv is required when --component-csv is provided",
+		},
+		{
+			name: "given_relationship_csv_without_model_and_component_csv_when_prerune_then_returns_relationship_usage_error",
+			flagValues: map[string]string{
+				"relationship-csv": "relationships.csv",
+			},
+			expectError: true,
+			errorMsg:    "--relationship-csv can only be used with --model-csv and --component-csv",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resetGenerateFlags(generateCmd)
+			for flagName, value := range tt.flagValues {
+				err := generateCmd.PersistentFlags().Set(flagName, value)
+				assert.NoError(t, err)
+			}
+
+			err := generateCmd.PreRunE(generateCmd, []string{})
+			if tt.expectError {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.errorMsg)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestPreRunEValidationValidPathsNoRegression(t *testing.T) {
+	t.Run("given_complete_csv_mode_with_relationship_csv_when_prerune_then_no_error", func(t *testing.T) {
+		resetGenerateFlags(generateCmd)
+		tmpDir := t.TempDir()
+		modelPath := createTempCSVFile(t, tmpDir, "models.csv")
+		componentPath := createTempCSVFile(t, tmpDir, "components.csv")
+		relationshipPath := createTempCSVFile(t, tmpDir, "relationships.csv")
+
+		assert.NoError(t, generateCmd.PersistentFlags().Set("model-csv", modelPath))
+		assert.NoError(t, generateCmd.PersistentFlags().Set("component-csv", componentPath))
+		assert.NoError(t, generateCmd.PersistentFlags().Set("relationship-csv", relationshipPath))
+
+		err := generateCmd.PreRunE(generateCmd, []string{})
+		assert.NoError(t, err)
+	})
+
+	t.Run("given_spreadsheet_mode_when_prerune_then_no_error", func(t *testing.T) {
+		resetGenerateFlags(generateCmd)
+		assert.NoError(t, generateCmd.PersistentFlags().Set("spreadsheet-id", "sheet-id"))
+		assert.NoError(t, generateCmd.PersistentFlags().Set("spreadsheet-cred", "dummy-cred"))
+
+		err := generateCmd.PreRunE(generateCmd, []string{})
+		assert.NoError(t, err)
+	})
+
+	t.Run("given_registrant_mode_when_prerune_then_no_error", func(t *testing.T) {
+		resetGenerateFlags(generateCmd)
+		assert.NoError(t, generateCmd.PersistentFlags().Set("registrant-def", "conn-def"))
+		assert.NoError(t, generateCmd.PersistentFlags().Set("registrant-cred", "cred-def"))
+
+		err := generateCmd.PreRunE(generateCmd, []string{})
+		assert.NoError(t, err)
+	})
+
+	t.Run("given_directory_mode_when_prerune_then_no_error", func(t *testing.T) {
+		resetGenerateFlags(generateCmd)
+		assert.NoError(t, generateCmd.PersistentFlags().Set("directory", t.TempDir()))
+
+		err := generateCmd.PreRunE(generateCmd, []string{})
+		assert.NoError(t, err)
+	})
 }

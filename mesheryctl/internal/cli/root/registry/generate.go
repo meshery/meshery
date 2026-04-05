@@ -22,6 +22,7 @@ import (
 	"sync"
 	"time"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	mutils "github.com/meshery/meshkit/utils"
@@ -56,6 +57,22 @@ var (
 	// Whether to generate only the latest version of each model
 	latestVersionOnly bool
 )
+
+type cmdRegistryGenerateFlags struct {
+	SpreadsheetID    string        `json:"spreadsheet-id" validate:"omitempty"`
+	SpreadsheetCred  string        `json:"spreadsheet-cred" validate:"omitempty"`
+	RegistrantDef    string        `json:"registrant-def" validate:"omitempty"`
+	RegistrantCred   string        `json:"registrant-cred" validate:"omitempty"`
+	Directory        string        `json:"directory" validate:"omitempty"`
+	ModelCSV         string        `json:"model-csv" validate:"omitempty,filepath"`
+	ComponentCSV     string        `json:"component-csv" validate:"omitempty,filepath"`
+	RelationshipCSV  string        `json:"relationship-csv" validate:"omitempty,filepath"`
+	Timeout          time.Duration `json:"timeout" validate:"omitempty"`
+	LatestVersionOnly bool         `json:"latest-only" validate:"boolean"`
+}
+
+var registryGenerateFlags cmdRegistryGenerateFlags
+
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
@@ -93,39 +110,57 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		directory, _ := cmd.Flags().GetString("directory")
 		modelCSV, _ := cmd.Flags().GetString("model-csv")
 		componentCSV, _ := cmd.Flags().GetString("component-csv")
+		relationshipCSV, _ := cmd.Flags().GetString("relationship-csv")
+
+		modelCSVProvided := modelCSV != ""
+		componentCSVProvided := componentCSV != ""
+		relationshipCSVProvided := relationshipCSV != ""
+
+		if modelCSVProvided && !componentCSVProvided {
+			return utils.ErrInvalidArgument(errors.New(utils.RegistryError("--component-csv is required when --model-csv is provided", "generate")))
+		}
+
+		if componentCSVProvided && !modelCSVProvided {
+			return utils.ErrInvalidArgument(errors.New(utils.RegistryError("--model-csv is required when --component-csv is provided", "generate")))
+		}
+
+		if relationshipCSVProvided && (!modelCSVProvided || !componentCSVProvided) {
+			return utils.ErrInvalidArgument(errors.New(utils.RegistryError("--relationship-csv can only be used with --model-csv and --component-csv", "generate")))
+		}
+
+		registryGenerateFlags = cmdRegistryGenerateFlags{
+			SpreadsheetID:     spreadsheetIdFlag,
+			SpreadsheetCred:   spreadsheeetCred,
+			RegistrantDef:     registrantDefFlag,
+			RegistrantCred:    pathToRegistrantCredDefinition,
+			Directory:         directory,
+			ModelCSV:          modelCSV,
+			ComponentCSV:      componentCSV,
+			RelationshipCSV:   relationshipCSV,
+			Timeout:           modelTimeout,
+			LatestVersionOnly: latestVersionOnly,
+		}
+
+		if err := mesheryctlflags.ValidateCmdFlags(cmd, &registryGenerateFlags); err != nil {
+			return err
+		}
 
 		// Check if individual CSV flags are provided
-		hasIndividualCSVs := modelCSV != "" && componentCSV != ""
+		hasIndividualCSVs := modelCSVProvided && componentCSVProvided
 
 		if spreadsheetIdFlag == "" && registrantDefFlag == "" && directory == "" && !hasIndividualCSVs {
-			return errors.New(utils.RegistryError(errorMsg, "generate"))
+			return utils.ErrInvalidArgument(errors.New(utils.RegistryError(errorMsg, "generate")))
 		}
 
 		spreadsheetCredFlag, _ := cmd.Flags().GetString("spreadsheet-cred")
 		registrantCredFlag, _ := cmd.Flags().GetString("registrant-cred")
 
 		if spreadsheetIdFlag != "" && spreadsheetCredFlag == "" {
-			return errors.New(utils.RegistryError("Spreadsheet Credentials is required\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help'", "generate"))
+			return utils.ErrInvalidArgument(errors.New(utils.RegistryError("Spreadsheet Credentials is required\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help'", "generate")))
 		}
 
 		if registrantDefFlag != "" && registrantCredFlag == "" {
-			return errors.New(utils.RegistryError("Registrant Credentials is required\n\nUsage: mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]\nRun 'mesheryctl registry generate --help'", "generate"))
-		}
-
-		// Validate individual CSV files if provided
-		if hasIndividualCSVs {
-			if _, err := os.Stat(modelCSV); os.IsNotExist(err) {
-				return errors.New(utils.RegistryError(fmt.Sprintf("Model CSV file not found: %s", modelCSV), "generate"))
-			}
-			if _, err := os.Stat(componentCSV); os.IsNotExist(err) {
-				return errors.New(utils.RegistryError(fmt.Sprintf("Component CSV file not found: %s", componentCSV), "generate"))
-			}
-			relationshipCSV, _ := cmd.Flags().GetString("relationship-csv")
-			if relationshipCSV != "" {
-				if _, err := os.Stat(relationshipCSV); os.IsNotExist(err) {
-					return errors.New(utils.RegistryError(fmt.Sprintf("Relationship CSV file not found: %s", relationshipCSV), "generate"))
-				}
-			}
+			return utils.ErrInvalidArgument(errors.New(utils.RegistryError("Registrant Credentials is required\n\nUsage: mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]\nRun 'mesheryctl registry generate --help'", "generate")))
 		}
 
 		return nil
