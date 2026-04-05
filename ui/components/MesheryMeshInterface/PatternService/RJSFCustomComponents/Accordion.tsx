@@ -48,12 +48,16 @@ export default function SimpleAccordion(props) {
             })()}{' '}
           </Typography>
 
-          {props.childProps.hasRemove && (
+          {(props.childProps?.buttonsProps?.hasRemove ?? props.childProps?.hasRemove) && (
             <IconButton
-              style={{ padding: '0', iconSmall }}
-              // style={btnStyle, iconSmall}
+              style={{ padding: '0' }}
               disabled={props.childProps.disabled || props.childProps.readonly}
-              onClick={props.childProps.onDropIndexClick(props.childProps.index)}
+              onClick={
+                props.childProps?.buttonsProps?.onRemoveItem ||
+                (typeof props.childProps?.onDropIndexClick === 'function'
+                  ? props.childProps.onDropIndexClick(props.childProps.index)
+                  : undefined)
+              }
             >
               <DeleteIcon fill="gray" style={iconSmall} />
             </IconButton>
