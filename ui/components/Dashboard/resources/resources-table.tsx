@@ -1,9 +1,9 @@
 // @ts-nocheck
 
 import React, { useEffect, useMemo, useState } from 'react';
-import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
+import { useLazyGetMeshSyncResourcesQuery } from '@/rtk-query/meshsync';
 import {
   CustomColumnVisibilityControl,
   ResponsiveDataTable,
@@ -31,6 +31,20 @@ export const ACTION_TYPES = {
 };
 
 const ResourcesTable = (props) => {
+  const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
+    props;
+  const router = useRouter();
+
+  // Wait for router to be ready before rendering query-dependent content.
+  // Static export has no query params; they're only available after hydration.
+  if (!router.isReady) {
+    return null;
+  }
+
+  return <ResourcesTableInner {...props} />;
+};
+
+const ResourcesTableInner = (props) => {
   const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
     props;
   const [meshSyncResources, setMeshSyncResources] = useState([]);
@@ -101,8 +115,9 @@ const ResourcesTable = (props) => {
   const encodedClusterIds = encodeURIComponent(JSON.stringify(clusterIds));
 
   const { notify } = useNotification();
+  const [fetchMeshSyncResources] = useLazyGetMeshSyncResourcesQuery();
 
-  const getMeshsyncResources = (page, pageSize, search, sortOrder) => {
+  const getMeshsyncResources = async (page, pageSize, search, sortOrder) => {
     setLoading(true);
     const { query } = router;
     const resourceName =
@@ -117,32 +132,32 @@ const ResourcesTable = (props) => {
     if (!resourceName) search = '';
     if (!sortOrder) sortOrder = '';
 
-    let apiUrl = `/api/system/meshsync/resources?kind=${resourceCategory}&status=true&spec=true&annotations=true&labels=true&clusterIds=${encodedClusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-      resourceName,
-    )}&order=${encodeURIComponent(sortOrder)}`;
+    try {
+      const res = await fetchMeshSyncResources({
+        kind: resourceCategory,
+        status: true,
+        spec: true,
+        annotations: true,
+        labels: true,
+        clusterIds: encodedClusterIds,
+        page,
+        pagesize: pageSize,
+        search: resourceName,
+        order: sortOrder,
+        ...(namespaceFilter ? { namespace: namespaceFilter } : {}),
+      }).unwrap();
 
-    if (namespaceFilter) {
-      apiUrl += `&namespace=${encodeURIComponent(namespaceFilter)}`;
+      setMeshSyncResources(res?.resources || []);
+      setPage(res?.page || 0);
+      setCount(res?.total_count || 0);
+      setPageSize(res?.page_size || 0);
+      setLoading(false);
+      if (query.resourceCategory && query.resourceName && res?.resources.length === 1) {
+        switchView(SINGLE_VIEW, res?.resources[0]);
+      }
+    } catch (err) {
+      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES)(err);
     }
-
-    dataFetch(
-      apiUrl,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        setMeshSyncResources(res?.resources || []);
-        setPage(res?.page || 0);
-        setCount(res?.total_count || 0);
-        setPageSize(res?.page_size || 0);
-        setLoading(false);
-        if (query.resourceCategory && query.resourceName && res?.resources.length === 1) {
-          switchView(SINGLE_VIEW, res?.resources[0]);
-        }
-      },
-      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
-    );
   };
 
   const [tableCols, updateCols] = useState(tableConfig.columns);

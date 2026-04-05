@@ -37,6 +37,7 @@ ui/tests/e2e/.env
 provider-ui/out/
 provider-ui/.next/
 provider-ui/node_modules/
+provider-ui/.eslintcache
 
 # mesheryctl
 mesheryctl/cmd/mesheryctl/mesheryctl

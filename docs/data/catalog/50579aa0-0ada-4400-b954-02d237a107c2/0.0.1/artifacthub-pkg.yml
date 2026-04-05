@@ -1,0 +1,20 @@
+version: 0.0.1
+name: mattermost-server-scaling-for-aws-design
+displayName: Mattermost Server Scaling for aws design
+createdAt: "2025-10-23T14:29:41Z"
+description: Mattermost Server Scaling for aws design
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/50579aa0-0ada-4400-b954-02d237a107c2/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c191d146-dd71-44ac-8ef9-bccac10068fe
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
