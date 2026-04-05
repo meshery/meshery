@@ -24,6 +24,26 @@ describe('sessionTimer', () => {
     vi.useRealTimers();
   });
 
+  it('startSessionTimer registers click and keydown listeners', () => {
+    const addEventSpy = vi.spyOn(window, 'addEventListener');
+    startSessionTimer();
+
+    const registeredEvents = addEventSpy.mock.calls.map((call) => call[0]);
+    expect(registeredEvents).toContain('click');
+    expect(registeredEvents).toContain('keydown');
+
+    addEventSpy.mockRestore();
+  });
+
+  it('startSessionTimer does not register duplicate listeners', () => {
+    const addEventSpy = vi.spyOn(window, 'addEventListener');
+    startSessionTimer();
+
+    expect(addEventSpy).not.toHaveBeenCalled();
+
+    addEventSpy.mockRestore();
+  });
+
   it('recordActivity dispatches idle when session is expiring', () => {
     mockStatus = 'expiring';
     recordActivity();
@@ -37,7 +57,6 @@ describe('sessionTimer', () => {
   });
 
   it('dispatches expiring after timeout minus warning period', () => {
-    startSessionTimer();
     recordActivity();
 
     // Advance to 55 minutes (SESSION_TIMEOUT_MS - WARNING_BEFORE_MS)
@@ -47,7 +66,6 @@ describe('sessionTimer', () => {
   });
 
   it('does not dispatch expiring before the warning period', () => {
-    startSessionTimer();
     recordActivity();
     vi.clearAllMocks();
 
@@ -66,16 +84,5 @@ describe('sessionTimer', () => {
     mockStatus = 'expired';
     triggerSessionExpired();
     expect(store.dispatch).not.toHaveBeenCalled();
-  });
-
-  it('startSessionTimer registers click and keydown listeners', () => {
-    const addEventSpy = vi.spyOn(window, 'addEventListener');
-    startSessionTimer();
-
-    const registeredEvents = addEventSpy.mock.calls.map((call) => call[0]);
-    expect(registeredEvents).toContain('click');
-    expect(registeredEvents).toContain('keydown');
-
-    addEventSpy.mockRestore();
   });
 });

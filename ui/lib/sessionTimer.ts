@@ -16,6 +16,8 @@ const WARNING_BEFORE_MS = 5 * 60 * 1000; // Warn 5 minutes before expiry
 
 let lastActivity = Date.now();
 let warningTimer: ReturnType<typeof setTimeout> | null = null;
+let started = false;
+const resetOnInteraction = () => recordActivity();
 
 export function recordActivity() {
   const sessionState = store.getState().sessions.status;
@@ -60,9 +62,9 @@ export function triggerSessionExpired() {
 
 export function startSessionTimer() {
   if (typeof window === 'undefined') return;
+  if (started) return;
+  started = true;
 
-  // Reset activity on any user interaction
-  const resetOnInteraction = () => recordActivity();
   window.addEventListener('click', resetOnInteraction, { passive: true });
   window.addEventListener('keydown', resetOnInteraction, { passive: true });
 

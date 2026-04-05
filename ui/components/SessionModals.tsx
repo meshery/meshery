@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Box,
@@ -11,11 +11,15 @@ import {
   CircularProgress,
   styled,
 } from '@sistent/sistent';
-import { SessionState } from '@/store/slices/sessions';
+import { ExpirationState } from '@/store/slices/sessions';
 import { recordActivity, triggerSessionExpired } from 'lib/sessionTimer';
 
-const selectSessionStatus = (state: { sessions: { status: SessionState } }) =>
+const selectSessionStatus = (state: { sessions: { status: ExpirationState } }) =>
   state.sessions.status;
+
+function getLoginRedirectUrl() {
+  return '/user/login?redirect=' + encodeURIComponent(window.location.pathname);
+}
 
 const FooterActions = styled(Box)({
   display: 'flex',
@@ -27,6 +31,13 @@ const FooterActions = styled(Box)({
 const SessionExpiringModal = () => {
   const sessionStatus = useSelector(selectSessionStatus);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const handleStayLoggedIn = () => {
     setIsRefreshing(true);
@@ -42,7 +53,9 @@ const SessionExpiringModal = () => {
         triggerSessionExpired();
       })
       .finally(() => {
-        setIsRefreshing(false);
+        if (isMountedRef.current) {
+          setIsRefreshing(false);
+        }
       });
   };
 
@@ -53,7 +66,7 @@ const SessionExpiringModal = () => {
   return (
     <Modal
       open={sessionStatus === 'expiring'}
-      closeModal={handleStayLoggedIn}
+      closeModal={() => recordActivity()}
       title="Session Expiring Soon"
       maxWidth="xs"
       disableEscapeKeyDown
@@ -89,27 +102,19 @@ const SessionExpiredModal = () => {
   const sessionStatus = useSelector(selectSessionStatus);
   const isExpired = sessionStatus === 'expired';
 
-  const redirectTo =
-    typeof window !== 'undefined' && process.env.NODE_ENV === 'development'
-      ? '/user/login'
-      : typeof window !== 'undefined'
-        ? window.location.href
-        : '/';
-
   const handleLogin = () => {
-    window.location.href = redirectTo;
+    window.location.href = getLoginRedirectUrl();
   };
 
-  // Auto-redirect after 5 seconds
   useEffect(() => {
     if (!isExpired) return;
 
     const timer = setTimeout(() => {
-      window.location.href = redirectTo;
+      window.location.href = getLoginRedirectUrl();
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [isExpired, redirectTo]);
+  }, [isExpired]);
 
   return (
     <Modal
