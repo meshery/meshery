@@ -1,0 +1,13 @@
+{{- $models := where site.RegularPages ".File.Dir" "like" "^extensions/models/" -}}
+{{- $grouped := $models.GroupByParam "integrations-category" -}}
+{{- $categoryList := slice -}}
+{{- range $group := $grouped -}}
+  {{- if $group.Key -}}
+    {{- $categoryList = $categoryList | append (dict "name" $group.Key "count" (len $group.Pages)) -}}
+  {{- end -}}
+{{- end -}}
+{{- $sortedCategories := sort $categoryList "count" "desc" -}}
+{{- range $sortedCategories -}}
+{{- $anchor := replace .name " " "-" -}}
+<li style="list-style-type: disc; margin: 2px 0 2px 20px;"><a href="/extensions/models#{{ $anchor }}">{{ .name }}</a> ({{ .count }})</li>
+{{- end -}}

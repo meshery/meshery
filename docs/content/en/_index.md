@@ -153,6 +153,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
+        {{< integration-categories >}}
         <li>See all <a href="/extensions/models">{{< model-count >}} integrations</a></li>
       </ul>
     </details>
