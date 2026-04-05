@@ -100,7 +100,8 @@ mesheryctl design apply [design-name]
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				utils.Log.Error(ErrDesignNotFound(patternName))
+				err = ErrDesignNotFound(patternName)
+				utils.Log.Error(err)
 				return err
 			} else if len(response.Patterns) == 1 {
 				designFile = response.Patterns[0].PatternFile
