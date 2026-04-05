@@ -1853,12 +1853,17 @@ func (h *Handler) convertV1alpha2ToV1beta1(mesheryPattern *models.MesheryPattern
 }
 
 func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *patternV1beta1.PatternFile) error {
+	if reg == nil {
+		return nil
+	}
 	s := selector.New(reg)
 	for _, comp := range patternFile.Components {
 		if comp == nil {
 			continue
 		}
 
+		var wc component.ComponentDefinition
+		foundFallback := false
 		wc, err := s.GetDefinition(comp.Component.Kind, comp.Model.Model.Version, comp.Model.Name, comp.Component.Version, true)
 		if err != nil {
 			m := []string{"meshery", "meshery-core", "meshery-shapes", "meshery-flowchart"}
@@ -1880,51 +1885,58 @@ func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *patternV1b
 				Name:       comp.Component.Kind,
 				APIVersion: comp.Component.Version,
 			})
-			comp, found := selector.FindCompDefinitionWithVersion(entities, comp.Model.Model.Version)
+			matchedComp, found := selector.FindCompDefinitionWithVersion(entities, comp.Model.Model.Version)
 
-			if found {
-				wc = *comp
+			if found && matchedComp != nil {
+				wc = *matchedComp
+				foundFallback = true
 			}
 
 		}
 
-		comp.Model = wc.Model
-		if wc.Model.Registrant.Status == "" {
-			comp.Model.Registrant.Status = connection.ConnectionStatusRegistered
-		}
-		comp.Format = wc.Format
-		comp.Version = wc.Version
-		status := component.ComponentDefinitionStatus(wc.Model.Status)
-		comp.Status = &status
+		// Only enrich if we found a valid definition
+		if err == nil || foundFallback {
+			if wc.Model != nil {
+				comp.Model = wc.Model
+				if comp.Model.Registrant.Status == "" {
+					comp.Model.Registrant.Status = connection.ConnectionStatusRegistered
+				}
 
-		// Replace the SVG value with the  svg path. UI uses the path to fetch the SVG from the server.
+				if comp.Model.Metadata != nil {
+					if comp.Model.Metadata.SvgComplete != nil && *comp.Model.Metadata.SvgComplete == "" {
+						comp.Model.Metadata.SvgComplete = nil
+					}
+				}
+				status := component.ComponentDefinitionStatus(wc.Model.Status)
+				comp.Status = &status
+			}
 
-		// helpers.WriteSVGsOnFileSystem()
-		if comp.Model.Metadata.SvgComplete != nil && *comp.Model.Metadata.SvgComplete == "" {
-			comp.Model.Metadata.SvgComplete = nil
-		}
-		comp.Capabilities = wc.Capabilities
-		if comp.Capabilities == nil {
-			comp.Capabilities = models.K8sMeshModelMetadata.Capabilities
-		}
-		comp.Metadata.Genealogy = wc.Metadata.Genealogy
-		comp.Metadata.IsAnnotation = wc.Metadata.IsAnnotation
-		comp.Metadata.Published = wc.Metadata.Published
+			comp.Format = wc.Format
+			comp.Version = wc.Version
 
-		var styles component.Styles
+			comp.Capabilities = wc.Capabilities
+			if comp.Capabilities == nil {
+				comp.Capabilities = models.K8sMeshModelMetadata.Capabilities
+			}
 
-		if comp.Styles != nil {
-			styles = *comp.Styles
-		} else {
-			comp.Styles = &component.Styles{}
-		}
+			comp.Metadata = wc.Metadata
 
-		// Assign the other styles and reassign the position.
-		if wc.Styles != nil {
-			comp.Styles = wc.Styles
-		}
-		if styles.Position != nil {
-			comp.Styles.Position = styles.Position
+			var styles component.Styles
+			if comp.Styles != nil {
+				styles = *comp.Styles
+			} else {
+				comp.Styles = &component.Styles{}
+			}
+
+			if wc.Styles != nil {
+				comp.Styles = wc.Styles
+			}
+			if styles.Position != nil {
+				if comp.Styles == nil {
+					comp.Styles = &component.Styles{}
+				}
+				comp.Styles.Position = styles.Position
+			}
 		}
 
 	}
