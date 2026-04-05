@@ -94,6 +94,22 @@
 
 <script>
   $(function() {
+    function getSiteRootUrl() {
+      const rootLink = document.querySelector("a.navbar-brand, #td-section-nav a.tree-root");
+      const href = rootLink ? rootLink.getAttribute("href") : "/";
+      return new URL(href || "/", window.location.href);
+    }
+
+    function buildSearchUrl(query) {
+      const url = new URL("search/", getSiteRootUrl());
+
+      if (query) {
+        url.searchParams.set("q", query);
+      }
+
+      return url.toString();
+    }
+
     const $rootSidebarItem = $("#td-section-nav > ul > li").filter(function() {
       return $(this).find('> a.tree-root, > label > a.tree-root').length > 0;
     }).first();
@@ -108,7 +124,7 @@
       return;
     }
 
-    $sidebarSearchForm.attr("action", '{{ "search" | relURL }}');
+    $sidebarSearchForm.attr("action", buildSearchUrl(""));
     $sidebarSearchForm.attr("method", "get");
 
     $sidebarSearchInput.attr("id", "sidebar-search-input");
@@ -124,7 +140,8 @@
         return;
       }
 
-      $sidebarSearchInput.val(query);
+      event.preventDefault();
+      window.location.assign(buildSearchUrl(query));
     });
   });
 </script>
