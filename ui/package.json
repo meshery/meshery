@@ -24,7 +24,7 @@
     "relay": "relay-compiler",
     "prepare": "cd .. && husky ui/.husky",
     "postinstall": "patch-package",
-    "clean": "rm -rf .next,out"
+    "clean": "rimraf .next out"
   },
   "keywords": [],
   "author": "Meshery Authors",
@@ -89,6 +89,7 @@
     "rehype-sanitize": "^6.0.0",
     "relay-runtime": "^20.1.1",
     "resize-observer-polyfill": "^1.5.1",
+    "rimraf": "^6.1.3",
     "rxjs": "^7.8.2",
     "universal-cookie": "^8.0.1",
     "uuid": "^13.0.0",
