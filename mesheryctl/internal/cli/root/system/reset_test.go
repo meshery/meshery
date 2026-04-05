@@ -1,13 +1,13 @@
 package system
 
 import (
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	log "github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
-	log "github.com/sirupsen/logrus"
-	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/stretchr/testify/assert"
 )
 
 // This is a Unit test
