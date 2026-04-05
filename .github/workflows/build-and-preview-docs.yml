@@ -77,6 +77,7 @@ jobs:
           HUGO_PREVIEW: "true"
         run: |
           make docs-build-production BASE_URL="/"
+          find docs/public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
           cat > docs/public/robots.txt <<'EOF'
           User-agent: *
           Disallow: /
