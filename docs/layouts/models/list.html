@@ -8,7 +8,7 @@
 {{ if gt (len $models) 0 }}
 <div class="models-list">
   {{ range ($models.GroupByParam "integrations-category") }}
-    <h3 id="{{ .Key | urlize }}">{{ .Key | default "Other Integrations" }}</h3>
+    <h3 id="{{ replace .Key " " "-" }}">{{ .Key | default "Other Integrations" }}</h3>
     <ul>
       {{ range .Pages }}
         {{ if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") }}
