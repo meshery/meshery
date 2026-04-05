@@ -1,5 +1,5 @@
-import { graphql, requestSubscription } from 'react-relay';
-import { createRelayEnvironment } from '../../../lib/relayEnvironment';
+import { graphql } from 'react-relay';
+import { createSubscription } from '../../../lib/subscriptionHelper';
 
 export const clusterResourcesSubscription = graphql`
   subscription ClusterResourcesSubscription($k8scontextIDs: [String!], $namespace: String!) {
@@ -24,11 +24,10 @@ export default function subscribeClusterResources(
   dataCB: (_data: unknown) => void,
   variables: ClusterResourcesVariables,
 ) {
-  const environment = createRelayEnvironment({});
-  return requestSubscription(environment, {
+  return createSubscription({
     subscription: clusterResourcesSubscription,
-    variables: variables,
+    variables,
     onNext: dataCB,
-    onError: (error) => console.log(`Cluster Resources Subscription error:`, error),
+    subscriptionName: 'ClusterResources',
   });
 }
