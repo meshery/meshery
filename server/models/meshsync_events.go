@@ -102,18 +102,18 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 			if !ok {
 				return
 			}
-		if event.EventType == broker.ErrorEvent {
-			// TODO: Handle errors accordingly
-			mh.log.Error(event.Object.(error))
-			continue
-		}
+			if event.EventType == broker.ErrorEvent {
+				// TODO: Handle errors accordingly
+				mh.log.Error(event.Object.(error))
+				continue
+			}
 
-		// handle the events
-		err := mh.meshsyncEventsAccumulator(event)
-		if err != nil {
-			mh.log.Error(err)
-			continue
-		}
+			// handle the events
+			err := mh.meshsyncEventsAccumulator(event)
+			if err != nil {
+				mh.log.Error(err)
+				continue
+			}
 		}
 	}
 }
@@ -148,25 +148,25 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 			if !ok {
 				return
 			}
-		if storeUpdate.EventType == broker.ErrorEvent {
-			mh.log.Error(storeUpdate.Object.(error))
-			continue
-		}
-
-		objectsSlice := storeUpdate.Object.([]interface{})
-
-		for _, object := range objectsSlice {
-			obj, err := mh.Unmarshal(object)
-			if err != nil {
+			if storeUpdate.EventType == broker.ErrorEvent {
+				mh.log.Error(storeUpdate.Object.(error))
 				continue
 			}
 
-			err = mh.persistStoreUpdate(&obj)
-			if err != nil {
-				mh.log.Error(err)
-				continue
+			objectsSlice := storeUpdate.Object.([]interface{})
+
+			for _, object := range objectsSlice {
+				obj, err := mh.Unmarshal(object)
+				if err != nil {
+					continue
+				}
+
+				err = mh.persistStoreUpdate(&obj)
+				if err != nil {
+					mh.log.Error(err)
+					continue
+				}
 			}
-		}
 		}
 	}
 }

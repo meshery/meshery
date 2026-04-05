@@ -35,7 +35,6 @@ func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider,
 					Metadata:    event.Metadata,
 					Status:      string(event.Status),
 					SystemID:    event.SystemID.String(),
-
 				}
 
 				if event.UserID != nil {

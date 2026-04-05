@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models"
@@ -100,6 +101,46 @@ func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.
 //   200:
 //   500:
 
+func (h *Handler) isValidPath(filePath string) bool {
+	mesheryHome, err := filepath.EvalSymlinks(h.mesheryHome)
+	if err != nil {
+		// If mesheryHome doesn't exist yet, we can't reliably validate against it
+		// but for this check we expect it to exist or be the default.
+		// Fallback to absolute path if EvalSymlinks fails
+		mesheryHome, err = filepath.Abs(h.mesheryHome)
+		if err != nil {
+			return false
+		}
+	}
+	mesheryHome, err = filepath.Abs(mesheryHome)
+	if err != nil {
+		return false
+	}
+
+	// Resolve symlinks and get absolute path to prevent traversal via symlinks
+	absPath, err := filepath.EvalSymlinks(filePath)
+	if err != nil {
+		return false
+	}
+	absPath, err = filepath.Abs(absPath)
+	if err != nil {
+		return false
+	}
+
+	// Check if the resolved path is within mesheryHome
+	rel, err := filepath.Rel(mesheryHome, absPath)
+	if err != nil || strings.HasPrefix(rel, "..") || rel == ".." {
+		return false
+	}
+
+	// Explicitly block sensitive config directory
+	if rel == "config" || strings.HasPrefix(rel, "config"+string(filepath.Separator)) {
+		return false
+	}
+
+	return true
+}
+
 // ViewHandler handles viewing the file content.
 func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.Request) {
 	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
@@ -108,6 +149,12 @@ func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.
 		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	if !h.isValidPath(filePath) {
+		http.Error(responseWriter, "Invalid file path", http.StatusForbidden)
+		return
+	}
+
 	file, err := os.Open(filePath)
 	if err != nil {
 		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
@@ -144,6 +191,11 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
 	if err != nil {
 		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if !h.isValidPath(filePath) {
+		http.Error(responseWriter, "Invalid file path", http.StatusForbidden)
 		return
 	}
 

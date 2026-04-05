@@ -222,7 +222,7 @@ func WriteLogsToFiles() error {
 
 	// Iterate over non-empty register attempts and construct the log message
 	for host, attempts := range nonEmptyRegisterAttempts {
-		logMessage.WriteString(fmt.Sprintf("%s failed to register:\n  Components:\n", host))
+		fmt.Fprintf(&logMessage, "%s failed to register:\n  Components:\n", host)
 		for entityType, entityCount := range attempts.Component {
 			logMessage.WriteString("    " + entityType + " (Attempt " + strconv.Itoa(entityCount.Attempt) + "): " + entityCount.Error.Error() + "\n")
 		}

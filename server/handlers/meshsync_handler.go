@@ -11,9 +11,9 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/meshsync/pkg/model"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"gorm.io/gorm"
 )
 
