@@ -408,7 +408,12 @@ case err := <-evalErrChan:
 	errResponse := models.ErrInternalServer(err)
 	h.log.Error(errResponse)
 
-	http.Error(rw, errResponse.Error(), http.StatusInternalServerError)
+	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusInternalServerError)
+
+	_ = json.NewEncoder(rw).Encode(map[string]string{
+		"error": errResponse.Error(),
+	})
 	return
 
 	case evaluationResponse := <-evalRespChan:
