@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -501,21 +502,13 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 
 	err1 := kindsQuery.Scan(&kindCounts).Error
 
-	if err1 != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err1))
-	}
-
 	err2 := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
 		Select("distinct namespace").
 		Where("kubernetes_resources.cluster_id IN (?)", clusterIds).
 		Scan(&namespaces).Error
-
-	if err2 != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err2))
-	}
-
+	
 	var labels []model.KubernetesKeyValue
 
 	labelsQuery := selectDistinctKeyValues(provider.GetGenericPersister().Model(&model.KubernetesResource{}), "label")
@@ -525,13 +518,19 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 
 	err := labelsQuery.Scan(&labels).Error
 
-	if err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
-	}
-
-	// only return error if both queries failed
-	if err1 != nil && err2 != nil {
-		combinedErr := fmt.Errorf("error fetching meshsync resources summary: %v, %v", err1, err2)
+	if err1 != nil || err2 != nil || err != nil {
+		var errs []string
+		if err1 != nil {
+			errs = append(errs, fmt.Sprintf("kinds_err=%v", err1))
+		}
+		if err2 != nil {
+			errs = append(errs, fmt.Sprintf("namespaces_err=%v", err2))
+		}
+		if err != nil {
+			errs = append(errs, fmt.Sprintf("labels_err=%v", err))
+		}
+		combinedErr := fmt.Errorf("error fetching meshsync resources summary: %s", strings.Join(errs, ", "))
+		h.log.Error(ErrFetchMeshSyncResources(combinedErr))
 		http.Error(rw, ErrFetchMeshSyncResources(combinedErr).Error(), http.StatusInternalServerError)
 		return
 	}
