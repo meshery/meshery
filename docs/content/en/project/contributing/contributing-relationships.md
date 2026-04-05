@@ -353,9 +353,37 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
 1. In the event of an overlapping set of complementary Relationship Definitions, Union.
 1. In the event of an overlapping set of conflicting Relationship Definitions, no relationship type (Kind) is inherently more important than the next one, so will not be any case of conflict.
 
+<a class="anchorjs-link" id="relationship-testing"></a>
+
+###  Test Your Relationship in Meshery Kanvas
+
+Before submitting your relationship, verify that it works visually in Meshery Kanvas.
+
+#### Option 1: Test Locally
+1. Run `make ui-server` from meshery root
+2. Open `localhost:9081` in your browser
+3. Navigate to Kanvas
+
+#### Option 2: Test in Playground
+1. Go to `https://playground.meshery.io` and sign in with GitHub
+2. Navigate to Kanvas
+
+#### 4. Testing Steps
+1. Search for and drag both components onto the canvas
+![Drag components onto canvas](images/step1-drag-components.png)
+2. Hover over the source component — connection arrows will appear
+![Hover to reveal connection arrows](images/step2-hover-arrows.png)
+3. Click and drag an arrow to the target component
+![Network label visible on arrow](images/step3-network-label.png)
+4. A relationship edge should appear with your subType label
+![Connected relationship edge](images/step4-connected-edge.png)
+5. Take a screenshot and attach it to your PR as proof
+
+{% include alert.html title="Note" type="info" content="Relationship edges do not appear automatically — they must be manually drawn by hovering and dragging between components." %}
+{% include alert.html title="Note" type="info" content="The testing workflow described here reflects the current process. It may be updated as new CLI validation commands become available." %}
 <a class="anchorjs-link" id="relationship-contribution"></a>
 
-#### 4. Contribute your relationship to the Meshery project
+#### 5. Contribute your relationship to the Meshery project
 
 Submit a pull request to the Meshery repository with your new relationship definition, so that all users can benefit from the relationship(s) you have defined.
 
