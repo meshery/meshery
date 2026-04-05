@@ -183,11 +183,9 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	h.log.Info(description)
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(respJSON)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
 		return
 	}
 }
