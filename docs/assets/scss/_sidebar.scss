@@ -353,8 +353,8 @@
     padding-top: 0;
   }
 
-  & #td-section-nav>ul>li:has(>a.tree-root[href="/"]),
-  & #td-section-nav>ul>li:has(>label>a.tree-root[href="/"]) {
+  & #td-section-nav>ul>li:has(>a.tree-root),
+  & #td-section-nav>ul>li:has(>label>a.tree-root) {
     border: 0;
     padding: 0;
 

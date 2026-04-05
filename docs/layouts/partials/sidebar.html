@@ -95,7 +95,7 @@
 <script>
   $(function() {
     const $rootSidebarItem = $("#td-section-nav > ul > li").filter(function() {
-      return $(this).find('> a.tree-root[href="{{ .Site.Home.RelPermalink }}"], > label > a.tree-root[href="{{ .Site.Home.RelPermalink }}"]').length > 0;
+      return $(this).find('> a.tree-root, > label > a.tree-root').length > 0;
     }).first();
     const $sidebarSearchForm = $("#td-sidebar-menu form.td-sidebar__search");
     const $sidebarSearchInput = $sidebarSearchForm.find('input[name="q"]').first();
