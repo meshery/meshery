@@ -5,7 +5,7 @@
 </style>
 <details open>
     <summary>Example Visual Representations</summary>
-    <details close><summary>Kind: Hierarchical</summary>
+    <details><summary>Kind: Hierarchical</summary>
         <figure>
             <figcaption>subType: Parent | Namespace (Parent) and ConfigMap (child), Role (Child)<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=6370ffcd-13a6-4a65-b426-30f1e63dc381"> (open in playground)</a></figcaption>
         </figure>
@@ -16,11 +16,11 @@
         </figure>
         <img alt="Hierarchical - Parent: Namespace to other components" src="/concepts/logical/relationships/images/hierarchical_inventory_relationship.svg"/>
     </details>
-    <details close><summary>Kind: Edge</summary>
+    <details><summary>Kind: Edge</summary>
         <figure>
             <figcaption>Type: `Non-Binding`, subType: `Permission`: Cluster Role with Cluster Role Binding to Service Account<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=7dd39d30-7b14-4f9f-a66c-06ba3e5000fa"> (open in playground)</a></figcaption>
         </figure>
-        <img alt=Binding src="/concepts/logical/relationships/images/edge_permission_relationship_cluster_role_service_account.svg"/>
+        <img alt="Binding" src="/concepts/logical/relationships/images/edge_permission_relationship_cluster_role_service_account.svg"/>
         <figure>
             <figcaption>Type: `Binding`, subType: `Mount`: Pod to Persistent volume via Persistent volume claim<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=43d5fdfe-25f8-4c2c-be9d-30861bbc2a08"> (open in playground)</a> </figcaption>
         </figure>
@@ -54,6 +54,6 @@
         <figure>
             <figcaption><code>type:non-binding</code>, subType: `Network`: Network Policy (Pod to Pod) <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=58fda714-eaa4-490f-b228-b8bcfe3a1e47s"> (open in playground)</a></figcaption>
         </figure>
-        <img alt="Edge - Network Policy" src="/concepts/logical/relationships/images/edge_firewall_relationship_pod_to_pod.svg">
+        <img alt="Edge - Network Policy" src="/concepts/logical/relationships/images/edge_firewall_relationship_pod_to_pod.svg" />
     </details>
 </details>
