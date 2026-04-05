@@ -187,7 +187,7 @@ func (h *Handler) EvaluateDesign(
 		)
 
 		if err != nil {
-			h.log.Debug(err)
+			h.log.Error(errResponse)
 			// log an event
 			return pattern.EvaluationResponse{}, err
 		}
@@ -369,6 +369,7 @@ if err != nil {
 	errResponse := ErrRequestBody(err)
 	h.log.Error(errResponse)
 
+	rw.Header().Set("Content-Type", "application/json")
 	http.Error(rw, errResponse.Error(), http.StatusBadRequest)
 	return
 }
@@ -378,6 +379,7 @@ if err != nil {
 	errResponse := ErrDecoding(err, "design file")
 	h.log.Error(errResponse)
 
+	rw.Header().Set("Content-Type", "application/json")
 	http.Error(rw, errResponse.Error(), http.StatusInternalServerError)
 	return
 }
@@ -403,8 +405,10 @@ if err != nil {
 	select {
 
 case err := <-evalErrChan:
-	h.log.Debug(err)
-	http.Error(rw, err.Error(), http.StatusInternalServerError)
+	errResponse := models.ErrInternalServer(err)
+	h.log.Error(errResponse)
+
+	http.Error(rw, errResponse.Error(), http.StatusInternalServerError)
 	return
 
 	case evaluationResponse := <-evalRespChan:
