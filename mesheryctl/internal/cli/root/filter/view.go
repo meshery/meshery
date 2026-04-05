@@ -24,6 +24,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -32,9 +33,9 @@ import (
 )
 
 type filterViewFlags struct {
-	viewAllFlag  bool
-	outputFormat string
-	save         bool
+	ViewAllFlag  bool   `json:"all" validate:"boolean"`
+	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
+	Save         bool   `json:"save" validate:"boolean"`
 }
 
 var filterViewFlagsProvided filterViewFlags
@@ -65,16 +66,16 @@ mesheryctl filter view "filter name"
 		if len(args) > 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("accepts at most 1 arg, received %d\n\n%s", len(args), errMsg))
 		}
-		if len(args) > 0 && filterViewFlagsProvided.viewAllFlag {
+		if len(args) > 0 && filterViewFlagsProvided.ViewAllFlag {
 			return ErrViewAllWithName("view")
 		}
-		if len(args) == 0 && !filterViewFlagsProvided.viewAllFlag {
+		if len(args) == 0 && !filterViewFlagsProvided.ViewAllFlag {
 			return utils.ErrInvalidArgument(fmt.Errorf("filter name or ID is required\n\n%s", errMsg))
 		}
 		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return display.ValidateOutputFormat(filterViewFlagsProvided.outputFormat)
+		return mesheryctlflags.ValidateCmdFlags(cmd, &filterViewFlagsProvided)
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -120,7 +121,7 @@ mesheryctl filter view "filter name"
 			}
 			filterPage = page
 
-			if !filterViewFlagsProvided.viewAllFlag {
+			if !filterViewFlagsProvided.ViewAllFlag {
 				if len(filterPage.Filters) == 0 {
 					utils.Log.Info(fmt.Sprintf("filter with name: %q not found", filter))
 					return nil
@@ -132,13 +133,13 @@ mesheryctl filter view "filter name"
 		outputFormatterFactory := display.OutputFormatterFactory[any]{}
 		var data any
 
-		if filterViewFlagsProvided.viewAllFlag {
+		if filterViewFlagsProvided.ViewAllFlag {
 			data = filterPage
 		} else {
 			data = selectedFilter
 		}
 
-		outputFormatter, err := outputFormatterFactory.New(filterViewFlagsProvided.outputFormat, data)
+		outputFormatter, err := outputFormatterFactory.New(filterViewFlagsProvided.OutputFormat, data)
 		if err != nil {
 			return err
 		}
@@ -148,12 +149,12 @@ mesheryctl filter view "filter name"
 			return err
 		}
 
-		if filterViewFlagsProvided.save {
+		if filterViewFlagsProvided.Save {
 			err := saveToFile(
-				filterViewFlagsProvided.outputFormat,
+				filterViewFlagsProvided.OutputFormat,
 				outputFormatter,
 				selectedFilter,
-				filterViewFlagsProvided.viewAllFlag,
+				filterViewFlagsProvided.ViewAllFlag,
 			)
 			if err != nil {
 				return err
@@ -193,7 +194,7 @@ func saveToFile(
 
 
 func init() {
-	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.viewAllFlag, "all", "a", false, "(optional) view all filters available")
-	viewCmd.Flags().StringVarP(&filterViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.ViewAllFlag, "all", "a", false, "(optional) view all filters available")
+	viewCmd.Flags().StringVarP(&filterViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
 }
