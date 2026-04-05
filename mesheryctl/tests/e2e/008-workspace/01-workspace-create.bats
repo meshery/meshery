@@ -11,5 +11,5 @@ setup() {
 
     assert_failure 
     assert_output --partial "Error"
-    assert_output --partial "Invalid value for --orgId 'foo': must be a valid UUID"
+    assert_output --partial "Invalid value for --orgid 'foo': must be a valid UUID"
 }

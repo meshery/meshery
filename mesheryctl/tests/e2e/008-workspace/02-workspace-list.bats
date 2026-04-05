@@ -29,6 +29,6 @@ setup() {
     NON_EXISTENT_ORGANIZATION_ID="00000000-0000-0000-0000-000000000000"
 
     run $MESHERYCTL_BIN workspace list --orgId "$NON_EXISTENT_ORGANIZATION_ID"
-    assert_success
-    assert_output --partial "No workspaces found"
+    assert_failure
+    assert_output --partial "Authentication token not found"
 }
