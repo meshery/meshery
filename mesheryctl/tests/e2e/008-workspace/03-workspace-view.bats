@@ -30,10 +30,11 @@ setup() {
     assert_output --partial "Invalid value for --orgId 'foo': must be a valid UUID"
 }
 
-@test "given non-existent UUID when running mesheryctl workspace view then authentication error is displayed" {
+@test "given non-existent UUID when running mesheryctl workspace view then workspace not found error is displayed" {
     run $MESHERYCTL_BIN workspace view 00000000-0000-0000-0000-000000000000
 
     assert_failure
     assert_output --partial "Error"
-    assert_output --partial "Authentication token not found"
+    assert_output --partial "No workspace found"
 }
+
