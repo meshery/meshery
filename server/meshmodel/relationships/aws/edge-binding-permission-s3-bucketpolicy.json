@@ -1,0 +1,32 @@
+{
+  "id": "02036ff5-a353-4d68-923d-98d517d378bf",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "kind": "edge",
+  "type": "binding",
+  "subType": "permission",
+  "displayName": "S3 BucketPolicy to S3 Bucket Permission",
+  "version": "v1.0.0",
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "BucketPolicy",
+            "model": "aws-s3-controller"
+          }
+        ],
+        "to": [
+          {
+            "kind": "Bucket",
+            "model": "aws-s3-controller"
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+
