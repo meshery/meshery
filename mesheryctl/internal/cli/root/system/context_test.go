@@ -241,14 +241,14 @@ func TestContextCreateCmd(t *testing.T) {
 			Name:           "given no context provided when system context create  then thorw error",
 			Args:           []string{"context", "create"},
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errCreateContextMsg, contextCreateUsageMsg)),
 			IsOutputGolden: false,
 		},
 		{
 			Name:           "given multiple context name provided when system context create then throw error",
 			Args:           []string{"context", "create", "local1", "local2"},
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errCreateContextMsg, contextCreateUsageMsg)),
 			IsOutputGolden: false,
 		},
 	}

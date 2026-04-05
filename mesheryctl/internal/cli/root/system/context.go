@@ -73,7 +73,7 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errCreateContextMsg, contextCreateUsageMsg))
 		}
 
 		return nil
@@ -131,7 +131,7 @@ mesheryctl system context delete [context name]
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextDeleteUsageMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errDeleteContextMsg, contextDeleteUsageMsg))
 		}
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
@@ -384,7 +384,7 @@ mesheryctl system context switch sample
 	Annotations: linkDocContextSwitch,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%s", errArgMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s", errSwitchContextMsg))
 		}
 		return nil
 	},
