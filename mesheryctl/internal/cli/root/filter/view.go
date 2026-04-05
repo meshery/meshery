@@ -14,7 +14,9 @@
 
 package filter
 
+
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"path/filepath"
@@ -69,8 +71,8 @@ mesheryctl filter view "filter name"
 		if len(args) > 0 && filterViewFlagsProvided.ViewAllFlag {
 			return ErrViewAllWithName("view")
 		}
-		if len(args) == 0 && !filterViewFlagsProvided.ViewAllFlag {
-			return utils.ErrInvalidArgument(fmt.Errorf("filter name or ID is required\n\n%s", errMsg))
+		if (len(args) == 0 || args[0] == "") && !filterViewFlagsProvided.ViewAllFlag {
+			return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
 		}
 		return nil
 	},
