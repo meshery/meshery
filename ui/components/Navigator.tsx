@@ -684,16 +684,6 @@ const Navigator_ = () => {
                       ? 'invert(50%) sepia(30%) saturate(1000%) hue-rotate(120deg)'
                       : '',
                 }}
-                onMouseOver={(e) => {
-                  e.target.style.transform = 'translate(-20%, -25%)';
-                  e.target.style.top = '0';
-                  e.target.style.right = '0';
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.transform = 'translate(0, 0)';
-                  e.target.style.top = 'auto';
-                  e.target.style.right = 'auto';
-                }}
               />
             </MainListIcon>
           </CustomTooltip>
