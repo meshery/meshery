@@ -1,0 +1,20 @@
+version: 0.0.1
+name: kubernetes-daemonset-pattern
+displayName: Kubernetes DaemonSet Pattern
+createdAt: "2025-08-04T08:11:05Z"
+description: Kubernetes DaemonSet Pattern
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7191dfdd-2c44-4235-acb7-688f5e99750d/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 637f0d76-d582-4269-a08c-e85e6e5e2312
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
