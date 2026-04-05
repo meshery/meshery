@@ -1,10 +1,10 @@
-import { api } from './index';
+import { api, mesheryApiPath } from './index';
 
 const userOrgRolesApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getUserOrgRoles: builder.query({
       query: (queryArgs) => ({
-        url: `extensions/api/identity/orgs/${queryArgs.orgId}/roles`,
+        url: mesheryApiPath(`extensions/api/identity/orgs/${queryArgs.orgId}/roles`),
         method: 'GET',
         credentials: 'include',
         params: {
