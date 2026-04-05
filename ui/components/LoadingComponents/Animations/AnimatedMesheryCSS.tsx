@@ -1,10 +1,56 @@
 // @ts-nocheck
 import React from 'react';
 
+const ANIMATION_STYLES = `
+        @keyframes meshery-fade-in {
+          0% { fill: transparent; }
+          100% { fill: var(--final-color); }
+        }
+
+        /* 2. Base style for all paths/polygons */
+        [class^='svg-meshery-'] {
+          fill: transparent; /* Start invisible */
+          animation-name: meshery-fade-in;
+          animation-duration: 0.7s; /* Matches your 0.7s transition duration */
+          animation-timing-function: cubic-bezier(0.47, 0, 0.745, 0.715);
+          animation-fill-mode: forwards; /* Stay colored after animation ends */
+          animation-iteration-count: infinite; /* Optional: remove if you want it to run once */
+          animation-direction: alternate; /* Optional: makes it pulse in and out */
+        }
+
+        /* 3. Sequence and Color Mapping */
+        .svg-meshery-1  { --final-color: rgb(0, 211, 169); animation-delay: 0.8s; }
+        .svg-meshery-2  { --final-color: rgb(0, 211, 169); animation-delay: 0.9s; }
+        .svg-meshery-3  { --final-color: rgb(0, 179, 159); animation-delay: 1s; }
+        .svg-meshery-4  { --final-color: rgb(0, 179, 159); animation-delay: 1.1s; }
+        .svg-meshery-5  { --final-color: rgb(0, 179, 159); animation-delay: 1.2s; }
+        .svg-meshery-6  { --final-color: rgb(0, 211, 169); animation-delay: 1.3s; }
+        .svg-meshery-7  { --final-color: rgb(0, 179, 159); animation-delay: 1.4s; }
+        .svg-meshery-8  { --final-color: rgb(0, 179, 159); animation-delay: 1.5s; }
+        .svg-meshery-9  { --final-color: rgb(0, 211, 169); animation-delay: 1.6s; }
+        .svg-meshery-10 { --final-color: rgb(0, 179, 159); animation-delay: 1.7s; }
+        .svg-meshery-11 { --final-color: rgb(0, 179, 159); animation-delay: 1.8s; }
+        .svg-meshery-12 { --final-color: rgb(0, 179, 159); animation-delay: 1.9s; }
+        .svg-meshery-13 { --final-color: rgb(0, 211, 169); animation-delay: 2s; }
+        .svg-meshery-14 { --final-color: rgb(0, 179, 159); animation-delay: 2.1s; }
+        .svg-meshery-15 { --final-color: rgb(0, 211, 169); animation-delay: 2.2s; }
+        .svg-meshery-16 { --final-color: rgb(0, 179, 159); animation-delay: 2.3s; }
+        .svg-meshery-17 { --final-color: rgb(0, 211, 169); animation-delay: 2.4s; }
+        .svg-meshery-18 { --final-color: rgb(0, 211, 169); animation-delay: 2.5s; }
+        .svg-meshery-19 { --final-color: rgb(0, 211, 169); animation-delay: 2.6s; }
+        .svg-meshery-20 { --final-color: rgb(0, 179, 159); animation-delay: 2.7s; }
+        .svg-meshery-21 { --final-color: rgb(0, 211, 169); animation-delay: 2.8s; }
+        .svg-meshery-22 { --final-color: rgb(0, 211, 169); animation-delay: 2.9s; }
+        .svg-meshery-23 { --final-color: rgb(0, 179, 159); animation-delay: 3s; }
+        .svg-meshery-24 { --final-color: rgb(0, 211, 169); animation-delay: 3.1s; }
+        .svg-meshery-25 { --final-color: rgb(0, 179, 159); animation-delay: 3.2s; }
+`;
+
 const AnimatedMeshery = (props) => {
   const textfill = props.textFill || '#ccc';
   return (
     <div>
+      <style dangerouslySetInnerHTML={{ __html: ANIMATION_STYLES }} />
       <svg
         id="Layer_1"
         data-name="Layer 1"
