@@ -187,7 +187,7 @@ func (h *Handler) EvaluateDesign(
 		)
 
 		if err != nil {
-			h.log.Debug(err)
+			h.log.Error(errResponse)
 			// log an event
 			return pattern.EvaluationResponse{}, err
 		}
@@ -364,21 +364,25 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userUUID).WithCategory("relationship").WithAction("evaluation")
 
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-		rw.WriteHeader((http.StatusBadRequest))
-		return
-	}
+body, err := io.ReadAll(r.Body)
+if err != nil {
+	errResponse := ErrRequestBody(err)
+	h.log.Error(errResponse)
 
+	rw.Header().Set("Content-Type", "application/json")
+	http.Error(rw, errResponse.Error(), http.StatusBadRequest)
+	return
+}
 	relationshipPolicyEvalPayload := pattern.EvaluationRequest{}
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
+if err != nil {
+	errResponse := ErrDecoding(err, "design file")
+	h.log.Error(errResponse)
 
-	if err != nil {
-		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
-		return
-	}
+	rw.Header().Set("Content-Type", "application/json")
+	http.Error(rw, errResponse.Error(), http.StatusInternalServerError)
+	return
+}
 	// decode the pattern file
 	patternUUID := relationshipPolicyEvalPayload.Design.ID
 	eventBuilder.ActedUpon(patternUUID)
@@ -400,11 +404,17 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	select {
 
-	case err := <-evalErrChan:
-		h.log.Debug(err)
-		// log an event
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
+case err := <-evalErrChan:
+	errResponse := models.ErrInternalServer(err)
+	h.log.Error(errResponse)
+
+	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusInternalServerError)
+
+	_ = json.NewEncoder(rw).Encode(map[string]string{
+		"error": errResponse.Error(),
+	})
+	return
 
 	case evaluationResponse := <-evalRespChan:
 		// include trace instead of design file in the event
@@ -419,15 +429,13 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		_ = provider.PersistEvent(*event, nil)
 
 		// write the response
-		ec := json.NewEncoder(rw)
-		err = ec.Encode(evaluationResponse)
-		if err != nil {
-			h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
-			http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
-			return
-		}
-	case <-evalCtx.Done():
-		h.log.Info("Evaluation terminated: request context closed")
+	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusOK)
+
+	err = json.NewEncoder(rw).Encode(evaluationResponse)
+	if err != nil {
+		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
 		return
 	}
 }
