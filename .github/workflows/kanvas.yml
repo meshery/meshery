@@ -29,14 +29,7 @@ jobs:
     steps:
       - name: Set PR number # To comment the final status on the Pull-request opened in any repository
         run: |
-          if [ -f "$GITHUB_EVENT_PATH" ]; then
-            export pull_number=$(jq -r '.pull_request.number // empty' "$GITHUB_EVENT_PATH")
-            if [ -z "$pull_number" ]; then
-              export pull_number="${{ github.event.pull_request.number }}"
-            fi
-          else
-            export pull_number="${{ github.event.pull_request.number }}"
-          fi
+          export pull_number="${{ github.event.pull_request.number }}"
           echo "PULL_NO=${pull_number:-0}" >> $GITHUB_ENV
       - uses: actions/checkout@v6
       - uses: actions/checkout@v6 #this step would go away
