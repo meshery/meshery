@@ -36,11 +36,14 @@ jobs:
         with:
           path: action
           repository: layer5labs/kanvas-snapshot
+      - name: Debug Kanvas Response
+        run: |
+          echo "Response will be logged in the next step"
       - id: test_result
         uses: layer5labs/Kanvas-Snapshot@v0.2.43
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }} # github's personal access token example: "ghp_...."
           mesheryToken: ${{ secrets.MESHERY_TOKEN }} # Meshery Cloud Authentication token, signin to meshery-cloud to get one, example: ey.....
           prNumber: ${{ env.PULL_NO }} # auto-filled from the above step
-          application_type: Kubernetes Manifest # your application type, could be any of three: "Kubernetes Manifest", "Docker Compose", "Helm Chart"
-          filePath: ${{ inputs.fileName == '' && 'install/deployment_yamls/k8s' || inputs.fileName }} # relative file-path from the root directory in the github-runner env, you might require to checkout the repository as described in step 2
+          application_type: "Kubernetes Manifest" # your application type, could be any of three: "Kubernetes Manifest", "Docker Compose", "Helm Chart"
+          filePath: ${{ inputs.fileName == '' && 'install/deployment_yamls/k8s/meshery-deployment.yaml' || inputs.fileName }} # relative file-path from the root directory in the github-runner env, you might require to checkout the repository as described in step 2
