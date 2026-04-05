@@ -4,9 +4,9 @@ import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/
 import { ADAPTER_STATUS, adaptersList, AdaptersListType } from './constants';
 import changeAdapterState from '../../graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
-import { promisifiedDataFetch } from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
+import { useLazyGetSystemSyncQuery } from '../../../rtk-query/system';
 import { Grid2, Switch, Typography, useTheme } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
@@ -31,6 +31,7 @@ const Adapters: React.FC = () => {
 
   // Hooks.
   const { notify } = useNotification();
+  const [fetchSystemSync] = useLazyGetSystemSyncQuery();
 
   // useEffects.
   useEffect(() => {
@@ -43,10 +44,8 @@ const Adapters: React.FC = () => {
   const handleAdapterSync = async (showLoader = true): Promise<void> => {
     showLoader && updateProgress({ showProgress: true });
 
-    promisifiedDataFetch('/api/system/sync', {
-      method: 'GET',
-      credentials: 'include',
-    })
+    fetchSystemSync()
+      .unwrap()
       .then((result: SyncResult) => {
         showLoader && updateProgress({ showProgress: false });
 
