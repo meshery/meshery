@@ -34,7 +34,13 @@ func GetK8sVersionInfo() (*version.Info, error) {
 	if err != nil {
 		return nil, err
 	}
-	return client.KubeClient.Discovery().ServerVersion()
+
+	version, err := client.KubeClient.Discovery().ServerVersion()
+	if err != nil {
+		return nil, Errk8sVersionInfo(err)
+	}
+
+	return version, nil
 }
 
 func CheckK8sVersion(versionInfo *version.Info) error {
@@ -61,13 +67,13 @@ func getK8sVersion(versionString string) ([3]int, error) {
 	split := strings.Split(justTheMajorMinorRevisionNumbers, ".")
 
 	if len(split) < 3 {
-		return version, fmt.Errorf("unknown version string format [%s]", versionString)
+		return version, ErrK8sInvalidVersionFormat(fmt.Errorf("unknown version string format [%s]", versionString))
 	}
 
 	for i, segment := range split {
 		v, err := strconv.Atoi(strings.TrimSpace(segment))
 		if err != nil {
-			return version, fmt.Errorf("unknown version string format [%s]", versionString)
+			return version, ErrK8sInvalidVersionFormat(fmt.Errorf("unknown version string format [%s]", versionString))
 		}
 		version[i] = v
 	}
@@ -125,16 +131,27 @@ func parseKubectlShortVersion(version string) ([3]int, error) {
 // IsMesheryRunning checks if the meshery server containers are up and running
 func IsMesheryRunning(currPlatform string) (bool, error) {
 	// Get viper instance used for context to extract the endpoint from config file
-	mctlCfg, _ := config.GetMesheryCtl(viper.GetViper())
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return false, err
+	}
 
-	currCtx, _ := mctlCfg.GetCurrentContext()
+	currCtx, err := mctlCfg.GetCurrentContext()
+	if err != nil {
+		return false, err
+	}
 
 	urlEndpoint := currCtx.GetEndpoint()
 
 	urlTest := urlEndpoint + "/api/system/version"
 
 	// Checking if Meshery is running with the URL obtained
-	resp, _ := http.Get(urlTest)
+	resp, err := http.Get(urlTest)
+	if err != nil {
+		Log.Infof("Meshery endpoint from current context is not reachable using the URL: %s\n", urlTest)
+		Log.Debugf("Error while reaching Meshery endpoint: %v\n", err)
+		Log.Infof("Checking if Meshery is running using the platform: %s\n", currPlatform)
+	}
 
 	if resp != nil && resp.StatusCode == 200 {
 		return true, nil
@@ -319,7 +336,7 @@ func WaitForPodRunning(c *meshkitkube.Client, desiredPod, namespace string, time
 		return err
 	}
 	if len(podList.Items) == 0 {
-		return fmt.Errorf("no pods in %s", namespace)
+		return ErrNoMesheryPodsFound(namespace)
 	}
 	var desiredPodName string
 	for _, pod := range podList.Items {
@@ -330,7 +347,7 @@ func WaitForPodRunning(c *meshkitkube.Client, desiredPod, namespace string, time
 	}
 
 	if desiredPodName == "" {
-		return fmt.Errorf("`%s` pod not found", desiredPod)
+		return ErrMissingMesheryPod(desiredPod)
 	}
 
 	return pollForPodRunning(c, namespace, desiredPodName, time.Duration(timeout)*time.Second)

@@ -12,6 +12,7 @@ import (
 	"math/big"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -30,6 +31,12 @@ const (
 
 	// Stores the remote provider session cookie (identity cookie) to facilitate logout from remote provider as user logs out of Meshery
 	ProviderSessionCookieName = "session_cookie"
+
+	// Tracks the number of consecutive auth redirect attempts to detect and break redirect loops
+	AuthRetryCookieName = "meshery_auth_retries"
+
+	// Maximum number of auth redirect attempts before breaking the loop
+	MaxAuthRetries = 3
 )
 
 // JWK - a type respresting the JSON web Key
@@ -50,6 +57,10 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 	}
 
 	if resp.StatusCode == 401 {
+		if !l.canRefreshToken(tokenString) {
+			return resp, nil
+		}
+
 		// Read and close response body before reusing request
 		// https://github.com/golang/go/issues/19653#issuecomment-341540384
 		_, _ = io.ReadAll(resp.Body)
@@ -62,7 +73,12 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 			return nil, ErrTokenRefresh(err)
 		}
 		l.Log.Info("token refresh successful")
-		resp, err := l.doRequestHelper(req, newToken)
+		retryReq, err := cloneRequestForRetry(req)
+		if err != nil {
+			return nil, ErrDoRequest(err, req.Method, req.URL.String())
+		}
+
+		resp, err := l.doRequestHelper(retryReq, newToken)
 		if err != nil {
 			return nil, ErrDoRequest(err, req.Method, req.URL.String())
 		}
@@ -75,7 +91,7 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	l.TokenStoreMut.Lock()
 	defer l.TokenStoreMut.Unlock()
-	newTokenString := l.TokenStore[tokenString]
+	newTokenString := strings.TrimSpace(l.TokenStore[tokenString])
 	if newTokenString != "" {
 		return newTokenString, nil
 	}
@@ -90,22 +106,63 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if r.StatusCode == http.StatusInternalServerError {
-		return "", ErrTokenRefresh(fmt.Errorf("failed to refresh token. Status code 500"))
-	}
 
 	defer SafeClose(r.Body, l.Log)
+	if r.StatusCode != http.StatusOK {
+		body, readErr := io.ReadAll(r.Body)
+		if readErr != nil {
+			return "", fmt.Errorf("failed to refresh token. status code %d", r.StatusCode)
+		}
+		return "", fmt.Errorf("failed to refresh token. status code %d: %s", r.StatusCode, strings.TrimSpace(string(body)))
+	}
+
 	var target map[string]string
 	err = json.NewDecoder(r.Body).Decode(&target)
 	if err != nil {
 		return "", err
 	}
-	l.TokenStore[tokenString] = target[TokenCookieName]
+	newTokenString = strings.TrimSpace(target[TokenCookieName])
+	if newTokenString == "" {
+		return "", fmt.Errorf("failed to refresh token. response missing %q", TokenCookieName)
+	}
+	l.TokenStore[tokenString] = newTokenString
 	time.AfterFunc(1*time.Hour, func() {
 		l.Log.Info("deleting old token string")
 		delete(l.TokenStore, tokenString)
 	})
-	return target[TokenCookieName], nil
+	return newTokenString, nil
+}
+
+func (l *RemoteProvider) canRefreshToken(tokenString string) bool {
+	if strings.TrimSpace(tokenString) == "" {
+		return false
+	}
+
+	token, err := l.DecodeTokenData(tokenString)
+	if err != nil {
+		return false
+	}
+
+	return strings.TrimSpace(token.RefreshToken) != ""
+}
+
+func cloneRequestForRetry(req *http.Request) (*http.Request, error) {
+	retryReq := req.Clone(req.Context())
+
+	switch {
+	case req.GetBody != nil:
+		body, err := req.GetBody()
+		if err != nil {
+			return nil, err
+		}
+		retryReq.Body = body
+	case req.Body == nil || req.Body == http.NoBody:
+		retryReq.Body = http.NoBody
+	default:
+		return nil, fmt.Errorf("request body is not replayable")
+	}
+
+	return retryReq, nil
 }
 
 func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http.Response, error) {
@@ -406,4 +463,37 @@ func (l *RemoteProvider) SetProviderSessionCookie(w http.ResponseWriter, session
 
 func (l *RemoteProvider) UnSetProviderSessionCookie(w http.ResponseWriter) {
 	unsetCookie(w, ProviderSessionCookieName)
+}
+
+// GetAuthRetryCount reads the auth retry counter from the request cookie.
+// Returns 0 if the cookie is missing or malformed.
+func GetAuthRetryCount(req *http.Request) int {
+	ck, err := req.Cookie(AuthRetryCookieName)
+	if err != nil {
+		return 0
+	}
+	count := 0
+	_, _ = fmt.Sscanf(ck.Value, "%d", &count)
+	if count < 0 {
+		count = 0
+	}
+	return count
+}
+
+// SetAuthRetryCookie sets the auth retry counter cookie with a short TTL.
+// The short TTL ensures stale counters are automatically cleaned up.
+func SetAuthRetryCookie(w http.ResponseWriter, count int) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     AuthRetryCookieName,
+		Value:    fmt.Sprintf("%d", count),
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   120, // 2 minutes — enough to detect loops, auto-cleans after
+	})
+}
+
+// ClearAuthRetryCookie removes the auth retry counter cookie.
+// Called after a successful authentication to reset the counter.
+func ClearAuthRetryCookie(w http.ResponseWriter) {
+	unsetCookie(w, AuthRetryCookieName)
 }

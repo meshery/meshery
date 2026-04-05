@@ -79,37 +79,60 @@ function PersistedRandomLoadingMessage(){
 };
 
 
-const PRE_REACT_NEXTJS_LOADER_ID = 'prereact-next-js-loader'
+const PRE_REACT_NEXTJS_LOADER_ID = 'prereact-next-js-loader';
+const PRE_REACT_LOADER_ID = 'PRE_REACT_LOADER';
+const PRE_REACT_LOADER_MESSAGE_ID = `${PRE_REACT_LOADER_ID}-text-message`;
 
-var _hidingTimeout = null
+var _hidingTimeout = null;
 
-function show() {
-  if (_hidingTimeout){
-    clearTimeout(_hidingTimeout)
-  }
-  const loader = document.getElementById('PRE_REACT_LOADER');
-  if (loader && loader?.style?.display != 'flex') {
-    loader.style.display = 'flex'
+function getLoader() {
+  return document.getElementById(PRE_REACT_LOADER_ID);
+}
+
+function getLoaderMessageNode() {
+  return document.getElementById(PRE_REACT_LOADER_MESSAGE_ID);
+}
+
+function setMessage(message) {
+  const loaderMessage = getLoaderMessageNode();
+  if (loaderMessage && typeof message === 'string') {
+    loaderMessage.textContent = message;
   }
 }
 
+function resetMessage() {
+  setMessage(PersistedRandomLoadingMessage());
+}
+
+function show() {
+  if (_hidingTimeout) {
+    clearTimeout(_hidingTimeout);
+  }
+  const loader = getLoader();
+  if (loader && loader?.style?.display != 'flex') {
+    loader.style.display = 'flex';
+  }
+}
 
 function hide() {
-
   _hidingTimeout = setTimeout(() => {
-    const loader = document.getElementById('PRE_REACT_LOADER');
+    const loader = getLoader();
     if (loader) {
-      loader.style.display = 'none'
+      loader.style.display = 'none';
+      resetMessage();
     }
-  },1000)
+  }, 1000);
 }
 
 // export globals
 window.Loader = {
   LOADING_MESSAGES: LoadingMessages,
   PRE_REACT_NEXTJS_LOADER_ID,
+  PRE_REACT_LOADER_ID,
   PersistedRandomLoadingMessage,
   RandomLoadingMessage: getRandomLoadingMessage,
   show,
-  hide
-}
+  hide,
+  setMessage,
+  resetMessage,
+};
