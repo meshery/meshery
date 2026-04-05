@@ -46,6 +46,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
+      - name: Free disk space (start)
+        uses: ./.github/actions/free-disk-space/start
       - name: Set up Docker
         uses: docker/setup-buildx-action@v4
       - name: Setup BATS and BATS libs
@@ -132,6 +134,9 @@ jobs:
           commit_user_email: ci@meshery.io
         env:
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+      - name: Free disk space (end)
+        if: always()
+        uses: ./.github/actions/free-disk-space/end
 
   manual-test:
     name: Manual e2e Test
@@ -143,6 +148,8 @@ jobs:
         k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['docker', 'kubernetes']
     steps:
+      - name: Free disk space (start)
+        uses: ./.github/actions/free-disk-space/start
       - name: Setup Kubernetes
         uses: manusa/actions-setup-minikube@v2.14.0
         with:
@@ -231,6 +238,9 @@ jobs:
           platform: ${{ matrix.platform }}
           pattern_url: ${{ github.event.inputs.pattern_url }}
           pattern_file: ${{ github.event.inputs.pattern_file }}
+      - name: Free disk space (end)
+        if: always()
+        uses: ./.github/actions/free-disk-space/end
 
   scheduled-test:
     name: Scheduled e2e Test
@@ -242,6 +252,8 @@ jobs:
         k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['docker', 'kubernetes']
     steps:
+      - name: Free disk space (start)
+        uses: ./.github/actions/free-disk-space/start
       - name: Setup Kubernetes
         uses: manusa/actions-setup-minikube@v2.14.0
         with:
@@ -334,3 +346,6 @@ jobs:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
           pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/9d3b33bf-eaf6-4d06-9dd6-64aa725ab383.yaml
+      - name: Free disk space (end)
+        if: always()
+        uses: ./.github/actions/free-disk-space/end

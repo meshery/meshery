@@ -11,10 +11,12 @@ jobs:
     name: swagger-docs
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
-          ref: "master"
+          sparse-checkout: |
+            handlers/
+            docs/
       - name: Setup go-swagger
         uses: minchao/setup-go-swagger@v1
         with:
@@ -25,7 +27,9 @@ jobs:
         run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models && swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
 
       - name: Pull changes from remote
-        run: git pull origin master
+        run: |
+         git fetch origin master --depth=1
+         git merge origin/master
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v7

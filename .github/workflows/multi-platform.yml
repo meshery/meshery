@@ -57,6 +57,8 @@ jobs:
       - 
         name: Checkout repo
         uses: actions/checkout@v6
+      - name: Free disk space (start)
+        uses: ./.github/actions/free-disk-space/start
       - 
         name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"
@@ -114,6 +116,9 @@ jobs:
             RELEASE_CHANNEL=${{env.RELEASE_CHANNEL}}
           tags: ${{ steps.meta.outputs.tags }}     
           platforms: linux/amd64,linux/arm64
+      - name: Free disk space (end)
+        if: always()
+        uses: ./.github/actions/free-disk-space/end
 #       - 
 #         name: Docker Hub Description
 #         uses: peter-evans/dockerhub-description@v3

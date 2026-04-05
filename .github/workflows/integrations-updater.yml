@@ -29,7 +29,8 @@ jobs:
         with:
           path: meshery
           token: ${{ secrets.MESHERY_CI }}
-      
+      - name: Free disk space (start)
+        uses: ./.github/actions/free-disk-space/start
       # Extension Point. Add your website repo here.
       # See http://docs.meshery.io/extensibility/providers
       - name: Checkout Layer5.io repo

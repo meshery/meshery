@@ -1,0 +1,19 @@
+name: "Start Cleanup"
+description: "Free disk space before job"
+runs:
+  using: "composite"
+  steps:
+    - name: Cleanup disk space
+      shell: bash
+      run: |
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /usr/local/.ghcup
+        sudo rm -rf /usr/local/share/powershell
+        sudo rm -rf /usr/share/swift
+        sudo rm -rf /usr/lib/jvm
+        sudo rm -rf /opt/ghc
+        sudo apt-get clean
+        sudo rm -rf /var/lib/apt/lists/*
+        docker system prune -af || true
+        df -h
