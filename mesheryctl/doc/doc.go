@@ -26,8 +26,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/spf13/cobra"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root"
+	"github.com/spf13/cobra"
 )
 
 // GenMarkdownTreeCustom is a modified version of GenMarkdownTree from spf13/cobra

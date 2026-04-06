@@ -25,6 +25,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -33,9 +34,9 @@ import (
 )
 
 type filterViewFlags struct {
-	viewAllFlag  bool
-	outputFormat string
-	save         bool
+	ViewAllFlag  bool   `json:"all" validate:"boolean"`
+	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
+	Save         bool   `json:"save" validate:"boolean"`
 }
 
 var filterViewFlagsProvided filterViewFlags
@@ -61,15 +62,24 @@ mesheryctl filter view --all --output-format json -s
 //View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 mesheryctl filter view "filter name"
         `,
-	Args: cobra.ArbitraryArgs,
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl filter view [filter-name | ID]\nRun 'mesheryctl filter view --help' to see detailed help message"
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("accepts at most 1 arg, received %d\n\n%s", len(args), errMsg))
+		}
+		if len(args) > 0 && filterViewFlagsProvided.ViewAllFlag {
+			return ErrViewAllWithName("view")
+		}
+		if (len(args) == 0 || args[0] == "") && !filterViewFlagsProvided.ViewAllFlag {
+			return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Validate output-format
-		return display.ValidateOutputFormat(filterViewFlagsProvided.outputFormat)
+		return mesheryctlflags.ValidateCmdFlags(cmd, &filterViewFlagsProvided)
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// for formatting errors
-		subCmdUsed := cmd.Use
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -78,18 +88,8 @@ mesheryctl filter view "filter name"
 
 		filter := ""
 		isID := false
-		// if filter name/id available
 		if len(args) > 0 {
-			if filterViewFlagsProvided.viewAllFlag {
-				return ErrViewAllWithName(subCmdUsed)
-			}
-
-			filterArg, err := parseQuotedArg(args, subCmdUsed)
-			if err != nil {
-				return err
-			}
-
-			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), filterArg, "filter")
+			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 			if err != nil {
 				return utils.ErrInvalidNameOrID(err)
 			}
@@ -97,11 +97,7 @@ mesheryctl filter view "filter name"
 
 		urlString := ""
 		if len(filter) == 0 {
-			if filterViewFlagsProvided.viewAllFlag {
-				urlString = "api/filter?pagesize=10000"
-			} else {
-				return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
-			}
+			urlString = "api/filter?pagesize=10000"
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
 			urlString = "api/filter/" + filter
@@ -126,7 +122,7 @@ mesheryctl filter view "filter name"
 			}
 			filterPage = page
 
-			if !filterViewFlagsProvided.viewAllFlag {
+			if !filterViewFlagsProvided.ViewAllFlag {
 				if len(filterPage.Filters) == 0 {
 					utils.Log.Info(fmt.Sprintf("filter with name: %q not found", filter))
 					return nil
@@ -138,13 +134,13 @@ mesheryctl filter view "filter name"
 		outputFormatterFactory := display.OutputFormatterFactory[any]{}
 		var data any
 
-		if filterViewFlagsProvided.viewAllFlag {
+		if filterViewFlagsProvided.ViewAllFlag {
 			data = filterPage
 		} else {
 			data = selectedFilter
 		}
 
-		outputFormatter, err := outputFormatterFactory.New(filterViewFlagsProvided.outputFormat, data)
+		outputFormatter, err := outputFormatterFactory.New(filterViewFlagsProvided.OutputFormat, data)
 		if err != nil {
 			return err
 		}
@@ -154,12 +150,12 @@ mesheryctl filter view "filter name"
 			return err
 		}
 
-		if filterViewFlagsProvided.save {
+		if filterViewFlagsProvided.Save {
 			err := saveToFile(
-				filterViewFlagsProvided.outputFormat,
+				filterViewFlagsProvided.OutputFormat,
 				outputFormatter,
 				selectedFilter,
-				filterViewFlagsProvided.viewAllFlag,
+				filterViewFlagsProvided.ViewAllFlag,
 			)
 			if err != nil {
 				return err
@@ -197,20 +193,8 @@ func saveToFile(
 	return outputFormatterSaver.Save()
 }
 
-// Check if the argument starts and ends with double quotes
-func parseQuotedArg(args []string, subCmdUsed string) (string, error) {
-	fullArg := strings.Join(args, " ")
-
-	if strings.HasPrefix(fullArg, "\"") && strings.HasSuffix(fullArg, "\"") {
-		return strings.Trim(fullArg, "\""), nil
-	} else if len(args) == 1 {
-		return args[0], nil
-	}
-	return "", ErrMultiWordFilterName(subCmdUsed)
-}
-
 func init() {
-	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.viewAllFlag, "all", "a", false, "(optional) view all filters available")
-	viewCmd.Flags().StringVarP(&filterViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.ViewAllFlag, "all", "a", false, "(optional) view all filters available")
+	viewCmd.Flags().StringVarP(&filterViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
 }
