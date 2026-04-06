@@ -11,9 +11,9 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/meshsync/pkg/model"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"gorm.io/gorm"
 )
 
@@ -230,37 +230,6 @@ func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
 		Where("kubernetes_key_values.kind = ?", kind)
 }
 
-// swagger:route GET /api/system/meshsync/resources GetMeshSyncResources idGetMeshSyncResources
-// Handle GET request for meshsync discovered resources
-//
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
-//
-// ```?search={componentname}``` If search is non empty then a greedy search is performed
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?annotation={annotaion}``` annotation is a boolean value. If true then annotations are returned
-//
-// ```?labels={labels}``` labels is a boolean value. If true then labels are returned
-//
-// ```?spec={spec}``` spec is a boolean value. If true then spec is returned
-//
-// ```?model={[model]}``` model is an array of string values to filter the resources
-//
-// ```?status={status}``` status is a boolean value. If true then status is returned
-//
-// ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
-//
-// ```?asDesign={bool}``` asDesign is a boolean value. If true then the response is returned as a design and resources are omitted
-//
-// responses:
-// 200: []meshsyncResourcesResponseWrapper
 func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -411,10 +380,6 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 }
 
-// swagger:route GET /api/system/meshsync/resources/{id} GetMeshSyncResourceByID idGetMeshSyncResourceByID
-// Handle GET request for meshsync discovered resource by ID ( returns the resource in v1beta1 component format )
-// responses:
-// 200: meshsyncResourceByIDResponseWrapper
 func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -456,15 +421,6 @@ func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Reques
 		}
 	}
 }
-
-// swagger:route GET /api/system/meshsync/resources/summary GetMeshSyncResourcesSummary idGetMeshSyncResourcesSummary
-// Handle GET request for meshsync discovered resources
-//
-// ```?clusterId={clusterId}``` clusterId is id of the cluster to get resources for ( multiple supported)
-//
-//
-// responses:
-// 200: []meshsyncResourcesSummaryResponseWrapper
 
 func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")

@@ -23,27 +23,6 @@ func init() {
 	gob.Register(&models.GrafanaClient{})
 }
 
-// swagger:route GET /api/telemetry/metrics/grafana/config GrafanaAPI idGetGrafanaConfig
-// Handle GET request for Grafana configuration
-//
-// Used for fetching Grafana configuration
-// responses:
-// 	200: grafanaConfigResponseWrapper
-
-// swagger:route POST /api/telemetry/metrics/grafana/config GrafanaAPI idPostGrafanaConfig
-// Handle POST request for Grafana configuration
-//
-// Used for persisting Grafana configuration
-// responses:
-// 	200:
-
-// swagger:route DELETE /api/telemetry/metrics/grafana/config GrafanaAPI idDeleteGrafanaConfig
-// Handle DELETE request for Grafana configuration
-//
-// Used for Delete Grafana configuration
-// responses:
-// 	200:
-
 // GrafanaConfigHandler is used for fetching or persisting or removing Grafana configuration
 func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
 	sysID := h.SystemID
@@ -134,13 +113,6 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-// swagger:route GET /api/telemetry/metrics/grafana/ping/{connectionID} GrafanaAPI idGetGrafanaPing
-// Handle GET request for Grafana ping
-//
-// Used to initiate a Grafana ping
-// responses:
-// 	200:
-
 // GrafanaPingHandler - used to initiate a Grafana ping
 func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
@@ -171,13 +143,6 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 
 	_, _ = w.Write([]byte("{}"))
 }
-
-// swagger:route GET /api/telemetry/metrics/grafana/boards/{connectionID} GrafanaAPI idGetGrafanaBoards
-// Handle GET request for Grafana boards
-//
-// Used for fetching Grafana boards and panels
-// responses:
-// 	200: grafanaBoardsResponseWrapper
 
 // GrafanaBoardsHandler is used for fetching Grafana boards and panels
 func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
@@ -228,13 +193,6 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 }
-
-// swagger:route GET /api/telemetry/metrics/grafana/query/{connectionID} GrafanaAPI idGetGrafanaQuery
-// Handle GET request for Grafana queries
-//
-// Used for handling Grafana queries
-// responses:
-// 	200:
 
 // GrafanaQueryHandler is used for handling Grafana queries
 func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
@@ -317,13 +275,6 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 		h.log.Error(err)
 	}
 }
-
-// swagger:route POST /api/telemetry/metrics/grafana/boards/{connectionID} GrafanaAPI idPostGrafanaBoards
-// Handle POST request for Grafana boards
-//
-// Used for persist Grafana boards and panel selections
-// responses:
-// 	200:
 
 // SaveSelectedGrafanaBoardsHandler is used to persist board and panel selection
 func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {

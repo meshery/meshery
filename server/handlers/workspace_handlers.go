@@ -12,24 +12,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 )
 
-// swagger:route GET /api/workspaces WorkspacesAPI idGetWorkspaces
-// Handles GET for all Workspaces
-//
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 20
-//
-// ```?search={name}``` If search is non empty then a greedy search is performed
-//
-// ```?orgID={orgid}``` orgID is used to retrieve workspaces belonging to a particular org *required*
-//
-// ```?filter={condition}```
-// responses:
-// 	200: workspacesResponseWrapper
-
 func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -58,15 +40,6 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-// swagger:route GET /api/workspaces/{id} WorkspacesAPI idGetWorkspacesByIdHandler
-// Handle GET for Workspace info by ID
-//
-// ```?orgID={orgid}``` orgID is used to retrieve workspaces belonging to a particular org
-//
-// Returns Workspace info
-// responses:
-//   200: workspaceResponseWrapper
-
 func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(r)["id"]
 	q := r.URL.Query()
@@ -89,12 +62,6 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 	}
 }
 
-// swagger:route POST /api/workspaces PostWorkspace idSaveWorkspace
-// Handle POST request for creating a new workspace
-//
-// Creates a new workspace
-// responses:
-// 201: workspaceResponseWrapper
 func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -130,12 +97,6 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-// swagger:route DELETE /api/workspaces/{id} WorkspaceAPI idDeleteWorkspaceHandler
-// Handle DELETE for Workspace based on ID
-//
-// Deletes a workspace
-// responses:
-// 201: workspaceResponseWrapper
 func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(r)["id"]
 	resp, err := provider.DeleteWorkspace(r, workspaceID)
@@ -151,13 +112,6 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 	}
 }
 
-// swagger:route PUT /api/workspaces/{id} PostWorkspace idUpdateWorkspaceHandler
-// Handle PUT request for updating a workspace
-//
-// Updates a workspace
-// responses:
-//
-//	200: workspaceResponseWrapper
 func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	bd, err := io.ReadAll(req.Body)
@@ -203,23 +157,6 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	}
 }
 
-// swagger:route GET /api/workspaces/{id}/environments WorkspacesAPI idGetWorkspaceEnvironments
-// Handles GET for all Environments in a Workspace
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 20
-//
-// ```?search={name}``` If search is non empty then a greedy search is performed
-//
-// ```?orgID={orgid}``` orgID is used to retrieve workspaces belonging to a particular org *required*
-//
-// ```?filter={{"assigned": true/false, "deleted_at": true/false}}``` defaults to assigned: false, deleted_at: false
-// responses:
-//
-//	200: environmentsResponseWrapper
 func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()
@@ -236,21 +173,6 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 	}
 }
 
-// swagger:route GET /api/workspaces/{id}/designs WorkspacesAPI idGetWorkspaceMesheryDesigns
-// Handles GET for all Meshery Designs in a Workspace
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 20
-//
-// ```?search={name}``` If search is non empty then a greedy search is performed
-//
-// ```?filter={{"assigned": true/false, "deleted_at": true/false}}``` defaults to assigned: false, deleted_at: false
-// responses:
-//
-//	200: mesheryPatternsResponseWrapper
 func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()
@@ -267,12 +189,6 @@ func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.
 	}
 }
 
-// swagger:route POST /api/workspaces/{id}/environments/{environmentID} WorkspacesAPI idAddEnvironmentToWorkspace
-// Handle POST request for adding an environment to a workspace
-//
-// Adds an environment to a workspace
-// responses:
-// 201: workspaceEnvironmentsMappingResponseWrapper
 func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	environmentID := mux.Vars(req)["environmentID"]
@@ -288,12 +204,6 @@ func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *h
 	}
 }
 
-// swagger:route DELETE /api/workspaces/{id}/environments/{environmentID} WorkspacesAPI idRemoveEnvironmentFromWorkspace
-// Handle DELETE request for removing an environment from a workspace
-//
-// Removes an environment from a workspace
-// responses:
-// 201: workspaceEnvironmentsMappingResponseWrapper
 func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	environmentID := mux.Vars(req)["environmentID"]
@@ -309,12 +219,6 @@ func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, r
 	}
 }
 
-// swagger:route POST /api/workspaces/{id}/designs/{designID} WorkspacesAPI idAddMesheryDesignToWorkspace
-// Handle POST request for adding a meshery design to a workspace
-//
-// Adds a meshery design to a workspace
-// responses:
-// 201: workspaceDesignsMappingResponseWrapper
 func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	designID := mux.Vars(req)["designID"]
