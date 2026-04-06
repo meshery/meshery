@@ -1,0 +1,92 @@
+{{- /* Load all adapter pages from extensions/adapters section */ -}}
+{{- $adapters := slice -}}
+{{- range site.AllPages -}}
+  {{- if and (strings.Contains .Path "extensions/adapters") (ne .Kind "section") .Params.port -}}
+    {{- $adapters = $adapters | append . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Sort adapters by project_status in reverse */ -}}
+{{- $sorted := sort $adapters "Params.project_status" -}}
+{{- $reversed := slice -}}
+{{- $len := len $sorted -}}
+{{- range $i := (seq $len) -}}
+  {{- $reversed = $reversed | append (index $sorted (sub $len $i)) -}}
+{{- end -}}
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th style="text-align: left; padding: 10px; border-bottom: 2px solid #ccc;">Component</th>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">Port</th>
+      <th style="text-align: left; padding: 10px; border-bottom: 2px solid #ccc;">Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="border-bottom: 1px solid #eee;">
+      <td style="padding: 10px;">Meshery Server</td>
+      <td style="text-align: center; padding: 10px;">9081/tcp</td>
+      <td style="padding: 10px;">UI, REST, and GraphQL APIs</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #eee;">
+      <td style="padding: 10px;">Meshery Server</td>
+      <td style="text-align: center; padding: 10px;">80/tcp</td>
+      <td style="padding: 10px;">WebSocket</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #eee;">
+      <td style="padding: 10px;"><a href="/concepts/architecture/broker">Meshery Broker</a></td>
+      <td style="text-align: center; padding: 10px;">4222/tcp</td>
+      <td style="padding: 10px;">Client communication with Meshery Server</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #eee;">
+      <td style="padding: 10px;"><a href="/concepts/architecture/broker">Meshery Broker</a></td>
+      <td style="text-align: center; padding: 10px;">8222/tcp</td>
+      <td style="padding: 10px;">HTTP management port for monitoring Meshery Broker. Available as of Meshery v0.5.0</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #eee;">
+      <td style="padding: 10px;"><a href="/concepts/architecture/broker">Meshery Broker</a></td>
+      <td style="text-align: center; padding: 10px;">6222/tcp</td>
+      <td style="padding: 10px;">Routing port for Broker clustering. Unused as of Meshery v0.6.0-rc-2</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #eee;">
+      <td style="padding: 10px;"><a href="/concepts/architecture/broker">Meshery Broker</a></td>
+      <td style="text-align: center; padding: 10px;">7422/tcp</td>
+      <td style="padding: 10px;">Incoming/outgoing leaf node connections. Unused as of Meshery v0.6.0-rc-2</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #eee;">
+      <td style="padding: 10px;"><a href="/concepts/architecture/broker">Meshery Broker</a></td>
+      <td style="text-align: center; padding: 10px;">7522/tcp</td>
+      <td style="padding: 10px;">Gateway to gateway communication. Unused as of Meshery v0.6.0-rc-2</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #eee;">
+      <td style="padding: 10px;"><a href="/concepts/architecture/broker">Meshery Broker</a></td>
+      <td style="text-align: center; padding: 10px;">7777/tcp</td>
+      <td style="padding: 10px;">Used for Prometheus NATS Exporter. Unused as of Meshery v0.6.0-rc-2</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #eee;">
+      <td style="padding: 10px;"><a href="/extensibility/providers">Meshery Remote Providers</a></td>
+      <td style="text-align: center; padding: 10px;">443/tcp</td>
+      <td style="padding: 10px;">e.g. Meshery Cloud</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #eee;">
+      <td style="padding: 10px;"><a href="/guides/performance-management/managing-performance">Meshery Perf</a></td>
+      <td style="text-align: center; padding: 10px;">10013/gRPC</td>
+      <td style="padding: 10px;">Performance Management</td>
+    </tr>
+    {{- range $reversed -}}
+      {{- if .Params.port -}}
+    <tr style="border-bottom: 1px solid #eee;">
+      <td style="padding: 10px;">
+        <img src="{{ .Params.image }}" style="width:24px; height:24px; vertical-align: middle; margin-right: 8px;" 
+             data-logo-for-dark="{{ .Params.white_image }}" 
+             data-logo-for-light="{{ .Params.image }}" 
+             loading="lazy"/>
+        <a href="{{ .RelPermalink }}" style="text-decoration: none;">{{ .Params.name }}</a>
+      </td>
+      <td style="text-align: center; padding: 10px;">{{ .Params.port }}/gRPC</td>
+      <td style="padding: 10px;">Communication with Meshery Server</td>
+    </tr>
+      {{- end -}}
+    {{- end -}}
+  </tbody>
+</table>

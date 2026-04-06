@@ -41,7 +41,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 	var greedy bool
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 

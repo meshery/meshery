@@ -26,7 +26,7 @@ type PerformanceProfilePage struct {
 func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order string, page, pageSize uint64) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"updated_at", "created_at", "name", "last_run"})
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	count := int64(0)

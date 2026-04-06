@@ -1,0 +1,258 @@
+name: Deployment Web
+version: 0.0.8
+services:
+  Backend:
+    annotations: {}
+    apiVersion: networking.istio.io/v1beta1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: Backend
+    namespace: default
+    settings:
+      spec:
+        hosts:
+        - backend
+        location: MESH_INTERNAL
+        ports:
+        - name: http
+          number: 80
+          protocol: HTTP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 04bb97a4-ba4b-4fde-89b2-c9436f62a108
+        label: Backend
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          metadata: {}
+          name: kubernetes
+          version: v1.27.2
+        meshmodel-metadata:
+          isCustomResource: true
+          isNamespaced: true
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          styleOverrides:
+            z-index: 3
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 90
+          posY: 290
+        whiteboardData:
+          style:
+            z-index: 4
+    type: ServiceEntry
+    version: v1.27.2
+  backend-to-database:
+    annotations: {}
+    apiVersion: networking.istio.io/v1beta1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: backend-to-database
+    namespace: default
+    settings:
+      spec:
+        hosts:
+        - backend
+        http:
+        - route:
+          - destination:
+              host: database
+              port:
+                number: 3306
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 48d52b7d-23c1-4004-9d4e-87180180fff8
+        label: backend-to-database
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          metadata: {}
+          name: kubernetes
+          version: v1.27.2
+        meshmodel-metadata:
+          isCustomResource: true
+          isNamespaced: true
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 50
+          posY: 230
+        whiteboardData:
+          style:
+            z-index: 5
+    type: VirtualService
+    version: v1.27.2
+  database:
+    annotations: {}
+    apiVersion: networking.istio.io/v1beta1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: database
+    namespace: default
+    settings:
+      spec:
+        hosts:
+        - database
+        location: MESH_INTERNAL
+        ports:
+        - name: mysql
+          number: 3306
+          protocol: TCP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: e158850a-5d24-4cd8-9dd7-6d7654608281
+        label: database
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          metadata: {}
+          name: kubernetes
+          version: v1.27.2
+        meshmodel-metadata:
+          isCustomResource: true
+          isNamespaced: true
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          styleOverrides:
+            z-index: 5
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 50
+          posY: 290
+        whiteboardData:
+          style:
+            z-index: 6
+    type: ServiceEntry
+    version: v1.27.2
+  frontend:
+    annotations: {}
+    apiVersion: networking.istio.io/v1beta1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: frontend
+    namespace: default
+    settings:
+      spec:
+        hosts:
+        - frontend
+        location: MESH_INTERNAL
+        ports:
+        - name: http
+          number: 80
+          protocol: HTTP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 568a066c-e221-44f0-9f46-c20698e9e695
+        label: frontend
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          metadata: {}
+          name: kubernetes
+          version: v1.27.2
+        meshmodel-metadata:
+          isCustomResource: true
+          isNamespaced: true
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          styleOverrides:
+            z-index: 6
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 150
+          posY: 290
+        whiteboardData:
+          style:
+            z-index: 7
+    type: ServiceEntry
+    version: v1.27.2
+  frontend-to-backend:
+    annotations: {}
+    apiVersion: networking.istio.io/v1beta1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: frontend-to-backend
+    namespace: default
+    settings:
+      spec:
+        hosts:
+        - frontend
+        http:
+        - route:
+          - destination:
+              host: backend
+              port:
+                number: 80
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: fc8d8131-0f79-4a3a-8480-5c83228144fa
+        label: frontend-to-backend
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          metadata: {}
+          name: kubernetes
+          version: v1.27.2
+        meshmodel-metadata:
+          isCustomResource: true
+          isNamespaced: true
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          styleOverrides:
+            z-index: 4
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 110
+          posY: 230
+        whiteboardData:
+          style:
+            z-index: 3
+    type: VirtualService
+    version: v1.27.2

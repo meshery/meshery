@@ -21,7 +21,6 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 
-	"github.com/meshery/meshery/server/helpers/utils"
 	mesheryutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/schemas/models/v1beta1/category"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -65,7 +64,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	}
 	k8sContext := map[string]interface{}{}
 	if len(ctx) > 0 {
-		k8sContext, _ = utils.MarshalAndUnmarshal[models.K8sContext, map[string]interface{}](*ctx[0])
+		k8sContext, _ = mesheryutils.MarshalAndUnmarshal[models.K8sContext, map[string]interface{}](*ctx[0])
 	}
 	count := 0
 	for _, c := range man {
@@ -345,7 +344,7 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 // Returns a map of api resources with key as api-resource kind and value as api-resource object
 func getAPIRes(cli *kubernetes.Client) (map[string]v1.APIResource, error) {
 	var apiRes = make(map[string]v1.APIResource)
-	lists, err := cli.KubeClient.DiscoveryClient.ServerPreferredResources()
+	lists, err := cli.KubeClient.ServerPreferredResources()
 	if err != nil {
 		return nil, err
 	}

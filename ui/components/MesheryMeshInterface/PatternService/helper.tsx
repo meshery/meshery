@@ -1,5 +1,29 @@
+import React from 'react';
 import _ from 'lodash';
 import { Colors } from '@/themes/app';
+
+/**
+ * Returns a value safe to use as React child or tooltip/label text.
+ * Prevents React error #130 (Objects are not valid as a React child).
+ * Use for schema title/description, rawErrors, or any value that might be an object.
+ */
+export function safeDisplayValue(value) {
+  if (value == null) return '';
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean')
+    return value;
+  if (React.isValidElement(value)) return value;
+  return String(value);
+}
+
+/**
+ * Returns a string safe for title/label/tooltip (never an object).
+ */
+export function safeStringTitle(value) {
+  if (value == null) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  return String(value);
+}
 
 function deleteTitleFromJSONSchema(jsonSchema) {
   return { ...jsonSchema, title: '' };

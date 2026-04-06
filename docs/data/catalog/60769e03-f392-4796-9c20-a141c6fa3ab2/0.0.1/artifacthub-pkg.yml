@@ -1,0 +1,20 @@
+version: 0.0.1
+name: install-traefik-as-ingress-controller
+displayName: Install-Traefik-as-ingress-controller
+createdAt: "2024-03-02T06:45:09Z"
+description: Install-Traefik-as-ingress-controller
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/60769e03-f392-4796-9c20-a141c6fa3ab2/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9cb4bfce-ad8f-4a8e-8647-bb138fa07e7f
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

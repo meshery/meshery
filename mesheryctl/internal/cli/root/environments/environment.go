@@ -17,7 +17,6 @@ package environments
 import (
 	"fmt"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/environment"
@@ -35,7 +34,7 @@ var EnvironmentCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "Manage environments",
 	Long: `Create, delete, list of view details of environment(s) of a specific organization
-Documentation for environment can be found at https://docs.meshery.io/concepts/logical/environments
+Find more information at: https://docs.meshery.io/concepts/logical/environments
 	`,
 	Example: `
 // Create an environment in an organization
@@ -79,27 +78,18 @@ func init() {
 	EnvironmentCmd.AddCommand(availableSubcommands...)
 }
 
-// selectComponentPrompt lets user to select a model if models are more than one
-func selectEnvironmentPrompt(environments []environment.Environment) environment.Environment {
-	environmentNames := []string{}
-	environmentArray := environments
+// selectEnvironmentPrompt lets user to select an environment if environments are more than one
+func selectEnvironmentPrompt(environments []environment.Environment) (environment.Environment, error) {
+	environmentNames := make([]string, len(environments))
 
-	for _, environment := range environmentArray {
-		environmentName := fmt.Sprintf("ID: %s, Name: %s, Owner: %s, Organization: %s", environment.ID, environment.Name, environment.Owner, environment.OrganizationID)
-		environmentNames = append(environmentNames, environmentName)
+	for i, environment := range environments {
+		environmentNames[i] = fmt.Sprintf("ID: %s, Name: %s, Owner: %s, Organization: %s", environment.ID, environment.Name, environment.Owner, environment.OrganizationID)
 	}
 
-	prompt := promptui.Select{
-		Label: "Select environment",
-		Items: environmentNames,
+	i, err := utils.RunSelectPrompt("Select environment", environmentNames)
+	if err != nil {
+		return environment.Environment{}, err
 	}
 
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return environmentArray[i]
-	}
+	return environments[i], nil
 }

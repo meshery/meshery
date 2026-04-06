@@ -1,0 +1,24 @@
+version: 0.0.3
+name: expose-nginx-app-with-ingress
+displayName: Expose NGINX app with Ingress
+createdAt: "2025-08-29T20:51:34Z"
+description: hg
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/bf5913ca-e6b3-4467-8830-7718b8b86636/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "gyg \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 10cc20f2-e63f-4071-8ce0-4f42274c8cc1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/bf5913ca-e6b3-4467-8830-7718b8b86636-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/bf5913ca-e6b3-4467-8830-7718b8b86636-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

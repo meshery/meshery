@@ -1,0 +1,21 @@
+name: Meshery UI and Server PR Build
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-backend:
+    uses: ./.github/workflows/build-meshery-server.yml
+   
+  build-ui:
+    uses: ./.github/workflows/build-meshery-ui.yml
+
+  tests-ui-e2e:
+    needs: [build-backend, build-ui]
+    uses: ./.github/workflows/test-e2e-pr.yml
+    with:
+      backend-artifact: ${{ needs.build-backend.outputs.backend-artifact }}
+      ui-artifact: ${{ needs.build-ui.outputs.ui-artifact }}
+      provider-ui-artifact: ${{ needs.build-ui.outputs.provider-ui-artifact }}

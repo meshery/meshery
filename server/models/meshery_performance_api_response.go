@@ -71,7 +71,7 @@ type PerformanceResult struct {
 	PerformanceProfile *uuid.UUID    `json:"performance_profile,omitempty"`
 	UserID             *uuid.UUID    `json:"user_id"`
 	RunnerResults      RunnerResults `json:"runner_results"`
-	ServerMatrics      interface{}   `json:"server_metrics"`
+	ServerMetrics      interface{}   `json:"server_metrics"`
 	ServerBoardConfig  interface{}   `json:"server_board_config,omitempty"`
 	TestStartTime      *time.Time    `json:"test_start_time,omitempty"`
 }

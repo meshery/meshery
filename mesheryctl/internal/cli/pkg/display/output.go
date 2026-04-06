@@ -100,6 +100,7 @@ func NewJSONOutputFormatter[T any](data T) OutputFormatter[T] {
 }
 
 func (j *JSONOutputFormatterSaver[T]) WithFilePath(filePath string) OutputFormatterSaver[T] {
+	utils.Log.Debugf("Setting file path for JSON output formatter saver: %s", filePath)
 	j.FilePath = filePath
 	return j
 }
@@ -112,6 +113,7 @@ func NewJSONOutputFormatterSaver[T any](outputFormatter JSONOutputFormatter[T]) 
 }
 
 func (j *JSONOutputFormatter[T]) WithOutput(out io.Writer) OutputFormatter[T] {
+	utils.Log.Debug("Setting output writer for JSON output formatter")
 	j.Out = out
 	return j
 }
@@ -122,7 +124,7 @@ func (j *JSONOutputFormatter[T]) WithEncoderSettings(settings JsonEncoderSetting
 }
 
 func (j *JSONOutputFormatter[T]) Display() error {
-	// Default to stdout if no output is provided
+	utils.Log.Debug("\nDebug: Displaying data using JSON output formatter\n")
 	if j.Out == nil {
 		j.Out = os.Stdout
 	}
@@ -218,7 +220,7 @@ func (y *YAMLOutputFormatter[T]) WithOutput(out io.Writer) OutputFormatter[T] {
 }
 
 func (y *YAMLOutputFormatter[T]) Display() error {
-	// Default to stdout if no output is provided
+	utils.Log.Debug("\nDebug: Displaying data using YAML output formatter\n")
 	if y.Out == nil {
 		y.Out = os.Stdout
 	}

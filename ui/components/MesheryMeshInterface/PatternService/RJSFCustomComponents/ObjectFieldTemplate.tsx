@@ -9,7 +9,7 @@ import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
-import { calculateGrid } from '../helper';
+import { calculateGrid, safeStringTitle } from '../helper';
 
 /**
  * Get the raw errors from the error schema.
@@ -42,6 +42,7 @@ const ObjectFieldTemplate = ({
 
   errorSchema,
 }) => {
+  const safeId = idSchema?.$id ?? 'object-field';
   const additional = schema?.__additional_property; // check if the object is additional
   const theme = useTheme();
   const rawErrors = getRawErrors(errorSchema);
@@ -55,7 +56,12 @@ const ObjectFieldTemplate = ({
         schema.properties[property.name]?.__additional_property || false;
     }
   });
-  const CustomTitleField = ({ title, id, description, properties }) => {
+  const safeTitleStr = safeStringTitle(additional ? 'Value' : (uiSchema['ui:title'] ?? title));
+  const safeDescriptionStr =
+    description != null && typeof description === 'string' ? description : '';
+
+  const CustomTitleField = ({ title: titleProp, id, description: descProp, properties }) => {
+    const titleStr = safeStringTitle(titleProp ?? safeTitleStr);
     return (
       <Box mb={1} mt={1} id={id}>
         <CssBaseline />
@@ -68,7 +74,7 @@ const ObjectFieldTemplate = ({
             >
               <IconButton
                 className="object-property-expand"
-                onClick={onAddClick(schema)}
+                onClick={typeof onAddClick === 'function' ? onAddClick(schema) : undefined}
                 disabled={disabled || readonly}
               >
                 <AddIcon
@@ -106,10 +112,10 @@ const ObjectFieldTemplate = ({
               variant="body1"
               style={{ fontWeight: 'bold', display: 'inline', fontFamily: 'inherit', fontSize: 13 }}
             >
-              {title.charAt(0).toUpperCase() + title.slice(1)}{' '}
+              {titleStr ? titleStr.charAt(0).toUpperCase() + titleStr.slice(1) : ''}{' '}
             </Typography>
-            {description && (
-              <CustomTextTooltip title={description}>
+            {safeStringTitle(descProp ?? safeDescriptionStr) && (
+              <CustomTextTooltip title={safeStringTitle(descProp ?? safeDescriptionStr)}>
                 <IconButton
                   disableTouchRipple="true"
                   disableRipple="true"
@@ -126,7 +132,10 @@ const ObjectFieldTemplate = ({
               </CustomTextTooltip>
             )}
             {rawErrors.length !== 0 && (
-              <CustomTextTooltip bgColor={ERROR_COLOR} title={rawErrors?.join('  ')}>
+              <CustomTextTooltip
+                bgColor={ERROR_COLOR}
+                title={safeStringTitle(Array.isArray(rawErrors) ? rawErrors.join('  ') : rawErrors)}
+              >
                 <IconButton
                   disableTouchRipple="true"
                   disableRipple="true"
@@ -181,9 +190,9 @@ const ObjectFieldTemplate = ({
       {fieldTitle ? (
         <>
           <CustomTitleField
-            id={`${idSchema.$id}-title`}
-            title={additional ? 'Value' : fieldTitle}
-            description={description}
+            id={`${safeId}-title`}
+            title={safeTitleStr}
+            description={safeDescriptionStr}
             properties={properties}
           />
           {Object.keys(properties).length > 0 && show && Properties}

@@ -1,0 +1,182 @@
+{{ $context := .context -}}
+{{ $sidebarRoot := .sidebarRoot -}}
+{{ $sidebarRootID := .sidebarRootID -}}
+{{ $cacheSidebar := .cacheSidebar -}}
+
+{{ with $context -}}
+
+{{/* When the sidebar is cached, "active" class is set client side. */ -}}
+{{ $shouldDelayActive := $cacheSidebar -}}
+
+<div id="td-sidebar-menu" class="td-sidebar__inner{{ if $shouldDelayActive }} d-none{{ end }}">
+  {{ if not .Site.Params.ui.sidebar_search_disable -}}
+
+  <form class="td-sidebar__search d-flex align-items-center">
+    {{ partial "search-input.html" . }}
+    <button class="btn btn-link td-sidebar__toggle" type="button" {{/**/ -}}
+      data-bs-toggle="collapse" data-bs-target="#td-section-nav" {{/**/ -}}
+      aria-controls="td-section-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+
+  {{- else -}}
+
+  <div id="content-mobile">
+  <form class="td-sidebar__search d-flex align-items-center">
+    {{ partial "search-input.html" . }}
+    <button class="btn btn-link td-sidebar__toggle" type="button" {{/**/ -}}
+      data-bs-toggle="collapse" data-bs-target="#td-section-nav" {{/**/ -}}
+      aria-controls="td-section-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  </div>
+  <div id="content-desktop"></div>
+
+  {{- end }}
+  {{/* */ -}}
+
+  <nav class="td-sidebar-nav collapse
+        {{- if .Site.Params.ui.sidebar_search_disable }} td-sidebar-nav--search-disabled{{ end -}}
+        {{- if .Site.Params.ui.sidebar_menu_foldable }} foldable-nav{{ end }}" {{/**/ -}}
+      id="td-section-nav"
+      {{- if .Site.Params.ui.sidebar_root_enabled }} data-sidebar-root-id="{{ $sidebarRootID }}"{{ end -}}
+    >
+    {{ if and .Site.Params.ui.sidebar_lang_menu (gt (len .Site.Home.Translations) 0) -}}
+    <div class="td-sidebar-nav__section nav-item d-block d-lg-none">
+      {{ partial "navbar-lang-selector.html" . }}
+    </div>
+    {{ end -}}
+    {{ $navRoot := cond (and (ne .Params.toc_root true) (eq .Site.Home.Type "docs")) .Site.Home .FirstSection -}}
+    {{ if $sidebarRoot -}}
+      {{ $navRoot = $sidebarRoot -}}
+    {{ end -}}
+    {{ $ulNr := 0 -}}
+    {{ $ulShow := .Site.Params.ui.ul_show | default 1 -}}
+    {{ $sidebarMenuTruncate := .Site.Params.ui.sidebar_menu_truncate | default 100 -}}
+    <ul class="td-sidebar-nav__section pe-md-3 ul-{{ $ulNr }}">
+      {{ template "section-tree-nav-section" (dict "page" . "section" $navRoot "shouldDelayActive" $shouldDelayActive "sidebarMenuTruncate" $sidebarMenuTruncate "ulNr" $ulNr "ulShow" (add $ulShow 1)) }}
+    </ul>
+  </nav>
+</div>
+
+{{- end }}{{/* with $context */ -}}
+
+{{ define "section-tree-nav-section" -}}
+  {{/* cSpell:ignore manuallink manuallinkrelref manuallinktitle */ -}}
+  {{ $s := .section -}}
+  {{ $p := .page -}}
+  {{ $shouldDelayActive := .shouldDelayActive -}}
+  {{ $sidebarMenuTruncate := .sidebarMenuTruncate -}}
+  {{ $treeRoot := cond (eq .ulNr 0) true false -}}
+  {{ $ulNr := .ulNr -}}
+  {{ $ulShow := .ulShow -}}
+  {{ $active := and (not $shouldDelayActive) (eq $s $p) -}}
+  {{ $activePath := and (not $shouldDelayActive) (or (eq $p $s) ($p.IsDescendant $s)) -}}
+  {{ $show := cond
+        (or
+          (lt $ulNr $ulShow)
+          $activePath
+          (and (not $shouldDelayActive) (eq $s.Parent $p.Parent))
+          (and (not $shouldDelayActive) (eq $s.Parent $p))
+          (not $p.Site.Params.ui.sidebar_menu_compact)
+          (and (not $shouldDelayActive) ($p.IsDescendant $s.Parent))
+        )
+        true false
+  -}}
+  {{ $mid := printf "m-%s" ($s.RelPermalink | anchorize) -}}
+  {{ $pages_tmp := where (union $s.Pages $s.Sections) ".Params.toc_hide" "!=" true -}}
+  {{ $pages_tmp = sort $pages_tmp "Title" "asc" -}}
+  {{ $pages_tmp = sort $pages_tmp "Weight" "asc" -}}
+  {{ $pages := $pages_tmp -}}
+
+  {{ $withChild := gt (len $pages) 0 -}}
+  {{ $manualLink :=
+      cond
+        (isset $s.Params "manuallink")
+        $s.Params.manualLink
+        (cond
+          (isset $s.Params "manuallinkrelref")
+          (relref $s $s.Params.manualLinkRelref)
+          $s.RelPermalink
+        )
+  -}}
+  {{ $manualLinkTitle :=
+      cond
+        (isset $s.Params "manuallinktitle")
+        $s.Params.manualLinkTitle
+        $s.Title
+  -}}
+  {{ if and $treeRoot (eq $s.Params.sidebar_root_for "self") -}}
+    {{ with $s.Parent -}}
+      {{ $manualLink = .RelPermalink -}}
+    {{ end -}}
+  {{ end -}}
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section
+        {{- if $withChild }} with-child{{ else }} without-child{{ end -}}
+        {{ if $activePath }} active-path{{ end -}}
+        {{ if (not (or $show $p.Site.Params.ui.sidebar_menu_foldable )) }} collapse{{ end -}}
+      " {{/**/ -}}
+      id="{{ $mid }}-li" {{- /**/ -}}
+    >
+    {{ if (and $p.Site.Params.ui.sidebar_menu_foldable (ge $ulNr 1)) -}}
+    <input type="checkbox" id="{{ $mid }}-check"{{ if $activePath}} checked{{ end }}/>
+    <label for="{{ $mid }}-check">{{/**/ -}}
+      <a href="{{ $manualLink }}"
+        {{- if ne $s.LinkTitle $manualLinkTitle }} {{/**/ -}}
+          title="{{ $manualLinkTitle }}"
+        {{- end -}}
+        {{ with $s.Params.manualLinkTarget }} {{/**/ -}}
+          target="{{ . }}"
+          {{- if eq . "_blank" }} rel="noopener"{{ end -}}
+        {{ end }} {{/**/ -}}
+        class="align-left ps-0 {{ if $active}} active{{ end }} td-sidebar-link
+          {{- if $s.IsPage }} td-sidebar-link__page
+          {{- else }} td-sidebar-link__section
+          {{- end }}
+          {{- if $treeRoot }} tree-root{{ end }}" {{/**/ -}}
+        id="{{ $mid }}" {{- /**/ -}}
+      >
+        {{- with $s.Params.Icon -}}
+          <i class="{{ . }}"></i>
+        {{- end -}}
+        <span class="{{ if $active }}td-sidebar-nav-active-item{{ end }}">
+          {{- $s.LinkTitle -}}
+        </span> {{- /**/ -}}
+      </a> {{- /**/ -}}
+    </label>
+    {{ else -}}
+      <a href="{{ $manualLink }}"
+        {{- if ne $s.LinkTitle $manualLinkTitle }} title="{{ $manualLinkTitle }}"{{ end -}}
+        {{ with $s.Params.manualLinkTarget }} {{/**/ -}}
+          target="{{ . }}"
+          {{- if eq . "_blank" }} rel="noopener"{{ end -}}
+        {{ end }} {{/**/ -}}
+        class="align-left ps-0
+          {{- if $active}} active{{ end }} {{/**/ -}}
+          td-sidebar-link
+          {{- if $s.IsPage }} td-sidebar-link__page{{ else }} td-sidebar-link__section{{ end }}
+          {{- if $treeRoot }} tree-root{{ end }}" {{/**/ -}}
+        id="{{ $mid }}" {{- /**/ -}}
+      >
+      {{- with $s.Params.Icon -}}
+        <i class="{{ . }}"></i>
+      {{- end -}}
+      <span class="
+        {{- if $active }}td-sidebar-nav-active-item{{ end -}}
+        {{- if and $treeRoot $s.Params.sidebar_root_for site.Params.ui.sidebar_root_enabled }} td-sidebar-root-up-icon{{ end -}}
+      ">
+        {{- $s.LinkTitle -}}
+      </span></a>
+    {{- end -}}
+    {{ if $withChild -}}
+    {{ $ulNr := add $ulNr 1 }}
+    <ul class="ul-{{ $ulNr }}{{ if (gt $ulNr 1)}} foldable{{end}}">
+      {{ range $pages -}}
+        {{ if (not (and (eq $s $p.Site.Home) (eq .Params.toc_root true))) -}}
+          {{ template "section-tree-nav-section" (dict "page" $p "section" . "shouldDelayActive" $shouldDelayActive "sidebarMenuTruncate" $sidebarMenuTruncate "ulNr" $ulNr "ulShow" $ulShow) }}
+        {{- end }}
+      {{- end }}
+    </ul>
+    {{- end }}
+  </li>
+{{- end -}}

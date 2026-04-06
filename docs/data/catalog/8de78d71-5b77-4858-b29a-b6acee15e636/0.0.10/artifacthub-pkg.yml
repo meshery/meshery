@@ -1,0 +1,24 @@
+version: 0.0.10
+name: testtt
+displayName: testtt
+createdAt: "2025-03-04T17:28:28Z"
+description: zihan two
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8de78d71-5b77-4858-b29a-b6acee15e636/0.0.10/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "zihan two \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 30f82ac6-f326-44c0-80d0-275db76dae9b
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8de78d71-5b77-4858-b29a-b6acee15e636-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8de78d71-5b77-4858-b29a-b6acee15e636-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -18,11 +18,11 @@ func (kp *KeyPersister) GetUsersKeys(search, order, updatedAfter string) ([]byte
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "function", "category", "subcategory"})
 
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	count := int64(0)
-	keys := []*Key{}
+	keys := []Key{}
 
 	query := kp.DB.Where("updated_at > ?", updatedAfter).Order(order)
 
@@ -52,9 +52,9 @@ func (kp *KeyPersister) SaveUsersKey(key *Key) (*Key, error) {
 	return key, nil
 }
 
-// SaveUsersKeys saves a key to the database
-func (kp *KeyPersister) SaveUsersKeys(keys []*Key) ([]*Key, error) {
-	if err := kp.DB.Save(keys).Error; err != nil {
+// SaveUsersKeys saves multiple keys to the database
+func (kp *KeyPersister) SaveUsersKeys(keys []Key) ([]Key, error) {
+	if err := kp.DB.Save(&keys).Error; err != nil {
 		return nil, ErrDBCreate(err)
 	}
 

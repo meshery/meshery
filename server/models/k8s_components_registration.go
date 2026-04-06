@@ -10,7 +10,7 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/schemas/models/v1alpha1/capability"
+	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 
 	"github.com/meshery/meshkit/logger"

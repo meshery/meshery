@@ -26,6 +26,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -52,6 +53,9 @@ mesheryctl design delete [file | URL]
 		if len(args) > 0 {
 			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
+				if errors.GetCode(err) == utils.ErrNotFoundCode {
+					return ErrDesignNotFound(args[0])
+				}
 				return utils.ErrInvalidNameOrID(err)
 			}
 		}
@@ -60,6 +64,9 @@ mesheryctl design delete [file | URL]
 		if isID {
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
+				if errors.GetCode(err) == utils.ErrNotFoundCode {
+					return ErrDesignNotFound(args[0])
+				}
 				return ErrDeleteDesign(err, args[0])
 			}
 			utils.Log.Info("Design ", args[0], " deleted")
@@ -128,7 +135,7 @@ mesheryctl design delete [file | URL]
 			}
 
 			if len(response) == 0 {
-				return ErrDesignNotFound()
+				return ErrDesignNotFound("design at " + file)
 			}
 
 			patternFileByt, err = yaml.Marshal(response[0].PatternFile)

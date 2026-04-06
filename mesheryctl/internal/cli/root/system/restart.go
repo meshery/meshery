@@ -103,7 +103,7 @@ func restart() error {
 			return ErrRestartMeshery(err)
 		}
 	} else {
-		if currPlatform == "kubernetes" {
+		if currPlatform == platformKubernetes {
 			userResponse := false
 			if utils.SilentFlag {
 				userResponse = true

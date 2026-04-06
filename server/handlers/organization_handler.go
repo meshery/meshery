@@ -39,5 +39,7 @@ func (h *Handler) GetOrganizations(w http.ResponseWriter, req *http.Request, _ *
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }

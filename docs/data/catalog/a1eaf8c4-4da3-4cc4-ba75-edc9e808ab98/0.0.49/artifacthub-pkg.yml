@@ -1,0 +1,26 @@
+version: 0.0.49
+name: elkk-stack-with-kafka
+displayName: ELKK Stack with Kafka
+createdAt: "2025-09-30T13:20:43Z"
+description: |-
+    ELKK (ELK + Kafka) logging pipeline: My App emits logs → Kafka Producer publishes to Kafka topic logs → Kafka brokers the stream (9092) → Logstash consumes from Kafka and indexes into Elasticsearch (index pattern app-logs-*, port 9200) → Kibana queries Elasticsearch for visualisation (5601).
+    This Meshery Design captures the topology and intent; some nodes use generic workload placeholders where native models were not available.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/a1eaf8c4-4da3-4cc4-ba75-edc9e808ab98/0.0.49/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Design is topology-focused; some components (Kafka Producer, Logstash, Kibana) are represented as generic workloads/Namespaces.\nProvides a Logstash pipeline that consumes from Kafka and outputs to Elasticsearch.\nUpdate hostnames/ports for your environment (e.g., kafka:9092, elasticsearch:9200).\nSecurity/auth not configured (no TLS/SASL for Kafka, no X-Pack auth for ES/Kibana).\nIntended for a single-namespace demo; scaling and production hardening are out of scope. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 985074f5-27a0-406c-b83a-7f247ba77746
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a1eaf8c4-4da3-4cc4-ba75-edc9e808ab98-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a1eaf8c4-4da3-4cc4-ba75-edc9e808ab98-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

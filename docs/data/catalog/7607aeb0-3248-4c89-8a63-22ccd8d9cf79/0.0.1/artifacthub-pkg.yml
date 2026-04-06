@@ -1,0 +1,20 @@
+version: 0.0.1
+name: nginx-deployment
+displayName: Nginx Deployment
+createdAt: "2023-01-25T15:09:08Z"
+description: A widely-used web server and reverse proxy server, within a Kubernetes cluster. This example provides a design for deploying, configuring, and managing Nginx in a containerized environment, leveraging Kubernetes resources to ensure scalability, resilience, and ease of management.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7607aeb0-3248-4c89-8a63-22ccd8d9cf79/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure that the Nginx deployment is secure by using network policies to restrict traffic flow, RBAC to control access to Kubernetes resources, and Secrets to manage sensitive data such as SSL certificates.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 173202fe-b94d-4064-8a86-1cf063732884
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

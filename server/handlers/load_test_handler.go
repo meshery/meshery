@@ -41,7 +41,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "failed to read request body: %s", err)
+		if _, writeErr := fmt.Fprintf(w, "failed to read request body: %s", err); writeErr != nil {
+			h.log.Error(writeErr)
+		}
 		return
 	}
 
@@ -176,7 +178,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 
-	isSSLCertificateProvided := req.URL.Query().Get("cert") == "true"
+	isSSLCertificateProvided := req.URL.Query().Get("cert") == queryParamTrue
 
 	/*
 	 When "cert" query param is set the body contains self-signed certs

@@ -101,7 +101,9 @@ mesheryctl perf profile test --view
 				return err
 			}
 
-			outputFormatter.Display()
+			if err := outputFormatter.Display(); err != nil {
+				return err
+			}
 		} else if !viewSingleProfile { // print all profiles
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data, nil)
 		} else { // print single profile
