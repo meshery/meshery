@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 5th 2026, 11:31:32 pm
+- Testing started at: April 6th 2026, 6:51:47 pm
 
 **📦 Test Result Summary**
 
-- ✅ 53 passed
-- ❌ 16 failed
+- ✅ 52 passed
+- ❌ 17 failed
 - ⚠️ 0 flaked
 - ⏩ 3 skipped
 
-⌛ _Duration: 5 minutes and 57 seconds_
+⌛ _Duration: 6 minutes and 9 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -52,7 +52,7 @@
 | 29 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ✅ |
 | 30 | Meshery | chromium-meshery-provider | Verify Kanvas Details |  | ✅ |
 | 31 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
-| 32 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
+| 32 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ❌ |
 | 33 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ✅ |
 | 34 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ✅ |
 | 35 | Meshery | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ✅ |
@@ -281,6 +281,20 @@ SyntaxError: "undefined" is not valid JSON
  [90m 45 |[39m       [36mconst[39m designToTest [33m=[39m { [33m...[39mdesign[33m,[39m relationships[33m:[39m [] }[33m;[39m
  [90m 46 |[39m[0m
 ```
+
+</details>
+
+<details>
+<summary>❌ Verify Meshery Adapter for Istio Section (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
 
 </details>
 
