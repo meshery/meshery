@@ -211,12 +211,5 @@ func setupLogger() {
 		logLevel = logrus.DebugLevel
 	}
 
-<<<<<<< refactor/config-mutation-helper
-func setupLogger() {
-
-	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, RootCmd.OutOrStdout())
-
-=======
 	utils.Log = mesheryctllogger.GetMeshkitLogger(logLevel)
->>>>>>> master
 }
