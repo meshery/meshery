@@ -3,6 +3,7 @@ import { Avatar, Button } from '@sistent/sistent';
 import NoSsr from '@mui/material/NoSsr';
 import Link from 'next/link';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
+import { mesheryApiPath } from '../rtk-query/index';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
@@ -63,7 +64,7 @@ const User = (props) => {
 
   const { color } = props;
 
-  const source = new URL('/api/user/token', window.location.origin);
+  const source = new URL(mesheryApiPath('user/token'), window.location.origin);
   const sourceURL = btoa(source.toString());
   const refURL = btoa(window.location.href);
 

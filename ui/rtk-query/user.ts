@@ -43,7 +43,7 @@ export const userApi = api
         invalidatesTags: [Tags.LOAD_TEST_PREF],
       }),
       getToken: builder.query({
-        query: () => `/api/user/token`,
+        query: () => mesheryApiPath('user/token'),
         method: 'GET',
       }),
       getUserPref: builder.query({
@@ -223,7 +223,7 @@ export const userApi = api
       }),
       getAccessToken: builder.query({
         query: () => ({
-          url: `/api/user/token`,
+          url: mesheryApiPath('user/token'),
         }),
         transformResponse: (response) => {
           return response?.token;
