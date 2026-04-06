@@ -1,17 +1,17 @@
-name: Build Server
+name: Build Meshery Image
 
 on:
   workflow_call:
     outputs:
       meshery-image:
-        description: 'Name of the backend artifact'
+        description: 'Name of the artifact'
         value: 'meshery-image' 
 
     secrets: {}
 
 jobs:
-  build-backend:
-    name: Backend build
+  build-image:
+    name: Build image
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
