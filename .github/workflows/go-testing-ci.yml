@@ -157,4 +157,6 @@ jobs:
           ./mesheryctl system stop -y;
           echo "Running Mesheryctl with ${{ matrix.platform }} completed."
         working-directory: ./mesheryctl
-
+      - name: Free disk space (end)
+        if: always()
+        uses: ./.github/actions/free-disk-space/end

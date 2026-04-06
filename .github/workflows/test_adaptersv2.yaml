@@ -59,6 +59,8 @@ jobs:
     outputs:
       exitstatus: ${{ steps.runresources.outputs.exitstatus }}
     steps:
+      - name: Free disk space (start)
+        uses: ./.github/actions/free-disk-space/start
       - name: Set adapter_name for output
         id: adapter_name
         run: |
@@ -279,3 +281,6 @@ jobs:
           if [ "$exitstatus" -eq 1 ];then
               exit 1
           fi
+      - name: Free disk space (end)
+        if: always()
+        uses: ./.github/actions/free-disk-space/end

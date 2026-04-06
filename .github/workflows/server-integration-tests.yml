@@ -26,12 +26,8 @@ jobs:
         with:
           fetch-depth: 1
         # inspired by .github/workflows/build-ui-and-server.yml
-      - name: Free disk space
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /opt/hostedtoolcache
+      - name: Free disk space (start)
+        uses: ./.github/actions/free-disk-space/start
 
       - name: file system info 00
         run: df -h
@@ -76,3 +72,6 @@ jobs:
 
       - name: Integration tests clean up
         run: make server-integration-tests-meshsync-cleanup
+      - name: Free disk space (end)
+        if: always()
+        uses: ./.github/actions/free-disk-space/end

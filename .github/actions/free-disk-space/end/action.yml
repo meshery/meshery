@@ -1,0 +1,18 @@
+name: "End Cleanup"
+description: "Free disk space after job"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Cleanup disk space
+      shell: bash
+      run: |
+        minikube delete || true
+        docker system prune -af || true
+        go clean -cache || true
+        rm -rf ~/.meshery/logs/ || true
+        rm -rf ~/.cache/ms-playwright || true
+        npm cache clean --force || true
+        go clean -modcache || true
+        rm -rf ~/.meshery/logs/ || true
+        go clean -cache || true

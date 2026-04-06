@@ -58,6 +58,8 @@ jobs:
     outputs:
       exitstatus: ${{ steps.runresources.outputs.exitstatus }}
     steps:
+      - name: Free disk space (start)
+        uses: ./.github/actions/free-disk-space/start
       - name: Setting up minikube
         id: setk8s
         uses: manusa/actions-setup-minikube@v2.11.0
@@ -245,3 +247,6 @@ jobs:
           if [ "$exitstatus" -eq 1 ];then
               exit 1
           fi
+      - name: Free disk space (end)
+        if: always()
+        uses: ./.github/actions/free-disk-space/end

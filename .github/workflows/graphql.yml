@@ -17,6 +17,12 @@ jobs:
         uses: actions/checkout@master
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
+      - name: Free disk space (start)
+        uses: ./.github/actions/free-disk-space/start
+      - name: Setup sparse checkout
+        run: |
+          git sparse-checkout init --cone
+          git sparse-checkout set server/internal/graphql/schema/schema.graphql docs/
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
