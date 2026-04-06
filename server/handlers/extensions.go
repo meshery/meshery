@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"path"
 	"plugin"
+	"strings"
 	"sync"
 
 	"github.com/meshery/meshery/server/extensions"
@@ -106,11 +107,25 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Reques
 func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	resp, err := provider.ExtensionProxy(req)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error: %v", err.Error()), http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		if encodeErr := json.NewEncoder(w).Encode(map[string]string{"message": err.Error()}); encodeErr != nil {
+			h.log.Error(encodeErr)
+		}
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	for key, values := range resp.Headers {
+		if strings.EqualFold(key, "Content-Length") {
+			continue
+		}
+		for _, value := range values {
+			w.Header().Add(key, value)
+		}
+	}
+	if w.Header().Get("Content-Type") == "" {
+		w.Header().Set("Content-Type", "application/json")
+	}
 	w.WriteHeader(resp.StatusCode)
 	if _, err := fmt.Fprint(w, string(resp.Body)); err != nil {
 		h.log.Error(err)

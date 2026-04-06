@@ -4347,6 +4347,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 
 	response := &ExtensionProxyResponse{
 		Body:       bdr,
+		Headers:    resp.Header.Clone(),
 		StatusCode: resp.StatusCode,
 	}
 
@@ -4356,7 +4357,8 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 		l.Log.Info("response retrieved from remote provider.")
 		return response, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("failed to communicate with remote provider. "), string(bdr), resp.StatusCode)
+	l.Log.Error(ErrFetch(fmt.Errorf("failed to communicate with remote provider. "), string(bdr), resp.StatusCode))
+	return response, nil
 }
 
 func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
