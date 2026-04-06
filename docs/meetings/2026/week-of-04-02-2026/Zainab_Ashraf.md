@@ -1,0 +1,2 @@
+My name is Zainab Ashraf, and I am from Pakistan. I recently completed my Bachelor’s in Computer Science and am currently pursuing my Master’s in Computer Science at the University of Engineering and Technology, Lahore.
+I am very excited to be part of the Layer5 community! I am currently learning more about open-source development and contributing to projects like Meshery. I would love to participate actively, learn from all of you, and contribute wherever I can.

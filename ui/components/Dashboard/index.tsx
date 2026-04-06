@@ -42,10 +42,11 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 const useDashboardRouter = () => {
   const router = useRouter();
-  const { query, push: pushRoute, route } = router;
+  const { query, push: pushRoute, route, isReady } = router;
 
-  const resourceCategory = query.resourceCategory || 'Overview';
-  const selectedResource = query.resource;
+  // Use 'Overview' until router is hydrated with query params
+  const resourceCategory = isReady ? query.resourceCategory || 'Overview' : 'Overview';
+  const selectedResource = isReady ? query.resource : undefined;
 
   const changeResourceTab = (resourceCategory) => {
     if (query.resourceCategory === resourceCategory) {

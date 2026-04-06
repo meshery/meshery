@@ -1,9 +1,9 @@
-import { api } from './index';
+import { api, mesheryApiPath } from './index';
 
 export const meshApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getMesh: builder.query({
-      query: () => 'mesh',
+      query: () => mesheryApiPath('mesh'),
     }),
   }),
 });

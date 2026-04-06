@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/controllers"
 )
 
 func TestControllerEventActedUponPrefersConnectionID(t *testing.T) {
@@ -55,5 +57,40 @@ func TestShouldPersistControllerEvent(t *testing.T) {
 
 	if shouldPersistControllerEvent(userID, uuid.Nil) {
 		t.Fatal("expected controller event persistence to be skipped when actedUpon is nil")
+	}
+}
+
+func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
+	// Create an empty K8sContext which will result in an invalid kubeconfig
+	// and eventually a failure in mesherykube.New()
+	ctx := K8sContext{
+		ID:   "test-context",
+		Name: "test-cluster",
+	}
+
+	log, _ := logger.New("test", logger.Options{})
+
+	mch := NewMesheryControllersHelper(
+		log,
+		controllers.OperatorDeploymentConfig{},
+		nil,
+		nil,
+		nil,
+		nil,
+	)
+	
+	// A successful execution of this function without panicking indicates the fix is working.
+	// We wrap in a defer-recover just to explicitly fail the test if a panic occurs.
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("AddCtxControllerHandlers panicked, indicating the nil pointer bug is still present: %v", r)
+		}
+	}()
+
+	mch.AddCtxControllerHandlers(ctx)
+
+	// Additionally, verify that ctxControllerHandlers is still empty/nil because it should have returned early
+	if len(mch.ctxControllerHandlers) != 0 {
+		t.Fatalf("expected ctxControllerHandlers to be empty, got %d", len(mch.ctxControllerHandlers))
 	}
 }
