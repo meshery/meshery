@@ -35,5 +35,5 @@ setup() {
 
     assert_failure
     assert_output --partial "Error"
-    assert_output --partial "record not found"
+    assert_output --partial "failed to get workspace by ID"
 }
