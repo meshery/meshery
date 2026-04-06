@@ -25,7 +25,7 @@ import (
 //
 // ```?search={environments_name}``` If search is non empty then a greedy search is performed
 //
-// ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org *required*
+// ```?orgId={orgid}``` orgId is used to retrieve environments belonging to a particular org *required*
 //
 // ```?filter={condition}```
 // responses:
@@ -40,7 +40,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 
 	q := req.URL.Query()
 
-	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q.Get("orgID"))
+	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q.Get("orgId"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
@@ -56,7 +56,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 // swagger:route GET /api/environments/{id} EnvironmentAPI idGetEnvironmentByIDHandler
 // Handle GET for Environment info by ID
 //
-// ```?orgID={orgid}``` orgID is used to retrieve environments belonging to a particular org
+// ```?orgId={orgid}``` orgId is used to retrieve environments belonging to a particular org
 //
 // Returns Environment info
 // responses:
@@ -65,7 +65,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	environmentID := mux.Vars(r)["id"]
 	q := r.URL.Query()
-	resp, err := provider.GetEnvironmentByID(r, environmentID, q.Get("orgID"))
+	resp, err := provider.GetEnvironmentByID(r, environmentID, q.Get("orgId"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
