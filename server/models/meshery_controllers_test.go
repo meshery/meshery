@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+	"sync"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -60,7 +62,31 @@ func TestShouldPersistControllerEvent(t *testing.T) {
 	}
 }
 
+func TestOperatorTracker_ConcurrentAccess(t *testing.T) {
+	ot := NewOperatorTracker(false)
+	var wg sync.WaitGroup
+
+	// Start multiple goroutines trying to read and write to the OperatorTracker concurrently
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		go func(id int) {
+			defer wg.Done()
+			ctxID := fmt.Sprintf("ctx-%d", id%10)
+
+			// Mix of reads and writes
+			ot.IsUndeployed(ctxID)
+			ot.Undeployed(ctxID, id%2 == 0)
+			ot.IsUndeployed(ctxID)
+		}(i)
+	}
+
+	// Wait for all goroutines to finish. If there is a concurrent map access panic,
+	// this test will fail.
+	wg.Wait()
+}
+
 func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
+
 	// Create an empty K8sContext which will result in an invalid kubeconfig
 	// and eventually a failure in mesherykube.New()
 	ctx := K8sContext{
