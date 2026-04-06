@@ -140,13 +140,10 @@ class MesheryDocument extends Document<MyDocumentProps> {
             dangerouslySetInnerHTML={{
               __html: `
                 (function () {
-                  const loaderId = "PRE_REACT_LOADER-text-message"
-
                   try {
-                    var el = document.getElementById(loaderId)
-                    if (!el) return;
-
-                    el.textContent = window.Loader.PersistedRandomLoadingMessage()
+                    if (window.Loader?.initializePreReactLoader) {
+                      window.Loader.initializePreReactLoader();
+                    }
                   } catch (e) {
                     console.log("Failed to set loading message",e)
                   }
