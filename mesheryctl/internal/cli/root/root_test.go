@@ -27,14 +27,12 @@ func TestRootCmdIntegration(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 
-	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
 
-	// update all locations
 	fixturesDirPath := filepath.Join(currDir, "fixtures")
 	utils.MesheryFolder = filepath.Join(fixturesDirPath, ".meshery")
 	utils.DefaultConfigPath = filepath.Join(utils.MesheryFolder, "config.yaml")
@@ -56,25 +54,30 @@ func TestRootCmdIntegration(t *testing.T) {
 			ExpectedResponse: "Context: local2\nChannel: edge\nVersion: latest\n\n",
 		},
 		{
-			Name:             "view the channel with verbose flag",
-			Args:             []string{"system", "channel", "view", "--verbose"},
-			ExpectedResponse: "Context: local\nChannel: stable\nVersion: latest\n\n",
+			Name: "view the channel with verbose flag",
+			Args: []string{"system", "channel", "view", "--verbose"},
+			ExpectedResponse: fmt.Sprintf(
+				"Using config file:%s\nContext: local\nChannel: stable\nVersion: latest\n\n",
+				utils.DefaultConfigPath,
+			),
 		},
 		{
-			Name:             "view the channel with short verbose flag and different config",
-			Args:             []string{"system", "channel", "view", "-v", "--config", testConfigPath},
-			ExpectedResponse: "Context: local2\nChannel: edge\nVersion: latest\n\n",
+			Name: "view the channel with short verbose flag and different config",
+			Args: []string{"system", "channel", "view", "-v", "--config", testConfigPath},
+			ExpectedResponse: fmt.Sprintf(
+				"Using config file:%s\nContext: local2\nChannel: edge\nVersion: latest\n\n",
+				testConfigPath,
+			),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			// So that flag values from any previous test are not used.
 			resetFlags()
 			viper.Reset()
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-    		RootCmd.SetOut(b)
+			RootCmd.SetOut(b)
 			RootCmd.SetArgs(tt.Args)
 
 			err := RootCmd.Execute()
