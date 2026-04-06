@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       meshery-image:
-        description: 'Name of the backend artifact to download'
+        description: 'Name of the Docker image artifact to download'
         required: true
         type: string
     
