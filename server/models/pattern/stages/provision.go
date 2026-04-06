@@ -3,6 +3,7 @@ package stages
 import (
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/meshery/meshery/server/models/pattern/planner"
 	"github.com/meshery/meshkit/logger"
@@ -43,6 +44,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			return
 		}
 
+		var errsMx sync.Mutex
 		errs := []error{}
 
 		// Execute the plan
@@ -52,8 +54,10 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			err := orchestration.EnrichComponentWithMesheryMetadata(&component, data.Pattern.ID.String(), data.Pattern.Version)
 
 			if err != nil {
-				fmt.Println("Err while assigning labels", err)
+				log.Error(err)
+				errsMx.Lock()
 				errs = append(errs, err)
+				errsMx.Unlock()
 				return false
 			}
 
@@ -67,7 +71,9 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 			msg, err := act.Provision(ccp)
 			if err != nil {
+				errsMx.Lock()
 				errs = append(errs, err)
+				errsMx.Unlock()
 				return false
 			}
 			data.Lock.Lock()

@@ -45,12 +45,15 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 	msgs := make([]DeploymentMessagePerContext, 0)
 	var msgsMx sync.Mutex
 
+	var errsMx sync.Mutex
 	var errs []error
 	var kclis []*kubernetes.Client
 	for _, config := range kconfigs {
 		cli, err := kubernetes.New([]byte(config))
 		if err != nil {
+			errsMx.Lock()
 			errs = append(errs, err)
+			errsMx.Unlock()
 			continue
 		}
 		kclis = append(kclis, cli)
@@ -79,7 +82,9 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					deploymentMsg.Message = result
 					if err != nil {
 						deploymentMsg.Success = false
+						errsMx.Lock()
 						errs = append(errs, err)
+						errsMx.Unlock()
 						deploymentMsg.Error = err
 					}
 					msgsPerComp = append(msgsPerComp, deploymentMsg)
@@ -100,6 +105,9 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					_msg.Message = fmt.Sprintf("Error %sing %s/%s", action, patternName, comp.DisplayName)
 					_msg.Error = err
 					_msg.Success = false
+					errsMx.Lock()
+					errs = append(errs, err)
+					errsMx.Unlock()
 				}
 				msgsPerComp = append(msgsPerComp, _msg)
 			}
