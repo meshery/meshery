@@ -8,7 +8,7 @@ const globals = require('globals');
 // built-in parser) for JS/JSX files; the TS entry already uses @typescript-eslint/parser.
 const patchedNextConfig = next.map((cfg) => {
   if (cfg.name === 'next') {
-    const { parser, globals, ...restLangOpts } = cfg.languageOptions ?? {};
+    const { parser, ...restLangOpts } = cfg.languageOptions ?? {};
     return {
       ...cfg,
       languageOptions: {
