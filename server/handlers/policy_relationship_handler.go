@@ -13,9 +13,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
-	"github.com/meshery/schemas/models/v1alpha1/capability"
-	"github.com/meshery/schemas/models/v1alpha1/core"
-	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/capability"
+	"github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 
@@ -63,10 +63,10 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 	from := fromSet[0]
 	to := toSet[0]
-	if from.Patch == nil || from.Patch.MutatedRef == nil {
+	if from.RelationshipDefinitionSelectorsPatch == nil || from.RelationshipDefinitionSelectorsPatch.MutatedRef == nil {
 		return alias, false
 	}
-	mutatedRefs := *from.Patch.MutatedRef
+	mutatedRefs := *from.RelationshipDefinitionSelectorsPatch.MutatedRef
 
 	if len(mutatedRefs) == 0 {
 		return alias, false

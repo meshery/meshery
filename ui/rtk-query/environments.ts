@@ -3,8 +3,8 @@ import {
   useCreateEnvironmentMutation as useSchemasCreateEnvironmentMutation,
   useGetEnvironmentsQuery as useSchemasGetEnvironmentsQuery,
   useRemoveConnectionFromEnvironmentMutation as useSchemasRemoveConnectionFromEnvironmentMutation,
-} from '@meshery/schemas/dist/mesheryApi';
-import { api } from './index';
+} from '@meshery/schemas/mesheryApi';
+import { api, mesheryApiPath } from './index';
 
 const TAGS = {
   ENVIRONMENT_CONNECTIONS: 'enivroment_connections',
@@ -17,7 +17,7 @@ const connectionsApi = api
     endpoints: (builder) => ({
       updateEnvironment: builder.mutation({
         query: (queryArg) => ({
-          url: `environments/${queryArg.environmentId}`,
+          url: mesheryApiPath(`environments/${queryArg.environmentId}`),
           method: 'PUT',
           body: queryArg.environmentPayload,
         }),
@@ -27,7 +27,7 @@ const connectionsApi = api
 
       deleteEnvironment: builder.mutation({
         query: (queryArg) => ({
-          url: `environments/${queryArg.environmentId}`,
+          url: mesheryApiPath(`environments/${queryArg.environmentId}`),
           method: 'DELETE',
         }),
 
@@ -36,7 +36,7 @@ const connectionsApi = api
 
       getEnvironmentConnections: builder.query({
         query: (queryArg) => ({
-          url: `environments/${queryArg.environmentId}/connections`,
+          url: mesheryApiPath(`environments/${queryArg.environmentId}/connections`),
           params: {
             page: queryArg.page || 0,
             per_page: queryArg.per_page,
@@ -52,7 +52,7 @@ const connectionsApi = api
 
       saveEnvironment: builder.mutation({
         query: (queryArg) => ({
-          url: `environments`,
+          url: mesheryApiPath(`environments`),
           method: 'POST',
           body: queryArg.body,
         }),

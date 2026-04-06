@@ -108,8 +108,11 @@ mesheryctl system status --verbose
 		if err != nil {
 			return err
 		}
+
+		// If Meshery is not running, print the status and return
 		if !ok {
-			return utils.ErrMesheryServerNotRunning(currPlatform)
+			utils.Log.Infof("Context: %s\nPlatform: %s\nStatus: Meshery is not running", mctlCfg.GetCurrentContextName(), currPlatform)
+			return nil
 		}
 
 		switch currPlatform {
@@ -133,7 +136,7 @@ mesheryctl system status --verbose
 				PrintLogs:           false,
 				IsPreRunE:           false,
 				Subcommand:          "status",
-				RunKubernetesChecks: true,
+				RunKubernetesChecks: false,
 			}
 			hc, err := NewHealthChecker(hcOptions)
 			if err != nil {
@@ -144,7 +147,6 @@ mesheryctl system status --verbose
 				return nil
 			}
 
-			fallthrough
 		case platformKubernetes:
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace

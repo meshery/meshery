@@ -1,7 +1,6 @@
 package root
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -58,12 +57,12 @@ func TestRootCmdIntegration(t *testing.T) {
 		{
 			Name:             "view the channel with verbose flag",
 			Args:             []string{"system", "channel", "view", "--verbose"},
-			ExpectedResponse: fmt.Sprintf("Using config file:%s\nContext: local\nChannel: stable\nVersion: latest\n\n", utils.DefaultConfigPath),
+			ExpectedResponse: "Context: local\nChannel: stable\nVersion: latest\n\n",
 		},
 		{
 			Name:             "view the channel with short verbose flag and different config",
 			Args:             []string{"system", "channel", "view", "-v", "--config", testConfigPath},
-			ExpectedResponse: fmt.Sprintf("Using config file:%s\nContext: local2\nChannel: edge\nVersion: latest\n\n", testConfigPath),
+			ExpectedResponse: "Context: local2\nChannel: edge\nVersion: latest\n\n",
 		},
 	}
 

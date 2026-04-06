@@ -1,0 +1,20 @@
+version: 0.0.1
+name: kyverno-policy-engine
+displayName: Kyverno Policy Engine
+createdAt: "2025-10-12T17:11:40Z"
+description: Kyverno Policy Engine
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/12250207-b931-43b6-b3c2-a3dbc0ab775a/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: f5f6fccb-7c48-497d-a848-21f03d793cfa
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

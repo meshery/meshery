@@ -196,7 +196,7 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 }
 
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ := uuid.FromString(environmentPayload.OrgId)
+	orgId := uuid.UUID(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
@@ -210,7 +210,7 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	id, _ := uuid.FromString(environmentID)
-	orgId, _ := uuid.FromString(environmentPayload.OrgId)
+	orgId := uuid.UUID(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
@@ -1364,7 +1364,7 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 		return nil, fmt.Errorf("error retrieving count of credentials for user id: %s - %v", userID, err)
 	}
 
-	var credentialsList []*Credential
+	var credentialsList []Credential
 	if count > 0 {
 		if err := result.Offset(page * pageSize).Limit(pageSize).Find(&credentialsList).Error; err != nil {
 			if err != gorm.ErrRecordNotFound {
@@ -1388,11 +1388,12 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
-	if err := l.GetGenericPersister().Model(*updatedCredential).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserID, credential.ID).Updates(credential); err != nil {
-		return nil, fmt.Errorf("error updating user credential: %v", err)
+	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential)
+	if db.Error != nil {
+		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
 	}
 
-	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserID, credential.ID).First(updatedCredential).Error; err != nil {
+	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserId, credential.ID).First(updatedCredential).Error; err != nil {
 		return nil, fmt.Errorf("error getting updated user credential: %v", err)
 	}
 	return updatedCredential, nil
@@ -1446,9 +1447,8 @@ func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byt
 	return l.KeyPersister.GetUsersKey(id)
 }
 
-// SaveKey saves the given key with the provider
-func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []*Key) ([]*Key, error) {
-	// fmt.Printf(keys)
+// SaveUsersKey saves the given keys with the provider
+func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []Key) ([]Key, error) {
 	return l.KeyPersister.SaveUsersKeys(keys)
 }
 

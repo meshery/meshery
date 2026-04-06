@@ -136,13 +136,13 @@ mesheryctl system logs meshery-istio
 			utils.Log.Info("Starting Meshery logging...")
 
 			if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
-				return ErrDockerComposeFileMissing(err)
+				return utils.ErrDockerComposeFileMissing(err)
 			}
 
 			// Use compose library instead of exec.Command
 			composeClient, err := utils.NewComposeClient()
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to create compose client"))
+				return utils.ErrDockerComposeClient(err)
 			}
 
 			if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, true, os.Stdout); err != nil {

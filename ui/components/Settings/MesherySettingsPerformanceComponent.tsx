@@ -87,7 +87,8 @@ const MesherySettingsPerformanceComponent = () => {
         setTError('error-autocomplete-value');
         return;
       }
-    } catch {
+    } catch(e) {
+      console.error("[MesherySettingsPerformance] autocomplete error:", e);
       setTError('error-autocomplete-value');
       return;
     }

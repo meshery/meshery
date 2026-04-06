@@ -1,6 +1,6 @@
 {{ define "main" }}
 <article>
-    <p>{{ .Params.subtitle }}</p>
+    {{ with .Params.subtitle }}<p>{{ . }}</p>{{ end }}
     {{ .Content }}
     <!-- components -->
     <div>
