@@ -7,7 +7,7 @@ permissions:
 
 jobs:
   build-meshery:
-    uses: ./.github/workflows/build-meshery-server.yml
+    uses: ./.github/workflows/build-meshery-image.yml
 
   tests-ui-e2e:
     needs: [build-meshery]
