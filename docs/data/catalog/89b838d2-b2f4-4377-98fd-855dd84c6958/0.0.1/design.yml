@@ -1,0 +1,922 @@
+name: bookInfoPatternIstio.yaml
+version: 0.0.5
+services:
+  bookinfo-vs:
+    annotations: {}
+    apiVersion: networking.istio.io/v1alpha3
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: istio
+    name: bookinfo-vs
+    namespace: default
+    settings:
+      gateways:
+      - sample-app-gateway
+      hosts:
+      - book
+      http:
+      - cors Policy:
+          allow Credentials: false
+        fault:
+          delay:
+            fixedDelay: 7s
+            percentage:
+              value: 100
+        match:
+        - ignore Uri Case: false
+          uri:
+            exact: /productpage
+        - ignore Uri Case: false
+          uri:
+            prefix: /static
+        - ignore Uri Case: false
+          uri:
+            exact: /login
+        - ignore Uri Case: false
+          uri:
+            exact: /logout
+        - ignore Uri Case: false
+          uri:
+            prefix: /api/v1/products
+        retries:
+          attempts: 2
+          retry Remote Localities: false
+        route:
+        - destination:
+            host: productpage
+            port:
+              number: 9080
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: c8314d33-28cf-4ae9-8934-6c0701e99a96
+            meatadata:
+              port: 80
+              protocol: TCP
+            source: sample-app-gateway
+            target: bookinfo-vs
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 6e352f2e-bdbb-4f45-a77f-ace2629eda50
+            meatadata:
+              port: 80
+              protocol: TCP
+            source: bookinfo-vs
+            target: productpage
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: bookinfo-vs
+        label: bookinfo-vs
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 6
+        position:
+          posX: 90
+          posY: 270
+        whiteboardData:
+          style: {}
+    type: VirtualService
+    version: ""
+  details:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: details
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: details
+            version: v1
+        template:
+          metadata:
+            labels:
+              app: details
+              version: v1
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-details-v1:1.16.4
+              name: details
+              ports:
+              - container Port: 9080
+                protocol: TCP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: cd5b5be7-1552-4a90-9cdf-88f7ca50907d
+            metadata:
+              port: 9080
+              protocol: TCP
+            source: reviews
+            subType: Network
+            target: details
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 2f4825cd-7230-4b85-8c64-75a0146ff966
+            meatadata:
+              port: 80
+              protocol: TCP
+            source: productpage
+            target: details
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: details
+        label: details
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 8
+        position:
+          posX: 390
+          posY: 370
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  productpage:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: productpage
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: productpage
+            version: v1
+        template:
+          metadata:
+            labels:
+              app: productpage
+              version: v1
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-productpage-v1:1.16.4
+              name: productpage
+              ports:
+              - container Port: 9080
+                protocol: TCP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: f8700d75-ef61-4258-b258-fb1351eafb33
+            meatadata:
+              port: 80
+              protocol: TCP
+            source: productpage
+            target: reviews
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 0f472d4c-323a-4b7d-82ab-0243d126f93e
+            metadata:
+              port: 9080
+              protocol: TCP
+            source: reviews
+            subType: Network
+            target: productpage
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 2f4825cd-7230-4b85-8c64-75a0146ff966
+            meatadata:
+              port: 80
+              protocol: TCP
+            source: productpage
+            target: details
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 6e352f2e-bdbb-4f45-a77f-ace2629eda50
+            meatadata:
+              port: 80
+              protocol: TCP
+            source: bookinfo-vs
+            target: productpage
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: productpage
+        label: productpage
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 3
+        position:
+          posX: 170
+          posY: 270
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  ratings:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: ratings
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: ratings
+            version: v1
+        template:
+          metadata:
+            labels:
+              app: ratings
+              version: v1
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-ratings-v1:1.16.4
+              name: ratings
+              ports:
+              - container Port: 9080
+                protocol: TCP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 139f342f-4395-4cc2-85c3-601fd67c0a04
+            metadata:
+              port: 9080
+              protocol: TCP
+            source: reviews
+            subType: Network
+            target: ratings
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: e92609a8-fcce-4866-abf9-a7ec64f40795
+            source: reviews-v3
+            target: ratings
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: ratings
+        label: ratings
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 7
+        position:
+          posX: 670
+          posY: 410
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  reviews:
+    annotations: {}
+    apiVersion: ""
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: reviews
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 9080
+        selector:
+          app: reviews
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: f8700d75-ef61-4258-b258-fb1351eafb33
+            meatadata:
+              port: 80
+              protocol: TCP
+            source: productpage
+            target: reviews
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 64ee6365-427d-47ca-9dad-715f2e258957
+            meatadata:
+              port: 80
+              protocol: TCP
+            source: reviews
+            target: 7207724b-9e0f-4ee1-95aa-de844edd2941
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: cd5b5be7-1552-4a90-9cdf-88f7ca50907d
+            metadata:
+              port: 9080
+              protocol: TCP
+            source: reviews
+            subType: Network
+            target: details
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 0f472d4c-323a-4b7d-82ab-0243d126f93e
+            metadata:
+              port: 9080
+              protocol: TCP
+            source: reviews
+            subType: Network
+            target: productpage
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 139f342f-4395-4cc2-85c3-601fd67c0a04
+            metadata:
+              port: 9080
+              protocol: TCP
+            source: reviews
+            subType: Network
+            target: ratings
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 973790ef-73c9-45bf-8ca9-e6f3b92017a0
+            metadata:
+              port: 9080
+              protocol: TCP
+            source: reviews
+            subType: Network
+            target: reviews-v1
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 573cf3d0-afa4-47ea-8025-4542eb19113a
+            metadata:
+              port: 9080
+              protocol: TCP
+            source: reviews
+            subType: Network
+            target: reviews-v2
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: c1e0fb11-2930-417a-b47a-565954b3082a
+            metadata:
+              port: 9080
+              protocol: TCP
+            source: reviews
+            subType: Network
+            target: reviews-v3
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: reviews
+        label: reviews
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 4
+        position:
+          posX: 390
+          posY: 150
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  reviews-v1:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: reviews-v1
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: reviews
+            version: v1
+        template:
+          metadata:
+            labels:
+              app: reviews
+              version: v1
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-reviews-v1:1.16.4
+              name: reviews-v1
+              ports:
+              - container Port: 9080
+                protocol: TCP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 973790ef-73c9-45bf-8ca9-e6f3b92017a0
+            metadata:
+              port: 9080
+              protocol: TCP
+            source: reviews
+            subType: Network
+            target: reviews-v1
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: reviews-v1
+        label: reviews-v1
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 10
+        parent: 7207724b-9e0f-4ee1-95aa-de844edd2941
+        position:
+          posX: 510
+          posY: 130
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  reviews-v2-ddidj:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: reviews-v2
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: reviews
+            version: v2
+        template:
+          metadata:
+            labels:
+              app: reviews
+              version: v2
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-reviews-v2:1.16.4
+              name: reviews-v2
+              ports:
+              - container Port: 9080
+                protocol: TCP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: c1e0fb11-2930-417a-b47a-565954b3082a
+            metadata:
+              port: 9080
+              protocol: TCP
+            source: reviews
+            subType: Network
+            target: reviews-v3
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: e92609a8-fcce-4866-abf9-a7ec64f40795
+            source: reviews-v3
+            target: ratings
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: reviews-v3
+        label: reviews-v3
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 11
+        parent: 7207724b-9e0f-4ee1-95aa-de844edd2941
+        position:
+          posX: 530
+          posY: 250
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  reviews-v2-ymeau:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: reviews-v2
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: reviews
+            version: v2
+        template:
+          metadata:
+            labels:
+              app: reviews
+              version: v2
+          spec:
+            containers:
+            - image: docker.io/istio/examples-bookinfo-reviews-v2:1.16.4
+              name: reviews-v2
+              ports:
+              - container Port: 9080
+                protocol: TCP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 573cf3d0-afa4-47ea-8025-4542eb19113a
+            metadata:
+              port: 9080
+              protocol: TCP
+            source: reviews
+            subType: Network
+            target: reviews-v2
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: reviews-v2
+        label: reviews-v2
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 9
+        parent: 7207724b-9e0f-4ee1-95aa-de844edd2941
+        position:
+          posX: 530
+          posY: 190
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  sample-app-gateway:
+    annotations: {}
+    apiVersion: networking.istio.io/v1alpha3
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: istio
+    name: sample-app-gateway
+    namespace: default
+    settings:
+      selector:
+        istio: ingressgateway
+      servers:
+      - hosts:
+        - bookinfo.meshery.io
+        port:
+          name: http
+          number: 80
+          protocol: HTTP
+        tls:
+          https Redirect: false
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: c8314d33-28cf-4ae9-8934-6c0701e99a96
+            meatadata:
+              port: 80
+              protocol: TCP
+            source: sample-app-gateway
+            target: bookinfo-vs
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: sample-app-gateway
+        label: sample-app-gateway
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 5
+        position:
+          posX: -10
+          posY: 270
+        whiteboardData:
+          style: {}
+    type: Gateway
+    version: ""

@@ -109,7 +109,6 @@ const getRelationshipFromAction = (action, relationshipMapping) => {
 
 // Component Trace Item
 const ComponentAction = ({ action, componentMapping }) => {
-  console.log('ComponentAction', action, componentMapping);
   const component = getComponentFromAction(action, componentMapping);
 
   if (!component) {
@@ -165,7 +164,6 @@ const formatPath = (path) => {
 // Relationship Trace Item
 const RelationshipAction = ({ action, relationshipMapping }) => {
   const relationship = getRelationshipFromAction(action, relationshipMapping);
-  console.log('RelationshipAction', action, relationshipMapping, relationship);
 
   if (!relationship) {
     return null;
@@ -217,7 +215,6 @@ const RelationshipAction = ({ action, relationshipMapping }) => {
 
 // Main Formatter Component
 export const RelationshipEvaluationTraceFormatter = ({ actions, design }) => {
-  console.log('RelationshipEvaluationTraceFormatter', actions, design);
   const componentMapping = React.useMemo(
     () =>
       design?.components?.reduce?.(
@@ -243,8 +240,6 @@ export const RelationshipEvaluationTraceFormatter = ({ actions, design }) => {
   );
 
   if (!actions) return null;
-
-  console.log('Trace ', actions);
 
   const hasChanges = actions.length > 0;
 

@@ -222,6 +222,8 @@ type HandlerInterface interface {
 	GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
+	DeleteModel(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+
 	GetOrganizations(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetWorkspacesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)

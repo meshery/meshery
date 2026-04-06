@@ -1,16 +1,20 @@
-import { api } from '.';
+import { api, mesheryApiPath } from '.';
 
 const resourceApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAccessActorsInfoOfResource: builder.query({
       query: (queryArg) => ({
-        url: `extensions/api/resource/${queryArg.resourceType}/share/${queryArg.resourceId}/${queryArg.actorType}`,
+        url: mesheryApiPath(
+          `extensions/api/resource/${queryArg.resourceType}/share/${queryArg.resourceId}/${queryArg.actorType}`,
+        ),
       }),
       providesTags: ['access_update'],
     }),
     createAndRevokeResourceAccessRecord: builder.mutation({
       query: (queryArg) => ({
-        url: `extensions/api/resource/${queryArg.resourceType}/share/${queryArg.resourceId}`,
+        url: mesheryApiPath(
+          `extensions/api/resource/${queryArg.resourceType}/share/${queryArg.resourceId}`,
+        ),
         method: 'POST',
         body: queryArg.resourceAccessMappingPayload,
       }),

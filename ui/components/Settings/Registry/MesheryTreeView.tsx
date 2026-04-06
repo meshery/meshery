@@ -123,8 +123,8 @@ const MesheryTreeView = React.memo(
       setExpanded(arr);
     };
 
-    const handleSelect = (_event: unknown, nodeIds: string | string[]) => {
-      if ((Array.isArray(nodeIds) ? nodeIds.length : 1) >= 0) {
+    const handleSelect = (_event: unknown, nodeIds: string | string[] | null) => {
+      if (nodeIds !== null && (Array.isArray(nodeIds) ? nodeIds.length : 1) >= 0) {
         const nodeIdList = Array.isArray(nodeIds) ? nodeIds : [nodeIds];
         const selectedIdArr = nodeIdList[0].split('.');
         let indx = data.findIndex((item) => item.id === selectedIdArr[0]);

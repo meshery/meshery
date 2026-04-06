@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/jarcoal/httpmock"
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshkit/errors"
@@ -56,8 +57,8 @@ type CmdTestInput struct {
 	ExpectedResponseYaml string
 	ExpectError          bool
 	ErrorStringContains  []string
-	ExpectedError        error `default:"nil"`
-	IsOutputGolden       bool  `default:"true"`
+	ExpectedError        error
+	IsOutputGolden       bool
 }
 
 type GoldenFile struct {
@@ -73,6 +74,7 @@ func NewGoldenFile(t *testing.T, name string, directory string) *GoldenFile {
 func InitTestEnvironment(t *testing.T) *TestHelper {
 	SetupContextEnv(t)
 	StartMockery(t)
+	viper.Set("LOG_LEVEL", int(logrus.InfoLevel))
 	testContext := NewTestHelper(t)
 	return testContext
 }
@@ -185,7 +187,14 @@ func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 // setup meshkit logger for testing and return the buffer in which commands output is to be set.
 func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
-	Log = SetupMeshkitLogger("mesheryctl", verbose, b)
+	logLevel := logrus.InfoLevel
+	if verbose {
+		logLevel = logrus.DebugLevel
+	}
+	logger := mesheryctllogger.GetMeshkitLogger(logLevel)
+	logger.SetLevel(logLevel)
+	logger.UpdateLogOutput(b)
+	Log = logger
 	return b
 }
 
@@ -197,6 +206,7 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 
 	viper.SetConfigFile(pathToContext)
 	DefaultConfigPath = pathToContext
+	CfgFile = pathToContext
 	err := viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
@@ -351,8 +361,8 @@ type MesheryListCommandTest struct {
 	Fixture          string
 	ExpectedResponse string
 	ExpectError      bool
-	ExpectedError    error `default:"nil"`
-	IsOutputGolden   bool  `default:"true"`
+	ExpectedError    error
+	IsOutputGolden   bool
 }
 
 func GetToken(t *testing.T) string {
@@ -397,9 +407,8 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			}()
 
 			_ = SetupMeshkitLoggerTesting(t, false)
-
 			cmd.SetArgs(tt.Args)
-			cmd.SetOut(originalStdout)
+			cmd.SetOut(w)
 			err := cmd.Execute()
 
 			// Close write end before reading
@@ -461,8 +470,8 @@ type MesheryCommandTest struct {
 	Fixture          string
 	ExpectedResponse string
 	ExpectError      bool
-	IsOutputGolden   bool  `default:"true"`
-	ExpectedError    error `default:"nil"`
+	IsOutputGolden   bool
+	ExpectedError    error
 }
 
 func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommandTest, commandDir string, commandName string) {
@@ -558,8 +567,8 @@ type MesheryMultiURLCommamdTest struct {
 	ExpectedResponse string
 	Token            string
 	ExpectError      bool
-	IsOutputGolden   bool  `default:"true"`
-	ExpectedError    error `default:"nil"`
+	IsOutputGolden   bool
+	ExpectedError    error
 }
 
 func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryMultiURLCommamdTest, commandDir string, commandName string, resetVariables func()) {
@@ -588,24 +597,11 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 			testdataDir := filepath.Join(commandDir, "testdata")
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// Properly save and restore stdout using defer
-			originalStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-
-			// Ensure stdout is always restored
-			defer func() {
-				os.Stdout = originalStdout
-			}()
-
-			Log = SetupMeshkitLogger("mesheryctl", false, w)
+			buf := SetupMeshkitLoggerTesting(t, false)
 
 			cmd.SetArgs(tt.Args)
-			cmd.SetOut(w)
+			cmd.SetOut(buf)
 			err := cmd.Execute()
-
-			// Close write end before reading
-			_ = w.Close()
 
 			if err != nil {
 				// if we're supposed to get an error
@@ -626,16 +622,6 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 				}
 				// Unexpected error - fail immediately
 				t.Fatalf("unexpected error: %v", err)
-			}
-
-			if tt.ExpectError {
-				t.Fatalf("expected an error but command succeeded")
-			}
-
-			var buf bytes.Buffer
-			_, errCopy := io.Copy(&buf, r)
-			if errCopy != nil {
-				t.Fatal(errCopy)
 			}
 
 			if tt.ExpectError {
@@ -705,7 +691,7 @@ func RunMesheryctlMultipleURLsListTests(t *testing.T, updateGoldenFile *bool, cm
 			err := cmd.Execute()
 
 			// Close write end before reading
-			w.Close()
+			assert.NoError(t, w.Close())
 
 			if err != nil {
 				// if we're supposed to get an error

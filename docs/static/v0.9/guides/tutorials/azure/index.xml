@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Azure on Documentation</title>
+    <link>/v0.9/guides/tutorials/azure/</link>
+    <description>Recent content in Azure on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/guides/tutorials/azure/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Deploy Azure resources with Meshery</title>
+      <link>/v0.9/guides/tutorials/azure/deploy-azure-resources-with-meshery/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/tutorials/azure/deploy-azure-resources-with-meshery/</guid>
+      <description>&lt;h3 id=&#34;introduction&#34;&gt;&#xA;&#x9;Introduction&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;Meshery now supports managing Azure resources declaratively through Kubernetes by integrating with Azure Service Operator (ASO). With this capability, you can visually design, deploy, and manage a variety of Azure resources—such as Storage Accounts, Key Vaults, SQL Servers, and more—directly from Meshery’s UI. In this tutorial, you’ll install the ASO operator (without CRD pattern configurations, as Meshery will handle them), create a Service Principal and a Kubernetes secret with your Azure credentials, and use Meshery to provision Azure resources seamlessly into your subscription.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Deploy Azure Storage Account with Meshery</title>
+      <link>/v0.9/guides/tutorials/azure/deploy-azure-storage-account-with-meshery/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/tutorials/azure/deploy-azure-storage-account-with-meshery/</guid>
+      <description>&lt;h3 id=&#34;introduction&#34;&gt;&#xA;&#x9;Introduction&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;Meshery enables you to manage Azure Storage Accounts declaratively through Kubernetes by leveraging the Azure Service Operator (ASO). In this tutorial, you&amp;rsquo;ll install the ASO operator (without CRD pattern configurations, which Meshery will manage), create a Service Principal and a Kubernetes secret with your Azure credentials, and use Meshery&amp;rsquo;s UI to visually design and deploy a Storage Account resource to your Azure subscription.&lt;/p&gt;&#xA;&lt;h3 id=&#34;prerequisites&#34;&gt;&#xA;&#x9;Prerequisites&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;Before you begin, ensure you have the following:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

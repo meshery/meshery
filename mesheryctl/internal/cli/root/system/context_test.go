@@ -7,11 +7,13 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v3"
 )
 
-func TestViewContextCmd(t *testing.T) {
+func TestContextViewCmd(t *testing.T) {
 	resetVariables()
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
@@ -51,10 +53,15 @@ func TestViewContextCmd(t *testing.T) {
 			ExpectedResponse: "viewAllExpected.golden",
 		},
 	}
+
+	mesheryctlflags.InitValidators(SystemCmd)
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t, false)
-			SystemCmd.SetOut(b)
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+
+			SystemCmd.SetOut(buf)
+			SystemCmd.SetErr(buf)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 
@@ -68,14 +75,12 @@ func TestViewContextCmd(t *testing.T) {
 			}
 
 			if tt.ExpectError {
-				if err == nil {
-					t.Fatalf("expected error, got nil")
-				}
+				t.Fatalf("expected error, got nil")
 			}
 
 			testdataDir := filepath.Join(currDir, "testdata/context")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-			actualResponse := b.String()
+			actualResponse := buf.String()
 
 			if *update {
 				golden.Write(actualResponse)
@@ -91,7 +96,8 @@ func TestViewContextCmd(t *testing.T) {
 		t.Logf("List %s test", "context")
 	}
 }
-func TestListContextCmd(t *testing.T) {
+
+func TestContextListCmd(t *testing.T) {
 	resetVariables()
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
@@ -109,15 +115,18 @@ func TestListContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t, false)
-			SystemCmd.SetOut(b)
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+
+			SystemCmd.SetOut(buf)
+			SystemCmd.SetErr(buf)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
 
-			actualResponse := b.String()
+			actualResponse := buf.String()
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata/context")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
@@ -134,7 +143,7 @@ func TestListContextCmd(t *testing.T) {
 	}
 }
 
-func TestDeleteContextCmd(t *testing.T) {
+func TestContextDeleteCmd(t *testing.T) {
 	resetVariables()
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
@@ -150,17 +159,22 @@ func TestDeleteContextCmd(t *testing.T) {
 			ExpectedResponse: "delete.context.golden",
 		},
 	}
+
+	mesheryctlflags.InitValidators(SystemCmd)
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t, false)
-			SystemCmd.SetOut(b)
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+
+			SystemCmd.SetOut(buf)
+			SystemCmd.SetErr(buf)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
 
-			actualResponse := b.String()
+			actualResponse := buf.String()
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata/context")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
@@ -206,8 +220,8 @@ func TestDeleteContextCmd(t *testing.T) {
 		t.Log("DeleteContextCmd test Passed")
 	}
 }
-func TestAddContextCmd(t *testing.T) {
-	resetVariables()
+
+func TestContextCreateCmd(t *testing.T) {
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 
@@ -218,23 +232,52 @@ func TestAddContextCmd(t *testing.T) {
 	utils.SetupCustomContextEnv(t, currDir+"/testdata/context/ExpectedAdd.yaml")
 	tests := []utils.CmdTestInput{
 		{
-			Name:             "add given context",
-			Args:             []string{"context", "create", "local3"},
-			ExpectedResponse: "createContext.golden",
+			Name:                 "given context name provided when system context create then context is created",
+			Args:                 []string{"context", "create", "local3"},
+			ExpectedResponse:     "createContext.golden",
+			ExpectedResponseYaml: "addExpected.golden",
+		},
+		{
+			Name:           "given no context provided when system context create  then thorw error",
+			Args:           []string{"context", "create"},
+			ExpectError:    true,
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
+			IsOutputGolden: false,
+		},
+		{
+			Name:           "given multiple context name provided when system context create then throw error",
+			Args:           []string{"context", "create", "local1", "local2"},
+			ExpectError:    true,
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
+			IsOutputGolden: false,
 		},
 	}
+
+	mesheryctlflags.InitValidators(SystemCmd)
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			utils.SetupMeshkitLoggerTesting(t, false)
-			b := utils.SetupLogrusGrabTesting(t, false)
-			SystemCmd.SetOut(b)
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+
+			SystemCmd.SetOut(buf)
+			SystemCmd.SetErr(buf)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
+
 			if err != nil {
-				t.Error(err)
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
+				}
+				t.Fatal(err)
 			}
 
-			actualResponse := b.String()
+			if tt.ExpectError {
+				t.Fatalf("expected error, got nil")
+			}
+
+			actualResponse := buf.String()
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata/context")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
@@ -255,7 +298,7 @@ func TestAddContextCmd(t *testing.T) {
 				t.Error(err)
 			}
 			actualResponse = string(content)
-			golden = utils.NewGoldenFile(t, "addExpected.golden", testdataDir)
+			golden = utils.NewGoldenFile(t, tt.ExpectedResponseYaml, testdataDir)
 			if *update {
 				golden.Write(actualResponse)
 			}
@@ -269,9 +312,111 @@ func TestAddContextCmd(t *testing.T) {
 		})
 		t.Log("CreateContextCmd test Passed")
 	}
+
 }
 
-func TestSwitchContextCmd(t *testing.T) {
+func TestContextAddUppercaseCmd(t *testing.T) {
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	utils.SetupCustomContextEnv(t, currDir+"/testdata/context/ExpectedAdd.yaml")
+	tests := []utils.CmdTestInput{
+		{
+			Name:                 "given context name which contains uppercase provided when system context create then context is created in lowercase",
+			Args:                 []string{"context", "create", "Local3"},
+			ExpectedResponse:     "createContext.golden",
+			ExpectedResponseYaml: "addExpected.golden",
+		},
+	}
+
+	mesheryctlflags.InitValidators(SystemCmd)
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+
+			SystemCmd.SetOut(buf)
+			SystemCmd.SetErr(buf)
+			SystemCmd.SetArgs(tt.Args)
+			err := SystemCmd.Execute()
+
+			if err != nil {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
+				}
+				t.Fatal(err)
+			}
+
+			if tt.ExpectError {
+				t.Fatalf("expected error, got nil")
+			}
+
+			actualResponse := buf.String()
+			// Expected response
+			testdataDir := filepath.Join(currDir, "testdata/context")
+			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			if *update {
+				golden.Write(actualResponse)
+			}
+			expectedResponse := golden.Load()
+
+			assert.Equal(t, expectedResponse, actualResponse)
+			path, err := os.Getwd()
+			if err != nil {
+				t.Error("unable to locate meshery directory")
+			}
+			filepath := path + "/testdata/context/ExpectedAdd.yaml"
+
+			content, err := os.ReadFile(filepath)
+			if err != nil {
+				t.Error(err)
+			}
+			actualResponse = string(content)
+			golden = utils.NewGoldenFile(t, tt.ExpectedResponseYaml, testdataDir)
+			if *update {
+				golden.Write(actualResponse)
+			}
+			addExpected := golden.Load()
+			assert.Equal(t, addExpected, actualResponse)
+
+			// To check context is lowercase
+			contentFile, err := os.ReadFile(filepath)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			var data map[string]interface{}
+			err = yaml.Unmarshal(contentFile, &data)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			contexts := data["contexts"].(map[string]interface{})
+
+			if len(tt.Args) > 2 {
+				_, existsUpper := contexts[tt.Args[2]]
+				if existsUpper {
+					t.Fatalf("uppercase context should not exist")
+				}
+			}
+
+			//Repopulating Expected yaml
+			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
+				t.Error(err, "Could not complete test. Unable to configure delete test file")
+			}
+		})
+		t.Log("CreateUppercaseContextCmd test Passed")
+	}
+
+}
+
+func TestContextSwitchCmd(t *testing.T) {
 	resetVariables()
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
@@ -290,15 +435,18 @@ func TestSwitchContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t, false)
-			SystemCmd.SetOut(b)
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+
+			SystemCmd.SetOut(buf)
+			SystemCmd.SetErr(buf)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
 
-			actualResponse := b.String()
+			actualResponse := buf.String()
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata/context")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
@@ -336,7 +484,5 @@ func TestSwitchContextCmd(t *testing.T) {
 
 func resetVariables() {
 	//reset context before tests
-	newContext = ""
-	currContext = ""
 	tempCntxt = ""
 }

@@ -1,0 +1,24 @@
+version: 0.0.25
+name: k8s-webapp-deployment-service
+displayName: k8s-webapp-deployment-service
+createdAt: "2025-08-19T00:58:13Z"
+description: "This design deploys a web application using Kubernetes Deployment. \nA Service exposes the application internally on port 80/TCP and forwards requests to Pods. \nThe Service ensures load balancing and service discovery between replicas.\n"
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/6ddc8245-74a0-4343-8619-0a9755b04fc2/0.0.25/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 39f9ce8f-9306-426d-b88e-fa5488926639
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6ddc8245-74a0-4343-8619-0a9755b04fc2-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6ddc8245-74a0-4343-8619-0a9755b04fc2-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

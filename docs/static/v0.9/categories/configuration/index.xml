@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Configuration on Documentation</title>
+    <link>/v0.9/categories/configuration/</link>
+    <description>Recent content in Configuration on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/categories/configuration/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cloud Native Design Patterns</title>
+      <link>/v0.9/guides/configuration-management/pattern-management/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/configuration-management/pattern-management/</guid>
+      <description>&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;&lt;div class=&#34;h4 alert-heading&#34; role=&#34;heading&#34;&gt;What are Cloud Native Patterns?&lt;/div&gt;&#xA;&lt;p&gt;This feature area is under active development. Patterns will be importable and exportable as OCI images in v0.8.0.&lt;/p&gt;&#xA;&lt;/div&gt;&#xA;&lt;p&gt;Patterns are essentially atomic designs with one or more components made in composed into an atomic, reusable design. Patterns are a way to apply the DRY principle when managing the configuration of cloud native infrastructure.&lt;/p&gt;&#xA;&lt;h2 id=&#34;use-meshery-to-deploy-a-cloud-native-pattern&#34;&gt;&#xA;&#x9;Use Meshery to Deploy a Cloud Native Pattern&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Use Meshery to deploy a cloud native pattern. Cloud native patterns are detailed as a YAML file. See the &lt;a href=&#34;/v0.9/guides/configuration-management/&#34;&gt;Configuration Management&lt;/a&gt; guide.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Configuration Management Guides</title>
+      <link>/v0.9/guides/configuration-management/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/configuration-management/</guid>
+      <description>&lt;p&gt;Guides for understanding Meshery&amp;rsquo;s ability to configure infrastructure and applications.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Configuring your Cloud Native Infrastructure and Applications</title>
+      <link>/v0.9/guides/configuration-management/working-with-designs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/configuration-management/working-with-designs/</guid>
+      <description>&lt;p&gt;As an cloud native management platform, Meshery has built-in support infastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.&lt;/p&gt;&#xA;&lt;h2 id=&#34;what-is-a-meshery-design&#34;&gt;&#xA;&#x9;What is a Meshery Design?&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Meshery&amp;rsquo;s core construct of configuration management is that of a design. A design is ultimately a document – and a document in which you capture and describe your desired state of improv the environment.&lt;/p&gt;&#xA;&lt;p&gt;&lt;a href=&#34;/v0.9/guides/configuration-management/working-with-designs/images/context-aware-design.svg&#34;&gt;&lt;img class=&#34;content-image&#34; src=&#34;./images/context-aware-design.svg&#34; alt=&#34;Context Aware Design&#34;  /&gt;&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Create Models</title>
+      <link>/v0.9/guides/configuration-management/creating-models/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/configuration-management/creating-models/</guid>
+      <description>&lt;p&gt;Meshery offers two primary ways to bring models into your system: &lt;strong&gt;Create&lt;/strong&gt; and &lt;strong&gt;&lt;a href=&#34;/v0.9/guides/configuration-management/importing-models/&#34;&gt;Import&lt;/a&gt;&lt;/strong&gt;.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Import&lt;/strong&gt; is ideal when you already have a model definition file (e.g., JSON, CSV) and simply want to bring it into Meshery.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Create&lt;/strong&gt; is the recommended approach if you’re starting fresh — it guides you through building a model step by step using an intuitive UI wizard.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;This section walks you through the &lt;strong&gt;Create&lt;/strong&gt; workflow — perfect for users who want full control over naming, styling, and categorizing their models while sourcing CRDs from GitHub or ArtifactHub.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Creating a Meshery Design</title>
+      <link>/v0.9/guides/configuration-management/creating-a-meshery-design/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/configuration-management/creating-a-meshery-design/</guid>
+      <description>&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;&lt;div class=&#34;h4 alert-heading&#34; role=&#34;heading&#34;&gt;Learn about Designs&lt;/div&gt;&#xA;&lt;p&gt;Learn more about &lt;a href=&#39;/v0.9/concepts/logical/designs&#39;&gt;what a Meshery Design&lt;/a&gt; is and how it fits into Meshery&amp;rsquo;s approach to cloud native management.&lt;/p&gt;&#xA;&lt;/div&gt;&#xA;&lt;h2 id=&#34;ways-to-create-a-meshery-design&#34;&gt;&#xA;&#x9;Ways to create a Meshery Design&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;You can create a Meshery design in two ways:&lt;/p&gt;&#xA;&lt;h3 id=&#34;from-scratch&#34;&gt;&#xA;&#x9;From scratch&#xA;&lt;/h3&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Click on the &amp;ldquo;Design&amp;rdquo; tab to start creating a new design.&lt;/li&gt;&#xA;&lt;li&gt;In the left panel, click &amp;ldquo;Components&amp;rdquo; and browse the type of component you want to add.&lt;/li&gt;&#xA;&lt;li&gt;Drag and drop the components onto the canvas.&lt;/li&gt;&#xA;&lt;li&gt;Click and drag from one component to another to create connections between components. You can customize the connections by adding labels or adjusting their properties.&lt;/li&gt;&#xA;&lt;li&gt;Once you&amp;rsquo;re satisfied with your design, click the &amp;ldquo;Save&amp;rdquo; button on the toolbar. Your design will be saved as &amp;ldquo;Untitled design&amp;rdquo; by default. You can give your design a name to help identify and manage it later.&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h3 id=&#34;from-a-template&#34;&gt;&#xA;&#x9;From a template&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;Another way to create a Meshery design is to use an already curated template. You can either import designs that others have published and made available for public use or clone patterns from the Meshery Catalog.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Edge Styles Guide</title>
+      <link>/v0.9/guides/configuration-management/edges-guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/configuration-management/edges-guide/</guid>
+      <description>&lt;p&gt;In Meshery, the line that connects &lt;a href=&#34;/v0.9/concepts/logical/components/&#34;&gt;components&lt;/a&gt; is called an &lt;strong&gt;edge&lt;/strong&gt;. Each edge visually represents a &lt;a href=&#34;/v0.9/concepts/logical/relationships/&#34;&gt;relationship&lt;/a&gt; and uses a specific style to communicate its nature.&lt;/p&gt;&#xA;&lt;p&gt;This guide helps you interpret the most common edge styles you will encounter.&lt;/p&gt;&#xA;&lt;h3 id=&#34;interpreting-common-edge-styles&#34;&gt;&#xA;&#x9;Interpreting Common Edge Styles&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;Meshery uses a set of default visual styles to provide at-a-glance information about the type of connection an edge represents. While these styles can be customized in the UI, understanding the defaults is key to interpreting component relationships.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Exporting Models</title>
+      <link>/v0.9/guides/configuration-management/exporting-models/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/configuration-management/exporting-models/</guid>
+      <description>&lt;p&gt;Export existing Meshery &lt;a href=&#34;/v0.9/concepts/logical/models/&#34;&gt;Models&lt;/a&gt; or your custom infrastructure crd imported as &lt;a href=&#34;/v0.9/concepts/logical/models/&#34;&gt;Models&lt;/a&gt; in Meshery. The platform supports a variety of application definition formats, and you can export designs using either the Meshery CLI or the Meshery UI.&lt;/p&gt;&#xA;&lt;h2 id=&#34;export-models-using-meshery-cli&#34;&gt;&#xA;&#x9;Export Models Using Meshery CLI&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;Step 1: Install Meshery CLI&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;Before you can use the Meshery CLI to export a &lt;a href=&#34;/v0.9/concepts/logical/models/&#34;&gt;Model&lt;/a&gt;, you must first install it. You can install Meshery CLI by &lt;a href=&#34;/v0.9/installation/#install-mesheryctl&#34;&gt;following the instructions&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Identifying Meshery Components</title>
+      <link>/v0.9/guides/configuration-management/identifying-components/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/configuration-management/identifying-components/</guid>
+      <description>&lt;p&gt;Ever wondered what the different icons and shapes in Meshery represent? Whether you&amp;rsquo;re looking at a dashboard, a settings page, or a design, you&amp;rsquo;ll encounter a rich library of visual elements. This guide is here to help you understand what they mean.&lt;/p&gt;&#xA;&lt;p&gt;The &lt;a href=&#34;/v0.9/concepts/logical/components/&#34;&gt;components&lt;/a&gt; in Meshery fall into two fundamental categories, distinguished by whether they can be orchestrated (managed) by Meshery during deployment:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;strong&gt;Semantic Components (Orchestratable):&lt;/strong&gt; These represent actual infrastructure resources that Meshery can understand and manage during deployment. Examples include Kubernetes resources (like Pods and Services), databases, and other infrastructure components. Meshery will actively manage their lifecycle during deployment.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Importing Models</title>
+      <link>/v0.9/guides/configuration-management/importing-models/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/configuration-management/importing-models/</guid>
+      <description>&lt;p&gt;Import your existing Models and existing custom resource definition (CRD) into Meshery. The platform supports a variety of application definition formats, and you can import designs using either the Meshery CLI or the Meshery UI.&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; A &lt;a href=&#34;/v0.9/concepts/logical/models/&#34;&gt;Model&lt;/a&gt; can be only imported if it contains atleast a valid &lt;a href=&#34;/v0.9/concepts/logical/components/&#34;&gt;Component&lt;/a&gt; or &lt;a href=&#34;/v0.9/concepts/logical/relationships/&#34;&gt;Relationship&lt;/a&gt;.&lt;/p&gt;&#xA;&lt;h2 id=&#34;import-models-using-meshery-cli&#34;&gt;&#xA;&#x9;Import Models Using Meshery CLI&#xA;&lt;/h2&gt;&#xA;&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;&lt;div class=&#34;h4 alert-heading&#34; role=&#34;heading&#34;&gt;Limitation on Importing Connections&lt;/div&gt;&#xA;&lt;p&gt;The &lt;code&gt;mesheryctl model import&lt;/code&gt; command currently supports importing Models containing Components, Relationships, and Policies. Importing Models with &lt;code&gt;Connection&lt;/code&gt; definitions is not yet supported. This functionality may be added in a future release.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Push or Pull a Model Image</title>
+      <link>/v0.9/guides/configuration-management/push-pull-model-image/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/configuration-management/push-pull-model-image/</guid>
+      <description>&lt;h2 id=&#34;use-mesheryctl-to-push-or-pull-a-model-image&#34;&gt;&#xA;&#x9;Use mesheryctl to Push or Pull a Model Image&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;You can push or pull Meshery model images to or from any OCI-compatible image repository.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

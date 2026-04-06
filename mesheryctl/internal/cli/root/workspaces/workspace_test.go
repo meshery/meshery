@@ -12,8 +12,11 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 var testOrgId = "2d2c0b60-076a-4f0a-8a63-de538570a553"
+var validWorkspaceName = "workspace-test"
+var workspaceDescription = "integration test"
 
 func TestWorkspaces(t *testing.T) {
+	utils.SetupContextEnv(t)
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -41,7 +44,7 @@ func TestWorkspaces(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list]. Use 'mesheryctl exp workspace --help' to display usage guide", "invalidCommand")),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list]. Use 'mesheryctl workspace --help' to display usage guide", "invalidCommand")),
 		},
 	}
 

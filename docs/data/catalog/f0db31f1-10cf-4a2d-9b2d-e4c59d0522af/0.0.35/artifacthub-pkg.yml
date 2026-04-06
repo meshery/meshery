@@ -1,0 +1,24 @@
+version: 0.0.35
+name: pet-adoption-porta
+displayName: Pet Adoption Porta
+createdAt: "2025-06-15T19:32:08Z"
+description: ' A Kubernetes-based web application for managing pet adoptions. Includes a React frontend, Node.js backend, and MongoDB database.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/f0db31f1-10cf-4a2d-9b2d-e4c59d0522af/0.0.35/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "For demo purposes only. Does not use persistent volumes. Images should be customized before production use.\n\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: d574bd52-93e6-44b7-ad69-edf67c643b2c
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/f0db31f1-10cf-4a2d-9b2d-e4c59d0522af-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/f0db31f1-10cf-4a2d-9b2d-e4c59d0522af-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

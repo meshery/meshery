@@ -1,0 +1,24 @@
+version: 0.0.17
+name: three-test-publish
+displayName: three test publish
+createdAt: "2025-03-04T17:30:10Z"
+description: test
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/868df315-bbca-445a-8abb-fa7c53bc515c/0.0.17/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "tset \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: e87c35fc-777e-4516-9278-3492c47d14a7
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/868df315-bbca-445a-8abb-fa7c53bc515c-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/868df315-bbca-445a-8abb-fa7c53bc515c-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,0 +1,27 @@
+version: 0.0.6
+name: ebpf-exporter
+displayName: ebpf-exporter
+createdAt: "2024-07-24T13:09:51Z"
+description: |
+    Export your eBPF metrics in Prometheus format using ebpf_exporter.
+
+    eBPF is an enchanment to BPF (Berkeley Packet Filter) and allow custom analysis programs to be executed on Linux tracing tools.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/aaae149b-95d2-458f-b3c1-710fb544acad/0.0.6/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Prerequisites\nK8s host running Linux kernel with kernel sources \n\nlearn more about ebpf exporter from this git repo https://github.com/cloudflare/ebpf_exporter \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/aaae149b-95d2-458f-b3c1-710fb544acad-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/aaae149b-95d2-458f-b3c1-710fb544acad-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

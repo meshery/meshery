@@ -35,7 +35,7 @@ type designViewFlags struct {
 var designViewFlagsProvided designViewFlags
 
 var linkDocPatternView = map[string]string{
-	"link":    "![pattern-view-usage](/assets/img/mesheryctl/patternView.png)",
+	"link":    "![pattern-view-usage](/reference/images/patternView.png)",
 	"caption": "Usage of mesheryctl design view",
 }
 
@@ -103,13 +103,14 @@ mesheryctl design view [design-name | ID]
 				return ErrDesignInvalidApiResponse("'patterns' field is not of expected type")
 			}
 			if len(arr) == 0 {
-				return ErrDesignNotFound()
+				return ErrDesignNotFound(design)
 			}
 			designData = arr[0]
 		}
 
 		outputFormatFactory := display.OutputFormatterFactory[interface{}]{}
 		outputFormatter, err := outputFormatFactory.New(designViewFlagsProvided.OutputFormat, designData)
+		outputFormatter.WithOutput(cmd.OutOrStdout())
 		if err != nil {
 			return err
 		}

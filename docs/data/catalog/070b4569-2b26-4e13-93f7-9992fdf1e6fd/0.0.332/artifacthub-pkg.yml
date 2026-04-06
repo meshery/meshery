@@ -1,0 +1,29 @@
+version: 0.0.332
+name: gcp-datamesh
+displayName: GCP DataMesh
+createdAt: "2024-08-20T06:06:38Z"
+description: |
+    *Implementing Data Mesh on Google Cloud Platform:*
+
+    Leverage Google Cloud's comprehensive suite of data services, including BigQuery, Dataflow, and Dataproc, to build a scalable and flexible Data Mesh platform.
+    Utilize tools like Dataplex to create a unified data catalog and metadata management system, facilitating data discovery and access.
+    Implement robust data governance policies and access controls using tools like Cloud IAM and DLP to ensure data security and compliance.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/070b4569-2b26-4e13-93f7-9992fdf1e6fd/0.0.332/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design is a reference architecture <u>only</u>, and as such is not immediately deployable. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 51f49d2c-0050-4bdb-9bce-fdddcb4742be
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/070b4569-2b26-4e13-93f7-9992fdf1e6fd-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/070b4569-2b26-4e13-93f7-9992fdf1e6fd-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

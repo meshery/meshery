@@ -1,0 +1,24 @@
+version: 0.0.5
+name: nginx-pod-with-meshery-milestone-app
+displayName: NGINX Pod with Meshery Milestone app
+createdAt: "2025-06-19T03:59:23Z"
+description: This is a simple example design, containing a single Kubernetes Pod with sample application "meshery-milestone" running on NGINX.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8738285d-de4d-421a-aab7-e8760ba57537/0.0.5/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Please copy, change, and deploy at-will. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 090e7114-509a-4046-81f1-9c5fb8daf724
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8738285d-de4d-421a-aab7-e8760ba57537-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8738285d-de4d-421a-aab7-e8760ba57537-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

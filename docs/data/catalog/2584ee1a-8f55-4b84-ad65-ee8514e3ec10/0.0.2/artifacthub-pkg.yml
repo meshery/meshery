@@ -1,0 +1,24 @@
+version: 0.0.2
+name: ms-locations-rest-0.0.11.tgz
+displayName: ms-locations-rest-0.0.11.tgz
+createdAt: "2025-10-07T06:27:22Z"
+description: Importes the ms-locations-rest-0.0.11.tgz Helm chart into Meshery Playground
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2584ee1a-8f55-4b84-ad65-ee8514e3ec10/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Chart imported successfully and produced 5 components with no annotations. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4fb65012-abb5-4098-9df4-43e0eb380132
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2584ee1a-8f55-4b84-ad65-ee8514e3ec10-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2584ee1a-8f55-4b84-ad65-ee8514e3ec10-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

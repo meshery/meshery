@@ -1,0 +1,561 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "ms-filestorage-rest",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.2",
+  "components": [
+    {
+      "id": "0ca759ac-5749-4335-91f8-8d88ca499e94",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ms-filestorage-rest",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T19:02:24.792474051Z",
+          "updated_at": "2025-10-08T19:02:24.792474051Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "automountServiceAccountToken": true,
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "ms-filestorage-rest",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "ms-filestorage-rest",
+            "app.kubernetes.io/version": "0.0.22",
+            "helm.sh/chart": "ms-base-0.0.22"
+          },
+          "name": "ms-filestorage-rest"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d2cad73a-deb9-4b9f-9b2a-023a1106ae7a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ms-filestorage-rest-vaultsecret",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T19:02:24.792474051Z",
+          "updated_at": "2025-10-08T19:02:24.792474051Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "data": {
+          "token": ""
+        },
+        "metadata": {
+          "name": "ms-filestorage-rest-vaultsecret"
+        },
+        "type": "Opaque"
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "6e0f8b72-b75a-482e-9956-790d7b901849",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ms-filestorage-rest-vaultserver",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T19:02:24.792474051Z",
+          "updated_at": "2025-10-08T19:02:24.792474051Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "data": {
+          "server": "http://vault-internal.vault-operator.svc.cluster.local:8200",
+          "solution": "security-codedesignplus"
+        },
+        "metadata": {
+          "name": "ms-filestorage-rest-vaultserver"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "011f5949-7df8-40ce-87e9-d085943ced4b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ms-filestorage-rest",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T19:02:24.792474051Z",
+          "updated_at": "2025-10-08T19:02:24.792474051Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "ms-filestorage-rest",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "ms-filestorage-rest",
+            "app.kubernetes.io/version": "0.0.22",
+            "helm.sh/chart": "ms-base-0.0.22"
+          },
+          "name": "ms-filestorage-rest"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 5000,
+              "protocol": "TCP",
+              "targetPort": "http"
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/instance": "ms-filestorage-rest",
+            "app.kubernetes.io/name": "ms-filestorage-rest"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "8f4bd6ae-c5a2-4d7e-97a4-8650ad22f63b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ms-filestorage-rest",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T19:02:24.792474051Z",
+          "updated_at": "2025-10-08T19:02:24.792474051Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "ms-filestorage-rest",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "ms-filestorage-rest",
+            "app.kubernetes.io/version": "0.0.22",
+            "helm.sh/chart": "ms-base-0.0.22"
+          },
+          "name": "ms-filestorage-rest"
+        },
+        "spec": {
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "ms-filestorage-rest",
+              "app.kubernetes.io/name": "ms-filestorage-rest"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app.kubernetes.io/instance": "ms-filestorage-rest",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "ms-filestorage-rest",
+                "app.kubernetes.io/version": "0.0.22",
+                "helm.sh/chart": "ms-base-0.0.22"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "ASPNETCORE_ENVIRONMENT",
+                      "value": "Staging"
+                    },
+                    {
+                      "name": "OTEL_RESOURCE_ATTRIBUTES",
+                      "value": "service.name=ms-filestorage-rest,service.namespace=default,service.instance.id=ms-filestorage-rest,deployment.environment=Staging"
+                    },
+                    {
+                      "name": "VAULT__TOKEN",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "token",
+                          "name": "ms-filestorage-rest-vaultsecret"
+                        }
+                      }
+                    },
+                    {
+                      "name": "VAULT__ADDRESS",
+                      "valueFrom": {
+                        "configMapKeyRef": {
+                          "key": "server",
+                          "name": "ms-filestorage-rest-vaultserver"
+                        }
+                      }
+                    },
+                    {
+                      "name": "VAULT__SOLUTION",
+                      "valueFrom": {
+                        "configMapKeyRef": {
+                          "key": "solution",
+                          "name": "ms-filestorage-rest-vaultserver"
+                        }
+                      }
+                    }
+                  ],
+                  "image": "codedesignplus/ms-filestorage-rest:latest",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "httpGet": {
+                      "path": "/health/live",
+                      "port": "http"
+                    }
+                  },
+                  "name": "ms-base",
+                  "ports": [
+                    {
+                      "containerPort": 5000,
+                      "name": "http",
+                      "protocol": "TCP"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "httpGet": {
+                      "path": "/health/ready",
+                      "port": "http"
+                    }
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "100m",
+                      "memory": "128Mi"
+                    },
+                    "requests": {
+                      "cpu": "100m",
+                      "memory": "128Mi"
+                    }
+                  }
+                }
+              ],
+              "serviceAccountName": "ms-filestorage-rest"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      }
+    }
+  ],
+  "relationships": null
+}

@@ -4,26 +4,26 @@
   "kind": "edge",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
-    "version": "",
-    "name": "kubernetes",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.35.0-rc.0"
+    },
+    "name": "kubernetes",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "v1.35.0-rc.0"
-    }
+    "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -31,22 +31,20 @@
           {
             "id": null,
             "kind": "MutatingWebhookConfiguration",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
@@ -56,7 +54,8 @@
                   "service",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -64,28 +63,27 @@
           {
             "id": null,
             "kind": "Service",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "metadata",
                   "name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]
