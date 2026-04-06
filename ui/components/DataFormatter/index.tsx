@@ -254,7 +254,7 @@ export const SectionBody = ({ body, style = {} }) => {
     ></TextWithLinks>
   );
 };
-export const ArrayFormatter = ({ items, style }) => {
+export const ArrayFormatter = ({ items, style, event }) => {
   const theme = useTheme();
   return (
     <ol
@@ -267,7 +267,7 @@ export const ArrayFormatter = ({ items, style }) => {
       {items.map((item) => (
         <li key={item} style={{ color: theme.palette.text.tertiary, ...style }}>
           <Level>
-            <DynamicFormatter data={item} />
+            <DynamicFormatter data={item} event={event} />
           </Level>
         </li>
       ))}
@@ -285,7 +285,7 @@ export function reorderObjectProperties(obj, order) {
   return { ...orderedProperties, ...remainingProperties };
 }
 
-const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
+const DynamicFormatter = ({ data, uiSchema, isLevel = true, style, event }) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
 
@@ -294,7 +294,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
   }
 
   if (_.isArray(data)) {
-    return <ArrayFormatter items={data} style={style} />;
+    return <ArrayFormatter items={data} style={style} event={event} />;
   }
 
   if (_.isObject(data)) {
@@ -306,7 +306,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
       if (propertyFormatters?.[title]) {
         return (
           <Grid key={title} sm={12} {...(uiSchema?.[title] || {})}>
-            {propertyFormatters[title](data, data)}
+            {propertyFormatters[title](data, event)}
           </Grid>
         );
       }
@@ -344,7 +344,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
             {title}
           </SectionHeading>
           <Level>
-            <DynamicFormatter level={level + 1} data={data} style={style} />
+            <DynamicFormatter level={level + 1} data={data} style={style} event={event} />
           </Level>
         </Grid>
       );
@@ -360,6 +360,7 @@ export const FormatStructuredData = ({
   uiSchema,
   isLevel,
   style,
+  event,
 }) => {
   if (!data || isEmptyAtAllDepths(data)) {
     return null;
@@ -378,7 +379,13 @@ export const FormatStructuredData = ({
           overflowWrap: 'break-word',
         }}
       >
-        <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} style={style} />
+        <DynamicFormatter
+          data={data}
+          uiSchema={uiSchema}
+          isLevel={isLevel}
+          style={style}
+          event={event}
+        />
       </Grid>
     </FormatterContext.Provider>
   );
