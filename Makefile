@@ -317,7 +317,7 @@ ui-server: ui-meshery-build ui-provider-build server
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds.
 #-----------------------------------------------------------------------------
-.PHONY: ui-setup ui ui-meshery-build ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
+.PHONY: ui-setup ui ui-meshery-build ui-provider ui-lint ui-provider-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
 UI_BUILD_SCRIPT = build16
 UI_DEV_SCRIPT = dev16
@@ -355,13 +355,13 @@ ui:
 ui-provider:
 	cd provider-ui; npm run dev; cd ..
 
-## Lint check Meshery UI on your local machine.
+## Lint Meshery UI. Auto-fixes locally; check-only in CI environments.
 ui-lint:
-	cd ui && npm ci && npm run lint
+	cd ui && npm ci && $(if $(CI), npm run lint, npm run lint:fix)
 
-## Lint check Meshery Provider UI on your local machine.
+## Lint Meshery Provider UI. Auto-fixes locally; check-only in CI environments.
 ui-provider-lint:
-	cd provider-ui && npm ci && npm run lint
+	cd provider-ui && npm ci && $(if $(CI), npm run lint, npm run lint:fix)
 
 ## Test Meshery Provider UI on your local machine.
 ui-provider-test:

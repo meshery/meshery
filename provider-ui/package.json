@@ -9,7 +9,8 @@
     "start": "NODE_ENV=production node server.js",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix",
-    "clean": "rm -rf .next,out"
+    "clean": "rm -rf .next,out",
+    "prepare": "cd .. && husky ui/.husky"
   },
   "keywords": [],
   "author": "Meshery Authors",
@@ -35,6 +36,8 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.1.0",
     "eslint-config-next": "^16.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
     "start-server-and-test": "^2.1.5",
     "typescript": "^6.0.2"
   },
