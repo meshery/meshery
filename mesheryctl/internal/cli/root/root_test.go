@@ -73,8 +73,8 @@ func TestRootCmdIntegration(t *testing.T) {
 			resetFlags()
 			viper.Reset()
 
-		b := utils.SetupMeshkitLoggerTesting(t, false)
-    RootCmd.SetOut(b)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+    		RootCmd.SetOut(b)
 			RootCmd.SetArgs(tt.Args)
 
 			err := RootCmd.Execute()
