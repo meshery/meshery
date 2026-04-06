@@ -239,7 +239,7 @@ export const SideBarListItem = styled(ListItemButton, {
   },
   '&:hover': {
     ...(link && {
-      backgroundColor: 'rgba(0, 187, 166, 0.5)',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)',
     }),
 
     '.svg-inline--fa': {
@@ -251,7 +251,7 @@ export const SideBarListItem = styled(ListItemButton, {
   paddingBottom: 4,
   pointerEvents: isShow ? 'none' : 'auto',
   opacity: isShow ? 0.5 : '',
-  fontSize: '14px',
+  fontSize: '1rem',
 }));
 
 export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({

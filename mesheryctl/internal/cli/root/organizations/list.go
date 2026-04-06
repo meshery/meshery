@@ -58,7 +58,7 @@ func processOrgData(orgs *models.OrganizationsPage) ([][]string, int64) {
 	var rows [][]string
 	for _, org := range orgs.Organizations {
 		rows = append(rows, []string{
-			org.Id.String(),
+			org.ID.String(),
 			org.Name,
 			org.CreatedAt.Format("01-02-2006"),
 		})

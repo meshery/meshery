@@ -1,0 +1,24 @@
+version: 0.0.11
+name: deploy-meshery-using-meshery
+displayName: Deploy Meshery using Meshery
+createdAt: "2025-03-09T18:07:55Z"
+description: This design let's you deploy the latest stable Meshery to a Kubernetes cluster using Meshery.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3afb9cdf-4a37-4db2-a9f9-2e2b8769ec3e/0.0.11/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The service type is NodePort.\nUse this for test/PoC purposes only.\nBe careful when connecting production clusters to it.  \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7dde79fb-2778-4a66-9ce5-6772bafe8df8
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3afb9cdf-4a37-4db2-a9f9-2e2b8769ec3e-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3afb9cdf-4a37-4db2-a9f9-2e2b8769ec3e-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

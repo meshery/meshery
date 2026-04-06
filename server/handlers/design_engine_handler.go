@@ -69,7 +69,9 @@ func (h *Handler) PatternFileHandler(
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 
 		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		if _, writeErr := fmt.Fprintf(rw, "failed to read request body: %s", err); writeErr != nil {
+			h.log.Error(writeErr)
+		}
 		return
 	}
 
@@ -78,7 +80,9 @@ func (h *Handler) PatternFileHandler(
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 
 		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to unmarshal request body: %s", err)
+		if _, writeErr := fmt.Fprintf(rw, "failed to unmarshal request body: %s", err); writeErr != nil {
+			h.log.Error(writeErr)
+		}
 		return
 	}
 
@@ -141,10 +145,10 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	if patternID == uuid.Nil {
-		patternID = patternFile.Id
+		patternID = patternFile.ID
 	}
 
-	patternFile.Id = patternID
+	patternFile.ID = patternID
 	// Generate the pattern file object
 	description := fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
 
@@ -389,7 +393,7 @@ func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 						sap.log.Error(err)
 						sap.Terminate(err)
 					}
-					dependsOnSlice = append(dependsOnSlice, comp.Id.String())
+					dependsOnSlice = append(dependsOnSlice, comp.ID.String())
 					comp.Metadata.AdditionalProperties["dependsOn"] = dependsOnSlice
 				}
 			}

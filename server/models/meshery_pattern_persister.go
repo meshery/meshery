@@ -33,7 +33,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	count := int64(0)
@@ -71,7 +71,7 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	var pg int

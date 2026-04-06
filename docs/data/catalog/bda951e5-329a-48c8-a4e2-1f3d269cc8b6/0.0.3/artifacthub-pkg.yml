@@ -1,0 +1,24 @@
+version: 0.0.3
+name: argocd-metrics
+displayName: Argocd metrics
+createdAt: "2024-09-04T13:12:29Z"
+description: "This is   \na sample argocd \ndesign        @  and mesasuring  Metric@ a *$kubernetes manifes->!"
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/bda951e5-329a-48c8-a4e2-1f3d269cc8b6/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "No caveats \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9cb4bfce-ad8f-4a8e-8647-bb138fa07e7f
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/bda951e5-329a-48c8-a4e2-1f3d269cc8b6-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/bda951e5-329a-48c8-a4e2-1f3d269cc8b6-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

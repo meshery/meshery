@@ -1,7 +1,6 @@
 package root
 
 import (
-	"io"
 	"os"
 	"path/filepath"
 	"testing"
@@ -94,7 +93,7 @@ func TestInitConfigUseCases(t *testing.T) {
 				utils.Log = origLog
 			})
 
-			utils.Log = utils.SetupMeshkitLogger("mesheryctl", false, io.Discard)
+			utils.SetupMeshkitLoggerTesting(t, false)
 
 			tt.setup(t)
 

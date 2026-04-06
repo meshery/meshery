@@ -40,7 +40,12 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 
 	q := req.URL.Query()
 
-	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q.Get("orgID"))
+	orgID := q.Get("orgID")
+	if orgID == "" {
+		http.Error(w, "orgID is required", http.StatusBadRequest)
+		return
+	}
+	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
@@ -48,7 +53,9 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/environments/{id} EnvironmentAPI idGetEnvironmentByIDHandler
@@ -63,7 +70,12 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	environmentID := mux.Vars(r)["id"]
 	q := r.URL.Query()
-	resp, err := provider.GetEnvironmentByID(r, environmentID, q.Get("orgID"))
+	orgID := q.Get("orgID")
+	if orgID == "" {
+		http.Error(w, "orgID is required", http.StatusBadRequest)
+		return
+	}
+	resp, err := provider.GetEnvironmentByID(r, environmentID, orgID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
@@ -71,7 +83,9 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route POST /api/environments PostEnvironment idSaveEnvironment
@@ -109,7 +123,9 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 
 	h.log.Info(description)
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -129,7 +145,9 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route PUT /api/environments/{id} PostEnvironment idUpdateEnvironmentHandler
@@ -202,7 +220,9 @@ func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *ht
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route DELETE /api/environments/{environmentID}/connections/{connectionID} EnvironmentAPI idRemoveConnectionFromEnvironmentHandler
@@ -223,7 +243,9 @@ func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, 
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/environments/{environmentID}/connections EnvironmentAPI idGetConnectionsOfEnvironmentHandler
@@ -253,5 +275,7 @@ func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *h
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }

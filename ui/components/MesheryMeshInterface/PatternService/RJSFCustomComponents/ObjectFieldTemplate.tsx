@@ -42,6 +42,7 @@ const ObjectFieldTemplate = ({
 
   errorSchema,
 }) => {
+  const safeId = idSchema?.$id ?? 'object-field';
   const additional = schema?.__additional_property; // check if the object is additional
   const theme = useTheme();
   const rawErrors = getRawErrors(errorSchema);
@@ -73,7 +74,7 @@ const ObjectFieldTemplate = ({
             >
               <IconButton
                 className="object-property-expand"
-                onClick={onAddClick(schema)}
+                onClick={typeof onAddClick === 'function' ? onAddClick(schema) : undefined}
                 disabled={disabled || readonly}
               >
                 <AddIcon
@@ -189,7 +190,7 @@ const ObjectFieldTemplate = ({
       {fieldTitle ? (
         <>
           <CustomTitleField
-            id={`${idSchema.$id}-title`}
+            id={`${safeId}-title`}
             title={safeTitleStr}
             description={safeDescriptionStr}
             properties={properties}

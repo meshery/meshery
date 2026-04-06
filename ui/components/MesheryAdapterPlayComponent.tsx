@@ -37,8 +37,12 @@ import { useRouter } from 'next/router';
 import { Controlled as CodeMirror } from './CodeMirror';
 import Moment from 'react-moment';
 import yaml from 'js-yaml';
-import dataFetch from '../lib/data-fetch';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
+import {
+  useAdapterOperationMutation,
+  useLazyPingAdapterQuery,
+  useLazyGetSmiResultsQuery,
+} from '../rtk-query/system';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
 import MesheryMetrics from './Performance/MesheryMetrics';
@@ -155,6 +159,9 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
   const { selectedK8sContexts } = useSelector((state) => state.ui);
   const { adapter } = props;
   const { notify } = useNotification();
+  const [triggerAdapterOp] = useAdapterOperationMutation();
+  const [triggerPingAdapter] = useLazyPingAdapterQuery();
+  const [triggerGetSmiResults] = useLazyGetSmiResultsQuery();
   const { grafana } = useSelector((state) => state.telemetry);
   const router = useRouter();
   const addIconEles = useRef({});
@@ -481,15 +488,12 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
     updateProgress({ showProgress: true });
     handleClose();
 
-    dataFetch(
-      ctxUrl('/api/system/adapter/operation', selectedK8sContexts),
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        body: params,
-      },
-      (result) => {
+    triggerAdapterOp({
+      url: ctxUrl('system/adapter/operation', selectedK8sContexts),
+      body: params,
+    })
+      .unwrap()
+      .then((result) => {
         updateProgress({ showProgress: false });
 
         const newMenuState = { ...menuState };
@@ -505,57 +509,47 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
         if (typeof result !== 'undefined') {
           notify({ message: 'Operation executing...', event_type: EVENT_TYPES.INFO });
         }
-      },
-      handleError(cat, deleteOp, op),
-    );
+      })
+      .catch(handleError(cat, deleteOp, op));
   };
 
-  const handleAdapterClick = (adapterLoc) => () => {
+  const handleAdapterClick = (adapterLoc) => async () => {
     updateProgress({ showProgress: true });
-
-    dataFetch(
-      `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-      {
-        credentials: 'include',
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          notify({ message: 'Adapter pinged!', event_type: EVENT_TYPES.SUCCESS });
-        }
-      },
-      handleError('Could not ping adapter.'),
-    );
+    try {
+      await triggerPingAdapter(adapterLoc).unwrap();
+      updateProgress({ showProgress: false });
+      notify({ message: 'Adapter pinged!', event_type: EVENT_TYPES.SUCCESS });
+    } catch (err) {
+      updateProgress({ showProgress: false });
+      handleError('Could not ping adapter.')(err);
+    }
   };
 
-  const fetchSMIResults = (adapterName, page, pageSize, search, sortOrder) => {
-    let query = '';
+  const fetchSMIResults = async (adapterName, page, pageSize, search, sortOrder) => {
     if (typeof search === 'undefined' || search === null) {
       search = '';
     }
     if (typeof sortOrder === 'undefined' || sortOrder === null) {
       sortOrder = '';
     }
-    query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-      search,
-    )}&order=${encodeURIComponent(sortOrder)}`;
 
-    dataFetch(
-      `/api/smi/results${query}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (typeof result !== 'undefined' && result.results) {
-          const results = result.results.filter(
-            (val) => val.mesh_name.toLowerCase() == adapterName.toLowerCase(),
-          );
-          setSmiResult({ ...result, results: results, total_count: results.length });
-        }
-      },
-      (error) => console.log('Could not fetch SMI results.', error),
-    );
+    try {
+      const result = await triggerGetSmiResults({
+        page,
+        pagesize: pageSize,
+        search,
+        order: sortOrder,
+      }).unwrap();
+
+      if (typeof result !== 'undefined' && result.results) {
+        const results = result.results.filter(
+          (val) => val.mesh_name.toLowerCase() == adapterName.toLowerCase(),
+        );
+        setSmiResult({ ...result, results: results, total_count: results.length });
+      }
+    } catch (error) {
+      console.log('Could not fetch SMI results.', error);
+    }
   };
 
   // const handleSMIClick = (adapterName) => () => {

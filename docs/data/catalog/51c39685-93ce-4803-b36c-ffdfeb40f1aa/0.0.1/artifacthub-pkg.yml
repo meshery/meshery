@@ -1,0 +1,20 @@
+version: 0.0.1
+name: apache-shardingsphere-operator
+displayName: Apache ShardingSphere Operator
+createdAt: "2023-05-11T14:48:24Z"
+description: The ShardingSphere Kubernetes Operator automates provisioning, management, and operations of ShardingSphere Proxy clusters running on Kubernetes. Apache ShardingSphere is an ecosystem to transform any database into a distributed database system, and enhance it with sharding, elastic scaling, encryption features & more.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/51c39685-93ce-4803-b36c-ffdfeb40f1aa/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure Apache ShardingSphere and Knative Service is registered as a MeshModel \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 0f0e1517-b824-4d90-b9a8-c5791eedf3c2
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

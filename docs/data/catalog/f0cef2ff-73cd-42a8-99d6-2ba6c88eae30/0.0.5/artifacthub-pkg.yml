@@ -1,0 +1,24 @@
+version: 0.0.5
+name: ms-licenses-rest
+displayName: ms-licenses-rest
+createdAt: "2025-10-07T08:13:19Z"
+description: ms-licenses rest design for hacktoberfest
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/f0cef2ff-73cd-42a8-99d6-2ba6c88eae30/0.0.5/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The most critical consideration is that the design requires a secret token for HashiCorp Vault, but the value is empty. Before this design can be deployed, a user must provide a valid token.\n\nThe design specifies fixed CPU and memory resources for the container. Users should be aware that these might need to be adjusted for their specific workload.\n\nFor best practice, the imagePullPolicy in the deployment should be changed.\n\n    Component: ms-licenses-rest (the Deployment)\n\n    Finding: The policy is set to Always even though a specific image version (:0.0.11) is used. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 25304b14-6c70-42cd-b6cc-a86b829f90e9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/f0cef2ff-73cd-42a8-99d6-2ba6c88eae30-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/f0cef2ff-73cd-42a8-99d6-2ba6c88eae30-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -40,5 +40,7 @@ func (h *Handler) GetUsersKeys(w http.ResponseWriter, req *http.Request, _ *mode
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	if _, err := fmt.Fprint(w, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }

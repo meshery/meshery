@@ -29,7 +29,7 @@ import (
 )
 
 type componentViewFlags struct {
-	OutputFormat string `json:"output-type" validate:"required,oneof=json yaml"`
+	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
 	Save         bool   `json:"save" validate:"boolean"`
 }
 
@@ -55,10 +55,8 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentViewFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("[component-name | component-id] is required but not specified\n\n%s", errViewCmdMsg))
-		} else if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errViewCmdMsg))
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errInvalidArg, viewUsageMsg))
 		}
 		return nil
 	},

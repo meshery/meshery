@@ -30,7 +30,7 @@ COPY ui .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN npm run build && npm run export
+RUN npm run build
 
 FROM base-node AS ui-provider-deps
 RUN apk add --no-cache libc6-compat

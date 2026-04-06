@@ -74,6 +74,14 @@ type Preference struct {
 	RemoteProviderPreferences         map[string]interface{} `json:"remoteProviderPreferences,omitempty"`
 }
 
+// NewDefaultPreference returns a preference initialized with Meshery's default opt-in values.
+func NewDefaultPreference() *Preference {
+	return &Preference{
+		AnonymousUsageStats:  true,
+		AnonymousPerfResults: true,
+	}
+}
+
 func init() {
 	gob.Register(&Preference{})
 	gob.Register(map[string]interface{}{})

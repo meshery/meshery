@@ -146,7 +146,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	queryParams := r.URL.Query()
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	var greedy bool
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 	returnAnnotationComp := queryParams.Get("annotations")
@@ -232,10 +232,10 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
 
-		Components:    queryParams.Get("components") == "true",
-		Relationships: queryParams.Get("relationships") == "true",
+		Components:    queryParams.Get("components") == queryParamTrue,
+		Relationships: queryParams.Get("relationships") == queryParamTrue,
 		Status:        queryParams.Get("status"),
-		Trim:          queryParams.Get("trim") == "true",
+		Trim:          queryParams.Get("trim") == queryParamTrue,
 	}
 	if search != "" {
 		filter.DisplayName = search
@@ -301,7 +301,7 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	queryParams := r.URL.Query()
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	var greedy bool
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 	v := queryParams.Get("version")
@@ -316,8 +316,8 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
 
-		Components:    queryParams.Get("components") == "true",
-		Relationships: queryParams.Get("relationships") == "true",
+		Components:    queryParams.Get("components") == queryParamTrue,
+		Relationships: queryParams.Get("relationships") == queryParamTrue,
 	})
 
 	var modelDefs []_model.ModelDefinition
@@ -428,7 +428,7 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	name := mux.Vars(r)["category"]
 	var greedy bool
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 	categories, count, _, _ := h.registryManager.GetEntities(&regv1beta1.CategoryFilter{
@@ -495,7 +495,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 
 	queryParams := r.URL.Query()
 	var greedy bool
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 	typ := mux.Vars(r)["model"]
@@ -574,7 +574,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	name := mux.Vars(r)["name"]
 	var greedy bool
 	queryParams := r.URL.Query()
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 	cat := mux.Vars(r)["category"]
@@ -651,7 +651,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	var greedy bool
 	queryParams := r.URL.Query()
 
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 	typ := mux.Vars(r)["model"]
@@ -730,14 +730,14 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	name := mux.Vars(r)["name"]
 	var greedy bool
 	queryParams := r.URL.Query()
-	if search == "true" {
+	if search == queryParamTrue {
 		greedy = true
 	}
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:        name,
-		Trim:        queryParams.Get("trim") == "true",
+		Trim:        queryParams.Get("trim") == queryParamTrue,
 		APIVersion:  queryParams.Get("apiVersion"),
 		Version:     v,
 		ModelName:   queryParams.Get("model"),
@@ -812,7 +812,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		Id:          queryParams.Get("id"),
 		ModelName:   typ,
 		Version:     v,
-		Trim:        queryParams.Get("trim") == "true",
+		Trim:        queryParams.Get("trim") == queryParamTrue,
 		APIVersion:  queryParams.Get("apiVersion"),
 		Limit:       limit,
 		Offset:      offset,
@@ -889,7 +889,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		CategoryName: cat,
 		ModelName:    typ,
 		Version:      v,
-		Trim:         queryParams.Get("trim") == "true",
+		Trim:         queryParams.Get("trim") == queryParamTrue,
 		APIVersion:   queryParams.Get("apiVersion"),
 		Limit:        limit,
 		Offset:       offset,
@@ -963,7 +963,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
 		Version:      v,
-		Trim:         queryParams.Get("trim") == "true",
+		Trim:         queryParams.Get("trim") == queryParamTrue,
 		APIVersion:   queryParams.Get("apiVersion"),
 		Limit:        limit,
 		Offset:       offset,
@@ -1038,7 +1038,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	filter := &regv1beta1.ComponentFilter{
 		Id:          queryParams.Get("id"),
 		Version:     v,
-		Trim:        queryParams.Get("trim") == "true",
+		Trim:        queryParams.Get("trim") == queryParamTrue,
 		APIVersion:  queryParams.Get("apiVersion"),
 		Limit:       limit,
 		Offset:      offset,
@@ -1314,7 +1314,11 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err)
 			return
 		}
-		defer modelCsvFile.Close()
+		defer func() {
+			if err := modelCsvFile.Close(); err != nil {
+				h.log.Error(err)
+			}
+		}()
 
 		_, err = modelCsvFile.Write(modelCSVData)
 		if err != nil {
@@ -1338,7 +1342,11 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			h.sendErrorEvent(userID, provider, "Error creating temp file for Component CSV", err)
 			return
 		}
-		defer componentCsvFile.Close()
+		defer func() {
+			if err := componentCsvFile.Close(); err != nil {
+				h.log.Error(err)
+			}
+		}()
 
 		_, err = componentCsvFile.Write(componentCSVData)
 		if err != nil {
@@ -1361,7 +1369,11 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err)
 			return
 		}
-		defer relationshipCsvFile.Close()
+		defer func() {
+			if err := relationshipCsvFile.Close(); err != nil {
+				h.log.Error(err)
+			}
+		}()
 
 		_, err = relationshipCsvFile.Write(relationshipCSVData)
 		if err != nil {
@@ -1383,7 +1395,11 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			h.sendErrorEvent(userID, provider, "Error creating temporary directory", err)
 			return
 		}
-		defer os.RemoveAll(tempDir)
+		defer func() {
+			if err := os.RemoveAll(tempDir); err != nil {
+				h.log.Error(err)
+			}
+		}()
 
 		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
 		if err != nil {
@@ -1499,12 +1515,18 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
 			return
 		}
-		defer os.Remove(tempFile.Name())
+		defer func() {
+			if err := os.Remove(tempFile.Name()); err != nil {
+				h.log.Error(err)
+			}
+		}()
 
 		dir = registration.NewDir(tempFile.Name())
 		if importRequest.Register {
 			registrationHelper.Register(dir)
-			tempFile.Close()
+			if err := tempFile.Close(); err != nil {
+				h.log.Error(err)
+			}
 		}
 	case "urlImport":
 		downloadFile := func(url string) ([]byte, error) {
@@ -1512,15 +1534,20 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			if err != nil {
 				return nil, fmt.Errorf("error downloading file from URL: %v", err)
 			}
-			defer resp.Body.Close()
+			fileData, err := io.ReadAll(resp.Body)
+			if err != nil {
+				if closeErr := resp.Body.Close(); closeErr != nil {
+					return nil, fmt.Errorf("error reading downloaded file: %v (close error: %v)", err, closeErr)
+				}
+				return nil, fmt.Errorf("error reading downloaded file: %v", err)
+			}
+
+			if err := resp.Body.Close(); err != nil {
+				return nil, fmt.Errorf("error closing response body: %v", err)
+			}
 
 			if resp.StatusCode != http.StatusOK {
 				return nil, fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode)
-			}
-
-			fileData, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return nil, fmt.Errorf("error reading downloaded file: %v", err)
 			}
 
 			return fileData, nil
@@ -1547,12 +1574,18 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
 			return
 		}
-		defer os.Remove(tempFile.Name())
+		defer func() {
+			if err := os.Remove(tempFile.Name()); err != nil {
+				h.log.Error(err)
+			}
+		}()
 
 		dir = registration.NewDir(tempFile.Name())
 		if importRequest.Register {
 			registrationHelper.Register(dir)
-			tempFile.Close()
+			if err := tempFile.Close(); err != nil {
+				h.log.Error(err)
+			}
 		}
 	}
 
@@ -1637,7 +1670,9 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		// http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusNotFound)
 		rw.WriteHeader(http.StatusNotFound)
 		// rw.Write([]byte(message))
-		fmt.Fprintln(rw, message)
+		if _, err := fmt.Fprintln(rw, message); err != nil {
+			h.log.Error(err)
+		}
 		return
 	}
 
@@ -1671,7 +1706,11 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	defer os.RemoveAll(modelDir)
+	defer func() {
+		if err := os.RemoveAll(modelDir); err != nil {
+			h.log.Error(err)
+		}
+	}()
 
 	components := []component.ComponentDefinition{}
 	// Components can be nil if hasComponents is false

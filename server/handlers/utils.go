@@ -7,6 +7,7 @@ import (
 
 const (
 	defaultPageSize = 25
+	queryParamTrue  = "true"
 )
 
 func getPaginationParams(req *http.Request) (page, offset, limit int, search, order, sortOnCol, status string) {

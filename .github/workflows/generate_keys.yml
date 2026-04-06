@@ -63,9 +63,8 @@ jobs:
           mv keys.csv server/permissions/keys.csv;
       - name: Save keys.csv to docs static folders
         run: |
-          cp server/permissions/keys.csv docs/assets/excel/keys.csv
-          mkdir -p docs-new/static/excel
-          cp server/permissions/keys.csv docs-new/static/excel/keys.csv
+          mkdir -p docs/static/excel
+          cp server/permissions/keys.csv docs/static/excel/keys.csv
 
       - name: Pull changes from remote
         run: git pull origin master

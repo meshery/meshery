@@ -1,0 +1,1986 @@
+{
+  "id": "8b3a14d0-b822-4c0d-8051-571032558408",
+  "name": "hello-nginx-design.yml",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.28",
+  "metadata": {
+    "resolvedAliases": {
+      "b4b5fc07-aa61-4db3-96d8-73f5cf8618f9": {
+        "alias_component_id": "b4b5fc07-aa61-4db3-96d8-73f5cf8618f9",
+        "immediate_parent_id": "158e3190-6635-4594-bbd2-9418cc15cb50",
+        "immediate_ref_field_path": [
+          "configuration",
+          "spec",
+          "template",
+          "spec",
+          "containers",
+          "0"
+        ],
+        "relationship_id": "80bec97a-ded0-4fd3-9c7b-a74b3aba4201",
+        "resolved_parent_id": "158e3190-6635-4594-bbd2-9418cc15cb50",
+        "resolved_ref_field_path": [
+          "configuration",
+          "spec",
+          "template",
+          "spec",
+          "containers",
+          "0"
+        ]
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "b4b5fc07-aa61-4db3-96d8-73f5cf8618f9",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "containers.0",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-08-29T07:09:16.995843063Z",
+          "updated_at": "2025-08-29T07:09:16.995843063Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Container",
+        "schema": ""
+      }
+    },
+    {
+      "id": "158e3190-6635-4594-bbd2-9418cc15cb50",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "hello-nginx",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-08-29T07:09:22.101715575Z",
+          "updated_at": "2025-08-29T07:09:22.101715575Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "position": {
+          "x": -32,
+          "y": 32
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg",
+        "z-index": 1
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "hello-nginx",
+          "namespace": "hello-nginx"
+        },
+        "spec": {
+          "replicas": 2,
+          "selector": {
+            "matchLabels": {
+              "app": "hello-nginx"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "hello-nginx"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx:stable",
+                  "name": "nginx",
+                  "ports": [
+                    {
+                      "containerPort": 80
+                    }
+                  ],
+                  "readinessProbe": {
+                    "httpGet": {
+                      "path": "/",
+                      "port": 80
+                    },
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 5
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      }
+    },
+    {
+      "id": "4a2072aa-8a73-4d50-a4a5-c955ab406567",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "hello-nginx-ingress",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-08-29T07:09:22.101715575Z",
+          "updated_at": "2025-08-29T07:09:22.101715575Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 224,
+          "y": 32
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/ingress-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/ingress-white.svg",
+        "z-index": 2
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {
+            "kubernetes.io/ingress.class": "nginx"
+          },
+          "name": "hello-nginx-ingress",
+          "namespace": "hello-nginx"
+        },
+        "spec": {
+          "rules": [
+            {
+              "http": {
+                "paths": [
+                  {
+                    "backend": {
+                      "service": {
+                        "name": "hello-nginx",
+                        "port": {
+                          "number": 80
+                        }
+                      }
+                    },
+                    "path": "/",
+                    "pathType": "Prefix"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "networking.k8s.io/v1",
+        "kind": "Ingress",
+        "schema": ""
+      }
+    },
+    {
+      "id": "bc479e07-8776-4d5e-b3b5-f0693c907035",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "hello-nginx",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-08-29T07:09:22.101715575Z",
+          "updated_at": "2025-08-29T07:09:22.101715575Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-style": "dashed",
+        "border-width": 2,
+        "position": {
+          "x": 100.75,
+          "y": 44.5
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg",
+        "z-index": 3
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "hello-nginx"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Namespace",
+        "schema": ""
+      }
+    },
+    {
+      "id": "6e09c888-b8d7-4626-9d06-a8c48b051278",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-08-29T07:09:16.995843063Z",
+          "updated_at": "2025-08-29T07:09:16.995843063Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "transparent",
+        "border-style": "dashed",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 1,
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": 134.87165733740653,
+          "y": 67.88990400858171
+        },
+        "primaryColor": "#00D3a9",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "width": 1,
+        "z-index": 7
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "PenTerminal",
+        "schema": ""
+      }
+    },
+    {
+      "id": "b952222d-c543-4104-96ba-e45370a3b9d7",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-08-29T07:09:16.995843063Z",
+          "updated_at": "2025-08-29T07:09:16.995843063Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "transparent",
+        "border-style": "dashed",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 1,
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": 292.716881356249,
+          "y": 161.6593440197752
+        },
+        "primaryColor": "#00D3a9",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "width": 1,
+        "z-index": 8
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "PenTerminal",
+        "schema": ""
+      }
+    },
+    {
+      "id": "c0a34f66-958d-4bc7-a3c6-b4cc04266b0d",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-08-29T07:09:16.995843063Z",
+          "updated_at": "2025-08-29T07:09:16.995843063Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "transparent",
+        "border-style": "dashed",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 1,
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": 183.57967200988762,
+          "y": 63.722373341417544
+        },
+        "primaryColor": "#00D3a9",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "width": 1,
+        "z-index": 6
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "PenTerminal",
+        "schema": ""
+      }
+    },
+    {
+      "id": "386b9d99-8d7b-4a91-9caf-3379eb2b61b9",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-08-29T07:09:16.995843063Z",
+          "updated_at": "2025-08-29T07:09:16.995843063Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 33,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 302.8401691856092,
+          "y": 183.76265202527878
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": -4.3000603,
+        "z-index": 4
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      }
+    },
+    {
+      "id": "90ea1516-4e52-4f04-a93f-11c3e1a63c66",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "hello-nginx",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-08-29T07:09:22.101715575Z",
+          "updated_at": "2025-08-29T07:09:22.101715575Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "position": {
+          "x": 96,
+          "y": 32
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20,
+        "z-index": 5
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "hello-nginx",
+          "namespace": "hello-nginx"
+        },
+        "spec": {
+          "ports": [
+            {
+              "port": 80,
+              "protocol": "TCP",
+              "targetPort": 80
+            }
+          ],
+          "selector": {
+            "app": "hello-nginx"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    }
+  ],
+  "preferences": {
+    "layers": {
+      "relationships": {
+        "hierarchical-sibling-matchlabels": false
+      }
+    }
+  },
+  "relationships": [
+    {
+      "id": "4a55d53e-7ff0-49b4-8d76-26887f2963a1",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "386b9d99-8d7b-4a91-9caf-3379eb2b61b9",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "386b9d99-8d7b-4a91-9caf-3379eb2b61b9",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "c3da35cc-e8d2-4518-b04f-ea4bf0554771",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "c0a34f66-958d-4bc7-a3c6-b4cc04266b0d",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "6e09c888-b8d7-4626-9d06-a8c48b051278",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "368b3bc7-ffdd-4e70-bcef-1039d7a4e390",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "158e3190-6635-4594-bbd2-9418cc15cb50",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "bc479e07-8776-4d5e-b3b5-f0693c907035",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "5555b317-1038-4044-bdcc-127b02df4f9c",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "4a2072aa-8a73-4d50-a4a5-c955ab406567",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "bc479e07-8776-4d5e-b3b5-f0693c907035",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "711c0e12-2646-4533-b698-3c44215e21dc",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "Namespace to namespaced components",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "90ea1516-4e52-4f04-a93f-11c3e1a63c66",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "bc479e07-8776-4d5e-b3b5-f0693c907035",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "80bec97a-ded0-4fd3-9c7b-a74b3aba4201",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "b4b5fc07-aa61-4db3-96d8-73f5cf8618f9",
+                "kind": "Container",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "meshery-core",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ],
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "158e3190-6635-4594-bbd2-9418cc15cb50",
+                "kind": "Deployment",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ],
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "alias",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    }
+  ]
+}

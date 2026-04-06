@@ -30,7 +30,7 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	count := int64(0)
@@ -68,7 +68,7 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	var pg int

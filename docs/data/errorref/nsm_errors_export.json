@@ -1,0 +1,152 @@
+{
+  "errors_export": {
+    "component_name": "nsm",
+    "component_type": "adapter",
+    "errors": {
+      "1000": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1000",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1001": {
+        "name": "ErrGetLatestReleasesCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to fetch release info: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1002": {
+        "name": "ErrGetLatestReleaseNamesCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to extract release names: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1003": {
+        "name": "ErrInstallNSMCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with nsm operation: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1004": {
+        "name": "ErrCreatingHelmIndexCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with nsm operation: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1005": {
+        "name": "ErrEntryWithAppVersionNotExistsCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Entry: \nwith app version : \ndoes not exists",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1006": {
+        "name": "ErrHelmRepositoryNotFoundCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Either the repo : \ndoes not exists or is corrupt: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1007": {
+        "name": "ErrDecodeYamlCode",
+        "code": "1007",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error decoding yaml: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1008": {
+        "name": "ErrMeshConfigCode",
+        "code": "1008",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error configuration mesh: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1009": {
+        "name": "ErrApplyHelmChartCode",
+        "code": "1009",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying helm chart: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1010": {
+        "name": "ErrConvertingAppVersionToChartVersionCode",
+        "code": "1010",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error converting app version to chart version: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1011": {
+        "name": "ErrCreatingNSMMeshClientCode",
+        "code": "1011",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to create a new nsm client: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1012": {
+        "name": "ErrSampleAppCode",
+        "code": "1012",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with sample app operation: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1013": {
+        "name": "ErrCustomOperationCode",
+        "code": "1013",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with custom operation: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1014": {
+        "name": "ErrOpInvalidCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrLoadNamespaceCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while labeling namespace:",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    }
+  }
+}

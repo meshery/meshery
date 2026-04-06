@@ -1,0 +1,20 @@
+version: 0.0.1
+name: browerless-chrome
+displayName: Browerless Chrome
+createdAt: "2024-04-30T20:25:52Z"
+description: Browerless Chrome
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/571a79c9-01c5-4c4b-b8c6-c3f0b2f2415f/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 090e7114-509a-4046-81f1-9c5fb8daf724
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

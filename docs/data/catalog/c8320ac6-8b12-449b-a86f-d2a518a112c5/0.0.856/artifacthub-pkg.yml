@@ -1,0 +1,24 @@
+version: 0.0.856
+name: architecture-diagramming
+displayName: Architecture Diagramming
+createdAt: "2025-11-04T14:26:02Z"
+description: "The whiteboarding feature introduces versatile, freestyle drawing capabilities within Kanvas. Enabling the whiteboard feature augments your ability to diagram with a suite of predefined shapes, and pen and pencil annotation, allowing you full freedom of expression of your engineering diagrams.\nKey Functionality\n\U0001F517\n\n    Drawing Tools Integration\n        Incorporates a comprehensive set of drawing tools resembling popular whiteboard applications.\n        Enables you to draw shapes, group components , annotate, and highlight specific elements within the infrastructure design canvas.\n    Real-time Collaboration\n        Facilitates simultaneous collaboration among multiple users within the tool.\n        Supports live editing and instant visualization of changes made by collaborators.\n    Non-Invasive Annotations\n        Annotations, shapes, or drawings created within the tool remain separate visual aids, not altering the actual infrastructure components."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/c8320ac6-8b12-449b-a86f-d2a518a112c5/0.0.856/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "--- \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 969bfd5e-28fb-4c20-a020-ee9db65da812
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c8320ac6-8b12-449b-a86f-d2a518a112c5-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c8320ac6-8b12-449b-a86f-d2a518a112c5-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

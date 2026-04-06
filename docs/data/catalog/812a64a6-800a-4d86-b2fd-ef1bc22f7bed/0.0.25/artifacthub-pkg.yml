@@ -1,0 +1,24 @@
+version: 0.0.25
+name: vald(helm)-v1.7.17.tgz
+displayName: Vald(Helm)-v1.7.17.tgz
+createdAt: "2025-10-02T16:45:41Z"
+description: "This design was generated from the Vald Helm chart (v1.7.17) and includes core components \nlike discoverer, manager, agent, and gateway."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/812a64a6-800a-4d86-b2fd-ef1bc22f7bed/0.0.25/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "- This design reflects Vald Helm chart v1.7.17.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 985074f5-27a0-406c-b83a-7f247ba77746
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/812a64a6-800a-4d86-b2fd-ef1bc22f7bed-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/812a64a6-800a-4d86-b2fd-ef1bc22f7bed-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

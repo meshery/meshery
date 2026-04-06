@@ -13,7 +13,7 @@ import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
-import { getCredentialByID } from '@/api/credentials';
+import { useLazyGetCredentialByIdQuery } from '@/rtk-query/credentials';
 import { useUpdateConnectionByIdMutation } from '@/rtk-query/connection';
 import {
   useConfigureGrafanaMutation,
@@ -43,6 +43,7 @@ const GrafanaChartsWrapper = styled(Box)(() => {
 
 const GrafanaComponent = (props) => {
   const { grafana } = useSelector((state) => state.telemetry);
+  const [fetchCredentialById] = useLazyGetCredentialByIdQuery();
   const [state, setState] = useState({
     urlError: false,
     grafanaConfigSuccess: grafana.grafanaURL !== '',
@@ -189,7 +190,7 @@ const GrafanaComponent = (props) => {
     // Get the connection object from the event value and update configuration
     const grafanaConnectionObj = value;
     try {
-      const res = await getCredentialByID(grafanaConnectionObj.credential_id);
+      const res = await fetchCredentialById(grafanaConnectionObj.credential_id).unwrap();
       const grafanaCfg = {
         grafanaURL: grafanaConnectionObj?.value || '',
         grafanaAPIKey: res?.secret?.secret || '',

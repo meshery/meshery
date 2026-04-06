@@ -37,7 +37,7 @@ type Operation struct {
 var spec string
 
 var linkDocMeshValidate = map[string]string{
-	"link":    "![mesh-validate-usage](/assets/img/mesheryctl/mesh-validate.png)",
+	"link":    "![mesh-validate-usage](/reference/images/mesh-validate.png)",
 	"caption": "Usage of mesheryctl adapter validate",
 }
 

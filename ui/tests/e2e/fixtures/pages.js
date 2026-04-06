@@ -78,7 +78,6 @@ export class ConnectionsPage {
 }
 
 export const test = base.test.extend({
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   designsPage: async ({ page }, use) => {
     const designerPage = new DesignsPage(page);
     await designerPage.loadDefault();

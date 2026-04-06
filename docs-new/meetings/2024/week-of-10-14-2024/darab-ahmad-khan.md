@@ -1,1 +1,0 @@
-Name:Darab ahmad khan

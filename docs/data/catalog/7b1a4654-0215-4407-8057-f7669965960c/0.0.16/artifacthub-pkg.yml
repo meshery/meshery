@@ -1,0 +1,24 @@
+version: 0.0.16
+name: edge-network-relationship
+displayName: Edge Network Relationship
+createdAt: "2025-10-27T14:10:06Z"
+description: 'This design consists of edge network relationship '
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7b1a4654-0215-4407-8057-f7669965960c/0.0.16/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Educational \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 6ad60df0-67bb-4c3f-8c9d-d4cd51f00644
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7b1a4654-0215-4407-8057-f7669965960c-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7b1a4654-0215-4407-8057-f7669965960c-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

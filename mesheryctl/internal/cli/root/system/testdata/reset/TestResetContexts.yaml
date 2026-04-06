@@ -22,7 +22,6 @@ contexts:
         platform: docker
         channel: stable
         version: latest
-        provider: Layer5
 current-context: local2
 tokens:
     - name: default

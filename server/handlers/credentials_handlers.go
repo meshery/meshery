@@ -23,7 +23,7 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 
 	userUUID := user.ID
 	credential := models.Credential{
-		UserID: &userUUID,
+		UserId: &userUUID,
 		Secret: map[string]interface{}{},
 	}
 
@@ -109,7 +109,7 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 
 	userUUID := user.ID
 	credential := &models.Credential{
-		UserID: &userUUID,
+		UserId: &userUUID,
 		Secret: map[string]interface{}{},
 	}
 	err = json.Unmarshal(bd, credential)

@@ -111,6 +111,7 @@ func (h *Handler) ProviderCapabilityHandler(
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(providerCapabilities)
 	if err != nil {
 		h.log.Error(models.ErrMarshal(err, "provider capabilities"))

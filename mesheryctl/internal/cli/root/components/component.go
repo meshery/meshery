@@ -101,7 +101,7 @@ func init() {
 func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponentsAPIResponse) ([][]string, int64) {
 	rows := [][]string{}
 	for _, component := range componentsResponse.Components {
-		componentID := component.Id.String()
+		componentID := component.ID.String()
 		componentName := component.DisplayName
 		if componentName == "" {
 			componentName = "N/A"

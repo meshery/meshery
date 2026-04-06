@@ -1,3 +1,0 @@
-Hi,
-
-gophering around meshery

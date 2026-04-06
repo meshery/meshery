@@ -45,11 +45,11 @@ func HandlePaginationAsync[T any](
 		urlPath := ""
 
 		pagesQuerySearch := url.Values{}
-		if !strings.Contains(displayData.UrlPath, "page") {
+		if !strings.Contains(displayData.UrlPath, "page=") {
 			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
 		}
 
-		if !strings.Contains(displayData.UrlPath, "pagesize") {
+		if !strings.Contains(displayData.UrlPath, "pagesize=") {
 			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
 		}
 
@@ -66,9 +66,10 @@ func HandlePaginationAsync[T any](
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {
 			errCode := errors.GetCode(err)
-			if slices.Contains(serverAndNetworkErrors, errCode) || errCode == utils.ErrUnmarshalCode {
+			if slices.Contains(serverAndNetworkErrors, errCode) || errCode == utils.ErrUnmarshalCode || errCode == utils.ErrNotFoundCode {
 				return err
 			}
+
 			return ErrPagination(err, currentPage)
 		}
 
