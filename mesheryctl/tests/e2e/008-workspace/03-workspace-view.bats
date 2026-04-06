@@ -35,6 +35,5 @@ setup() {
 
     assert_failure
     assert_output --partial "Error"
-    assert_output --partial "No workspace found"
+    assert_output --partial "record not found"
 }
-
