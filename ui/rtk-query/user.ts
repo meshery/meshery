@@ -43,7 +43,7 @@ export const userApi = api
         invalidatesTags: [Tags.LOAD_TEST_PREF],
       }),
       getToken: builder.query({
-        query: () => `/api/user/token`,
+        query: () => ({ url: `/api/token`, method: 'GET', credentials: 'include' }),
         method: 'GET',
       }),
       getUserPref: builder.query({
@@ -223,7 +223,7 @@ export const userApi = api
       }),
       getAccessToken: builder.query({
         query: () => ({
-          url: `/api/user/token`,
+          url: `/api/token`,
         }),
         transformResponse: (response) => {
           return response?.token;
