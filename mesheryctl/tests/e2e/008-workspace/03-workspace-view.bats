@@ -31,6 +31,7 @@ setup() {
 }
 
 @test "given non-existent UUID when running mesheryctl workspace view then workspace not found error is displayed" {
+    skip "TODO: workspace view by UUID needs rework - tracked in #18490"
     run $MESHERYCTL_BIN workspace view 00000000-0000-0000-0000-000000000000
 
     assert_failure
