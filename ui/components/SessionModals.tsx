@@ -14,6 +14,8 @@ import {
 import { ExpirationState } from '@/store/slices/sessions';
 import { recordActivity, triggerSessionExpired } from 'lib/sessionTimer';
 
+const AUTO_REDIRECT_DELAY_MS = 5000;
+
 const selectSessionStatus = (state: { sessions: { status: ExpirationState } }) =>
   state.sessions.status;
 
@@ -111,7 +113,7 @@ const SessionExpiredModal = () => {
 
     const timer = setTimeout(() => {
       window.location.href = getLoginRedirectUrl();
-    }, 5000);
+    }, AUTO_REDIRECT_DELAY_MS);
 
     return () => clearTimeout(timer);
   }, [isExpired]);

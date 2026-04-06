@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import sessionsReducer, { setSessionState } from '../sessions';
+import sessionsReducer, { setExpirationState } from '../sessions';
 
 describe('sessions slice', () => {
   it('returns initial state with idle status', () => {
@@ -8,42 +8,42 @@ describe('sessions slice', () => {
   });
 
   it('transitions from idle to expiring', () => {
-    const state = sessionsReducer(undefined, setSessionState('expiring'));
+    const state = sessionsReducer(undefined, setExpirationState('expiring'));
     expect(state.status).toBe('expiring');
   });
 
   it('transitions from idle to expired', () => {
-    const state = sessionsReducer(undefined, setSessionState('expired'));
+    const state = sessionsReducer(undefined, setExpirationState('expired'));
     expect(state.status).toBe('expired');
   });
 
   it('transitions from expiring to idle', () => {
-    const initial = sessionsReducer(undefined, setSessionState('expiring'));
-    const state = sessionsReducer(initial, setSessionState('idle'));
+    const initial = sessionsReducer(undefined, setExpirationState('expiring'));
+    const state = sessionsReducer(initial, setExpirationState('idle'));
     expect(state.status).toBe('idle');
   });
 
   it('transitions from expiring to expired', () => {
-    const initial = sessionsReducer(undefined, setSessionState('expiring'));
-    const state = sessionsReducer(initial, setSessionState('expired'));
+    const initial = sessionsReducer(undefined, setExpirationState('expiring'));
+    const state = sessionsReducer(initial, setExpirationState('expired'));
     expect(state.status).toBe('expired');
   });
 
   it('does not transition from expired to idle (absorbing state)', () => {
-    const initial = sessionsReducer(undefined, setSessionState('expired'));
-    const state = sessionsReducer(initial, setSessionState('idle'));
+    const initial = sessionsReducer(undefined, setExpirationState('expired'));
+    const state = sessionsReducer(initial, setExpirationState('idle'));
     expect(state.status).toBe('expired');
   });
 
   it('does not transition from expired to expiring (absorbing state)', () => {
-    const initial = sessionsReducer(undefined, setSessionState('expired'));
-    const state = sessionsReducer(initial, setSessionState('expiring'));
+    const initial = sessionsReducer(undefined, setExpirationState('expired'));
+    const state = sessionsReducer(initial, setExpirationState('expiring'));
     expect(state.status).toBe('expired');
   });
 
   it('allows expired to expired (idempotent)', () => {
-    const initial = sessionsReducer(undefined, setSessionState('expired'));
-    const state = sessionsReducer(initial, setSessionState('expired'));
+    const initial = sessionsReducer(undefined, setExpirationState('expired'));
+    const state = sessionsReducer(initial, setExpirationState('expired'));
     expect(state.status).toBe('expired');
   });
 });

@@ -10,18 +10,25 @@ vi.mock('../../store', () => ({
 }));
 
 import { store } from '../../store';
-import { setSessionState } from '@/store/slices/sessions';
-import { recordActivity, triggerSessionExpired, startSessionTimer } from '../sessionTimer';
+import { setExpirationState } from '@/store/slices/sessions';
+import {
+  recordActivity,
+  triggerSessionExpired,
+  startSessionTimer,
+  stopSessionTimer,
+} from '../sessionTimer';
 
 describe('sessionTimer', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.clearAllMocks();
     mockStatus = 'idle';
+    stopSessionTimer();
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    stopSessionTimer();
   });
 
   it('startSessionTimer registers click and keydown listeners', () => {
@@ -36,6 +43,7 @@ describe('sessionTimer', () => {
   });
 
   it('startSessionTimer does not register duplicate listeners', () => {
+    startSessionTimer();
     const addEventSpy = vi.spyOn(window, 'addEventListener');
     startSessionTimer();
 
@@ -47,7 +55,7 @@ describe('sessionTimer', () => {
   it('recordActivity dispatches idle when session is expiring', () => {
     mockStatus = 'expiring';
     recordActivity();
-    expect(store.dispatch).toHaveBeenCalledWith(setSessionState('idle'));
+    expect(store.dispatch).toHaveBeenCalledWith(setExpirationState('idle'));
   });
 
   it('recordActivity does nothing when session is expired', () => {
@@ -62,7 +70,7 @@ describe('sessionTimer', () => {
     // Advance to 55 minutes (SESSION_TIMEOUT_MS - WARNING_BEFORE_MS)
     vi.advanceTimersByTime(55 * 60 * 1000);
 
-    expect(store.dispatch).toHaveBeenCalledWith(setSessionState('expiring'));
+    expect(store.dispatch).toHaveBeenCalledWith(setExpirationState('expiring'));
   });
 
   it('does not dispatch expiring before the warning period', () => {
@@ -72,12 +80,12 @@ describe('sessionTimer', () => {
     // Advance to 54 minutes — should not fire yet
     vi.advanceTimersByTime(54 * 60 * 1000);
 
-    expect(store.dispatch).not.toHaveBeenCalledWith(setSessionState('expiring'));
+    expect(store.dispatch).not.toHaveBeenCalledWith(setExpirationState('expiring'));
   });
 
   it('triggerSessionExpired dispatches expired', () => {
     triggerSessionExpired();
-    expect(store.dispatch).toHaveBeenCalledWith(setSessionState('expired'));
+    expect(store.dispatch).toHaveBeenCalledWith(setExpirationState('expired'));
   });
 
   it('triggerSessionExpired is a no-op when already expired', () => {

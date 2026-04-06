@@ -9,7 +9,7 @@
  */
 
 import { store } from '../store';
-import { setSessionState } from '../store/slices/sessions';
+import { setExpirationState } from '../store/slices/sessions';
 
 const SESSION_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour (matches server default)
 const WARNING_BEFORE_MS = 5 * 60 * 1000; // Warn 5 minutes before expiry
@@ -47,17 +47,17 @@ function showTimeoutWarning() {
 
   if (state !== 'idle' || typeof document === 'undefined') return;
 
-  store.dispatch(setSessionState('expiring'));
+  store.dispatch(setExpirationState('expiring'));
 }
 
 function dismissWarning() {
-  store.dispatch(setSessionState('idle'));
+  store.dispatch(setExpirationState('idle'));
 }
 
 export function triggerSessionExpired() {
   if (store.getState().sessions.status === 'expired') return;
   if (warningTimer) clearTimeout(warningTimer);
-  store.dispatch(setSessionState('expired'));
+  store.dispatch(setExpirationState('expired'));
 }
 
 export function startSessionTimer() {
@@ -69,4 +69,18 @@ export function startSessionTimer() {
   window.addEventListener('keydown', resetOnInteraction, { passive: true });
 
   scheduleWarning();
+}
+
+export function stopSessionTimer() {
+  if (typeof window === 'undefined') return;
+  if (!started) return;
+  started = false;
+
+  window.removeEventListener('click', resetOnInteraction);
+  window.removeEventListener('keydown', resetOnInteraction);
+
+  if (warningTimer) {
+    clearTimeout(warningTimer);
+    warningTimer = null;
+  }
 }

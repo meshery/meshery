@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type SessionState = 'idle' | 'expiring' | 'expired';
+export type ExpirationState = 'idle' | 'expiring' | 'expired';
 
 interface SessionsState {
-  status: SessionState;
+  status: ExpirationState;
 }
 
 const initialState: SessionsState = {
@@ -14,7 +14,7 @@ const sessionsSlice = createSlice({
   name: 'sessions',
   initialState,
   reducers: {
-    setSessionState: (state, action: PayloadAction<SessionState>) => {
+    setExpirationState: (state, action: PayloadAction<ExpirationState>) => {
       // expired is an absorbing state — cannot transition out of it
       if (state.status === 'expired' && action.payload !== 'expired') return;
       state.status = action.payload;
@@ -22,5 +22,5 @@ const sessionsSlice = createSlice({
   },
 });
 
-export const { setSessionState } = sessionsSlice.actions;
+export const { setExpirationState } = sessionsSlice.actions;
 export default sessionsSlice.reducer;
