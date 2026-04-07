@@ -13,11 +13,11 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
-	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/core"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
+	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 
 	"github.com/meshery/meshkit/models/events"
 
@@ -343,11 +343,6 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 	return unknownComponents
 }
 
-// swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
-// Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
-//
-// responses:
-// 200
 func (h *Handler) EvaluateRelationshipPolicy(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -469,23 +464,6 @@ func (h *Handler) EvaluateRelationshipPolicy(
 // 	return
 // }
 
-// swagger:route GET /api/meshmodels/models/{model}/policies/{name} GetMeshmodelPoliciesByName idGetMeshmodelPoliciesByName
-// Handle GET request for getting meshmodel policies of a specific model by name.
-//
-// Example: ```/api/meshmodels/models/kubernetes/policies/{name}```
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// responses:
-//
-//	200: []meshmodelPoliciesResponseWrapper
 func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -529,23 +507,6 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 }
 
-// swagger:route GET /api/meshmodels/models/{model}/policies/ GetMeshmodelPolicies idGetMeshmodelPolicies
-// Handle GET request for getting meshmodel policies of a specific model by name.
-//
-// Example: ```/api/meshmodels/models/kubernetes/policies```
-//
-// // ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// responses:
-//
-//	200: []meshmodelPoliciesResponseWrapper
 func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)

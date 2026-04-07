@@ -217,12 +217,6 @@ func ImportErrorEvent(eventBuilder events.EventBuilder, importPayload MesheryDes
 
 }
 
-// swagger:route POST /api/pattern/import PatternsAPI idPostPatternFile
-// Handle design import
-//
-// responses: [Design]
-//
-//	200: mesheryPatternResponseWrapper
 func (h *Handler) DesignFileImportHandler(
 	rw http.ResponseWriter,
 	r *http.Request,

@@ -31,13 +31,6 @@ type componentGenerationResponseDataItem struct {
 	Errors     []string                        `json:"errors"`
 }
 
-// swagger:route POST /api/meshmodel/generate MeshmodelComponentGenerate idPostMeshModelComponentGenerate
-// Handle POST request for component generation
-//
-// Generates Meshery Components for the given payload
-// responses:
-// 	200:
-
 // request body should be json
 // request body should be of format - {data: [{name: string, register: boolean}]}
 // response format - {data: [{name: string, components: [component], errors: [string] }]}
