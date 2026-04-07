@@ -61,13 +61,6 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 	}
 }
 
-// swagger:route POST /api/system/kubernetes SystemAPI idPostK8SConfig
-// Handle POST request for Kubernetes Config
-//
-// Used to add kubernetes config to System
-// responses:
-// 	200: k8sConfigRespWrapper
-
 // The function is called only when user uploads a kube config.
 // Connections which have state as "registered" are the only new ones, hence the GraphQL K8sContext subscription only sends an update to UI if any connection has registered state.
 // A registered connection might have been regsitered previously and is not required for K8sContext Subscription to notify, but this case is not considered here.
@@ -228,13 +221,6 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	}
 }
 
-// swagger:route DELETE /api/system/kubernetes SystemAPI idDeleteK8SConfig
-// Handle DELETE request for Kubernetes Config
-//
-// Used to delete kubernetes config to System
-// responses:
-// 	200:
-
 func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, _ *http.Request, _ models.Provider) {
 	// prefObj.K8SConfig = nil
 	// err := provider.RecordPreferences(req, user.UserId, prefObj)
@@ -246,13 +232,6 @@ func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.R
 
 	_, _ = w.Write([]byte("{}"))
 }
-
-// swagger:route POST /api/system/kubernetes/contexts SystemAPI idPostK8SContexts
-// Handle POST requests for Kubernetes Context list
-//
-// Returns the context list for a given k8s config
-// responses:
-// 	200: k8sContextsRespWrapper
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
@@ -282,13 +261,6 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 		return
 	}
 }
-
-// swagger:route GET /api/system/kubernetes/ping?connection_id={id} SystemAPI idGetKubernetesPing
-// Handle GET request for Kubernetes ping
-//
-// Fetches server version to simulate ping
-// responses:
-// 	200:
 
 // KubernetesPingHandler - fetches server version to simulate ping
 func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -340,15 +312,6 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 	http.Error(w, "Empty contextID. Pass the context ID(in query parameter \"context\") of the kuberenetes to be pinged", http.StatusBadRequest)
 }
 
-// swagger:route POST /api/system/kubernetes/register SystemAPI idPostK8SRegistration
-// Handle registration request for Kubernetes components
-//
-// Used to register Kubernetes components to Meshery from a kubeconfig file
-// responses:
-//
-//		202:
-//	 400:
-//	 500:
 func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {

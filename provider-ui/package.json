@@ -22,7 +22,7 @@
     "@emotion/styled": "^11.14.1",
     "@meshery/schemas": "^1.0.1",
     "@mui/icons-material": "^7.3.9",
-    "@sistent/sistent": "^0.18.1",
+    "@sistent/sistent": "^0.18.2",
     "http-proxy": "^1.18.1",
     "next": "^16.2.1",
     "prop-types": "^15.8.1",
