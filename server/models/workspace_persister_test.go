@@ -12,13 +12,19 @@ import (
 	"gorm.io/gorm"
 )
 
-func TestSchemasWorkspaceAutoMigrateAndPersistMetadata(t *testing.T) {
+func newWorkspaceTestDB(t *testing.T) *database.Handler {
+	t.Helper()
+
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		t.Fatalf("failed to create in-memory database: %v", err)
 	}
 
-	dbHandler := &database.Handler{DB: db}
+	return &database.Handler{DB: db}
+}
+
+func TestSchemasWorkspaceAutoMigrateAndPersistMetadata(t *testing.T) {
+	dbHandler := newWorkspaceTestDB(t)
 	if err := dbHandler.AutoMigrate(&workspace.Workspace{}); err != nil {
 		t.Fatalf("failed to auto-migrate schemas workspace: %v", err)
 	}
@@ -40,9 +46,8 @@ func TestSchemasWorkspaceAutoMigrateAndPersistMetadata(t *testing.T) {
 		UpdatedAt:      now,
 		Name:           "Regression Workspace",
 		Description:    "verifies schemas workspace metadata storage",
-		Metadata:       schemacore.MapObject{"source": "test", "mode": "gorm"},
-		OrganizationID: &organizationID,
-		Owner:          "meshery",
+		Metadata:       schemacore.Map{"source": "test", "mode": "gorm"},
+		OrganizationID: organizationID,
 	}
 
 	if err := dbHandler.Create(&ws).Error; err != nil {

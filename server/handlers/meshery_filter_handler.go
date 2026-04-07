@@ -21,13 +21,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
-// swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
-// Handle GET request for filter file with given id
-//
-// Returns the Meshery Filter file saved by the current user with the given id
-// responses:
-//
-//	200: mesheryFilterResponseWrapper
 func (h *Handler) GetMesheryFilterFileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -73,13 +66,6 @@ func (h *Handler) FilterFileRequestHandler(
 	}
 }
 
-// swagger:route POST /api/filter FiltersAPI idPostFilterFile
-// Handle POST requests for Meshery Filters
-//
-// Used to save/update a Meshery Filter
-// responses:
-//
-//	200: mesheryFilterResponseWrapper
 func (h *Handler) handleFilterPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -228,25 +214,6 @@ func (h *Handler) handleFilterPOST(
 	}
 }
 
-// swagger:route GET /api/filter FiltersAPI idGetFilterFiles
-// Handle GET request for filters
-//
-// # Returns the list of all the filters saved by the current user
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search=<filter name>``` A string matching is done on the specified filter name
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-//
-// ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
-// Eg: ```?visibility=["public", "published"]``` will return public and published filters
-//
-// responses:
-//
-//	200: mesheryFiltersResponseWrapper
 func (h *Handler) GetMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -284,21 +251,6 @@ func (h *Handler) GetMesheryFiltersHandler(
 	}
 }
 
-// swagger:route GET /api/filter/catalog FiltersAPI idGetCatalogMesheryFiltersHandler
-// Handle GET request for catalog filters
-//
-// # Filters can be further filtered through query parameter
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10.
-//
-// ```?search={filtername}``` If search is non empty then a greedy search is performed
-// responses:
-//
-//	200: mesheryFiltersResponseWrapper
 func (h *Handler) GetCatalogMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -322,15 +274,6 @@ func (h *Handler) GetCatalogMesheryFiltersHandler(
 	}
 }
 
-// swagger:route DELETE /api/filter/{id} FiltersAPI idDeleteMesheryFilter
-// Handle Delete for a Meshery Filter
-//
-// Deletes a meshery filter with ID: id
-// responses:
-//
-//	200: noContentWrapper
-//
-// DeleteMesheryFilterHandler deletes a filter with the given id
 func (h *Handler) DeleteMesheryFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -354,15 +297,6 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	}
 }
 
-// swagger:route POST /api/filter/clone/{id} FiltersAPI idCloneMesheryFilter
-// Handle Clone for a Meshery Filter
-//
-// Creates a local copy of a published filter with id: id
-// responses:
-//
-//	200: noContentWrapper
-//
-// CloneMesheryFilterHandler clones a filter with the given id
 func (h *Handler) CloneMesheryFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -392,15 +326,6 @@ func (h *Handler) CloneMesheryFilterHandler(
 	}
 }
 
-// swagger:route POST /api/filter/catalog/publish FiltersAPI idPublishCatalogFilterHandler
-// Handle Publish for a Meshery Filter
-//
-// Publishes filter to Meshery Catalog by setting visibility to published and setting catalog data
-// responses:
-//
-//	202: noContentWrapper
-//
-// PublishCatalogFilterHandler set visibility of filter with given id as published
 func (h *Handler) PublishCatalogFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -473,15 +398,6 @@ func (h *Handler) PublishCatalogFilterHandler(
 	}
 }
 
-// swagger:route DELETE /api/filter/catalog/unpublish FiltersAPI idUnPublishCatalogFilterHandler
-// Handle UnPublish for a Meshery Filter
-//
-// Unpublishes filter from Meshery Catalog by setting visibility to private and removing catalog data from website
-// responses:
-//
-//	200: noContentWrapper
-//
-// UnPublishCatalogFilterHandler sets visibility of filter with given id as private
 func (h *Handler) UnPublishCatalogFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -552,13 +468,6 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 	}
 }
 
-// swagger:route GET /api/filter/{id} FiltersAPI idGetMesheryFilter
-// Handle GET request for a Meshery Filter
-//
-// Fetches the Meshery Filter with the given id
-// responses:
-// 	200: mesheryFilterResponseWrapper
-
 // GetMesheryFilterHandler fetched the filter with the given id
 func (h *Handler) GetMesheryFilterHandler(
 	rw http.ResponseWriter,
@@ -616,20 +525,6 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 	go h.EventsBuffer.Publish(res)
 	eventBuilder.WithDescription(fmt.Sprintf("Filter %s saved", strings.Join(names, ",")))
 }
-
-// swagger:route POST /api/filter/deploy FilterAPI idPostDeployFilterFile
-// Handle POST request for Filter File Deploy
-//
-// Deploy an attached filter file with the request
-// responses:
-//  200: FilterFilesResponseWrapper
-
-// swagger:route DELETE /api/filter/deploy FilterAPI idDeleteFilterFile
-// Handle DELETE request for Filter File Deploy
-//
-// Delete a deployed filter file with the request
-// responses:
-//  200:
 
 // FilterFileHandler handles the requested related to filter files
 func (h *Handler) FilterFileHandler(

@@ -4,7 +4,7 @@ import {
   useGetTeamsQuery as useSchemasGetTeamsQuery,
   useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery,
 } from '@meshery/schemas/mesheryApi';
-import { api } from './index';
+import { api, mesheryApiPath } from './index';
 import { initiateQuery } from './utils';
 import { useGetOrgsQuery } from './organization';
 import { useGetWorkspacesQuery } from './workspace';
@@ -43,7 +43,7 @@ export const userApi = api
         invalidatesTags: [Tags.LOAD_TEST_PREF],
       }),
       getToken: builder.query({
-        query: () => `/api/user/token`,
+        query: () => ({ url: `/api/token`, method: 'GET', credentials: 'include' }),
         method: 'GET',
       }),
       getUserPref: builder.query({
@@ -185,7 +185,7 @@ export const userApi = api
       }),
       handleFeedbackFormSubmission: builder.mutation({
         query: (queryArg) => ({
-          url: `extensions/api/identity/users/notify/feedback`,
+          url: mesheryApiPath(`extensions/api/identity/users/notify/feedback`),
           method: 'POST',
           body: queryArg.userFeedbackRequestBody,
         }),
@@ -206,14 +206,16 @@ export const userApi = api
       }),
       removeUserFromTeam: builder.mutation({
         query: (queryArg) => ({
-          url: `extensions/api/identity/orgs/${queryArg.orgId}/teams/${queryArg.teamId}/users/${queryArg.userId}`,
+          url: mesheryApiPath(
+            `extensions/api/identity/orgs/${queryArg.orgId}/teams/${queryArg.teamId}/users/${queryArg.userId}`,
+          ),
           method: 'DELETE',
         }),
         invalidatesTags: ['teams'],
       }),
       handleUserInvite: builder.mutation({
         query: (queryArg) => ({
-          url: `extensions/api/identity/orgs/${queryArg.orgId}/users/invite`,
+          url: mesheryApiPath(`extensions/api/identity/orgs/${queryArg.orgId}/users/invite`),
           method: 'POST',
           body: queryArg.userInvite,
         }),
@@ -221,7 +223,7 @@ export const userApi = api
       }),
       getAccessToken: builder.query({
         query: () => ({
-          url: `/api/user/token`,
+          url: `/api/token`,
         }),
         transformResponse: (response) => {
           return response?.token;

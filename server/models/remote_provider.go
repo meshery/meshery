@@ -5587,11 +5587,34 @@ func (l *RemoteProvider) GetWorkspaces(token, page, pageSize, search, order, fil
 		return nil, ErrDataRead(err, "Workspaces")
 	}
 
-	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+	if resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("No workspaces returned from remote provider")
+		return emptyWorkspacePageResponse(page)
+	}
+
+	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("Workspaces data retrieved from remote provider")
 		return bd, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get workspaces"), "Workspaces", resp.StatusCode)
+}
+
+func emptyWorkspacePageResponse(page string) ([]byte, error) {
+	pageNumber := 0
+	if page != "" {
+		parsedPage, err := strconv.Atoi(page)
+		if err != nil {
+			return nil, err
+		}
+		pageNumber = parsedPage
+	}
+
+	return json.Marshal(&workspace.WorkspacePage{
+		Page:       pageNumber,
+		PageSize:   0,
+		TotalCount: 0,
+		Workspaces: []workspace.AvailableWorkspace{},
+	})
 }
 
 func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID string) ([]byte, error) {
@@ -5629,7 +5652,7 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5717,7 +5740,7 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5728,7 +5751,7 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 	return nil, ErrFetch(fmt.Errorf("failed to delete workspace"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
+func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.WorkspaceUpdatePayload, workspaceID string) (*workspace.Workspace, error) {
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvailable)
 
@@ -5806,7 +5829,7 @@ func (l *RemoteProvider) AddEnvironmentToWorkspace(req *http.Request, workspaceI
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5846,7 +5869,7 @@ func (l *RemoteProvider) RemoveEnvironmentFromWorkspace(req *http.Request, works
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5902,7 +5925,7 @@ func (l *RemoteProvider) GetEnvironmentsOfWorkspace(req *http.Request, workspace
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
@@ -5935,7 +5958,7 @@ func (l *RemoteProvider) AddDesignToWorkspace(req *http.Request, workspaceID str
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
@@ -5992,7 +6015,7 @@ func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, p
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
@@ -6000,4 +6023,320 @@ func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, p
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get designs of workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) RemoveDesignFromWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/designs/" + designID)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("Design removed from workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to remove design from workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) GetViewsOfWorkspace(req *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/views")
+
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("Views retrieved from workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to get views of workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) AddViewToWorkspace(req *http.Request, workspaceID string, viewID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/views/" + viewID)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("View added to workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to add view to workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) RemoveViewFromWorkspace(req *http.Request, workspaceID string, viewID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/views/" + viewID)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("View removed from workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to remove view from workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) GetTeamsOfWorkspace(req *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/teams")
+
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("Teams retrieved from workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to get teams of workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) AddTeamToWorkspace(req *http.Request, workspaceID string, teamID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/teams/" + teamID)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("Team added to workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to add team to workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) RemoveTeamFromWorkspace(req *http.Request, workspaceID string, teamID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/teams/" + teamID)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("Team removed from workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to remove team from workspace"), "Workspace", resp.StatusCode)
 }

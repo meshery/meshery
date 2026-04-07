@@ -24,13 +24,6 @@ type SessionSyncDataK8sConfig struct {
 	UpdatedAt         *time.Time `json:"updated_at,omitempty"`
 }
 
-// swagger:route GET /api/system/sync SystemAPI idSystemSync
-// Handle GET request for config sync
-//
-// Used to send session data to the UI for initial sync
-// responses:
-// 	200: userLoadTestPrefsRespWrapper
-
 // SessionSyncHandler is used to send session data to the UI for initial sync
 func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodGet {
