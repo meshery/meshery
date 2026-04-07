@@ -1,0 +1,33 @@
+.l5-dark-yellow { background-color: #ebc017 !important; }
+
+.l5-dark-yellow-text { color: #ebc017 !important; }
+
+.l5-light-yellow { background-color: #e9c46a !important; }
+.l5-light-yellow .l5-light-yellow-text { color: #e9c46a !important; }
+.l5-light-yellow table.adapters { box-shadow: 1px 1px 2px grey; border: 1px; }
+.l5-light-yellow table.adapters td { width: auto; vertical-align: middle; border: 1px solid darkgray; }
+.l5-light-yellow table.adapters td.no-adapters { width: auto; text-align: center; color: #aaa; font-style: italic; }
+.l5-light-yellow table.adapters td.alpha-adapters { width: auto; background-color: lightgray; text-align: center; }
+.l5-light-yellow table.adapters td.beta-adapters { width: auto; background-color: #00D3A9; text-align: center; color: #fff; }
+.l5-light-yellow table.adapters td.stable-adapters { width: auto; background-color: #3C494F; text-align: center; color: #fff; }
+.l5-light-yellow table.adapters tr:hover { background-color: #f5f5f5; }
+.l5-light-yellow table.adapters img.adapter-logo { vertical-align: middle; margin-right: 5px; height: 30px; width: 30px; }
+
+pre.codeblock-pre { display: inline-flex; justify-content: left; text-align: left; align-items: left; align-content: left; flex-wrap: nowrap; flex-direction: row; background-color: #111; margin: 0; padding: 10px; border-radius: 0.3rem; width: 100%; }
+
+.codeblock { width: 100%; display: inline-flex; overflow: auto; justify-content: left; color: #ddd; margin: 0px; padding: 0px; }
+
+.clipboardjs { display: inline-flex; align-self: flex-end; justify-content: left; width: 100%; overflow-x: auto; padding: 0px; margin: 0px; }
+
+.btn-copy-wrap { align-content: flex-end; }
+
+.clipbtn { margin: 5px; border: 0px; background-color: transparent; color: #ccc; font-size: 1.2rem; }
+
+.clipbtn:hover { color: #fff; cursor: pointer; }
+
+div.prereqs { background-color: #3C494F; color: #ddd; margin: 20px; padding: 15px; border-radius: 0.3rem; }
+
+a.meshery-light { color: #00b39f; }
+
+table.mesherycomponents th { background-color: #3C494F; color: white; }
+table.mesherycomponents td.childcomponent { color: white; background-color: #477E96; }
