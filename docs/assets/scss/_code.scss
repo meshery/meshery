@@ -2,15 +2,15 @@ code {
   font-size: 95%;
   color: var(--code);
   word-break: break-word;
-  &::-webkit-scrollbar,
-  & ::-webkit-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-grey-light) transparent;
+
+  &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
     background: transparent;
-    scrollbar-width: thin;
   }
-  &::-webkit-scrollbar-thumb,
-  & ::-webkit-scrollbar-thumb {
+  &::-webkit-scrollbar-thumb {
     background: var(--color-grey-light);
     border-radius: 4px;
   }
@@ -60,11 +60,10 @@ code {
 .td-content pre > code {
   padding: 10px 0;
   margin: 0;
-  font-size: 100%;
+  font-size: 0.9rem;
   word-break: normal;
   white-space: pre;
   text-wrap: wrap;
-  font-size: 0.9rem;
   border: 0;
   width: 100%;
   overflow: auto;
@@ -74,15 +73,15 @@ code {
 pre {
   display: block;
   color: var(--color-grey-medium);
-  &::-webkit-scrollbar,
-  & ::-webkit-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-grey-light) transparent;
+
+  &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
     background: transparent;
-    scrollbar-width: thin;
   }
-  &::-webkit-scrollbar-thumb,
-  & ::-webkit-scrollbar-thumb {
+  &::-webkit-scrollbar-thumb {
     background: var(--color-grey-light);
     border-radius: 4px;
   }
@@ -101,16 +100,16 @@ pre {
     word-wrap: normal;
     background-color: var(--color-primary-medium);
     padding: 1rem;
-    overflow: hidden;
-    &::-webkit-scrollbar,
-    & ::-webkit-scrollbar {
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-grey-light) transparent;
+
+    &::-webkit-scrollbar {
       width: 6px;
       height: 6px;
       background: transparent;
-      scrollbar-width: thin;
     }
-    &::-webkit-scrollbar-thumb,
-    & ::-webkit-scrollbar-thumb {
+    &::-webkit-scrollbar-thumb {
       background: var(--color-grey-light);
       border-radius: 4px;
     }
