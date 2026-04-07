@@ -154,7 +154,10 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 // DeleteMesheryPattern takes in a profile id and delete it if it already exists
 func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id uuid.UUID) ([]byte, error) {
 	pattern := MesheryPattern{ID: &id}
-	mpp.DB.Delete(&pattern)
+	err := mpp.DB.Delete(&pattern).Error
+	if err != nil {
+		return nil, err
+	}
 
 	return marshalMesheryPattern(&pattern), nil
 }
@@ -165,7 +168,10 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 	for _, pObj := range patterns.Patterns {
 		id := uuid.FromStringOrNil(pObj.ID)
 		pattern := MesheryPattern{ID: &id}
-		mpp.DB.Delete(&pattern)
+		err := mpp.DB.Delete(&pattern).Error
+		if err != nil {
+			return nil, err
+		}
 		deletedMaptterns = append(deletedMaptterns, pattern)
 	}
 
