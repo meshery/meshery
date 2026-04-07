@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 7th 2026, 8:32:01 pm
+- Testing started at: April 7th 2026, 11:35:52 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 3 skipped
 
-⌛ _Duration: 6 minutes and 17 seconds_
+⌛ _Duration: 6 minutes and 35 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -154,7 +154,7 @@ The following tests failed. Click on each to see the failure reason:
 | edge | binding | permission | Role | ServiceAccount | kubernetes | Understanding Relationships | ❌ |
 | edge | non-binding | network | Service | Deployment | kubernetes | service-to-deployment-network | ✅ |
 | edge | non-binding | network | Service | Deployment | kubernetes | meshery-design-fixture.json | ✅ |
-| edge | non-binding | reference | ClusterRoleBinding | ClusterRole | kubernetes | meshery-design-fixture.json | ✅ |
+| edge | non-binding | reference | ClusterRoleBinding | ClusterRole | kubernetes | meshery-design-fixture.json | ❌ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | container-hierarchical-parent-alias-relationship | ✅ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | deployment-configmap-reference-relationship | ✅ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | service-to-deployment-network | ✅ |
