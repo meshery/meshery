@@ -601,7 +601,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID uuid.UUID, search, o
 		}
 	}
 
-	query := wp.DB.Table("meshery_views AS v").Select("*")
+	query := wp.DB.Table("meshery_views AS v")
 
 	if workspaceFilter.Assigned {
 		query = query.Where("EXISTS (SELECT 1 FROM workspaces_views_mappings AS wvm WHERE v.id = wvm.view_id AND wvm.workspace_id = ? AND wvm.deleted_at IS NULL)", workspaceID)
@@ -635,7 +635,16 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID uuid.UUID, search, o
 		pageSize = "10"
 	}
 
-	viewsFetched := []workspace.MesheryView{}
+	query = query.
+		Joins("LEFT JOIN workspaces AS w ON w.id = ?", workspaceID).
+		Joins("LEFT JOIN organizations AS o ON o.id = w.organization_id").
+		Select(`v.*,
+			w.id AS workspace_id,
+			w.name AS workspace_name,
+			w.organization_id AS organization_id,
+			o.name AS organization_name`)
+
+	viewsFetched := []viewv1beta1.MesheryViewWithLocation{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
