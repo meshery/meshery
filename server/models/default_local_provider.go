@@ -30,7 +30,7 @@ import (
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/organization"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	patternV1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
@@ -770,7 +770,7 @@ func (l *DefaultLocalProvider) DeleteMesheryPattern(_ *http.Request, patternID s
 }
 
 // DeleteMesheryPattern deletes a meshery pattern with the given id
-func (l *DefaultLocalProvider) DeleteMesheryPatterns(_ *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+func (l *DefaultLocalProvider) DeleteMesheryPatterns(_ *http.Request, patterns patternV1beta1.MesheryPatternDeleteRequestBody) ([]byte, error) {
 	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
 }
 
@@ -1711,7 +1711,7 @@ func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPatter
 		return nil, err
 	}
 
-	var patternFile pattern.PatternFile
+	var patternFile patternV1beta1.PatternFile
 	err = yaml.Unmarshal(body, &patternFile)
 	if err != nil {
 		err = errors.Wrapf(err, "error decoding design file")

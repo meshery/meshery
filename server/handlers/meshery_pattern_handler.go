@@ -1283,7 +1283,7 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	if err != nil {
 		h.log.Error(models.ErrDataRead(err, "Request Body"))
 	}
-	var patterns models.MesheryPatternDeleteRequestBody
+	var patterns patternV1beta1.MesheryPatternDeleteRequestBody
 	err = json.Unmarshal([]byte(body), &patterns)
 	if err != nil {
 		h.log.Error(models.ErrMarshal(err, "pattern"))
