@@ -344,6 +344,33 @@ system-context:
       description: List all contexts present
       usage: mesheryctl system context list
 
+system-token:
+  name: system token
+  description: Manage Meshery user tokens
+  usage: mesheryctl system token
+
+  subcommands:
+    create:
+      name: create
+      description: Create the token with provided token name to your meshconfig tokens
+      usage: mesheryctl system token create [token name]
+    delete:
+      name: delete
+      description: Delete the token with provided token name from your meshconfig tokens
+      usage: mesheryctl system token delete [token name]
+    list:
+      name: list
+      description: List all the tokens in your meshconfig
+      usage: mesheryctl system token list
+    set:
+      name: set
+      description: Set token for current context or context specified with --context flag
+      usage: mesheryctl system token set [token name]
+    view:
+      name: view
+      description: View a specific token in meshery config
+      usage: mesheryctl system token view [token name]
+
 system-provider:
   name: system provider
   description: Enforce a provider. Choose between available Meshery providers
