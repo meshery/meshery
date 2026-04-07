@@ -426,15 +426,15 @@ const Environments = () => {
   };
 
   const handleAssignablePage = () => {
-    const pagesCount = parseInt(Math.ceil(parseInt(connections?.total_count) / connectionPageSize));
+    const pagesCount = Math.ceil(Number(connections?.total_count ?? 0) / connectionPageSize);
     if (connectionsPage < pagesCount - 1) {
       setConnectionsPage((prevConnectionsPage) => prevConnectionsPage + 1);
     }
   };
 
   const handleAssignedPage = () => {
-    const pagesCount = parseInt(
-      Math.ceil(parseInt(environmentConnections?.total_count) / connectionPageSize),
+    const pagesCount = Math.ceil(
+      Number(environmentConnections?.total_count ?? 0) / connectionPageSize,
     );
     if (connectionsOfEnvironmentPage < pagesCount - 1) {
       setConnectionsOfEnvironmentPage(

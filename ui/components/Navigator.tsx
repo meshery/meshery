@@ -82,7 +82,7 @@ import {
   ExpandMore,
 } from './General/style';
 import DashboardIcon from '@/assets/icons/DashboardIcon';
-import { useMediaQuery } from '@mui/material';
+import { useMediaQuery } from '@sistent/sistent';
 import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
 import { useDispatch, useSelector } from 'react-redux';
 import {

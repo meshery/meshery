@@ -12,7 +12,6 @@ type EventsPersister struct {
 	DB *database.Handler
 }
 
-// swagger:response EventsResponse
 type EventsResponse struct {
 	Events               []*events.Event         `json:"events"`
 	Page                 int                     `json:"page"`

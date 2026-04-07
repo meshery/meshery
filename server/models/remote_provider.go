@@ -481,6 +481,7 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 //
 // Every Remote Provider must offer this function
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
+	l.Log.Info(fmt.Sprintf("[AUTH_FLOW] step=InitiateLogin action=start path=%s", r.URL.Path))
 
 	_, supportsAnonymousUserSessions := l.GetProviderProperties().Capabilities.GetEndpointForFeature(PersistAnonymousUser)
 	baseCallbackURL := r.Context().Value(MesheryServerCallbackURL).(string)
@@ -527,6 +528,7 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
 		w.Header().Set("Pragma", "no-cache")
 		w.Header().Set("Expires", "Thu, 01 Jan 1970 00:00:00 GMT")
+		l.Log.Info(fmt.Sprintf("[AUTH_FLOW] step=InitiateLogin action=redirect target=%s/login reason=no_token", l.RemoteProviderURL))
 		http.Redirect(w, r, l.RemoteProviderURL+"/login?"+queryParams.Encode(), http.StatusFound)
 		return
 	}
@@ -749,47 +751,50 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		l.Log.Info("session not found")
 		return ErrEmptySession
 	}
-	jwtClaims, err := l.VerifyToken(ts)
-	if err != nil {
-		// If parsing fails but introspection passes, treat the session as valid.
+
+	// Step 1: Verify JWT signature and claims locally
+	jwtClaims, verifyErr := l.VerifyToken(ts)
+	if verifyErr != nil {
+		// Local verification failed — try introspection as fallback
 		if introspectErr := l.introspectToken(ts); introspectErr == nil {
 			return nil
-		} else {
-			l.Log.Error(introspectErr)
 		}
-		err = ErrTokenClaims
-		l.Log.Error(err)
-		return err
+		l.Log.Info("Token verification and introspection failed, attempting refresh")
+		// Both failed — attempt token refresh as last resort
+		newts, refreshErr := l.refreshToken(ts)
+		if refreshErr != nil {
+			l.Log.Error(ErrTokenRefresh(refreshErr))
+			return ErrTokenRefresh(refreshErr)
+		}
+		if _, verifyErr2 := l.VerifyToken(newts); verifyErr2 != nil {
+			l.Log.Error(ErrTokenVerify(verifyErr2))
+			return ErrTokenVerify(verifyErr2)
+		}
+		return nil
 	}
+
 	if jwtClaims == nil {
-		err = ErrNilJWKs
-		l.Log.Error(err)
-		return err
+		l.Log.Error(ErrNilJWKs)
+		return ErrNilJWKs
 	}
-	// we verify the signature of the token and check if it has exp claim,
-	// if not present it's an infinite JWT, hence skip the introspect step
-	//
+
+	// Step 2: If JWT has an expiry claim, introspect to confirm it's not revoked.
+	// Tokens without exp are infinite JWTs — skip introspection for those.
 	if (*jwtClaims)["exp"] != nil {
-		err = l.introspectToken(ts)
-		if err != nil {
-			return err
+		if introspectErr := l.introspectToken(ts); introspectErr != nil {
+			l.Log.Info("Token introspection failed, attempting refresh")
+			// Introspection failed — attempt token refresh before giving up
+			newts, refreshErr := l.refreshToken(ts)
+			if refreshErr != nil {
+				l.Log.Error(ErrTokenRefresh(refreshErr))
+				return ErrTokenRefresh(refreshErr)
+			}
+			if introspectErr2 := l.introspectToken(newts); introspectErr2 != nil {
+				return introspectErr2
+			}
 		}
 	}
 
-	if err != nil {
-		l.Log.Info("Token validation error : ", err.Error())
-		newts, err := l.refreshToken(ts)
-		if err != nil {
-			err = ErrTokenRefresh(err)
-			l.Log.Error(err)
-			return err
-		}
-		_, err = l.VerifyToken(newts)
-		if err != nil {
-			err = ErrTokenVerify(err)
-			return err
-		}
-	}
 	return nil
 }
 
@@ -877,8 +882,26 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 
 // HandleUnAuthenticated
 //
-// Redirects to alert user of expired sesion
+// Redirects to alert user of expired session.
+// Includes redirect loop detection — if the user has been redirected more than
+// MaxAuthRetries times within a short window, an error page is served instead
+// of continuing the redirect chain.
 func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.Request) {
+	retries := GetAuthRetryCount(req)
+	l.Log.Info(fmt.Sprintf("[AUTH_FLOW] step=HandleUnAuthenticated action=start path=%s retry=%d/%d", req.URL.Path, retries, MaxAuthRetries))
+	if retries >= MaxAuthRetries {
+		l.Log.Error(fmt.Errorf("[AUTH_FLOW] step=HandleUnAuthenticated action=loop_detected retry=%d, breaking the redirect loop", retries))
+		// Clear auth session cookies (JWT + provider session) to give the user a clean slate.
+		// The provider selection cookie (meshery-provider) is intentionally preserved
+		// so the user doesn't have to re-select their provider.
+		l.UnSetJWTCookie(w)
+		l.UnSetProviderSessionCookie(w)
+		ClearAuthRetryCookie(w)
+		http.Error(w, "Authentication failed after multiple attempts. Please clear your browser cookies for this site and try again.", http.StatusUnauthorized)
+		return
+	}
+	SetAuthRetryCookie(w, retries+1)
+
 	_, err := req.Cookie("meshery-provider")
 	if err == nil {
 		// remove the cookie from the browser and redirect to inform about expired session.
@@ -4006,6 +4029,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 // TokenHandler - specific to remote auth
 // Refreshes the token, sets the cookie and redirects to the home page and fetches the  latest capabilities
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ bool) {
+	l.Log.Info("[AUTH_FLOW] step=TokenHandler action=start reason=received_token_from_provider")
 	tokenString := r.URL.Query().Get(TokenCookieName)
 	// gets the session cookie from remote provider
 	sessionCookie := r.URL.Query().Get("session_cookie")
@@ -4013,6 +4037,8 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	l.SetJWTCookie(w, tokenString)
 	// sets the session cookie for Meshery Session
 	l.SetProviderSessionCookie(w, sessionCookie)
+	// Clear the auth retry counter on successful token receipt
+	ClearAuthRetryCookie(w)
 
 	// Get new capabilities
 	// Doing this here is important so that the latest capabilities are always fetched when a user logs in
@@ -4054,6 +4080,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			l.Log.Error(ErrSaveConnection(err))
 		}
 	}()
+	l.Log.Info(fmt.Sprintf("[AUTH_FLOW] step=TokenHandler action=redirect target=%s reason=auth_complete", redirectURL))
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
@@ -5560,11 +5587,34 @@ func (l *RemoteProvider) GetWorkspaces(token, page, pageSize, search, order, fil
 		return nil, ErrDataRead(err, "Workspaces")
 	}
 
-	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+	if resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("No workspaces returned from remote provider")
+		return emptyWorkspacePageResponse(page)
+	}
+
+	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("Workspaces data retrieved from remote provider")
 		return bd, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get workspaces"), "Workspaces", resp.StatusCode)
+}
+
+func emptyWorkspacePageResponse(page string) ([]byte, error) {
+	pageNumber := 0
+	if page != "" {
+		parsedPage, err := strconv.Atoi(page)
+		if err != nil {
+			return nil, err
+		}
+		pageNumber = parsedPage
+	}
+
+	return json.Marshal(&workspace.WorkspacePage{
+		Page:       pageNumber,
+		PageSize:   0,
+		TotalCount: 0,
+		Workspaces: []workspace.AvailableWorkspace{},
+	})
 }
 
 func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID string) ([]byte, error) {
@@ -5602,7 +5652,7 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5690,7 +5740,7 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5701,7 +5751,7 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 	return nil, ErrFetch(fmt.Errorf("failed to delete workspace"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
+func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.WorkspaceUpdatePayload, workspaceID string) (*workspace.Workspace, error) {
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvailable)
 
@@ -5779,7 +5829,7 @@ func (l *RemoteProvider) AddEnvironmentToWorkspace(req *http.Request, workspaceI
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5819,7 +5869,7 @@ func (l *RemoteProvider) RemoveEnvironmentFromWorkspace(req *http.Request, works
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5875,7 +5925,7 @@ func (l *RemoteProvider) GetEnvironmentsOfWorkspace(req *http.Request, workspace
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
@@ -5908,7 +5958,7 @@ func (l *RemoteProvider) AddDesignToWorkspace(req *http.Request, workspaceID str
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
@@ -5965,7 +6015,7 @@ func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, p
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
@@ -5973,4 +6023,320 @@ func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, p
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get designs of workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) RemoveDesignFromWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/designs/" + designID)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("Design removed from workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to remove design from workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) GetViewsOfWorkspace(req *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/views")
+
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("Views retrieved from workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to get views of workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) AddViewToWorkspace(req *http.Request, workspaceID string, viewID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/views/" + viewID)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("View added to workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to add view to workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) RemoveViewFromWorkspace(req *http.Request, workspaceID string, viewID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/views/" + viewID)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("View removed from workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to remove view from workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) GetTeamsOfWorkspace(req *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/teams")
+
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("Teams retrieved from workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to get teams of workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) AddTeamToWorkspace(req *http.Request, workspaceID string, teamID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/teams/" + teamID)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("Team added to workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to add team to workspace"), "Workspace", resp.StatusCode)
+}
+
+func (l *RemoteProvider) RemoveTeamFromWorkspace(req *http.Request, workspaceID string, teamID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistWorkspaces) {
+		l.Log.Warn(ErrOperationNotAvailable)
+
+		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/teams/" + teamID)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "response body"))
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		l.Log.Info("Team removed from workspace")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to remove team from workspace"), "Workspace", resp.StatusCode)
 }

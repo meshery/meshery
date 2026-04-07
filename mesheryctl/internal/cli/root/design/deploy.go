@@ -127,6 +127,11 @@ mesheryctl design deploy -f [filepath] -s [source type]
 				index = multiplepatternsConfirmation(response.Patterns)
 				patternFile, _ = patterns.GetPatternFormat(response.Patterns[index].PatternFile)
 			}
+		} else if designDeployFlags.SkipSave {
+			patternFile, err = readPatternFromFile(designDeployFlags.File)
+			if err != nil {
+				return err
+			}
 		} else {
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {

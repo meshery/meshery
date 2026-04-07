@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -17,6 +18,20 @@ import (
 	"github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
 )
+
+// isTransientProviderError returns true if the error indicates the remote
+// provider is temporarily unreachable (network error, timeout, 5xx) as
+// opposed to a genuine authentication failure (missing token, invalid token).
+// This distinction prevents destroying a user's valid session when the
+// remote provider has a transient outage.
+func isTransientProviderError(err error) bool {
+	if err == nil {
+		return false
+	}
+	errMsg := err.Error()
+	return strings.Contains(errMsg, "Could not reach remote provider") ||
+		strings.Contains(errMsg, models.ErrUnreachableRemoteProviderCode)
+}
 
 const providerQParamName = "provider"
 
@@ -111,8 +126,8 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 			// }
 			// logrus.Debugf("provider %s", provider)
 			isValid, err := h.validateAuth(provider, req)
-			// logrus.Debugf("validate auth: %t", isValid)
 			if !isValid {
+				h.log.Info(fmt.Sprintf("[AUTH_FLOW] step=AuthMiddleware action=auth_failed path=%s error=%v", req.URL.Path, err))
 				if !errors.Is(err, models.ErrEmptySession) && provider.GetProviderType() == models.RemoteProviderType {
 					provider.HandleUnAuthenticated(w, req)
 					return
@@ -178,16 +193,23 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		// }
 
 		user, err := provider.GetUserDetails(req)
-		// if user details are not available,
-		// then logout current user session and redirect to login page
 		if err != nil {
+			h.log.Error(ErrGetUserDetails(err))
+			// Distinguish auth failures from transient provider errors.
+			// If the token cookie is missing/invalid, the user genuinely needs to re-authenticate.
+			// But if Cloud is temporarily unreachable, we must NOT destroy the user's session
+			// by logging them out — that would cause a redirect loop when Cloud recovers.
+			if isTransientProviderError(err) {
+				http.Error(w, "Remote provider temporarily unavailable. Please try again.", http.StatusServiceUnavailable)
+				return
+			}
+			// Genuine auth failure — logout and redirect to login
 			err1 := provider.Logout(w, req)
 			if err1 != nil {
 				h.log.Error(models.ErrLogout(err1))
 				provider.HandleUnAuthenticated(w, req)
 				return
 			}
-			h.log.Error(ErrGetUserDetails(err))
 			http.Error(w, ErrGetUserDetails(err).Error(), http.StatusUnauthorized)
 			return
 		}

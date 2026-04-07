@@ -196,7 +196,7 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 }
 
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ := uuid.FromString(environmentPayload.OrgId)
+	orgId := uuid.UUID(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
@@ -210,7 +210,7 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	id, _ := uuid.FromString(environmentID)
-	orgId, _ := uuid.FromString(environmentPayload.OrgId)
+	orgId := uuid.UUID(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
@@ -1364,7 +1364,7 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 		return nil, fmt.Errorf("error retrieving count of credentials for user id: %s - %v", userID, err)
 	}
 
-	var credentialsList []*Credential
+	var credentialsList []Credential
 	if count > 0 {
 		if err := result.Offset(page * pageSize).Limit(pageSize).Find(&credentialsList).Error; err != nil {
 			if err != gorm.ErrRecordNotFound {
@@ -1388,11 +1388,12 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
-	if err := l.GetGenericPersister().Model(*updatedCredential).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserID, credential.ID).Updates(credential); err != nil {
-		return nil, fmt.Errorf("error updating user credential: %v", err)
+	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential)
+	if db.Error != nil {
+		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
 	}
 
-	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserID, credential.ID).First(updatedCredential).Error; err != nil {
+	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserId, credential.ID).First(updatedCredential).Error; err != nil {
 		return nil, fmt.Errorf("error getting updated user credential: %v", err)
 	}
 	return updatedCredential, nil
@@ -1446,9 +1447,8 @@ func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byt
 	return l.KeyPersister.GetUsersKey(id)
 }
 
-// SaveKey saves the given key with the provider
-func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []*Key) ([]*Key, error) {
-	// fmt.Printf(keys)
+// SaveUsersKey saves the given keys with the provider
+func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []Key) ([]Key, error) {
 	return l.KeyPersister.SaveUsersKeys(keys)
 }
 
@@ -1467,31 +1467,23 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID stri
 }
 
 func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
-	orgID := workspacePayload.OrganizationID
-	workspace := &workspace.Workspace{
+	orgID := uuid.UUID(workspacePayload.OrganizationID)
+	ws := &workspace.Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationID: &orgID,
-		Owner:          "Meshery",
+		OrganizationID: orgID,
 		UpdatedAt:      time.Now(),
 	}
-	return l.WorkspacePersister.SaveWorkspace(workspace)
+	return l.WorkspacePersister.SaveWorkspace(ws)
 }
 
-func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
-	id, _ := uuid.FromString(workspaceID)
-	orgID := workspacePayload.OrganizationID
-	workspace := &workspace.Workspace{
-		ID:             id,
-		CreatedAt:      time.Now(),
-		Description:    workspacePayload.Description,
-		Name:           workspacePayload.Name,
-		OrganizationID: &orgID,
-		Owner:          "Meshery",
-		UpdatedAt:      time.Now(),
+func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspaceUpdatePayload, workspaceID string) (*workspace.Workspace, error) {
+	id, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
 	}
-	return l.WorkspacePersister.UpdateWorkspaceByID(workspace)
+	return l.WorkspacePersister.UpdateWorkspace(id, workspacePayload)
 }
 
 func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
@@ -1520,6 +1512,82 @@ func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID
 func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
 	workspaceId, _ := uuid.FromString(workspaceID)
 	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter, visibility)
+}
+
+func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	dID, err := uuid.FromString(designID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.DeleteDesignFromWorkspace(wsID, dID)
+}
+
+func (l *DefaultLocalProvider) GetViewsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.GetWorkspaceViews(wsID, search, order, page, pageSize, filter)
+}
+
+func (l *DefaultLocalProvider) AddViewToWorkspace(_ *http.Request, workspaceID string, viewID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	vID, err := uuid.FromString(viewID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.AddViewToWorkspace(wsID, vID)
+}
+
+func (l *DefaultLocalProvider) RemoveViewFromWorkspace(_ *http.Request, workspaceID string, viewID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	vID, err := uuid.FromString(viewID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.DeleteViewFromWorkspace(wsID, vID)
+}
+
+func (l *DefaultLocalProvider) GetTeamsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.GetWorkspaceTeams(wsID, search, order, page, pageSize, filter)
+}
+
+func (l *DefaultLocalProvider) AddTeamToWorkspace(_ *http.Request, workspaceID string, teamID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	tID, err := uuid.FromString(teamID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.AddTeamToWorkspace(wsID, tID)
+}
+
+func (l *DefaultLocalProvider) RemoveTeamFromWorkspace(_ *http.Request, workspaceID string, teamID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	tID, err := uuid.FromString(teamID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.DeleteTeamFromWorkspace(wsID, tID)
 }
 
 // GetOrganization returns the organization for the given organizationID

@@ -39,8 +39,18 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
       const designResponse = await request.get(
         `${ENV.REMOTE_PROVIDER_URL}/api/content/patterns/${id}`,
       );
+
+      expect(
+        designResponse.ok(),
+        `Failed to fetch design ${name}. Status ${designResponse.status()}`,
+      ).toBeTruthy();
+
       const responseJson = await designResponse.json();
-      const design = JSON.parse(responseJson.pattern_file);
+      const rawPattern = responseJson.patternFile ?? responseJson.pattern_file;
+
+      expect(rawPattern, `Design ${name} returned no pattern file`).toBeTruthy();
+
+      const design = typeof rawPattern === 'string' ? JSON.parse(rawPattern) : rawPattern;
 
       const designToTest = { ...design, relationships: [] };
 
