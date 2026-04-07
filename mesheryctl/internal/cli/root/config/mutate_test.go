@@ -85,9 +85,9 @@ func TestInitDefaultConfig(t *testing.T) {
 		mesheryFolder := filepath.Join(tmpDir, ".meshery")
 
 		minimalMeshConfig := `contexts: {}
-		current-context: ""
-		tokens: []
-		`
+current-context: ""
+tokens: []
+`
 
 		createConfig := func() error {
     		return os.WriteFile(configPath, []byte(minimalMeshConfig), 0o644)
