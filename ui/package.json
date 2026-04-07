@@ -153,16 +153,13 @@
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.0.8",
-    "node-polyfill-webpack-plugin": "^4.1.0",
     "nodemon": "^3.1.14",
     "nyc": "^18.0.0",
     "prettier": "^3.8.4",
     "relay-compiler": "^21.0.1",
     "start-server-and-test": "^3.0.11",
     "typescript": "6.0.3",
-    "vitest": "^4.1.9",
-    "webpack": "^5.107.2",
-    "webpack-cli": "^7.0.3"
+    "vitest": "^4.1.9"
   },
   "engines": {
     "node": "^22.13.0 || >=24"

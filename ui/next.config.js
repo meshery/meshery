@@ -1,6 +1,4 @@
 /** @type {import('next').NextConfig} */
-const path = require('path');
-
 const isPlaygroundBuild = process.env.PLAYGROUND === 'true';
 
 const nextConfig = {
@@ -17,7 +15,8 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
 
-  // Transpile packages that have CSS imports or ESM issues
+  // Transpile packages that have CSS imports or ship ESM-only (needed for
+  // SSR during static export because remote-component.config.js require()s them).
   transpilePackages: [
     '@uiw/react-md-editor',
     '@uiw/react-markdown-preview',
@@ -26,10 +25,17 @@ const nextConfig = {
     // @mui/x-internals' disposable/index.mjs does a bare directory import of
     // `core-js-pure/actual/disposable-stack`, which Node's native ESM resolver
     // rejects with ERR_UNSUPPORTED_DIR_IMPORT when the package is loaded as an
-    // external module. Transpiling lets webpack/Turbopack resolve the directory
+    // external module. Transpiling lets Turbopack resolve the directory
     // import (to its index.js) instead of leaving it for Node.
     '@mui/x-tree-view',
     '@mui/x-internals',
+    '@reduxjs/toolkit',
+    'react-redux',
+    'uuid',
+    'xstate',
+    '@xstate/react',
+    'graphql-ws',
+    'yjs',
   ],
 
   // SWC Compiler Configuration (SWC is the default in Next.js 15)
@@ -38,13 +44,16 @@ const nextConfig = {
   },
 
   // Turbopack configuration (default bundler in Next.js 16+).
-  // An explicit config block is required when a `webpack` config is also present
-  // so that Next.js 16 does not abort the build with a configuration-mismatch error.
-  // resolveAlias mirrors the webpack alias for remote-component.config.js so that
-  // @paciolan/remote-component can find the config in dev mode (Turbopack).
   turbopack: {
     resolveAlias: {
       'remote-component.config.js': './remote-component.config.js',
+    },
+    rules: {
+      // Handle markdown imports as raw text (replaces next-remove-imports)
+      '*.md': {
+        loaders: ['raw-loader'],
+        as: '*.js',
+      },
     },
   },
 
@@ -75,51 +84,6 @@ const nextConfig = {
       '/settings': { page: '/settings' },
       '/user/preferences': { page: '/user/preferences' },
     };
-  },
-
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'remote-component.config.js': __dirname + '/remote-component.config.js',
-      // Force a single React instance (prevents "Invalid hook call" / useContext null)
-      react: path.resolve(__dirname, 'node_modules/react'),
-      'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
-      'react/jsx-runtime': path.resolve(__dirname, 'node_modules/react/jsx-runtime'),
-      'react/jsx-dev-runtime': path.resolve(__dirname, 'node_modules/react/jsx-dev-runtime'),
-      // Force a single MUI instance so tables pick up dark theme
-      '@mui/material': path.resolve(__dirname, 'node_modules/@mui/material'),
-      '@mui/icons-material': path.resolve(__dirname, 'node_modules/@mui/icons-material'),
-    };
-
-    // Handle markdown imports (replaces next-remove-imports)
-    config.module.rules.push({
-      test: /\.md$/,
-      type: 'asset/source',
-    });
-
-    // `import.meta.webpackHot.accept()` into CommonJS MUI files under @mui/material.
-    // Treat all JS files in this package as generic JS modules so `import.meta`
-    // is accepted and dev server can compile.
-    config.module.rules.push({
-      test: /node_modules[\\/]@mui[\\/]material[\\/].*\.js$/,
-      type: 'javascript/auto',
-      resolve: {
-        fullySpecified: false,
-      },
-    });
-
-    // Similarly, billboard.js is bundled as CommonJS and is being transformed
-    // by React Fast Refresh. Treat its dist bundle as generic JS as well so
-    // injected `import.meta.webpackHot.accept()` is accepted.
-    config.module.rules.push({
-      test: /node_modules[\\/]billboard\.js[\\/]dist[\\/].*\.js$/,
-      type: 'javascript/auto',
-      resolve: {
-        fullySpecified: false,
-      },
-    });
-
-    return config;
   },
 };
 
