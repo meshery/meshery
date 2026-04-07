@@ -349,6 +349,22 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET")
 	gMux.Handle("/api/workspaces/{id}/designs/{designID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AddDesignToWorkspaceHandler), models.ProviderAuth))).
 		Methods("POST")
+	gMux.Handle("/api/workspaces/{id}/designs/{designID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveDesignFromWorkspaceHandler), models.ProviderAuth))).
+		Methods("DELETE")
+
+	gMux.Handle("/api/workspaces/{id}/views", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetViewsOfWorkspaceHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/workspaces/{id}/views/{viewID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AddViewToWorkspaceHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/workspaces/{id}/views/{viewID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveViewFromWorkspaceHandler), models.ProviderAuth))).
+		Methods("DELETE")
+
+	gMux.Handle("/api/workspaces/{id}/teams", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetTeamsOfWorkspaceHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/workspaces/{id}/teams/{teamID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AddTeamToWorkspaceHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/workspaces/{id}/teams/{teamID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveTeamFromWorkspaceHandler), models.ProviderAuth))).
+		Methods("DELETE")
 
 	gMux.Handle("/api/identity/orgs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetOrganizations), models.ProviderAuth))).
 		Methods("GET")
