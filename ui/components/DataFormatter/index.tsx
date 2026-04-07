@@ -254,7 +254,7 @@ export const SectionBody = ({ body, style = {} }) => {
     ></TextWithLinks>
   );
 };
-export const ArrayFormatter = ({ items, style, event }) => {
+export const ArrayFormatter = ({ items, style, event, isLevel }) => {
   const theme = useTheme();
   return (
     <ol
@@ -264,10 +264,10 @@ export const ArrayFormatter = ({ items, style, event }) => {
         margin: '0rem',
       }}
     >
-      {items.map((item) => (
-        <li key={item} style={{ color: theme.palette.text.tertiary, ...style }}>
+      {items.map((item, index) => (
+        <li key={index} style={{ color: theme.palette.text.tertiary, ...style }}>
           <Level>
-            <DynamicFormatter data={item} event={event} />
+            <DynamicFormatter data={item} event={event} isLevel={isLevel} />
           </Level>
         </li>
       ))}
@@ -294,19 +294,21 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true, style, event }) => {
   }
 
   if (_.isArray(data)) {
-    return <ArrayFormatter items={data} style={style} event={event} />;
+    return <ArrayFormatter items={data} style={style} event={event} isLevel={isLevel} />;
   }
 
   if (_.isObject(data)) {
     return Object.entries(data).map(([title, data]) => {
-      if (!title.trim() || !data || _.isEmpty(data)) {
+      if (!title.trim() || data === null || data === undefined || _.isEmpty(data)) {
         return null;
       }
 
       if (propertyFormatters?.[title]) {
+        const context = _.isObject(data) ? { ...data, event } : { value: data, event };
+
         return (
           <Grid key={title} sm={12} {...(uiSchema?.[title] || {})}>
-            {propertyFormatters[title](data, event)}
+            {propertyFormatters[title](data, context)}
           </Grid>
         );
       }
@@ -344,7 +346,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true, style, event }) => {
             {title}
           </SectionHeading>
           <Level>
-            <DynamicFormatter level={level + 1} data={data} style={style} event={event} />
+            <DynamicFormatter data={data} style={style} event={event} isLevel={isLevel} />
           </Level>
         </Grid>
       );
