@@ -93,12 +93,13 @@ test.describe('Design Configurator Tests', () => {
 
   test('should edit design in Design Configurator', async () => {
     await designConfigPage.categorySelector.click();
+    await expect(designConfigPage.databaseCategory).toBeVisible();
     await designConfigPage.databaseCategory.click();
+
     await designConfigPage.modelSelector.click();
     await designConfigPage.modelAzure.click();
 
     await expect(designConfigPage.modelContainer).toBeVisible();
-
     await designConfigPage.updateDesign();
   });
 });

@@ -1492,8 +1492,8 @@ github.com/meshery/meshkit v1.0.2 h1:B4l624AapuSeM7aFYyxA+jYxx4YZRZNPPgDhzjnpZH0
 github.com/meshery/meshkit v1.0.2/go.mod h1:otsT6pbFm6npq2Tfjk6A0Nhv4c9UgzPyhPLVDS9Hhug=
 github.com/meshery/meshsync v0.8.26 h1:GM5jzECZMCQGx3BMNo9cahcAfD/TXYue/DPWFGpjnho=
 github.com/meshery/meshsync v0.8.26/go.mod h1:RNQnmmg/hq/TaGbu6hIVAPCnjB4dIMm9Nmi729OgmFM=
-github.com/meshery/schemas v1.0.4 h1:TA1R3oZr0W/KWYZYTpr3tkeG0lSRR3WhjhD4YoVlhTQ=
-github.com/meshery/schemas v1.0.4/go.mod h1:iwGksna9cB7RZHehNUVtjHvSiB+C6SSib7TfPOy+cjQ=
+github.com/meshery/schemas v1.0.5 h1:XV63NCOC7feDYUgnLo3Prie2jHCWV+OgqfsrrDazqjs=
+github.com/meshery/schemas v1.0.5/go.mod h1:iwGksna9cB7RZHehNUVtjHvSiB+C6SSib7TfPOy+cjQ=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
 github.com/miekg/pkcs11 v1.0.2/go.mod h1:XsNlhZGX73bx86s2hdc/FuaLm2CPZJemRLMA+WTFxgs=

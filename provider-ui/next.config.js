@@ -6,9 +6,6 @@ module.exports = (phase) => {
   return {
     reactStrictMode: true,
     assetPrefix: isDev ? '/' : '/provider',
-    eslint: {
-      ignoreDuringBuilds: true,
-    },
     output: 'export',
   };
 };

@@ -12,6 +12,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	patternv1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
+	viewv1beta1 "github.com/meshery/schemas/models/v1beta1/view"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"gorm.io/gorm"
 )
@@ -650,7 +651,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID uuid.UUID, search, o
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&viewsFetched)
 	}
 
-	viewsPage := &workspace.MesheryViewPage{
+	viewsPage := &viewv1beta1.MesheryViewPage{
 		Page:       int(pageUint),
 		PageSize:   len(viewsFetched),
 		TotalCount: int(count),
