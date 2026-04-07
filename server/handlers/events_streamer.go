@@ -356,7 +356,6 @@ STOP:
 		}
 		time.Sleep(5 * time.Second)
 	}
-	close(respChan)
 	defer h.log.Debug("events handler closed")
 }
 func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp chan []byte, log logger.Handler, _ models.Provider) {
@@ -374,7 +373,11 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 				log.Error(models.ErrMarshal(err, "event"))
 				continue
 			}
-			resp <- data
+			select {
+			case resp <- data:
+			case <-ctx.Done():
+				return
+			}
 
 		case <-ctx.Done():
 			return
@@ -428,7 +431,11 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 			log.Error(models.ErrMarshal(err, "event"))
 			return
 		}
-		respChan <- data
+		select {
+		case respChan <- data:
+		case <-ctx.Done():
+			return
+		}
 	}
 }
 
