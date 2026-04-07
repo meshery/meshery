@@ -7,7 +7,7 @@ on:
 jobs:
   update-graphql-docs:
     name: Update GraphQL API Documentation
-    if: github.repository == 'meshery/meshery'
+    if: ${{ github.repository == 'meshery/meshery' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
@@ -48,7 +48,7 @@ jobs:
 
   build:
     name: Docker build and push
-    if: github.repository == 'meshery/meshery'
+    if: ${{ github.repository == 'meshery/meshery' }}
     env:
       RELEASE_CHANNEL: "stable"
     runs-on: ubuntu-24.04
