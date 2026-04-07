@@ -1467,31 +1467,23 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID stri
 }
 
 func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
-	orgID := workspacePayload.OrganizationID
-	workspace := &workspace.Workspace{
+	orgID := uuid.UUID(workspacePayload.OrganizationID)
+	ws := &workspace.Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationID: &orgID,
-		Owner:          "Meshery",
+		OrganizationID: orgID,
 		UpdatedAt:      time.Now(),
 	}
-	return l.WorkspacePersister.SaveWorkspace(workspace)
+	return l.WorkspacePersister.SaveWorkspace(ws)
 }
 
-func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
-	id, _ := uuid.FromString(workspaceID)
-	orgID := workspacePayload.OrganizationID
-	workspace := &workspace.Workspace{
-		ID:             id,
-		CreatedAt:      time.Now(),
-		Description:    workspacePayload.Description,
-		Name:           workspacePayload.Name,
-		OrganizationID: &orgID,
-		Owner:          "Meshery",
-		UpdatedAt:      time.Now(),
+func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspaceUpdatePayload, workspaceID string) (*workspace.Workspace, error) {
+	id, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
 	}
-	return l.WorkspacePersister.UpdateWorkspaceByID(workspace)
+	return l.WorkspacePersister.UpdateWorkspace(id, workspacePayload)
 }
 
 func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
@@ -1520,6 +1512,82 @@ func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID
 func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
 	workspaceId, _ := uuid.FromString(workspaceID)
 	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter, visibility)
+}
+
+func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	dID, err := uuid.FromString(designID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.DeleteDesignFromWorkspace(wsID, dID)
+}
+
+func (l *DefaultLocalProvider) GetViewsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.GetWorkspaceViews(wsID, search, order, page, pageSize, filter)
+}
+
+func (l *DefaultLocalProvider) AddViewToWorkspace(_ *http.Request, workspaceID string, viewID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	vID, err := uuid.FromString(viewID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.AddViewToWorkspace(wsID, vID)
+}
+
+func (l *DefaultLocalProvider) RemoveViewFromWorkspace(_ *http.Request, workspaceID string, viewID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	vID, err := uuid.FromString(viewID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.DeleteViewFromWorkspace(wsID, vID)
+}
+
+func (l *DefaultLocalProvider) GetTeamsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.GetWorkspaceTeams(wsID, search, order, page, pageSize, filter)
+}
+
+func (l *DefaultLocalProvider) AddTeamToWorkspace(_ *http.Request, workspaceID string, teamID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	tID, err := uuid.FromString(teamID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.AddTeamToWorkspace(wsID, tID)
+}
+
+func (l *DefaultLocalProvider) RemoveTeamFromWorkspace(_ *http.Request, workspaceID string, teamID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	tID, err := uuid.FromString(teamID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.DeleteTeamFromWorkspace(wsID, tID)
 }
 
 // GetOrganization returns the organization for the given organizationID
