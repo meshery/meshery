@@ -8,21 +8,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 )
 
-// swagger:route GET /api/identity/orgs/{orgID}/users/keys UserKeysAPI idGetAllUsersKeysHandler;
-// Handles GET for all Keys for users
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={}``` If search is non empty then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-//
-// ```?filter={filter}``` Filter keys
-// responses:
-// 200: keys
-
 func (h *Handler) GetUsersKeys(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
