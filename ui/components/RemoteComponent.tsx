@@ -32,9 +32,10 @@ const RemoteComponent: React.FC<RemoteComponentProps> = ({ url, loaderType, ...p
   const { notify } = useNotification();
   const router = useRouter();
   const theme = useTheme();
+  const isFullPage = loaderType !== 'circular';
 
   useEffect(() => {
-    if (err == null) return;
+    if (err == null || !isFullPage) return;
 
     notify({
       message: `Failed to load extension: ${err.toString()}`,
@@ -46,10 +47,10 @@ const RemoteComponent: React.FC<RemoteComponentProps> = ({ url, loaderType, ...p
     }, DASHBOARD_REDIRECT_DELAY_MS);
 
     return () => clearTimeout(timer);
-  }, [err, notify, router]);
+  }, [err, notify, router, isFullPage]);
 
   if (loading) {
-    if (loaderType === 'circular') {
+    if (!isFullPage) {
       return null;
     } else {
       return (
@@ -59,6 +60,10 @@ const RemoteComponent: React.FC<RemoteComponentProps> = ({ url, loaderType, ...p
   }
 
   if (err != null) {
+    if (!isFullPage) {
+      return null;
+    }
+
     return (
       <div role="alert">
         <h2>Uh-oh! Please pardon our mesh.</h2>
