@@ -34,20 +34,6 @@ type statusIDs struct {
 	IDs []*uuid.UUID `json:"ids"`
 }
 
-// swagger:route GET /api/system/events EventsAPI idGetEventStreamer
-// Handle GET request for events.
-// ```search={description}``` If search is non empty then a search is performed on event description
-// ```?category=[eventcategory] Returns event belonging to provided categories ```
-// ```?action=[eventaction] Returns events belonging to provided actions ```
-// ```?status={[read/unread]}``` Return events filtered on event status Default is unread````
-// ```?severity=[eventseverity] Returns events belonging to provided severities ```
-// ```?sort={field} order the records based on passed field, defaults to updated_at```
-// ```?order={[asc/desc]}``` Default behavior is desc
-// ```?page={page-number}``` Default page number is 0
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// responses:
-// 	200: eventsResponseWrapper
-
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := user.ID
 	page, offset, limit,
@@ -105,10 +91,6 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	// }
 }
 
-// swagger:route GET /api/events/types EventsAPI idGetEventStreamer
-// Handle GET request for available event categories and actions.
-// responses:
-// 200:
 func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := user.ID
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
@@ -129,12 +111,6 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 		return
 	}
 }
-
-// swagger:route PUT /api/events/status/{id} idGetEventStreamer
-// Handle PUT request to update event status.
-// Updates event status for the event associated with the id.
-// responses:
-// 	200: eventResponseWrapper
 
 func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
@@ -169,12 +145,6 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 
 }
 
-// swagger:route PUT /api/events/status idGetEventStreamer
-// Handle PUT request to update event status in bulk.
-// Bulk update status for the events associated with the ids.
-// responses:
-//
-//	200: eventResponseWrapper
 func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 
 	defer func() {
@@ -201,12 +171,6 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 
 }
 
-// swagger:route DELETE /api/events/bulk idGetEventStreamer
-// Handle DELETE request to delete events in bulk.
-// Bulk delete events associated with the ids.
-// responses:
-// 	200:
-
 func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	defer func() {
 		_ = req.Body.Close()
@@ -230,12 +194,6 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 }
-
-// swagger:route DELETE /api/events/{id} idGetEventStreamer
-// Handle DELETE request for events.
-// Deletes event associated with the id.
-// responses:
-// 	200:
 
 func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
@@ -288,13 +246,6 @@ func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
 
 	return eventFilter, nil
 }
-
-// swagger:route GET /api/events EventsAPI idGetEventStreamer
-// Handle GET request for events.
-// Listens for events across all of Meshery's components like adapters and server, streaming them to the UI via Server Side Events
-// This API call never terminates and establishes a persistent keep-alive connection over which `EventsResponse`s are pushed.
-// responses:
-// 	200:
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
 func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
@@ -490,11 +441,6 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 
 	return map[string]*meshes.MeshClient{}
 }
-
-// swagger:route POST /api/events EventsAPI idClientEventHandler
-// Receives client-generated events bound for the Notification Center.
-// responses:
-// 200:
 
 func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := user.ID
