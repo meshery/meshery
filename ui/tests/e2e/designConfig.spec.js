@@ -74,7 +74,7 @@ test.describe('Design Configurator Tests', () => {
               id: 'comp-1',
               component: { kind: 'FlexibleServer', version: 'v1', schema: '{}' },
               displayName: 'Flexible Server',
-              model: { name: MOCK_MODEL, version: '1.0.0' },
+              model: { name: MOCK_MODEL, model: { version: '1.0.0' } },
               metadata: {},
             },
           ],
