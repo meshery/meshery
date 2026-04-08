@@ -4,6 +4,7 @@ import {
   getDependencies,
   createRequires,
 } from '@paciolan/remote-component';
+import { useTheme } from '@sistent/sistent';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import Troubleshoot from './TroubleshootingComponent';
 import { useNotification } from '@/utils/hooks/useNotification';
@@ -30,6 +31,7 @@ const RemoteComponent: React.FC<RemoteComponentProps> = ({ url, loaderType, ...p
   const [loading, err, RemoteComponentInstance] = useRemoteComponent(url.url);
   const { notify } = useNotification();
   const router = useRouter();
+  const theme = useTheme();
 
   useEffect(() => {
     if (err == null) return;
@@ -44,7 +46,7 @@ const RemoteComponent: React.FC<RemoteComponentProps> = ({ url, loaderType, ...p
     }, DASHBOARD_REDIRECT_DELAY_MS);
 
     return () => clearTimeout(timer);
-  }, [err]);
+  }, [err, notify, router]);
 
   if (loading) {
     if (loaderType === 'circular') {
@@ -62,15 +64,15 @@ const RemoteComponent: React.FC<RemoteComponentProps> = ({ url, loaderType, ...p
         <h2>Uh-oh! Please pardon our mesh.</h2>
         <div
           style={{
-            backgroundColor: '#1E2117',
-            color: '#FFFFFF',
+            backgroundColor: theme.palette.background.code ?? theme.palette.background.default,
+            color: theme.palette.text.primary,
             padding: '.85rem',
             borderRadius: '.2rem',
           }}
         >
           <code>{err.toString()}</code>
         </div>
-        <p style={{ marginTop: '1rem', color: '#666' }}>
+        <p style={{ marginTop: '1rem', color: theme.palette.text.secondary }}>
           Redirecting to dashboard in a few seconds...
         </p>
         <div style={{ marginTop: '1rem' }}>
