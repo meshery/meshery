@@ -23,4 +23,7 @@ const sessionsSlice = createSlice({
 });
 
 export const { setExpirationState } = sessionsSlice.actions;
+
+export const selectExpirationStatus = (state: { sessions: SessionsState }) => state.sessions.status;
+
 export default sessionsSlice.reducer;

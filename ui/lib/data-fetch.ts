@@ -10,7 +10,7 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
     .then((res) => {
       if (res.status === 401 || res.redirected) {
         triggerSessionExpired();
-        return new Promise(() => {});
+        return Promise.reject(new Error('Session expired'));
       }
 
       // Successful response — session is alive, reset the timeout warning

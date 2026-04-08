@@ -11,13 +11,11 @@ import {
   CircularProgress,
   styled,
 } from '@sistent/sistent';
-import { ExpirationState } from '@/store/slices/sessions';
+import { selectExpirationStatus } from '@/store/slices/sessions';
 import { recordActivity, triggerSessionExpired } from 'lib/sessionTimer';
 
 const AUTO_REDIRECT_DELAY_MS = 5000;
-
-const selectSessionStatus = (state: { sessions: { status: ExpirationState } }) =>
-  state.sessions.status;
+const REFRESH_REQUEST_TIMEOUT_MS = 10000;
 
 function getLoginRedirectUrl() {
   return '/user/login?redirect=' + encodeURIComponent(window.location.pathname);
@@ -31,7 +29,7 @@ const FooterActions = styled(Box)({
 });
 
 const SessionExpiringModal = () => {
-  const sessionStatus = useSelector(selectSessionStatus);
+  const sessionStatus = useSelector(selectExpirationStatus);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const isMountedRef = useRef(true);
 
@@ -43,7 +41,10 @@ const SessionExpiringModal = () => {
 
   const handleStayLoggedIn = () => {
     setIsRefreshing(true);
-    fetch('/api/user/prefs', { credentials: 'include' })
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REFRESH_REQUEST_TIMEOUT_MS);
+
+    fetch('/api/user/prefs', { credentials: 'include', signal: controller.signal })
       .then((res) => {
         if (res.ok) {
           recordActivity();
@@ -55,6 +56,7 @@ const SessionExpiringModal = () => {
         triggerSessionExpired();
       })
       .finally(() => {
+        clearTimeout(timeoutId);
         if (isMountedRef.current) {
           setIsRefreshing(false);
         }
@@ -101,7 +103,7 @@ const SessionExpiringModal = () => {
 };
 
 const SessionExpiredModal = () => {
-  const sessionStatus = useSelector(selectSessionStatus);
+  const sessionStatus = useSelector(selectExpirationStatus);
   const isExpired = sessionStatus === 'expired';
 
   const handleLogin = () => {
