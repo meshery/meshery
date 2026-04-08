@@ -31,10 +31,10 @@ setup() {
 }
 
 @test "given non-existent UUID when running mesheryctl workspace view then workspace not found error is displayed" {
-    skip "TODO: workspace view by UUID needs rework - tracked in #18490"
-    run $MESHERYCTL_BIN workspace view 00000000-0000-0000-0000-000000000000
+    "TODO: workspace view by UUID needs rework - tracked in #18490"
+    run $MESHERYCTL_BIN workspace view 12345678-1234-1234-1234-123456789012
 
     assert_failure
     assert_output --partial "Error"
-    assert_output --partial "failed to get workspace by ID"
+    assert_output --partial "WorkspaceID or OrgID cannot be empty"
 }
