@@ -1,4 +1,145 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 06 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.1</title><link>/project/releases/v1.0.1/</link><pubDate>Mon, 06 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.1/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Tue, 07 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.2</title><link>/project/releases/v1.0.2/</link><pubDate>Tue, 07 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.2/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Cleanup swagger @CodexRaunak (#18534)&lt;/li&gt;
+&lt;li&gt;Fix orgID query parameter case in workspace and environment handlers @yi-nuo426 (#18519)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Upgrade to Meshery Schemas v1.0.4: enhance Workspace API @yi-nuo426 (#18541)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] Fix console 404s for environments and icons @yi-nuo426 (#18556)&lt;/li&gt;
+&lt;li&gt;[Chore]: Update to Sistent v0.18.3 @l5io (#18554)&lt;/li&gt;
+&lt;li&gt;[Provider UI] Remove deprecated eslint option from next.config.js @shri33 (#18551)&lt;/li&gt;
+&lt;li&gt;chore: upgrade meshery/schemas to v1.0.5 @yi-nuo426 (#18550)&lt;/li&gt;
+&lt;li&gt;Bump @sistent/sistent to v0.18.2 and use editWorkspaceSchema @fitzergerald (#18544)&lt;/li&gt;
+&lt;li&gt;chore(deps): bump vite from 7.3.1 to 7.3.2 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#18524)&lt;/li&gt;
+&lt;li&gt;[UI] Guard workspace query on org availability @yi-nuo426 (#18525)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;chore: remove deprecated reusable workflow for UI and server builds @ianrwhitney (#18542)&lt;/li&gt;
+&lt;li&gt;chore(deps): bump vite from 7.3.1 to 7.3.2 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#18524)&lt;/li&gt;
+&lt;li&gt;Retire swagger-based REST API docs and point references to meshery/schemas @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#18521)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Retire swagger-based REST API docs and point references to meshery/schemas @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#18521)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@CodexRaunak, @Copilot, @alexquincy, @dependabot[bot], @fitzergerald, @ianrwhitney, @l5io, @leecalcote, @miacycle, @shri33, @simihablo, @suttonskate, @yi-nuo426, [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.3</title><link>/project/releases/v1.0.3/</link><pubDate>Tue, 07 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.3/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix patternFile tag naming @aabidsofi19 (#18562)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Use open api for API docs with improved styling @CodexRaunak (#18304)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Fix Husky prepare script to avoid git-config errors in non-git contexts @rishiraj38 (#18518)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Use open api for API docs with improved styling @CodexRaunak (#18304)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Use open api for API docs with improved styling @CodexRaunak (#18304)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@CodexRaunak, @PragalvaXFREZ, @aabidsofi19, @leecalcote, @rishiraj38 and @saurabhraghuvanshii&lt;/p&gt;</description></item><item><title>v1.0.4</title><link>/project/releases/v1.0.4/</link><pubDate>Tue, 07 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.4/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix: meshery logo animation @suzy-g38 (#18516)&lt;/li&gt;
+&lt;li&gt;fix pattern file naming in ui @aabidsofi19 (#18563)&lt;/li&gt;
+&lt;li&gt;[CI] - Fix E2E failures caused by cloud API field rename and misplaced data-testid @Oluwatunmise-olat (#18561)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix pattern file naming in ui @aabidsofi19 (#18563)&lt;/li&gt;
+&lt;li&gt;[CI] - Fix E2E failures caused by cloud API field rename and misplaced data-testid @Oluwatunmise-olat (#18561)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Oluwatunmise-olat, @aabidsofi19, @alexquincy, @leecalcote, @saurabhraghuvanshii and @suzy-g38&lt;/p&gt;</description></item><item><title>v1.0.5</title><link>/project/releases/v1.0.5/</link><pubDate>Tue, 07 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.5/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Align MesheryPattern JSON tags and wrapper key @arjunmehta-git (#18570)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Provider UI] Convert eslint.config.js to CommonJS to fix Node warning @Junnygram (#18523)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Add deployment preview gh pages @CodexRaunak (#18494)&lt;/li&gt;
+&lt;li&gt;fix(ci): wrap conditional @Omkar-Ugal (#18571)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Add deployment preview gh pages @CodexRaunak (#18494)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix SVG footer undefined stroke-linecap and stroke-linejoin attributes @Junnygram (#18492)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@CodexRaunak, @Junnygram, @Omkar-Ugal, @arjunmehta-git, @fitzergerald and @leecalcote&lt;/p&gt;</description></item><item><title>v1.0.1</title><link>/project/releases/v1.0.1/</link><pubDate>Mon, 06 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.1/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -31772,7 +31913,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.1&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.5&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;

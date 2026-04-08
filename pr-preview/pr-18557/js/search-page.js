@@ -9,6 +9,20 @@
         return $('<div>').text(str).html();
     }
 
+    function getSiteRootUrl() {
+        const rootLink = document.querySelector("a.navbar-brand, #td-section-nav a.tree-root");
+        const href = rootLink ? rootLink.getAttribute("href") : "/";
+        return new URL(href || "/", window.location.href);
+    }
+
+    function resolveSitePath(pathname) {
+        if (!pathname || typeof pathname !== "string") return pathname;
+        if (/^(?:[a-z]+:)?\/\//i.test(pathname)) return pathname;
+        if (/^(?:data:|mailto:|tel:|#)/i.test(pathname)) return pathname;
+        if (!pathname.startsWith("/")) return pathname;
+        return new URL(pathname.slice(1), getSiteRootUrl()).toString();
+    }
+
     function escapeLunrSearch(string) {
         return string.replace(/[+\-&|!(){}\[\]^"~*?:\\]/g, '\\$&');
     }
@@ -71,7 +85,7 @@
             const $item      = $('<div class="search-result-item">');
             const $titleElem = $('<h3 class="search-result-title">');
             const $bullet    = $('<span class="search-result-bullet">&bull;</span>');
-            const $link      = $('<a class="search-result-link">').attr('href', doc.ref).html(highlightedTitle);
+            const $link      = $('<a class="search-result-link">').attr('href', resolveSitePath(doc.ref)).html(highlightedTitle);
             const $snippet   = $('<p class="search-result-snippet">').text(snippetRaw);
 
             $titleElem.append($bullet).append($link);
@@ -96,8 +110,8 @@
 
         const el = document.querySelector('[data-search-index]');
         const searchIndexUrl = (el && el.getAttribute('data-search-index'))
-            ? el.getAttribute('data-search-index')
-            : "/offline-search-index.json";
+            ? resolveSitePath(el.getAttribute('data-search-index'))
+            : resolveSitePath("/offline-search-index.json");
 
         if (!searchQuery) {
             $loading.hide();
