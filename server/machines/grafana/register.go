@@ -37,9 +37,18 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
-	userUUID := user.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	var userUUID uuid.UUID
+	if user != nil {
+		userUUID = user.ID
+	}
+
+	var systemID uuid.UUID
+	if sysID != nil {
+		systemID = *sysID
+	}
+
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(systemID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
 	connPayload, err := utils.Cast[connections.ConnectionPayload](data)
 	if err != nil {

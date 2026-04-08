@@ -69,6 +69,7 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 	}
 
 	log, _ := logger.New("test", logger.Options{})
+	userID := uuid.Must(uuid.NewV4())
 
 	mch := NewMesheryControllersHelper(
 		log,
@@ -78,7 +79,7 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 		nil,
 		nil,
 	)
-	
+
 	// A successful execution of this function without panicking indicates the fix is working.
 	// We wrap in a defer-recover just to explicitly fail the test if a panic occurs.
 	defer func() {
@@ -87,7 +88,7 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 		}
 	}()
 
-	mch.AddCtxControllerHandlers(ctx)
+	mch.AddCtxControllerHandlers(ctx, userID)
 
 	// Additionally, verify that ctxControllerHandlers is still empty/nil because it should have returned early
 	if len(mch.ctxControllerHandlers) != 0 {
