@@ -8,9 +8,15 @@ permissions:
 jobs:
   build-meshery:
     uses: ./.github/workflows/build-meshery-image.yml
+  
+  swaggerci:
+    uses: ./.github/workflows/swaggerci.yml
+    
+  graphql_validate:
+    uses: ./.github/workflows/graphql_validate.yml
 
   tests-ui-e2e:
-    needs: [build-meshery]
+    needs: [build-meshery, swaggerci, graphql_validate]
     uses: ./.github/workflows/test-e2e-pr.yml
     with:
       meshery-image: ${{ needs.build-meshery.outputs.meshery-image }}
