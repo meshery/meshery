@@ -33,6 +33,7 @@ import (
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	patternV1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
@@ -2653,7 +2654,7 @@ func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatte
 }
 
 // DeleteMesheryPatterns deletes meshery patterns with the given ids and names
-func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns patternV1beta1.MesheryPatternDeleteRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistMesheryPatterns, l.ProviderName)

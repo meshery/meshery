@@ -11,6 +11,7 @@ import (
 
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/patterns"
+	patternV1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
 // MesheryPatternPersister is the persister for persisting
@@ -154,19 +155,27 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 // DeleteMesheryPattern takes in a profile id and delete it if it already exists
 func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id uuid.UUID) ([]byte, error) {
 	pattern := MesheryPattern{ID: &id}
-	mpp.DB.Delete(&pattern)
+	err := mpp.DB.Delete(&pattern).Error
+	if err != nil {
+		return nil, err
+	}
 
 	return marshalMesheryPattern(&pattern), nil
 }
 
 // DeleteMesheryPatterns takes in a meshery-patterns and delete those if exist
-func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns patternV1beta1.MesheryPatternDeleteRequestBody) ([]byte, error) {
 	var deletedMaptterns []MesheryPattern
-	for _, pObj := range patterns.Patterns {
-		id := uuid.FromStringOrNil(pObj.ID)
-		pattern := MesheryPattern{ID: &id}
-		mpp.DB.Delete(&pattern)
-		deletedMaptterns = append(deletedMaptterns, pattern)
+	if patterns.Patterns != nil {
+		for _, pObj := range *patterns.Patterns {
+			id := pObj.ID
+			pattern := MesheryPattern{ID: &id}
+			err := mpp.DB.Delete(&pattern).Error
+			if err != nil {
+				return nil, err
+			}
+			deletedMaptterns = append(deletedMaptterns, pattern)
+		}
 	}
 
 	return marshalMesheryPatterns(deletedMaptterns), nil
