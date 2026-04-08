@@ -91,7 +91,7 @@ const MesherySettingsPerformanceComponent = () => {
       return;
     }
     try {
-      const tNum = parseInt(t.substring(0, t.length - 1), 10);
+const tNum = t.length > 1 ? parseInt(t.substring(0, t.length - 1), 10) : NaN;
       if (isNaN(tNum) || tNum <= 0 || !['h', 'm', 's'].includes(t.slice(-1).toLowerCase())) {
         setTError('error-autocomplete-value');
         return;
