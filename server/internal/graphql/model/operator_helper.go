@@ -71,6 +71,11 @@ func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 }
 
 func GetBrokerInfo(broker controllers.IMesheryController, log logger.Handler) OperatorControllerStatus {
+	if broker == nil {
+		return OperatorControllerStatus{
+			Status: StatusUnknown,
+		}
+	}
 	brokerStatus := broker.GetStatus().String()
 	monitorEndpoint, err := broker.GetEndpointForPort("monitor")
 	log.Debug("broker monitor endpoint", monitorEndpoint, err)

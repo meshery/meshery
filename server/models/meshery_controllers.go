@@ -118,6 +118,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 	// go func(mch *MesheryControllersHelper) {
 
 	ctxID := k8scontext.ID
+	mch.contextID = ctxID
 	if mch.ctxMeshsyncDataHandler == nil {
 		var brokerHandler broker.Handler
 		var stopFunc func()
@@ -212,6 +213,10 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 ) broker.Handler {
 	ctxID := k8scontext.ID
 	controllerHandlers := mch.ctxControllerHandlers
+
+	if controllerHandlers == nil || controllerHandlers[MesheryBroker] == nil {
+		return nil
+	}
 
 	// brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
 	// do something if broker is being deployed , maybe try again after sometime
@@ -312,36 +317,36 @@ func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
 	return nil
 }
 
+// handleControllerInitError handles errors that occur during controller initialization
+func (mch *MesheryControllersHelper) handleControllerInitError(ctx K8sContext, err error, message string) *MesheryControllersHelper {
+	mch.log.Error(err)
+	mch.emitErrorEvent(message, err, map[string]any{
+		"k8sContextID":   ctx.ID,
+		"k8sContextName": ctx.Name,
+		"connectionID":   ctx.ConnectionID,
+	}, uuid.Nil)
+	return mch
+}
+
 // attach a MesheryController for each context if
 // 1. the config is valid
 // 2. if it is not already attached
 func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *MesheryControllersHelper {
 	// go func(mch *MesheryControllersHelper) {
+	mch.contextID = ctx.ID
 
 	// resetting this value as a specific controller handler instance does not have any significance opposed to
 	// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
 
 	cfg, err := ctx.GenerateKubeConfig()
 	if err != nil {
-		mch.log.Error(err)
-		mch.emitErrorEvent("Failed to generate kubeconfig", err, map[string]any{
-			"k8sContextID":   ctx.ID,
-			"k8sContextName": ctx.Name,
-			"connectionID":   ctx.ConnectionID,
-		}, uuid.Nil)
-		return mch
+		return mch.handleControllerInitError(ctx, err, "Failed to generate kubeconfig")
 	}
 
 	client, err := mesherykube.New(cfg)
 	// means that the config is invalid
 	if err != nil {
-		mch.log.Error(err)
-		mch.emitErrorEvent("Failed to create Kubernetes client", err, map[string]any{
-			"k8sContextID":   ctx.ID,
-			"k8sContextName": ctx.Name,
-			"connectionID":   ctx.ConnectionID,
-		}, uuid.Nil)
-		return mch
+		return mch.handleControllerInitError(ctx, err, "Failed to create Kubernetes client")
 	}
 
 	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{
@@ -401,6 +406,8 @@ func (ot *OperatorTracker) Undeployed(ctxID string, undeployed bool) {
 	if ot.DisableOperator { //no-op when operator is disabled
 		return
 	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
 	if ot.ctxIDtoDeploymentStatus == nil {
 		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
 	}
@@ -411,6 +418,8 @@ func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return true
 	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
 	if ot.ctxIDtoDeploymentStatus == nil {
 		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
 		return false

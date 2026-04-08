@@ -16,6 +16,7 @@ func expectedViewFlagError(outputFormat string) error {
 }
 
 func TestViewWorkspace(t *testing.T) {
+	utils.SetupContextEnv(t)
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")

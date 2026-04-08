@@ -11,6 +11,7 @@ import (
 )
 
 func TestCreateWorkspace(t *testing.T) {
+	utils.SetupContextEnv(t)
 	// Get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
