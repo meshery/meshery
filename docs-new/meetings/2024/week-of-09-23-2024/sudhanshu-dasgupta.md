@@ -1,3 +1,0 @@
-```
-Name : Sudhanshu Dasgupta
-```

@@ -1,1 +1,0 @@
-Lokeswara Rao Katari

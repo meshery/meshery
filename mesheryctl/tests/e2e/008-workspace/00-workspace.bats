@@ -6,8 +6,8 @@ setup() {
     _load_bats_libraries
 }
 
-@test "given --help flag provided when running mesheryctl exp workspace --help displays command usage" {
-    run $MESHERYCTL_BIN exp workspace --help
+@test "given --help flag provided when running mesheryctl workspace --help displays command usage" {
+    run $MESHERYCTL_BIN workspace --help
 
     assert_success
     assert_output --partial "Examples:"    

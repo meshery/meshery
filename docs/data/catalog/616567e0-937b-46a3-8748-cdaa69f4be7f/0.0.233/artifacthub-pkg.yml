@@ -1,0 +1,24 @@
+version: 0.0.233
+name: '[tutorial]-canary-deployment-with-meshery'
+displayName: '[Tutorial] Canary Deployment with Meshery'
+createdAt: "2025-12-20T13:36:48Z"
+description: 'Design for the Kanvas tutorial,  "Exploring Canary Deployments in Kubernetes". '
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/616567e0-937b-46a3-8748-cdaa69f4be7f/0.0.233/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "if you intend to see the traffic split, first hand. 1. Remove the canary-ingress -> 2. Deploy -> 3. Add the canary-ingress -> 4. Deploy.   \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 337a7dd1-2d26-48d6-bb28-26922e16d30d
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/616567e0-937b-46a3-8748-cdaa69f4be7f-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/616567e0-937b-46a3-8748-cdaa69f4be7f-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

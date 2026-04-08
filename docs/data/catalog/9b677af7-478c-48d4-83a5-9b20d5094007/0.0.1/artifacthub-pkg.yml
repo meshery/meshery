@@ -1,0 +1,20 @@
+version: 0.0.1
+name: istio-ingress-service-web-api-v1-only
+displayName: istio-ingress-service-web-api-v1-only
+createdAt: "2023-09-25T22:44:52Z"
+description: istio-ingress-service-web-api-v1-only
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/9b677af7-478c-48d4-83a5-9b20d5094007/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a550f4d6-d3bd-44f1-9b4c-167114452062
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

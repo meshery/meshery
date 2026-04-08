@@ -1,0 +1,24 @@
+version: 0.0.8
+name: azure-monitor-containers
+displayName: Azure Monitor Containers
+createdAt: "2024-11-01T20:34:57Z"
+description: "Azure Monitor Containers is a service that monitors and provides insights into the performance and health of Azure container apps and Kubernetes clusters:\n\n- Container insights\nCollects and analyzes container logs and metric data from Azure Kubernetes clusters. It supports Azure Kubernetes Service (AKS), Azure Arc-enabled Kubernetes clusters, and Windows Server 2022. \n\n- Metric data collection\nRegularly collects metric data from container apps to help users understand their performance and health. Users can visualize the data in the Azure portal's metrics explorer. \n\n\n- Hybrid Kubernetes monitoring\nSupports monitoring Kubernetes clusters on-premises and on Azure Stack with AKS Engine. Users can install the container agent with their AKS workloads to create alerts and gain insights into the performance of their on-premises workloads. \n\n- Log streaming\nAllows users to view streaming system and console logs from a container in near real-time. "
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/661bf5e6-cf42-4804-8a74-f7fe651b8bb4/0.0.8/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Container insights is a feature of Azure Monitor that collects and analyzes container logs from Azure Kubernetes clusters or Azure Arc-enabled Kubernetes clusters and their components. You can analyze the collected data for the different components in your cluster with a collection of views and prebuilt workbooks. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 090e7114-509a-4046-81f1-9c5fb8daf724
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/661bf5e6-cf42-4804-8a74-f7fe651b8bb4-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/661bf5e6-cf42-4804-8a74-f7fe651b8bb4-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

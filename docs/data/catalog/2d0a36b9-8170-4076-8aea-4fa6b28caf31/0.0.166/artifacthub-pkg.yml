@@ -1,0 +1,24 @@
+version: 0.0.166
+name: match-labels-relationship
+displayName: Match-Labels-Relationship
+createdAt: "2024-09-30T13:54:52Z"
+description: A Match Labels Relationship in Meshery refers to the configuration where Kubernetes components are linked based on shared labels. This relationship is essential for identifying and managing groups of Pods, Services, or other resources that share common characteristics. By using matching labels, Kubernetes can efficiently route traffic, apply policies, and manage workloads across components that are part of the same logical grouping.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2d0a36b9-8170-4076-8aea-4fa6b28caf31/0.0.166/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Ensure that labels are consistently applied across related Kubernetes components. Inconsistent or misspelled labels can lead to unexpected behavior and make it difficult to manage or identify related resources.\n\n2. Use clear and descriptive labels that convey the purpose or role of the component. This helps with understanding the architecture and functionality of your application, making it easier to manage and troubleshoot.\n\n3. Consider how label relationships will affect scaling and updating strategies. Changes to labels or the addition of new components may require adjustments to selectors and configurations to maintain proper functionality and resource management across your Kubernetes environment. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2d0a36b9-8170-4076-8aea-4fa6b28caf31-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2d0a36b9-8170-4076-8aea-4fa6b28caf31-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

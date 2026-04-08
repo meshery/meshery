@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker on Documentation</title>
+    <link>/v0.9/categories/docker/</link>
+    <description>Recent content in Docker on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/categories/docker/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker</title>
+      <link>/v0.9/installation/docker/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/docker/</guid>
+      <description>&lt;h1&gt;Quick Start with Docker &lt;img src=&#34;/v0.9/installation/docker/images/docker.svg&#34; style=&#34;width:35px;height:35px;&#34; /&gt;&lt;/h1&gt;&#xA;&#xA;&lt;div class=&#34;prereqs&#34;&gt;&lt;h4&gt;Prerequisites&lt;/h4&gt;&#xA;&#xA;1. Install the Meshery command line client, &#xA;&lt;a href=&#34;/v0.9/installation/mesheryctl&#34; class=&#34;meshery-light&#34;&gt;&#xA;    mesheryctl&#xA;&lt;/a&gt;.&#xA;&lt;/div&gt;&#xA;&lt;h2 id=&#34;deploying-meshery-on-docker&#34;&gt;&#xA;&#x9;Deploying Meshery on Docker&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Follow these installation steps to use Docker and Docker Compose to run Meshery. Users often choose this installation approach in order to run Meshery on their local machine. If you need to install &lt;em&gt;Docker&lt;/em&gt;, see &lt;a href=&#34;https://docs.docker.com/get-started/&#34;&gt;Getting Started with Docker&lt;/a&gt;, and if you need to install &lt;em&gt;Docker Compose&lt;/em&gt;, see &lt;a href=&#34;https://docs.docker.com/compose/install/&#34;&gt;Installing Docker Compose&lt;/a&gt;.&lt;/p&gt;&#xA;&lt;p&gt;Start Meshery by executing the following command:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Docker Extension</title>
+      <link>/v0.9/installation/docker/docker-extension/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/docker/docker-extension/</guid>
+      <description>&lt;h1&gt;Quick Start with Docker Extension &lt;img src=&#34;/v0.9/installation/docker/images/docker.svg&#34; style=&#34;width:35px;height:35px;&#34; /&gt;&lt;/h1&gt;&#xA;&lt;p&gt;The Docker Extension for Meshery extends Docker Desktop&amp;rsquo;s position as the developer&amp;rsquo;s go-to Kubernetes environment with easy access to the full capabilities of Meshery&amp;rsquo;s collaborative cloud native management features.&lt;/p&gt;&#xA;&lt;h2 id=&#34;prerequisites&#34;&gt;&#xA;&#x9;Prerequisites&#xA;&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;You need Docker Desktop version of 4.10 or higher for this.&lt;/li&gt;&#xA;&lt;li&gt;This document applies only when Docker Desktop uses kubeadm with Kubernetes enabled. If you are using kind, please refer to the &lt;a href=&#34;/v0.9/installation/kubernetes/kind/&#34;&gt;Kind&lt;/a&gt; section.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;install-the-docker-meshery-extension&#34;&gt;&#xA;&#x9;Install the Docker Meshery Extension&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Select one of the following three options to install the Docker Meshery Extension:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

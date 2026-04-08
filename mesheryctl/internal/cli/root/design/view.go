@@ -35,7 +35,7 @@ type designViewFlags struct {
 var designViewFlagsProvided designViewFlags
 
 var linkDocPatternView = map[string]string{
-	"link":    "![pattern-view-usage](/assets/img/mesheryctl/patternView.png)",
+	"link":    "![pattern-view-usage](/reference/images/patternView.png)",
 	"caption": "Usage of mesheryctl design view",
 }
 
@@ -110,6 +110,7 @@ mesheryctl design view [design-name | ID]
 
 		outputFormatFactory := display.OutputFormatterFactory[interface{}]{}
 		outputFormatter, err := outputFormatFactory.New(designViewFlagsProvided.OutputFormat, designData)
+		outputFormatter.WithOutput(cmd.OutOrStdout())
 		if err != nil {
 			return err
 		}

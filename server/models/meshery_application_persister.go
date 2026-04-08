@@ -27,7 +27,7 @@ func (maap *MesheryApplicationPersister) GetMesheryApplications(search, order st
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	count := int64(0)

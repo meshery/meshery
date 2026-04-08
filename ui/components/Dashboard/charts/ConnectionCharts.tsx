@@ -72,6 +72,7 @@ export default function ConnectionStatsChart() {
     <Link
       href="/management/connections"
       style={{
+        textDecoration: 'none',
         pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
           ? 'none'
           : 'auto',

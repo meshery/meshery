@@ -1,0 +1,26 @@
+version: 0.0.61
+name: managing-configuration-for-kubernetes-pods
+displayName: Managing Configuration for Kubernetes Pods
+createdAt: "2025-07-20T07:04:33Z"
+description: |-
+    This design pattern demonstrates the standard method for managing and injecting configuration into Pods within a Kubernetes environment.
+    t is based on a diagram from the Exoscale documentation.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3f712cfe-b2a9-4b4f-89df-ac5b19d10f3a/0.0.61/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The purpose is for visualization and learning, not for direct production deployment without modification. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4fb65012-abb5-4098-9df4-43e0eb380132
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3f712cfe-b2a9-4b4f-89df-ac5b19d10f3a-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3f712cfe-b2a9-4b4f-89df-ac5b19d10f3a-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

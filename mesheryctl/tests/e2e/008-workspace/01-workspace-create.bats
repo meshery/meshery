@@ -6,12 +6,10 @@ setup() {
 	_load_bats_libraries
 }
 
-@test "given an invalid orgId provided as an argument when running mesheryctl exp workspace create --orgId invalid-org-id then an error message is displayed" {
-    run $MESHERYCTL_BIN exp workspace create --orgId foo
+@test "given an invalid orgId provided as an argument when running mesheryctl workspace create --orgId invalid-org-id then an error message is displayed" {
+    run $MESHERYCTL_BIN workspace create --orgId foo
 
     assert_failure 
     assert_output --partial "Error"
-    assert_output --partial "Invalid Argument"
-    assert_output --partial "[ name | description ] not specified"
+    assert_output --partial "Invalid value for --orgId 'foo': must be a valid UUID"
 }
-

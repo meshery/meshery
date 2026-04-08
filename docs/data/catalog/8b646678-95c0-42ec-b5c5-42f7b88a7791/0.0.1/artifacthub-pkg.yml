@@ -1,0 +1,20 @@
+version: 0.0.1
+name: fluentbit-log-pipeline
+displayName: fluentbit-log-pipeline
+createdAt: "2025-07-07T05:22:00Z"
+description: fluentbit-log-pipeline
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8b646678-95c0-42ec-b5c5-42f7b88a7791/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: ccb3c48a-5bb7-484e-899e-6992fcfa2ac9
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

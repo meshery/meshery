@@ -1,0 +1,24 @@
+version: 0.0.35
+name: hello-design.yml
+displayName: hello-design.yml
+createdAt: "2025-09-19T04:25:25Z"
+description: "A Meshery Playground design \n\nTags: tutorial, kubernetes, nginx, ingress, meshery"
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/4d3d5921-2293-4b12-b3b5-aa147fbbf755/0.0.35/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "A Meshery Playground design that demonstrates exposing an NGINX app using Deployment, Service, and Ingress.\n\nTags: tutorial, kubernetes, nginx, ingress, meshery \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 96183f93-7d7f-43c3-a67a-80732b1c5719
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/4d3d5921-2293-4b12-b3b5-aa147fbbf755-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/4d3d5921-2293-4b12-b3b5-aa147fbbf755-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

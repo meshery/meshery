@@ -1,0 +1,1312 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "authentik-2025.8.4.tgz",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.5",
+  "components": [
+    {
+      "id": "6b925ad7-7c58-4c7d-b271-f2d85158b471",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "authentik",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "authentik",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "serviceAccount",
+            "app.kubernetes.io/part-of": "authentik",
+            "app.kubernetes.io/version": "2.1.0",
+            "helm.sh/chart": "serviceAccount-2.1.0"
+          },
+          "name": "authentik",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "cd6c8159-beb6-41df-a4b6-3ebbfb341d0a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "authentik",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "AUTHENTIK_EMAIL__PORT": "NTg3",
+          "AUTHENTIK_EMAIL__TIMEOUT": "MzA=",
+          "AUTHENTIK_EMAIL__USE_SSL": "ZmFsc2U=",
+          "AUTHENTIK_EMAIL__USE_TLS": "ZmFsc2U=",
+          "AUTHENTIK_ENABLED": "dHJ1ZQ==",
+          "AUTHENTIK_ERROR_REPORTING__ENABLED": "ZmFsc2U=",
+          "AUTHENTIK_ERROR_REPORTING__ENVIRONMENT": "azhz",
+          "AUTHENTIK_ERROR_REPORTING__SEND_PII": "ZmFsc2U=",
+          "AUTHENTIK_EVENTS__CONTEXT_PROCESSORS__ASN": "L2dlb2lwL0dlb0xpdGUyLUFTTi5tbWRi",
+          "AUTHENTIK_EVENTS__CONTEXT_PROCESSORS__GEOIP": "L2dlb2lwL0dlb0xpdGUyLUNpdHkubW1kYg==",
+          "AUTHENTIK_LOG_LEVEL": "aW5mbw==",
+          "AUTHENTIK_OUTPOSTS__CONTAINER_IMAGE_BASE": "Z2hjci5pby9nb2F1dGhlbnRpay8lKHR5cGUpczolKHZlcnNpb24pcw==",
+          "AUTHENTIK_POSTGRESQL__HOST": "YXV0aGVudGlrLXBvc3RncmVzcWw=",
+          "AUTHENTIK_POSTGRESQL__NAME": "YXV0aGVudGlr",
+          "AUTHENTIK_POSTGRESQL__PORT": "NTQzMg==",
+          "AUTHENTIK_POSTGRESQL__USER": "YXV0aGVudGlr",
+          "AUTHENTIK_REDIS__HOST": "YXV0aGVudGlrLXJlZGlzLW1hc3Rlcg==",
+          "AUTHENTIK_WEB__PATH": "Lw=="
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "authentik",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "authentik",
+            "app.kubernetes.io/part-of": "authentik",
+            "app.kubernetes.io/version": "2025.8.4",
+            "helm.sh/chart": "authentik-2025.8.4"
+          },
+          "name": "authentik",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "bf8fa768-d64e-4575-91fe-a29cdaae6134",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "authentik-default",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 22,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg",
+        "width": 22,
+        "x": 8.5,
+        "y": 7.5
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "authentik",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "serviceAccount",
+            "app.kubernetes.io/part-of": "authentik",
+            "app.kubernetes.io/version": "2.1.0",
+            "helm.sh/chart": "serviceAccount-2.1.0"
+          },
+          "name": "authentik-default"
+        },
+        "rules": [
+          {
+            "apiGroups": [
+              "apiextensions.k8s.io"
+            ],
+            "resources": [
+              "customresourcedefinitions"
+            ],
+            "verbs": [
+              "list"
+            ]
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRole",
+        "schema": ""
+      }
+    },
+    {
+      "id": "b26c1978-77c3-4b39-83a3-cd4a9e7aff5e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "authentik-default",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 25,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg",
+        "width": 25,
+        "x": 7,
+        "y": 7
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "authentik",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "serviceAccount",
+            "app.kubernetes.io/part-of": "authentik",
+            "app.kubernetes.io/version": "2.1.0",
+            "helm.sh/chart": "serviceAccount-2.1.0"
+          },
+          "name": "authentik-default"
+        },
+        "roleRef": {
+          "apiGroup": "rbac.authorization.k8s.io",
+          "kind": "ClusterRole",
+          "name": "authentik-default"
+        },
+        "subjects": [
+          {
+            "kind": "ServiceAccount",
+            "name": "authentik",
+            "namespace": "default"
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRoleBinding",
+        "schema": ""
+      }
+    },
+    {
+      "id": "025d1528-db71-4ef2-98b7-3d40eca6413b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "authentik",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 22,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/role-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/role-white.svg",
+        "width": 22,
+        "x": 8.5,
+        "y": 7.5,
+        "z-index": 4
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "authentik",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "serviceAccount",
+            "app.kubernetes.io/part-of": "authentik",
+            "app.kubernetes.io/version": "2.1.0",
+            "helm.sh/chart": "serviceAccount-2.1.0"
+          },
+          "name": "authentik",
+          "namespace": "default"
+        },
+        "rules": [
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resources": [
+              "secrets",
+              "services",
+              "configmaps"
+            ],
+            "verbs": [
+              "get",
+              "create",
+              "delete",
+              "list",
+              "patch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "extensions",
+              "apps"
+            ],
+            "resources": [
+              "deployments"
+            ],
+            "verbs": [
+              "get",
+              "create",
+              "delete",
+              "list",
+              "patch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "extensions",
+              "networking.k8s.io"
+            ],
+            "resources": [
+              "ingresses"
+            ],
+            "verbs": [
+              "get",
+              "create",
+              "delete",
+              "list",
+              "patch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "traefik.containo.us",
+              "traefik.io"
+            ],
+            "resources": [
+              "middlewares"
+            ],
+            "verbs": [
+              "get",
+              "create",
+              "delete",
+              "list",
+              "patch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "gateway.networking.k8s.io"
+            ],
+            "resources": [
+              "httproutes"
+            ],
+            "verbs": [
+              "get",
+              "create",
+              "delete",
+              "list",
+              "patch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "monitoring.coreos.com"
+            ],
+            "resources": [
+              "servicemonitors"
+            ],
+            "verbs": [
+              "get",
+              "create",
+              "delete",
+              "list",
+              "patch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "apiextensions.k8s.io"
+            ],
+            "resources": [
+              "customresourcedefinitions"
+            ],
+            "verbs": [
+              "list"
+            ]
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "Role",
+        "schema": ""
+      }
+    },
+    {
+      "id": "6fc8a786-f5d5-4d3a-8065-262a86cbb9a4",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "authentik",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 25,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/rolebinding-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/rolebinding-white.svg",
+        "width": 25,
+        "x": 7,
+        "y": 7,
+        "z-index": 4
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "authentik",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "serviceAccount",
+            "app.kubernetes.io/part-of": "authentik",
+            "app.kubernetes.io/version": "2.1.0",
+            "helm.sh/chart": "serviceAccount-2.1.0"
+          },
+          "name": "authentik",
+          "namespace": "default"
+        },
+        "roleRef": {
+          "apiGroup": "rbac.authorization.k8s.io",
+          "kind": "Role",
+          "name": "authentik"
+        },
+        "subjects": [
+          {
+            "kind": "ServiceAccount",
+            "name": "authentik",
+            "namespace": "default"
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "RoleBinding",
+        "schema": ""
+      }
+    },
+    {
+      "id": "7b20b97e-770e-49d3-ab89-af2665cccc5c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "authentik-server",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "server",
+            "app.kubernetes.io/instance": "authentik",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "authentik",
+            "app.kubernetes.io/part-of": "authentik",
+            "app.kubernetes.io/version": "2025.8.4",
+            "helm.sh/chart": "authentik-2025.8.4"
+          },
+          "name": "authentik-server",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 80,
+              "protocol": "TCP",
+              "targetPort": 9000
+            },
+            {
+              "name": "https",
+              "port": 443,
+              "protocol": "TCP",
+              "targetPort": 9443
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/component": "server",
+            "app.kubernetes.io/instance": "authentik",
+            "app.kubernetes.io/name": "authentik"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "5a4c1df1-1dc7-402d-b47b-f184187dae37",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "authentik-server",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "server",
+            "app.kubernetes.io/instance": "authentik",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "authentik",
+            "app.kubernetes.io/part-of": "authentik",
+            "app.kubernetes.io/version": "2025.8.4",
+            "helm.sh/chart": "authentik-2025.8.4"
+          },
+          "name": "authentik-server",
+          "namespace": "default"
+        },
+        "spec": {
+          "replicas": 1,
+          "revisionHistoryLimit": 3,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "server",
+              "app.kubernetes.io/instance": "authentik",
+              "app.kubernetes.io/name": "authentik"
+            }
+          },
+          "template": {
+            "metadata": {
+              "annotations": {
+                "checksum/secret": "2988486fa7833880cd1a945dadf81390f35d47fbc6fcfa61a3920e39ffa8fc21"
+              },
+              "labels": {
+                "app.kubernetes.io/component": "server",
+                "app.kubernetes.io/instance": "authentik",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "authentik",
+                "app.kubernetes.io/part-of": "authentik",
+                "app.kubernetes.io/version": "2025.8.4",
+                "helm.sh/chart": "authentik-2025.8.4"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchLabels": {
+                            "app.kubernetes.io/component": "server",
+                            "app.kubernetes.io/instance": "authentik",
+                            "app.kubernetes.io/name": "authentik"
+                          }
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 100
+                    }
+                  ]
+                }
+              },
+              "containers": [
+                {
+                  "args": [
+                    "server"
+                  ],
+                  "env": [
+                    {
+                      "name": "AUTHENTIK_LISTEN__HTTP",
+                      "value": "0.0.0.0:9000"
+                    },
+                    {
+                      "name": "AUTHENTIK_LISTEN__HTTPS",
+                      "value": "0.0.0.0:9443"
+                    },
+                    {
+                      "name": "AUTHENTIK_LISTEN__METRICS",
+                      "value": "0.0.0.0:9300"
+                    }
+                  ],
+                  "envFrom": [
+                    {
+                      "secretRef": {
+                        "name": "authentik"
+                      }
+                    }
+                  ],
+                  "image": "ghcr.io/goauthentik/server:2025.8.4",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                      "path": "/-/health/live/",
+                      "port": "http"
+                    },
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 3
+                  },
+                  "name": "server",
+                  "ports": [
+                    {
+                      "containerPort": 9000,
+                      "name": "http",
+                      "protocol": "TCP"
+                    },
+                    {
+                      "containerPort": 9443,
+                      "name": "https",
+                      "protocol": "TCP"
+                    },
+                    {
+                      "containerPort": 9300,
+                      "name": "metrics",
+                      "protocol": "TCP"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                      "path": "/-/health/ready/",
+                      "port": "http"
+                    },
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 3
+                  },
+                  "resources": {},
+                  "startupProbe": {
+                    "failureThreshold": 60,
+                    "httpGet": {
+                      "path": "/-/health/live/",
+                      "port": "http"
+                    },
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 3
+                  }
+                }
+              ],
+              "enableServiceLinks": true,
+              "terminationGracePeriodSeconds": 30
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      }
+    },
+    {
+      "id": "525511b5-c430-4fa1-990c-b0bcb31db7dd",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "authentik-worker",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "worker",
+            "app.kubernetes.io/instance": "authentik",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "authentik",
+            "app.kubernetes.io/part-of": "authentik",
+            "app.kubernetes.io/version": "2025.8.4",
+            "helm.sh/chart": "authentik-2025.8.4"
+          },
+          "name": "authentik-worker",
+          "namespace": "default"
+        },
+        "spec": {
+          "replicas": 1,
+          "revisionHistoryLimit": 3,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "worker",
+              "app.kubernetes.io/instance": "authentik",
+              "app.kubernetes.io/name": "authentik"
+            }
+          },
+          "template": {
+            "metadata": {
+              "annotations": {
+                "checksum/secret": "2988486fa7833880cd1a945dadf81390f35d47fbc6fcfa61a3920e39ffa8fc21"
+              },
+              "labels": {
+                "app.kubernetes.io/component": "worker",
+                "app.kubernetes.io/instance": "authentik",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "authentik",
+                "app.kubernetes.io/part-of": "authentik",
+                "app.kubernetes.io/version": "2025.8.4",
+                "helm.sh/chart": "authentik-2025.8.4"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchLabels": {
+                            "app.kubernetes.io/component": "worker",
+                            "app.kubernetes.io/instance": "authentik",
+                            "app.kubernetes.io/name": "authentik"
+                          }
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 100
+                    }
+                  ]
+                }
+              },
+              "containers": [
+                {
+                  "args": [
+                    "worker"
+                  ],
+                  "env": [
+                    {
+                      "name": "AUTHENTIK_LISTEN__HTTP",
+                      "value": "0.0.0.0:9000"
+                    },
+                    {
+                      "name": "AUTHENTIK_LISTEN__METRICS",
+                      "value": "0.0.0.0:9300"
+                    }
+                  ],
+                  "envFrom": [
+                    {
+                      "secretRef": {
+                        "name": "authentik"
+                      }
+                    }
+                  ],
+                  "image": "ghcr.io/goauthentik/server:2025.8.4",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "exec": {
+                      "command": [
+                        "ak",
+                        "healthcheck"
+                      ]
+                    },
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 3
+                  },
+                  "name": "worker",
+                  "ports": [
+                    {
+                      "containerPort": 9000,
+                      "name": "http",
+                      "protocol": "TCP"
+                    },
+                    {
+                      "containerPort": 9300,
+                      "name": "metrics",
+                      "protocol": "TCP"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "exec": {
+                      "command": [
+                        "ak",
+                        "healthcheck"
+                      ]
+                    },
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 3
+                  },
+                  "resources": {},
+                  "startupProbe": {
+                    "exec": {
+                      "command": [
+                        "ak",
+                        "healthcheck"
+                      ]
+                    },
+                    "failureThreshold": 60,
+                    "initialDelaySeconds": 30,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 3
+                  }
+                }
+              ],
+              "enableServiceLinks": true,
+              "serviceAccountName": "authentik",
+              "terminationGracePeriodSeconds": 30
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      }
+    }
+  ],
+  "relationships": null
+}

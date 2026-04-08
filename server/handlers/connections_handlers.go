@@ -16,6 +16,7 @@ import (
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
@@ -56,19 +57,27 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			nil,
 		)
 		if err != nil {
-			event := eventBuilder.WithSeverity(events.Error).WithDescription("Unable to perisit the \"%s\" connection details").WithMetadata(map[string]interface{}{
+			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
-			_ = provider.PersistEvent(*event, nil)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
+			if event != nil {
+				_ = provider.PersistEvent(*event, nil)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+			h.log.Error(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		event, err := inst.SendEvent(req.Context(), machines.EventType(connectionRegisterPayload.Status), connectionRegisterPayload)
 		if err != nil {
 			h.log.Error(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			_ = provider.PersistEvent(*event, nil)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
+			if event != nil {
+				_ = provider.PersistEvent(*event, nil)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+			return
 		}
 	}
 }
@@ -122,12 +131,6 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 	}
 }
 
-// swagger:route POST /api/integrations/connections PostConnection idPostConnection
-// Handle POST request for creating a new connection
-//
-// Creates a new connection
-// responses:
-// 201: noContentWrapper
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	userID := user.ID
@@ -181,28 +184,6 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	w.WriteHeader(http.StatusCreated)
 }
 
-// swagger:route GET /api/integrations/connections GetConnections idGetConnections
-// Handle GET request for getting all connections
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={}``` If search is non empty then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-//
-// ```?filter={filter}``` Filter connections with type or sub_type, eg /api/integrations/connections?filter=type%20platform or /api/integrations/connections?filter=sub_type%20management
-//
-// ```?status={status}``` Status takes array as param to filter connections based on status, eg /api/integrations/connections?status=["connected", "deleted"]
-//
-// ```?kind={kind}``` Kind takes array as param to filter connections based on kind, eg /api/integrations/connections?kind=["meshery", "kubernetes"]
-//
-// ```?type={type}``` Type takes array as param to filter connections based on type, eg /api/integrations/connections?type=["platform", "observability"]
-//
-// ```?name={name}``` Name filters connections by name (partial match), eg /api/integrations/connections?name=my-cluster
-// responses:
-// 200: mesheryConnectionsResponseWrapper
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 	page, _ := strconv.Atoi(q.Get("page"))
@@ -334,12 +315,6 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-// swagger:route GET /api/integrations/connections/{connectionId} GetConnectionById idGetConnectionById
-// Handle GET request for getting a single connection by its ID
-//
-// Fetches a single connection by its ID
-// responses:
-// 200: mesheryConnectionResponseWrapper
 func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	if connectionID == uuid.Nil {
@@ -365,12 +340,6 @@ func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ 
 	}
 }
 
-// swagger:route PUT /api/integrations/connections/{connectionId} PutConnectionById idPutConnectionById
-// Handle PUT request for updating an existing connection by connection ID
-//
-// Updates existing connection using ID
-// responses:
-// 200: mesheryConnectionResponseWrapper
 func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	userID := user.ID
@@ -557,12 +526,6 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 	return *eventBuilder.Build(), nil
 }
 
-// swagger:route DELETE /api/integrations/connections/{connectionId} DeleteConnection idDeleteConnection
-// Handle DELETE request for deleting an existing connection by connection ID
-//
-// Deletes existing connection
-// responses:
-// 200: noContentWrapper
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	userID := user.ID
@@ -579,6 +542,11 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
+		if errors.GetCode(err) == models.ErrResultNotFoundCode {
+			h.log.Warnf("No connection with ID %q found to delete", connectionID)
+			http.Error(w, _err.Error(), http.StatusNotFound)
+			return
+		}
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return

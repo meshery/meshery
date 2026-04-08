@@ -1,0 +1,24 @@
+version: 0.0.4
+name: all-pods-metal03.yaml
+displayName: all-pods-metal03.yaml
+createdAt: "2025-04-25T15:22:20Z"
+description: A one-time export of my metal03 cluster.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/cfde9483-de24-498f-869f-d8d74353a2af/0.0.4/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "For validation of my cluster's configuration. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a5eb9e0a-c9e3-4b66-890c-8f018e729306
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/cfde9483-de24-498f-869f-d8d74353a2af-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/cfde9483-de24-498f-869f-d8d74353a2af-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

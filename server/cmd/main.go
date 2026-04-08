@@ -176,7 +176,11 @@ func main() {
 	if err != nil {
 		logrus.Fatalf("Could not create log file: %v", err)
 	}
-	defer logFile.Close()
+	defer func() {
+		if err := logFile.Close(); err != nil {
+			log.Error(err)
+		}
+	}()
 	viper.Set("REGISTRY_LOG_FILE", logFilePath)
 
 	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
@@ -243,6 +247,8 @@ func main() {
 		workspace.Workspace{},
 		workspace.WorkspacesEnvironmentsMapping{},
 		workspace.WorkspacesDesignsMapping{},
+		workspace.WorkspacesTeamsMapping{},
+		workspace.WorkspacesViewsMapping{},
 		_events.Event{},
 	)
 	if err != nil {
@@ -398,7 +404,11 @@ func main() {
 	policies.SyncRelationship.Unlock()
 
 	b := broadcast.NewBroadcaster(100)
-	defer b.Close()
+	defer func() {
+		if err := b.Close(); err != nil {
+			log.Error(err)
+		}
+	}()
 
 	g := graphql.New(graphql.Options{
 		Config:      hc,

@@ -34,7 +34,7 @@ func (s *SMIResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) 
 	total := int64(0)
 	s.DB.Model(&SmiResultWithID{}).Count(&total)
 	results := []*SmiResultWithID{}
-	order := "updated_at desc"
+	order := defaultOrderUpdatedAtDesc
 	query := s.DB.Order(order)
 	Paginate(uint(page), uint(pageSize))(query).Find(&results)
 	bd, err := json.Marshal(&SmiResultPage{

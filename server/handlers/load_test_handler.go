@@ -41,7 +41,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "failed to read request body: %s", err)
+		if _, writeErr := fmt.Fprintf(w, "failed to read request body: %s", err); writeErr != nil {
+			h.log.Error(writeErr)
+		}
 		return
 	}
 
@@ -143,20 +145,6 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 	return &headers
 }
 
-// swagger:route GET /api/perf/profile PerfAPI idRunPerfTest
-// Handle GET request to run a test
-//
-// Runs the load test with the given parameters
-// responses:
-// 	200:
-
-// swagger:route GET /api/user/performance/profiles/{id}/run PerformanceAPI idRunPerformanceTest
-// Handle GET request to run a performance test
-//
-// Runs the load test with the given parameters
-// responses:
-// 	200:
-
 // LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	cleanUpFiles := make([]string, 0)
@@ -176,7 +164,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 
-	isSSLCertificateProvided := req.URL.Query().Get("cert") == "true"
+	isSSLCertificateProvided := req.URL.Query().Get("cert") == queryParamTrue
 
 	/*
 	 When "cert" query param is set the body contains self-signed certs

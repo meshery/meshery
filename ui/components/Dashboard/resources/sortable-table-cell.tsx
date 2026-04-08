@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* eslint-disable react/jsx-filename-extension */
+
 import { Grid2, Tooltip, Typography, TableCell, TableSortLabel } from '@sistent/sistent';
 
 export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon, tooltip }) => {

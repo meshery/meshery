@@ -114,7 +114,7 @@ func stop() error {
 	}
 
 	switch currCtx.GetPlatform() {
-	case "docker":
+	case platformDocker:
 		// if the platform is docker, then stop all the running containers
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
@@ -140,7 +140,7 @@ func stop() error {
 			return ErrStopMeshery(err)
 		}
 		log.Info("Meshery resources is stopped.")
-	case "kubernetes":
+	case platformKubernetes:
 		client, err := meshkitkube.New([]byte(""))
 		if err != nil {
 			return err

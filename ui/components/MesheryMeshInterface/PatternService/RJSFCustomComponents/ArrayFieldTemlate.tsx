@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Grid2, Paper, Button, IconButton, Typography, useTheme } from '@sistent/sistent';
 import AddIcon from '@mui/icons-material/Add';

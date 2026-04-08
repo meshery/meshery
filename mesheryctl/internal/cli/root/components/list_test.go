@@ -12,6 +12,7 @@ import (
 
 func TestListComponent(t *testing.T) {
 
+	mesheryctlflags.InitValidators(ComponentCmd)
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {

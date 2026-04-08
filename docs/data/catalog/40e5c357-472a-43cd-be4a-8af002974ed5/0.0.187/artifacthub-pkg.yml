@@ -1,0 +1,24 @@
+version: 0.0.187
+name: tagset-relationships
+displayName: TagSet Relationships
+createdAt: "2024-11-01T03:22:14Z"
+description: This design is an example of a tagset relationship between two otherwise disparate components.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/40e5c357-472a-43cd-be4a-8af002974ed5/0.0.187/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design is for learning purposes. A TagSet Relationship in Meshery refers to the configuration where components are linked based on shared labels. This relationship is essential for identifying and managing groups of Pods, Services, or other resources that share common characteristics. By using matching labels, Kubernetes can efficiently route traffic, apply policies, and manage workloads across components that are part of the same logical grouping. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 090e7114-509a-4046-81f1-9c5fb8daf724
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/40e5c357-472a-43cd-be4a-8af002974ed5-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/40e5c357-472a-43cd-be4a-8af002974ed5-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

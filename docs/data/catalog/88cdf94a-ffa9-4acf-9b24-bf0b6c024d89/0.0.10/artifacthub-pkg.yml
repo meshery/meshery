@@ -1,0 +1,24 @@
+version: 0.0.10
+name: edge-network-relationship:-service-to-deployment
+displayName: 'Edge-Network-Relationship: Service to Deployment'
+createdAt: "2025-01-14T08:57:56Z"
+description: An Edge-Network Relationship in Meshery represents the networking configuration between Kubernetes components, typically illustrated by a dashed arrow connecting a Service to a Deployment. This dashed arrow signifies that the Service is linked to the Pods in the Deployment, exposing network access to them through a specified port. The accompanying port/network protocol notation indicates the port exposed by the Service and the corresponding protocol, such as TCP.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/88cdf94a-ffa9-4acf-9b24-bf0b6c024d89/0.0.10/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Use consistent and accurate labels in both the Service and Deployment configurations. This consistency is crucial for the Service to correctly route traffic to the intended Pods, ensuring proper communication within the edge-network relationship. \n\n2. Clearly specify the network protocol (e.g., TCP or UDP) in the Service configuration. Ensure that the chosen protocol aligns with the requirements of the application and the behavior of the underlying Pods. Mismatched protocols can lead to unexpected communication failures. \n\n3. Carefully manage the exposed ports for Services to avoid conflicts and ensure proper communication. Be sure to match the target port in the Service configuration to the container port in the Pods to ensure that traffic is routed correctly. This alignment is essential for the application to function properly, as mismatched ports can lead to connectivity issues. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 3284758c-d15f-4efa-b9af-55901461958a
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/88cdf94a-ffa9-4acf-9b24-bf0b6c024d89-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/88cdf94a-ffa9-4acf-9b24-bf0b6c024d89-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

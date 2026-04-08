@@ -18,13 +18,6 @@ func init() {
 	gob.Register([]*models.Adapter{})
 }
 
-// swagger:route GET /api/system/adapters/available SystemAPI idGetAvailableAdapters
-// Handle GET request for available adapters
-//
-// Fetches and returns all the adapters available for deployment
-// Responses:
-//  200: systemAdaptersRespWrapper
-
 // AdaptersHandler is used to fetch all the adapters
 func (h *Handler) AvailableAdaptersHandler(w http.ResponseWriter, _ *http.Request) {
 	err := json.NewEncoder(w).Encode(models.ListAvailableAdapters)
@@ -35,13 +28,6 @@ func (h *Handler) AvailableAdaptersHandler(w http.ResponseWriter, _ *http.Reques
 		return
 	}
 }
-
-// swagger:route GET /api/system/adapters SystemAPI idGetSystemAdapters
-// Handle GET request for adapters
-//
-// Fetches and returns all the adapters and ping adapters
-// Responses:
-//  200: systemAdaptersRespWrapper
 
 // AdaptersHandler is used to fetch all the adapters
 func (h *Handler) AdaptersHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -113,20 +99,6 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 
 	_, _ = w.Write([]byte("{}"))
 }
-
-// swagger:route POST /api/system/adapter/manage SystemAPI idPostAdapterConfig
-// Handle POST requests to persist adapter config
-//
-// Used to persist adapter config
-// responses:
-// 	200: mesheryAdaptersRespWrapper
-
-// swagger:route DELETE /api/system/adapter/manage SystemAPI idDeleteAdapterConfig
-// Handle DELETE requests to delete adapter config
-//
-// Used to delete adapter configuration
-// responses:
-// 	200:
 
 // MeshAdapterConfigHandler is used to persist adapter config
 func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -269,13 +241,6 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 	h.log.Debug("New adapters: ", b)
 	return newMeshAdapters, nil
 }
-
-// swagger:route POST /api/system/adapter/operation SystemAPI idPostAdapterOperation
-// Handle POST requests for Adapter Operations
-//
-// Used to send operations to the adapters
-// responses:
-// 	200:
 
 // MeshOpsHandler is used to send operations to the adapters
 func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {

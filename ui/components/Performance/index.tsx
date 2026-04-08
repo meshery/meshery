@@ -209,7 +209,7 @@ const MesheryPerformanceComponent_ = (props) => {
   );
   const { selectedK8sContexts } = useSelector((state) => state.ui);
   const { k8sConfig } = useSelector((state) => state.ui);
-  const { staticPrometheusBoardConfig } = useSelector((state) => state.telemetry);
+  const { prometheus, staticPrometheusBoardConfig } = useSelector((state) => state.telemetry);
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const { data: userData, isSuccess: isUserDataFetched } =
@@ -589,8 +589,8 @@ const MesheryPerformanceComponent_ = (props) => {
     isSuccess: isConfigFetchSuccessful,
     isError: isConfigFetchFailed,
     error: fetchError,
-  } = useGetStaticPrometheusBoardConfigQuery(undefined, {
-    skip: shouldSkipFetch,
+  } = useGetStaticPrometheusBoardConfigQuery(prometheus?.connectionID, {
+    skip: shouldSkipFetch || !prometheus?.connectionID,
   });
 
   const persistStaticBoardConfig = () => {
@@ -731,7 +731,6 @@ const MesheryPerformanceComponent_ = (props) => {
     setTimerDialogOpen(false);
   };
   const { grafana } = useSelector((state) => state.telemetry);
-  const { prometheus } = useSelector((state) => state.telemetry);
   let localStaticPrometheusBoardConfig;
   if (
     staticPrometheusBoardConfig &&

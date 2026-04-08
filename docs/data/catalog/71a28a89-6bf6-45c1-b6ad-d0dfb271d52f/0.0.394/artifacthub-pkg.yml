@@ -1,0 +1,24 @@
+version: 0.0.394
+name: design-reviews
+displayName: Design Reviews
+createdAt: "2025-10-27T09:38:55Z"
+description: Kanvas Designer empowers you to seamlessly add comments, annotations, and text nodes directly inline with your Infrastructure-as-Code (IaC). Use comments to share feedback with teammates, document design decisions, capture best practices, and provide context behind your infrastructure and application configurations. By doing so, you not only improve collaboration today but also leave a valuable historical record—helping your future self and others understand the “why” behind your choices.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/71a28a89-6bf6-45c1-b6ad-d0dfb271d52f/0.0.394/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: de7f1b67-5c6d-4c38-8c6c-fda919129ed0
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/71a28a89-6bf6-45c1-b6ad-d0dfb271d52f-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/71a28a89-6bf6-45c1-b6ad-d0dfb271d52f-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

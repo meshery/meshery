@@ -1,1 +1,0 @@
-Sulochan Mahajan

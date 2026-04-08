@@ -1,0 +1,27 @@
+version: 0.0.4
+name: ms-payments-grpc-0.0.11
+displayName: ms-payments-grpc-0.0.11
+createdAt: "2025-10-07T14:39:15Z"
+description: |-
+    Helm chart for deploying the ms-payments-grpc microservice (CodeDesignPlus stack).
+    Based on the ms-base chart; renders Kubernetes resources (Deployment/Service),
+    health probes, optional HPA, and integrations like Vault and Istio.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/74b17e3a-3fc8-411c-8086-e4c13138bb65/0.0.4/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "• Values: Provide required secrets/config via Helm values (e.g., Vault token) before deploy.\n• Autoscaling: HPA requires metrics-server on the cluster.\n• Networking: If Istio is enabled in values, ensure sidecar injection is configured for the namespace.\n• Security: Prefer external secrets (Vault) vs plain-text in values.yaml.\n• Image: Pin a specific tag instead of :latest for reproducible releases. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 985074f5-27a0-406c-b83a-7f247ba77746
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/74b17e3a-3fc8-411c-8086-e4c13138bb65-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/74b17e3a-3fc8-411c-8086-e4c13138bb65-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
