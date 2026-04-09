@@ -205,7 +205,7 @@ const Dashboard = () => {
       }),
     );
   const isWidgetAlreadyAdded = (key, layout, breakpoint) => {
-    return Boolean((layout[breakpoint] || []).find((item) => item.i == key));
+    return (layout[breakpoint] || []).some((item) => item.i === key);
   };
 
   const getWidgetsAvailableToBeAdded = (layout, breakpoint) => {
@@ -359,19 +359,16 @@ const Dashboard = () => {
   }, [orgDashboardLayout]);
 
   const onLayoutChange = (layout, layouts) => {
-    if (!isEditMode) {
-      return;
-    }
     setDashboardLayout(normalizeLayouts(layouts));
   };
 
   const widgetsToRenderForLayout = (layout, breakpoint) => {
     return (layout[breakpoint] || [])
+      .filter((layoutItem) => WIDGETS[layoutItem.i]?.isEnabled?.())
       .map((layoutItem) => ({
         key: layoutItem.i,
-        ...(WIDGETS[layoutItem.i] || {}), // old widgets might still be in the layout and now no longer available
-      }))
-      .filter((widget) => widget?.isEnabled?.());
+        ...(WIDGETS[layoutItem.i] || {}),
+      }));
   };
 
   const removeWidget = (key) => {
