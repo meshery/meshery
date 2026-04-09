@@ -44,6 +44,7 @@ import { useThemePreference } from '@/themes/hooks';
 import { ErrorBoundary, SistentThemeProvider, CssBaseline, NoSsr } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
+import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
 import {
   StyledAppContent,
   StyledMainContent,
@@ -385,15 +386,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
           dispatch(updateAdaptersInfo({ meshAdapters: result.meshAdapters }));
         }
         if (result.loadTestPrefs) {
-          const loadTestPref = Object.assign(
-            {
-              c: 0,
-              qps: 0,
-              t: 0,
-              gen: 0,
-            },
-            result.loadTestPrefs,
-          );
+          const loadTestPref = normalizeLoadTestPrefs(result.loadTestPrefs);
           dispatch(updateLoadTestPref({ loadTestPref }));
         }
       }

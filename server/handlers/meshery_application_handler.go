@@ -38,20 +38,6 @@ package handlers
 // 	Name            string                     `json:"name,omitempty"`
 // }
 
-// // swagger:route POST /api/application/deploy ApplicationsAPI idPostDeployApplicationFile
-// // Handle POST request for Application File Deploy
-// //
-// // Deploy an attached application file with the request
-// // responses:
-// //  200: applicationFilesResponseWrapper
-
-// // swagger:route DELETE /api/application/deploy ApplicationsAPI idDeleteApplicationFile
-// // Handle DELETE request for Application File Deploy
-// //
-// // Delete a deployed application file with the request
-// // responses:
-// //  200:
-
 // // ApplicationFileHandler handles the requested related to application files
 // func (h *Handler) ApplicationFileHandler(
 // 	rw http.ResponseWriter,
@@ -63,13 +49,6 @@ package handlers
 // 	// Application files are just design files
 // 	h.PatternFileHandler(rw, r, prefObj, user, provider)
 // }
-
-// // swagger:route POST /api/application/{sourcetype} ApplicationsAPI idPostApplicationFileRequest
-// // Handle POST request for Application Files
-// //
-// // Creates a new application with source-content
-// // responses:
-// //  200: mesheryApplicationResponseWrapper
 
 // // ApplicationFileRequestHandler will handle requests of both type GET and POST
 // // on the route /api/application
@@ -94,13 +73,6 @@ package handlers
 // 		h.handleApplicationUpdate(rw, r, prefObj, user, provider)
 // 	}
 // }
-
-// // swagger:route POST /api/application/{sourcetype} ApplicationsAPI idPutApplicationFileRequest
-// // Handle POST request for Application Files
-// //
-// // Updates the design for the provided application
-// // responses:
-// //  200: mesheryApplicationResponseWrapper
 
 // func (h *Handler) handleApplicationPOST(
 // 	rw http.ResponseWriter,
@@ -732,23 +704,6 @@ package handlers
 
 // }
 
-// // swagger:route GET /api/application ApplicationsAPI idGetMesheryApplications
-// // Handle GET request for Application Files
-// //
-// // Fetches the list of all applications saved by the current user
-// //
-// // ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
-// //
-// // ```?order={field}``` orders on the passed field
-// //
-// // ```?search=<application name>``` A string matching is done on the specified application name
-// //
-// // ```?page={page-number}``` Default page number is 0
-// //
-// // ```?pagesize={pagesize}``` Default pagesize is 10
-// // responses:
-// //  200: mesheryApplicationsResponseWrapper
-
 // // GetMesheryApplicationsHandler returns the list of all the applications saved by the current user
 // func (h *Handler) GetMesheryApplicationsHandler(
 // 	rw http.ResponseWriter,
@@ -779,13 +734,6 @@ package handlers
 // 	rw.Header().Set("Content-Type", "application/json")
 // 	fmt.Fprint(rw, string(resp))
 // }
-
-// // swagger:route DELETE /api/application/{id} ApplicationsAPI idDeleteMesheryApplicationFile
-// // Handle Delete for a Meshery Application File
-// //
-// // Deletes a meshery application file with ID: id
-// // responses:
-// //  200: noContentWrapper
 
 // // DeleteMesheryApplicationHandler deletes a application with the given id
 // func (h *Handler) DeleteMesheryApplicationHandler(
@@ -845,39 +793,6 @@ package handlers
 // 	fmt.Fprint(rw, string(resp))
 // }
 
-// // swagger:route GET /api/application/types ApplicationsAPI typeGetMesheryApplication
-// // Handle GET request for Meshery Application types
-// //
-// // Get application file types
-// // responses:
-// //
-// //	200: mesheryApplicationTypesResponseWrapper
-// func (h *Handler) GetMesheryApplicationTypesHandler(
-// 	rw http.ResponseWriter,
-// 	_ *http.Request,
-// 	_ *models.Preference,
-// 	_ *models.User,
-// 	_ models.Provider,
-// ) {
-// 	response := models.GetApplicationTypes()
-// 	b, err := json.Marshal(response)
-// 	if err != nil {
-// 		obj := "available types"
-// 		h.log.Error(models.ErrMarshal(err, obj))
-// 		http.Error(rw, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	rw.Header().Set("Content-Type", "application/json")
-// 	fmt.Fprint(rw, string(b))
-// }
-
-// // swagger: route GET /api/application/download/{id} ApplicationsAPI idGetApplication
-// // Handle GET request for Meshery Application with the given id
-// //
-// // Get the application file with the given id
-// // responses:
-// //  200
-
 // // GetMesheryApplicationFile returns the application file with the given id
 // func (h *Handler) GetMesheryApplicationFile(
 // 	rw http.ResponseWriter,
@@ -912,13 +827,6 @@ package handlers
 // 		return
 // 	}
 // }
-
-// // swagger:route GET /api/application/download/{id}/{sourcetype} ApplicationsAPI typeGetApplication
-// // Handle GET request for Meshery Application with of source content
-// //
-// // Get the application source-content
-// // responses:
-// //  200
 
 // // GetMesheryApplicationHandler fetched the application with the given id
 // func (h *Handler) GetMesheryApplicationSourceHandler(

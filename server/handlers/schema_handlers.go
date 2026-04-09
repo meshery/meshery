@@ -9,15 +9,6 @@ import (
 	"github.com/meshery/meshkit/schemas"
 )
 
-// HandleResourceSchemas handles the request to retrieve and merge resource schemas.
-// swagger:route GET /api/schema/resource/{resourceName} HandleResourceSchemas
-//
-// Handles the request to retrieve and merge resource JSON schema and UI schema.
-//
-// Responses:
-//
-//	200
-//	500
 func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request) {
 	rscName := mux.Vars(r)["resourceName"]
 	rjsfSchema, uiSchema, err := schemas.ServeJSonFile(rscName)

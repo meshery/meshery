@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 2nd 2026, 11:32:45 pm
+- Testing started at: April 9th 2026, 4:51:20 pm
 
 **📦 Test Result Summary**
 
-- ✅ 56 passed
-- ❌ 5 failed
+- ✅ 69 passed
+- ❌ 0 failed
 - ⚠️ 0 flaked
-- ⏩ 11 skipped
+- ⏩ 3 skipped
 
-⌛ _Duration: 5 minutes and 53 seconds_
+⌛ _Duration: 6 minutes and 26 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
@@ -27,16 +27,16 @@
 | 4 | Meshery | chromium-meshery-provider | Common UI elements |  | ✅ |
 | 5 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 6 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
-| 7 | Meshery | chromium-meshery-provider | Create a Model |  | ❌ |
-| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ❌ |
+| 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
+| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
-| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
+| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
+| 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
+| 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
-| 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ➖ |
-| 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ❌ |
+| 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
+| 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ✅ |
 | 17 | Meshery | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 18 | Meshery | chromium-meshery-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 19 | Meshery | chromium-meshery-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
@@ -64,16 +64,16 @@
 | 41 | None | chromium-local-provider | Common UI elements |  | ✅ |
 | 42 | None | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 43 | None | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
-| 44 | None | chromium-local-provider | Create a Model |  | ❌ |
+| 44 | None | chromium-local-provider | Create a Model |  | ✅ |
 | 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 46 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
-| 48 | None | chromium-local-provider | Import a Model via File Import |  | ➖ |
-| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
+| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
+| 48 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
+| 49 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 51 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
-| 52 | None | chromium-local-provider | Search a Model and Export it |  | ➖ |
-| 53 | None | chromium-local-provider | should edit design in Design Configurator |  | ❌ |
+| 52 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
+| 53 | None | chromium-local-provider | should edit design in Design Configurator |  | ✅ |
 | 54 | None | chromium-local-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 55 | None | chromium-local-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 56 | None | chromium-local-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
@@ -104,122 +104,6 @@
 
 
 
-**❌ Failed Test Details**
-
-The following tests failed. Click on each to see the failure reason:
-
-
-<details>
-<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ Delete Kubernetes cluster connections (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ Create a Model (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/models.spec.js`
-
-**Error Message:**
-```
-Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
-
-Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775172832437')
-Expected: visible
-Timeout: 120000ms
-Error: element(s) not found
-
-Call log:
-[2m  - Expect "toBeVisible" with timeout 120000ms[22m
-[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775172832437')[22m
-
-```
-
-**Code Snippet:**
-```
-[0m [90m 67 |[39m     [36mawait[39m expect(
- [90m 68 |[39m       page[33m.[39mgetByTestId([32m`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`[39m)[33m,[39m
-[31m[1m>[22m[39m[90m 69 |[39m     )[33m.[39mtoBeVisible({ timeout[33m:[39m [35m120[39m_000 })[33m;[39m
- [90m    |[39m       [31m[1m^[22m[39m
- [90m 70 |[39m     [36mawait[39m expect(page[33m.[39mgetByTestId([32m'ModelImportMessages-Wrapper'[39m))[33m.[39mtoBeVisible()[33m;[39m
- [90m 71 |[39m
- [90m 72 |[39m     [36mawait[39m page[33m.[39mgetByTestId([32m'UrlStepper-Button-Finish'[39m)[33m.[39mclick()[33m;[39m[0m
-```
-
-</details>
-
-<details>
-<summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ Create a Model (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/models.spec.js`
-
-**Error Message:**
-```
-Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
-
-Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1775172980477')
-Expected: visible
-Timeout: 120000ms
-Error: element(s) not found
-
-Call log:
-[2m  - Expect "toBeVisible" with timeout 120000ms[22m
-[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1775172980477')[22m
-
-```
-
-**Code Snippet:**
-```
-[0m [90m 67 |[39m     [36mawait[39m expect(
- [90m 68 |[39m       page[33m.[39mgetByTestId([32m`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`[39m)[33m,[39m
-[31m[1m>[22m[39m[90m 69 |[39m     )[33m.[39mtoBeVisible({ timeout[33m:[39m [35m120[39m_000 })[33m;[39m
- [90m    |[39m       [31m[1m^[22m[39m
- [90m 70 |[39m     [36mawait[39m expect(page[33m.[39mgetByTestId([32m'ModelImportMessages-Wrapper'[39m))[33m.[39mtoBeVisible()[33m;[39m
- [90m 71 |[39m
- [90m 72 |[39m     [36mawait[39m page[33m.[39mgetByTestId([32m'UrlStepper-Button-Finish'[39m)[33m.[39mclick()[33m;[39m[0m
-```
-
-</details>
-
-
-
-
 
 
 **🔗 Relationship Tests**
@@ -234,7 +118,7 @@ Call log:
 | edge | binding | permission | Role | ServiceAccount | kubernetes | Understanding Relationships | ❌ |
 | edge | non-binding | network | Service | Deployment | kubernetes | service-to-deployment-network | ✅ |
 | edge | non-binding | network | Service | Deployment | kubernetes | meshery-design-fixture.json | ✅ |
-| edge | non-binding | reference | ClusterRoleBinding | ClusterRole | kubernetes | meshery-design-fixture.json | ✅ |
+| edge | non-binding | reference | ClusterRoleBinding | ClusterRole | kubernetes | meshery-design-fixture.json | ❌ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | container-hierarchical-parent-alias-relationship | ✅ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | deployment-configmap-reference-relationship | ✅ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | service-to-deployment-network | ✅ |

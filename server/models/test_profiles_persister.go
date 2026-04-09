@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/schemas/models/core"
 )
 
 // TestProfilesPersister assists with persisting session in store
@@ -15,7 +15,7 @@ type TestProfilesPersister struct {
 }
 
 type PerformanceTestConfig struct {
-	ID                         uuid.UUID
+	ID                         core.Uuid
 	PerformanceTestConfigBytes []byte
 	UpdatedAt                  time.Time
 }
@@ -61,7 +61,7 @@ func (s *TestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]byte, e
 }
 
 // GetTestConfig - gets result for a specific key
-func (s *TestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMP.PerformanceTestConfig, error) {
+func (s *TestProfilesPersister) GetTestConfig(key core.Uuid) (*SMP.PerformanceTestConfig, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
@@ -79,7 +79,7 @@ func (s *TestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMP.PerformanceTe
 }
 
 // DeleteTestConfig - delete result for a specific key
-func (s *TestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
+func (s *TestProfilesPersister) DeleteTestConfig(key core.Uuid) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
@@ -88,7 +88,7 @@ func (s *TestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
 }
 
 // WriteTestConfig persists the result
-func (s *TestProfilesPersister) WriteTestConfig(key uuid.UUID, result []byte) error {
+func (s *TestProfilesPersister) WriteTestConfig(key core.Uuid, result []byte) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
@@ -105,6 +105,6 @@ func (s *TestProfilesPersister) WriteTestConfig(key uuid.UUID, result []byte) er
 	return s.DB.Model(&PerformanceTestConfig{}).Create(&p).Error
 }
 
-func (s *TestProfilesPersister) UpdateTestConfig(key uuid.UUID, p PerformanceTestConfig) error {
+func (s *TestProfilesPersister) UpdateTestConfig(key core.Uuid, p PerformanceTestConfig) error {
 	return s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).UpdateColumns(p).Error
 }

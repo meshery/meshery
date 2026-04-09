@@ -1,0 +1,23 @@
+{{ $name := .name | default "Ungrouped" }}
+{{ $tags := .tags | default dict }}
+{{ $meta := index $tags $name }}
+
+{{ $rawLabel := "" }}
+
+{{ if $meta }}
+  {{ $rawLabel = index $meta "x-displayName" | default "" }}
+{{ end }}
+
+{{ if eq $rawLabel "" }}
+  {{ $parts := split $name "_" }}
+  {{ $rawLabel = index $parts (sub (len $parts) 1) | default $name }}
+{{ end }}
+
+{{ $label := replace $rawLabel "_" " " }}
+{{ if ne $label "" }}
+  {{ $label = $label | title }}
+{{ else }}
+  {{ $label = "Ungrouped" }}
+{{ end }}
+
+{{ return (dict "name" $name "label" $label) }}

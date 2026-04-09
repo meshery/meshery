@@ -186,7 +186,7 @@ const InfoModal_ = React.memo((props) => {
     body = JSON.stringify({
       name: selectedResource.name,
       catalog_data: modifiedData,
-      design_file: yaml.load(selectedResource.pattern_file),
+      design_file: yaml.load(selectedResource.patternFile),
       id: selectedResource.id,
       visibility: visibility,
     });

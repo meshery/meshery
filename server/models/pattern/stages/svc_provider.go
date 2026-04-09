@@ -1,10 +1,10 @@
 package stages
 
 import (
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshery/server/models/pattern/patterns"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
+	schemacore "github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
@@ -15,7 +15,7 @@ type ServiceInfoProvider interface {
 		namespace string,
 		typ string,
 		oamType string,
-	) (ID *uuid.UUID, err error)
+	) (ID *schemacore.Uuid, err error)
 	IsDelete() bool
 }
 
