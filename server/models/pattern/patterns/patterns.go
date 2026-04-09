@@ -42,22 +42,20 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 		return nil, err
 	}
 
-	msgs := make([]DeploymentMessagePerContext, 0)
-	var msgsMx sync.Mutex
-
-	var errsMx sync.Mutex
 	var errs []error
 	var kclis []*kubernetes.Client
 	for _, config := range kconfigs {
 		cli, err := kubernetes.New([]byte(config))
 		if err != nil {
-			errsMx.Lock()
 			errs = append(errs, err)
-			errsMx.Unlock()
 			continue
 		}
 		kclis = append(kclis, cli)
 	}
+
+	msgs := make([]DeploymentMessagePerContext, 0, len(kclis))
+	msgCh := make(chan DeploymentMessagePerContext, len(kclis))
+	errCh := make(chan error, len(kclis)*len(componets)*2)
 
 	var wg sync.WaitGroup
 	for _, kcli := range kclis {
@@ -82,9 +80,7 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					deploymentMsg.Message = result
 					if err != nil {
 						deploymentMsg.Success = false
-						errsMx.Lock()
-						errs = append(errs, err)
-						errsMx.Unlock()
+						errCh <- err
 						deploymentMsg.Error = err
 					}
 					msgsPerComp = append(msgsPerComp, deploymentMsg)
@@ -105,24 +101,31 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					_msg.Message = fmt.Sprintf("Error %sing %s/%s", action, patternName, comp.DisplayName)
 					_msg.Error = err
 					_msg.Success = false
-					errsMx.Lock()
-					errs = append(errs, err)
-					errsMx.Unlock()
+					errCh <- err
 				}
 				msgsPerComp = append(msgsPerComp, _msg)
 			}
 
-			msgsMx.Lock()
-			msgs = append(msgs, DeploymentMessagePerContext{
+			msgCh <- DeploymentMessagePerContext{
 				Summary:    msgsPerComp,
 				SystemName: kcli.RestConfig.ServerName,
 				Location:   kcli.RestConfig.Host,
-			})
-			msgsMx.Unlock()
+			}
 
 		}(kcli)
 	}
 	wg.Wait()
+	close(errCh)
+	close(msgCh)
+
+	for err := range errCh {
+		errs = append(errs, err)
+	}
+
+	for msg := range msgCh {
+		msgs = append(msgs, msg)
+	}
+
 	return msgs, mergeErrors(errs)
 }
 

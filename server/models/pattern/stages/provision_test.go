@@ -8,14 +8,14 @@ import (
 
 func TestProvisionConcurrentErrorAppends(t *testing.T) {
 	// Simulate the parallel_process.go callback executed by planner.go
-	// to ensure that errs append remains thread-safe.
+	// to ensure that error collection via channels remains thread-safe.
 	
-	var errsMx sync.Mutex
+	numComponents := 100
+	errCh := make(chan error, numComponents)
 	var errs []error
 	var wg sync.WaitGroup
 
 	// Simulate deploying 100 components concurrently
-	numComponents := 100
 	for i := 0; i < numComponents; i++ {
 		wg.Add(1)
 		go func(compID int) {
@@ -24,14 +24,17 @@ func TestProvisionConcurrentErrorAppends(t *testing.T) {
 			// Simulate a failure in enriching component or provisioning
 			err := fmt.Errorf("failed to provision component %d", compID)
 			
-			errsMx.Lock()
-			errs = append(errs, err)
-			errsMx.Unlock()
+			errCh <- err
 		}(i)
 	}
 
 	// Wait for all "components" to finish
 	wg.Wait()
+	close(errCh)
+
+	for err := range errCh {
+		errs = append(errs, err)
+	}
 
 	if len(errs) != numComponents {
 		t.Errorf("Expected %d provision errors, got %d", numComponents, len(errs))

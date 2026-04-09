@@ -3,7 +3,6 @@ package stages
 import (
 	"fmt"
 	"strings"
-	"sync"
 
 	"github.com/meshery/meshery/server/models/pattern/planner"
 	"github.com/meshery/meshkit/logger"
@@ -44,8 +43,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			return
 		}
 
-		var errsMx sync.Mutex
-		errs := []error{}
+		errCh := make(chan error, len(data.Pattern.Components)*2)
 
 		// Execute the plan
 		_ = plan.Execute(func(name string, component component.ComponentDefinition) bool {
@@ -55,9 +53,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 			if err != nil {
 				log.Error(err)
-				errsMx.Lock()
-				errs = append(errs, err)
-				errsMx.Unlock()
+				errCh <- err
 				return false
 			}
 
@@ -71,9 +67,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 			msg, err := act.Provision(ccp)
 			if err != nil {
-				errsMx.Lock()
-				errs = append(errs, err)
-				errsMx.Unlock()
+				errCh <- err
 				return false
 			}
 			data.Lock.Lock()
@@ -83,6 +77,12 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 			return true
 		}, log)
+
+		close(errCh)
+		var errs []error
+		for err := range errCh {
+			errs = append(errs, err)
+		}
 
 		if next != nil {
 			next(data, mergeErrors(errs))

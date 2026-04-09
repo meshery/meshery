@@ -8,27 +8,29 @@ import (
 
 func TestConcurrentErrorAppends(t *testing.T) {
 	// Simulate the exact scenario from patterns.go where multiple goroutines
-	// could encounter an error and append to the errs slice simultaneously.
+	// encounter an error and append to an error channel simultaneously.
 	
-	var errsMx sync.Mutex
+	numRoutines := 100
+	errCh := make(chan error, numRoutines)
 	var errs []error
 	var wg sync.WaitGroup
 
-	numRoutines := 100
 	for i := 0; i < numRoutines; i++ {
 		wg.Add(1)
 		go func(id int) {
 			defer wg.Done()
 			err := fmt.Errorf("simulated error %d", id)
 			
-			// If errsMx is removed, running 'go test -race' will detect a data race here.
-			errsMx.Lock()
-			errs = append(errs, err)
-			errsMx.Unlock()
+			errCh <- err
 		}(i)
 	}
 
 	wg.Wait()
+	close(errCh)
+
+	for err := range errCh {
+		errs = append(errs, err)
+	}
 
 	if len(errs) != numRoutines {
 		t.Errorf("Expected %d errors, got %d", numRoutines, len(errs))
