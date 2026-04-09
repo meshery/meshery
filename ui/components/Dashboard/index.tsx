@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
@@ -10,7 +10,6 @@ import MesheryIcon from './images/meshery-icon';
 import { TabPanel } from './tabpanel';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
-import { useState } from 'react';
 import {
   Tab,
   Tabs,
@@ -216,10 +215,11 @@ const Dashboard = () => {
         (widget) => widget?.isEnabled?.() && !isWidgetAlreadyAdded(widget.key, layout, breakpoint),
       );
   };
-  const [dashboardLayout, setDashboardLayout] = useState(() =>
-    sanitizeLayouts(userData?.dashboardPreferences || defaultLayout),
+  const orgDashboardLayout = useMemo(
+    () => sanitizeLayouts(userData?.dashboardPreferences || defaultLayout),
+    [userData?.dashboardPreferences, defaultLayout],
   );
-  const orgDashboardLayout = sanitizeLayouts(userData?.dashboardPreferences || defaultLayout);
+  const [dashboardLayout, setDashboardLayout] = useState(orgDashboardLayout);
 
   const {
     showModal: showUnsavedModal,
@@ -288,7 +288,7 @@ const Dashboard = () => {
   };
   const cancelEditing = () => {
     setIsEditMode(false);
-    setDashboardLayout(sanitizeLayouts(userData?.dashboardPreferences || defaultLayout));
+    setDashboardLayout(orgDashboardLayout);
   };
 
   const saveLayout = () => {
@@ -355,8 +355,8 @@ const Dashboard = () => {
     setCurrentBreakpoint(breakpoint);
   };
   useEffect(() => {
-    setDashboardLayout(sanitizeLayouts(userData?.dashboardPreferences || defaultLayout));
-  }, [defaultLayout, userData?.dashboardPreferences]);
+    setDashboardLayout(orgDashboardLayout);
+  }, [orgDashboardLayout]);
 
   const onLayoutChange = (layout, layouts) => {
     if (!isEditMode) {
