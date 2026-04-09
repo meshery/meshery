@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/meshery/schemas/models/core"
-
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
