@@ -22,6 +22,8 @@ import (
 	"sync"
 	"time"
 
+	schemacore "github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/core"
@@ -77,8 +79,8 @@ type RemoteProvider struct {
 	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
 }
 type AnonymousFlowResponse struct {
-	AccessToken string    `json:"access_token"`
-	UserID      uuid.UUID `json:"user_id,omitempty"`
+	AccessToken string          `json:"access_token"`
+	UserID      schemacore.Uuid `json:"user_id,omitempty"`
 }
 
 type userSession struct {
@@ -978,7 +980,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 	return *connection, nil
 }
 func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
-	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
+	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*schemacore.Uuid)
 	if !ok {
 		return nil, ErrMesheryInstanceID
 	}
@@ -1330,7 +1332,7 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 }
 
 // FetchSmiResult - fetches single result from provider backend with given id
-func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID uuid.UUID) ([]byte, error) {
+func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID schemacore.Uuid) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistSMIResults) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return []byte{}, ErrInvalidCapability("PersistSMIResults", l.ProviderName)
@@ -1386,7 +1388,7 @@ func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, searc
 }
 
 // GetResult - fetches result from provider backend for the given result id
-func (l *RemoteProvider) GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error) {
+func (l *RemoteProvider) GetResult(tokenVal string, resultID schemacore.Uuid) (*MesheryResult, error) {
 	if !l.Capabilities.IsSupported(PersistResult) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistResult", l.ProviderName)
@@ -1549,20 +1551,28 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	return "", ErrPost(err, string(bdr), resp.StatusCode)
 }
 
-// IF the remote provider supports persisting events, this function will persist the event
-// The token is used to authenticate the request to the remote provider. if the token is nil, it uses the GlobalTokenForAnonymousResults
-func (l *RemoteProvider) PersistEvent(event events.Event, token *string) error {
-
-	var tokenString string
-	if token == nil {
-		l.Log.Debug("No token provided, using GlobalTokenForAnonymousResults")
-		tokenString = GlobalTokenForAnonymousResults
-	} else {
-		tokenString = *token
+// PersistEvent persists a user-initiated event to the remote provider.
+// When the token is empty or remote persistence fails, it falls back to local persistence.
+func (l *RemoteProvider) PersistEvent(event events.Event, token string) error {
+	if strings.TrimSpace(token) == "" {
+		return l.EventsPersister.PersistEvent(event, "")
 	}
+	if err := l.persistEventRemote(event, token); err != nil {
+		l.Log.Warn(fmt.Errorf("remote event persistence failed, falling back to local DB: %w", err))
+		return l.EventsPersister.PersistEvent(event, "")
+	}
+	return nil
+}
 
+// PersistSystemEvent persists a system-initiated event (MeshSync, registry seeding,
+// auto-registration) to the local database. These events have no user request context.
+func (l *RemoteProvider) PersistSystemEvent(event events.Event) error {
+	return l.EventsPersister.PersistEvent(event, "")
+}
+
+// persistEventRemote sends an event to the remote provider for persistence.
+func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString string) error {
 	if !l.Capabilities.IsSupported(PersistEvents) {
-		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
 		return ErrInvalidCapability("PersistEvents", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEvents)
@@ -1582,15 +1592,18 @@ func (l *RemoteProvider) PersistEvent(event events.Event, token *string) error {
 	if err != nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
-		l.Log.Error(ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode))
 		return ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
 	return nil
 }
 
-func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error) {
+func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID schemacore.Uuid, sysID schemacore.Uuid) (*EventsResponse, error) {
 	if !l.Capabilities.IsSupported(PersistEvents) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
 		return nil, ErrInvalidCapability("PersistEvents", l.ProviderName)
@@ -1662,7 +1675,7 @@ func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilt
 
 }
 
-func (l *RemoteProvider) GetEventTypes(token string, userID uuid.UUID, sysID uuid.UUID) (EventTypesResponse, error) {
+func (l *RemoteProvider) GetEventTypes(token string, userID schemacore.Uuid, sysID schemacore.Uuid) (EventTypesResponse, error) {
 
 	eventTypes := EventTypesResponse{}
 
@@ -1728,7 +1741,7 @@ func (l *RemoteProvider) GetEventTypes(token string, userID uuid.UUID, sysID uui
 
 }
 
-func (l *RemoteProvider) UpdateEventStatus(token string, eventID uuid.UUID, status string) error {
+func (l *RemoteProvider) UpdateEventStatus(token string, eventID schemacore.Uuid, status string) error {
 
 	if !l.Capabilities.IsSupported(PersistEvents) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
@@ -1762,7 +1775,7 @@ func (l *RemoteProvider) UpdateEventStatus(token string, eventID uuid.UUID, stat
 	return nil
 }
 
-func (l *RemoteProvider) BulkUpdateEventStatus(token string, eventIDs []*uuid.UUID, status string) error {
+func (l *RemoteProvider) BulkUpdateEventStatus(token string, eventIDs []*schemacore.Uuid, status string) error {
 
 	if !l.Capabilities.IsSupported(PersistEvents) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
@@ -1797,7 +1810,7 @@ func (l *RemoteProvider) BulkUpdateEventStatus(token string, eventIDs []*uuid.UU
 	return nil
 }
 
-func (l *RemoteProvider) DeleteEvent(token string, eventID uuid.UUID) error {
+func (l *RemoteProvider) DeleteEvent(token string, eventID schemacore.Uuid) error {
 	if !l.Capabilities.IsSupported(PersistEvents) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
 		return ErrInvalidCapability("PersistEvents", l.ProviderName)
@@ -1821,7 +1834,7 @@ func (l *RemoteProvider) DeleteEvent(token string, eventID uuid.UUID) error {
 	return nil
 }
 
-func (l *RemoteProvider) BulkDeleteEvent(token string, eventIDs []*uuid.UUID) error {
+func (l *RemoteProvider) BulkDeleteEvent(token string, eventIDs []*schemacore.Uuid) error {
 	if !l.Capabilities.IsSupported(PersistEvents) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
 		return ErrInvalidCapability("PersistEvents", l.ProviderName)
@@ -2150,8 +2163,8 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 
 	data, err := json.Marshal(map[string]interface{}{
-		"pattern_data": pattern,
-		"save":         true,
+		"patternFile": pattern,
+		"save":        true,
 	})
 
 	if err != nil {
@@ -4070,7 +4083,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 
 	go func() {
 		credential := make(map[string]interface{}, 0)
-		var temp *uuid.UUID
+		var temp *schemacore.Uuid
 		credential["token"] = temp
 
 		connectionPayload := connections.BuildMesheryConnectionPayload(r.Context().Value(MesheryServerURL).(string), credential)
@@ -4475,7 +4488,7 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	return &cp, nil
 }
 
-func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
+func (l *RemoteProvider) GetConnectionByID(token string, connectionID schemacore.Uuid) (*connections.Connection, int, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrInvalidCapability("PersistConnection", l.ProviderName))
 		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -4519,7 +4532,7 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID)
 // UpdateConnectionStatusByID updates a connection's status by its ID.
 // Note: The HTTP route for this functionality has been removed, but the method
 // is kept for internal use by state machines and other internal components.
-func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
+func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID schemacore.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -4654,7 +4667,7 @@ func (l *RemoteProvider) UpdateConnectionById(token string, connection *connecti
 }
 
 // DeleteConnection - to delete a saved connection
-func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
+func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID schemacore.Uuid) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -4945,7 +4958,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	return &cp, nil
 }
 
-func (l *RemoteProvider) GetCredentialByID(token string, credentialID uuid.UUID) (*Credential, int, error) {
+func (l *RemoteProvider) GetCredentialByID(token string, credentialID schemacore.Uuid) (*Credential, int, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, http.StatusForbidden, ErrInvalidCapability("PersistCredentials", l.ProviderName)
@@ -5028,7 +5041,7 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 }
 
 // DeleteUserCredential - to delete a saved credential
-func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error) {
+func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID schemacore.Uuid) (*Credential, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)

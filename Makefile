@@ -292,7 +292,7 @@ server-playground: dep-check
 
 ## Lint check Meshery Server.
 golangci: error dep-check
-	golangci-lint run
+	golangci-lint run --config=.github/.golangci.yml --timeout=10m
 
 ## Build Meshery's protobufs.
 proto-build:

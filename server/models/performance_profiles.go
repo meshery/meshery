@@ -1,9 +1,9 @@
 package models
 
 import (
-	"github.com/gofrs/uuid"
 	"github.com/lib/pq"
 	"github.com/meshery/meshery/server/internal/sql"
+	"github.com/meshery/schemas/models/core"
 
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
@@ -11,11 +11,11 @@ import (
 // PerformanceProfile represents the performance profile that needs
 // to be saved
 type PerformanceProfile struct {
-	ID *uuid.UUID `json:"id,omitempty"`
+	ID *core.Uuid `json:"id,omitempty"`
 
 	Name              string         `json:"name,omitempty"`
 	LastRun           *sql.Time      `json:"last_run,omitempty" gorm:"type:datetime"`
-	Schedule          *uuid.UUID     `json:"schedule,omitempty"`
+	Schedule          *core.Uuid     `json:"schedule,omitempty"`
 	LoadGenerators    pq.StringArray `json:"load_generators,omitempty" gorm:"type:text[]"`
 	Endpoints         pq.StringArray `json:"endpoints,omitempty" gorm:"type:text[]"`
 	ServiceMesh       string         `json:"service_mesh,omitempty"`

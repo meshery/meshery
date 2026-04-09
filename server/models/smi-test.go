@@ -1,11 +1,11 @@
 package models
 
 import (
-	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/core"
 )
 
 type SmiResult struct {
-	ID                uuid.UUID `json:"id,omitempty"`
+	ID                core.Uuid `json:"id,omitempty"`
 	Date              string    `json:"date,omitempty"`
 	MeshName          string    `json:"mesh_name,omitempty"`
 	MeshVersion       string    `json:"mesh_version,omitempty"`

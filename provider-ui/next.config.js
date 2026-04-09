@@ -5,7 +5,7 @@ module.exports = (phase) => {
 
   return {
     reactStrictMode: true,
-    assetPrefix: isDev ? '/' : '/provider',
+    basePath: isDev ? '' : '/provider',
     output: 'export',
   };
 };

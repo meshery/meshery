@@ -7,7 +7,7 @@ on:
 jobs:
   update-graphql-docs:
     name: Update GraphQL API Documentation
-    if: github.repository == 'meshery/meshery'
+    if: ${{ github.repository == 'meshery/meshery' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
@@ -48,7 +48,7 @@ jobs:
 
   build:
     name: Docker build and push
-    if: github.repository == 'meshery/meshery'
+    if: ${{ github.repository == 'meshery/meshery' }}
     env:
       RELEASE_CHANNEL: "stable"
     runs-on: ubuntu-24.04
@@ -96,7 +96,7 @@ jobs:
       #     DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
   ctlrelease:
     name: Mesheryctl build & release
-    if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
+    if: ${{ github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc') }}
     runs-on: macos-latest
     steps:
       - name: Check out code
@@ -171,7 +171,7 @@ jobs:
       image: "meshery/meshery:playground-${{ github.ref_name }}"
     secrets: inherit
   email-on-failure:
-    needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
+    needs: [update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
     if: ${{ failure() }}
     runs-on: ubuntu-24.04
     steps:
