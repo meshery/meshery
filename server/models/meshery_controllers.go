@@ -43,17 +43,18 @@ const (
 )
 
 type MesheryControllersHelper struct {
-	// context that is being manged by a particular controllerHelper instance
+	// contextID stores the current context ID being processed (retained for backward compatibility but maps are used for multi-cluster)
 	contextID string
-	//  controller handlers for a particular context
-	// this will be used as the source of truth
-	ctxControllerHandlers map[MesheryController]controllers.IMesheryController
+	// ctxControllerHandlers maps contextID to its controller handlers
+	ctxControllerHandlers map[string]map[MesheryController]controllers.IMesheryController
 
-	// operator status for a particular context
-	ctxOperatorStatus controllers.MesheryControllerStatus
+	// ctxOperatorStatus maps contextID to its operator status
+	ctxOperatorStatus map[string]controllers.MesheryControllerStatus
 
-	// meshsync data handler for a particular context
-	ctxMeshsyncDataHandler *MeshsyncDataHandler
+	// ctxMeshsyncDataHandler maps contextID to its meshsync data handler
+	ctxMeshsyncDataHandler map[string]*MeshsyncDataHandler
+
+	mu sync.RWMutex
 
 	log          logger.Handler
 	oprDepConfig controllers.OperatorDeploymentConfig
@@ -67,16 +68,50 @@ type MesheryControllersHelper struct {
 	systemID         *uuid.UUID
 }
 
+func (mch *MesheryControllersHelper) GetControllerHandlersForContext(ctxID string) map[MesheryController]controllers.IMesheryController {
+	mch.mu.RLock()
+	defer mch.mu.RUnlock()
+	return mch.ctxControllerHandlers[ctxID]
+}
+
 func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[MesheryController]controllers.IMesheryController {
-	return mch.ctxControllerHandlers
+	mch.mu.RLock()
+	defer mch.mu.RUnlock()
+	return mch.ctxControllerHandlers[mch.contextID]
 }
 
+func (mch *MesheryControllersHelper) GetMeshSyncDataHandlerForContext(ctxID string) *MeshsyncDataHandler {
+	mch.mu.RLock()
+	defer mch.mu.RUnlock()
+	return mch.ctxMeshsyncDataHandler[ctxID]
+}
+
+// Deprecated: use GetMeshSyncDataHandlerForContext instead
 func (mch *MesheryControllersHelper) GetMeshSyncDataHandlersForEachContext() *MeshsyncDataHandler {
-	return mch.ctxMeshsyncDataHandler
+	mch.mu.RLock()
+	defer mch.mu.RUnlock()
+	return mch.ctxMeshsyncDataHandler[mch.contextID]
 }
 
+func (mch *MesheryControllersHelper) GetOperatorsStatusForContext(ctxID string) controllers.MesheryControllerStatus {
+	mch.mu.RLock()
+	defer mch.mu.RUnlock()
+	status, ok := mch.ctxOperatorStatus[ctxID]
+	if !ok {
+		return controllers.Unknown
+	}
+	return status
+}
+
+// Deprecated: use GetOperatorsStatusForContext instead
 func (mch *MesheryControllersHelper) GetOperatorsStatusMap() controllers.MesheryControllerStatus {
-	return mch.ctxOperatorStatus
+	mch.mu.RLock()
+	defer mch.mu.RUnlock()
+	status, ok := mch.ctxOperatorStatus[mch.contextID]
+	if !ok {
+		return controllers.Unknown
+	}
+	return status
 }
 
 func NewMesheryControllersHelper(
@@ -88,14 +123,11 @@ func NewMesheryControllersHelper(
 	systemID *uuid.UUID,
 ) *MesheryControllersHelper {
 	return &MesheryControllersHelper{
-		ctxControllerHandlers: make(map[MesheryController]controllers.IMesheryController),
+		ctxControllerHandlers: make(map[string]map[MesheryController]controllers.IMesheryController),
+		ctxOperatorStatus:     make(map[string]controllers.MesheryControllerStatus),
+		ctxMeshsyncDataHandler: make(map[string]*MeshsyncDataHandler),
 		log:                   log,
 		oprDepConfig:          operatorDepConfig,
-		ctxOperatorStatus:     controllers.Unknown,
-		// The nil check is performed for the ctxMeshsyncDataHandler and if it is nil, then a new dataHandler for the context is assigned.
-		// The presence of a handler for a context in a map indicate that the meshsync data for that context is properly being handled.
-		// Resetting this value results in again subscribing to the Broker.
-		ctxMeshsyncDataHandler: nil,
 		dbHandler:              dbHandler,
 		meshsyncDeploymentMode: schemasConnection.MeshsyncDeploymentModeOperator,
 		eventBroadcaster:       eventBroadcaster,
@@ -114,11 +146,13 @@ func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value schemasConn
 // updating the map. The presence of a handler for a context in a map indicate that
 // the meshsync data for that context is properly being handled
 func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context, k8scontext K8sContext, userID, mesheryInstanceID uuid.UUID, provider Provider) *MesheryControllersHelper {
-	// only checking those contexts whose MesheryConrollers are active
-	// go func(mch *MesheryControllersHelper) {
-
 	ctxID := k8scontext.ID
-	if mch.ctxMeshsyncDataHandler == nil {
+	mch.mu.Lock()
+	mch.contextID = ctxID
+	msHandler := mch.ctxMeshsyncDataHandler[ctxID]
+	mch.mu.Unlock()
+
+	if msHandler == nil {
 		var brokerHandler broker.Handler
 		var stopFunc func()
 
@@ -167,8 +201,17 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 		}
 		token, _ := ctx.Value(TokenCtxKey).(string)
 		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token, stopFunc)
+
+		mch.mu.Lock()
+		// Double-check pattern to prevent duplicate initialization
+		if existingHandler := mch.ctxMeshsyncDataHandler[ctxID]; existingHandler != nil {
+			mch.mu.Unlock()
+			return mch
+		}
+
 		err := msDataHandler.Run()
 		if err != nil {
+			mch.mu.Unlock()
 			mch.log.Warn(err)
 			mch.log.Info(fmt.Sprintf("Unable to connect MeshSync for Kubernetes context (%s) due to: %s", ctxID, err.Error()))
 			mch.emitErrorEvent("Unable to connect MeshSync", err, map[string]any{
@@ -178,11 +221,10 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 			}, userID)
 			return mch
 		}
-		mch.ctxMeshsyncDataHandler = msDataHandler
+		mch.ctxMeshsyncDataHandler[ctxID] = msDataHandler
+		mch.mu.Unlock()
 		mch.log.Info(fmt.Sprintf("MeshSync connected for Kubernetes context (%s)", ctxID))
 	}
-
-	// }(mch)
 
 	// Emit success event for successful MeshSync data handler attachment
 	var description string
@@ -211,7 +253,13 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 	userID uuid.UUID,
 ) broker.Handler {
 	ctxID := k8scontext.ID
-	controllerHandlers := mch.ctxControllerHandlers
+	mch.mu.RLock()
+	controllerHandlers := mch.ctxControllerHandlers[ctxID]
+	mch.mu.RUnlock()
+
+	if controllerHandlers == nil || controllerHandlers[MesheryBroker] == nil {
+		return nil
+	}
 
 	// brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
 	// do something if broker is being deployed , maybe try again after sometime
@@ -298,16 +346,21 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersStartLibMeshsyncRun(
 }
 
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
-	if mch.ctxMeshsyncDataHandler != nil {
+	mch.mu.Lock()
+	defer mch.mu.Unlock()
+	if msHandler, ok := mch.ctxMeshsyncDataHandler[contextID]; ok && msHandler != nil {
 		mch.log.Infof("MesheryControllersHelper::RemoveMeshSyncDataHandler for contextID = %s", contextID)
-		mch.ctxMeshsyncDataHandler.Stop()
-		mch.ctxMeshsyncDataHandler = nil
+		msHandler.Stop()
+		delete(mch.ctxMeshsyncDataHandler, contextID)
 	}
 }
 
-func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
-	if mch.ctxMeshsyncDataHandler != nil {
-		return mch.ctxMeshsyncDataHandler.Resync()
+func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context, contextID string) error {
+	mch.mu.RLock()
+	msHandler := mch.ctxMeshsyncDataHandler[contextID]
+	mch.mu.RUnlock()
+	if msHandler != nil {
+		return msHandler.Resync()
 	}
 	return nil
 }
@@ -315,11 +368,10 @@ func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
 // attach a MesheryController for each context if
 // 1. the config is valid
 // 2. if it is not already attached
-func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *MesheryControllersHelper {
-	// go func(mch *MesheryControllersHelper) {
-
-	// resetting this value as a specific controller handler instance does not have any significance opposed to
-	// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
+func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext, userID uuid.UUID) *MesheryControllersHelper {
+	mch.mu.Lock()
+	mch.contextID = ctx.ID
+	mch.mu.Unlock()
 
 	cfg, err := ctx.GenerateKubeConfig()
 	if err != nil {
@@ -328,7 +380,7 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 			"k8sContextID":   ctx.ID,
 			"k8sContextName": ctx.Name,
 			"connectionID":   ctx.ConnectionID,
-		}, uuid.Nil)
+		}, userID)
 		return mch
 	}
 
@@ -340,46 +392,54 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 			"k8sContextID":   ctx.ID,
 			"k8sContextName": ctx.Name,
 			"connectionID":   ctx.ConnectionID,
-		}, uuid.Nil)
+		}, userID)
 		return mch
 	}
 
-	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{
+	mch.mu.Lock()
+	mch.ctxControllerHandlers[ctx.ID] = map[MesheryController]controllers.IMesheryController{
 		MesheryBroker:   controllers.NewMesheryBrokerHandler(client),
 		MesheryOperator: controllers.NewMesheryOperatorHandler(client, mch.oprDepConfig),
 		Meshsync:        controllers.NewMeshsyncHandler(client),
 	}
+	mch.mu.Unlock()
 
-	// }(mch)
 	return mch
 }
 
 func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Context, contextID string) {
-	mch.ctxControllerHandlers = nil
+	mch.mu.Lock()
+	defer mch.mu.Unlock()
+	delete(mch.ctxControllerHandlers, contextID)
 }
 
 // update the status of MesheryOperator in all the contexts
 // for whom MesheryControllers are attached
 // should be called after AddCtxControllerHandlers
-func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
-	// go func(mch *MesheryControllersHelper) {
+func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
 	if mch.meshsyncDeploymentMode != schemasConnection.MeshsyncDeploymentModeOperator {
 		return mch
 	}
 
-	if ot.IsUndeployed(mch.contextID) {
-		// this code is probably never reached as mch.contextID is never set
-		mch.ctxOperatorStatus = controllers.Undeployed
+	if ot.IsUndeployed(contextID) {
+		mch.mu.Lock()
+		mch.ctxOperatorStatus[contextID] = controllers.Undeployed
+		mch.mu.Unlock()
 	} else {
-		if mch.ctxControllerHandlers != nil {
-			operatorHandler, ok := mch.ctxControllerHandlers[MesheryOperator]
+		mch.mu.RLock()
+		handlers := mch.ctxControllerHandlers[contextID]
+		mch.mu.RUnlock()
+		if handlers != nil {
+			operatorHandler, ok := handlers[MesheryOperator]
 			if ok {
-				mch.ctxOperatorStatus = operatorHandler.GetStatus()
+				status := operatorHandler.GetStatus()
+				mch.mu.Lock()
+				mch.ctxOperatorStatus[contextID] = status
+				mch.mu.Unlock()
 			}
 		}
 	}
 
-	// }(mch)
 	return mch
 }
 
@@ -401,6 +461,8 @@ func (ot *OperatorTracker) Undeployed(ctxID string, undeployed bool) {
 	if ot.DisableOperator { //no-op when operator is disabled
 		return
 	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
 	if ot.ctxIDtoDeploymentStatus == nil {
 		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
 	}
@@ -411,6 +473,8 @@ func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return true
 	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
 	if ot.ctxIDtoDeploymentStatus == nil {
 		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
 		return false
@@ -420,18 +484,22 @@ func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
 
 // looks at the status of Meshery Operator for each cluster and takes necessary action.
 // it will deploy the operator only when it is in NotDeployed state
-func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return mch
 	}
 	if mch.meshsyncDeploymentMode != schemasConnection.MeshsyncDeploymentModeOperator {
 		return mch
 	}
-	// go func(mch *MesheryControllersHelper) {
 
-	if mch.ctxOperatorStatus == controllers.NotDeployed {
-		if mch.ctxControllerHandlers != nil {
-			operatorHandler, ok := mch.ctxControllerHandlers[MesheryOperator]
+	mch.mu.RLock()
+	oprStatus := mch.ctxOperatorStatus[contextID]
+	handlers := mch.ctxControllerHandlers[contextID]
+	mch.mu.RUnlock()
+
+	if oprStatus == controllers.NotDeployed {
+		if handlers != nil {
+			operatorHandler, ok := handlers[MesheryOperator]
 			if ok {
 				err := operatorHandler.Deploy(false)
 
@@ -439,27 +507,26 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 					mch.log.Error(err)
 					mch.emitErrorEvent("Failed to deploy Meshery Operator", err, map[string]any{
 						"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
-						"operatorStatus":         mch.ctxOperatorStatus,
+						"operatorStatus":         oprStatus,
+						"contextID":              contextID,
 					}, uuid.Nil)
 				}
 			}
 		}
 	}
 
-	// }(mch)
-
 	return mch
 }
 
-func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
-	// go func(mch *MesheryControllersHelper) {
-
-	oprStatus := mch.ctxOperatorStatus
+func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
+	mch.mu.RLock()
+	oprStatus := mch.ctxOperatorStatus[contextID]
+	handlers := mch.ctxControllerHandlers[contextID]
+	mch.mu.RUnlock()
 
 	if oprStatus != controllers.Undeployed {
-
-		if mch.ctxControllerHandlers != nil {
-			operatorHandler, ok := mch.ctxControllerHandlers[MesheryOperator]
+		if handlers != nil {
+			operatorHandler, ok := handlers[MesheryOperator]
 			if ok {
 				err := operatorHandler.Undeploy()
 
@@ -467,14 +534,14 @@ func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTrack
 					mch.log.Error(err)
 					mch.emitErrorEvent("Failed to undeploy Meshery Operator", err, map[string]any{
 						"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
-						"operatorStatus":         mch.ctxOperatorStatus,
+						"operatorStatus":         oprStatus,
+						"contextID":              contextID,
 					}, uuid.Nil)
 				}
 			}
 		}
 	}
 
-	// }(mch)
 	return mch
 }
 

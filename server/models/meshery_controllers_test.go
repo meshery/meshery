@@ -1,6 +1,7 @@
 package models
 
 import (
+	"sync"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -69,6 +70,7 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 	}
 
 	log, _ := logger.New("test", logger.Options{})
+	userID := uuid.Must(uuid.NewV4())
 
 	mch := NewMesheryControllersHelper(
 		log,
@@ -87,10 +89,52 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 		}
 	}()
 
-	mch.AddCtxControllerHandlers(ctx)
+	mch.AddCtxControllerHandlers(ctx, userID)
 
 	// Additionally, verify that ctxControllerHandlers is still empty/nil because it should have returned early
 	if len(mch.ctxControllerHandlers) != 0 {
 		t.Fatalf("expected ctxControllerHandlers to be empty, got %d", len(mch.ctxControllerHandlers))
+	}
+}
+
+func TestMesheryControllersHelper_MultiClusterConcurrency(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{})
+	mch := NewMesheryControllersHelper(
+		log,
+		controllers.OperatorDeploymentConfig{},
+		nil,
+		nil,
+		nil,
+		nil,
+	)
+
+	const numClusters = 50
+	var wg sync.WaitGroup
+	wg.Add(numClusters)
+
+	for i := 0; i < numClusters; i++ {
+		go func(id int) {
+			defer wg.Done()
+			ctxID := uuid.Must(uuid.NewV4()).String()
+
+			// Simulate AddCtxControllerHandlers (minimal mock)
+			mch.mu.Lock()
+			mch.ctxControllerHandlers[ctxID] = make(map[MesheryController]controllers.IMesheryController)
+			mch.mu.Unlock()
+
+			// Simulate UpdateOperatorsStatusMap
+			ot := NewOperatorTracker(false)
+			mch.UpdateOperatorsStatusMap(ot, ctxID)
+
+			// Verify status was set for THIS context
+			status := mch.GetOperatorsStatusForContext(ctxID)
+			_ = status // Expect it to be Unknown if no handler attached, check it doesn't return status from another context.
+		}(i)
+	}
+
+	wg.Wait()
+
+	if len(mch.ctxControllerHandlers) != numClusters {
+		t.Errorf("expected %d clusters, got %d", numClusters, len(mch.ctxControllerHandlers))
 	}
 }

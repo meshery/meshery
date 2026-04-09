@@ -635,18 +635,19 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		{
 			contextID := machineCtx.K8sContext.ID
 			ctrlHelper.
-				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				UndeployDeployedOperators(machineCtx.OperatorTracker).
+				UpdateOperatorsStatusMap(machineCtx.OperatorTracker, contextID).
+				UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
 				RemoveCtxControllerHandler(ctx, contextID)
 			ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 		}
 		// connect
 		{
+			contextID := machineCtx.K8sContext.ID
 			ctrlHelper.
-				AddCtxControllerHandlers(machineCtx.K8sContext).
+				AddCtxControllerHandlers(machineCtx.K8sContext, userID).
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
-				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				DeployUndeployedOperators(machineCtx.OperatorTracker).
+				UpdateOperatorsStatusMap(machineCtx.OperatorTracker, contextID).
+				DeployUndeployedOperators(machineCtx.OperatorTracker, contextID).
 				AddMeshsynDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
 		}
 

@@ -185,7 +185,7 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 				r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
 				continue
 			}
-			ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
+			ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForContext(machinectx.K8sContext.ID)
 			for controller, handler := range ctrlHandlers {
 				if _, ok := statusMapPerConnection[connectionID]; !ok {
 					statusMapPerConnection[connectionID] = make(map[models.MesheryController]models.MesheryControllerStatusAndVersion)
@@ -247,7 +247,7 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 					continue
 				}
 
-				ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
+				ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForContext(machinectx.K8sContext.ID)
 				for controller, controllerHandler := range ctrlHandlers {
 					newStatus := controllerHandler.GetStatus()
 
@@ -360,7 +360,7 @@ type subscriptionResolver struct{ *Resolver }
 				continue
 			}
 
-			dataHandler := machinectx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
+			dataHandler := machinectx.MesheryCtrlsHelper.GetMeshSyncDataHandlerForContext(machinectx.K8sContext.ID)
 			if dataHandler == nil {
 				r.Log.Info("skipping meshsync events subscription for connection Id: %s", connectionID)
 				r.Log.Info("connection to broker and datahandler is not yet initialised")

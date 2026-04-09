@@ -29,7 +29,7 @@ func ResyncResources(ctx context.Context, sm *machines.StateMachine) error {
 		)
 	}
 
-	if err := mesheryCtrlsHelper.ResyncMeshsync(ctx); err != nil {
+	if err := mesheryCtrlsHelper.ResyncMeshsync(ctx, mashineCtx.K8sContext.ID); err != nil {
 		return ErrResyncK8SResources(
 			errors.Join(
 				fmt.Errorf("error calling ResyncMeshsync for machine %v", sm.ID),

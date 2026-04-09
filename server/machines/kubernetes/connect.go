@@ -22,10 +22,23 @@ func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interfac
 func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
-	userUUID := user.ID
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	var userUUID uuid.UUID
+	if user != nil {
+		userUUID = user.ID
+	}
+
+	var systemID uuid.UUID
+	if sysID != nil {
+		systemID = *sysID
+	}
+
+	provider, ok := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if !ok {
+		return machines.NoOp, nil, fmt.Errorf("provider not found in context")
+	}
+
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(systemID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
@@ -74,12 +87,13 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	}
 
 	go func() {
+		contextID := machinectx.K8sContext.ID
 		ctrlHelper := machinectx.MesheryCtrlsHelper.
-			AddCtxControllerHandlers(machinectx.K8sContext).
+			AddCtxControllerHandlers(machinectx.K8sContext, userUUID).
 			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
-			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-			DeployUndeployedOperators(machinectx.OperatorTracker)
-		ctrlHelper.AddMeshsynDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
+			UpdateOperatorsStatusMap(machinectx.OperatorTracker, contextID).
+			DeployUndeployedOperators(machinectx.OperatorTracker, contextID)
+		ctrlHelper.AddMeshsynDataHandlers(ctx, machinectx.K8sContext, userUUID, systemID, provider)
 	}()
 	return machines.NoOp, nil, nil
 }

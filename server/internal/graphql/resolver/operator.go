@@ -192,8 +192,8 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, con
 		return unknowStatus, nil
 	}
 
-	controllerhandler := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
-	if !ok {
+	controllerhandler := machinectx.MesheryCtrlsHelper.GetControllerHandlersForContext(machinectx.K8sContext.ID)
+	if controllerhandler == nil || controllerhandler[models.MesheryOperator] == nil {
 		return unknowStatus, nil
 	}
 	status := controllerhandler[models.MesheryOperator].GetStatus()
@@ -229,8 +229,8 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 	}
 
 	status := model.GetMeshSyncInfo(
-		machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()[models.Meshsync],
-		machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()[models.MesheryBroker],
+		machinectx.MesheryCtrlsHelper.GetControllerHandlersForContext(machinectx.K8sContext.ID)[models.Meshsync],
+		machinectx.MesheryCtrlsHelper.GetControllerHandlersForContext(machinectx.K8sContext.ID)[models.MesheryBroker],
 		r.Log,
 	)
 	status.ConnectionID = connectionID
@@ -268,7 +268,7 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 	}
 
 	status := model.GetBrokerInfo(
-		machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()[models.MesheryBroker],
+		machinectx.MesheryCtrlsHelper.GetControllerHandlersForContext(machinectx.K8sContext.ID)[models.MesheryBroker],
 		r.Log,
 	)
 	status.ConnectionID = connectionID

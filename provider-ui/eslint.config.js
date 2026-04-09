@@ -1,6 +1,6 @@
-const js = require('@eslint/js');
-const next = require('eslint-config-next');
-const globals = require('globals');
+import js from '@eslint/js';
+import next from 'eslint-config-next';
+import globals from 'globals';
 
 
 // ESLint 10: eslint-config-next's babel-based parser returns a scope manager that
@@ -8,8 +8,7 @@ const globals = require('globals');
 // built-in parser) for JS/JSX files; the TS entry already uses @typescript-eslint/parser.
 const patchedNextConfig = next.map((cfg) => {
   if (cfg.name === 'next') {
-    const { parser, ...restLangOpts } = cfg.languageOptions ?? {};
-    return {
+    const { parser, globals, ...restLangOpts } = cfg.languageOptions ?? {};    return {
       ...cfg,
       languageOptions: {
         ...restLangOpts,
@@ -121,4 +120,4 @@ const config = [
     },
   },
 ];
-module.exports = config;
+export default config;

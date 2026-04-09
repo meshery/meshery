@@ -12,7 +12,6 @@ Stop, then start Meshery
 ## Synopsis
 
 Restart all Meshery containers / pods.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system restart [flags]

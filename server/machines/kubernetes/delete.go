@@ -51,8 +51,8 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 
 	go func() {
 
-		machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-			UndeployDeployedOperators(machinectx.OperatorTracker).
+		machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker, contextID).
+			UndeployDeployedOperators(machinectx.OperatorTracker, contextID).
 			RemoveCtxControllerHandler(ctx, contextID)
 
 		machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)

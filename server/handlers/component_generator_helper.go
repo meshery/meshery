@@ -402,25 +402,25 @@ func writeMessageString(response *models.RegistryAPIResponse) string {
 		}
 		modelName := ModelNames(response)
 		modelWord := determinePluralWord(response.EntityCount.ModelCount, "model")
-		message.WriteString(fmt.Sprintf("Imported %s %s ", modelWord, modelName))
+		fmt.Fprintf(&message, "Imported %s %s ", modelWord, modelName)
 	}
 	if response.EntityCount.CompCount > 0 || response.EntityCount.RelCount > 0 {
 		message.WriteString("(")
 	}
 	if response.EntityCount.CompCount > 0 {
 		componentWord := determinePluralWord(response.EntityCount.CompCount, "component")
-		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.CompCount, componentWord))
+		fmt.Fprintf(&message, "%d %s", response.EntityCount.CompCount, componentWord)
 	}
 	if response.EntityCount.RelCount > 0 && response.EntityCount.CompCount > 0 {
 		if message.Len() > 0 {
 			message.WriteString(" and ")
 		}
 		relationshipWord := determinePluralWord(response.EntityCount.RelCount, "relationship")
-		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.RelCount, relationshipWord))
+		fmt.Fprintf(&message, "%d %s", response.EntityCount.RelCount, relationshipWord)
 	}
 	if response.EntityCount.CompCount == 0 && response.EntityCount.RelCount > 0 {
 		relationshipWord := determinePluralWord(response.EntityCount.RelCount, "relationship")
-		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.RelCount, relationshipWord))
+		fmt.Fprintf(&message, "%d %s", response.EntityCount.RelCount, relationshipWord)
 	}
 	if response.EntityCount.CompCount > 0 || response.EntityCount.RelCount > 0 {
 		message.WriteString(")")
