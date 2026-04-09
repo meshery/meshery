@@ -78,72 +78,106 @@ func TestNeedsMutation(t *testing.T) {
 }
 
 func TestInitDefaultConfig(t *testing.T) {
+	tests := []struct {
+		name         string
+		setup        func(string, *testing.T)
+		configPath   func(string) string
+		createConfig func(string) func() error
+		wantErr      bool
+	}{
+		{
+			name: "Given valid setup, When InitDefaultConfig is called, Then no error is returned",
+			setup: func(_ string, _ *testing.T) {},
+			configPath: func(p string) string { return p },
+			createConfig: func(path string) func() error {
+				return func() error {
+					return os.WriteFile(path, []byte("contexts: {}\n"), 0o644)
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "Given createConfigFile fails, When InitDefaultConfig is called, Then error is returned",
+			setup: func(_ string, _ *testing.T) {},
+			configPath: func(p string) string { return p },
+			createConfig: func(_ string) func() error {
+				return func() error {
+					return errors.New("create failed")
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name: "Given os.MkdirAll fails, When InitDefaultConfig is called, Then error is returned",
+			setup: func(_ string, _ *testing.T) {},
+			configPath: func(_ string) string { return "/invalid/path/config.yaml" },
+			createConfig: func(_ string) func() error {
+				return func() error { return nil }
+			},
+			wantErr: true,
+		},
+		{
+			name: "Given AddTokenToConfig fails, When InitDefaultConfig is called, Then error is returned",
+			setup: func(path string, t *testing.T) {
+				// Create directory instead of file → guaranteed failure
+				if err := os.Mkdir(path, 0o700); err != nil {
+					t.Fatalf("failed to create dir: %v", err)
+				}
+			},
+			configPath: func(p string) string { return p },
+			createConfig: func(_ string) func() error {
+				return func() error { return nil }
+			},
+			wantErr: true,
+		},
+		{
+			name: "Given AddContextToConfig fails, When InitDefaultConfig is called, Then error is returned",
+			setup: func(path string, t *testing.T) {
+				if err := os.WriteFile(path, []byte("valid: yaml"), 0o644); err != nil {
+					t.Fatalf("write failed: %v", err)
+				}
+				// Make parent directory read-only → prevents write
+				dir := filepath.Dir(path)
+				if err := os.Chmod(dir, 0o500); err != nil {
+					t.Fatalf("chmod failed: %v", err)
+				}
+			},
+			configPath: func(p string) string { return p },
+			createConfig: func(_ string) func() error {
+				return func() error { return nil }
+			},
+			wantErr: true,
+		},
+	}
 
-	t.Run("Given valid setup, When InitDefaultConfig is called, Then config is created", func(t *testing.T) {
-		tmpDir := t.TempDir()
-		configPath := filepath.Join(tmpDir, "config.yaml")
-		mesheryFolder := filepath.Join(tmpDir, ".meshery")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tmpDir := t.TempDir()
 
-		minimalMeshConfig := `contexts: {}
-current-context: ""
-tokens: []
-`
+			basePath := filepath.Join(tmpDir, "config.yaml")
+			configPath := tt.configPath(basePath)
+			mesheryFolder := filepath.Join(tmpDir, ".meshery")
 
-		createConfig := func() error {
-    		return os.WriteFile(configPath, []byte(minimalMeshConfig), 0o644)
-		}
+			tt.setup(configPath, t)
 
-		err := config.InitDefaultConfig(
-			configPath,
-			mesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
-			createConfig,
-		)
+			err := config.InitDefaultConfig(
+				configPath,
+				mesheryFolder,
+				utils.TemplateToken,
+				utils.TemplateContext,
+				tt.createConfig(configPath),
+			)
 
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-	})
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("error = %v, wantErr %v", err, tt.wantErr)
+			}
 
-	t.Run("Given createConfig fails, When InitDefaultConfig is called, Then error is returned", func(t *testing.T) {
-		tmpDir := t.TempDir()
-		configPath := filepath.Join(tmpDir, "config.yaml")
-		mesheryFolder := filepath.Join(tmpDir, ".meshery")
-
-		createConfig := func() error {
-			return errors.New("create failed")
-		}
-
-		err := config.InitDefaultConfig(
-			configPath,
-			mesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
-			createConfig,
-		)
-
-		if err == nil {
-			t.Fatal("expected error, got nil")
-		}
-	})
-
-	t.Run("Given invalid directory, When MkdirAll fails, Then error is returned", func(t *testing.T) {
-		configPath := "/invalid/path/config.yaml"
-		mesheryFolder := "/invalid/path/.meshery"
-
-		createConfig := func() error { return nil }
-
-		err := config.InitDefaultConfig(
-			configPath,
-			mesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
-			createConfig,
-		)
-
-		if err == nil {
-			t.Fatal("expected error, got nil")
-		}
-	})
+			// Strong assertion for success case
+			if !tt.wantErr {
+				if _, err := os.Stat(configPath); err != nil {
+					t.Fatalf("expected config file to exist: %v", err)
+				}
+			}
+		})
+	}
 }
