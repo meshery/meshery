@@ -297,7 +297,6 @@ const Dashboard = () => {
 
   const resetLayout = () => {
     const normalizedDefaultLayout = sanitizeLayouts(defaultLayout);
-    setDashboardLayout(normalizedDefaultLayout);
     updateLayout(normalizedDefaultLayout);
   };
   const LayoutActions = {
