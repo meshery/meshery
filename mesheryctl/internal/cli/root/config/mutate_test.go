@@ -136,11 +136,24 @@ func TestInitDefaultConfig(t *testing.T) {
 				if err := os.WriteFile(path, []byte("valid: yaml"), 0o644); err != nil {
 					t.Fatalf("write failed: %v", err)
 				}
-				// Make parent directory read-only → prevents write
+				
 				dir := filepath.Dir(path)
+				// Save original permissions
+				info, err := os.Stat(dir)
+				if err != nil {
+					t.Fatalf("stat failed: %v", err)
+				}
+				originalPerm := info.Mode()
+
+				// Make directory read-only
 				if err := os.Chmod(dir, 0o500); err != nil {
 					t.Fatalf("chmod failed: %v", err)
 				}
+
+				// Restore permissions after test
+				t.Cleanup(func() {
+					_ = os.Chmod(dir, originalPerm)
+				})
 			},
 			configPath: func(p string) string { return p },
 			createConfig: func(_ string) func() error {
