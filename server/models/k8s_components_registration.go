@@ -10,7 +10,7 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/schemas/models/v1alpha1/capability"
+	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 
 	"github.com/meshery/meshkit/logger"
@@ -114,7 +114,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 
 		event := events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromUser(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
-		err := provider.PersistEvent(*event, nil)
+		err := provider.PersistSystemEvent(*event)
 		if err != nil {
 			// Even if event was not persisted continue with the operation and publish the event to user.
 			cg.log.Warn(err)

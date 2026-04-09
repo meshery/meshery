@@ -1,5 +1,5 @@
-import { graphql, requestSubscription } from 'react-relay';
-import { createRelayEnvironment } from '../../../lib/relayEnvironment';
+import { graphql } from 'react-relay';
+import { createSubscription } from '../../../lib/subscriptionHelper';
 
 const configurationSubscription = graphql`
   subscription ConfigurationSubscription(
@@ -52,11 +52,10 @@ const configurationSubscription = graphql`
 `;
 
 export default function ConfigurationSubscription(onNext, variables) {
-  const environment = createRelayEnvironment({});
-  return requestSubscription(environment, {
+  return createSubscription({
     subscription: configurationSubscription,
-    variables: variables,
-    onNext: onNext,
-    onError: (error) => console.log('ERROR OCCURED IN CONFIGURATION SUBCRIPTION', error),
+    variables,
+    onNext,
+    subscriptionName: 'Configuration',
   });
 }

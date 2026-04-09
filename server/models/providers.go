@@ -397,9 +397,13 @@ type Provider interface {
 	GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
-	// in case of a provider that does not support persisting results, it should return an error
-	// if the token is null then then a safe pass is used if the provider supports it else an error is returned
-	PersistEvent(event events.Event, token *string) error
+	// PersistEvent persists a user-initiated event to the remote provider using the given auth token.
+	PersistEvent(event events.Event, token string) error
+
+	// PersistSystemEvent persists a system-initiated event (e.g. MeshSync updates, registry seeding,
+	// auto-registration) that occurs outside of a user request context and has no auth token.
+	// These events are persisted to the local database.
+	PersistSystemEvent(event events.Event) error
 
 	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
 	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)
@@ -498,12 +502,19 @@ type Provider interface {
 	GetWorkspaceByID(req *http.Request, workspaceID, orgID string) ([]byte, error)
 	SaveWorkspace(req *http.Request, workspace *workspace.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteWorkspace(req *http.Request, workspaceID string) ([]byte, error)
-	UpdateWorkspace(req *http.Request, workspace *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error)
+	UpdateWorkspace(req *http.Request, workspace *workspace.WorkspaceUpdatePayload, workspaceID string) (*workspace.Workspace, error)
 	GetEnvironmentsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
 	AddEnvironmentToWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
 	RemoveEnvironmentFromWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
 	GetDesignsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string, visibility []string) ([]byte, error)
 	AddDesignToWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
+	RemoveDesignFromWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
+	GetViewsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
+	AddViewToWorkspace(req *http.Request, workspaceID string, viewID string) ([]byte, error)
+	RemoveViewFromWorkspace(req *http.Request, workspaceID string, viewID string) ([]byte, error)
+	GetTeamsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
+	AddTeamToWorkspace(req *http.Request, workspaceID string, teamID string) ([]byte, error)
+	RemoveTeamFromWorkspace(req *http.Request, workspaceID string, teamID string) ([]byte, error)
 
 	// events
 	GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error)

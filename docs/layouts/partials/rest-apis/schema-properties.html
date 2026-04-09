@@ -1,0 +1,34 @@
+{{ $schema := . }}
+{{ $source := $schema }}
+{{ $label := "Schema fields" }}
+{{ $result := dict "label" $label "rows" (slice) }}
+
+{{ if and (not (index $schema "properties")) (eq (index $schema "type") "array") (index $schema "items") (index (index $schema "items") "properties") }}
+  {{ $source = index $schema "items" }}
+  {{ $label = "Array item fields" }}
+  {{ $result = dict "label" $label "rows" (slice) }}
+{{ end }}
+
+{{ $properties := index $source "properties" }}
+{{ if $properties }}
+  {{ $required := index $source "required" | default (slice) }}
+  {{ $rows := slice }}
+
+  {{ range $name, $property := $properties }}
+    {{ $order := 9999 }}
+    {{ with index $property "x-order" }}
+      {{ $order = . }}
+    {{ end }}
+    {{ $rows = $rows | append (dict
+      "name" $name
+      "order" $order
+      "schema" $property
+      "required" (in $required $name)
+    ) }}
+  {{ end }}
+
+  {{ $rows = sort (sort $rows "name") "order" }}
+  {{ $result = dict "label" $label "rows" $rows }}
+{{ end }}
+
+{{ return $result }}

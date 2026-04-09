@@ -62,6 +62,7 @@ const (
 	ErrDockerStartCode                    = "mesheryctl-1210"
 	ErrDockerUnknownCode                  = "mesheryctl-1211"
 	ErrOperatorUnsupportedPlatformCode    = "mesheryctl-1219"
+	ErrLogoutCode                         = "mesheryctl-1229"
 )
 
 var (
@@ -427,4 +428,12 @@ func ErrOperatorUnsupportedPlatform(platform string) error {
 		[]string{fmt.Sprintf("The platform %s is not supported for operator health checks", platform)},
 		[]string{"The operator health checks can only be run on Kubernetes platform"},
 		[]string{"Please switch to a Kubernetes context to run operator health checks. "})
+}
+
+func ErrLogout(err error) error {
+	return errors.New(ErrLogoutCode, errors.Fatal,
+		[]string{"Logout failed"},
+		[]string{err.Error()},
+		[]string{"Unable to complete the logout operation"},
+		[]string{"Check the token file path and permissions. The underlying error will provide more details."})
 }
