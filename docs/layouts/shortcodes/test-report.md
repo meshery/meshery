@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 8th 2026, 2:16:15 pm
+- Testing started at: April 9th 2026, 5:51:54 am
 
 **📦 Test Result Summary**
 
-- ✅ 67 passed
-- ❌ 2 failed
+- ✅ 69 passed
+- ❌ 0 failed
 - ⚠️ 0 flaked
 - ⏩ 3 skipped
 
-⌛ _Duration: 6 minutes and 26 seconds_
+⌛ _Duration: 6 minutes and 6 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
@@ -36,7 +36,7 @@
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 15 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
-| 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ❌ |
+| 16 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ✅ |
 | 17 | Meshery | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 18 | Meshery | chromium-meshery-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 19 | Meshery | chromium-meshery-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
@@ -73,7 +73,7 @@
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 51 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 52 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
-| 53 | None | chromium-local-provider | should edit design in Design Configurator |  | ❌ |
+| 53 | None | chromium-local-provider | should edit design in Design Configurator |  | ✅ |
 | 54 | None | chromium-local-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 55 | None | chromium-local-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 56 | None | chromium-local-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
@@ -99,42 +99,6 @@
 | 76 | None | remote-setup | authenticate with Remote Provider |  | ✅ |
 
 </div>
-</details>
-
-
-
-
-**❌ Failed Test Details**
-
-The following tests failed. Click on each to see the failure reason:
-
-
-<details>
-<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
 </details>
 
 

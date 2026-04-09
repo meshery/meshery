@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"gopkg.in/yaml.v2"
 
@@ -152,7 +154,7 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 }
 
 // DeleteMesheryPattern takes in a profile id and delete it if it already exists
-func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id uuid.UUID) ([]byte, error) {
+func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, error) {
 	pattern := MesheryPattern{ID: &id}
 	mpp.DB.Delete(&pattern)
 
@@ -242,14 +244,14 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 	return marshalMesheryPatterns(finalPatterns), mpp.DB.Create(finalPatterns).Error
 }
 
-func (mpp *MesheryPatternPersister) GetMesheryPattern(id uuid.UUID) ([]byte, error) {
+func (mpp *MesheryPatternPersister) GetMesheryPattern(id core.Uuid) ([]byte, error) {
 	var mesheryPattern MesheryPattern
 
 	err := mpp.DB.First(&mesheryPattern, id).Error
 	return marshalMesheryPattern(&mesheryPattern), err
 }
 
-func (mpp *MesheryPatternPersister) GetMesheryPatternSource(id uuid.UUID) ([]byte, error) {
+func (mpp *MesheryPatternPersister) GetMesheryPatternSource(id core.Uuid) ([]byte, error) {
 	var mesheryPattern MesheryPattern
 	err := mpp.DB.First(&mesheryPattern, id).Error
 	return mesheryPattern.SourceContent, err

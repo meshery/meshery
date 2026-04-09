@@ -16,9 +16,9 @@ import (
 	mcore "github.com/meshery/meshery/server/models/meshmodel/core"
 
 	// for GKE kube API authentication
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/core"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
 	"github.com/meshery/meshkit/models/events"
@@ -197,7 +197,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			go func(inst *machines.StateMachine) {
 				event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
 				if err != nil {
-					_ = provider.PersistEvent(*event, nil)
+					_ = provider.PersistEvent(*event, token)
 					go h.config.EventBroadcaster.Publish(userID, event)
 				}
 			}(inst)
@@ -211,7 +211,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	}
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
@@ -235,6 +235,12 @@ func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.R
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	token, err := provider.GetProviderToken(req)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
 
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
@@ -251,7 +257,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userUUID, event)
 
 	err = json.NewEncoder(w).Encode(contexts)
@@ -333,7 +339,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	// userUUID := uuid.FromStringOrNil(userID)
 
 	// Get meshery instance ID
-	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
+	mid, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
 	if !ok {
 		return contexts, models.ErrMesheryInstanceID
 	}

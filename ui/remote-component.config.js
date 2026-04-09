@@ -135,7 +135,6 @@ module.exports = {
     rxjs: require('rxjs'),
     'rxjs/operators': require('rxjs/operators'),
     xstate: require('xstate'),
-    axios: require('axios'),
     '@reduxjs/toolkit': require('@reduxjs/toolkit'),
     '@reduxjs/toolkit/query/react': require('@reduxjs/toolkit/query/react'),
     'react-redux': require('react-redux'),

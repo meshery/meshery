@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
@@ -136,7 +138,7 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 		components = append(components, componentDef)
 	}
 
-	var emptyUUID uuid.UUID
+	var emptyUUID core.Uuid
 
 	return pattern.PatternFile{
 		Name:          "ClusterSnapshot",

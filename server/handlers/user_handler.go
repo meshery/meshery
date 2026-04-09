@@ -39,6 +39,11 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 		return
 	}
 
+	if resp == nil {
+		http.Error(w, "user not found", http.StatusNotFound)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
 		h.log.Error(err)
