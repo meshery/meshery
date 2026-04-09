@@ -96,7 +96,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	}
 	//if want to log we can use the above function in future to log the error in terminal.
 
-	_ = (*provider).PersistEvent(*event, nil)
+	_ = (*provider).PersistSystemEvent(*event)
 	ec.Publish(userUUID, event)
 	return
 }

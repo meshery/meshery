@@ -850,13 +850,19 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	dec := json.NewDecoder(r.Body)
 	userID := user.ID
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
 	entityType := mux.Vars(r)["entityType"]
 	var updateData struct {
 		ID          string `json:"id"`
 		Status      string `json:"status"`
 		DisplayName string `json:"displayname"`
 	}
-	err := dec.Decode(&updateData)
+	err = dec.Decode(&updateData)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
@@ -870,7 +876,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 			"error": err,
 		})
 		_event := eventBuilder.Build()
-		_ = provider.PersistEvent(*_event, nil)
+		_ = provider.PersistEvent(*_event, token)
 		go h.config.EventBroadcaster.Publish(userID, _event)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
@@ -879,7 +885,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	// Respond with success status
@@ -917,13 +923,20 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	userID := user.ID
 	var message string
 
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
 	//Here the codes handles to decode and store the data from the payload
 	var importRequest schemav1beta1.ImportRequest
 
-	err := json.NewDecoder(r.Body).Decode(&importRequest)
+	err = json.NewDecoder(r.Body).Decode(&importRequest)
 	if err != nil {
 		h.log.Info("Error in unmarshalling request body")
-		h.sendErrorEvent(userID, provider, "Error in unmarshalling request body", err)
+		h.sendErrorEvent(userID, provider, "Error in unmarshalling request body", err, token)
 		http.Error(rw, "Invalid request format", http.StatusBadRequest)
 		return
 	}
@@ -939,7 +952,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		err := meshkitRegistryUtils.SetLogger(false)
 		if err != nil {
 			h.handleError(rw, err, "Error setting logger")
-			h.sendErrorEvent(userID, provider, "Error setting logger", err)
+			h.sendErrorEvent(userID, provider, "Error setting logger", err, token)
 		}
 		fetchBase64DataFromDataURL := func(dataURL string) ([]byte, error) {
 			if strings.HasPrefix(dataURL, "data:text/csv;base64,") {
@@ -951,14 +964,14 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		modelCSVData, err := fetchBase64DataFromDataURL(importRequest.ImportBody.ModelCsv)
 		if err != nil {
 			h.handleError(rw, err, "Error fetching or decoding Model CSV")
-			h.sendErrorEvent(userID, provider, "Error fetching or decoding Model CSV", err)
+			h.sendErrorEvent(userID, provider, "Error fetching or decoding Model CSV", err, token)
 			return
 		}
 		modelCsvFile, err := os.CreateTemp("", "model-*.csv")
 		if err != nil {
 			err = ErrCreateFile(err, "Error creating temp file for Model CSV")
 			h.handleError(rw, err, "Error creating temp file for Model CSV")
-			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err)
+			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err, token)
 			return
 		}
 		defer func() {
@@ -971,14 +984,14 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = ErrWritingIntoFile(err, "Error writing Model CSV to temp file")
 			h.handleError(rw, err, "Error writing Model CSV to temp file")
-			h.sendErrorEvent(userID, provider, "Error writing Model CSV to temp file", err)
+			h.sendErrorEvent(userID, provider, "Error writing Model CSV to temp file", err, token)
 			return
 		}
 
 		componentCSVData, err := fetchBase64DataFromDataURL(importRequest.ImportBody.ComponentCsv)
 		if err != nil {
 			h.handleError(rw, err, "Error fetching or decoding Component CSV")
-			h.sendErrorEvent(userID, provider, "Error fetching or decoding Component CSV", err)
+			h.sendErrorEvent(userID, provider, "Error fetching or decoding Component CSV", err, token)
 			return
 		}
 
@@ -986,7 +999,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = ErrCreateFile(err, "Error creating temp file for Component CSV")
 			h.handleError(rw, err, "Error creating temp file for Component CSV")
-			h.sendErrorEvent(userID, provider, "Error creating temp file for Component CSV", err)
+			h.sendErrorEvent(userID, provider, "Error creating temp file for Component CSV", err, token)
 			return
 		}
 		defer func() {
@@ -999,21 +1012,21 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = ErrWritingIntoFile(err, "Error writing Component CSV to temp file")
 			h.handleError(rw, err, "Error writing Component CSV to temp file")
-			h.sendErrorEvent(userID, provider, "Error writing Component CSV to temp file", err)
+			h.sendErrorEvent(userID, provider, "Error writing Component CSV to temp file", err, token)
 			return
 		}
 
 		relationshipCSVData, err := fetchBase64DataFromDataURL(importRequest.ImportBody.RelationshipCSV)
 		if err != nil {
 			h.handleError(rw, err, "Error fetching or decoding Model CSV")
-			h.sendErrorEvent(userID, provider, "Error fetching or decoding Model CSV", err)
+			h.sendErrorEvent(userID, provider, "Error fetching or decoding Model CSV", err, token)
 			return
 		}
 		relationshipCsvFile, err := os.CreateTemp("", "relationship-*.csv")
 		if err != nil {
 			err = ErrCreateFile(err, "Error creating temp file for Model CSV")
 			h.handleError(rw, err, "Error creating temp file for Model CSV")
-			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err)
+			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err, token)
 			return
 		}
 		defer func() {
@@ -1026,7 +1039,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = ErrWritingIntoFile(err, "Error writing Model CSV to temp file")
 			h.handleError(rw, err, "Error writing Model CSV to temp file")
-			h.sendErrorEvent(userID, provider, "Error writing Model CSV to temp file", err)
+			h.sendErrorEvent(userID, provider, "Error writing Model CSV to temp file", err, token)
 			return
 		}
 
@@ -1039,7 +1052,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		tempDir, err := os.MkdirTemp("", "tempData")
 		if err != nil {
 			h.handleError(rw, err, "Error creating temporary directory")
-			h.sendErrorEvent(userID, provider, "Error creating temporary directory", err)
+			h.sendErrorEvent(userID, provider, "Error creating temporary directory", err, token)
 			return
 		}
 		defer func() {
@@ -1051,11 +1064,11 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
 		if err != nil {
 			h.handleError(rw, err, "Error invoking generation from sheet")
-			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err)
+			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err, token)
 			return
 		}
 
-		h.sendEventForImport(userID, provider, 0, "", true)
+		h.sendEventForImport(userID, provider, 0, "", true, token)
 		modelDirPaths, err := models.GetModelDirectoryPaths(tempDir)
 		if err != nil {
 			h.log.Error(models.ErrSeedingComponents(err))
@@ -1076,7 +1089,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		err = utils.CopyDirectory(tempDir, modelLocation)
 		if err != nil {
 			h.handleError(rw, err, "Error copying data to model location")
-			h.sendErrorEvent(userID, provider, "Error copying data to model location", err)
+			h.sendErrorEvent(userID, provider, "Error copying data to model location", err, token)
 			return
 		}
 
@@ -1105,13 +1118,13 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		pkg, version, err := meshkitRegistryUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error generating model")
-			h.sendErrorEvent(userID, provider, "Error generating model", err)
+			h.sendErrorEvent(userID, provider, "Error generating model", err, token)
 			return
 		}
 		modelDirPath, compDirPath, err := utils.CreateVersionedDirectoryForModelAndComp(version, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
-			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err)
+			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err, token)
 			return
 		}
 		filePath := filepath.Join(modelDirPath, model.Model+".json")
@@ -1119,7 +1132,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		err = modelDef.WriteModelDefinition(filePath, "json")
 		if err != nil {
 			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
-			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err)
+			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err, token)
 			return
 		}
 
@@ -1127,12 +1140,12 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		lengthofComps, _, err := meshkitRegistryUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef, model.Group)
 		if err != nil {
 			h.handleError(rw, err, "Error generating components")
-			h.sendErrorEvent(userID, provider, "Error generating components", err)
+			h.sendErrorEvent(userID, provider, "Error generating components", err, token)
 			return
 		}
 
 		//Event when the URL is used to show that we g
-		h.sendEventForImport(userID, provider, lengthofComps, model.Model, false)
+		h.sendEventForImport(userID, provider, lengthofComps, model.Model, false, token)
 		if importRequest.Register {
 			dir = registration.NewDir(modelDirPath)
 			registrationHelper.Register(dir)
@@ -1159,7 +1172,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, err.Error())
-			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
+			h.sendErrorEvent(userID, provider, "Error creating temp file", err, token)
 			return
 		}
 		defer func() {
@@ -1204,7 +1217,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		fileData, err := downloadFile(importRequest.ImportBody.Url)
 		if err != nil {
 			h.handleError(rw, err, "Error downloading file from URL")
-			h.sendErrorEvent(userID, provider, "Error downloading file from URL", err)
+			h.sendErrorEvent(userID, provider, "Error downloading file from URL", err, token)
 			return
 		}
 		isOCI := meshkitOci.IsOCIArtifact(fileData)
@@ -1218,7 +1231,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, "Error creating temp file")
-			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
+			h.sendErrorEvent(userID, provider, "Error creating temp file", err, token)
 			return
 		}
 		defer func() {
@@ -1243,7 +1256,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		errMsg = ErrMsgContruct(&response)
 	}
 
-	h.sendSuccessResponse(rw, userID, provider, message, errMsg, &response)
+	h.sendSuccessResponse(rw, userID, provider, message, errMsg, &response, token)
 
 }
 

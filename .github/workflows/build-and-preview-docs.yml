@@ -1,108 +1,113 @@
 name: Build and Preview Docs
+
 on:
   pull_request_target:
-    branches: [ master ]
-    types: [opened, synchronize, reopened]
+    branches: [master]
+    types: [opened, synchronize, reopened, closed]
     paths:
       - '!**'
       - 'docs/**'
       - '.github/workflows/build-and-preview-docs.yml'
       - 'mesheryctl/doc/**'
 
-permissions: {}
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
-  build-docs-preview:
+  build-and-deploy-preview:
     runs-on: ubuntu-24.04
-    permissions:
-      contents: read
+    env:
+      HUGO_VERSION: 0.157.0
+
     steps:
       - name: Checkout PR code
+        if: github.event.action != 'closed'
         uses: actions/checkout@v6
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
-          submodules: true
+          submodules: recursive
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Checkout for cleanup
+        if: github.event.action == 'closed'
+        uses: actions/checkout@v6
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: docs/package-lock.json
+          ref: gh-pages
+          fetch-depth: 0
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
-        with:
-          hugo-version: '0.157.0'
-          extended: true
+      - name: Install Hugo CLI
+        if: github.event.action != 'closed'
+        run: |
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
+          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
 
       - name: Install dart-sass
+        if: github.event.action != 'closed'
         run: |
           sudo snap install dart-sass
 
+      - name: Setup Node
+        if: github.event.action != 'closed'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Install dependencies
+        if: github.event.action != 'closed'
         run: |
           cd docs
-          npm ci
+          [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
 
-      - name: Build Hugo site
-        run: |
-          cd docs
-          hugo --cleanDestinationDir -e production -DFE --minify --baseURL "/"
-
-      - name: Zip Site
-        run: |
-          cd docs/public
-          zip -r ../../docs-site.zip .
-          cd ../..
-
-      - name: Upload files
-        uses: actions/upload-artifact@v4
-        with:
-          name: docs-site
-          path: ./docs-site.zip
-          retention-days: 1
-
-  deploy-docs-preview:
-    if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-24.04
-    needs: build-docs-preview
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      - name: Checkout workflow code
-        uses: actions/checkout@v6
-
-      - name: Download Site directory
-        uses: actions/download-artifact@v4
-        with:
-          name: docs-site
-          path: .
-
-      - name: Unzip Site
-        run: |
-          mkdir -p docs-preview
-          unzip docs-site.zip -d docs-preview
-          rm -f docs-site.zip
-
-      - name: Deploy to Netlify
-        id: netlify
-        uses: nwtgck/actions-netlify@v3
-        with:
-          publish-dir: 'docs-preview'
-          production-deploy: false
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          enable-commit-comment: false
+      - name: Build PR preview
+        if: github.event.action != 'closed'
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          HUGO_ENVIRONMENT: production
+          HUGO_ENV: production
+          HUGO_PREVIEW: "true"
+        run: |
+          make docs-build-production BASE_URL="/"
+          find docs/public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
+          cat > docs/public/robots.txt <<'EOF'
+          User-agent: *
+          Disallow: /
+          EOF
 
-      - name: Comment Deploy URL
-        uses: ./.github/actions/comment-preview-on-pr
+      - name: Deploy PR preview
+        if: github.event.action != 'closed'
+        uses: rossjrw/pr-preview-action@v1.6.3
         with:
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
-          deploy_url: "${{ steps.netlify.outputs.deploy-url }}"
+          source-dir: ./docs/public
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: auto
+          comment: false
+
+      - name: Comment PR with Preview URL
+        if: github.event.action != 'closed'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pr-preview
+          message: |
+            🚀 **Preview deployment for PR #${{ github.event.pull_request.number }}**
+
+            🌐 **Preview URL**: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/
+
+            _This preview will be updated automatically when you push new commits to this PR._
+      - name: Cleanup PR preview on close
+        if: github.event.action == 'closed'
+        uses: rossjrw/pr-preview-action@v1.6.3
+        with:
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: remove

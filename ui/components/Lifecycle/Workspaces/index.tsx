@@ -14,6 +14,7 @@ import {
   Modal,
   createAndEditWorkspaceSchema,
   createAndEditWorkspaceUiSchema,
+  editWorkspaceSchema,
   Button,
   Typography,
   SearchBar,
@@ -239,9 +240,13 @@ const Workspaces = ({ onSelectWorkspace }) => {
       .catch((error) => handleError(`Workspace Delete Error: ${error?.data}`));
   };
 
-  const fetchSchema = () => {
+  const fetchSchema = (workspaceActionType) => {
+    const baseSchema =
+      workspaceActionType === WORKSPACE_ACTION_TYPES.EDIT
+        ? editWorkspaceSchema
+        : createAndEditWorkspaceSchema;
     const updatedSchema = {
-      schema: createAndEditWorkspaceSchema,
+      schema: baseSchema,
       uiSchema: createAndEditWorkspaceUiSchema,
     };
     updatedSchema.schema?.properties?.organization &&
@@ -286,9 +291,9 @@ const Workspaces = ({ onSelectWorkspace }) => {
     });
   };
 
-  const handleWorkspaceModalOpen = (e, actionType, workspaceObject) => {
+  const handleWorkspaceModalOpen = (e, workspaceActionType, workspaceObject) => {
     e.stopPropagation();
-    if (actionType === WORKSPACE_ACTION_TYPES.EDIT) {
+    if (workspaceActionType === WORKSPACE_ACTION_TYPES.EDIT) {
       setActionType(WORKSPACE_ACTION_TYPES.EDIT);
       setInitialData({
         name: workspaceObject.name,
@@ -305,7 +310,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       });
       setEditWorkspaceId('');
     }
-    fetchSchema();
+    fetchSchema(workspaceActionType);
   };
 
   const handleTeamsModalOpen = (e, workspaceId, workspaceName) => {

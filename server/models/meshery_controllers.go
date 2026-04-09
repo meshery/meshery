@@ -670,7 +670,7 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 
 		if mch.provider != nil {
 			if shouldPersistControllerEvent(userID, actedUpon) {
-				if err := mch.provider.PersistEvent(*event, nil); err != nil {
+				if err := mch.provider.PersistSystemEvent(*event); err != nil {
 					mch.log.Error(fmt.Errorf("failed to persist event: %w", err))
 				}
 			} else {

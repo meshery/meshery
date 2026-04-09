@@ -11,10 +11,22 @@ export function normalizeStaticImagePath(path) {
     return '';
   }
 
-  if (path.startsWith('http')) {
-    return path;
+  const trimmed = path.trim();
+  if (!trimmed || ['empty', 'none', 'null', 'undefined'].includes(trimmed.toLowerCase())) {
+    return '';
   }
 
-  const trimmed = path.replace(/^\/?ui\/public\//, '').replace(/^\/+/, '');
-  return `/${trimmed}`;
+  if (trimmed.startsWith('http') || trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
+    return trimmed;
+  }
+
+  const normalized = trimmed.replace(/^\/+/, '');
+
+  // Meshmodel SVGs are generated under ui/public at runtime and are served by Meshery Server
+  // through the same ui/public-prefixed path.
+  if (normalized.startsWith('ui/public/static/img/meshmodels/')) {
+    return `/${normalized}`;
+  }
+
+  return `/${normalized.replace(/^ui\/public\//, '')}`;
 }
