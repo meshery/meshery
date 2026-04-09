@@ -2,14 +2,13 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
-
-	"encoding/json"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -19,6 +18,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	_events "github.com/meshery/meshkit/utils/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 var (
@@ -27,11 +27,11 @@ var (
 
 type eventStatusPayload struct {
 	Status    string       `json:"status"`
-	StatusIDs []*uuid.UUID `json:"ids"`
+	StatusIDs []*core.Uuid `json:"ids"`
 }
 
 type statusIDs struct {
-	IDs []*uuid.UUID `json:"ids"`
+	IDs []*core.Uuid `json:"ids"`
 }
 
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -381,8 +381,9 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 		}
 	}
 }
-func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID uuid.UUID, userID string) {
+func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID core.Uuid, userID string) {
 	log.Debug("Received a stream client...")
+	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	userUUID := uuid.FromStringOrNil(userID)
 	streamClient, err := mClient.MClient.StreamEvents(ctx, &meshes.EventsRequest{})
 	if err != nil {
@@ -420,7 +421,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		}
 
 		_event := eventBuilder.Build()
-		_ = p.PersistEvent(*_event, nil)
+		_ = p.PersistEvent(*_event, token)
 		ec.Publish(userUUID, _event)
 
 		data, err := json.Marshal(event)
@@ -444,6 +445,12 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 
 func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := user.ID
+	token, err := provider.GetProviderToken(req)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
 
 	defer func() {
 		_ = req.Body.Close()
@@ -475,7 +482,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		WithDescription(evt.Description).WithMetadata(evt.Metadata).ActedUpon(evt.ActedUpon)
 
 	event := eventBuilder.Build()
-	err = provider.PersistEvent(*event, nil)
+	err = provider.PersistEvent(*event, token)
 	if err != nil {
 		h.log.Error(models.ErrPersistEvent(err))
 		http.Error(w, models.ErrPersistEvent(err).Error(), http.StatusInternalServerError)

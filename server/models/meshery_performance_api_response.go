@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/go-openapi/strfmt"
-	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/core"
 )
 
 // PerformanceProfileParameters structs contains parameters to save a performance profile
@@ -65,11 +65,11 @@ type PerformanceResultsAPIResponse struct {
 
 // PerformanceResult represents the result of a performance test
 type PerformanceResult struct {
-	MesheryID          *uuid.UUID    `json:"meshery_id,omitempty"`
+	MesheryID          *core.Uuid    `json:"meshery_id,omitempty"`
 	Name               string        `json:"name,omitempty"`
 	Mesh               string        `json:"mesh,omitempty"`
-	PerformanceProfile *uuid.UUID    `json:"performance_profile,omitempty"`
-	UserID             *uuid.UUID    `json:"user_id"`
+	PerformanceProfile *core.Uuid    `json:"performance_profile,omitempty"`
+	UserID             *core.Uuid    `json:"user_id"`
 	RunnerResults      RunnerResults `json:"runner_results"`
 	ServerMetrics      interface{}   `json:"server_metrics"`
 	ServerBoardConfig  interface{}   `json:"server_board_config,omitempty"`

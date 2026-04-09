@@ -4,6 +4,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
 )
 
@@ -26,7 +27,7 @@ type CountBySeverityLevel struct {
 	Count    int    `json:"count"`
 }
 
-func (e *EventsPersister) getCountBySeverity(userID uuid.UUID, eventStatus events.EventStatus) ([]*CountBySeverityLevel, error) {
+func (e *EventsPersister) getCountBySeverity(userID core.Uuid, eventStatus events.EventStatus) ([]*CountBySeverityLevel, error) {
 	if eventStatus == "" {
 		eventStatus = events.Unread
 	}
