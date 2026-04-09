@@ -18,6 +18,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
@@ -196,7 +198,7 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 }
 
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ := uuid.FromString(environmentPayload.OrgId)
+	orgId := core.Uuid(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
@@ -210,7 +212,7 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	id, _ := uuid.FromString(environmentID)
-	orgId, _ := uuid.FromString(environmentPayload.OrgId)
+	orgId := core.Uuid(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
@@ -264,7 +266,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 
 	k8sServerID := *k8sContext.KubernetesServerID
 
-	var connID uuid.UUID
+	var connID core.Uuid
 	id, err := K8sContextGenerateID(k8sContext)
 	if err == nil {
 		connID, _ = uuid.FromString(id)
@@ -432,7 +434,7 @@ func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, _, _, _, _ str
 }
 
 // GetResult - fetches result from provider backend for the given result id
-func (l *DefaultLocalProvider) GetResult(_ string, resultID uuid.UUID) (*MesheryResult, error) {
+func (l *DefaultLocalProvider) GetResult(_ string, resultID core.Uuid) (*MesheryResult, error) {
 	// key := uuid.FromStringOrNil(resultID)
 	if resultID == uuid.Nil {
 		return nil, ErrResultID
@@ -492,7 +494,7 @@ func (l *DefaultLocalProvider) FetchSmiResults(_ *http.Request, page, pageSize, 
 }
 
 // FetchSmiResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchSmiResult(_ *http.Request, _, _, _, _ string, resultID uuid.UUID) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchSmiResult(_ *http.Request, _, _, _, _ string, resultID core.Uuid) ([]byte, error) {
 	return l.SmiResultPersister.GetResult(resultID)
 }
 
@@ -1013,7 +1015,7 @@ func (l *DefaultLocalProvider) ShareFilter(_ *http.Request) (int, error) {
 
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfile *PerformanceProfile) ([]byte, error) {
-	var uid uuid.UUID
+	var uid core.Uuid
 	if performanceProfile.ID != nil {
 		uid = *performanceProfile.ID
 	} else {
@@ -1142,7 +1144,7 @@ func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, pa
 	return connectionsPage, nil
 }
 
-func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
+func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error) {
 	connection, err := l.ConnectionPersister.GetConnection(connectionID, "")
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -1157,7 +1159,7 @@ func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, connection *con
 	return l.ConnectionPersister.UpdateConnectionByID(connection)
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
+func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
 	updatedConnection, err := l.ConnectionPersister.UpdateConnectionStatusByID(connectionID, connectionStatus)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
@@ -1181,7 +1183,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 	return l.UpdateConnection(nil, &connection)
 }
 
-func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID core.Uuid) (*connections.Connection, error) {
 	return l.ConnectionPersister.DeleteConnectionById(connectionID)
 }
 
@@ -1207,7 +1209,10 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 }
 
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
-	seededUUIDs := make([]uuid.UUID, 0)
+	var (
+		seededUUIDs   []core.Uuid
+		seededUUIDsMu sync.Mutex
+	)
 	seedContents := []string{"Pattern", "Filter"}
 	nilUserID := ""
 
@@ -1215,7 +1220,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	catalogDir := filepath.Join("..", "..", "docs", "catalog")
 
 	for _, seedContent := range seedContents {
-		go func(comp string, log logger.Handler, seededUUIDs *[]uuid.UUID) {
+		go func(comp string, log logger.Handler) {
 			switch comp {
 			case "Pattern":
 				files, err := walker.WalkLocalDirectory(catalogDir)
@@ -1256,7 +1261,9 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
 								log.Error(ErrGettingSeededComponents(err, comp+"s"))
 							}
-							*seededUUIDs = append(*seededUUIDs, id)
+							seededUUIDsMu.Lock()
+							seededUUIDs = append(seededUUIDs, id)
+							seededUUIDsMu.Unlock()
 						}(file, i)
 					}
 				}
@@ -1288,11 +1295,13 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 						if err != nil {
 							log.Error(ErrGettingSeededComponents(err, comp+"s"))
 						}
-						*seededUUIDs = append(*seededUUIDs, id)
+						seededUUIDsMu.Lock()
+						seededUUIDs = append(seededUUIDs, id)
+						seededUUIDsMu.Unlock()
 					}
 				}
 			}
-		}(seedContent, log, &seededUUIDs)
+		}(seedContent, log)
 	}
 
 	// Seed default organization before the UI requests organizations.
@@ -1343,7 +1352,7 @@ func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Cred
 	return nil, nil
 }
 
-func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID uuid.UUID) (*Credential, int, error) {
+func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID core.Uuid) (*Credential, int, error) {
 	return nil, http.StatusForbidden, ErrLocalProviderSupport
 }
 
@@ -1364,7 +1373,7 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 		return nil, fmt.Errorf("error retrieving count of credentials for user id: %s - %v", userID, err)
 	}
 
-	var credentialsList []*Credential
+	var credentialsList []Credential
 	if count > 0 {
 		if err := result.Offset(page * pageSize).Limit(pageSize).Find(&credentialsList).Error; err != nil {
 			if err != gorm.ErrRecordNotFound {
@@ -1388,17 +1397,18 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
-	if err := l.GetGenericPersister().Model(*updatedCredential).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserID, credential.ID).Updates(credential); err != nil {
-		return nil, fmt.Errorf("error updating user credential: %v", err)
+	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential)
+	if db.Error != nil {
+		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
 	}
 
-	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserID, credential.ID).First(updatedCredential).Error; err != nil {
+	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserId, credential.ID).First(updatedCredential).Error; err != nil {
 		return nil, fmt.Errorf("error getting updated user credential: %v", err)
 	}
 	return updatedCredential, nil
 }
 
-func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID uuid.UUID) (*Credential, error) {
+func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID core.Uuid) (*Credential, error) {
 	delCredential := &Credential{}
 	if err := l.GetGenericPersister().Model(&Credential{}).Where("id = ?", credentialID).Update("deleted_at", time.Now()).Error; err != nil {
 		return nil, err
@@ -1446,9 +1456,8 @@ func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byt
 	return l.KeyPersister.GetUsersKey(id)
 }
 
-// SaveKey saves the given key with the provider
-func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []*Key) ([]*Key, error) {
-	// fmt.Printf(keys)
+// SaveUsersKey saves the given keys with the provider
+func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []Key) ([]Key, error) {
 	return l.KeyPersister.SaveUsersKeys(keys)
 }
 
@@ -1467,31 +1476,23 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID stri
 }
 
 func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
-	orgID := workspacePayload.OrganizationID
-	workspace := &workspace.Workspace{
+	orgID := core.Uuid(workspacePayload.OrganizationID)
+	ws := &workspace.Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationID: &orgID,
-		Owner:          "Meshery",
+		OrganizationID: orgID,
 		UpdatedAt:      time.Now(),
 	}
-	return l.WorkspacePersister.SaveWorkspace(workspace)
+	return l.WorkspacePersister.SaveWorkspace(ws)
 }
 
-func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
-	id, _ := uuid.FromString(workspaceID)
-	orgID := workspacePayload.OrganizationID
-	workspace := &workspace.Workspace{
-		ID:             id,
-		CreatedAt:      time.Now(),
-		Description:    workspacePayload.Description,
-		Name:           workspacePayload.Name,
-		OrganizationID: &orgID,
-		Owner:          "Meshery",
-		UpdatedAt:      time.Now(),
+func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspaceUpdatePayload, workspaceID string) (*workspace.Workspace, error) {
+	id, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
 	}
-	return l.WorkspacePersister.UpdateWorkspaceByID(workspace)
+	return l.WorkspacePersister.UpdateWorkspace(id, workspacePayload)
 }
 
 func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
@@ -1520,6 +1521,82 @@ func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID
 func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
 	workspaceId, _ := uuid.FromString(workspaceID)
 	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter, visibility)
+}
+
+func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	dID, err := uuid.FromString(designID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.DeleteDesignFromWorkspace(wsID, dID)
+}
+
+func (l *DefaultLocalProvider) GetViewsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.GetWorkspaceViews(wsID, search, order, page, pageSize, filter)
+}
+
+func (l *DefaultLocalProvider) AddViewToWorkspace(_ *http.Request, workspaceID string, viewID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	vID, err := uuid.FromString(viewID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.AddViewToWorkspace(wsID, vID)
+}
+
+func (l *DefaultLocalProvider) RemoveViewFromWorkspace(_ *http.Request, workspaceID string, viewID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	vID, err := uuid.FromString(viewID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.DeleteViewFromWorkspace(wsID, vID)
+}
+
+func (l *DefaultLocalProvider) GetTeamsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.GetWorkspaceTeams(wsID, search, order, page, pageSize, filter)
+}
+
+func (l *DefaultLocalProvider) AddTeamToWorkspace(_ *http.Request, workspaceID string, teamID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	tID, err := uuid.FromString(teamID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.AddTeamToWorkspace(wsID, tID)
+}
+
+func (l *DefaultLocalProvider) RemoveTeamFromWorkspace(_ *http.Request, workspaceID string, teamID string) ([]byte, error) {
+	wsID, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	tID, err := uuid.FromString(teamID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.DeleteTeamFromWorkspace(wsID, tID)
 }
 
 // GetOrganization returns the organization for the given organizationID
@@ -1846,7 +1923,7 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 
 // Events
 
-func (e *EventsPersister) PersistEvent(event events.Event, token *string) error {
+func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
 	err := e.DB.Save(event).Error
 	if err != nil {
 		return ErrPersistEvent(err)
@@ -1854,7 +1931,11 @@ func (e *EventsPersister) PersistEvent(event events.Event, token *string) error 
 	return nil
 }
 
-func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error) {
+func (e *EventsPersister) PersistSystemEvent(event events.Event) error {
+	return e.PersistEvent(event, "")
+}
+
+func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
 	e := l.EventsPersister
 	eventsDB := []*events.Event{}
 	finder := e.DB.Model(&events.Event{}).Where("user_id = ? OR user_id = ?", userID, sysID)
@@ -1914,7 +1995,7 @@ func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.Even
 	}, nil
 }
 
-func (l *DefaultLocalProvider) GetEventTypes(token string, userID uuid.UUID, sysID uuid.UUID) (EventTypesResponse, error) {
+func (l *DefaultLocalProvider) GetEventTypes(token string, userID core.Uuid, sysID core.Uuid) (EventTypesResponse, error) {
 	e := l.EventsPersister
 
 	eventTypes := EventTypesResponse{}
@@ -1935,7 +2016,7 @@ func (l *DefaultLocalProvider) GetEventTypes(token string, userID uuid.UUID, sys
 	return eventTypes, err
 }
 
-func (l *DefaultLocalProvider) UpdateEventStatus(token string, eventID uuid.UUID, status string) error {
+func (l *DefaultLocalProvider) UpdateEventStatus(token string, eventID core.Uuid, status string) error {
 	e := l.EventsPersister
 	err := e.DB.Model(&events.Event{ID: eventID, Status: events.EventStatus(status)}).Update("status", status).Error
 	if err != nil {
@@ -1946,7 +2027,7 @@ func (l *DefaultLocalProvider) UpdateEventStatus(token string, eventID uuid.UUID
 
 }
 
-func (l *DefaultLocalProvider) BulkUpdateEventStatus(token string, eventIDs []*uuid.UUID, status string) error {
+func (l *DefaultLocalProvider) BulkUpdateEventStatus(token string, eventIDs []*core.Uuid, status string) error {
 
 	err := l.EventsPersister.DB.Model(&events.Event{Status: events.EventStatus(status)}).Where("id IN ?", eventIDs).Update("status", status).Error
 	if err != nil {
@@ -1956,7 +2037,7 @@ func (l *DefaultLocalProvider) BulkUpdateEventStatus(token string, eventIDs []*u
 
 }
 
-func (l *DefaultLocalProvider) DeleteEvent(token string, eventID uuid.UUID) error {
+func (l *DefaultLocalProvider) DeleteEvent(token string, eventID core.Uuid) error {
 	err := l.EventsPersister.DB.Delete(&events.Event{ID: eventID}).Error
 	if err != nil {
 		return err
@@ -1964,7 +2045,7 @@ func (l *DefaultLocalProvider) DeleteEvent(token string, eventID uuid.UUID) erro
 	return nil
 }
 
-func (l *DefaultLocalProvider) BulkDeleteEvent(token string, eventIDs []*uuid.UUID) error {
+func (l *DefaultLocalProvider) BulkDeleteEvent(token string, eventIDs []*core.Uuid) error {
 	err := l.EventsPersister.DB.Where("id IN ?", eventIDs).Delete(&events.Event{}).Error
 	if err != nil {
 		return err

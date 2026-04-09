@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -21,7 +22,7 @@ type workspaceViewFlags struct {
 
 var workspaceViewFlagsProvided workspaceViewFlags
 
-func formatWorkspaceLabel(rows []workspace.Workspace) []string {
+func formatWorkspaceLabel(rows []workspace.AvailableWorkspace) []string {
 	labels := []string{}
 	for _, w := range rows {
 		labels = append(labels, fmt.Sprintf("%s (ID: %s)", w.Name, w.ID.String()))
@@ -71,20 +72,13 @@ mesheryctl workspace view [workspace-id] --output-format json --save
 
 		if utils.IsUUID(workspaceNameOrID) {
 			urlPath = fmt.Sprintf("%s/%s", workspacesApiPath, url.PathEscape(workspaceNameOrID))
-			displayData = display.DisplayDataAsync{UrlPath: urlPath}
-
-			err := display.PromptAsyncPagination(
-				displayData,
-				formatWorkspaceLabel,
-				func(data *workspace.Workspace) ([]workspace.Workspace, int64) {
-					return []workspace.Workspace{*data}, 1
-				},
-				selectedWorkspace,
-			)
+			fetchedWorkspace, err := api.Fetch[workspace.Workspace](urlPath)
 			if err != nil {
 				return err
 			}
+			*selectedWorkspace = *fetchedWorkspace
 		} else {
+			selectedAvailableWorkspace := new(workspace.AvailableWorkspace)
 			viewUrlValue := url.Values{}
 			viewUrlValue.Add("orgID", workspaceViewFlagsProvided.OrgID)
 			viewUrlValue.Add("search", workspaceNameOrID)
@@ -98,14 +92,21 @@ mesheryctl workspace view [workspace-id] --output-format json --save
 			err := display.PromptAsyncPagination(
 				displayData,
 				formatWorkspaceLabel,
-				func(data *workspace.WorkspacePage) ([]workspace.Workspace, int64) {
+				func(data *workspace.WorkspacePage) ([]workspace.AvailableWorkspace, int64) {
 					return data.Workspaces, int64(data.TotalCount)
 				},
-				selectedWorkspace,
+				selectedAvailableWorkspace,
 			)
 			if err != nil {
 				return err
 			}
+
+			urlPath = fmt.Sprintf("%s/%s", workspacesApiPath, url.PathEscape(selectedAvailableWorkspace.ID.String()))
+			fetchedWorkspace, err := api.Fetch[workspace.Workspace](urlPath)
+			if err != nil {
+				return err
+			}
+			*selectedWorkspace = *fetchedWorkspace
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[workspace.Workspace]{}

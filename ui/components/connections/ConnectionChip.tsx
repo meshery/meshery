@@ -14,6 +14,7 @@ import {
   CONNECTION_STATES,
   CONTROLLER_STATES,
 } from '../../utils/Enum';
+import { normalizeStaticImagePath } from '@/utils/fallback';
 import { CustomTooltip } from '@sistent/sistent';
 import {
   ChipWrapper,
@@ -33,6 +34,7 @@ import ConnectionIcon from '@/assets/icons/Connection';
 export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
   const chipStyle = { width };
   const theme = useTheme();
+  const normalizedIconSrc = normalizeStaticImagePath(iconSrc) || undefined;
 
   const STATUS_LEVEL_MAP = Object.fromEntries([
     ...[CONNECTION_STATES.CONNECTED, CONTROLLER_STATES.DEPLOYED].map((status) => [
@@ -75,12 +77,15 @@ export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, w
       avatar={
         status ? (
           <BadgeAvatars color={getStatusColor(getStatusLevel(status))}>
-            <Avatar src={iconSrc} style={(status ? {} : { opacity: 0.2 }, iconMedium)}>
+            <Avatar
+              src={normalizedIconSrc}
+              style={{ ...(status ? {} : { opacity: 0.2 }), ...iconMedium }}
+            >
               <ConnectionIcon {...iconSmall} />
             </Avatar>
           </BadgeAvatars>
         ) : (
-          <Avatar src={iconSrc} sx={iconMedium}>
+          <Avatar src={normalizedIconSrc} sx={iconMedium}>
             <ConnectionIcon {...iconSmall} />
           </Avatar>
         )

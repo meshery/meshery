@@ -8,7 +8,7 @@
       "name": "minikube",
       "kind": "kubernetes",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "connected",
       "metadata": {
         "server_version": "v1.29.0",
@@ -22,7 +22,7 @@
       "name": "playground-context",
       "kind": "kubernetes",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "deleted",
       "metadata": {
         "server_version": "v1.29.0",
@@ -36,7 +36,7 @@
       "name": "meshery-ex1",
       "kind": "meshery",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "connected",
       "metadata": {
         "server_version": "v1.29.0",
@@ -50,7 +50,7 @@
       "name": "meshery-ex2",
       "kind": "meshery",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "connected",
       "metadata": {
         "server_version": "v1.29.0",
@@ -64,7 +64,7 @@
       "name": "meshery-ex3",
       "kind": "kubernetes",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "connected",
       "metadata": {
         "server_version": "v1.29.0",
@@ -78,7 +78,7 @@
       "name": "meshery-ex4",
       "kind": "kubernetes",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "connected",
       "metadata": {
         "server_version": "v1.29.0",
@@ -92,7 +92,7 @@
       "name": "meshery-ex5",
       "kind": "meshery",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "connected",
       "metadata": {
         "server_version": "v1.29.0",
@@ -106,7 +106,7 @@
       "name": "meshery-ex6",
       "kind": "meshery",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "deleted",
       "metadata": {
         "server_version": "v1.29.0",
@@ -120,7 +120,7 @@
       "name": "meshery-ex7",
       "kind": "kubernetes",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "connected",
       "metadata": {
         "server_version": "v1.29.0",
@@ -134,7 +134,7 @@
       "name": "meshery-ex8",
       "kind": "meshery",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "connected",
       "metadata": {
         "server_version": "v1.29.0",

@@ -22,8 +22,4 @@ function Index() {
   );
 }
 
-Index.getInitialProps = async () => {
-  return {};
-};
-
 export default Index;

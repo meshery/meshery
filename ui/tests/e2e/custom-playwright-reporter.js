@@ -167,10 +167,12 @@ ${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`
       status,
     )}, Tags: ${allTags} ${
       status === 'unexpected' && result.error !== undefined
-        ? ('\n' +
-            `File Location: ${result.error.location?.file ?? 'Not Found'}` +
-            '\n' +
-            result.error?.snippet ?? 'No snippet' + '\n' + result.error?.message)
+        ? '\nFile Location: ' +
+          (result.error.location?.file ?? 'Not Found') +
+          '\n' +
+          (result.error?.snippet ?? 'No snippet') +
+          '\n' +
+          (result.error?.message ?? 'No message')
         : ''
     }\n`;
 
