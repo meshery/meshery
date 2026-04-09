@@ -115,7 +115,7 @@ type MesheryResult struct {
 	ServerBoardConfig interface{} `json:"server_board_config,omitempty" gorm:"type:JSONB"`
 
 	TestStartTime          *time.Time         `json:"test_start_time,omitempty"`
-	PerformanceProfileInfo PerformanceProfile `json:"-,omitempty" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
+	PerformanceProfileInfo PerformanceProfile `json:"-" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
 
 	UpdatedAt string `json:"updated_at,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
