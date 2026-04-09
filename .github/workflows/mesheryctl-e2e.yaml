@@ -75,10 +75,14 @@ jobs:
       - name: Get Date
         id: date
         run: echo "date=$(date +'%Y-%m-%d-%H.%M.%S')" >> $GITHUB_OUTPUT
-      - name: Build mesheryctl and start Meshery
+      - name: Build mesheryctl
+        run: make build
+        shell: bash
+        working-directory: ./mesheryctl
+      - name: Start Meshery
         run: |
-          make build && \
-          ./mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update
+          # Start Meshery with with verbose logging for detailed output in case of failures
+          ./mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update --verbose
         shell: bash
         working-directory: ./mesheryctl
       - name: Run mesheryctl end2end tests
@@ -96,8 +100,13 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'push' }}
         working-directory: ./mesheryctl
         run: |
+          if [ ! -f tests/e2e/bats.tap ]; then
+            echo "TAP file not found!"
+            exit 1
+          fi
           node bats-to-allure.js tests/e2e/bats.tap
-
+        shell: bash
+        
       - name: Checkout QA
         uses: actions/checkout@v6
         if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}

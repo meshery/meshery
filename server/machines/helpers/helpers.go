@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/machines/grafana"
 	"github.com/meshery/meshery/server/machines/kubernetes"
@@ -13,6 +12,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
 )
 
 func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
@@ -34,7 +34,7 @@ func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
 	}
 	return machines.EventType(machines.DefaultState)
 }
-func getMachine(initialState machines.StateType, mtype, id string, userID uuid.UUID, log logger.Handler, dbHandler *database.Handler) (*machines.StateMachine, error) {
+func getMachine(initialState machines.StateType, mtype, id string, userID core.Uuid, log logger.Handler, dbHandler *database.Handler) (*machines.StateMachine, error) {
 	switch mtype {
 	case "kubernetes":
 		return kubernetes.New(id, userID, log)
@@ -68,8 +68,8 @@ func getMachine(initialState machines.StateType, mtype, id string, userID uuid.U
 func InitializeMachineWithContext(
 	machineCtx interface{},
 	ctx context.Context,
-	ID uuid.UUID,
-	userID uuid.UUID,
+	ID core.Uuid,
+	userID core.Uuid,
 	smInstanceTracker *machines.ConnectionToStateMachineInstanceTracker,
 	log logger.Handler,
 	provider models.Provider,

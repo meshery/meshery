@@ -1,8 +1,8 @@
 package models
 
 import (
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 const (
@@ -16,10 +16,10 @@ type EventTypesResponse struct {
 }
 
 type MesheryEvents interface {
-	// GetAllEvents(eventFilter *events.EventsFilter, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error)
-	// GetEventTypes(userID uuid.UUID, sysID uuid.UUID) (map[string]interface{}, error)
-	DeleteEvent(eventID uuid.UUID) error
-	UpdateEventStatus(eventID uuid.UUID, status string) (*events.Event, error)
-	BulkUpdateEventStatus(eventID []*uuid.UUID, status string) ([]*events.Event, error)
-	BulkDeleteEvent(eventID []*uuid.UUID) error
+	// GetAllEvents(eventFilter *events.EventsFilter, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error)
+	// GetEventTypes(userID core.Uuid, sysID core.Uuid) (map[string]interface{}, error)
+	DeleteEvent(eventID core.Uuid) error
+	UpdateEventStatus(eventID core.Uuid, status string) (*events.Event, error)
+	BulkUpdateEventStatus(eventID []*core.Uuid, status string) ([]*events.Event, error)
+	BulkDeleteEvent(eventID []*core.Uuid) error
 }

@@ -1,8 +1,8 @@
 id: 11111111-1111-1111-1111-111111111111
 name: minikube
-credential_id: 00000000-9c7a-d4ce-4aab-111111111111
+credentialId: 00000000-9c7a-d4ce-4aab-111111111111
 type: platform
-sub_type: orchestrator
+subType: orchestrator
 kind: kubernetes
 metadata:
     deployment_type: ""

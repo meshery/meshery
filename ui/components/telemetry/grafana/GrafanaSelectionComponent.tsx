@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@sistent/sistent';
 import { TextField, Grid2, Button, Chip, MenuItem, useTheme, styled, Box } from '@sistent/sistent';
-import dataFetch from '../../../lib/data-fetch';
 import { trueRandom } from '../../../lib/trueRandom';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { useLazyQueryTemplateVarsQuery } from '@/rtk-query/telemetry';
 
 const GrafanaRoot = styled(Box)(() => {
   const theme = useTheme();
@@ -59,6 +59,7 @@ function GrafanaSelectionComponent(props) {
     grafanaBoards: propGrafanaBoards,
   } = props;
 
+  const [triggerQueryVars] = useLazyQueryTemplateVarsQuery();
   const [grafanaBoards, setGrafanaBoards] = useState([]);
   const [grafanaBoard, setGrafanaBoard] = useState('');
   const [templateVars, setTemplateVars] = useState([]);
@@ -122,32 +123,27 @@ function GrafanaSelectionComponent(props) {
 
   const queryTemplateVars = (ind) => {
     if (templateVars.length > 0) {
-      let queryURL = `/api/telemetry/metrics/grafana/query/${connectionID}?query=${encodeURIComponent(
-        templateVars[ind].query,
-      )}&dsid=${templateVars[ind].datasource.id}`;
+      // Build query string params directly
+      const params = new URLSearchParams();
+      params.set('query', templateVars[ind].query);
+      params.set('dsid', templateVars[ind].datasource.id);
       for (let i = ind; i > 0; i--) {
-        queryURL += `&${templateVars[i - 1].name}=${selectedTemplateVars[i - 1]}`;
+        params.set(templateVars[i - 1].name, selectedTemplateVars[i - 1]);
       }
       if (
         templateVars[ind].query.startsWith('label_values') &&
         templateVars[ind].query.indexOf(',') > -1
       ) {
-        // series query needs a start and end time or else it will take way longer to return. . .
-        // but at this point this component does not have the time range selection bcoz the time range selection comes after this component makes its selections
-        // hence for now just limiting the time period to the last 24hrs
-
         const ed = new Date();
         const sd = new Date();
         sd.setDate(sd.getDate() - 1);
-        queryURL += `&start=${Math.floor(sd.getTime() / 1000)}&end=${Math.floor(
-          ed.getTime() / 1000,
-        )}`;
+        params.set('start', String(Math.floor(sd.getTime() / 1000)));
+        params.set('end', String(Math.floor(ed.getTime() / 1000)));
       }
       updateProgress({ showProgress: true });
-      dataFetch(
-        queryURL,
-        { credentials: 'include' },
-        (result) => {
+      triggerQueryVars({ connectionID, query: params.toString() })
+        .unwrap()
+        .then((result) => {
           updateProgress({ showProgress: false });
           if (typeof result !== 'undefined') {
             let tmpVarOpts = [];
@@ -185,16 +181,15 @@ function GrafanaSelectionComponent(props) {
               return newOptions;
             });
           }
-        },
-        (error) => {
+        })
+        .catch((error) => {
           setTemplateVarOptions((prev) => {
             const newOptions = [...prev];
             newOptions[ind] = [templateVars[ind].Value];
             return newOptions;
           });
           handleError(error);
-        },
-      );
+        });
     }
   };
 

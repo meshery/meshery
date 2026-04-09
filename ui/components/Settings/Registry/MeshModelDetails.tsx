@@ -12,6 +12,7 @@ import {
 } from '@sistent/sistent';
 import DownloadIcon from '@mui/icons-material/Download';
 import { REGISTRY_ITEM_STATES } from '@/utils/Enum';
+import { normalizeStaticImagePath } from '@/utils/fallback';
 // import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 // import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
@@ -419,19 +420,22 @@ const Description = ({ description }: { description?: string }) => {
   );
 };
 
-const TitleWithImg = ({ displayName, iconSrc }: { displayName?: string; iconSrc?: string }) => (
-  <div style={{ display: 'flex', alignItems: 'center' }}>
-    {iconSrc && (
-      <img
-        src={iconSrc}
-        height="32px"
-        width="32px"
-        style={{ objectFit: 'contain', marginRight: '0.6rem' }}
-      />
-    )}
-    <StyledTitle>{displayName}</StyledTitle>
-  </div>
-);
+const TitleWithImg = ({ displayName, iconSrc }: { displayName?: string; iconSrc?: string }) => {
+  const normalizedIconSrc = normalizeStaticImagePath(iconSrc);
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      {normalizedIconSrc && (
+        <img
+          src={normalizedIconSrc}
+          height="32px"
+          width="32px"
+          style={{ objectFit: 'contain', marginRight: '0.6rem' }}
+        />
+      )}
+      <StyledTitle>{displayName}</StyledTitle>
+    </div>
+  );
+};
 
 const StatusChip = ({ entityData, entityType }: { entityData: any; entityType: string }) => {
   const nextStatus = Object.values(REGISTRY_ITEM_STATES);
