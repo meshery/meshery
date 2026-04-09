@@ -97,6 +97,15 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 	}
 }
 
+// TestMesheryControllersHelper_MultiClusterConcurrency verifies that MesheryControllersHelper
+// can safely handle concurrent state updates across multiple Kubernetes clusters.
+//
+// Scenario: Multiple clusters are connected simultaneously, triggering concurrent calls to
+// methods that modify the shared helper state (e.g., adding handlers, updating operator status).
+//
+// Expected Outcome: The test simulates 50 concurrent context initializations. It should
+// execute without data races or panics (previously caused by single-value fields) and
+// the resulting state should correctly reflect 50 isolated cluster handlers.
 func TestMesheryControllersHelper_MultiClusterConcurrency(t *testing.T) {
 	log, _ := logger.New("test", logger.Options{})
 	mch := NewMesheryControllersHelper(
