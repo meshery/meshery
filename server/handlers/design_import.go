@@ -20,7 +20,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
-	schemacore "github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
@@ -90,13 +90,13 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 
 	switch identifiedFile.Type {
 
-	case schemacore.HelmChart:
+	case core.HelmChart:
 		return files.ConvertHelmChartToKubernetesManifest(identifiedFile)
-	case schemacore.DockerCompose:
+	case core.DockerCompose:
 		return files.ConvertDockerComposeToKubernetesManifest(identifiedFile)
-	case schemacore.K8sManifest:
+	case core.K8sManifest:
 		return string(rawFile.Data), nil
-	case schemacore.K8sKustomize:
+	case core.K8sKustomize:
 		return files.ConvertKustomizeToKubernetesManifest(identifiedFile)
 	default:
 		return "", files.ErrUnsupportedFileTypeForConversionToDesign(rawFile.FileName, string(identifiedFile.Type))
@@ -104,7 +104,7 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 }
 
 // returns the design file , the type of file that was identified during converion , and any error
-func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager, logger logger.Handler) (pattern.PatternFile, schemacore.IaCFileTypes, error) {
+func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager, logger logger.Handler) (pattern.PatternFile, core.IaCFileTypes, error) {
 
 	defer utils.TrackTime(logger, time.Now(), "ConvertFileToDesign")
 
@@ -147,7 +147,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 		return emptyDesign, "", err
 	}
 
-	if identifiedFile.Type == schemacore.MesheryDesign {
+	if identifiedFile.Type == core.MesheryDesign {
 		design := identifiedFile.ParsedFile.(pattern.PatternFile)
 		return design, identifiedFile.Type, nil
 	}
@@ -171,7 +171,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	return design, identifiedFile.Type, err
 }
 
-func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID schemacore.Uuid, eventBuilder *events.EventBuilder) {
+func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID core.Uuid, eventBuilder *events.EventBuilder) {
 
 	h.log.Error(ErrRetrieveUserToken(err))
 	http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
@@ -187,7 +187,7 @@ func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider mode
 
 }
 
-func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider models.Provider, err error, userID schemacore.Uuid, eventBuilder *events.EventBuilder) {
+func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider models.Provider, err error, userID core.Uuid, eventBuilder *events.EventBuilder) {
 
 	h.log.Error(ErrRequestBody(err))
 	http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)

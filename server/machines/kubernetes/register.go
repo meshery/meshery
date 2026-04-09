@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	schemacore "github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/core"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshery/server/models/meshmodel/core"
+	meshmodelcore "github.com/meshery/meshery/server/models/meshmodel/core"
 	"github.com/meshery/meshkit/models/events"
 )
 
@@ -22,7 +22,7 @@ func (ra *RegisterAction) ExecuteOnEntry(ctx context.Context, machineCtx interfa
 
 func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*schemacore.Uuid)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
@@ -44,7 +44,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 
 	context := []*models.K8sContext{&machinectx.K8sContext}
 
-	machinectx.K8sCompRegHelper.UpdateContexts(context).RegisterComponents(context, []models.K8sRegistrationFunction{core.RegisterK8sMeshModelComponents}, machinectx.RegistryManager, machinectx.EventBroadcaster, provider, user.ID.String(), true)
+	machinectx.K8sCompRegHelper.UpdateContexts(context).RegisterComponents(context, []models.K8sRegistrationFunction{meshmodelcore.RegisterK8sMeshModelComponents}, machinectx.RegistryManager, machinectx.EventBroadcaster, provider, user.ID.String(), true)
 
 	return machines.Connect, nil, nil
 }
