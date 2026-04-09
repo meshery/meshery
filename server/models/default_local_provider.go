@@ -1914,16 +1914,12 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 
 // Events
 
-func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
+func (e *EventsPersister) PersistEvent(event events.Event, token *string) error {
 	err := e.DB.Save(event).Error
 	if err != nil {
 		return ErrPersistEvent(err)
 	}
 	return nil
-}
-
-func (e *EventsPersister) PersistSystemEvent(event events.Event) error {
-	return e.PersistEvent(event, "")
 }
 
 func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error) {

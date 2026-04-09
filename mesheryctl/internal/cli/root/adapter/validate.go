@@ -86,14 +86,15 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		s := utils.CreateDefaultSpinner(fmt.Sprintf("Validating %s", meshName), fmt.Sprintf("\n%s validation successful", meshName))
 		s.Start()
 		_, err = sendOperationRequest(mctlCfg, meshName, false, spec)
 		if err != nil {
-			s.Stop()
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		s.Stop()
 
@@ -101,7 +102,8 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 			utils.Log.Info("Verifying Operation")
 			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
 			if err != nil {
-				return ErrWaitValidateResponse(err)
+				utils.Log.Error(ErrWaitValidateResponse(err))
+				return nil
 			}
 		}
 

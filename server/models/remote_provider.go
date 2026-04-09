@@ -1549,28 +1549,20 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	return "", ErrPost(err, string(bdr), resp.StatusCode)
 }
 
-// PersistEvent persists a user-initiated event to the remote provider.
-// When the token is empty or remote persistence fails, it falls back to local persistence.
-func (l *RemoteProvider) PersistEvent(event events.Event, token string) error {
-	if strings.TrimSpace(token) == "" {
-		return l.EventsPersister.PersistEvent(event, "")
-	}
-	if err := l.persistEventRemote(event, token); err != nil {
-		l.Log.Warn(fmt.Errorf("remote event persistence failed, falling back to local DB: %w", err))
-		return l.EventsPersister.PersistEvent(event, "")
-	}
-	return nil
-}
+// IF the remote provider supports persisting events, this function will persist the event
+// The token is used to authenticate the request to the remote provider. if the token is nil, it uses the GlobalTokenForAnonymousResults
+func (l *RemoteProvider) PersistEvent(event events.Event, token *string) error {
 
-// PersistSystemEvent persists a system-initiated event (MeshSync, registry seeding,
-// auto-registration) to the local database. These events have no user request context.
-func (l *RemoteProvider) PersistSystemEvent(event events.Event) error {
-	return l.EventsPersister.PersistEvent(event, "")
-}
+	var tokenString string
+	if token == nil {
+		l.Log.Debug("No token provided, using GlobalTokenForAnonymousResults")
+		tokenString = GlobalTokenForAnonymousResults
+	} else {
+		tokenString = *token
+	}
 
-// persistEventRemote sends an event to the remote provider for persistence.
-func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString string) error {
 	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
 		return ErrInvalidCapability("PersistEvents", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEvents)
@@ -1590,12 +1582,9 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 	if err != nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
-	defer func() {
-		_, _ = io.Copy(io.Discard, resp.Body)
-		_ = resp.Body.Close()
-	}()
 
 	if resp.StatusCode != http.StatusOK {
+		l.Log.Error(ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode))
 		return ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
 	return nil
@@ -2161,8 +2150,8 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 
 	data, err := json.Marshal(map[string]interface{}{
-		"patternFile": pattern,
-		"save":        true,
+		"pattern_data": pattern,
+		"save":         true,
 	})
 
 	if err != nil {

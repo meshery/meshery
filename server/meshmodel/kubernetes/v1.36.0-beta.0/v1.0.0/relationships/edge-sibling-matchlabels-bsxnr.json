@@ -47,7 +47,6 @@
             "patch": {
               "mutatedRef": [
                 [
-                  "configuration",
                   "metadata",
                   "labels"
                 ]
@@ -76,7 +75,6 @@
             "patch": {
               "mutatedRef": [
                 [
-                  "configuration",
                   "metadata",
                   "labels"
                 ]

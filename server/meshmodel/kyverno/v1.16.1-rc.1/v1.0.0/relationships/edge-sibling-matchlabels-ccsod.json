@@ -83,7 +83,6 @@
             "patch": {
               "mutatedRef": [
                 [
-                  "configuration",
                   "metadata",
                   "name"
                 ]

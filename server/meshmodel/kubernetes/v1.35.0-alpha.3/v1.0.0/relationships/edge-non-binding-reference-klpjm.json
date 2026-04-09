@@ -47,7 +47,6 @@
             "patch": {
               "mutatorRef": [
                 [
-                  "configuration",
                   "metadata"
                 ],
                 [

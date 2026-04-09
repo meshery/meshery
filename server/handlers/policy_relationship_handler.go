@@ -351,7 +351,6 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	provider models.Provider,
 ) {
 	evalCtx := r.Context()
-	token, _ := evalCtx.Value(models.TokenCtxKey).(string)
 
 	userUUID := user.ID
 	defer func() {
@@ -412,7 +411,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 				"evaluation_response": evaluationResponse,
 				"evaluated_at":        *evaluationResponse.Timestamp,
 			}).WithSeverity(events.Informational).Build()
-		_ = provider.PersistEvent(*event, token)
+		_ = provider.PersistEvent(*event, nil)
 
 		// write the response
 		ec := json.NewEncoder(rw)

@@ -32,7 +32,7 @@ func (h *Handler) handleError(rw http.ResponseWriter, err error, logMsg string) 
 	http.Error(rw, logMsg, http.StatusInternalServerError)
 }
 
-func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID uuid.UUID, provider models.Provider, message string, errMsg string, response *models.RegistryAPIResponse, token string) {
+func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID uuid.UUID, provider models.Provider, message string, errMsg string, response *models.RegistryAPIResponse) {
 	if errMsg != "" {
 		if message != "" {
 			response.ErrMsg = message + ", " + errMsg
@@ -45,7 +45,7 @@ func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID uuid.UUID, 
 		response.ErrMsg = message
 		h.log.Info(response.ErrMsg)
 	}
-	h.sendFileEvent(userID, provider, response, token)
+	h.sendFileEvent(userID, provider, response)
 	rw.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(rw).Encode(response); err != nil {
 		h.log.Error(err)
@@ -198,11 +198,11 @@ func incrementCountersOnSuccess(mu *sync.Mutex, entityType entity.EntityType, co
 	}
 }
 
-func (h *Handler) sendErrorEvent(userID uuid.UUID, provider models.Provider, description string, err error, token string) {
+func (h *Handler) sendErrorEvent(userID uuid.UUID, provider models.Provider, description string, err error) {
 	event := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithAction("register").WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
 		"error": err,
 	}).Build()
-	_ = provider.PersistEvent(*event, token)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 
@@ -292,7 +292,7 @@ func (h *Handler) handleRegistrationAndError(registrationHelper registration.Reg
 		}
 	}
 }
-func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, response *models.RegistryAPIResponse, token string) {
+func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, response *models.RegistryAPIResponse) {
 	// Initialize metadata map
 	metadata := map[string]interface{}{
 		"ModelImportMessage": response.ErrMsg,
@@ -358,7 +358,7 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 		WithMetadata(metadata).
 		Build()
 
-	_ = provider.PersistEvent(*event, token)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 func getFirst42Chars(s string) string {
@@ -367,7 +367,7 @@ func getFirst42Chars(s string) string {
 	}
 	return s
 }
-func (h *Handler) sendEventForImport(userID uuid.UUID, provider models.Provider, compsCount int, modelName string, isCsv bool, token string) {
+func (h *Handler) sendEventForImport(userID uuid.UUID, provider models.Provider, compsCount int, modelName string, isCsv bool) {
 
 	var description string
 	var componentWord string
@@ -390,7 +390,7 @@ func (h *Handler) sendEventForImport(userID uuid.UUID, provider models.Provider,
 		WithSeverity(events.Informational).
 		WithMetadata(metadata).
 		Build()
-	_ = provider.PersistEvent(*event, token)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 func writeMessageString(response *models.RegistryAPIResponse) string {

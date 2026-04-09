@@ -17,19 +17,15 @@ package system
 import (
 	"fmt"
 
-	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
+
+	log "github.com/sirupsen/logrus"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
-
-type cmdSystemRestartFlags struct {
-	SkipUpdate bool   `json:"skip-update" validate:"boolean"`
-	Provider   string `json:"provider" validate:"omitempty"`
-}
-
-var systemRestartFlags cmdSystemRestartFlags
 
 var (
 	silentFlagSet bool
@@ -39,8 +35,7 @@ var (
 var restartCmd = &cobra.Command{
 	Use:   "restart",
 	Short: "Stop, then start Meshery",
-	Long: `Restart all Meshery containers / pods.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/system/restart`,
+	Long:  `Restart all Meshery containers / pods.`,
 	Example: `
 // Restart all Meshery containers, their instances and their connected volumes
 mesheryctl system restart
@@ -48,22 +43,7 @@ mesheryctl system restart
 // (optional) skip checking for new updates available in Meshery.
 mesheryctl system restart --skip-update
 	`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) > 0 {
-			return utils.ErrInvalidArgument(
-				fmt.Errorf("restart does not take any arguments, see '%s --help' for more information", cmd.CommandPath()),
-			)
-		}
-		return nil
-	},
-
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Validate flags
-		err := mesheryctlflags.ValidateCmdFlags(cmd, &systemRestartFlags)
-		if err != nil {
-			return err
-		}
-
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
@@ -83,8 +63,9 @@ mesheryctl system restart --skip-update
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		skipUpdateFlag = systemRestartFlags.SkipUpdate
-		providerFlag = systemRestartFlags.Provider
+		if len(args) > 1 {
+			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("restart takes only one flag. See '%s --help' for more information.\n", cmd.CommandPath()), "restart"))
+		}
 		return restart()
 	},
 }
@@ -93,7 +74,8 @@ func restart() error {
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return err
+		utils.Log.Error(err)
+		return nil
 	}
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
@@ -113,14 +95,14 @@ func restart() error {
 
 	running, err := utils.AreMesheryComponentsRunning(currPlatform)
 	if err != nil {
-		return ErrRestartMeshery(err)
+		utils.Log.Error(err)
+		return nil
 	}
 	if !running { // Meshery is not running
 		if err := start(); err != nil {
 			return ErrRestartMeshery(err)
 		}
 	} else {
-		silentFlagSet = utils.SilentFlag
 		if currPlatform == platformKubernetes {
 			userResponse := false
 			if utils.SilentFlag {
@@ -130,15 +112,16 @@ func restart() error {
 				userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
 			}
 			if !userResponse {
-				utils.Log.Info("Restart aborted.")
+				log.Info("Restart aborted.")
 				return nil
 			}
+			// take a backup of silentFlag value to pass it to start() function later
+			silentFlagSet = utils.SilentFlag
 			// skips asking for confirmation in the stop() function
 			utils.SilentFlag = true
 		}
 
-		silentFlagSet = utils.SilentFlag
-		utils.Log.Info("Restarting Meshery...")
+		log.Info("Restarting Meshery...")
 
 		if err := stop(); err != nil {
 			return ErrRestartMeshery(err)
@@ -155,6 +138,6 @@ func restart() error {
 }
 
 func init() {
-	restartCmd.Flags().BoolVarP(&systemRestartFlags.SkipUpdate, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
-	restartCmd.Flags().StringVar(&systemRestartFlags.Provider, "provider", "", "Provider to use with the Meshery server")
+	restartCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
+	restartCmd.Flags().StringVar(&providerFlag, "provider", "", "Provider to use with the Meshery server")
 }

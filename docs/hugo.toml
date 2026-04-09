@@ -1,7 +1,5 @@
 baseURL = "https://docs.meshery.io"
 title = "Documentation"
-relativeURLs = true
-canonifyURLs = false
 
 # Language settings
 contentDir = "content/en"

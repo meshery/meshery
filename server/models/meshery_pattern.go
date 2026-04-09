@@ -94,7 +94,7 @@ type MesheryPattern struct {
 
 	Location      isql.Map             `json:"location"`
 	Visibility    string               `json:"visibility"`
-	CatalogData   v1alpha1.CatalogData `json:"catalogData,omitempty" gorm:"type:bytes;serializer:json"`
+	CatalogData   v1alpha1.CatalogData `json:"catalog_data,omitempty" gorm:"type:bytes;serializer:json"`
 	Type          sql.NullString       `json:"type"`
 	SourceContent []byte               `json:"source_content"`
 
@@ -107,7 +107,7 @@ type MesheryPattern struct {
 	CloneCount      int       `json:"clone_count" db:"clone_count"`
 	DeploymentCount int       `json:"deployment_count" db:"deployment_count"`
 	WorkspaceID     uuid.UUID `json:"workspace_id,omitempty" db:"-"`
-	OrgID           uuid.UUID `json:"orgId,omitempty" db:"-"`
+	OrgID           uuid.UUID `json:"org_id,omitempty" db:"-"`
 }
 
 // MesheryCatalogPatternRequestBody refers to the type of request body

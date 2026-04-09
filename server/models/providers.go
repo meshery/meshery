@@ -397,13 +397,9 @@ type Provider interface {
 	GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
-	// PersistEvent persists a user-initiated event to the remote provider using the given auth token.
-	PersistEvent(event events.Event, token string) error
-
-	// PersistSystemEvent persists a system-initiated event (e.g. MeshSync updates, registry seeding,
-	// auto-registration) that occurs outside of a user request context and has no auth token.
-	// These events are persisted to the local database.
-	PersistSystemEvent(event events.Event) error
+	// in case of a provider that does not support persisting results, it should return an error
+	// if the token is null then then a safe pass is used if the provider supports it else an error is returned
+	PersistEvent(event events.Event, token *string) error
 
 	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
 	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)

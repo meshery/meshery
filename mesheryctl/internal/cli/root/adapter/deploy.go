@@ -64,14 +64,15 @@ mesheryctl adapter deploy linkerd --watch
 		RunE: func(cmd *cobra.Command, args []string) error {
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Deploying %s", meshName), fmt.Sprintf("\n%s infrastructure deployed", meshName))
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false, "null")
 			if err != nil {
-				s.Stop()
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 			s.Stop()
 
@@ -79,7 +80,8 @@ mesheryctl adapter deploy linkerd --watch
 				utils.Log.Info("Verifying Operation")
 				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
 				if err != nil {
-					return err
+					utils.Log.Error(err)
+					return nil
 				}
 			}
 

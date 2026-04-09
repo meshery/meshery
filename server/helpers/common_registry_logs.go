@@ -188,7 +188,7 @@ func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider 
 			"DownloadLink":     filePath,
 			"ViewLink":         filePath,
 		})
-		_ = (*provider).PersistSystemEvent(*errorEvent)
+		_ = (*provider).PersistEvent(*errorEvent, nil)
 		if userID != "" {
 			userUUID := gofrs.FromStringOrNil(userID)
 			ec.Publish(userUUID, errorEvent)

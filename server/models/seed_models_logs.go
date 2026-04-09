@@ -114,7 +114,7 @@ func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider 
 			"ViewLink":     filePath,
 			"error":        ErrImportFailure(hostname, failedMsg),
 		})
-		_ = (*provider).PersistSystemEvent(*errorEvent)
+		_ = (*provider).PersistEvent(*errorEvent, nil)
 		if userID != "" {
 			userUUID := gofrs.FromStringOrNil(userID)
 			ec.Publish(userUUID, errorEvent)
@@ -195,7 +195,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()
-		_ = provider.PersistSystemEvent(*successEvent)
+		_ = provider.PersistEvent(*successEvent, nil)
 
 		failLog, err := FailedEventCompute(host.Kind, sysID, &provider, "", handlerConfig.EventBroadcaster, regErrorStore)
 		if err != nil {

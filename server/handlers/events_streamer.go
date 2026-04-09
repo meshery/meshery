@@ -383,7 +383,6 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 }
 func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID uuid.UUID, userID string) {
 	log.Debug("Received a stream client...")
-	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	userUUID := uuid.FromStringOrNil(userID)
 	streamClient, err := mClient.MClient.StreamEvents(ctx, &meshes.EventsRequest{})
 	if err != nil {
@@ -421,7 +420,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		}
 
 		_event := eventBuilder.Build()
-		_ = p.PersistEvent(*_event, token)
+		_ = p.PersistEvent(*_event, nil)
 		ec.Publish(userUUID, _event)
 
 		data, err := json.Marshal(event)
@@ -445,12 +444,6 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 
 func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := user.ID
-	token, err := provider.GetProviderToken(req)
-	if err != nil {
-		h.log.Error(ErrRetrieveUserToken(err))
-		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
-		return
-	}
 
 	defer func() {
 		_ = req.Body.Close()
@@ -482,7 +475,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		WithDescription(evt.Description).WithMetadata(evt.Metadata).ActedUpon(evt.ActedUpon)
 
 	event := eventBuilder.Build()
-	err = provider.PersistEvent(*event, token)
+	err = provider.PersistEvent(*event, nil)
 	if err != nil {
 		h.log.Error(models.ErrPersistEvent(err))
 		http.Error(w, models.ErrPersistEvent(err).Error(), http.StatusInternalServerError)
