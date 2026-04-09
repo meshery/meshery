@@ -219,6 +219,7 @@ const Dashboard = () => {
   const [dashboardLayout, setDashboardLayout] = useState(() =>
     sanitizeLayouts(userData?.dashboardPreferences || defaultLayout),
   );
+  const orgDashboardLayout = sanitizeLayouts(userData?.dashboardPreferences || defaultLayout);
 
   const {
     showModal: showUnsavedModal,
