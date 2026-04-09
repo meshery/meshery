@@ -75,6 +75,49 @@ const useDashboardRouter = () => {
 };
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
+const GRID_COLS = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
+const BREAKPOINTS = Object.keys(GRID_COLS);
+
+const overlaps = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+
+const findCollision = (candidate, items) => items.find((item) => overlaps(candidate, item)) || null;
+
+const compactLayout = (items) => {
+  const sorted = [...items].sort((a, b) => (a.y !== b.y ? a.y - b.y : a.x - b.x));
+
+  const placeAtFirstFreeRow = (item, placed, y = 0) => {
+    const collision = findCollision({ ...item, y }, placed);
+    if (!collision) {
+      return { ...item, y };
+    }
+    return placeAtFirstFreeRow(item, placed, Math.max(y + 1, collision.y + collision.h));
+  };
+
+  return sorted.reduce((placed, item) => {
+    return [...placed, placeAtFirstFreeRow(item, placed)];
+  }, []);
+};
+
+const isLayoutValid = (items, breakpoint) => {
+  if (!Array.isArray(items)) return false;
+  const maxCols = GRID_COLS[breakpoint];
+
+  const coordinatesAreValid = items.every(({ x, y, w, h }) => {
+    return (
+      Number.isFinite(x + y + w + h) && x >= 0 && y >= 0 && w >= 1 && h >= 1 && x + w <= maxCols
+    );
+  });
+
+  if (!coordinatesAreValid) {
+    return false;
+  }
+
+  const hasCollisions = items.some((item, index) => {
+    return items.slice(index + 1).some((peer) => overlaps(item, peer));
+  });
+
+  return !hasCollisions;
+};
 
 const Dashboard = () => {
   const { data: userData, isLoading } = useGetUserPrefQuery();
@@ -101,13 +144,6 @@ const Dashboard = () => {
   if (!ResourceCategoryTabs.includes(resourceCategory)) {
     changeResourceTab('Overview');
   }
-  const getCurrentDashboardLayoutFromOrgPrefs = (prefs) => {
-    if (!prefs) {
-      return defaultLayout;
-    }
-    return prefs;
-  };
-
   const [currentBreakPoint, setCurrentBreakpoint] = useState('lg');
   const { selectedK8sContexts } = useSelector((state) => state.ui);
   const { k8sConfig } = useSelector((state) => state.ui);
@@ -132,9 +168,45 @@ const Dashboard = () => {
     [WIDGETS],
   );
   const availableHandles = ['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne'];
+  const cols = GRID_COLS;
 
+  const clampLayoutItem = (item, breakpoint) => {
+    const maxCols = GRID_COLS[breakpoint];
+    const sizing = WIDGETS[item.i]?.defaultSizing;
+
+    if (sizing) {
+      const w = Math.min(maxCols, Math.max(1, sizing.w || 1));
+      const h = Math.max(1, sizing.h || 1);
+      const x = Math.min(Math.max(item.x || 0, 0), maxCols - w);
+      return { ...item, w, h, x, minW: w, maxW: w, minH: h, maxH: h };
+    }
+
+    const w = Math.min(maxCols, Math.max(1, item.w || 1));
+    const x = Math.min(Math.max(item.x || 0, 0), maxCols - w);
+    const h = Math.max(1, item.h || 1);
+    return { ...item, w, h, x, minW: 1, maxW: maxCols, minH: 1, maxH: Infinity };
+  };
+
+  const normalizeLayouts = (layouts) =>
+    Object.fromEntries(
+      BREAKPOINTS.map((bp) => [bp, (layouts[bp] || []).map((item) => clampLayoutItem(item, bp))]),
+    );
+
+  const sanitizeLayouts = (layouts) =>
+    Object.fromEntries(
+      BREAKPOINTS.map((bp) => {
+        const items = layouts[bp] || [];
+        const normalized = items.map((item) => clampLayoutItem(item, bp));
+        const compacted = compactLayout(normalized);
+        const compactedById = Object.fromEntries(compacted.map((item) => [item.i, item]));
+        const hasGaps = normalized.some(
+          (item) => item.y - (compactedById[item.i]?.y ?? item.y) >= 2,
+        );
+        return [bp, !isLayoutValid(items, bp) || hasGaps ? compacted : normalized];
+      }),
+    );
   const isWidgetAlreadyAdded = (key, layout, breakpoint) => {
-    return Boolean(layout[breakpoint].find((item) => item.i == key));
+    return Boolean((layout[breakpoint] || []).find((item) => item.i == key));
   };
 
   const getWidgetsAvailableToBeAdded = (layout, breakpoint) => {
@@ -144,8 +216,9 @@ const Dashboard = () => {
         (widget) => widget?.isEnabled?.() && !isWidgetAlreadyAdded(widget.key, layout, breakpoint),
       );
   };
-  const orgDashboardLayout = getCurrentDashboardLayoutFromOrgPrefs(userData?.dashboardPreferences);
-  const [dashboardLayout, setDashboardLayout] = useState(orgDashboardLayout);
+  const [dashboardLayout, setDashboardLayout] = useState(() =>
+    sanitizeLayouts(userData?.dashboardPreferences || defaultLayout),
+  );
 
   const {
     showModal: showUnsavedModal,
@@ -180,22 +253,16 @@ const Dashboard = () => {
   };
 
   const onAddWidget = (widget, key) => {
-    const newComponent = {
-      i: key,
-      x: 0,
-      static: false,
-      moved: false,
-      y: 10,
-      ...widget.defaultSizing,
-    };
-    const updatedLayouts = {
-      lg: [...dashboardLayout.lg, newComponent],
-      md: [...dashboardLayout.md, newComponent],
-      sm: [...dashboardLayout.sm, newComponent],
-      xs: [...dashboardLayout.xs, newComponent],
-      xxs: [...dashboardLayout.xxs, newComponent],
-    };
-    setDashboardLayout(updatedLayouts);
+    const updated = Object.fromEntries(
+      BREAKPOINTS.map((bp) => {
+        const newItem = clampLayoutItem(
+          { i: key, x: 0, y: Infinity, static: false, moved: false, ...widget.defaultSizing },
+          bp,
+        );
+        return [bp, [...(dashboardLayout[bp] || []), newItem]];
+      }),
+    );
+    setDashboardLayout(sanitizeLayouts(updated));
   };
   const { handleError, handleSuccess } = useNotificationHandlers();
 
@@ -220,16 +287,17 @@ const Dashboard = () => {
   };
   const cancelEditing = () => {
     setIsEditMode(false);
-    setDashboardLayout(orgDashboardLayout);
+    setDashboardLayout(sanitizeLayouts(userData?.dashboardPreferences || defaultLayout));
   };
 
   const saveLayout = () => {
-    return updateLayout(dashboardLayout);
+    return updateLayout(sanitizeLayouts(dashboardLayout));
   };
 
   const resetLayout = () => {
-    setDashboardLayout(defaultLayout);
-    updateLayout(defaultLayout);
+    const normalizedDefaultLayout = sanitizeLayouts(defaultLayout);
+    setDashboardLayout(normalizedDefaultLayout);
+    updateLayout(normalizedDefaultLayout);
   };
   const LayoutActions = {
     START_EDIT: {
@@ -283,24 +351,21 @@ const Dashboard = () => {
     .map(([key, layoutAction]) => ({ key, ...layoutAction }));
 
   const onBreakpointChange = (breakpoint) => {
-    if (!isEditMode) {
-      return;
-    }
     setCurrentBreakpoint(breakpoint);
   };
   useEffect(() => {
-    setDashboardLayout(orgDashboardLayout);
-  }, [orgDashboardLayout]);
+    setDashboardLayout(sanitizeLayouts(userData?.dashboardPreferences || defaultLayout));
+  }, [defaultLayout, userData?.dashboardPreferences]);
 
   const onLayoutChange = (layout, layouts) => {
     if (!isEditMode) {
       return;
     }
-    setDashboardLayout(layouts);
+    setDashboardLayout(normalizeLayouts(layouts));
   };
 
   const widgetsToRenderForLayout = (layout, breakpoint) => {
-    return layout[breakpoint]
+    return (layout[breakpoint] || [])
       .map((layoutItem) => ({
         key: layoutItem.i,
         ...(WIDGETS[layoutItem.i] || {}), // old widgets might still be in the layout and now no longer available
@@ -393,6 +458,7 @@ const Dashboard = () => {
                 breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                 onBreakpointChange={onBreakpointChange}
                 onLayoutChange={onLayoutChange}
+                compactType="vertical"
                 measureBeforeMount={false}
                 style={{
                   backgroundColor: 'transparent',
