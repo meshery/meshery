@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -80,7 +82,7 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	return cg
 }
 
-type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID uuid.UUID, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error
+type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error
 
 // start registration of components for the contexts
 func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, reg *meshmodel.RegistryManager, eventsBrodcaster *Broadcast, provider Provider, userID string, skip bool) {
@@ -114,7 +116,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 
 		event := events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromUser(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
-		err := provider.PersistEvent(*event, nil)
+		err := provider.PersistSystemEvent(*event)
 		if err != nil {
 			// Even if event was not persisted continue with the operation and publish the event to user.
 			cg.log.Warn(err)

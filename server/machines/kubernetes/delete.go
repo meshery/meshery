@@ -5,11 +5,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -35,7 +35,7 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		os.Exit(1)
 	}
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	userUUID := user.ID
 

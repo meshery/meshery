@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/internal/graphql/model"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider, user models.User) (<-chan *model.Event, error) {
@@ -15,7 +15,7 @@ func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider,
 	ch, unsubscribe := r.Config.EventBroadcaster.Subscribe(userID)
 
 	eventsChan := make(chan *model.Event)
-	go func(userID uuid.UUID) {
+	go func(userID core.Uuid) {
 		r.Log.Infof("Events Subscription started for %s", userID)
 		for {
 			select {
@@ -35,7 +35,6 @@ func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider,
 					Metadata:    event.Metadata,
 					Status:      string(event.Status),
 					SystemID:    event.SystemID.String(),
-
 				}
 
 				if event.UserID != nil {

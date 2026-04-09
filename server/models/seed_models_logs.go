@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-
 	"strings"
 
 	gofrs "github.com/gofrs/uuid"
@@ -12,6 +11,7 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	mutils "github.com/meshery/meshkit/utils"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
 )
 
@@ -99,7 +99,7 @@ func failedMsgCompute(failedMsg string, hostName string, regLog *RegistrationFai
 	return failedMsg, nil
 }
 
-func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider *Provider, userID string, ec *Broadcast, regErrorStore *RegistrationFailureLog) (string, error) {
+func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *Provider, userID string, ec *Broadcast, regErrorStore *RegistrationFailureLog) (string, error) {
 	failedMsg, err := failedMsgCompute("", hostname, regErrorStore)
 	if err != nil {
 		return "", err
@@ -114,7 +114,7 @@ func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider 
 			"ViewLink":     filePath,
 			"error":        ErrImportFailure(hostname, failedMsg),
 		})
-		_ = (*provider).PersistEvent(*errorEvent, nil)
+		_ = (*provider).PersistSystemEvent(*errorEvent)
 		if userID != "" {
 			userUUID := gofrs.FromStringOrNil(userID)
 			ec.Publish(userUUID, errorEvent)
@@ -195,7 +195,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()
-		_ = provider.PersistEvent(*successEvent, nil)
+		_ = provider.PersistSystemEvent(*successEvent)
 
 		failLog, err := FailedEventCompute(host.Kind, sysID, &provider, "", handlerConfig.EventBroadcaster, regErrorStore)
 		if err != nil {

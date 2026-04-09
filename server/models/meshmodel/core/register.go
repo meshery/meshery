@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"strings"
 
+	schemacore "github.com/meshery/schemas/models/core"
+
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
@@ -49,7 +51,7 @@ type names struct {
 	Kind string `json:"kind"`
 }
 
-func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context, config []byte, ctxID string, connectionID string, userID string, mesheryInstanceID uuid.UUID, reg *registry.RegistryManager, ec *models.Broadcast, log logger.Handler, ctxName string) (err error) {
+func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context, config []byte, ctxID string, connectionID string, userID string, mesheryInstanceID schemacore.Uuid, reg *registry.RegistryManager, ec *models.Broadcast, log logger.Handler, ctxName string) (err error) {
 	connectionUUID := uuid.FromStringOrNil(connectionID)
 	userUUID := uuid.FromStringOrNil(userID)
 
@@ -96,7 +98,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	}
 	//if want to log we can use the above function in future to log the error in terminal.
 
-	_ = (*provider).PersistEvent(*event, nil)
+	_ = (*provider).PersistSystemEvent(*event)
 	ec.Publish(userUUID, event)
 	return
 }

@@ -6,9 +6,9 @@ import (
 
 	"database/sql"
 
-	"github.com/gofrs/uuid"
 	isql "github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
+	"github.com/meshery/schemas/models/core"
 	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -84,7 +84,7 @@ type StatusApplyConfiguration struct {
 
 // MesheryPattern represents the patterns that needs to be saved
 type MesheryPattern struct {
-	ID *uuid.UUID `json:"id,omitempty"`
+	ID *core.Uuid `json:"id,omitempty"`
 
 	Name        string `json:"name,omitempty"`
 	PatternFile string `json:"patternFile"`
@@ -106,14 +106,14 @@ type MesheryPattern struct {
 	DownloadCount   int       `json:"download_count" db:"download_count"`
 	CloneCount      int       `json:"clone_count" db:"clone_count"`
 	DeploymentCount int       `json:"deployment_count" db:"deployment_count"`
-	WorkspaceID     uuid.UUID `json:"workspace_id,omitempty" db:"-"`
-	OrgID           uuid.UUID `json:"orgId,omitempty" db:"-"`
+	WorkspaceID     core.Uuid `json:"workspace_id,omitempty" db:"-"`
+	OrgID           core.Uuid `json:"orgId,omitempty" db:"-"`
 }
 
 // MesheryCatalogPatternRequestBody refers to the type of request body
 // that PublishCatalogPattern would receive
 type MesheryCatalogPatternRequestBody struct {
-	ID          uuid.UUID `json:"id,omitempty"`
+	ID          core.Uuid `json:"id,omitempty"`
 	CatalogData isql.Map  `json:"catalog_data,omitempty"`
 }
 
@@ -145,5 +145,5 @@ func GetPatternName(stringifiedFile string) (string, error) {
 
 type MesheryPatternFileDeployPayload struct {
 	PatternFile string    `json:"pattern_file"`
-	PatternID   uuid.UUID `json:"pattern_id"`
+	PatternID   core.Uuid `json:"pattern_id"`
 }

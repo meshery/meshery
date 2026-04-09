@@ -23,6 +23,7 @@ import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-
 import { useSelector, useDispatch } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
+import { normalizeLoadTestPrefs } from '../../lib/load-test-prefs';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
 
@@ -87,8 +88,8 @@ const MesherySettingsPerformanceComponent = () => {
         setTError('error-autocomplete-value');
         return;
       }
-    } catch(e) {
-      console.error("[MesherySettingsPerformance] autocomplete error:", e);
+    } catch (e) {
+      console.error('[MesherySettingsPerformance] autocomplete error:', e);
       setTError('error-autocomplete-value');
       return;
     }
