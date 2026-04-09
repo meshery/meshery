@@ -8,7 +8,7 @@
       "name": "minikube",
       "kind": "kubernetes",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "connected",
       "metadata": {
         "server_version": "v1.29.0",
@@ -22,7 +22,7 @@
       "name": "playground-context",
       "kind": "kubernetes",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "deleted",
       "metadata": {
         "server_version": "v1.29.0",
@@ -36,7 +36,7 @@
       "name": "meshery-ex1",
       "kind": "meshery",
       "type": "platform",
-      "sub_type": "cluster",
+      "subType": "cluster",
       "status": "connected",
       "metadata": {
         "server_version": "v1.29.0",

@@ -12,6 +12,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	patternv1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
+	viewv1beta1 "github.com/meshery/schemas/models/v1beta1/view"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"gorm.io/gorm"
 )
@@ -85,15 +86,29 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&workspacesFetched)
 	}
 
+	// Convert fetched workspaces to AvailableWorkspace type
+	availableWorkspaces := make([]workspace.AvailableWorkspace, 0, len(workspacesFetched))
+	for _, ws := range workspacesFetched {
+		aw := workspace.AvailableWorkspace{
+			CreatedAt:      ws.CreatedAt,
+			DeletedAt:      ws.DeletedAt,
+			Description:    ws.Description,
+			ID:             ws.ID,
+			Name:           ws.Name,
+			OrganizationId: uuid.UUID(ws.OrganizationID),
+			OwnerId:        ws.Owner,
+			UpdatedAt:      ws.UpdatedAt,
+		}
+		availableWorkspaces = append(availableWorkspaces, aw)
+	}
+
 	// Prepare the response
 	workspacesPage := &workspace.WorkspacePage{
 		Page:       int(pageUint),
 		PageSize:   len(workspacesFetched),
 		TotalCount: int(count),
-		Workspaces: make([]workspace.Workspace, 0, len(workspacesFetched)),
+		Workspaces: availableWorkspaces,
 	}
-
-	workspacesPage.Workspaces = append(workspacesPage.Workspaces, workspacesFetched...)
 
 	// Marshal the response to JSON
 	wsJSON, err := json.Marshal(workspacesPage)
@@ -186,16 +201,22 @@ func (wp *WorkspacePersister) GetWorkspaceByID(workspaceID uuid.UUID) ([]byte, e
 }
 
 // UpdateWorkspaceByID updates a single workspace by ID
-func (wp *WorkspacePersister) UpdateWorkspace(workspaceID uuid.UUID, payload *workspace.WorkspacePayload) (*workspace.Workspace, error) {
+func (wp *WorkspacePersister) UpdateWorkspace(workspaceID uuid.UUID, payload *workspace.WorkspaceUpdatePayload) (*workspace.Workspace, error) {
 	ws, err := wp.GetWorkspace(workspaceID)
 	if err != nil {
 		return nil, err
 	}
 
-	ws.Name = payload.Name
-	ws.Description = payload.Description
-	organizationID := payload.OrganizationID
-	ws.OrganizationID = &organizationID
+	if payload.Name != "" {
+		ws.Name = payload.Name
+	}
+	if payload.Description != "" {
+		ws.Description = payload.Description
+	}
+	organizationID := uuid.UUID(payload.OrganizationID)
+	if organizationID != uuid.Nil {
+		ws.OrganizationID = organizationID
+	}
 
 	return wp.UpdateWorkspaceByID(ws)
 }
@@ -250,7 +271,6 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, se
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
 	}
-	fmt.Println("got here")
 	// Parse the filter parameter
 	var workspaceFilter WorkspaceFilter
 	workspaceFilter.Assigned = true // Default to true
@@ -291,7 +311,6 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, se
 
 	count := int64(0)
 	query.Count(&count)
-	fmt.Println("count done")
 
 	if page == "" {
 		page = "0"
@@ -517,4 +536,275 @@ func schemaMesheryPatterns(patterns []*MesheryPattern) ([]patternv1beta1.Meshery
 	}
 
 	return decoded, nil
+}
+
+func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID uuid.UUID) ([]byte, error) {
+	wsViewMapping := workspace.WorkspacesViewsMapping{
+		ViewId:      viewID,
+		WorkspaceId: workspaceID,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil, ErrGenerateUUID(err)
+	}
+	wsViewMapping.ID = id
+
+	if err := wp.DB.Create(wsViewMapping).Error; err != nil {
+		return nil, ErrDBCreate(err)
+	}
+
+	wsJSON, err := json.Marshal(wsViewMapping)
+	if err != nil {
+		return nil, err
+	}
+
+	return wsJSON, nil
+}
+
+func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID uuid.UUID) ([]byte, error) {
+	var wsViewMapping workspace.WorkspacesViewsMapping
+
+	if err := wp.DB.Where("workspace_id = ? AND view_id = ?", workspaceID, viewID).First(&wsViewMapping).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, ErrDBRead(err)
+	}
+
+	if err := wp.DB.Delete(&wsViewMapping).Error; err != nil {
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+	}
+
+	wsJSON, err := json.Marshal(wsViewMapping)
+	if err != nil {
+		return nil, err
+	}
+
+	return wsJSON, nil
+}
+
+func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID uuid.UUID, search, order, page, pageSize, filter string) ([]byte, error) {
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	if order == "" {
+		order = defaultOrderUpdatedAtDesc
+	}
+
+	var workspaceFilter WorkspaceFilter
+	workspaceFilter.Assigned = true
+	if filter != "" {
+		err := json.Unmarshal([]byte(filter), &workspaceFilter)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	query := wp.DB.Table("meshery_views AS v").Select("*")
+
+	if workspaceFilter.Assigned {
+		query = query.Where("EXISTS (SELECT 1 FROM workspaces_views_mappings AS wvm WHERE v.id = wvm.view_id AND wvm.workspace_id = ? AND wvm.deleted_at IS NULL)", workspaceID)
+	} else {
+		query = query.Joins("LEFT JOIN workspaces_views_mappings AS wvm ON v.id = wvm.view_id AND wvm.workspace_id = ?", workspaceID).
+			Where("wvm.workspace_id IS NULL")
+	}
+
+	if workspaceFilter.DeletedAt {
+		query = query.Where("v.deleted_at IS NOT NULL")
+	} else {
+		query = query.Where("v.deleted_at IS NULL")
+	}
+
+	if search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		query = query.Where("lower(v.name) LIKE ?", like)
+	}
+
+	dynamicKeys := []string{"owner", "organization_id"}
+	query = utils.ApplyFilters(query, filter, dynamicKeys)
+	query = query.Order(order)
+
+	count := int64(0)
+	query.Count(&count)
+
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	viewsFetched := []workspace.MesheryView{}
+	pageUint, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return nil, err
+	}
+
+	if pageSize == "all" {
+		query.Find(&viewsFetched)
+	} else {
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		if err != nil {
+			return nil, err
+		}
+		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&viewsFetched)
+	}
+
+	viewsPage := &viewv1beta1.MesheryViewPage{
+		Page:       int(pageUint),
+		PageSize:   len(viewsFetched),
+		TotalCount: int(count),
+		Views:      viewsFetched,
+	}
+
+	viewsJSON, err := json.Marshal(viewsPage)
+	if err != nil {
+		return nil, err
+	}
+
+	return viewsJSON, nil
+}
+
+func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID uuid.UUID) ([]byte, error) {
+	wsTeamMapping := workspace.WorkspacesTeamsMapping{
+		TeamId:      teamID,
+		WorkspaceId: workspaceID,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil, ErrGenerateUUID(err)
+	}
+	wsTeamMapping.ID = id
+
+	if err := wp.DB.Create(wsTeamMapping).Error; err != nil {
+		return nil, ErrDBCreate(err)
+	}
+
+	wsJSON, err := json.Marshal(wsTeamMapping)
+	if err != nil {
+		return nil, err
+	}
+
+	return wsJSON, nil
+}
+
+func (wp *WorkspacePersister) DeleteTeamFromWorkspace(workspaceID, teamID uuid.UUID) ([]byte, error) {
+	var wsTeamMapping workspace.WorkspacesTeamsMapping
+
+	if err := wp.DB.Where("workspace_id = ? AND team_id = ?", workspaceID, teamID).First(&wsTeamMapping).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, ErrDBRead(err)
+	}
+
+	if err := wp.DB.Delete(&wsTeamMapping).Error; err != nil {
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+	}
+
+	wsJSON, err := json.Marshal(wsTeamMapping)
+	if err != nil {
+		return nil, err
+	}
+
+	return wsJSON, nil
+}
+
+func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID uuid.UUID, search, order, page, pageSize, filter string) ([]byte, error) {
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	if order == "" {
+		order = defaultOrderUpdatedAtDesc
+	}
+
+	var workspaceFilter WorkspaceFilter
+	workspaceFilter.Assigned = true
+	if filter != "" {
+		err := json.Unmarshal([]byte(filter), &workspaceFilter)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	query := wp.DB.Table("teams AS t").Select("*")
+
+	if workspaceFilter.Assigned {
+		query = query.Where("EXISTS (SELECT 1 FROM workspaces_teams_mappings AS wtm WHERE t.id = wtm.team_id AND wtm.workspace_id = ? AND wtm.deleted_at IS NULL)", workspaceID)
+	} else {
+		query = query.Joins("LEFT JOIN workspaces_teams_mappings AS wtm ON t.id = wtm.team_id AND wtm.workspace_id = ?", workspaceID).
+			Where("wtm.workspace_id IS NULL")
+	}
+
+	if workspaceFilter.DeletedAt {
+		query = query.Where("t.deleted_at IS NOT NULL")
+	} else {
+		query = query.Where("t.deleted_at IS NULL")
+	}
+
+	if search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		query = query.Where("lower(t.name) LIKE ?", like)
+	}
+
+	dynamicKeys := []string{"owner", "organization_id"}
+	query = utils.ApplyFilters(query, filter, dynamicKeys)
+	query = query.Order(order)
+
+	count := int64(0)
+	query.Count(&count)
+
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	type Team struct {
+		ID        uuid.UUID  `json:"id" db:"id"`
+		Name      string     `json:"name" db:"name"`
+		CreatedAt time.Time  `json:"created_at" db:"created_at"`
+		UpdatedAt time.Time  `json:"updated_at" db:"updated_at"`
+		DeletedAt *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
+	}
+
+	teamsFetched := []Team{}
+	pageUint, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return nil, err
+	}
+
+	if pageSize == "all" {
+		query.Find(&teamsFetched)
+	} else {
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		if err != nil {
+			return nil, err
+		}
+		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&teamsFetched)
+	}
+
+	type TeamPage struct {
+		Page       int    `json:"page"`
+		PageSize   int    `json:"page_size"`
+		TotalCount int    `json:"total_count"`
+		Teams      []Team `json:"teams"`
+	}
+
+	teamsPage := &TeamPage{
+		Page:       int(pageUint),
+		PageSize:   len(teamsFetched),
+		TotalCount: int(count),
+		Teams:      teamsFetched,
+	}
+
+	teamsJSON, err := json.Marshal(teamsPage)
+	if err != nil {
+		return nil, err
+	}
+
+	return teamsJSON, nil
 }

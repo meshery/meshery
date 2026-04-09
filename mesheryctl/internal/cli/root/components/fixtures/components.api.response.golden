@@ -20,9 +20,9 @@
         "registrant": {
           "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
           "name": "Artifact Hub",
-          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "credentialId": "00000000-0000-0000-0000-000000000000",
           "type": "registry",
-          "sub_type": "",
+          "subType": "",
           "kind": "artifacthub",
           "status": "registered",
           "user_id": "00000000-0000-0000-0000-000000000000",

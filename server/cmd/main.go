@@ -247,6 +247,8 @@ func main() {
 		workspace.Workspace{},
 		workspace.WorkspacesEnvironmentsMapping{},
 		workspace.WorkspacesDesignsMapping{},
+		workspace.WorkspacesTeamsMapping{},
+		workspace.WorkspacesViewsMapping{},
 		_events.Event{},
 	)
 	if err != nil {

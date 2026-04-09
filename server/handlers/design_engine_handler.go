@@ -35,20 +35,6 @@ import (
 	patternHelpers "github.com/meshery/meshkit/models/patterns"
 )
 
-// swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
-// Handle POST request for Pattern Deploy
-//
-// Deploy an attached pattern with the request
-// responses:
-// 	200:
-
-// swagger:route DELETE /api/pattern/deploy PatternsAPI idDeleteDeployPattern
-// Handle DELETE request for Pattern Deploy
-//
-// Delete a deployed pattern with the request
-// responses:
-// 	200:
-
 // PatternFileHandler handles the requested related to pattern files
 func (h *Handler) PatternFileHandler(
 	rw http.ResponseWriter,
@@ -58,7 +44,12 @@ func (h *Handler) PatternFileHandler(
 	provider models.Provider,
 ) {
 	userID := user.ID
-	// token, _ := r.Context().Value(models.TokenCtxKey).(string)
+	token, ok := r.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		h.log.Error(ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token")))
+		http.Error(rw, ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token")).Error(), http.StatusInternalServerError)
+		return
+	}
 	var payload models.MesheryPatternFileDeployPayload
 	var patternFileByte []byte
 
@@ -105,7 +96,7 @@ func (h *Handler) PatternFileHandler(
 	if err != nil {
 		err = ErrPatternFile(err)
 		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
@@ -121,7 +112,7 @@ func (h *Handler) PatternFileHandler(
 		}, eventBuilder)
 
 		event := eventBuilder.Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		if err != nil {
@@ -188,7 +179,7 @@ func (h *Handler) PatternFileHandler(
 		}
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(err)
@@ -215,7 +206,7 @@ func (h *Handler) PatternFileHandler(
 		event = eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
 	}
 
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go func() {
 		h.config.EventBroadcaster.Publish(userID, event)
 

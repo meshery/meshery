@@ -190,7 +190,7 @@ func (ep *EnvironmentPersister) UpdateEnvironment(environmentID uuid.UUID, paylo
 
 	env.Name = payload.Name
 	env.Description = payload.Description
-	env.OrganizationID = uuid.FromStringOrNil(payload.OrgId)
+	env.OrganizationID = uuid.UUID(payload.OrgId)
 
 	return ep.UpdateEnvironmentByID(env)
 }

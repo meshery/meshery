@@ -321,7 +321,17 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 	// resetting this value as a specific controller handler instance does not have any significance opposed to
 	// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
 
-	cfg, _ := ctx.GenerateKubeConfig()
+	cfg, err := ctx.GenerateKubeConfig()
+	if err != nil {
+		mch.log.Error(err)
+		mch.emitErrorEvent("Failed to generate kubeconfig", err, map[string]any{
+			"k8sContextID":   ctx.ID,
+			"k8sContextName": ctx.Name,
+			"connectionID":   ctx.ConnectionID,
+		}, uuid.Nil)
+		return mch
+	}
+
 	client, err := mesherykube.New(cfg)
 	// means that the config is invalid
 	if err != nil {
@@ -331,6 +341,7 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 			"k8sContextName": ctx.Name,
 			"connectionID":   ctx.ConnectionID,
 		}, uuid.Nil)
+		return mch
 	}
 
 	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{
@@ -659,7 +670,7 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 
 		if mch.provider != nil {
 			if shouldPersistControllerEvent(userID, actedUpon) {
-				if err := mch.provider.PersistEvent(*event, nil); err != nil {
+				if err := mch.provider.PersistSystemEvent(*event); err != nil {
 					mch.log.Error(fmt.Errorf("failed to persist event: %w", err))
 				}
 			} else {

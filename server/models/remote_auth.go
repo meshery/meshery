@@ -31,6 +31,12 @@ const (
 
 	// Stores the remote provider session cookie (identity cookie) to facilitate logout from remote provider as user logs out of Meshery
 	ProviderSessionCookieName = "session_cookie"
+
+	// Tracks the number of consecutive auth redirect attempts to detect and break redirect loops
+	AuthRetryCookieName = "meshery_auth_retries"
+
+	// Maximum number of auth redirect attempts before breaking the loop
+	MaxAuthRetries = 3
 )
 
 // JWK - a type respresting the JSON web Key
@@ -457,4 +463,37 @@ func (l *RemoteProvider) SetProviderSessionCookie(w http.ResponseWriter, session
 
 func (l *RemoteProvider) UnSetProviderSessionCookie(w http.ResponseWriter) {
 	unsetCookie(w, ProviderSessionCookieName)
+}
+
+// GetAuthRetryCount reads the auth retry counter from the request cookie.
+// Returns 0 if the cookie is missing or malformed.
+func GetAuthRetryCount(req *http.Request) int {
+	ck, err := req.Cookie(AuthRetryCookieName)
+	if err != nil {
+		return 0
+	}
+	count := 0
+	_, _ = fmt.Sscanf(ck.Value, "%d", &count)
+	if count < 0 {
+		count = 0
+	}
+	return count
+}
+
+// SetAuthRetryCookie sets the auth retry counter cookie with a short TTL.
+// The short TTL ensures stale counters are automatically cleaned up.
+func SetAuthRetryCookie(w http.ResponseWriter, count int) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     AuthRetryCookieName,
+		Value:    fmt.Sprintf("%d", count),
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   120, // 2 minutes — enough to detect loops, auto-cleans after
+	})
+}
+
+// ClearAuthRetryCookie removes the auth retry counter cookie.
+// Called after a successful authentication to reset the counter.
+func ClearAuthRetryCookie(w http.ResponseWriter) {
+	unsetCookie(w, AuthRetryCookieName)
 }

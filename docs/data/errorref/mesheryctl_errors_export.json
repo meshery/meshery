@@ -1838,6 +1838,60 @@
         "short_description": "Error in writing config",
         "probable_cause": "Unable to write to config file",
         "suggested_remediation": "Ensure that you have the correct permissions to write to the config file at `$HOME/.meshery/config.yaml`."
+      },
+      "1223": {
+        "name": "ErrDockerComposeFileMissingCode",
+        "code": "1223",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Docker Compose file not found",
+        "probable_cause": "Docker Compose file is missing from the Meshery folder",
+        "suggested_remediation": "Run `mesheryctl system start` again to download and generate docker-compose file based on your context"
+      },
+      "1224": {
+        "name": "ErrDockerComposeClientCode",
+        "code": "1224",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to create Docker Compose client",
+        "probable_cause": "Unable to initialize the Docker Compose client, which is required for managing Docker-based Meshery deployments",
+        "suggested_remediation": "Ensure that Docker is installed and running on your system, and that you have the necessary permissions to access the Docker API"
+      },
+      "1225": {
+        "name": "ErrDockerComposeRemoveCode",
+        "code": "1225",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to delete Meshery containers",
+        "probable_cause": "An error occurred while trying to delete Meshery containers using Docker Compose",
+        "suggested_remediation": "Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder. If the issue persists, check the Docker and Docker Compose configuration and logs for more details."
+      },
+      "1226": {
+        "name": "ErrDockerComposeLogsCode",
+        "code": "1226",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to fetch logs from Meshery containers",
+        "probable_cause": "An error occurred while trying to fetch logs from Meshery containers using Docker Compose",
+        "suggested_remediation": "Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder. If the issue persists, check the Docker and Docker Compose configuration and logs for more details."
+      },
+      "1227": {
+        "name": "ErrMesheryCheckRunningStatusCode",
+        "code": "1227",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to check if Meshery is running",
+        "probable_cause": "You are not on correct context. \nMeshery is not reachable. \nThere might be some issue with your Docker or Kubernetes environment. ",
+        "suggested_remediation": "Please ensure Meshery is installed. \nValidate that you are in the correct context. "
+      },
+      "1229": {
+        "name": "ErrLogoutCode",
+        "code": "1229",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Logout failed",
+        "probable_cause": "Unable to complete the logout operation",
+        "suggested_remediation": "Check the token file path and permissions. The underlying error will provide more details."
       }
     }
   }
