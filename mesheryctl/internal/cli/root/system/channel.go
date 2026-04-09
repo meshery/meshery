@@ -16,13 +16,13 @@ package system
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -45,47 +45,53 @@ func IsBetaOrStable(str string) bool {
 var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view release channel and version",
-	Long:  `View release channel and version of context in focus`,
+	Long: `View release channel and version of context in focus
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/view`,
 	Example: `
 // View current release channel
-mesheryctl system channel view
+mesheryctl system channel view edge
+
+// View release channel for all contexts
+mesheryctl system channel view --all
 	`,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return errors.New(utils.SystemChannelSubError("this command takes no arguments.\n", "view"))
+			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("No argument expected.\n", "view")))
 		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-		focusedContext := tempContext
-		if focusedContext == "" {
-			focusedContext = mctlCfg.CurrentContext
+			return err
 		}
 
+		focusedContext := focusedSystemContext(cmd, mctlCfg.CurrentContext)
+
 		if showForAllContext {
-			for k, v := range mctlCfg.Contexts {
-				log.Println(PrintChannelAndVersionToStdout(v, k))
-				log.Println()
+			keys := make([]string, 0, len(mctlCfg.Contexts))
+			for contextName := range mctlCfg.Contexts {
+				keys = append(keys, contextName)
 			}
-			log.Printf("Current Context: %v", focusedContext)
+			sort.Strings(keys)
+
+			for _, contextName := range keys {
+				utils.Log.Infof("%s\n", PrintChannelAndVersionToStdout(mctlCfg.Contexts[contextName], contextName))
+			}
+			utils.Log.Infof("Current Context: %v", focusedContext)
 			return nil
 		}
 
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
-			utils.Log.Error(ErrSetCurrentContext(err))
-			return nil
+			return ErrSetCurrentContext(err)
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
-		log.Print(PrintChannelAndVersionToStdout(*currCtx, focusedContext))
-		log.Println()
+		utils.Log.Infof("%s\n", PrintChannelAndVersionToStdout(*currCtx, focusedContext))
 		return nil
 	},
 }
@@ -93,26 +99,22 @@ mesheryctl system channel view
 var setCmd = &cobra.Command{
 	Use:   "set [stable|stable-version|edge|edge-version]",
 	Short: "set release channel and version",
-	Long:  `Set release channel and version of context in focus`,
+	Long: `Set release channel and version of context in focus
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/set`,
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Please provide either 'stable' or 'edge' release channel. Usage: mesheryctl system channel set [stable|stable-version|edge|edge-version]`
-		if len(args) == 0 {
-			return fmt.Errorf("release channel not specified\n\n%v", errMsg)
-		} else if len(args) > 1 {
-			return fmt.Errorf("too many arguments.\n\n%v", errMsg)
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", "set")))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		focusedContext := mctlCfg.CurrentContext
@@ -126,8 +128,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 		channelNameSeperated := strings.SplitN(channelVersion, "-", 2)
 
 		if !IsBetaOrStable(channelNameSeperated[0]) {
-			return errors.New("No release channel subscription found. " +
-				"Please subscribe to either the 'stable' or 'edge' release channel")
+			return ErrSystemSetInvalidReleaseChannel(channelNameSeperated[0])
 		}
 
 		version := "latest"
@@ -136,7 +137,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 			switch channelNameSeperated[0] {
 			case "edge":
 				if channelNameSeperated[1] != "latest" {
-					return errors.New("edge channel only supports latest as version argument")
+					return ErrSystemSetInvalidEdgeRelease(channelNameSeperated[1])
 				}
 			case "stable":
 				if channelNameSeperated[1] != "latest" {
@@ -149,8 +150,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 		ContextContent, ok := mctlCfg.Contexts[focusedContext]
 		if !ok {
-			utils.Log.Error(ErrContextContent())
-			return nil
+			return ErrContextContent()
 		}
 
 		ContextContent.Version = version
@@ -158,18 +158,17 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 		err = ContextContent.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			// TODO: Move to proper meshkit error
+			return err
 		}
 
 		mctlCfg.Contexts[focusedContext] = ContextContent
 		viper.Set("contexts", mctlCfg.Contexts)
 		err = viper.WriteConfig()
 		if err != nil {
-			utils.Log.Error(ErrWriteConfig(err))
-			return nil
+			return ErrWriteConfig(err)
 		}
-		log.Infof("Channel set to %s-%s", ContextContent.Channel, ContextContent.Version)
+		utils.Log.Infof("Channel set to %s-%s", ContextContent.Channel, ContextContent.Version)
 		return nil
 	},
 }
@@ -177,20 +176,12 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 var switchCmd = &cobra.Command{
 	Use:   "switch [stable|stable-version|edge|edge-version]",
 	Short: "switch release channel and version",
-	Long:  `Switch release channel and version of context in focus`,
+	Long: `Switch release channel and version of context in focus
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/switch`,
 	Example: `
 // Switch between release channels
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
-	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Please provide either 'stable' or 'edge' release channel. Usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]`
-		if len(args) == 0 {
-			return fmt.Errorf("release channel not specified\n\n%v", errMsg)
-		} else if len(args) > 1 {
-			return fmt.Errorf("too many arguments.\n\n%v", errMsg)
-		}
-		return nil
-	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -200,18 +191,23 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		return hc.RunPreflightHealthChecks()
 	},
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError("Only one release channel can be specified as an argument.\n", "switch")))
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		userResponse := false
-
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			return err
 		}
+
 		focusedContext := tempContext
 		if focusedContext == "" {
 			focusedContext = mctlCfg.CurrentContext
@@ -226,19 +222,16 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		}
 
 		if !userResponse {
-			utils.Log.Error(ErrSwitchChannelResponse())
-			return nil
+			return ErrSwitchChannelResponse()
 		}
 
 		err = setCmd.RunE(cmd, args)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		err = restartCmd.RunE(cmd, args)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		return nil
 	},
@@ -248,7 +241,8 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: "Switch between release channels",
-	Long:  `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.`,
+	Long: `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel`,
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel
@@ -268,8 +262,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		// If no subcommands are provided, show usage
@@ -279,9 +272,8 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 		// If an invalid subcommand is provided, return error
 		if !utils.IsValidSubcommand(availableSubcommands, args[0]) {
-			return errors.New(utils.SystemChannelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [set/switch/view]. Use 'mesheryctl system channel --help' to display usage guide.\n", args[0]), "channel"))
+			return utils.ErrInvalidArgument(errors.New(utils.SystemChannelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [set/switch/view]. Use 'mesheryctl system channel --help' to display usage guide.\n", args[0]), "channel")))
 		}
-
 		return nil
 	},
 }

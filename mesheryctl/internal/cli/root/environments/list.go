@@ -38,7 +38,7 @@ var listEnvironmentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered environments",
 	Long: `List detailed information of all registered environments
-Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/list`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/list`,
 	Example: `
 // List all registered environment
 mesheryctl environment list --orgID [orgID]

@@ -1,0 +1,29 @@
+version: 0.0.109
+name: expose-kubernetes-app-with-nginx-ingress
+displayName: Expose Kubernetes App with NGINX Ingress
+createdAt: "2025-08-30T13:36:15Z"
+description: |-
+    This design demonstrates deploying a sample NGINX app in Kubernetes and exposing it via NGINX Ingress.
+
+    Tags: Kubernetes, NGINX, Ingress, Tutorial, Meshery
+
+    Mark it as Public and click Publish.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/dbc5cf33-6db9-4644-a5aa-c8df5ffaf0a6/0.0.109/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 10cc20f2-e63f-4071-8ce0-4f42274c8cc1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/dbc5cf33-6db9-4644-a5aa-c8df5ffaf0a6-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/dbc5cf33-6db9-4644-a5aa-c8df5ffaf0a6-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

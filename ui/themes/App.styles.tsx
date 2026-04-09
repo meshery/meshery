@@ -34,15 +34,22 @@ export const StyledMainContent = styled('main')(({ theme }) => ({
   },
 }));
 
-export const StyledAppContent = styled('div')(({ theme, canShowNav }) => ({
+export const StyledAppContent = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed' && prop !== 'canShowNav',
+})(({ theme, canShowNav, isDrawerCollapsed }) => ({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
   overflowX: 'hidden',
   overflowY: 'hidden',
+
   [theme.breakpoints.down('sm')]: {
     marginLeft: canShowNav ? '4.25rem' : '0',
+  },
+
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: isDrawerCollapsed && canShowNav ? 68 : 0,
   },
 }));
 

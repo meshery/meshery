@@ -1,0 +1,39 @@
+version: 0.0.21
+name: redis-php-guestbook
+displayName: Redis PHP Guestbook
+createdAt: "2024-10-22T11:59:52Z"
+description: |-
+    This desgin shows you how to build and deploy a simple (not production ready), multi-tier web application using Kubernetes and Docker. This example consists of the following components:
+
+    1. A single-instance Redis to store guestbook entries
+    2. Multiple web frontend instances
+
+
+    **Creating the Redis leader Service**
+
+    The guestbook application needs to communicate to the Redis to write its data. You need to apply a Service to proxy the traffic to the Redis Pod. A Service defines a policy to access the Pods.
+
+    **Set up Redis followers**
+    Although the Redis leader is a single Pod, you can make it highly available and meet traffic demands by adding a few Redis followers, or replicas.
+
+    **Creating the Redis follower service**
+    The guestbook application needs to communicate with the Redis followers to read data. To make the Redis followers discoverable, you must set up another Service.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/307373c2-a096-4b52-841e-fc18c3a5d17f/0.0.21/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "None \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: ff1f8398-e501-4bb2-817f-80edffd0d37b
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/307373c2-a096-4b52-841e-fc18c3a5d17f-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/307373c2-a096-4b52-841e-fc18c3a5d17f-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

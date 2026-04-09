@@ -8,7 +8,7 @@ Creating sample credentials...
 Created test-case-aws-dynamodb-controller model at test-case-aws-dynamodb-controller
 
 Next steps:
-1. cd test-case-aws-dynamodb-controller
+1. cd test-case-aws-dynamodb-controller/v0.1.0
 2. Edit model.yaml to customize your model configuration
 3. Add your components in the components/ directory
 4. Define relationships in relationships/ directory

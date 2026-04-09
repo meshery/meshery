@@ -21,13 +21,6 @@ export function mergeMesheryController(currentState, newData) {
     ...currentState.filter((data) => {
       for (let newControllerData of newData) {
         if (isControllerObjectEqual(newControllerData, data)) {
-          console.log(
-            'CONTROLLER INSIDE MERGE LOOP: ',
-            newControllerData.controller,
-            data.controller,
-            newControllerData?.status,
-            data?.status,
-          );
           return false;
         }
       }

@@ -45,12 +45,12 @@ setup() {
 
     #Extract connection ID if present and store it in temp dir
     CONNECTION_ID=$(
-        echo "$output" |
-        grep -oE '"connection_id"\s*:\s*"[^"]+"' |
-        cut -d '"' -f 4
-    )
-    [ -n "$CONNECTION_ID" ] || skip "No ID found in output"
+        echo "$output" \
+        | grep -o '"connection_id":"[^"]*"' \
+        | head -n1 \
+        | cut -d'"' -f4
+)
+    [ -n "$CONNECTION_ID" ] || skip "No connected connection found"
 
     echo "$CONNECTION_ID" > "$TESTDATA_DIR/id"
-
 }

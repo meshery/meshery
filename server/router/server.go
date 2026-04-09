@@ -6,10 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-openapi/runtime/middleware"
-    "go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 )
 
 // Router represents Meshery router
@@ -66,7 +65,11 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/user", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserHandler), models.ProviderAuth))).
 		Methods("GET")
+	gMux.Handle("/api/identity/users/profile", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserHandler), models.ProviderAuth))).
+		Methods("GET")
 	gMux.Handle("/api/user/profile/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUserByIDHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/identity/users/profile/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUserByIDHandler), models.ProviderAuth))).
 		Methods("GET")
 
 	gMux.Handle("/api/identity/users", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUsers), models.ProviderAuth))).
@@ -204,6 +207,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/meshmodels/categories", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelCategories), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/models", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModels), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/models/{model}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModelsByName), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/models/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteModel), models.ProviderAuth))).Methods("DELETE")
 
 	gMux.Handle("/api/meshmodels/registrants", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelRegistrants), models.NoAuth))).Methods("GET")
 
@@ -345,6 +349,22 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET")
 	gMux.Handle("/api/workspaces/{id}/designs/{designID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AddDesignToWorkspaceHandler), models.ProviderAuth))).
 		Methods("POST")
+	gMux.Handle("/api/workspaces/{id}/designs/{designID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveDesignFromWorkspaceHandler), models.ProviderAuth))).
+		Methods("DELETE")
+
+	gMux.Handle("/api/workspaces/{id}/views", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetViewsOfWorkspaceHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/workspaces/{id}/views/{viewID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AddViewToWorkspaceHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/workspaces/{id}/views/{viewID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveViewFromWorkspaceHandler), models.ProviderAuth))).
+		Methods("DELETE")
+
+	gMux.Handle("/api/workspaces/{id}/teams", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetTeamsOfWorkspaceHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/workspaces/{id}/teams/{teamID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AddTeamToWorkspaceHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/workspaces/{id}/teams/{teamID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveTeamFromWorkspaceHandler), models.ProviderAuth))).
+		Methods("DELETE")
 
 	gMux.Handle("/api/identity/orgs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetOrganizations), models.ProviderAuth))).
 		Methods("GET")
@@ -425,11 +445,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.HandleFunc("/healthz/live", h.K8sHealthzHandler).Methods("GET")
 	gMux.HandleFunc("/healthz/ready", h.K8sHealthzHandler).Methods("GET")
 
-	// Swagger Interactive Playground
-	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
-	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
-	gMux.Handle("/swagger.yaml", http.FileServer(http.Dir("../helpers/")))
-	gMux.Handle("/docs", swaggerSh)
 	fs := http.FileServer(http.Dir("../../ui"))
 	gMux.PathPrefix("/ui/public/static/img/meshmodels").Handler(http.StripPrefix("/ui/", fs)).Methods("GET")
 	gMux.PathPrefix("/").

@@ -1,0 +1,24 @@
+version: 0.0.643
+name: oracle-e-commerce-microservices-on-kubernetes
+displayName: Oracle e-commerce microservices on kubernetes
+createdAt: "2025-10-30T07:47:08Z"
+description: This design illustrates an Oracle E-commerce microservices architecture deployed on Oracle Cloud Infrastructure (OCI) using Oracle Kubernetes Engine (OKE). It features multiple microservices for user management, orders, payments, and catalog operations, all managed through an OCI Load Balancer. The setup ensures scalability, security, and efficient data handling using Oracle Autonomous Database and OCI Object Storage.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/10caf581-6498-4a1f-a00a-76011b60af48/0.0.643/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design requires careful monitoring of microservice dependencies and network communication within OKE to prevent latency or service failures. Proper load balancing, database scaling, and secure access control are crucial for performance and reliability. Cost management for compute and storage resources, along with continuous monitoring and automated scaling, should be considered to maintain efficiency and high availability. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c191d146-dd71-44ac-8ef9-bccac10068fe
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/10caf581-6498-4a1f-a00a-76011b60af48-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/10caf581-6498-4a1f-a00a-76011b60af48-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

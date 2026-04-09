@@ -1,0 +1,20 @@
+version: 0.0.1
+name: prometheus-monitoring-ns
+displayName: Prometheus-monitoring-ns
+createdAt: "2023-08-27T20:52:24Z"
+description: This is a simple prometheus montioring design
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/36f6c6df-7a99-420f-8d4d-fe0b2dffa5f9/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Networking should be properly configured to enable communication between the frontend and backend components of the app. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a551897f-da39-4d4d-812e-6b299e82c457
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

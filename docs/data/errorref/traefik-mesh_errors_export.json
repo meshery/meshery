@@ -1,0 +1,215 @@
+{
+  "errors_export": {
+    "component_name": "meshery-traefik-mesh",
+    "component_type": "adapter",
+    "errors": {
+      "1012": {
+        "name": "ErrApplyHelmChartCode",
+        "code": "1012",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while applying Helm Chart",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1013": {
+        "name": "ErrNilClientCode",
+        "code": "1013",
+        "severity": "Alert",
+        "long_description": "Kubernetes client is nil",
+        "short_description": "kubernetes client not initialized",
+        "probable_cause": "kubernetes client not initialized",
+        "suggested_remediation": "Reconnect the adapter to Meshery server"
+      },
+      "1014": {
+        "name": "ErrInvalidOAMComponentTypeCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid OAM component name: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrTraefikCoreComponentFailCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error in Traefik core component",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1016": {
+        "name": "ErrProcessOAMCode",
+        "code": "1016",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error performing OAM operations",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1017": {
+        "name": "ErrParseTraefikCoreComponentCode",
+        "code": "1017",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Traefik core component manifest parsing failing",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1018": {
+        "name": "ErrParseOAMComponentCode",
+        "code": "1018",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing application component in the OAM request made by Meshery Server",
+        "short_description": "error parsing the component",
+        "probable_cause": "Could not unmarshall configuration component received via ProcessOAM gRPC call into a valid Component struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid component for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, check if Meshery Server and adapters are referring to same component struct provided in MeshKit."
+      },
+      "1019": {
+        "name": "ErrParseOAMConfigCode",
+        "code": "1019",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing configuration in the request made by Meshery Server",
+        "short_description": "error parsing the configuration",
+        "probable_cause": "Could not unmarshall OAM config received via ProcessOAM gRPC call into a valid Config struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
+      },
+      "1020": {
+        "name": "ErrGetLatestReleaseCode",
+        "code": "1020",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get latest version",
+        "probable_cause": "Latest version could not be found at the specified url",
+        "suggested_remediation": ""
+      },
+      "1029": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1029",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1030": {
+        "name": "ErrGetLatestReleasesCode",
+        "code": "1030",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch release info",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1031": {
+        "name": "ErrGetLatestReleaseNamesCode",
+        "code": "1031",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to extract release names",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1032": {
+        "name": "ErrInstallTraefikCode",
+        "code": "1032",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with traefik operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1033": {
+        "name": "ErrCreatingHelmIndexCode",
+        "code": "1033",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while creating Helm Index",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1034": {
+        "name": "ErrEntryWithAppVersionNotExistsCode",
+        "code": "1034",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Entry for the app version does not exist",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1035": {
+        "name": "ErrHelmRepositoryNotFoundCode",
+        "code": "1035",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Helm repo not found",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1036": {
+        "name": "ErrDecodeYamlCode",
+        "code": "1036",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while decoding YAML",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1037": {
+        "name": "ErrMeshConfigCode",
+        "code": "1037",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error configuration mesh",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1038": {
+        "name": "ErrConvertingAppVersionToChartVersionCode",
+        "code": "1038",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while converting app version to chart version",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1039": {
+        "name": "ErrCreatingTraefikMeshClientCode",
+        "code": "1039",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to create a new NSM client",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1040": {
+        "name": "ErrSampleAppCode",
+        "code": "1040",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with sample app operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1041": {
+        "name": "ErrCustomOperationCode",
+        "code": "1041",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with custom operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1042": {
+        "name": "ErrOpInvalidCode",
+        "code": "1042",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    }
+  }
+}

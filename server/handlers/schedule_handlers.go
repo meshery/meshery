@@ -9,13 +9,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 )
 
-// swagger:route POST /api/user/schedules SchedulesAPI idPostSchedules
-// Handle POST request for Schedules
-//
-// Save schedule using the current provider's persistence mechanism
-// responses:
-// 	200: singleScheduleResponseWrapper
-
 // SaveScheduleHandler will save schedule using the current provider's persistence mechanism
 func (h *Handler) SaveScheduleHandler(
 	rw http.ResponseWriter,
@@ -58,22 +51,11 @@ func (h *Handler) SaveScheduleHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
 
-// swagger:route GET /api/user/schedules SchedulesAPI idGetSchedules
-// Handle GET request for Schedules
-//
-// # Returns the list of all the schedules saved by the current user
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-// responses:
-//
-//	200: schedulesResponseWrapper
 func (h *Handler) GetSchedulesHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -93,15 +75,10 @@ func (h *Handler) GetSchedulesHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
-
-// swagger:route DELETE /api/user/schedules/{id} SchedulesAPI idDeleteSchedules
-// Handle DELETE request for Schedules
-//
-// Deletes a schedule with the given id
-// responses:
-// 	200: schedulesResponseWrapper
 
 // DeleteScheduleHandler deletes a schedule with the given id
 func (h *Handler) DeleteScheduleHandler(
@@ -123,15 +100,10 @@ func (h *Handler) DeleteScheduleHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }
-
-// swagger:route GET /api/user/schedules/{id} SchedulesAPI idGetSingleSchedule
-// Handle GET request for Schedules
-//
-// Fetches and returns the schedule with the given id
-// responses:
-// 	200: singleScheduleResponseWrapper
 
 // GetScheduleHandler fetches the schedule with the given id
 func (h *Handler) GetScheduleHandler(
@@ -153,5 +125,7 @@ func (h *Handler) GetScheduleHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
 }

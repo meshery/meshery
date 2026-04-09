@@ -1,0 +1,288 @@
+{{- /* Load all compatibility test results from project/compatibility section and subdirectories */ -}}
+{{- $k8s_tests := slice -}}
+{{- range site.AllPages -}}
+  {{- if and (strings.Contains .Path "project/compatibility") (ne .Kind "section") -}}
+    {{- $k8s_tests = $k8s_tests | append . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Group by k8s-version and sort */ -}}
+{{- $grouped := dict -}}
+{{- range $k8s_tests -}}
+  {{- $version := .Params.k8sVersion | default (index .Params "k8s-version") | default "" -}}
+  {{- if $version -}}
+    {{- $items := index $grouped $version | default slice -}}
+    {{- $grouped = merge $grouped (dict $version ($items | append .)) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Collect and sort versions */ -}}
+{{- $versions := slice -}}
+{{- range $version, $items := $grouped -}}
+  {{- $versions = $versions | append $version -}}
+{{- end -}}
+{{- $versions = $versions | sort -}}
+
+{{- /* Reverse the versions for descending order */ -}}
+{{- $reversed := slice -}}
+{{- $len := len $versions -}}
+{{- range $i := (seq $len) -}}
+  {{- $reversed = $reversed | append (index $versions (sub $len $i)) -}}
+{{- end -}}
+{{- $versions = $reversed -}}
+
+<style>
+  td:hover,tr:hover {
+      background-color: var(--color-primary-dark);
+      cursor:pointer;
+    }
+    td.details {
+      background-color: #fafafa;
+      cursor:text;
+    }
+    .yellowCheckbox{
+      width:2.5rem
+    }
+    .tooltipss{
+      position:relative;
+      width:fit-content;
+      cursor:pointer;
+      margin-right: auto;
+      margin-left: auto;
+    }
+    .tooltipss .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    }
+
+  .tooltipss .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+  }
+  .tooltipss:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+</style>
+
+<table class="table table-striped" >
+  <thead>
+    <tr>
+      <th style="text-align: left; padding: 10px; border-bottom: 2px solid #ccc;">Kubernetes Version</th>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
+        <a href="https://github.com/meshery/meshery-istio" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/istio.svg" />
+          meshery-istio
+        </a>
+      </th>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
+        <a href="https://github.com/meshery/meshery-linkerd" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/linkerd.svg" />
+          meshery-linkerd
+        </a>
+      </th>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
+        <a href="https://github.com/meshery/meshery-kuma" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/kuma.svg" />
+          meshery-kuma
+        </a>
+      </th>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
+        <a href="https://github.com/meshery/meshery-nighthawk" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/nighthawk.svg" />
+          meshery-nighthawk
+        </a>
+      </th>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
+        <a href="https://github.com/meshery/meshery-nginx-sm" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/nginx-sm.svg" />
+          meshery-nginx-sm
+        </a>
+      </th>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
+        <a href="https://github.com/meshery/meshery-traefik-mesh" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/traefik-mesh.svg" />
+          meshery-traefik-mesh
+        </a>
+      </th>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
+        <a href="https://github.com/meshery/meshery-cilium" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/cilium.svg" />
+          meshery-cilium
+        </a>
+      </th>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
+        <a href="https://github.com/meshery/meshery-consul" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/consul.svg" />
+          meshery-consul
+        </a>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{- range $versions -}}
+      {{- $items := index $grouped . -}}
+      {{- /* Group items by adapter component for this K8s version */ -}}
+      {{- $adapters := dict -}}
+      {{- range $items -}}
+        {{- $comp := index .Params "meshery-component" -}}
+        {{- $adapter_items := index $adapters $comp | default slice -}}
+        {{- $adapters = merge $adapters (dict $comp ($adapter_items | append .)) -}}
+      {{- end -}}
+      
+      <tr style="border-bottom: 1px solid #eee;">
+        <td style="padding: 10px;">{{ . }}</td>
+        
+        {{- /* Istio */ -}}
+        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')">
+          {{- if index $adapters "meshery-istio" -}}
+            {{- $latest := index (sort (index $adapters "meshery-istio") "Params.meshery-component-version" "desc") 0 -}}
+            {{- $status := index $latest.Params "overall-status" -}}
+            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+          {{- else -}}N/A{{- end -}}
+        </td>
+        
+        {{- /* Linkerd */ -}}
+        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')">
+          {{- if index $adapters "meshery-linkerd" -}}
+            {{- $latest := index (sort (index $adapters "meshery-linkerd") "Params.meshery-component-version" "desc") 0 -}}
+            {{- $status := index $latest.Params "overall-status" -}}
+            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+          {{- else -}}N/A{{- end -}}
+        </td>
+        
+        {{- /* Kuma */ -}}
+        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')">
+          {{- if index $adapters "meshery-kuma" -}}
+            {{- $latest := index (sort (index $adapters "meshery-kuma") "Params.meshery-component-version" "desc") 0 -}}
+            {{- $status := index $latest.Params "overall-status" -}}
+            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+          {{- else -}}N/A{{- end -}}
+        </td>
+        
+        {{- /* Nighthawk */ -}}
+        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')">
+          {{- if index $adapters "meshery-nighthawk" -}}
+            {{- $latest := index (sort (index $adapters "meshery-nighthawk") "Params.meshery-component-version" "desc") 0 -}}
+            {{- $status := index $latest.Params "overall-status" -}}
+            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+          {{- else -}}N/A{{- end -}}
+        </td>
+        
+        {{- /* NGINX SM */ -}}
+        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')">
+          {{- if index $adapters "meshery-nginx-sm" -}}
+            {{- $latest := index (sort (index $adapters "meshery-nginx-sm") "Params.meshery-component-version" "desc") 0 -}}
+            {{- $status := index $latest.Params "overall-status" -}}
+            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+          {{- else -}}N/A{{- end -}}
+        </td>
+        
+        {{- /* Traefik Mesh */ -}}
+        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')">
+          {{- if index $adapters "meshery-traefik-mesh" -}}
+            {{- $latest := index (sort (index $adapters "meshery-traefik-mesh") "Params.meshery-component-version" "desc") 0 -}}
+            {{- $status := index $latest.Params "overall-status" -}}
+            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+          {{- else -}}N/A{{- end -}}
+        </td>
+        
+        {{- /* Cilium */ -}}
+        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')">
+          {{- if index $adapters "meshery-cilium" -}}
+            {{- $latest := index (sort (index $adapters "meshery-cilium") "Params.meshery-component-version" "desc") 0 -}}
+            {{- $status := index $latest.Params "overall-status" -}}
+            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+          {{- else -}}N/A{{- end -}}
+        </td>
+        
+        {{- /* Consul */ -}}
+        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')">
+          {{- if index $adapters "meshery-consul" -}}
+            {{- $latest := index (sort (index $adapters "meshery-consul") "Params.meshery-component-version" "desc") 0 -}}
+            {{- $status := index $latest.Params "overall-status" -}}
+            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+          {{- else -}}N/A{{- end -}}
+        </td>
+      </tr>
+    {{- end -}}
+  </tbody>
+</table>
+
+<script>
+  function redirectToPastResults(adapter) {
+    // Map adapter names to past results page URLs
+    const adapterMap = {
+      'meshery-istio': 'meshery-istio-past-results',
+      'meshery-linkerd': 'meshery-linkerd-past-results',
+      'meshery-kuma': 'meshery-kuma-past-results',
+      'meshery-nighthawk': 'meshery-nighthawk-past-results',
+      'meshery-nginx-sm': 'meshery-nginx-sm-past-results',
+      'meshery-traefik-mesh': 'meshery-traefik-mesh-past-results',
+      'meshery-cilium': 'meshery-cilium-past-results',
+      'meshery-consul': 'meshery-consul-past-results'
+    };
+    
+    const page = adapterMap[adapter];
+    if (page) {
+      window.location.href = `/installation/compatibility-matrix/${page}`;
+    }
+  }
+  
+  function showCompatability() {
+    let statusCells = document.querySelectorAll(".compatibility-status");
+    for(let i = 0; i < statusCells.length; i++) {
+      let status = statusCells[i].innerHTML.trim();
+      if (status === "✓") {
+        statusCells[i].innerHTML = `
+          <div class="tooltipss" style="text-align:center; cursor: pointer;">
+            <img src="/installation/compatibility-matrix/images/service-meshes/passing.svg" class="yellowCheckbox" alt="Passing" />
+            <span class="tooltiptext">Passing</span>
+          </div>`;
+      } else if (status === "✗") {
+        statusCells[i].innerHTML = `
+          <div class="tooltipss" style="text-align:center; cursor: pointer;">
+            <img src="/installation/compatibility-matrix/images/service-meshes/failing.svg" class="yellowCheckbox" alt="Failing" />
+            <span class="tooltiptext">Failing</span>
+          </div>`;
+      } else if (status === "—") {
+        statusCells[i].innerHTML = `
+          <div class="tooltipss" style="text-align:center; cursor: pointer;">
+            <img src="/installation/compatibility-matrix/images/service-meshes/passing.svg" class="yellowCheckbox" alt="Partial" />
+            <span class="tooltiptext">Partial</span>
+          </div>`;
+      } else if (status === "N/A") {
+        statusCells[i].innerHTML = `
+          <div class="tooltipss" style="text-align:center; cursor: pointer;">
+            <img src="/installation/compatibility-matrix/images/service-meshes/na-icon.svg" class="yellowCheckbox" alt="Not Applicable" />
+            <span class="tooltiptext">Not Applicable</span>
+          </div>`;
+      }
+    }
+  }
+  
+  // Call function when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showCompatability);
+  } else {
+    showCompatability();
+  }
+</script>

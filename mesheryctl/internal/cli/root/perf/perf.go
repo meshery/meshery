@@ -26,7 +26,6 @@ import (
 var (
 	availableSubcommands []*cobra.Command
 	outputFormatFlag     string
-	validOutputFormats   = []string{"json", "yaml"}
 	// setting up for error formatting
 	cmdUsed string
 )

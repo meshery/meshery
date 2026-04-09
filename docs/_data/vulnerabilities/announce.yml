@@ -1,8 +1,0 @@
-- CVE: CVE-2021-31856
-  DateAnnounced: 2021-04-28
-  Description: "A SQL Injection vulnerability in the REST API in Meshery 0.5.2 allows an attacker to execute arbitrary SQL commands via the /experimental/patternfiles endpoint (order parameter in GetMesheryPatterns in models/meshery_pattern_persister.go)."
-  AffectedComponent: REST API
-  VulnerableVersion: v0.5.2
-  PatchedVersion: v0.5.3
-  FixDetails: <a href="https://github.com/meshery/meshery/pull/2745">fix pull</a> 
-  Links: <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-31856">mitre</a>,<br><a href="https://github.com/ssst0n3/CVE-2021-31856">details</a>

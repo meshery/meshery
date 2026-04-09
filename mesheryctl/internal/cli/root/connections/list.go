@@ -26,7 +26,7 @@ var listConnectionsCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the connections",
 	Long: `List all available connections.
-Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection/list`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/connection/list`,
 	Example: `
 // List all the connections
 mesheryctl connection list

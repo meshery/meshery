@@ -1,5 +1,5 @@
 import { urlEncodeArrayParam, urlEncodeParams } from '@/utils/utils';
-import { api } from './index';
+import { api, mesheryApiPath } from './index';
 import { initiateQuery } from './utils';
 import _ from 'lodash';
 
@@ -15,20 +15,20 @@ export const viewsApi = api
     endpoints: (builder) => ({
       getView: builder.query({
         query: ({ viewId }) => ({
-          url: `extensions/api/content/views/${viewId}`,
+          url: mesheryApiPath(`extensions/api/content/views/${viewId}`),
           method: 'GET',
         }),
         providesTags: () => [{ type: TAGS.VIEWS }],
       }),
       deleteView: builder.mutation({
         query: ({ id }) => ({
-          url: `extensions/api/content/views/${id}`,
+          url: mesheryApiPath(`extensions/api/content/views/${id}`),
           method: 'DELETE',
         }),
       }),
       updateViewVisibility: builder.mutation({
         query: ({ id, body }) => ({
-          url: `extensions/api/content/views/${id}`,
+          url: mesheryApiPath(`extensions/api/content/views/${id}`),
           method: 'PUT',
           body: body,
         }),
@@ -36,18 +36,20 @@ export const viewsApi = api
       }),
       fetchViews: builder.query({
         query: (queryArg) =>
-          `extensions/api/content/views?${urlEncodeArrayParam(
-            'visibility',
-            queryArg.visibility,
-          )}&${urlEncodeParams({
-            page: queryArg.page,
-            pagesize: queryArg.pagesize,
-            search: queryArg.search || '',
-            order: queryArg.order || '',
-            trim: queryArg.trim || false,
-            shared: queryArg.shared || false,
-            user_id: queryArg.user_id,
-          })}`,
+          mesheryApiPath(
+            `extensions/api/content/views?${urlEncodeArrayParam(
+              'visibility',
+              queryArg.visibility,
+            )}&${urlEncodeParams({
+              page: queryArg.page,
+              pagesize: queryArg.pagesize,
+              search: queryArg.search || '',
+              order: queryArg.order || '',
+              trim: queryArg.trim || false,
+              shared: queryArg.shared || false,
+              user_id: queryArg.user_id,
+            })}`,
+          ),
 
         // Only have one cache entry
         serializeQueryArgs: ({ endpointName }) => {

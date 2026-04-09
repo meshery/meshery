@@ -1,12 +1,12 @@
 
 Docker 
 --------------
-✓ Docker is running
-✓ docker-compose is available (via library)
+!! Docker is not running
+✓ docker-compose is available
 
 Kubernetes API 
 --------------
-✓ can initialize Kubernetes client
+!! cannot initialize Kubernetes client
 !! cannot query the Kubernetes API
 
 Kubernetes Version 
@@ -16,4 +16,4 @@ Kubernetes Version
 
 --------------
 --------------
-✓✓ Meshery prerequisites met
+!! Meshery prerequisites not met

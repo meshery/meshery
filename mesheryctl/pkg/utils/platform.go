@@ -667,7 +667,7 @@ func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, 
 	podList, err := podInterface.List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
-		return nil, err
+		return nil, ErrListMesheryPods(err)
 	}
 	return podList, nil
 }
@@ -965,4 +965,15 @@ func ForceCleanupCluster() error {
 	}
 
 	return nil
+}
+
+// GetMesheryEndpoint discovers the Meshery service endpoint from Kubernetes.
+// This function centralizes the service discovery logic used across multiple commands.
+func GetMesheryEndpoint(ctx context.Context, client *meshkitkube.Client) (*meshkitutils.Endpoint, error) {
+	var opts meshkitkube.ServiceOptions
+	opts.Name = "meshery"
+	opts.Namespace = MesheryNamespace
+	opts.APIServerURL = client.RestConfig.Host
+	Log.Debugf("Discovering Meshery service endpoint from Kubernetes...\nOptions: %v", opts)
+	return meshkitkube.GetServiceEndpoint(ctx, client.KubeClient, &opts)
 }

@@ -1,0 +1,274 @@
+{{ define "main" }}
+<div class="content">
+  <h1>Meshery Compatibility Matrix</h1>
+  <h3>{{ .Params.subheading }} Integration Tests</h3>
+  <p>This page shows all the integration test run on {{ .Params.subheading }} in the past.</p>
+
+  {{- /* Load all test results from project/compatibility section */ -}}
+  {{- $test_results := slice -}}
+  {{- range site.AllPages -}}
+    {{- if and (strings.Contains .Path "project/compatibility") (ne .Kind "section") -}}
+      {{- $test_results = $test_results | append . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* Filter by service-mesh from frontmatter */ -}}
+  {{- $service_mesh := .Params.serviceMesh | default (index .Params "service-mesh") | default "" -}}
+  {{- $filtered := slice -}}
+  {{- range $test_results -}}
+    {{- $mesh := index .Params "service-mesh" | lower -}}
+    {{- if eq $mesh ($service_mesh | lower) -}}
+      {{- $filtered = $filtered | append . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* Group by meshery-component */ -}}
+  {{- $grouped := dict -}}
+  {{- range $filtered -}}
+    {{- $comp := index .Params "meshery-component" -}}
+    {{- if $comp -}}
+      {{- $items := index $grouped $comp | default slice -}}
+      {{- $grouped = merge $grouped (dict $comp ($items | append .)) -}}
+    {{- end -}}
+  {{- end -}}
+
+  <style>
+    .edge_visible{
+      display: table-row !important;
+      visibility: visible !important;
+    }
+    .stable_visible{
+      display: table-row !important;
+      visibility: visible !important;
+    }
+    .checkbox{
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      text-align: left;
+    }
+    td.details {
+      background-color: #fafafa;
+      cursor:text;
+    }
+    .edge_test_text{
+      margin-right: 20px;
+    }
+    .status-passing {
+      background-color: #56B257 !important;
+      color: white !important;
+    }
+    .status-partial {
+      background-color: #EBC017 !important;
+      color: white !important;
+    }
+    .status-failing {
+      background-color: #B32700 !important;
+      color: white !important;
+    }
+    .status-default {
+      background-color: #6c757d !important;
+      color: white !important;
+    }
+    #test-table tbody tr {
+      background-color: #3a3f47 !important;
+      color: #ccc;
+      cursor: pointer;
+    }
+    #test-table tbody tr:hover {
+      background-color: #3a3f47 !important;
+      color: #ccc;
+    }
+  </style>
+
+  <div class="checkbox">
+    <div>
+      <input onchange="handleEdgeCheckboxChange();" type="checkbox" id="checkbox_edge" value="Edge Tests" checked />
+      <label for="checkbox_edge" class="edge_test_text">Edge Channel</label>
+    </div>
+    <div>
+      <input onchange="handleStableCheckboxChange();" type="checkbox" id="checkbox_stable" value="Stable Tests" checked />
+      <label for="checkbox_stable">Stable Channel</label>
+    </div>
+  </div>
+
+  <table id="test-table" style="text-align: center;">
+    <thead>
+      <tr>
+        <th style="text-align: center;">Status</th>
+        <th style="text-align: center;">Meshery Component</th>
+        <th style="text-align: center;">Meshery Component Version</th>
+        <th style="text-align: center;">Meshery Server Version</th>
+        <th style="text-align: center;">Infrastructure</th>
+        <th style="text-align: center;">Infrastructure Version</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{- range $comp, $items := $grouped -}}
+        {{- /* Sort by timestamp descending for edge tests */ -}}
+        {{- $edge_sorted := sort $items "Params.timestamp" "desc" -}}
+        {{- range $edge_sorted -}}
+          {{- $version := index .Params "meshery-component-version" -}}
+          {{- if eq $version "edge" -}}
+            {{- $status := trim (index .Params "overall-status" | default "") " " -}}
+            {{- $status_class := "status-default" -}}
+            {{- if eq $status "passing" -}}
+              {{- $status_class = "status-passing" -}}
+            {{- else if eq $status "partial" -}}
+              {{- $status_class = "status-partial" -}}
+            {{- else if eq $status "failing" -}}
+              {{- $status_class = "status-failing" -}}
+            {{- end -}}
+            <tr style="visibility: hidden; display: none;" class="test-details edge edge_visible" onclick="toggle_visibility('{{ $comp }}-edge');">
+              <td class="{{ $status_class }}">{{ index .Params "timestamp" }}</td>
+              <td style="white-space:nowrap;"><a href="https://github.com/meshery/meshery-{{ index .Params "service-mesh" | lower }}">{{ $comp }}</a></td>
+              <td><a href="https://github.com/meshery/meshery-{{ index .Params "service-mesh" | lower }}/releases">{{ $version }}</a></td>
+              <td><a href="https://github.com/meshery/meshery/releases/tag/{{ index .Params "meshery-server-version" }}">{{ index .Params "meshery-server-version" }}</a></td>
+              <td style="white-space: nowrap;"><img style="height: 2rem; vertical-align: text-bottom; margin-right: 8px;" src="/installation/compatibility-matrix/images/service-meshes/{{ index .Params "service-mesh" | lower }}.svg" /><a href="/extensions/adapters/{{ index .Params "service-mesh" | lower }}">{{ index .Params "service-mesh" }}</a></td>
+              <td>{{ index .Params "service-mesh-version" }}</td>
+            </tr>
+            <tr class="hidden-details" id="{{ $comp }}-edge" style="visibility:hidden; display:none;">
+              <td colspan="2" class="details">
+                <i>Platform:</i>
+                <ul style="margin: 5px 0;">
+                  <li><img style="height: 1rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/kubernetes-icon-color.svg" /> {{ index .Params "k8s-distro" | default "Unknown" }} {{ index .Params "k8s-version" | default "" }}</li>
+                </ul>
+              </td>
+              <td colspan="4" class="details">
+                <i>Test results:</i>
+                <table style="border:0; margin-top: 5px;">
+                  {{- if index .Params "tests" -}}
+                    {{- range $pod, $status := index .Params "tests" -}}
+                      {{- $test_icon := "/installation/compatibility-matrix/images/service-meshes/passing.svg" -}}
+                      {{- if eq (trim $status " ") "Running" -}}
+                        {{- $test_icon = "/installation/compatibility-matrix/images/service-meshes/passing.svg" -}}
+                      {{- else -}}
+                        {{- $test_icon = "/installation/compatibility-matrix/images/service-meshes/failing.svg" -}}
+                      {{- end -}}
+                      <tr style="background-color: transparent;">
+                        <td><img style="height: 24px; width: 24px; margin-right: 8px;" src="{{ $test_icon }}" alt="Test Status" /></td>
+                        <td>{{ $pod }}</td>
+                      </tr>
+                    {{- end -}}
+                  {{- else -}}
+                    <tr><td colspan="2"><em>No test details available</em></td></tr>
+                  {{- end -}}
+                </table>
+              </td>
+            </tr>
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+
+      {{- /* Stable channel tests */ -}}
+      {{- range $comp, $items := $grouped -}}
+        {{- /* Sort by component version descending for stable tests */ -}}
+        {{- $stable_items := slice -}}
+        {{- range $items -}}
+          {{- $version := index .Params "meshery-component-version" -}}
+          {{- if ne $version "edge" -}}
+            {{- $stable_items = $stable_items | append . -}}
+          {{- end -}}
+        {{- end -}}
+        {{- $stable_sorted := sort $stable_items "Params.meshery-component-version" "desc" -}}
+        {{- range $stable_sorted -}}
+          {{- $status := trim (index .Params "overall-status" | default "") " " -}}
+          {{- $status_class := "status-default" -}}
+          {{- if eq $status "passing" -}}
+            {{- $status_class = "status-passing" -}}
+          {{- else if eq $status "partial" -}}
+            {{- $status_class = "status-partial" -}}
+          {{- else if eq $status "failing" -}}
+            {{- $status_class = "status-failing" -}}
+          {{- end -}}
+          <tr style="visibility: hidden; display: none;" class="test-details stable stable_visible" onclick="toggle_visibility('{{ $comp }}-stable');">
+            <td class="{{ $status_class }}">{{ index .Params "timestamp" }}</td>
+            <td style="white-space:nowrap;"><a href="https://github.com/meshery/meshery-{{ index .Params "service-mesh" | lower }}">{{ $comp }}</a></td>
+            <td><a href="https://github.com/meshery/meshery-{{ index .Params "service-mesh" | lower }}/releases/tag/{{ index .Params "meshery-component-version" }}">{{ index .Params "meshery-component-version" }}</a></td>
+            <td><a href="https://github.com/meshery/meshery/releases/tag/{{ index .Params "meshery-server-version" }}">{{ index .Params "meshery-server-version" }}</a></td>
+            <td style="white-space:nowrap;"><img style="height: 2rem; vertical-align: text-bottom; margin-right: 8px;" src="/installation/compatibility-matrix/images/service-meshes/{{ index .Params "service-mesh" | lower }}.svg" /><a href="/extensions/adapters/{{ index .Params "service-mesh" | lower }}">{{ index .Params "service-mesh" }}</a></td>
+            <td>{{ index .Params "service-mesh-version" }}</td>
+          </tr>
+          <tr class="hidden-details" id="{{ $comp }}-stable" style="visibility:hidden; display:none;">
+            <td colspan="2" class="details">
+              <i>Platform:</i>
+              <ul style="margin: 5px 0;">
+                <li><img style="height: 1rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/kubernetes-icon-color.svg" /> {{ index .Params "k8s-distro" | default "Unknown" }} {{ index .Params "k8s-version" | default "" }}</li>
+              </ul>
+            </td>
+            <td colspan="4" class="details">
+              <i>Test results:</i>
+              <table style="border:0; margin-top: 5px;">
+                {{- if index .Params "tests" -}}
+                  {{- range $pod, $status := index .Params "tests" -}}
+                    {{- $test_icon := "/installation/compatibility-matrix/images/service-meshes/passing.svg" -}}
+                    {{- if eq (trim $status " ") "Running" -}}
+                      {{- $test_icon = "/installation/compatibility-matrix/images/service-meshes/passing.svg" -}}
+                    {{- else -}}
+                      {{- $test_icon = "/installation/compatibility-matrix/images/service-meshes/failing.svg" -}}
+                    {{- end -}}
+                    <tr style="background-color: transparent;">
+                      <td><img style="height: 24px; width: 24px; margin-right: 8px;" src="{{ $test_icon }}" alt="Test Status" /></td>
+                      <td>{{ $pod }}</td>
+                    </tr>
+                  {{- end -}}
+                {{- else -}}
+                  <tr><td colspan="2"><em>No test details available</em></td></tr>
+                {{- end -}}
+              </table>
+            </td>
+          </tr>
+        {{- end -}}
+      {{- end -}}
+    </tbody>
+  </table>
+
+  <script>
+    function toggle_visibility(id) {
+      var e = document.getElementById(id);
+      if (e.style.visibility == "visible") {
+        e.style.display = "none";
+        e.style.visibility = "hidden";
+      } else {
+        e.style.display = "table-row";
+        e.style.visibility = "visible";
+      }
+    }
+
+    function handleEdgeCheckboxChange() {
+      let e = document.getElementsByClassName("edge");
+      let stable = document.getElementsByClassName("stable");
+      let stable_box = document.getElementById("checkbox_stable");
+      for (let i = 0; i < e.length; i++) {
+        if (e[i].classList.contains("edge_visible")) {
+          e[i].classList.remove("edge_visible");
+          if (!stable_box.checked) {
+            stable_box.checked = true;
+            handleStableCheckboxChange();
+          }
+        } else {
+          e[i].classList.add("edge_visible");
+        }
+      }
+    }
+
+    function handleStableCheckboxChange() {
+      let e = document.getElementsByClassName("stable");
+      let edge_box = document.getElementById("checkbox_edge");
+      for (let i = 0; i < e.length; i++) {
+        if (e[i].classList.contains("stable_visible")) {
+          e[i].classList.remove("stable_visible");
+          if (!edge_box.checked) {
+            edge_box.checked = true;
+            handleEdgeCheckboxChange();
+          }
+        } else {
+          e[i].classList.add("stable_visible");
+        }
+      }
+    }
+  </script>
+
+  {{ .Content }}
+</div>
+{{ end }}

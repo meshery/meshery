@@ -49,6 +49,7 @@ import MesheryConfigurationChart from '../Dashboard/charts/MesheryConfigurationC
 import ConnectionStatsChart from '../Dashboard/charts/ConnectionCharts';
 import { SecondaryTab, SecondaryTabs } from '../Dashboard/style';
 import { useSelector } from 'react-redux';
+import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -144,6 +145,7 @@ const MesherySettings = () => {
   const { prometheus } = useSelector((state) => state.telemetry);
   const { grafana } = useSelector((state) => state.telemetry);
   const { meshAdapters } = useSelector((state) => state.adapter);
+  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery();
   const [state, setState] = useState({
     meshAdapters,
     grafana,
@@ -333,6 +335,37 @@ const MesherySettings = () => {
               <TabContainer>
                 <NoSsr>
                   <RootClass>
+                    <Paper
+                      sx={{
+                        padding: '1rem 1.5rem',
+                        marginBottom: '1rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <div>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+                          Current Provider
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {providerCapabilities?.provider_name || 'Not selected'}
+                          {providerCapabilities?.provider_type
+                            ? ` (${providerCapabilities.provider_type})`
+                            : ''}
+                        </Typography>
+                      </div>
+                      <Typography
+                        variant="body2"
+                        component="a"
+                        href="https://docs.meshery.io/extensibility/providers"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{ color: theme.palette.primary.main }}
+                      >
+                        Learn about providers
+                      </Typography>
+                    </Paper>
                     <DashboardMeshModelGraph />
                     <Grid2 container spacing={2} size="grow">
                       <Grid2 size={{ xs: 12, md: 6 }}>

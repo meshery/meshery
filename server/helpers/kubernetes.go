@@ -63,9 +63,11 @@ func FetchKubernetesNodes(kubeconfig []byte, contextName string, log logger.Hand
 		addresses := n.Status.Addresses
 		for _, address := range addresses {
 			log.Debug(fmt.Sprintf("Type: %s, Address: %s", address.Type, address.Address))
-			if address.Type == "InternalIP" {
+			switch address.Type {
+			case "InternalIP":
 				node.InternalIP = address.Address
-			} else if address.Type == "Hostname" {
+
+			case "Hostname":
 				node.HostName = address.Address
 			}
 		}

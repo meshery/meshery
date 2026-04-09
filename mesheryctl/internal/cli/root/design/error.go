@@ -25,8 +25,8 @@ import (
 const (
 	ErrImportDesignCode               = "mesheryctl-1001"
 	ErrInValidSourceCode              = "mesheryctl-1002"
-	ErrOnboardDesignCode              = "mesheryctl-1003"
-	ErrOffboardDesignCode             = "mesheryctl-1005"
+	ErrDeployDesignCode               = "mesheryctl-1003"
+	ErrUndeployDesignCode             = "mesheryctl-1005"
 	ErrDesignFlagCode                 = "mesheryctl-1006"
 	ErrDesignManifestCode             = "mesheryctl-1007"
 	ErrDesignFileNotProvidedCode      = "mesheryctl-1140"
@@ -37,20 +37,23 @@ const (
 	ErrDeleteDesignCode               = "mesheryctl-1164"
 	ErrInvalidCommandCode             = "mesheryctl-1191"
 	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1192"
+	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 )
 
 const (
 	errPatternMsg = `Usage: mesheryctl design import -f [file/url] -s [source-type]
 Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`
 
-	errOnboardMsg = `Usage: mesheryctl design onboard -f [filepath] -s [source type]
-Example: mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
-Description: Onboard pattern`
+	errUndeployMsg = `Usage: mesheryctl design undeploy -f [filepath]
+Example: mesheryctl design undeploy -f ./pattern.yml
+Description: Undeploy design`
 	errInvalidPathMsg = "file path %s is invalid. Enter a valid path"
 )
 
-func ErrDesignNotFound() error {
-	return errors.New(ErrDesignsNotFoundCode, errors.Fatal, []string{"Design Not Found"}, []string{"No Design found with the given name or ID"}, []string{"Design with the given name or ID is not present"}, []string{"Please check if the given design name or ID is present via 'mesheryctl design list'"})
+func ErrDesignNotFound(design string) error {
+	return errors.New(ErrDesignsNotFoundCode, errors.Fatal,
+		[]string{"Design Not Found"},
+		[]string{fmt.Sprintf("No Design found with name, ID or at path: %s", design)}, []string{"Design with the given name, ID or path is not present"}, []string{"Please check if the given design name or ID is present via 'mesheryctl design list' or provide a valid file path"})
 }
 
 func ErrInvalidDesignFile(err error) error {
@@ -68,9 +71,9 @@ func ErrImportDesign(err error) error {
 func ErrInValidSource(invalidSourceType string, validSourceTypes []string) error {
 	return errors.New(ErrInValidSourceCode, errors.Fatal,
 		[]string{fmt.Sprintf("Invalid design source type: `%s`", invalidSourceType)},
-		[]string{"Invalid design source type due to wrong type/passing"},
-		[]string{"design source type (-s) is invalid or not passed."},
-		[]string{"Ensure you pass a valid source type. \nAllowed source types: %s", strings.Join(validSourceTypes, ", ")})
+		[]string{"Invalid design source type was provided"},
+		[]string{"Provided design source type (-s) is invalid"},
+		[]string{"Ensure you pass a valid source type", fmt.Sprintf("\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))})
 }
 
 func ErrDesignManifest() error {
@@ -89,12 +92,13 @@ func ErrDesignFileNotProvided() error {
 		[]string{"Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible. \n\n%v", errPatternMsg})
 }
 
-func ErrOnboardDesign() error {
-	return errors.New(ErrOnboardDesignCode, errors.Alert,
-		[]string{"Error Onboarding design"},
-		[]string{"Unable to onboard design due to empty path"},
-		[]string{"File path or design name not provided."},
-		[]string{"Provide a file path/design name. \n\n%v", errOnboardMsg})
+func ErrDeployDesign() error {
+	return errors.New(ErrDeployDesignCode, errors.Alert,
+		[]string{"Deploying design failed"},
+		[]string{"Unable to deploy design due to error during the processing"},
+		[]string{"File path or design name not provided. ", "Meshery server failed to interact with the Kubernetes cluster. ",
+			"There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s))..This connection might not be assigned to the selected environment."},
+		[]string{"Provide a valid file path/design name. ", "Ensure the Meshery server can interact with the Kubernetes cluster. ", "Check if the selected target platform is assigned to the current environment.\n"})
 }
 
 func ErrDesignSourceType() error {
@@ -113,12 +117,12 @@ func ErrViewDesignFlag() error {
 		[]string{"-a/-all cannot be used when [design name|id] is specified"})
 }
 
-func ErrOffboardDesign(err error) error {
-	return errors.New(ErrOffboardDesignCode, errors.Alert,
-		[]string{"Error Offboarding design"},
-		[]string{"Unable to offboard design due to empty path"},
+func ErrUndeployDesign(err error) error {
+	return errors.New(ErrUndeployDesignCode, errors.Alert,
+		[]string{"Undeploying design failed"},
+		[]string{"Unable to undeploy design due to empty path"},
 		[]string{"File path or design name not provided."},
-		[]string{"Provide a file path/design name. \n\n%v", errOnboardMsg})
+		[]string{"Provide a file path/design name. \n\n%v", errUndeployMsg})
 }
 
 func ErrParseDesignFile(err error) error {
@@ -159,4 +163,12 @@ func ErrDesignNameOrIDNotSpecified() error {
 		[]string{"No design name or ID was provided"},
 		[]string{"Command requires a design name or ID as argument"},
 		[]string{"Provide a design name or ID, or use '-a' flag to view all designs.\nRun 'mesheryctl design view --help' for usage details"})
+}
+
+func ErrDesignInvalidApiResponse(message string) error {
+	return errors.New(ErrDesignInvalidApiResponseCode, errors.Alert,
+		[]string{"Invalid API response"},
+		[]string{message},
+		[]string{"The API response is missing expected fields or has an unexpected format"},
+		[]string{"Ensure the Meshery server is running a compatible version", "Check for any issues with the Meshery server that may cause it to return malformed responses"})
 }

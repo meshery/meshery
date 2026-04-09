@@ -135,20 +135,6 @@ const BtnText = styled('span')(() => ({
   },
 }));
 
-const EllipsisButtonWrapper = styled('div')(({ theme }) => ({
-  display: 'none',
-  [theme.breakpoints.down('lg')]: {
-    display: 'block',
-  },
-}));
-
-const ActionWrapper = styled('div')(({ theme }) => ({
-  display: 'block',
-  [theme.breakpoints.down('lg')]: {
-    display: 'none',
-  },
-}));
-
 const YamlDialogTitle = styled(DialogTitle)(() => ({
   display: 'flex',
   justifyContent: 'space-between',
@@ -159,22 +145,8 @@ const YamlDialogTitleText = styled(Typography)(() => ({
   flexGrow: 1,
 }));
 
-function TooltipIcon({ children, onClick, title, placement, disabled }) {
-  return (
-    <>
-      <CustomTooltip title={title} placement={placement} interactive>
-        <div>
-          <IconButton disabled={disabled} onClick={onClick}>
-            {children}
-          </IconButton>
-        </div>
-      </CustomTooltip>
-    </>
-  );
-}
-
 function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
-  const [yaml, setYaml] = useState(pattern.pattern_file);
+  const [yaml, setYaml] = useState(pattern.patternFile);
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -223,7 +195,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
       <DialogContent>
         <FullScreenCodeMirrorWrapper>
           <CodeMirror
-            value={pattern.pattern_file}
+            value={pattern.patternFile}
             options={{
               theme: 'material',
               lineNumbers: true,
@@ -1109,7 +1081,7 @@ function MesheryPatterns({
               label: 'Validate Design',
               icon: <CheckIcon data-cy="verify-button" />,
               onClick: (e) => {
-                openValidateModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                openValidateModal(e, rowData.patternFile, rowData.name, rowData.id);
               },
               disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
             },
@@ -1117,7 +1089,7 @@ function MesheryPatterns({
               label: 'Dry Run',
               icon: <DryRunIcon data-cy="verify-button" />,
               onClick: (e) => {
-                openDryRunModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                openDryRunModal(e, rowData.patternFile, rowData.name, rowData.id);
               },
               disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
             },
@@ -1125,7 +1097,7 @@ function MesheryPatterns({
               label: 'Undeploy',
               icon: <UndeployIcon fill="#F91313" data-cy="undeploy-button" />,
               onClick: (e) => {
-                openUndeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                openUndeployModal(e, rowData.patternFile, rowData.name, rowData.id);
               },
               disabled: !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject),
             },
@@ -1133,7 +1105,7 @@ function MesheryPatterns({
               label: 'Deploy',
               icon: <DoneAllIcon data-cy="deploy-button" />,
               onClick: (e) => {
-                openDeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                openDeployModal(e, rowData.patternFile, rowData.name, rowData.id);
               },
               disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
             },
@@ -1175,27 +1147,9 @@ function MesheryPatterns({
           ].filter((action) => action.condition === undefined || action.condition);
 
           return (
-            <>
-              <EllipsisButtonWrapper>
-                <ActionPopover actions={actions} />
-              </EllipsisButtonWrapper>
-
-              <ActionWrapper>
-                <Box sx={{ display: 'flex' }}>
-                  {actions.map((action, index) => (
-                    <TooltipIcon
-                      key={index}
-                      placement="top"
-                      title={action.label}
-                      onClick={action.onClick}
-                      disabled={action.disabled}
-                    >
-                      {action.icon}
-                    </TooltipIcon>
-                  ))}
-                </Box>
-              </ActionWrapper>
-            </>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <ActionPopover actions={actions} />
+            </Box>
           );
         },
       },
@@ -1305,7 +1259,7 @@ function MesheryPatterns({
         toBeDeleted.length,
         toBeDeleted.map((p) => ' ' + p.name),
       );
-      if (response.toLowerCase() === 'DELETE') {
+      if (response && response.trim().toUpperCase() === 'DELETE') {
         deletePatterns({ patterns: toBeDeleted });
       }
       // if (response.toLowerCase() === "no")

@@ -16,9 +16,9 @@ import (
 	mcore "github.com/meshery/meshery/server/models/meshmodel/core"
 
 	// for GKE kube API authentication
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/core"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
 	"github.com/meshery/meshkit/models/events"
@@ -60,13 +60,6 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 		return
 	}
 }
-
-// swagger:route POST /api/system/kubernetes SystemAPI idPostK8SConfig
-// Handle POST request for Kubernetes Config
-//
-// Used to add kubernetes config to System
-// responses:
-// 	200: k8sConfigRespWrapper
 
 // The function is called only when user uploads a kube config.
 // Connections which have state as "registered" are the only new ones, hence the GraphQL K8sContext subscription only sends an update to UI if any connection has registered state.
@@ -171,13 +164,16 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				RegistryManager:    h.registryManager,
 			}
 
-			if status == connections.CONNECTED {
+			switch status {
+			case connections.CONNECTED:
 				saveK8sContextResponse.ConnectedContexts = append(saveK8sContextResponse.ConnectedContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Connection already exists with Kubernetes context \"%s\" at %s", ctx.Name, ctx.Server)
-			} else if status == connections.IGNORED {
+
+			case connections.IGNORED:
 				saveK8sContextResponse.IgnoredContexts = append(saveK8sContextResponse.IgnoredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Kubernetes context \"%s\" is set to ignored state.", ctx.Name)
-			} else if status == connections.DISCOVERED {
+
+			case connections.DISCOVERED:
 				saveK8sContextResponse.RegisteredContexts = append(saveK8sContextResponse.RegisteredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server)
 			}
@@ -201,7 +197,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			go func(inst *machines.StateMachine) {
 				event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
 				if err != nil {
-					_ = provider.PersistEvent(*event, nil)
+					_ = provider.PersistEvent(*event, token)
 					go h.config.EventBroadcaster.Publish(userID, event)
 				}
 			}(inst)
@@ -215,7 +211,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	}
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
@@ -224,13 +220,6 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		return
 	}
 }
-
-// swagger:route DELETE /api/system/kubernetes SystemAPI idDeleteK8SConfig
-// Handle DELETE request for Kubernetes Config
-//
-// Used to delete kubernetes config to System
-// responses:
-// 	200:
 
 func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, _ *http.Request, _ models.Provider) {
 	// prefObj.K8SConfig = nil
@@ -244,15 +233,14 @@ func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.R
 	_, _ = w.Write([]byte("{}"))
 }
 
-// swagger:route POST /api/system/kubernetes/contexts SystemAPI idPostK8SContexts
-// Handle POST requests for Kubernetes Context list
-//
-// Returns the context list for a given k8s config
-// responses:
-// 	200: k8sContextsRespWrapper
-
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	token, err := provider.GetProviderToken(req)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
 
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
@@ -269,7 +257,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userUUID, event)
 
 	err = json.NewEncoder(w).Encode(contexts)
@@ -280,19 +268,14 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-// swagger:route GET /api/system/kubernetes/ping?connection_id={id} SystemAPI idGetKubernetesPing
-// Handle GET request for Kubernetes ping
-//
-// Fetches server version to simulate ping
-// responses:
-// 	200:
-
 // KubernetesPingHandler - fetches server version to simulate ping
 func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "failed to get the token for the user")
+		if _, err := fmt.Fprintf(w, "failed to get the token for the user"); err != nil {
+			h.log.Error(err)
+		}
 		return
 	}
 
@@ -302,7 +285,9 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		k8sContext, err := provider.GetK8sContext(token, connectionID)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, "failed to get kubernetes context for the given ID")
+			if _, err := fmt.Fprintf(w, "failed to get kubernetes context for the given ID"); err != nil {
+				h.log.Error(err)
+			}
 			return
 		}
 
@@ -310,7 +295,9 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		kubeclient, err := k8sContext.GenerateKubeHandler()
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			fmt.Fprintf(w, "failed to get kubernetes config for the user")
+			if _, err := fmt.Fprintf(w, "failed to get kubernetes config for the user"); err != nil {
+				h.log.Error(err)
+			}
 			return
 		}
 		version, err := kubeclient.KubeClient.ServerVersion()
@@ -331,15 +318,6 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 	http.Error(w, "Empty contextID. Pass the context ID(in query parameter \"context\") of the kuberenetes to be pinged", http.StatusBadRequest)
 }
 
-// swagger:route POST /api/system/kubernetes/register SystemAPI idPostK8SRegistration
-// Handle registration request for Kubernetes components
-//
-// Used to register Kubernetes components to Meshery from a kubeconfig file
-// responses:
-//
-//		202:
-//	 400:
-//	 500:
 func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
@@ -361,7 +339,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	// userUUID := uuid.FromStringOrNil(userID)
 
 	// Get meshery instance ID
-	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
+	mid, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
 	if !ok {
 		return contexts, models.ErrMesheryInstanceID
 	}

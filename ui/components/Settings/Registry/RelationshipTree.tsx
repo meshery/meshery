@@ -1,5 +1,5 @@
 import React from 'react';
-import { TreeView } from '@mui/x-tree-view/TreeView';
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { CircularProgress } from '@sistent/sistent';
 import { RELATIONSHIPS } from '@/constants/navigator';
 import MinusSquare from '../../../assets/icons/MinusSquare';
@@ -33,17 +33,14 @@ const RelationshipTree = ({
   isRelationshipFetching,
 }: RelationshipTreeProps) => {
   return (
-    <TreeView
+    <SimpleTreeView
       aria-label="controlled"
-      defaultExpanded={['3']}
-      defaultCollapseIcon={<MinusSquare />}
-      defaultExpandIcon={<PlusSquare />}
-      defaultEndIcon={<DotSquare />}
-      onNodeToggle={handleToggle}
-      onNodeSelect={handleSelect}
+      slots={{ collapseIcon: MinusSquare, expandIcon: PlusSquare, endIcon: DotSquare }}
+      onExpandedItemsChange={handleToggle}
+      onSelectedItemsChange={handleSelect}
       multiSelect
-      expanded={expanded}
-      selected={selected}
+      expandedItems={expanded}
+      selectedItems={selected}
     >
       {data.map((relationshipByKind, index) => {
         const idForKind =
@@ -53,7 +50,7 @@ const RelationshipTree = ({
         return (
           <StyledTreeItem
             key={index}
-            nodeId={idForKind}
+            itemId={idForKind}
             data-id={idForKind}
             labelText={`${relationshipByKind.kind} (${relationshipByKind.relationships.length})`}
             onClick={() => {
@@ -68,7 +65,7 @@ const RelationshipTree = ({
             {relationshipByKind.relationships.map((relationship) => (
               <StyledTreeItem
                 key={index}
-                nodeId={`${idForKind}.${relationship.id}`}
+                itemId={`${idForKind}.${relationship.id}`}
                 data-id={`${idForKind}.${relationship.id}`}
                 labelText={`${relationship.subType} (${relationship.model.name})`}
                 onClick={() => {
@@ -84,7 +81,7 @@ const RelationshipTree = ({
       })}
       <div ref={lastRegistrantRef} style={{ height: '48px' }}></div>
       {isRelationshipFetching ? <CircularProgress color="inherit" /> : null}
-    </TreeView>
+    </SimpleTreeView>
   );
 };
 

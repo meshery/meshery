@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/schemas/models/core"
 )
 
 // PerformanceProfilePersister is the persister for persisting
@@ -26,7 +26,7 @@ type PerformanceProfilePage struct {
 func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order string, page, pageSize uint64) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"updated_at", "created_at", "name", "last_run"})
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	count := int64(0)
@@ -64,18 +64,18 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 }
 
 // DeletePerformanceProfile takes in a profile id and delete it if it already exists
-func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id uuid.UUID) ([]byte, error) {
+func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id core.Uuid) ([]byte, error) {
 	profile := PerformanceProfile{ID: &id}
 	ppp.DB.Delete(profile)
 
 	return marshalPerformanceProfile(&profile), nil
 }
 
-func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ uuid.UUID, profile *PerformanceProfile) error {
+func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ core.Uuid, profile *PerformanceProfile) error {
 	return ppp.DB.Save(profile).Error
 }
 
-func (ppp *PerformanceProfilePersister) GetPerformanceProfile(id uuid.UUID) (*PerformanceProfile, error) {
+func (ppp *PerformanceProfilePersister) GetPerformanceProfile(id core.Uuid) (*PerformanceProfile, error) {
 	var performanceProfile PerformanceProfile
 
 	err := ppp.DB.First(&performanceProfile, id).Error

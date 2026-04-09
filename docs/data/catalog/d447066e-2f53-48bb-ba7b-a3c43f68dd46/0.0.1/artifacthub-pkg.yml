@@ -1,0 +1,20 @@
+version: 0.0.1
+name: prometheus-versus-3
+displayName: prometheus-versus-3
+createdAt: "2023-08-28T15:06:01Z"
+description: This is a simple prometheus montioring design
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/d447066e-2f53-48bb-ba7b-a3c43f68dd46/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Networking should be properly configured to enable communication between the frontend and backend components of the app. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a551897f-da39-4d4d-812e-6b299e82c457
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

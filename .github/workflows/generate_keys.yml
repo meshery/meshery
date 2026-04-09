@@ -61,8 +61,10 @@ jobs:
         run: |
           [ ! -d "./server/permissions" ] && mkdir -p "./server/permissions";
           mv keys.csv server/permissions/keys.csv;
-      - name: Save keys.csv to docs/assets/excel
-        run: cp server/permissions/keys.csv docs/assets/excel/keys.csv
+      - name: Save keys.csv to docs static folders
+        run: |
+          mkdir -p docs/static/excel
+          cp server/permissions/keys.csv docs/static/excel/keys.csv
 
       - name: Pull changes from remote
         run: git pull origin master

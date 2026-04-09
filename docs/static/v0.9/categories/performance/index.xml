@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Performance on Documentation</title>
+    <link>/v0.9/categories/performance/</link>
+    <description>Recent content in Performance on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/categories/performance/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Interpreting Performance Test Results</title>
+      <link>/v0.9/guides/performance-management/interpreting-performance-test-results/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/performance-management/interpreting-performance-test-results/</guid>
+      <description>&lt;p&gt;Once a performance tests and run, it&amp;rsquo;s disco analysis is performed and test results persisted. Results or downloadable and persisted in the &lt;a href=&#34;https://smp-spec.io/&#34;&gt;Cloud Native Performance&lt;/a&gt; format.&lt;/p&gt;&#xA;&lt;h2 id=&#34;graphical-view&#34;&gt;&#xA;&#x9;Graphical View&#xA;&lt;/h2&gt;&#xA;&lt;img src=&#34;/v0.9/guides/performance-management/images/performance-dashboard.png&#34; /&gt;&#xA;&lt;img src=&#34;/v0.9/guides/performance-management/images/chart.png&#34; /&gt;&#xA;&lt;h2 id=&#34;tests&#34;&gt;&#xA;&#x9;Tests&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;For the best experience, you should compare between two or more tests of similar configuration. Tests that are configured with a high degree of variance (e.g., one test ran for a duration of 5 minutes, while another test ran for a duration of 1 hour) will produce comparisons that are more difficult to extrapolate insights from.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Managing Performance</title>
+      <link>/v0.9/guides/performance-management/managing-performance/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/performance-management/managing-performance/</guid>
+      <description>&lt;p&gt;Key to the efficient operation of any infrastructure is the measurement and management of it&amp;rsquo;s performance.&lt;/p&gt;&#xA;&lt;h2 id=&#34;performance-profiles&#34;&gt;&#xA;&#x9;Performance Profiles&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Performance Profile is a new and improved way to save performance test configurations, schedule performance tests, etc. Meshery Performance Profiles offers the following features:&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Saving Test Configurations&lt;/li&gt;&#xA;&lt;li&gt;Create schedules for running tests automatically.&lt;/li&gt;&#xA;&lt;li&gt;Meshery offers UI for describing the schedules which are as powerful as CRON but without the hassle of remembering its syntax!&lt;/li&gt;&#xA;&lt;li&gt;All the tests performed are under Profiles which has multiple advantages like:&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Access test results ran under a certain profiles at one place.&lt;/li&gt;&#xA;&lt;li&gt;If running ad-hoc tests, user can anytime come back and rename the performance profiles for re-use.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h2 id=&#34;load-generators&#34;&gt;&#xA;&#x9;Load Generators&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Meshery provides users with a choice about the kind of load generator they prefer to use for a given performance test. Users may set their configure based on their own preference of load generator different from that of the default load generator.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Performance Management Guides</title>
+      <link>/v0.9/guides/performance-management/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/performance-management/</guid>
+      <description>&lt;p&gt;Guides for understanding Meshery&amp;rsquo;s ability to characterize and analyze performance of your infrastructure and applications.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Performance Management with Meshery</title>
+      <link>/v0.9/guides/performance-management/performance-management/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/performance-management/performance-management/</guid>
+      <description>&lt;p&gt;This guide walks through running performance benchmarks using Meshery. Users can either use the Meshery UI, the CLI, mesheryctl or run performance tests in their CI/CD pipelines using the Meshery GitHub Action.&lt;/p&gt;&#xA;&lt;h2 id=&#34;installing-meshery&#34;&gt;&#xA;&#x9;Installing Meshery&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Install and login to Meshery to start running performance benchmarks. See &lt;a href=&#34;/v0.9/installation/&#34;&gt;Installation&lt;/a&gt; documentation for detailed steps on how to install Meshery.&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;Meshery dashboard&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;a href=&#34;/v0.9/guides/performance-management/images/smi-dashboard.png&#34;&gt;&lt;img alt=&#34;Meshery Dashboard&#34; src=&#34;/v0.9/guides/performance-management/images/smi-dashboard.png&#34; /&gt;&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;If you are looking to run performance benchmarks on cloud native infrastructur, you can use Meshery&amp;rsquo;s cloud native infrastructurelifecycle management capabilities to deploy all kinds of cloud native infrastructure on Kubernets. With Meshery&amp;rsquo;s performance benchmarking feature, you can also deploy you application off the mesh and compare the performance and determine the overhead when the app runs on the mesh.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Using Metrics in Meshery</title>
+      <link>/v0.9/guides/performance-management/meshery-metrics/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/performance-management/meshery-metrics/</guid>
+      <description>&lt;h2 id=&#34;connect-and-use-metrics-in-meshery&#34;&gt;&#xA;&#x9;Connect and use metrics in Meshery&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Meshery provides performance reports, including performance test results, node resource metrics etc. so that operators may easily understand the overhead of their cloud native infrastructure control plane and data plane in context of the overhead incurred on nodes running within the cluster. In order to generate performance test reports of infrastructure and their workloads, Meshery uses Grafana and/or Prometheus as visualization and metrics systems, respectively. This guide outlines the requirements necessary for Meshery to connect to these systems. The steps may vary depending upon the infrastructure and its configuration.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

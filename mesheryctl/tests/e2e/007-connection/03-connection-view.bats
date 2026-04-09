@@ -46,7 +46,9 @@ require_connection_id() {
 
     run $MESHERYCTL_BIN connection view --save "$CONNECTION_ID"
     assert_success
-    assert_file_exists "$HOME/.meshery/connection_minikube.yaml"
+
+    SAVED_FILE="$(echo "$output" | sed -n 's/.*Data saved to file: //p')"
+    assert_file_exists "$SAVED_FILE"
 }
 
 @test "given an invalid connection-id is provided as an argument when running mesheryctl connection view --save then a message error is displayed" {

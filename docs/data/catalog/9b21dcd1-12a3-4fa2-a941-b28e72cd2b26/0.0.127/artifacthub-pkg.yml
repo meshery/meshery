@@ -1,0 +1,24 @@
+version: 0.0.127
+name: loxilb-clustered-load-balancer-with-cgnat
+displayName: LoxiLB Clustered Load Balancer with CGNAT
+createdAt: "2025-10-13T07:04:08Z"
+description: Highly available LoxiLB clustered load balancer with CGNAT capabilities for Kubernetes environments. Provides scalable load balancing, IPv4 address preservation, and tight Kubernetes integration via kube-loxilb.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/9b21dcd1-12a3-4fa2-a941-b28e72cd2b26/0.0.127/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires Kubernetes cluster with eBPF-enabled Linux kernel (>=4.18)\n\nConfigured for local IPv4 CGNAT. Adjust CIDR ranges for your network\n\nDeploys to default namespace; avoid modifying the default namespace resource\n\nExample usage targeted at telco edge and multi-tenant environments \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4a244636-81e9-4d69-b85f-07e6fe40a2cb
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/9b21dcd1-12a3-4fa2-a941-b28e72cd2b26-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/9b21dcd1-12a3-4fa2-a941-b28e72cd2b26-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

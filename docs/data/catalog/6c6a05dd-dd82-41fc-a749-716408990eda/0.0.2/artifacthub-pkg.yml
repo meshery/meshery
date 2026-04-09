@@ -1,0 +1,28 @@
+version: 0.0.2
+name: ditto-operator-0.3.0.tgz
+displayName: ditto-operator-0.3.0.tgz
+createdAt: "2025-10-12T18:05:52Z"
+description: |
+    Eclipse Ditto Operator (Helm chart v0.3.0) packaged as a Meshery Design.
+    This design deploys the controller resources (CRDs, Deployment, RBAC, ServiceAccount)
+    required to manage Eclipse Ditto custom resources in a Kubernetes cluster.
+    Source: ctron/ditto-operator (Chart 0.3.0, App 0.4.0).
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/6c6a05dd-dd82-41fc-a749-716408990eda/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "• Requires cluster-admin or equivalent to install CRDs and RBAC.\n• Install in a dedicated namespace (e.g., ditto-operator); verify image pull access.\n• CRDs: ensure no conflicting Ditto CRDs exist from prior installs.\n• Tested on Kubernetes ≥1.24; versions below may have API incompatibilities.\n• This Design installs only the Operator; Ditto instances/workloads are managed\n  via Ditto custom resources after the operator is running.\n• If upgrading from another version, back up CRDs/CRs and review breaking changes.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 985074f5-27a0-406c-b83a-7f247ba77746
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6c6a05dd-dd82-41fc-a749-716408990eda-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6c6a05dd-dd82-41fc-a749-716408990eda-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

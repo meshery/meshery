@@ -1,0 +1,35 @@
+version: 0.0.8
+name: hashicorp-vault-
+displayName: 'Hashicorp Vault '
+createdAt: "2024-07-24T13:47:28Z"
+description: |-
+    The Vault server cluster can run directly on Kubernetes. This can be used by applications running within Kubernetes as well as external to Kubernetes, as long as they can communicate to the server via the network.
+
+    Accessing and Storing Secrets: Applications using the Vault service running in Kubernetes can access and store secrets from Vault using a number of different secret engines and authentication methods.
+
+    Running a Highly Available Vault Service: By using pod affinities, highly available backend storage (such as Consul) and auto-unseal, Vault can become a highly available service in Kubernetes.
+
+    Encryption as a Service: Applications using the Vault service running in Kubernetes can leverage the Transit secret engine as "encryption as a service". This allows applications to offload encryption needs to Vault before storing data at rest.
+
+    Audit Logs for Vault: Operators can choose to attach a persistent volume to the Vault cluster which can be used to store audit logs.
+
+    And more! Vault can run directly on Kubernetes, so in addition to the native integrations provided by Vault itself, any other tool built for Kubernetes can choose to leverage Vault.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/254aa1d3-d972-4894-813a-f58fdd24021c/0.0.8/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "refer for  Caveats And Considerations from this docs https://developer.hashicorp.com/vault/docs/platform/k8s \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/254aa1d3-d972-4894-813a-f58fdd24021c-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/254aa1d3-d972-4894-813a-f58fdd24021c-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

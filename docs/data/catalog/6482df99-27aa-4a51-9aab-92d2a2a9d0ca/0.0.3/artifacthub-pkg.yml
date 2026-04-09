@@ -1,0 +1,47 @@
+version: 0.0.3
+name: node-problem-detector
+displayName: Node Problem Detector
+createdAt: "2024-07-06T07:36:26Z"
+description: |
+    node-problem-detector aims to make various node problems visible to the upstream
+    layers in the cluster management stack.
+    It is a daemon that runs on each node, detects node
+    problems and reports them to apiserver.
+
+    node-problem-detector can either run as a
+    [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) or run standalone.
+    Now it is running as a
+    [Kubernetes Addon](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons)
+    enabled by default in the GKE cluster. It is also enabled by default in AKS as part of the
+    [AKS Linux Extension](https://learn.microsoft.com/en-us/azure/aks/faq#what-is-the-purpose-of-the-aks-linux-extension-i-see-installed-on-my-linux-vmss-instances).
+
+
+    There are tons of node problems that could possibly affect the pods running on the node, such as:
+
+    Infrastructure daemon issues: ntp service down;
+    Hardware issues: Bad CPU, memory or disk;
+    Kernel issues: Kernel deadlock, corrupted file system;
+    Container runtime issues: Unresponsive runtime daemon;
+    ...
+    Currently, these problems are invisible to the upstream layers in the cluster management stack, so Kubernetes will continue scheduling pods to the bad nodes.
+
+    To solve this problem, we introduced this new daemon node-problem-detector to collect node problems from various daemons and make them visible to the upstream layers. Once upstream layers have visibility to those problems, we can discuss the remedy system.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/6482df99-27aa-4a51-9aab-92d2a2a9d0ca/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "node-problem-detector uses Event and NodeCondition to report problems to apiserver.\n\nNodeCondition: Permanent problem that makes the node unavailable for pods should be reported as NodeCondition.\nEvent: Temporary problem that has limited impact on pod but is informative should be reported as Event.\nFor more Caveats And Considerations checkout this https://github.com/kubernetes/node-problem-detector \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6482df99-27aa-4a51-9aab-92d2a2a9d0ca-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6482df99-27aa-4a51-9aab-92d2a2a9d0ca-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

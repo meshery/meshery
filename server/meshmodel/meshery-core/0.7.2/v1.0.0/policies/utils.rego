@@ -38,11 +38,11 @@ array_endswith(arr, item) if {
 }
 
 # coalesce is a utility function that returns the first non-null value from the provided arguments.
-coalesce(val, defautl) := val if {
+coalesce(val, default_val) := val if {
 	val != null
 }
 
-coalesce(val, defautl) := defautl if {
+coalesce(val, default_val) := default_val if {
 	val == null
 }
 

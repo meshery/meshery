@@ -4,23 +4,23 @@ import rego.v1
 
 import data.eval_rules
 
-# Test same_relationship_identitfier
+# Test same_relationship_identifier
 test_same_relationship_identifier_true if {
 	rel_a := {"kind": "edge", "type": "binding", "subType": "mount"}
 	rel_b := {"kind": "edge", "type": "binding", "subType": "mount"}
-	eval_rules.same_relationship_identitfier(rel_a, rel_b)
+	eval_rules.same_relationship_identifier(rel_a, rel_b)
 }
 
 test_same_relationship_identifier_different_kind if {
 	rel_a := {"kind": "edge", "type": "binding", "subType": "mount"}
 	rel_b := {"kind": "hierarchical", "type": "binding", "subType": "mount"}
-	not eval_rules.same_relationship_identitfier(rel_a, rel_b)
+	not eval_rules.same_relationship_identifier(rel_a, rel_b)
 }
 
 test_same_relationship_identifier_different_type if {
 	rel_a := {"kind": "edge", "type": "binding", "subType": "mount"}
 	rel_b := {"kind": "edge", "type": "non-binding", "subType": "mount"}
-	not eval_rules.same_relationship_identitfier(rel_a, rel_b)
+	not eval_rules.same_relationship_identifier(rel_a, rel_b)
 }
 
 # Test same_relationship_selector_clause
