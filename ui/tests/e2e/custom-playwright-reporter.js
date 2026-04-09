@@ -1,6 +1,8 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { createHash, randomUUID } from 'crypto';
+import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { template } from 'lodash';
 import moment from 'moment';
+import os from 'os';
 import path from 'path';
 
 class MyReporter {
@@ -16,6 +18,7 @@ class MyReporter {
   skipped = 0;
   flaky = 0;
   countLog = 1;
+  relationshipAllureEntries = new Map();
 
   onBegin(_config, suite) {
     this.introMessage = `- Testing started at: ${moment().format('MMMM Do YYYY, h:mm:ss a')}`;
@@ -56,6 +59,7 @@ class MyReporter {
       try {
         const data = JSON.parse(annotation.description);
         this.collectRelationshipData(data);
+        this.collectRelationshipAllureEntry(test, result, project, provider, data);
       } catch {
         // Skip invalid annotations
       }
@@ -154,6 +158,128 @@ ${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`
       writeFileSync('test-report.md', message);
     } catch (e) {
       console.log('Cannot write test reporter ', e);
+    }
+
+    this.writeRelationshipAllureResults();
+  }
+
+  collectRelationshipAllureEntry(test, result, project, provider, data) {
+    const fileName = path.basename(test.location.file);
+    const suiteTitle = test.parent?.title || 'Relationship Evaluation';
+    const key = this.createRelationshipAllureKey(project, provider, data);
+
+    this.relationshipAllureEntries.set(key, {
+      fileName,
+      project,
+      provider,
+      suiteTitle,
+      data,
+      start: result.startTime?.getTime?.() ?? Date.now(),
+      stop:
+        (result.startTime?.getTime?.() ?? Date.now()) +
+        (typeof result.duration === 'number' ? result.duration : 0),
+      line: test.location.line,
+      column: test.location.column,
+    });
+  }
+
+  createRelationshipAllureKey(project, provider, data) {
+    return [
+      project,
+      provider,
+      data.kind,
+      data.type,
+      data.subType,
+      data.from,
+      data.to,
+      data.model,
+      data.designName,
+    ].join('|');
+  }
+
+  writeRelationshipAllureResults() {
+    if (this.relationshipAllureEntries.size === 0) {
+      return;
+    }
+
+    const allureResultsDir = path.resolve(process.cwd(), 'allure-results');
+    mkdirSync(allureResultsDir, { recursive: true });
+
+    for (const entry of this.relationshipAllureEntries.values()) {
+      const { fileName, project, provider, suiteTitle, data, start, stop, line, column } = entry;
+
+      const historySource = JSON.stringify({
+        fileName,
+        project,
+        provider,
+        suiteTitle,
+        kind: data.kind,
+        type: data.type,
+        subType: data.subType,
+        from: data.from,
+        to: data.to,
+        model: data.model,
+        designName: data.designName,
+      });
+      const testCaseId = createHash('md5').update(historySource).digest('hex');
+      const attachmentSource = `${randomUUID()}-attachment.json`;
+      const resultSource = `${randomUUID()}-result.json`;
+      const relationshipName =
+        `Relationship Result: ${data.kind}/${data.type}/${data.subType || '-'} ` +
+        `${data.from} -> ${data.to} (${data.designName})`;
+
+      writeFileSync(path.join(allureResultsDir, attachmentSource), JSON.stringify(data, null, 2));
+
+      writeFileSync(
+        path.join(allureResultsDir, resultSource),
+        JSON.stringify(
+          {
+            uuid: randomUUID(),
+            name: relationshipName,
+            historyId: testCaseId,
+            status: data.status === 'pass' ? 'passed' : 'failed',
+            statusDetails: {},
+            stage: 'finished',
+            steps: [],
+            attachments: [
+              {
+                name: 'relationship-data',
+                source: attachmentSource,
+                type: 'application/json',
+              },
+            ],
+            parameters: [
+              { name: 'Project', value: project },
+              { name: 'Provider', value: provider },
+              { name: 'Design', value: data.designName },
+              { name: 'Model', value: data.model },
+              { name: 'From', value: data.from },
+              { name: 'To', value: data.to },
+            ],
+            labels: [
+              { name: 'project', value: process.env.ALLURE_LABEL_project || 'Meshery' },
+              { name: 'type', value: process.env.ALLURE_LABEL_type || 'e2e' },
+              { name: 'language', value: 'javascript' },
+              { name: 'framework', value: 'playwright' },
+              { name: 'package', value: fileName },
+              { name: 'tag', value: 'relationship' },
+              { name: 'parentSuite', value: project },
+              { name: 'suite', value: fileName },
+              { name: 'subSuite', value: suiteTitle },
+              { name: 'host', value: os.hostname() },
+              { name: 'thread', value: `pid-${process.pid}` },
+            ],
+            links: [],
+            start,
+            stop,
+            testCaseId,
+            fullName: `${fileName}:${line}:${column}:${testCaseId}`,
+            titlePath: [fileName, suiteTitle, relationshipName],
+          },
+          null,
+          2,
+        ),
+      );
     }
   }
 
