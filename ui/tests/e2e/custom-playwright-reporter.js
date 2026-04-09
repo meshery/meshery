@@ -47,6 +47,7 @@ class MyReporter {
       result.retry,
       test.retries,
       result,
+      test.location,
     );
 
     // Process relationship annotations if present
@@ -113,7 +114,7 @@ class MyReporter {
 
     let count = 1;
     for (const row of this.testTableData) {
-      table += `\n| ${count} | ${row.provider} | ${row.project} | ${row.title} | ${row.tags} | ${row.statusEmoji} |`;
+      table += `\n| ${count} | ${this.escapeTableCell(row.provider)} | ${this.escapeTableCell(row.project)} | ${this.getTestCaseLink(row)} | ${this.escapeTableCell(row.tags)} | ${row.statusEmoji} |`;
       count++;
     }
 
@@ -128,11 +129,17 @@ class MyReporter {
     let details = '';
     for (const failedTest of this.failedTestDetails) {
       const escapedTitle = failedTest.title.replace(/[|]/g, '\\|');
+      const sourceUrl = this.getSourceCodeUrl(failedTest.fileLocation, failedTest.errorLine);
+      const fileDisplay = sourceUrl
+        ? `[${failedTest.fileLocation}](${sourceUrl})`
+        : `\`${failedTest.fileLocation}\``;
+
       details += `
+<a id="${failedTest.anchorId}"></a>
 <details>
 <summary>❌ ${escapedTitle} (${failedTest.provider} - ${failedTest.project})</summary>
 
-**File Location:** \`${failedTest.fileLocation}\`
+**File Location:** ${fileDisplay}
 
 **Error Message:**
 \`\`\`
@@ -147,8 +154,46 @@ ${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`
     return details;
   }
 
-  async onEnd(result) {
-    const message = await this.buildMessage(result);
+  escapeTableCell(value) {
+    return String(value ?? '').replace(/[|]/g, '\\|');
+  }
+
+  getTestCaseLink(row) {
+    const title = this.escapeTableCell(row.title);
+    // Failing tests link to their inline failure details anchor
+    if (row.failureAnchor) {
+      return `[${title}](#${row.failureAnchor})`;
+    }
+    // All other tests link to their source file on GitHub
+    if (row.sourceUrl) {
+      return `[${title}](${row.sourceUrl})`;
+    }
+    return title;
+  }
+
+  getSourceCodeUrl(filePath, line) {
+    const serverUrl = process.env.GITHUB_SERVER_URL || 'https://github.com';
+    const repository = process.env.GITHUB_REPOSITORY;
+    // GITHUB_HEAD_SHA is set by the workflow for pull_request_target events
+    // to give the PR head SHA; GITHUB_SHA is correct for push events.
+    const sha = process.env.GITHUB_HEAD_SHA || process.env.GITHUB_SHA;
+    const workspace = process.env.GITHUB_WORKSPACE;
+
+    if (!repository || !sha || !filePath || filePath === 'Not Found') {
+      return null;
+    }
+
+    let relativePath = filePath;
+    if (workspace && filePath.startsWith(workspace)) {
+      relativePath = filePath.slice(workspace.length).replace(/^\//, '');
+    }
+
+    const url = `${serverUrl}/${repository}/blob/${sha}/${relativePath}`;
+    return line ? `${url}#L${line}` : url;
+  }
+
+  onEnd(result) {
+    const message = this.buildMessage(result);
 
     try {
       writeFileSync('test-report.md', message);
@@ -181,7 +226,7 @@ ${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`
     this.countLog++;
   }
 
-  addTestTable(project, provider, title, tags, status, retry, retries, result) {
+  addTestTable(project, provider, title, tags, status, retry, retries, result, testLocation) {
     this.countTestStatus(tags, status, retry, retries);
 
     const lastRetriesRun = retry === retries;
@@ -201,6 +246,13 @@ ${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`
 
     const allTags = tags.map((item) => item.replace('@', '')).join(', ');
     const statusEmoji = this.getStatusEmoji(tags, status);
+    const failureAnchor =
+      isFail && lastRetriesRun && !isUnstableTest
+        ? this.getFailureAnchorId(project, provider, title)
+        : null;
+    const sourceUrl = testLocation
+      ? this.getSourceCodeUrl(testLocation.file, testLocation.line)
+      : null;
 
     // Add to test table data for sorting
     this.testTableData.push({
@@ -209,6 +261,8 @@ ${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`
       title: title,
       tags: allTags,
       statusEmoji: statusEmoji,
+      failureAnchor: failureAnchor,
+      sourceUrl: sourceUrl,
     });
 
     // Collect failed test details for collapsible section
@@ -219,10 +273,17 @@ ${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`
         title: title,
         tags: allTags,
         fileLocation: result.error.location?.file ?? 'Not Found',
+        errorLine: result.error.location?.line ?? null,
         errorMessage: result.error.message ?? 'No error message available',
         snippet: result.error.snippet ?? null,
+        anchorId: failureAnchor,
       });
     }
+  }
+
+  getFailureAnchorId(project, provider, title) {
+    const slugSource = `${provider}-${project}-${title}`.toLowerCase();
+    return `failed-test-${slugSource.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`;
   }
 
   countTestStatus(tags, status, retry, retries) {
@@ -269,7 +330,7 @@ ${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`
     return '➖';
   }
 
-  async buildMessage(result) {
+  buildMessage(result) {
     const duration = moment.duration(result.duration, 'milliseconds');
     const minutes = Math.floor(duration.asMinutes());
     const seconds = duration.seconds();

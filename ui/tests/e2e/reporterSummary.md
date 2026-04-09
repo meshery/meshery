@@ -13,6 +13,8 @@
 
 <%- failed > 0 ? "**Overall Result**: 👎 Some tests failed." : "**Overall Result**: 👍 All tests passed." %>
 
+Full test report with logs, traces, and history: [Allure Report](https://qa.meshery.io/meshery/)
+
 <% if (testTable) { %>
 
 <details>

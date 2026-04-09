@@ -51,8 +51,8 @@ jobs:
           const PRSha = fs.readFileSync('./pr/sha', 'utf8').trim()
           const E2ETestReporter = fs.readFileSync('./ui/test-report.md', 'utf8')
                 
-          const body = `        
-            **Commit SHA:** \`${PRSha}\`  
+          const body = `
+            **Commit SHA:** [\`${PRSha.slice(0, 7)}\`](https://github.com/${context.repo.owner}/${context.repo.repo}/commit/${PRSha})
 
             ${E2ETestReporter}
             `
