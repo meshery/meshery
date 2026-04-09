@@ -482,10 +482,6 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 1. On executing `make docs` a `_site` folder is created which has static html files.
 1. The `_site` folder is renamed to `v0.X` and is copied into the `docs` folder of the present version.
 
-## Bi-Weekly Meetings
-
-If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
-
 <div class="training-video">
   <iframe width="560" height="315"
     src="https://www.youtube.com/embed/dlr_nzJV16Q"
