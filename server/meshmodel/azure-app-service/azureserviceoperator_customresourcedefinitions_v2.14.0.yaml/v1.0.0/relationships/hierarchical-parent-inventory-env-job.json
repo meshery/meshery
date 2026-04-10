@@ -12,16 +12,16 @@
     }
   },
   "model": {
-    "displayName": "",
+    "displayName": "Azure App Service",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
       "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
     },
     "name": "azure-app-service",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
-    "version": ""
+    "version": "v1.0.0"
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
