@@ -70,11 +70,20 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			query := url.Values{}
 			query.Set("orgID", workspaceViewFlagsProvided.OrgID)
 			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(workspaceNameOrID), query.Encode())
-			fetchedWorkspace, err := api.Fetch[workspace.Workspace](urlPath)
+			fetchedPage, err := api.Fetch[workspace.WorkspacePage](urlPath)
 			if err != nil {
 				return err
 			}
-			*selectedWorkspace = *fetchedWorkspace
+			if fetchedPage.TotalCount == 0 || len(fetchedPage.Workspaces) == 0 {
+				return utils.ErrNotFound(fmt.Errorf("workspace not found"))
+			}
+			av := fetchedPage.Workspaces[0]
+			selectedWorkspace.ID = av.ID
+			selectedWorkspace.Name = av.Name
+			selectedWorkspace.Description = av.Description
+			selectedWorkspace.OrganizationID = av.OrganizationId
+			selectedWorkspace.CreatedAt = av.CreatedAt
+			selectedWorkspace.UpdatedAt = av.UpdatedAt
 		} else {
 			selectedAvailableWorkspace := new(workspace.AvailableWorkspace)
 			viewUrlValue := url.Values{}
