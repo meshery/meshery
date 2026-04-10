@@ -70,7 +70,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 		viewUrlValue.Add("orgID", workspaceViewFlagsProvided.OrgID)
 
 		if utils.IsUUID(workspaceNameOrID) {
-			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(workspaceNameOrID), viewUrlValue.Encode())
+			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.QueryEscape(workspaceNameOrID), viewUrlValue.Encode())
 			displayData = display.DisplayDataAsync{
 				UrlPath: urlPath,
 			}
@@ -98,8 +98,18 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			return err
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[workspace.AvailableWorkspace]{}
-		outputFormatter, err := outputFormatterFactory.New(workspaceViewFlagsProvided.OutputFormat, *selectedAvailableWorkspace)
+		// TODO: See how we can handle this properly
+		selectedWorkspace := &workspace.Workspace{
+			ID:             selectedAvailableWorkspace.ID,
+			Name:           selectedAvailableWorkspace.Name,
+			OrganizationID: selectedAvailableWorkspace.OrganizationId,
+			CreatedAt:      selectedAvailableWorkspace.CreatedAt,
+			UpdatedAt:      selectedAvailableWorkspace.UpdatedAt,
+			Metadata:       selectedAvailableWorkspace.Metadata,
+		}
+
+		outputFormatterFactory := display.OutputFormatterFactory[workspace.Workspace]{}
+		outputFormatter, err := outputFormatterFactory.New(workspaceViewFlagsProvided.OutputFormat, *selectedWorkspace)
 		if err != nil {
 			return err
 		}
@@ -112,12 +122,12 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 		}
 
 		if workspaceViewFlagsProvided.Save {
-			workspaceString := strings.ReplaceAll(selectedAvailableWorkspace.Name, " ", "_")
+			workspaceString := strings.ReplaceAll(selectedWorkspace.Name, " ", "_")
 			if workspaceString == "" {
-				workspaceString = selectedAvailableWorkspace.ID.String()
+				workspaceString = selectedWorkspace.ID.String()
 			}
 			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("workspace_%s.%s", workspaceString, workspaceViewFlagsProvided.OutputFormat))
-			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[workspace.AvailableWorkspace]{}
+			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[workspace.Workspace]{}
 			outputFormatterSaver, err := outputFormatterSaverFactory.New(workspaceViewFlagsProvided.OutputFormat, outputFormatter)
 			if err != nil {
 				return err
