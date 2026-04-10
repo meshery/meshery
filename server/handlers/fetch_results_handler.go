@@ -11,21 +11,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// swagger:route GET /api/user/performance/profiles/{id}/results PerformanceAPI idGETProfileResults
-// Handle GET request for results of a profile
-//
-// Fetches pages of results from provider for the given id
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-//
-// ```?search={result_name|mesh|url}``` If search is non empty then a greedy search is performed
-// responses:
-// 	200:performanceResultsResponseWrapper
-
 // FetchResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
 func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	profileID := mux.Vars(req)["id"]
@@ -49,44 +34,6 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	_, _ = w.Write(bdr)
 }
 
-// swagger:route GET /api/perf/profile/result PerfAPI idGetAllPerfResults
-// Handles GET requests for perf results
-//
-// # Results can be further filtered through query parameter
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-//
-// ```?search={}``` If search is non empty then a greedy search is performed
-//
-//  ```?from={date}``` Date must be in yyyy-mm-dd format
-//
-// ```?to={date}``` Date must be in yyyy-mm-dd format
-// responses:
-// 	200: performanceResultsResponseWrapper
-
-// swagger:route GET /api/user/performance/profiles/results PerformanceAPI idGetAllPerformanceResults
-// Handles GET requests for performance results
-//
-// # Results can be further filtered through query parameter
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-//
-// ```?search={}``` If search is non empty then a greedy search is performed
-//
-//  ```?from={date}``` Date must be in yyyy-mm-dd format
-//
-// ```?to={date}``` Date must be in yyyy-mm-dd format
-// responses:
-// 	200: performanceResultsResponseWrapper
-
 // FetchAllResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
 func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	err := req.ParseForm()
@@ -107,14 +54,6 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 	w.Header().Set("content-type", "application/json")
 	_, _ = w.Write(bdr)
 }
-
-// swagger:route GET /api/perf/profile/result/{id} PerfAPI idGetSinglePerfResult
-// Handles GET requests for perf result
-//
-// Returns an individual result from provider
-//
-// responses:
-// 	200: perfSingleResultRespWrapper
 
 // GetResultHandler gets an individual result from provider
 func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
@@ -161,21 +100,6 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	_, _ = w.Write(b)
 }
 
-// swagger:route GET /api/smi/results Smi idFetchSmiResults
-// Handle GET request for the results of all the smi conformance tests
-//
-// # Results can be further filtered through query parameter
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-//
-// ```?search={status|mesh_version|mesh_name|date|id}``` If search is non empty then a greedy search is performed
-// responses:
-//
-//	200: smiResultsResponseWrapper
 func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	w.Header().Set("content-type", "application/json")
 	err := req.ParseForm()

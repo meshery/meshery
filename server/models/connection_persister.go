@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/connections"
@@ -134,7 +136,7 @@ func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection
 	return connection, err
 }
 
-func (cp *ConnectionPersister) DeleteConnectionById(connectionID uuid.UUID) (*connections.Connection, error) {
+func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*connections.Connection, error) {
 	connection := connections.Connection{}
 	err := cp.DB.Where("id = ?", connectionID).First(&connection).Error
 	if err != nil {
@@ -159,7 +161,7 @@ func (cp *ConnectionPersister) fetchUserDetails() *User {
 	}
 }
 
-func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, error) {
+func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, error) {
 	err := cp.DB.Model(&connections.Connection{}).Where("id = ?", connectionID).UpdateColumn("status", connectionStatus).Error
 	if err != nil {
 		return nil, fmt.Errorf("error updating connection status: %v", err)
@@ -190,7 +192,7 @@ func (cp *ConnectionPersister) UpdateConnectionByID(connection *connections.Conn
 
 // Get connection by ID
 // If kind is provided filter with kind too
-func (cp *ConnectionPersister) GetConnection(id uuid.UUID, kind string) (*connections.Connection, error) {
+func (cp *ConnectionPersister) GetConnection(id core.Uuid, kind string) (*connections.Connection, error) {
 	connection := connections.Connection{}
 	query := cp.DB.Where("id = ?", id)
 	if kind != "" {

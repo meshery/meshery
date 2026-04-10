@@ -28,7 +28,7 @@ import (
 	"github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 
-	coreV1 "github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -87,13 +87,13 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 		switch sourceType {
 		case "Helm Chart":
-			sourceType = string(coreV1.HelmChart)
+			sourceType = string(core.HelmChart)
 		case "Kubernetes Manifest":
-			sourceType = string(coreV1.K8sManifest)
+			sourceType = string(core.K8sManifest)
 		case "Meshery Design":
-			sourceType = string(coreV1.MesheryDesign)
+			sourceType = string(core.MesheryDesign)
 		case "Docker Compose":
-			sourceType = string(coreV1.DockerCompose)
+			sourceType = string(core.DockerCompose)
 		}
 
 		pattern, err := importPattern(sourceType, file, patternURL, true)

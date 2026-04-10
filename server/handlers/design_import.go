@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	pCore "github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshkit/encoding"
@@ -21,7 +20,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
-	coreV1 "github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
@@ -91,13 +90,13 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 
 	switch identifiedFile.Type {
 
-	case coreV1.HelmChart:
+	case core.HelmChart:
 		return files.ConvertHelmChartToKubernetesManifest(identifiedFile)
-	case coreV1.DockerCompose:
+	case core.DockerCompose:
 		return files.ConvertDockerComposeToKubernetesManifest(identifiedFile)
-	case coreV1.K8sManifest:
+	case core.K8sManifest:
 		return string(rawFile.Data), nil
-	case coreV1.K8sKustomize:
+	case core.K8sKustomize:
 		return files.ConvertKustomizeToKubernetesManifest(identifiedFile)
 	default:
 		return "", files.ErrUnsupportedFileTypeForConversionToDesign(rawFile.FileName, string(identifiedFile.Type))
@@ -105,7 +104,7 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 }
 
 // returns the design file , the type of file that was identified during converion , and any error
-func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager, logger logger.Handler) (pattern.PatternFile, coreV1.IaCFileTypes, error) {
+func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager, logger logger.Handler) (pattern.PatternFile, core.IaCFileTypes, error) {
 
 	defer utils.TrackTime(logger, time.Now(), "ConvertFileToDesign")
 
@@ -148,7 +147,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 		return emptyDesign, "", err
 	}
 
-	if identifiedFile.Type == coreV1.MesheryDesign {
+	if identifiedFile.Type == core.MesheryDesign {
 		design := identifiedFile.ParsedFile.(pattern.PatternFile)
 		return design, identifiedFile.Type, nil
 	}
@@ -172,7 +171,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	return design, identifiedFile.Type, err
 }
 
-func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID uuid.UUID, eventBuilder *events.EventBuilder) {
+func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID core.Uuid, eventBuilder *events.EventBuilder) {
 
 	h.log.Error(ErrRetrieveUserToken(err))
 	http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
@@ -182,13 +181,13 @@ func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider mode
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
 
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, "")
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
 
 }
 
-func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider models.Provider, err error, userID uuid.UUID, eventBuilder *events.EventBuilder) {
+func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider models.Provider, err error, userID core.Uuid, eventBuilder *events.EventBuilder) {
 
 	h.log.Error(ErrRequestBody(err))
 	http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
@@ -198,7 +197,7 @@ func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider mo
 			"error": ErrRequestBody(err),
 		}).WithDescription("Unable to parse request body").Build()
 
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, "")
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
 }
@@ -217,12 +216,6 @@ func ImportErrorEvent(eventBuilder events.EventBuilder, importPayload MesheryDes
 
 }
 
-// swagger:route POST /api/pattern/import PatternsAPI idPostPatternFile
-// Handle design import
-//
-// responses: [Design]
-//
-//	200: mesheryPatternResponseWrapper
 func (h *Handler) DesignFileImportHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -260,7 +253,7 @@ func (h *Handler) DesignFileImportHandler(
 		h.log.Error(fmt.Errorf("conversion: failed to get file from payload  %w", err))
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -271,7 +264,7 @@ func (h *Handler) DesignFileImportHandler(
 		h.log.Error(fmt.Errorf("conversion: failed to convert to design %w", err))
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -287,7 +280,7 @@ func (h *Handler) DesignFileImportHandler(
 			"error": ErrSavePattern(err),
 		}).WithDescription(ErrSavePattern(err).Error()).Build()
 
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -305,14 +298,14 @@ func (h *Handler) DesignFileImportHandler(
 
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &designRecord)
 	if err != nil {
-		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider)
+		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider, token)
 		return
 	}
 
 	_, _ = rw.Write(savedDesignByt)
 
 	event := eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Imported design '%s' of type '%s'", design.Name, sourceFileType)).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 }
