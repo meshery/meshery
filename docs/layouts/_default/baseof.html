@@ -12,7 +12,15 @@
 
   <body class="td-{{ .Kind }} dark-mode {{ with .Params.body_class }}{{ . }}{{ end }}">
     <script>
-      if (localStorage.getItem("mode") === "light-mode") {
+      let savedMode = null;
+
+      try {
+        savedMode = localStorage.getItem("mode");
+      } catch (error) {
+        // Ignore storage access errors in restricted browsing contexts.
+      }
+
+      if (savedMode === "light-mode") {
         document.body.classList.remove("dark-mode");
         document.querySelectorAll("#logo-dark-light").forEach(e => {
           e.src = e.dataset.logoForLight;

@@ -1,8 +1,24 @@
 "use strict";
 
+function getSavedMode() {
+    try {
+        return localStorage.getItem("mode");
+    } catch (error) {
+        return null;
+    }
+}
+
+function saveMode(mode) {
+    try {
+        localStorage.setItem("mode", mode);
+    } catch (error) {
+        // Ignore storage access errors in restricted browsing contexts.
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 
-    const savedMode = localStorage.getItem("mode");
+    const savedMode = getSavedMode();
 
     if (!savedMode || savedMode === "dark-mode") {
         document.body.classList.add("dark-mode");
@@ -21,8 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function setMode() {
     document.body.classList.toggle("dark-mode");
     updateLogos();
-    localStorage.setItem(
-        "mode",
+    saveMode(
         document.body.classList.contains("dark-mode") ? "dark-mode" : "light-mode"
     );
 }
