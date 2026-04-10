@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   Box,
   Button,
@@ -17,12 +16,13 @@ import {
   Modal,
   ModalBody,
   useTheme,
-  Search,
 } from '@sistent/sistent';
+
+import SearchIcon from '@mui/icons-material/Search';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { useLazyPingKubernetesQuery } from '@/rtk-query/connection';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { RoundedTriangleShape } from './shapes/RoundedTriangle';
 import { notificationColors } from '../themes/app';
@@ -46,9 +46,14 @@ const DialogSubtitle = styled(DialogContentText)({
   padding: '5px',
 });
 
+interface ActionButtonProps {
+  isUndeploy?: boolean;
+  isDisabled?: boolean;
+}
+
 const ActionButton = styled(Button, {
-  shouldForwardProp: (prop) => !['isUndeploy', 'isDisabled'].includes(prop),
-})(({ theme, isUndeploy, isDisabled }) => ({
+  shouldForwardProp: (prop) => !['isUndeploy', 'isDisabled'].includes(prop as string),
+})<ActionButtonProps>(({ theme, isUndeploy, isDisabled }) => ({
   margin: theme.spacing(0.5),
   padding: theme.spacing(1),
   borderRadius: 5,
@@ -126,30 +131,46 @@ export const OctagonText = styled('div')({
   fontSize: '0.8rem',
 });
 
-function ConfirmationMsg(props) {
-  const {
-    open,
-    handleClose,
-    submit,
-    title,
-    validationBody,
-    componentCount,
-    tab,
-    errors,
-    dryRunComponent,
-  } = props;
+interface ConfirmationMsgProps {
+  open: boolean;
+  handleClose: () => void;
+  submit: {
+    deploy: () => void;
+    unDeploy: () => void;
+  };
+  title?: string;
+  validationBody?: React.ReactNode;
+  componentCount?: number;
+  tab: number;
+  errors?: {
+    validationError?: number;
+    deploymentError?: number;
+  };
+  dryRunComponent?: React.ReactNode;
+}
 
+function ConfirmationMsg({
+  open,
+  handleClose,
+  submit,
+  title,
+  validationBody,
+  componentCount,
+  tab,
+  errors,
+  dryRunComponent,
+}: ConfirmationMsgProps) {
   const [tabVal, setTabVal] = useState(tab);
   const [disabled, setDisabled] = useState(true);
-  const [context, setContexts] = useState([]);
+  const [context, setContexts] = useState<any[]>([]);
   const { notify } = useNotification();
   const [triggerPing] = useLazyPingKubernetesQuery();
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
-  const { k8sConfig: k8scontext } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state: any) => state.ui);
+  const { k8sConfig: k8scontext } = useSelector((state: any) => state.ui);
 
   let isDisabled =
     typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<any>();
   useEffect(() => {
     setTabVal(tab);
     setContexts(k8scontext);
@@ -159,19 +180,19 @@ function ConfirmationMsg(props) {
     setDisabled(isDisabled);
   }, [selectedK8sContexts]);
 
-  const handleTabValChange = (event, newVal) => {
+  const handleTabValChange = (event: React.SyntheticEvent, newVal: number) => {
     setTabVal(newVal);
   };
 
-  const handleKubernetesClick = async (ctxID) => {
+  const handleKubernetesClick = async (ctxID: string) => {
     updateProgress({ showProgress: true });
     try {
       await triggerPing(ctxID).unwrap();
       updateProgress({ showProgress: false });
-      successHandlerGenerator(notify, 'Kubernetes pinged')();
+      successHandlerGenerator(notify, 'Kubernetes pinged', () => {})({});
     } catch (err) {
       updateProgress({ showProgress: false });
-      errorHandlerGenerator(notify, 'Kubernetes not pinged')(err);
+      errorHandlerGenerator(notify, 'Kubernetes not pinged', () => {})(err);
     }
   };
 
@@ -191,12 +212,12 @@ function ConfirmationMsg(props) {
     handleClose();
   };
 
-  const searchContexts = (search) => {
+  const searchContexts = (search: string) => {
     if (search === '') {
       setContexts(k8scontext);
       return;
     }
-    let matchedCtx = [];
+    let matchedCtx: any = [];
     k8scontext.forEach((ctx) => {
       if (ctx.name.includes(search)) {
         matchedCtx.push(ctx);
@@ -205,7 +226,7 @@ function ConfirmationMsg(props) {
     setContexts(matchedCtx);
   };
 
-  const setContextViewer = (id) => {
+  const setContextViewer = (id: string) => {
     if (id === 'all') {
       if (selectedK8sContexts?.includes('all')) {
         dispatch(setK8sContexts({ selectedK8sContexts: [] }));
@@ -234,7 +255,15 @@ function ConfirmationMsg(props) {
     <Modal
       open={open}
       aria-labelledby="alert-dialog-title"
-      headerIcon={<PatternIcon style={{ ...iconMedium }} fill={'#FFFFFF'}></PatternIcon>}
+      headerIcon={
+        <PatternIcon
+          width={iconMedium.width}
+          height={iconMedium.height}
+          color={'#FFFFFF'}
+          style={{ ...iconMedium }}
+          fill={'#FFFFFF'}
+        ></PatternIcon>
+      }
       closeModal={handleClose}
       title={title ? title : 'Confirmation'}
       aria-describedby="alert-dialog-description"
@@ -264,19 +293,21 @@ function ConfirmationMsg(props) {
                     fontSize="small"
                   />
                   <TabLabelWrapper>Validate</TabLabelWrapper>
-                  {errors?.validationError > 0 && (
+                  {(errors?.validationError ?? 0) > 0 && (
                     <TriangleContainer>
                       <RoundedTriangleShape
                         color={notificationColors.warning}
                       ></RoundedTriangleShape>
-                      <TriangleNumber style={errors.validationError > 10 ? { left: '25%' } : {}}>
-                        {errors.validationError}
+                      <TriangleNumber
+                        style={(errors?.validationError ?? 0) > 10 ? { left: '25%' } : {}}
+                      >
+                        {errors?.validationError}
                       </TriangleNumber>
                     </TriangleContainer>
                   )}
                 </div>
               }
-              disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.resource)}
+              disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
             />
           )}
           <Tab
@@ -316,10 +347,10 @@ function ConfirmationMsg(props) {
                   fontSize="small"
                 />
                 <TabLabelWrapper>Deploy</TabLabelWrapper>
-                {errors?.deploymentError > 0 && (
+                {(errors?.deploymentError ?? 0) > 0 && (
                   <OctagonContainer>
                     <RedOctagonSvg fill={notificationColors.darkRed}></RedOctagonSvg>
-                    <OctagonText>{errors.deploymentError}</OctagonText>
+                    <OctagonText>{errors?.deploymentError}</OctagonText>
                   </OctagonContainer>
                 )}
               </div>
@@ -357,7 +388,7 @@ function ConfirmationMsg(props) {
                         margin: '1px 1px 8px ',
                       }}
                       InputProps={{
-                        endAdornment: <Search style={iconMedium} />,
+                        endAdornment: <SearchIcon style={iconMedium} />,
                       }}
                       // margin="none"
                     />
@@ -402,7 +433,7 @@ function ConfirmationMsg(props) {
                     </ContextsContainer>
                   </Typography>
                 ) : (
-                  <K8sEmptyState />
+                  <K8sEmptyState message={'No active cluster found'} />
                 )}
               </div>
             </DialogSubtitle>
@@ -454,20 +485,28 @@ function ConfirmationMsg(props) {
 
 export default ConfirmationMsg;
 
-export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => {
-  const dispatch = useDispatch();
+interface selectDeploymentTargetProps {
+  k8scontext: any[];
+  selectedK8sContexts: string[];
+}
+
+export const SelectDeploymentTarget_ = ({
+  k8scontext,
+  selectedK8sContexts,
+}: selectDeploymentTargetProps) => {
+  const dispatch = useDispatch<any>();
   const deployableK8scontexts = useFilterK8sContexts(k8scontext, ({ operatorState }) => {
     return operatorState !== 'DISABLED';
   });
   const [searchedContexts, setSearchedContexts] = useState(deployableK8scontexts);
   const selectedContexts = selectedK8sContexts;
 
-  const searchContexts = (search) => {
+  const searchContexts = (search: string) => {
     if (search === '') {
       setSearchedContexts(k8scontext);
       return;
     }
-    let matchedCtx = [];
+    let matchedCtx: any[] = [];
     k8scontext.forEach((ctx) => {
       if (ctx.name.includes(search)) {
         matchedCtx.push(ctx);
@@ -476,7 +515,7 @@ export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => 
     setSearchedContexts(matchedCtx);
   };
 
-  const setContextViewer = (id) => {
+  const setContextViewer = (id: string) => {
     if (id === 'all') {
       if (selectedContexts?.includes('all')) {
         dispatch(setK8sContexts({ selectedK8sContexts: [] }));
@@ -515,7 +554,7 @@ export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => 
           margin: '1px 1px 8px ',
         }}
         InputProps={{
-          endAdornment: <Search style={iconMedium} />,
+          endAdornment: <SearchIcon style={iconMedium} />,
         }}
         // margin="none"
       />
@@ -543,6 +582,9 @@ export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => 
               (selectedContexts?.length > 0 && selectedContexts[0] === 'all')
             }
             onSelectChange={() => setContextViewer(ctx.id)}
+            connectionMetadataState={{}}
+            meshsyncControllerState={{}}
+            onDelete={() => {}}
           />
         ))}
       </ContextsContainer>
