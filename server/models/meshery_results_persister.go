@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
 )
 
 type MesheryResultsPersister struct {
@@ -22,10 +22,10 @@ type MesheryResultPage struct {
 }
 
 type localMesheryResultDBRepresentation struct {
-	ID                 uuid.UUID  `json:"meshery_id,omitempty"`
+	ID                 core.Uuid  `json:"meshery_id,omitempty"`
 	Name               string     `json:"name,omitempty"`
 	Mesh               string     `json:"mesh,omitempty"`
-	PerformanceProfile *uuid.UUID `json:"performance_profile,omitempty"`
+	PerformanceProfile *core.Uuid `json:"performance_profile,omitempty"`
 	Result             []byte     `json:"runner_results,omitempty" gorm:"type:JSONB"`
 
 	ServerMetrics     interface{} `json:"server_metrics,omitempty" gorm:"type:JSONB"`
@@ -77,7 +77,7 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, log log
 	return marshalMesheryResultsPage(resultPage), err
 }
 
-func (mrp *MesheryResultsPersister) GetResult(key uuid.UUID, log logger.Handler) (*MesheryResult, error) {
+func (mrp *MesheryResultsPersister) GetResult(key core.Uuid, log logger.Handler) (*MesheryResult, error) {
 	var lres localMesheryResultDBRepresentation
 
 	err := mrp.DB.Table("meshery_results").Find(&lres).Where("id = ?", key).Error
@@ -85,7 +85,7 @@ func (mrp *MesheryResultsPersister) GetResult(key uuid.UUID, log logger.Handler)
 	return res, err
 }
 
-func (mrp *MesheryResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
+func (mrp *MesheryResultsPersister) WriteResult(key core.Uuid, result []byte) error {
 	var data MesheryResult
 	if err := json.Unmarshal(result, &data); err != nil {
 		return err

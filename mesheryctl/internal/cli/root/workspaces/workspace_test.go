@@ -16,6 +16,7 @@ var validWorkspaceName = "workspace-test"
 var workspaceDescription = "integration test"
 
 func TestWorkspaces(t *testing.T) {
+	utils.SetupContextEnv(t)
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {

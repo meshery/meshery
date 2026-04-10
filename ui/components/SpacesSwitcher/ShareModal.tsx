@@ -62,7 +62,7 @@ export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose 
         id: firstSelectedResource?.id,
         name: firstSelectedResource?.name,
         catalog_data: firstSelectedResource?.catalog_data,
-        design_file: JsonParse(firstSelectedResource?.pattern_file),
+        design_file: JsonParse(firstSelectedResource?.patternFile),
         visibility: value,
       },
     });

@@ -21,13 +21,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
-// swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
-// Handle GET request for filter file with given id
-//
-// Returns the Meshery Filter file saved by the current user with the given id
-// responses:
-//
-//	200: mesheryFilterResponseWrapper
 func (h *Handler) GetMesheryFilterFileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -73,13 +66,6 @@ func (h *Handler) FilterFileRequestHandler(
 	}
 }
 
-// swagger:route POST /api/filter FiltersAPI idPostFilterFile
-// Handle POST requests for Meshery Filters
-//
-// Used to save/update a Meshery Filter
-// responses:
-//
-//	200: mesheryFilterResponseWrapper
 func (h *Handler) handleFilterPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -90,6 +76,17 @@ func (h *Handler) handleFilterPOST(
 
 	userID := user.ID
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("filter").WithAction("update")
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
+			"error": ErrRetrieveUserToken(err),
+		}).WithDescription("No auth token provided in the request.").Build()
+		_ = provider.PersistSystemEvent(*event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
 
 	defer func() {
 		_ = r.Body.Close()
@@ -107,11 +104,15 @@ func (h *Handler) handleFilterPOST(
 		invalidReqBody := ErrRequestBody(err)
 		h.log.Error(invalidReqBody)
 
+		description := "Filter request body is corrupted."
+		if parsedBody != nil && parsedBody.FilterData != nil {
+			description = fmt.Sprintf("Filter %s is corrupted.", parsedBody.FilterData.Name)
+		}
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": invalidReqBody,
-		}).WithDescription(fmt.Sprintf("Filter %s is corrupted.", parsedBody.FilterData.Name)).Build()
+		}).WithDescription(description).Build()
 
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		http.Error(rw, ErrSaveFilter(err).Error(), http.StatusBadRequest)
@@ -125,20 +126,6 @@ func (h *Handler) handleFilterPOST(
 	}
 
 	eventBuilder.ActedUpon(*actedUpon)
-
-	token, err := provider.GetProviderToken(r)
-	if err != nil {
-		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
-			"error": ErrRetrieveUserToken(err),
-		}).WithDescription("No auth token provided in the request.").Build()
-
-		_ = provider.PersistEvent(*event, nil)
-		go h.config.EventBroadcaster.Publish(userID, event)
-		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
-		addMeshkitErr(&res, ErrRetrieveUserToken(err))
-		go h.EventsBuffer.Publish(&res)
-		return
-	}
 
 	format := r.URL.Query().Get("output")
 
@@ -187,7 +174,7 @@ func (h *Handler) handleFilterPOST(
 					"error": errFilterSave,
 				}).WithDescription(fmt.Sprintf("Failed persisting filter %s", parsedBody.FilterData.Name)).Build()
 
-				_ = provider.PersistEvent(*event, nil)
+				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userID, event)
 				addMeshkitErr(&res, ErrSaveFilter(err))
 				go h.EventsBuffer.Publish(&res)
@@ -209,7 +196,7 @@ func (h *Handler) handleFilterPOST(
 		}
 
 		h.formatFilterOutput(rw, byt, format, &res, eventBuilder)
-		_ = provider.PersistEvent(*eventBuilder.Build(), nil)
+		_ = provider.PersistEvent(*eventBuilder.Build(), token)
 		return
 	}
 
@@ -223,30 +210,11 @@ func (h *Handler) handleFilterPOST(
 		}
 
 		h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
-		_ = provider.PersistEvent(*eventBuilder.Build(), nil)
+		_ = provider.PersistEvent(*eventBuilder.Build(), token)
 		return
 	}
 }
 
-// swagger:route GET /api/filter FiltersAPI idGetFilterFiles
-// Handle GET request for filters
-//
-// # Returns the list of all the filters saved by the current user
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search=<filter name>``` A string matching is done on the specified filter name
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-//
-// ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
-// Eg: ```?visibility=["public", "published"]``` will return public and published filters
-//
-// responses:
-//
-//	200: mesheryFiltersResponseWrapper
 func (h *Handler) GetMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -284,21 +252,6 @@ func (h *Handler) GetMesheryFiltersHandler(
 	}
 }
 
-// swagger:route GET /api/filter/catalog FiltersAPI idGetCatalogMesheryFiltersHandler
-// Handle GET request for catalog filters
-//
-// # Filters can be further filtered through query parameter
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10.
-//
-// ```?search={filtername}``` If search is non empty then a greedy search is performed
-// responses:
-//
-//	200: mesheryFiltersResponseWrapper
 func (h *Handler) GetCatalogMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -322,15 +275,6 @@ func (h *Handler) GetCatalogMesheryFiltersHandler(
 	}
 }
 
-// swagger:route DELETE /api/filter/{id} FiltersAPI idDeleteMesheryFilter
-// Handle Delete for a Meshery Filter
-//
-// Deletes a meshery filter with ID: id
-// responses:
-//
-//	200: noContentWrapper
-//
-// DeleteMesheryFilterHandler deletes a filter with the given id
 func (h *Handler) DeleteMesheryFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -354,15 +298,6 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	}
 }
 
-// swagger:route POST /api/filter/clone/{id} FiltersAPI idCloneMesheryFilter
-// Handle Clone for a Meshery Filter
-//
-// Creates a local copy of a published filter with id: id
-// responses:
-//
-//	200: noContentWrapper
-//
-// CloneMesheryFilterHandler clones a filter with the given id
 func (h *Handler) CloneMesheryFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -392,15 +327,6 @@ func (h *Handler) CloneMesheryFilterHandler(
 	}
 }
 
-// swagger:route POST /api/filter/catalog/publish FiltersAPI idPublishCatalogFilterHandler
-// Handle Publish for a Meshery Filter
-//
-// Publishes filter to Meshery Catalog by setting visibility to published and setting catalog data
-// responses:
-//
-//	202: noContentWrapper
-//
-// PublishCatalogFilterHandler set visibility of filter with given id as published
 func (h *Handler) PublishCatalogFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -419,6 +345,12 @@ func (h *Handler) PublishCatalogFilterHandler(
 		WithCategory("filter").
 		WithAction("publish").
 		ActedUpon(userID)
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
 
 	var parsedBody *models.MesheryCatalogFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
@@ -428,7 +360,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 				"error": ErrRequestBody(err),
 			}).
 			WithDescription("Error parsing filter payload.").Build()
-		_ = provider.PersistEvent(*e, nil)
+		_ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
@@ -442,7 +374,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 				"error": ErrPublishCatalogFilter(err),
 			}).
 			WithDescription("Error publishing filter.").Build()
-		_ = provider.PersistEvent(*e, nil)
+		_ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
 		return
@@ -455,14 +387,14 @@ func (h *Handler) PublishCatalogFilterHandler(
 		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrPublishCatalogFilter(err),
 		}).WithDescription("Error parsing response.").Build()
-		_ = provider.PersistEvent(*e, nil)
+		_ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("Request to publish '%s' filter submitted with status: %s", respBody.ContentName, respBody.Status)).Build()
-	_ = provider.PersistEvent(*e, nil)
+	_ = provider.PersistEvent(*e, token)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
 	go h.config.FilterChannel.Publish(user.ID, struct{}{})
@@ -473,15 +405,6 @@ func (h *Handler) PublishCatalogFilterHandler(
 	}
 }
 
-// swagger:route DELETE /api/filter/catalog/unpublish FiltersAPI idUnPublishCatalogFilterHandler
-// Handle UnPublish for a Meshery Filter
-//
-// Unpublishes filter from Meshery Catalog by setting visibility to private and removing catalog data from website
-// responses:
-//
-//	200: noContentWrapper
-//
-// UnPublishCatalogFilterHandler sets visibility of filter with given id as private
 func (h *Handler) UnPublishCatalogFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -500,6 +423,12 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 		WithCategory("filter").
 		WithAction("unpublish_request").
 		ActedUpon(userID)
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
 
 	var parsedBody *models.MesheryCatalogFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
@@ -509,7 +438,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 				"error": ErrRequestBody(err),
 			}).
 			WithDescription("Error parsing filter payload.").Build()
-		_ = provider.PersistEvent(*e, nil)
+		_ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
@@ -522,7 +451,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 				"error": ErrPublishCatalogFilter(err),
 			}).
 			WithDescription("Error publishing filter.").Build()
-		_ = provider.PersistEvent(*e, nil)
+		_ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
 		return
@@ -535,14 +464,14 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrPublishCatalogFilter(err),
 		}).WithDescription("Error parsing response.").Build()
-		_ = provider.PersistEvent(*e, nil)
+		_ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("'%s' filter unpublished", respBody.ContentName)).Build()
-	_ = provider.PersistEvent(*e, nil)
+	_ = provider.PersistEvent(*e, token)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
 	go h.config.FilterChannel.Publish(user.ID, struct{}{})
@@ -551,13 +480,6 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 		h.log.Error(err)
 	}
 }
-
-// swagger:route GET /api/filter/{id} FiltersAPI idGetMesheryFilter
-// Handle GET request for a Meshery Filter
-//
-// Fetches the Meshery Filter with the given id
-// responses:
-// 	200: mesheryFilterResponseWrapper
 
 // GetMesheryFilterHandler fetched the filter with the given id
 func (h *Handler) GetMesheryFilterHandler(
@@ -616,20 +538,6 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 	go h.EventsBuffer.Publish(res)
 	eventBuilder.WithDescription(fmt.Sprintf("Filter %s saved", strings.Join(names, ",")))
 }
-
-// swagger:route POST /api/filter/deploy FilterAPI idPostDeployFilterFile
-// Handle POST request for Filter File Deploy
-//
-// Deploy an attached filter file with the request
-// responses:
-//  200: FilterFilesResponseWrapper
-
-// swagger:route DELETE /api/filter/deploy FilterAPI idDeleteFilterFile
-// Handle DELETE request for Filter File Deploy
-//
-// Delete a deployed filter file with the request
-// responses:
-//  200:
 
 // FilterFileHandler handles the requested related to filter files
 func (h *Handler) FilterFileHandler(

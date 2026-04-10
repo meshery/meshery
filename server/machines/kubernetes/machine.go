@@ -3,6 +3,8 @@ package kubernetes
 import (
 	"context"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
@@ -118,7 +120,7 @@ const (
 	machineName = "kubernetes"
 )
 
-func New(ID string, userID uuid.UUID, log logger.Handler) (*machines.StateMachine, error) {
+func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
 	log.Info("initialising K8s machine for connetion Id", connectionID)
 	if err != nil {
@@ -148,7 +150,7 @@ func New(ID string, userID uuid.UUID, log logger.Handler) (*machines.StateMachin
 
 func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	userUUID := user.ID
 
