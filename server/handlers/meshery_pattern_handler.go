@@ -20,7 +20,7 @@ import (
 	helpers "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshery/server/models/pattern/core"
+	patterncore "github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshery/server/models/pattern/resource/selector"
 	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/meshkit/encoding"
@@ -37,7 +37,7 @@ import (
 	"github.com/meshery/meshkit/utils/catalog"
 
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
-	schemacore "github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1alpha2"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
@@ -66,7 +66,7 @@ type MesheryPatternUPDATERequestBody struct {
 }
 
 type DesignPostPayload struct {
-	ID         *schemacore.Uuid               `json:"id,omitempty"`
+	ID         *core.Uuid               `json:"id,omitempty"`
 	Name       string                     `json:"name,omitempty"`
 	DesignFile patternV1beta1.PatternFile `json:"design_file"`
 	// Meshery doesn't have the user id fields
@@ -96,7 +96,7 @@ func (h *Handler) PatternFileRequestHandler(
 	}
 }
 
-func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID schemacore.Uuid, body []byte, err error, provider models.Provider, token string) {
+func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID core.Uuid, body []byte, err error, provider models.Provider, token string) {
 
 	var meshkitErr errors.Error
 	var event *events.Event
@@ -129,7 +129,7 @@ func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBu
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 
-func (h *Handler) handleProviderPatternGetError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID schemacore.Uuid, body []byte, err error, provider models.Provider, token string) {
+func (h *Handler) handleProviderPatternGetError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID core.Uuid, body []byte, err error, provider models.Provider, token string) {
 
 	var meshkitErr errors.Error
 	var event *events.Event
@@ -259,7 +259,7 @@ func (h *Handler) VerifyAndConvertToDesign(
 	provider models.Provider,
 ) error {
 	// Only proceed if we need to convert a non-design pattern that doesn't have a pattern file yet
-	if mesheryPattern.Type.Valid && mesheryPattern.Type.String != string(schemacore.MesheryDesign) && mesheryPattern.PatternFile == "" {
+	if mesheryPattern.Type.Valid && mesheryPattern.Type.String != string(core.MesheryDesign) && mesheryPattern.PatternFile == "" {
 		token, ok := ctx.Value(models.TokenCtxKey).(string)
 		if !ok {
 			return ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
@@ -747,7 +747,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if exportFormat == string(schemacore.HelmChart) {
+		if exportFormat == string(core.HelmChart) {
 			rw.Header().Set("Content-Type", "application/x-gzip")
 			rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.tgz", pattern.Name))
 		} else {
@@ -1452,7 +1452,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	}
 
 	for _, component := range design.Components {
-		component.Configuration = core.Format.DePrettify(component.Configuration, false)
+		component.Configuration = patterncore.Format.DePrettify(component.Configuration, false)
 	}
 
 	patternBytes, err := encoding.Marshal(design)

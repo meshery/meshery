@@ -57,8 +57,7 @@ archives:
       - tar.gz
     format_overrides:
       - goos: windows
-        formats:
-          - zip
+        format: zip
     name_template: >-
       {{ .ProjectName }}_{{.Version}}_
       {{- title .Os }}_
