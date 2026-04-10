@@ -1,0 +1,6 @@
+{
+  "id": "203ebd84-10f4-452f-9d5d-cd8858709579",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "displayName": "Lambda Function to IAM Role Permission",
+  "version": "v1.0.0"
+}

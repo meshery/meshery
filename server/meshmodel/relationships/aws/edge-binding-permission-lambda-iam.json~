@@ -1,0 +1,33 @@
+{
+  "id": "c25b22e9-abc5-4f5d-b60e-abe575d6524d",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "kind": "edge",
+  "type": "binding",
+  "subType": "permission",
+  "displayName": "Lambda Function to IAM Role Permission",
+  "version": "v1.0.0",
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Function",
+            "model": "aws-lambda-controller"
+          }
+        ],
+        "to": [
+          {
+            "kind": "Role",
+            "model": "aws-iam-controller"
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
+

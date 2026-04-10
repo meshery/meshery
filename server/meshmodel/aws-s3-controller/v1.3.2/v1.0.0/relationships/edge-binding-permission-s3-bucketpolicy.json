@@ -1,0 +1,101 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "An S3 Bucket is governed by a Bucket Policy that defines access control rules for the bucket and its objects.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "AWS S3 Controller",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.3.2"
+    },
+    "name": "aws-s3-controller",
+    "registrant": {
+      "kind": "github"
+    },
+    "version": "v1.3.2"
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "BucketPolicy",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "AWS S3 Controller",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": "v1.3.2"
+              },
+              "name": "aws-s3-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": "v1.3.2"
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "bucket"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Bucket",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "AWS S3 Controller",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": "v1.3.2"
+              },
+              "name": "aws-s3-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": "v1.3.2"
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "permission",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
+}
