@@ -76,6 +76,15 @@ const useDashboardRouter = () => {
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 const GRID_COLS = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 const BREAKPOINTS = Object.keys(GRID_COLS);
+const compareByRowThenColumn = (a, b) => (a.y !== b.y ? a.y - b.y : a.x - b.x);
+
+const pickLayoutFields = (items = []) =>
+  items.map(({ i, x, y, w, h }) => ({ i, x, y, w, h })).sort(compareByRowThenColumn);
+
+const projectLayouts = (layouts = {}) =>
+  Object.fromEntries(BREAKPOINTS.map((bp) => [bp, pickLayoutFields(layouts[bp] || [])]));
+
+const sameLayouts = (a, b) => _.isEqual(projectLayouts(a), projectLayouts(b));
 
 const overlaps = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
 
@@ -216,7 +225,7 @@ const Dashboard = () => {
       );
   };
   const orgDashboardLayout = useMemo(
-    () => sanitizeLayouts(userData?.dashboardPreferences || defaultLayout),
+    () => normalizeLayouts(userData?.dashboardPreferences || defaultLayout),
     [userData?.dashboardPreferences, defaultLayout],
   );
   const [dashboardLayout, setDashboardLayout] = useState(orgDashboardLayout);
@@ -354,11 +363,16 @@ const Dashboard = () => {
     setCurrentBreakpoint(breakpoint);
   };
   useEffect(() => {
-    setDashboardLayout(orgDashboardLayout);
+    setDashboardLayout((currentLayout) =>
+      sameLayouts(currentLayout, orgDashboardLayout) ? currentLayout : orgDashboardLayout,
+    );
   }, [orgDashboardLayout]);
 
-  const onLayoutChange = (layout, layouts) => {
-    setDashboardLayout(normalizeLayouts(layouts));
+  const onLayoutChange = (_layout, layouts) => {
+    setDashboardLayout((currentLayout) => {
+      const nextLayout = { ...currentLayout, ...layouts };
+      return sameLayouts(currentLayout, nextLayout) ? currentLayout : nextLayout;
+    });
   };
 
   const widgetsToRenderForLayout = (layout, breakpoint) => {
