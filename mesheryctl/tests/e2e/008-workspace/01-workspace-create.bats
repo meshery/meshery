@@ -3,7 +3,7 @@
 setup() {
     load "$E2E_HELPERS_PATH/bats_libraries"
     load "$E2E_HELPERS_PATH/constants"
-        _load_bats_libraries
+    _load_bats_libraries
 }
 
 @test "given an invalid orgId provided as an argument when running mesheryctl workspace create --orgId invalid-org-id then an error message is displayed" {
@@ -12,4 +12,11 @@ setup() {
     assert_failure
     assert_output --partial "Error"
     assert_output --partial "Invalid value for --orgId 'foo': must be a valid UUID"
+}
+
+@test "given valid orgId and name when running mesheryctl workspace create then workspace is created successfully" {
+    run $MESHERYCTL_BIN workspace create --orgId "$ORGANIZATION_ID" --name "e2e-test-workspace" --description "E2E test workspace"
+
+    assert_success
+    assert_output --partial "e2e-test-workspace"
 }

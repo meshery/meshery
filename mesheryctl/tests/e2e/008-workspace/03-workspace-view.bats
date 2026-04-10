@@ -15,11 +15,11 @@ assert_output --partial "please provide exactly one workspace name or ID"
 }
 
 @test "given a name without --orgId when running mesheryctl workspace view foo then an error message is displayed" {
-run $MESHERYCTL_BIN workspace view foo
+    run $MESHERYCTL_BIN workspace view foo
 
-assert_failure
-assert_output --partial "Error"
-assert_output --partial "--orgId is required when searching by name"
+    assert_failure
+    assert_output --partial "Error"
+    assert_output --partial "Invalid value for --orgId ''"
 }
 
 @test "given an invalid orgId when running mesheryctl workspace view somename --orgId foo then an error message is displayed" {
@@ -37,20 +37,13 @@ assert_failure
 assert_output --partial "Error"
 }
 
-@test "given a valid workspace id when running mesheryctl workspace view then it should pass validation" {
-FETCHED_ID=$($MESHERYCTL_BIN workspace list --orgId "2d2c0b60-076a-4f0a-8a63-de538570a553" | grep -E '[a-f0-9-]{36}' | awk '{print $1}' | head -n 1)
+@test "given a valid workspace UUID and orgId when running mesheryctl workspace view then workspace details are displayed" {
+    WORKSPACE_ID=$(cat /tmp/e2e_workspace_id)
 
-if [ -z "$FETCHED_ID" ]; then
-FETCHED_ID="2d2c0b60-076a-4f0a-8a63-de538570a553"
-fi
+    [ -n "$WORKSPACE_ID" ] || skip "No workspace found"
 
-run $MESHERYCTL_BIN workspace view "$FETCHED_ID"
+    run $MESHERYCTL_BIN workspace view "$WORKSPACE_ID" --orgId "$ORGANIZATION_ID"
 
-refute_output --partial "must be a valid UUID"
-
-if [ "$status" -eq 0 ]; then
-assert_output --partial "id: $FETCHED_ID"
-else
-assert_output --partial "Unable to connect"
-fi
+    assert_success
+    assert_output --partial "e2e-test-workspace"
 }

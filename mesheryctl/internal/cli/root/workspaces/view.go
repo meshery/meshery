@@ -17,7 +17,7 @@ import (
 type workspaceViewFlags struct {
 	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
 	Save         bool   `json:"save" validate:"boolean"`
-	OrgID        string `json:"orgId" validate:"omitempty,uuid"`
+	OrgID        string `json:"orgId" validate:"required,uuid"`
 }
 
 var workspaceViewFlagsProvided workspaceViewFlags
@@ -37,16 +37,16 @@ var viewWorkspaceCmd = &cobra.Command{
 Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace/view`,
 	Example: `
 // View details of a specific workspace by ID
-mesheryctl workspace view [workspace-id]
+mesheryctl workspace view [workspace-id] --orgId [orgId]
 
-// View details of a specific workspace by name (requires --orgId)
+// View details of a specific workspace by name
 mesheryctl workspace view [workspace-name] --orgId [orgId]
 
 // View details of a specific workspace in JSON format
-mesheryctl workspace view [workspace-id] --output-format json
+mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json
 
 // View details of a specific workspace and save it to a file
-mesheryctl workspace view [workspace-id] --output-format json --save
+mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceViewFlagsProvided)
@@ -57,10 +57,6 @@ mesheryctl workspace view [workspace-id] --output-format json --save
 			return utils.ErrInvalidArgument(fmt.Errorf("please provide exactly one workspace name or ID\n\n%v", errMsg))
 		}
 
-		// Validate orgId is provided when arg is not a UUID
-		if !utils.IsUUID(args[0]) && workspaceViewFlagsProvided.OrgID == "" {
-			return utils.ErrInvalidArgument(fmt.Errorf("--orgId is required when searching by name\n\nUsage: mesheryctl workspace view [workspace-name] --orgId [orgId]"))
-		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -71,12 +67,23 @@ mesheryctl workspace view [workspace-id] --output-format json --save
 		var displayData display.DisplayDataAsync
 
 		if utils.IsUUID(workspaceNameOrID) {
-			urlPath = fmt.Sprintf("%s/%s", workspacesApiPath, url.PathEscape(workspaceNameOrID))
-			fetchedWorkspace, err := api.Fetch[workspace.Workspace](urlPath)
+			query := url.Values{}
+			query.Set("orgID", workspaceViewFlagsProvided.OrgID)
+			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(workspaceNameOrID), query.Encode())
+			fetchedPage, err := api.Fetch[workspace.WorkspacePage](urlPath)
 			if err != nil {
 				return err
 			}
-			*selectedWorkspace = *fetchedWorkspace
+			if fetchedPage.TotalCount == 0 || len(fetchedPage.Workspaces) == 0 {
+				return utils.ErrNotFound(fmt.Errorf("workspace not found"))
+			}
+			av := fetchedPage.Workspaces[0]
+			selectedWorkspace.ID = av.ID
+			selectedWorkspace.Name = av.Name
+			selectedWorkspace.Description = av.Description
+			selectedWorkspace.OrganizationID = av.OrganizationId
+			selectedWorkspace.CreatedAt = av.CreatedAt
+			selectedWorkspace.UpdatedAt = av.UpdatedAt
 		} else {
 			selectedAvailableWorkspace := new(workspace.AvailableWorkspace)
 			viewUrlValue := url.Values{}
@@ -101,7 +108,9 @@ mesheryctl workspace view [workspace-id] --output-format json --save
 				return err
 			}
 
-			urlPath = fmt.Sprintf("%s/%s", workspacesApiPath, url.PathEscape(selectedAvailableWorkspace.ID.String()))
+			query := url.Values{}
+			query.Set("orgID", workspaceViewFlagsProvided.OrgID)
+			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(selectedAvailableWorkspace.ID.String()), query.Encode())
 			fetchedWorkspace, err := api.Fetch[workspace.Workspace](urlPath)
 			if err != nil {
 				return err
@@ -147,5 +156,5 @@ mesheryctl workspace view [workspace-id] --output-format json --save
 func init() {
 	viewWorkspaceCmd.Flags().StringVarP(&workspaceViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	viewWorkspaceCmd.Flags().BoolVarP(&workspaceViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
-	viewWorkspaceCmd.Flags().StringVarP(&workspaceViewFlagsProvided.OrgID, "orgId", "", "", "(optional) organization ID to search workspace by name")
+	viewWorkspaceCmd.Flags().StringVarP(&workspaceViewFlagsProvided.OrgID, "orgId", "", "", "(required) organization ID")
 }
