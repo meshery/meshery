@@ -65,6 +65,8 @@ To learn more about edge components and their visual styles, visit the <strong><
 
 In addition to the rich library of predefined icons, Meshery also provides a core set of foundational geometric shapes. These are not tied to any specific technology but are intended for representing abstract concepts or for simple annotations within your designs where a specific component icon doesn't apply.
 
+If users or contributors have alternative shapes they believe better suit a particular component, they are encouraged to visually design custom polygon shapes using the [Shape Builder](https://shapes.meshery.io) extension.
+
 <a href="./images/shapes.png" target="_blank">
   <img src="./images/shapes.png" style="width:50%; height:auto;" alt="Generic shapes palette in Meshery">
 </a>
