@@ -57,7 +57,7 @@ func TestViewWorkspace(t *testing.T) {
 			Args:             []string{"view", testWorkspaceID, "--orgId", testOrgId},
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
-			URL:              fmt.Sprintf("/%s/%s?orgID=%s", workspacesApiPath, testWorkspaceID, testOrgId),
+			URL:              fmt.Sprintf("/%s/%s?orgID=%s&page=0&pagesize=10", workspacesApiPath, testWorkspaceID, testOrgId),
 			Fixture:          "view.workspace.api.response.golden",
 			ExpectedResponse: "view.workspace.output.golden",
 			ExpectError:      false,

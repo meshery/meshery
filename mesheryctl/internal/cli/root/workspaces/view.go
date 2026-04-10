@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -61,25 +60,22 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		workspaceNameOrID := args[0]
-		selectedWorkspace := new(workspace.Workspace)
 
 		var urlPath string
 		var displayData display.DisplayDataAsync
 
+		selectedAvailableWorkspace := new(workspace.AvailableWorkspace)
+
+		viewUrlValue := url.Values{}
+		viewUrlValue.Add("orgID", workspaceViewFlagsProvided.OrgID)
+
 		if utils.IsUUID(workspaceNameOrID) {
-			query := url.Values{}
-			query.Set("orgID", workspaceViewFlagsProvided.OrgID)
-			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(workspaceNameOrID), query.Encode())
-			fetchedWorkspace, err := api.Fetch[workspace.Workspace](urlPath)
-			if err != nil {
-				return err
+			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(workspaceNameOrID), viewUrlValue.Encode())
+			displayData = display.DisplayDataAsync{
+				UrlPath: urlPath,
 			}
-			*selectedWorkspace = *fetchedWorkspace
+
 		} else {
-			selectedAvailableWorkspace := new(workspace.AvailableWorkspace)
-			viewUrlValue := url.Values{}
-			viewUrlValue.Add("orgID", workspaceViewFlagsProvided.OrgID)
-			viewUrlValue.Add("search", workspaceNameOrID)
 
 			urlPath = fmt.Sprintf("%s?%s", workspacesApiPath, viewUrlValue.Encode())
 			displayData = display.DisplayDataAsync{
@@ -87,30 +83,23 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 				SearchTerm: workspaceNameOrID,
 			}
 
-			err := display.PromptAsyncPagination(
-				displayData,
-				formatWorkspaceLabel,
-				func(data *workspace.WorkspacePage) ([]workspace.AvailableWorkspace, int64) {
-					return data.Workspaces, int64(data.TotalCount)
-				},
-				selectedAvailableWorkspace,
-			)
-			if err != nil {
-				return err
-			}
-
-			query := url.Values{}
-			query.Set("orgID", workspaceViewFlagsProvided.OrgID)
-			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(selectedAvailableWorkspace.ID.String()), query.Encode())
-			fetchedWorkspace, err := api.Fetch[workspace.Workspace](urlPath)
-			if err != nil {
-				return err
-			}
-			*selectedWorkspace = *fetchedWorkspace
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[workspace.Workspace]{}
-		outputFormatter, err := outputFormatterFactory.New(workspaceViewFlagsProvided.OutputFormat, *selectedWorkspace)
+		err := display.PromptAsyncPagination(
+			displayData,
+			formatWorkspaceLabel,
+			func(data *workspace.WorkspacePage) ([]workspace.AvailableWorkspace, int64) {
+				return data.Workspaces, int64(data.TotalCount)
+			},
+			selectedAvailableWorkspace,
+		)
+
+		if err != nil {
+			return err
+		}
+
+		outputFormatterFactory := display.OutputFormatterFactory[workspace.AvailableWorkspace]{}
+		outputFormatter, err := outputFormatterFactory.New(workspaceViewFlagsProvided.OutputFormat, *selectedAvailableWorkspace)
 		if err != nil {
 			return err
 		}
@@ -123,12 +112,12 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 		}
 
 		if workspaceViewFlagsProvided.Save {
-			workspaceString := strings.ReplaceAll(selectedWorkspace.Name, " ", "_")
+			workspaceString := strings.ReplaceAll(selectedAvailableWorkspace.Name, " ", "_")
 			if workspaceString == "" {
-				workspaceString = selectedWorkspace.ID.String()
+				workspaceString = selectedAvailableWorkspace.ID.String()
 			}
 			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("workspace_%s.%s", workspaceString, workspaceViewFlagsProvided.OutputFormat))
-			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[workspace.Workspace]{}
+			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[workspace.AvailableWorkspace]{}
 			outputFormatterSaver, err := outputFormatterSaverFactory.New(workspaceViewFlagsProvided.OutputFormat, outputFormatter)
 			if err != nil {
 				return err
