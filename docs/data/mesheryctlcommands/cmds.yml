@@ -352,24 +352,34 @@ system-token:
   subcommands:
     create:
       name: create
-      description: Create the token with provided token name to your meshconfig tokens
+      description: Create a token with the provided name in your meshconfig
       usage: mesheryctl system token create [token name]
+      example: mesheryctl system token create my-token
     delete:
       name: delete
-      description: Delete the token with provided token name from your meshconfig tokens
+      description: Delete a token with the provided name from your meshconfig
       usage: mesheryctl system token delete [token name]
+      example: mesheryctl system token delete my-token
     list:
       name: list
       description: List all the tokens in your meshconfig
       usage: mesheryctl system token list
+      example: mesheryctl system token list
     set:
       name: set
       description: Set token for current context or context specified with --context flag
       usage: mesheryctl system token set [token name]
+      example: mesheryctl system token set my-token --context my-context
+      flags:
+        context:
+          name: --context
+          description: Pass the context name to set the token for
+          usage: mesheryctl system token set [token name] --context [context name]
     view:
       name: view
-      description: View a specific token in meshery config
+      description: View a specific token in your meshconfig
       usage: mesheryctl system token view [token name]
+      example: mesheryctl system token view my-token
 
 system-provider:
   name: system provider
