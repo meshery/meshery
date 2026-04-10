@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/meshery/schemas/models/core"
+
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
@@ -15,7 +17,7 @@ import (
 
 	"github.com/meshery/meshery/server/models"
 
-	"github.com/meshery/meshery/server/models/pattern/core"
+	patterncore "github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -49,7 +51,7 @@ type names struct {
 	Kind string `json:"kind"`
 }
 
-func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context, config []byte, ctxID string, connectionID string, userID string, mesheryInstanceID uuid.UUID, reg *registry.RegistryManager, ec *models.Broadcast, log logger.Handler, ctxName string) (err error) {
+func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context, config []byte, ctxID string, connectionID string, userID string, mesheryInstanceID core.Uuid, reg *registry.RegistryManager, ec *models.Broadcast, log logger.Handler, ctxName string) (err error) {
 	connectionUUID := uuid.FromStringOrNil(connectionID)
 	userUUID := uuid.FromStringOrNil(userID)
 
@@ -96,7 +98,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	}
 	//if want to log we can use the above function in future to log the error in terminal.
 
-	_ = (*provider).PersistEvent(*event, nil)
+	_ = (*provider).PersistSystemEvent(*event)
 	ec.Publish(userUUID, event)
 	return
 }
@@ -153,23 +155,23 @@ func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
 func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
-		return nil, core.ErrGetK8sComponents(err)
+		return nil, patterncore.ErrGetK8sComponents(err)
 	}
 	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v3")
 	k8sversion, err := cli.KubeClient.ServerVersion()
 	if err != nil {
-		return nil, core.ErrGetK8sComponents(err)
+		return nil, patterncore.ErrGetK8sComponents(err)
 	}
 	var customResources = make(map[string]bool)
 	crdresult, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/apiextensions.k8s.io/v1/customresourcedefinitions").Do(context.Background()).Raw()
 	if err != nil {
-		return nil, core.ErrGetK8sComponents(err)
+		return nil, patterncore.ErrGetK8sComponents(err)
 	}
 
 	var xcrd crd
 	err = json.Unmarshal(crdresult, &xcrd)
 	if err != nil {
-		return nil, core.ErrGetK8sComponents(err)
+		return nil, patterncore.ErrGetK8sComponents(err)
 	}
 	for _, item := range xcrd.Items {
 		customResources[item.Spec.Names.Kind] = true
@@ -177,12 +179,12 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 	res := req.Do(context.Background())
 	content, err := res.Raw()
 	if err != nil {
-		return nil, core.ErrGetK8sComponents(err)
+		return nil, patterncore.ErrGetK8sComponents(err)
 	}
 	contents := mergeAllAPIResults(content, cli)
 	apiResources, err := getAPIRes(cli)
 	if err != nil {
-		return nil, core.ErrGetK8sComponents(err)
+		return nil, patterncore.ErrGetK8sComponents(err)
 	}
 
 	var arrAPIResources []string

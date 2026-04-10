@@ -6,7 +6,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
-	schemacore "github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -46,7 +46,7 @@ func TestSchemasWorkspaceAutoMigrateAndPersistMetadata(t *testing.T) {
 		UpdatedAt:      now,
 		Name:           "Regression Workspace",
 		Description:    "verifies schemas workspace metadata storage",
-		Metadata:       schemacore.Map{"source": "test", "mode": "gorm"},
+		Metadata:       core.Map{"source": "test", "mode": "gorm"},
 		OrganizationID: organizationID,
 	}
 
@@ -91,7 +91,7 @@ func TestWorkspacePersisterUpdateWorkspace_PreservesOrganizationIDWhenOmitted(t 
 		UpdatedAt:      now,
 		Name:           "Original Workspace",
 		Description:    "before update",
-		Metadata:       schemacore.Map{},
+		Metadata:       core.Map{},
 		OrganizationID: organizationID,
 	}
 

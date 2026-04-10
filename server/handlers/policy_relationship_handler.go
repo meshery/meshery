@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
@@ -102,7 +101,7 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 }
 
 // getComponentById retrieves a component from the design by its ID
-func getComponentById(design pattern.PatternFile, id uuid.UUID) *component.ComponentDefinition {
+func getComponentById(design pattern.PatternFile, id core.Uuid) *component.ComponentDefinition {
 	for _, comp := range design.Components {
 		if comp.ID == id {
 			return comp
@@ -351,6 +350,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	provider models.Provider,
 ) {
 	evalCtx := r.Context()
+	token, _ := evalCtx.Value(models.TokenCtxKey).(string)
 
 	userUUID := user.ID
 	defer func() {
@@ -411,7 +411,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 				"evaluation_response": evaluationResponse,
 				"evaluated_at":        *evaluationResponse.Timestamp,
 			}).WithSeverity(events.Informational).Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 
 		// write the response
 		ec := json.NewEncoder(rw)

@@ -170,7 +170,7 @@ export default function useDesignLifecycle() {
     try {
       const data = await fetchDesign({ design_id }).unwrap();
       setDesignId(design_id);
-      setDesignJson(jsYaml.load(data.pattern_file));
+      setDesignJson(jsYaml.load(data.patternFile));
     } catch (err) {
       notify({
         message: `failed to load design file`,
