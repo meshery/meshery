@@ -170,7 +170,8 @@ func initConfig() {
 
 		needsMutation, err := config.NeedsMutation(utils.DefaultConfigPath)
 		if err != nil {
-			utils.Log.Fatal(err)
+			utils.Log.Infof("Cannot access Meshery config file at %s. Error: %v", utils.DefaultConfigPath, err)
+			return
 		}
 
 		if needsMutation {
