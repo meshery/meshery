@@ -1,0 +1,14 @@
+---
+timestamp:
+meshery-component: meshery-linkerd
+meshery-component-version: v0.5.12
+meshery-server-version: v0.5.61
+k8s-distro: minikube
+k8s-version: v1.21.0
+service-mesh: linkerd
+service-mesh-version: v2.0.10
+tests:
+  prometheus: passing
+  jaeger: passing
+overall-status: failing
+---

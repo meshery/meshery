@@ -24,13 +24,6 @@ func init() {
 	gob.Register(&models.PrometheusClient{})
 }
 
-// swagger:route GET /api/system/meshsync/grafana SystemAPI idMeshSyncGrafana
-// Handle GET request for mesh-sync grafana
-//
-// Fetches Prometheus and Grafana
-// responses:
-// 	200: v1ServicesMapResponseWrapper
-
 // ScanPromGrafanaHandler - fetches  Prometheus and Grafana
 // func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 // 	errs := []string{}
@@ -67,13 +60,6 @@ func init() {
 // 	}
 // 	wg.Wait()
 // }
-
-// swagger:route GET /api/system/meshsync/prometheus SystemAPI idMeshSyncPrometheus
-// Handle GET request for fetching prometheus
-//
-// Fetches Prometheus
-// responses:
-// 	200: v1ServicesMapResponseWrapper
 
 // ScanPrometheusHandler - fetches  Prometheus
 // func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -112,13 +98,6 @@ func init() {
 // 	wg.Wait()
 // }
 
-// swagger:route GET /api/telemetry/metrics/grafana/scan GrafanaAPI idGetGrafana
-// Handle GET request for Grafana
-//
-// Fetches and returns Grafana
-// responses:
-// 	200: v1ServicesMapResponseWrapper
-
 // ScanGrafanaHandler - fetches  Grafana
 // func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 // 	errs := []string{}
@@ -156,27 +135,6 @@ func init() {
 // 	wg.Wait()
 // }
 
-// swagger:route GET /api/telemetry/metrics/config PrometheusAPI idGetPrometheusConfig
-// Handle GET for Prometheus configuration
-//
-// Used for fetching Prometheus configuration
-// responses:
-//  200: prometheusConfigResponseWrapper
-
-// swagger:route POST /api/telemetry/metrics/config PrometheusAPI idPostPrometheusConfig
-// Handle POST for Prometheus configuration
-//
-// Used for persisting Prometheus configuration
-// responses:
-//  200:
-
-// swagger:route DELETE /api/telemetry/metrics/config PrometheusAPI idDeletePrometheusConfig
-// Handle DELETE for Prometheus configuration
-//
-// Used for deleting Prometheus configuration
-// responses:
-//  200:
-
 // PrometheusConfigHandler is used for persisting prometheus configuration
 func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
@@ -195,6 +153,11 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+
+	if req.Method == http.MethodDelete {
+		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
+		return
+	}
 
 	if req.Method == http.MethodPost {
 		promURL := req.FormValue("prometheusURL")
@@ -226,7 +189,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 		userUUID := user.ID
 		credential, err := provider.SaveUserCredential(token, &models.Credential{
-			UserID: &userUUID,
+			UserId: &userUUID,
 			Type:   "prometheus",
 			Secret: promCred,
 			Name:   credName,
@@ -235,7 +198,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			_err := models.ErrPersistCredential(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to persist credential information for the connection %s", credName)).
 				WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = provider.PersistEvent(*event, nil)
+			_ = provider.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
@@ -248,25 +211,22 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			MetaData:         promConn,
 			CredentialSecret: promCred,
 			Name:             connName,
-			CredentialID:     &credential.ID,
+			CredentialID:     credential.ID,
 		}, token, false)
 
 		if err != nil {
 			_err := models.ErrPersistConnection(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", connName)).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = provider.PersistEvent(*event, nil)
+			_ = provider.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
 		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with Prometheus created at %s", connName, promURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
 		h.log.Debug("Prometheus URL %s saved", promURL)
-	} else if req.Method == http.MethodDelete {
-		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
-		return
 	}
 
 	err := provider.RecordPreferences(req, user.UserId, prefObj)
@@ -279,21 +239,18 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 	_, _ = w.Write([]byte("{}"))
 }
 
-// swagger:route GET /api/telemetry/metrics/ping/{connectionID} PrometheusAPI idGetPrometheusPing
-// Handle GET request for Prometheus Ping
-//
-// Used to ping prometheus
-// responses:
-// 	200:
-
 // PrometheusPingHandler - fetches server version to simulate ping
 func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 
@@ -313,13 +270,6 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 
 	_, _ = w.Write([]byte("{}"))
 }
-
-// swagger:route POST /api/telemetry/metrics/board_import PrometheusAPI idPostPrometheusBoardImport
-// Handle POST request for Prometheus board import
-//
-// Used for importing Grafana board for Prometheus
-// responses:
-// 	200: prometheusBoardImportRespWrapper
 
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
 func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, _ models.Provider) {
@@ -348,21 +298,18 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 	}
 }
 
-// swagger:route GET /api/telemetry/metrics/query/{connectionID}  PrometheusAPI idGetPrometheusQuery
-// Handle GET request for Prometheus Query
-//
-// Used to prometheus queries
-// responses:
-// 	200:
-
 // PrometheusQueryHandler handles prometheus queries
 func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 
@@ -388,9 +335,13 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 
@@ -415,21 +366,18 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 	}
 }
 
-// swagger:route GET /api/telemetry/metrics/static-board PrometheusAPI idGetPrometheusStaticBoard
-// Handle GET request for Prometheus static board
-//
-// Used to fetch the static board
-// responses:
-// 	200: prometheusStaticBoardRespWrapper
-
 // PrometheusStaticBoardHandler returns the static board
 func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, provider models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 	url, _ := connection.Metadata["url"].(string)
@@ -475,13 +423,6 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 	}
 }
 
-// swagger:route POST /api/telemetry/metrics/boards/{connectionID} PrometheusAPI idPostPrometheusBoard
-// Handle POST request for Prometheus board
-//
-// Used to persist selected board and panels
-// responses:
-// 	200:
-
 // SaveSelectedPrometheusBoardsHandler persists selected board and panels
 func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 
@@ -506,9 +447,13 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 

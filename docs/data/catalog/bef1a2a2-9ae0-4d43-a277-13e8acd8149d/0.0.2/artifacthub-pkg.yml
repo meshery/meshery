@@ -1,0 +1,24 @@
+version: 0.0.2
+name: rajshree
+displayName: Rajshree
+createdAt: "2025-09-03T06:20:58Z"
+description: My journey with the Meshery project began as a self-directed learning exercise. By recreating the 'All Relationships' design, I gained practical, hands-on experience with the visual designer and a deeper understanding of core cloud-native concepts. This initial contribution has motivated me to move from learning to building, and I am now eager to contribute more substantially to the project. I am passionate about the Layer5 community and committed to using my skills to help build a great product."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/bef1a2a2-9ae0-4d43-a277-13e8acd8149d/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Note: This design was created for learning and demonstration \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 588cce4a-bdd7-4d56-a61f-43465eb427c7
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/bef1a2a2-9ae0-4d43-a277-13e8acd8149d-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/bef1a2a2-9ae0-4d43-a277-13e8acd8149d-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

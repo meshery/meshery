@@ -145,6 +145,9 @@ e2e-clean:
 	rm -rf /tmp/tmp.*-bats; \
 	echo "#### MESHERYCTL END-TO-END TESTING - CLEANUP DONE ####\n\n"
 
+system-start: build
+	./$(BINARY) system start
+
 ## Build mesheryctl and run end-to-end tests.
 e2e: build e2e-libs
 	@echo "\n\n#### MESHERYCTL END-TO-END TESTING - START ####\n\n"; \
@@ -156,21 +159,11 @@ e2e: build e2e-libs
 	MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml" \
 	MESHERY_AUTH_FILE="${HOME}/.meshery/auth.json" \
 	MESHERYCTL_BIN="../../$(BINARY)" bats --formatter $(BATS_FORMATTER) $(BATS_FOLDER_PATTERN)/$(BATS_FILE_PATTERN).bats; \
+	rm -rf $(TEMP_DATA_DIR) \
 	echo "\n\n#### MESHERYCTL END-TO-END TESTING - DONE ####\n\n"
 
 ## Build mesheryctl and run end-to-end tests.
-e2e-ci: build e2e-libs
-	@echo "\n\n#### MESHERYCTL END-TO-END TESTING - START ####\n\n"; \
-	cd tests/e2e; \
-	BATS_LIB_PATH="$(shell pwd)/tests/e2e/$(BATS_LIB_PATH)" \
-	E2E_HELPERS_PATH=$(shell pwd)/tests/e2e/helpers \
-	E2E_TESTDATA_PATH=$(shell pwd)/tests/e2e/testdata \
-	TEMP_DATA_DIR=$(shell mktemp -d) \
-	MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml" \
-	MESHERY_AUTH_FILE="${HOME}/.meshery/auth.json" \
-	MESHERYCTL_BIN="../../$(BINARY)" bats  $(BATS_FOLDER_PATTERN)/$(BATS_FILE_PATTERN).bats >> bats.tap; cd ..
-	echo "\n\n#### MESHERYCTL END-TO-END TESTING - DONE ####\n\n"  
-
+e2e-ci: e2e
 	ALLURE_LABELS="epic=MesheryCtl,type=e2e,env=ci" node bats-to-allure.js tests/e2e/bats.tap
 
 ## Run end-to-end tests using an existing mesheryctl binary.
@@ -184,6 +177,7 @@ e2e-no-build: e2e-libs
 	MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml" \
 	MESHERY_AUTH_FILE="${HOME}/.meshery/auth.json" \
 	MESHERYCTL_BIN="../../$(BINARY)" bats --formatter $(BATS_FORMATTER) $(BATS_FOLDER_PATTERN)/$(BATS_FILE_PATTERN).bats; \
+	rm -rf $(TEMP_DATA_DIR) \
 	echo "\n\n#### MESHERYCTL END-TO-END TESTING - DONE ####\n\n"
 
 ## Run end-to-end tests and clean temporary artifacts.

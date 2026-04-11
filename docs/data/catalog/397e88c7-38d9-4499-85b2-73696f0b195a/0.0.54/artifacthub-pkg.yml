@@ -1,0 +1,24 @@
+version: 0.0.54
+name: edge-firewall-relationship
+displayName: Edge-Firewall-relationship
+createdAt: "2024-09-26T19:34:37Z"
+description: An Edge Firewall Relationship in Meshery models a Kubernetes Network Policy that controls ingress and egress traffic between Pods. This relationship defines rules for Pod-to-Pod communication, specifying allowed and blocked traffic paths. By enforcing network policies, it secures inter-Pod communication and enhances overall cluster security.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/397e88c7-38d9-4499-85b2-73696f0b195a/0.0.54/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1.  Ensure Pods are properly labeled, as Kubernetes Network Policies rely on labels to apply rules. Inconsistent or missing labels can cause the policy to behave unpredictably or fail to enforce the intended traffic rules.\n\n2. Ensure that the correct ports and protocols are specified in the network policy. Misconfigured ports or protocols can result in unintended traffic blocking, preventing necessary communication between Pods or services.\n\n3. Be mindful of how multiple network policies are configured within the same namespace. Overlapping or conflicting rules across policies may cause unexpected traffic behavior, so ensure that policies are clearly defined and ordered to avoid conflicts. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/397e88c7-38d9-4499-85b2-73696f0b195a-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/397e88c7-38d9-4499-85b2-73696f0b195a-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

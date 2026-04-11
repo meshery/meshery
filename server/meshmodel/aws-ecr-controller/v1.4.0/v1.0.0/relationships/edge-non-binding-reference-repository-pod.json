@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "reference",
+  "status": "enabled",
+  "metadata": {
+    "description": "A relationship that defines how an ECR Repository can be referenced by a Kubernetes Pod to automatically populate the container image field with the ECR repository URI.",
+    "capabilities": {
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": false,
+          "label": true
+        }
+      }
+    }
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-ecr-controller",
+    "registrant": {
+      "kind": "github"
+    },
+    "model": {
+      "version": "v1.4.0"
+    },
+    "displayName": "AWS Elastic Container Registry",
+    "category": {
+      "name": "Cloud Native Storage",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Repository",
+            "model": {
+              "name": "aws-ecr-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "description": "ECR Repository can be visually referenced by Kubernetes workloads."
+            },
+            "match_strategy_matrix": [
+              [
+                "equal_as_strings",
+                "not_null"
+              ]
+            ],
+            "id": null,
+            "match": {}
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "version": ""
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "spec",
+                  "containers",
+                  "_",
+                  "image"
+                ]
+              ],
+              "description": "Pod containers can reference ECR repository images."
+            },
+            "match_strategy_matrix": null,
+            "id": null,
+            "match": {}
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "evaluationQuery": "edge_non_binding_reference_relationship"
+}

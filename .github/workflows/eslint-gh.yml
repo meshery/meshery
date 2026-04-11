@@ -10,14 +10,14 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
-    - name: Install eslint in Meshery UI and Provider UI
+    - name: Install dependencies in Meshery UI and Provider UI
       run: |
-        cd ui && npm i eslint && cd ..
-        cd provider-ui && npm i eslint && cd ..
+        cd ui && npm ci && cd ..
+        cd provider-ui && npm ci && cd ..
     - name: Run ESLint Meshery-UI
-      run: cd ui && npm i eslint && npx eslint .
+      run: cd ui && npm run lint
     - name: Run ESLint Provider-UI
-      run: cd provider-ui && npm i eslint && npx eslint .
+      run: cd provider-ui && npm run lint
 
     # Replace the steps above with the following make targets and autocommit when ready.
     # - name: Run eslint Meshery UI
@@ -25,7 +25,7 @@ jobs:
     # - name: Run eslint Provider UI
     #   run: make ui-provider-lint
     # - name: Commit changes
-    #   uses: stefanzweifel/git-auto-commit-action@v5
+    #   uses: stefanzweifel/git-auto-commit-action@v7
     #   with:
     #     commit_user_name: mesheryci
     #     commit_user_email: ci@meshery.io

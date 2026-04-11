@@ -39,7 +39,7 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl#command-r
 	Example: `
 // Run performance test:
 mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
-	
+
 // List performance profiles:
 mesheryctl perf profile sam-test
 

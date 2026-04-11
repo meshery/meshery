@@ -57,7 +57,7 @@ identify_relationship(
 	})
 }
 
-# Evaluate bindind based on the feasiblity
+# Evaluate binding based on the feasibility
 evaluate_bindings(
 	binding_declarations,
 	relationship,
@@ -158,10 +158,10 @@ is_valid_binding(resource1, resource2, selectors) if {
 # If none of the match paths ("from" and "to") doesn't contain array field in between, then it is a normal lookup.
 is_feasible(from, to, resource1, resource2, default_value1, default_value2) if {
 	from_path := resolve_path(from, resource1)
-	formatted_from_path = format_json_path(from_path)
+	formatted_from_path := format_json_path(from_path)
 
 	to_path := resolve_path(to, resource2)
-	formatted_to_path = format_json_path(to_path)
+	formatted_to_path := format_json_path(to_path)
 
 	val1 := object.get(resource1, formatted_from_path, default_value1)
 	val2 := object.get(resource2, formatted_to_path, default_value2)

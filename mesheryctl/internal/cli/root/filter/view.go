@@ -15,24 +15,31 @@
 package filter
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
-	"io"
 	"net/url"
+	"path/filepath"
 	"strings"
 
-	"github.com/ghodss/yaml"
+	"github.com/meshery/meshery/server/models"
+
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var (
-	viewAllFlag   bool
-	outFormatFlag string
-)
+type filterViewFlags struct {
+	ViewAllFlag  bool   `json:"all" validate:"boolean"`
+	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
+	Save         bool   `json:"save" validate:"boolean"`
+}
+
+var filterViewFlagsProvided filterViewFlags
 
 var viewCmd = &cobra.Command{
 	Use:   "view",
@@ -46,11 +53,34 @@ mesheryctl filter view "[filter-name | ID]"
 // View all filter files
 mesheryctl filter view --all
 
+// View all filter files in json
+mesheryctl filter view --all --output-format json
+
+// View all filter files in json and save it to a file
+mesheryctl filter view --all --output-format json -s
+
 //View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 mesheryctl filter view "filter name"
         `,
-	Args: cobra.ArbitraryArgs,
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl filter view [filter-name | ID]\nRun 'mesheryctl filter view --help' to see detailed help message"
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("accepts at most 1 arg, received %d\n\n%s", len(args), errMsg))
+		}
+		if len(args) > 0 && filterViewFlagsProvided.ViewAllFlag {
+			return ErrViewAllWithName("view")
+		}
+		if (len(args) == 0 || args[0] == "") && !filterViewFlagsProvided.ViewAllFlag {
+			return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
+		}
+		return nil
+	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &filterViewFlagsProvided)
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)
@@ -58,110 +88,113 @@ mesheryctl filter view "filter name"
 
 		filter := ""
 		isID := false
-		var filterArg string
-		// if filter name/id available
 		if len(args) > 0 {
-			if viewAllFlag {
-				return errors.New(utils.FilterViewError("--all cannot be used when filter name or ID is specified\nUse 'mesheryctl filter view --help' to display usage guide\n"))
-			}
-			fullArg := strings.Join(args, " ")
-
-			// Check if the argument starts and ends with double quotes
-			if strings.HasPrefix(fullArg, "\"") && strings.HasSuffix(fullArg, "\"") {
-				// Remove the quotes and use the entire content
-				filterArg = strings.Trim(fullArg, "\"")
-			} else if len(args) == 1 {
-				// If it's a single word without quotes, use it as is
-				filterArg = args[0]
-			} else {
-				// If multiple words without quotes, return an error
-				return errors.New(utils.FilterViewError("multi-word filter names must be enclosed in double quotes\nUse 'mesheryctl filter view --help' to display usage guide\n"))
-			}
-
-			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), filterArg, "filter")
+			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 			if err != nil {
-				utils.Log.Error(ErrFilterNameOrID(err))
-				return nil
+				return utils.ErrInvalidNameOrID(err)
 			}
 		}
 
-		urlString := mctlCfg.GetBaseMesheryURL()
+		urlString := ""
 		if len(filter) == 0 {
-			if viewAllFlag {
-				urlString += "/api/filter?pagesize=10000"
-			} else {
-				return errors.New(utils.FilterViewError("filter-name or ID not specified, use -a to view all filters\nUse 'mesheryctl filter view --help' to display usage guide\n"))
-			}
+			urlString = "api/filter?pagesize=10000"
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
-			urlString += "/api/filter/" + filter
+			urlString = "api/filter/" + filter
 		} else {
 			// else search filter by name
-			urlString += "/api/filter?search=" + url.QueryEscape(filter)
+			urlString = "api/filter?search=" + url.QueryEscape(filter)
 		}
 
-		req, err := utils.NewRequest("GET", urlString, nil)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-		res, err := utils.MakeRequest(req)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		defer func() { _ = res.Body.Close() }()
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			return errors.Wrap(err, utils.FilterViewError("failed to read response body"))
-		}
-
-		var dat map[string]interface{}
-		if err = json.Unmarshal(body, &dat); err != nil {
-			utils.Log.Error(utils.ErrUnmarshal(err))
-			return nil
-		}
-
+		var selectedFilter *models.MesheryFilter
+		var filterPage *models.MesheryFilterPage
 		if isID {
-			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
-				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return nil
+			// Fetch single filter
+			filter, err := api.Fetch[models.MesheryFilter](urlString)
+			if err != nil {
+				return err
 			}
-		} else if viewAllFlag {
-			// only keep the filter key from the response when viewing all the filters
-			if body, err = json.MarshalIndent(map[string]interface{}{"filters": dat["filters"]}, "", "  "); err != nil {
-				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return nil
-			}
+			selectedFilter = filter
 		} else {
-			// use the first match from the result when searching by filter name
-			arr := dat["filters"].([]interface{})
-			if len(arr) == 0 {
-				utils.Log.Info(fmt.Sprintf("filter with name: %s not found", filter))
-				return nil
+			page, err := api.Fetch[models.MesheryFilterPage](urlString)
+			if err != nil {
+				return err
 			}
-			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
-				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return nil
+			filterPage = page
+
+			if !filterViewFlagsProvided.ViewAllFlag {
+				if len(filterPage.Filters) == 0 {
+					utils.Log.Info(fmt.Sprintf("filter with name: %q not found", filter))
+					return nil
+				}
+				selectedFilter = page.Filters[0]
 			}
 		}
 
-		if outFormatFlag == "yaml" {
-			if body, err = yaml.JSONToYAML(body); err != nil {
-				utils.Log.Error(utils.ErrJSONToYAML(err))
-				return nil
-			}
-		} else if outFormatFlag != "json" {
-			utils.Log.Error(utils.ErrOutFormatFlag())
-			return nil
+		outputFormatterFactory := display.OutputFormatterFactory[any]{}
+		var data any
+
+		if filterViewFlagsProvided.ViewAllFlag {
+			data = filterPage
+		} else {
+			data = selectedFilter
 		}
-		utils.Log.Info(string(body))
+
+		outputFormatter, err := outputFormatterFactory.New(filterViewFlagsProvided.OutputFormat, data)
+		if err != nil {
+			return err
+		}
+
+		err = outputFormatter.Display()
+		if err != nil {
+			return err
+		}
+
+		if filterViewFlagsProvided.Save {
+			err := saveToFile(
+				filterViewFlagsProvided.OutputFormat,
+				outputFormatter,
+				selectedFilter,
+				filterViewFlagsProvided.ViewAllFlag,
+			)
+			if err != nil {
+				return err
+			}
+		}
 		return nil
 	},
 }
 
+func saveToFile(
+	outputFormat string,
+	outputFormatter display.OutputFormatter[any],
+	selectedFilter *models.MesheryFilter,
+	isAll bool,
+) error {
+	var fileName string
+
+	if isAll {
+		fileName = "filters_all"
+	} else {
+		shortID := selectedFilter.ID.String()[:8]
+		sanitizer := strings.NewReplacer("/", "_", " ", "_")
+		sanitizedName := sanitizer.Replace(selectedFilter.Name)
+		fileName = fmt.Sprintf("filter_%s_%s", sanitizedName, shortID)
+	}
+
+	file := filepath.Join(utils.MesheryFolder, fileName)
+
+	outputFormatterSaverFactory := display.OutputFormatterSaverFactory[any]{}
+	outputFormatterSaver, err := outputFormatterSaverFactory.New(outputFormat, outputFormatter)
+	if err != nil {
+		return err
+	}
+	outputFormatterSaver = outputFormatterSaver.WithFilePath(file)
+	return outputFormatterSaver.Save()
+}
+
 func init() {
-	viewCmd.Flags().BoolVarP(&viewAllFlag, "all", "a", false, "(optional) view all filters available")
-	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.ViewAllFlag, "all", "a", false, "(optional) view all filters available")
+	viewCmd.Flags().StringVarP(&filterViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
 }

@@ -96,6 +96,12 @@
                       "configuration",
                       "subjects",
                       "_",
+                      "kind"
+                    ],
+                    [
+                      "configuration",
+                      "subjects",
+                      "_",
                       "name"
                     ]
                   ]

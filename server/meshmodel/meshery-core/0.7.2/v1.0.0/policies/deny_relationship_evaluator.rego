@@ -23,7 +23,7 @@ any_selector_matches(declaration, selector) if {
 }
 
 # If properties are not present in the relationship selector, then the rule evaluates to undefined.
-# and the expresssion "not is_relationship_denied" in other rules evaluates to true. And the relationship gets created.
+# and the expression "not is_relationship_denied" in other rules evaluates to true. And the relationship gets created.
 is_selector_and_declaration_kind_matches(selector, declaration) if {
 	selector.kind == "*"
 }

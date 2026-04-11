@@ -1,0 +1,116 @@
+{
+  "errors_export": {
+    "component_name": "meshery-consul",
+    "component_type": "adapter",
+    "errors": {
+      "1000": {
+        "name": "ErrApplyOperationCode",
+        "code": "1000",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1001": {
+        "name": "ErrParseOAMComponentCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing application component in the OAM request made by Meshery Server",
+        "short_description": "error parsing the component",
+        "probable_cause": "Could not unmarshall configuration component received via ProcessOAM gRPC call into a valid Component struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid component for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, check if Meshery Server and adapters are referring to same component struct provided in MeshKit."
+      },
+      "1002": {
+        "name": "ErrParseOAMConfigCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing configuration in the request made by Meshery Server",
+        "short_description": "error parsing the configuration",
+        "probable_cause": "Could not unmarshall OAM config received via ProcessOAM gRPC call into a valid Config struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
+      },
+      "1003": {
+        "name": "ErrProcessOAMCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error performing OAM operations",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1004": {
+        "name": "ErrApplyHelmChartCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying helm chart",
+        "probable_cause": "Chart could be invalid",
+        "suggested_remediation": "Use `helm verify` and `helm lint` to verify chart path and validity"
+      },
+      "1005": {
+        "name": "ErrMeshConfigCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "Error getting MeshSpecKey config from in-memory configuration",
+        "short_description": "Error configuration mesh",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1006": {
+        "name": "ErrConsulCoreComponentFailCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error in Consul core component",
+        "probable_cause": "API version or Kind passed is empty",
+        "suggested_remediation": "Make sure API version and Kind are not empty"
+      },
+      "1007": {
+        "name": "ErrParseConsulCoreComponentCode",
+        "code": "1007",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Consul core component manifest parsing failing",
+        "probable_cause": "Could not marshall generated component to YAML",
+        "suggested_remediation": ""
+      },
+      "1008": {
+        "name": "ErrGetLatestReleasesCode",
+        "code": "1008",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch release info",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1009": {
+        "name": "ErrGetManifestNamesCode",
+        "code": "1009",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch manifest names from github",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1010": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1010",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1011": {
+        "name": "ErrLoadingPathsetCode",
+        "code": "1011",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not create a pathset for static component generation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    }
+  }
+}

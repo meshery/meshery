@@ -2,7 +2,7 @@
 name: 📄 Documentation issue
 about: Issues related to documentation.
 title: '[Docs]'
-labels: 'area/docs, framework/jekyll, language/markdown, help wanted'
+labels: 'area/docs, framework/hugo, language/markdown, help wanted'
 assignees: ''
 ---
 ### Current State
@@ -11,8 +11,6 @@ assignees: ''
 ### Desired State
 
 
-
-_NOTE: If this issue involves adding a new page or moving the location of an existing page, please make sure the sidebar and homepage navigation are updated accordingly. As appropriate, update `_data/toc.yml` and `pages/index.md`._
 
 ---
 

@@ -2,10 +2,7 @@ package eval
 
 import rego.v1
 
-import data.actions
-import data.core_utils
 import data.eval_rules
-import data.feasibility_evaluation_utils
 
 edge_network_policy_identifier := "edge-non-binding"
 

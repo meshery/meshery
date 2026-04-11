@@ -1,0 +1,24 @@
+version: 0.0.16
+name: double-bubble-map
+displayName: Double Bubble Map
+createdAt: "2025-06-06T05:46:40Z"
+description: A double bubble map template is a visual diagramming tool that allows teams to explore relationships and connections between central ideas or concepts.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/28980b0e-fb2f-4b18-8a79-47c45b477ca3/0.0.16/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Describe multiple things that have overlapping characteristics. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 0af1d3ea-fbce-47c3-b833-357b45602ea7
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/28980b0e-fb2f-4b18-8a79-47c45b477ca3-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/28980b0e-fb2f-4b18-8a79-47c45b477ca3-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

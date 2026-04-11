@@ -1,0 +1,14 @@
+---
+timestamp: "2022-09-27 21:04:22 UTC Tue"
+meshery-component: meshery-consul
+meshery-component-version: edge
+meshery-server-version: "v0.6.9"
+k8s-distro: minikube
+k8s-version: "v1.20.11"
+service-mesh: Consul
+service-mesh-version: "v0.48.0"
+tests:
+  consul-client: null
+  consul-server:  null
+overall-status: "failing"
+---

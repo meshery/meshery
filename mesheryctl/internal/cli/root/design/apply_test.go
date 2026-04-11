@@ -1,21 +1,17 @@
 package design
 
 import (
+	"encoding/json"
 	"path/filepath"
 	"runtime"
 	"testing"
 
-	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/pkg/errors"
 )
 
 func TestApplyCmd(t *testing.T) {
-	// setup current context
-	utils.SetupContextEnv(t)
-
-	// initialize mock server for handling requests
-	utils.StartMockery(t)
-
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
@@ -28,16 +24,9 @@ func TestApplyCmd(t *testing.T) {
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
 	// test scenrios for fetching data
-	tests := []struct {
-		Name             string
-		Args             []string
-		ExpectedResponse string
-		URLs             []utils.MockURL
-		Token            string
-		ExpectError      bool
-	}{
+	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:             "Apply Designs",
+			Name:             "given valid file when design apply then design is applied",
 			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "apply.output.golden",
 			URLs: []utils.MockURL{
@@ -58,7 +47,7 @@ func TestApplyCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Apply Designs with --skip-save",
+			Name:             "given valid file when design apply with --skip-save then design is applied without saving",
 			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save"},
 			ExpectedResponse: "apply.output.golden",
 			URLs: []utils.MockURL{
@@ -72,61 +61,41 @@ func TestApplyCmd(t *testing.T) {
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
+		{
+			Name:             "given invalid file path when design apply then error is thrown",
+			Args:             []string{"apply", "-f", invalidFilePath},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFileRead(errors.Errorf(errInvalidPathMsg, invalidFilePath)),
+		},
+		{
+			Name:             "given invalid server response when design apply then error is thrown",
+			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "apply.invalidJSON.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError: func() error {
+				// Replicate the exact JSON unmarshal error
+				var response []*pattern.MesheryPattern
+				innerErr := json.Unmarshal([]byte(`{ "patterns": [ { "id": "123", "name": "incomplete-json"`), &response)
+
+				return utils.ErrUnmarshal(innerErr)
+			}(),
+		},
 	}
 
 	// Run tests
-	for _, tt := range tests {
-		t.Run(tt.Name, func(t *testing.T) {
-			for _, url := range tt.URLs {
-				// View api response from golden files
-				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
-
-				// mock response
-				httpmock.RegisterResponder(url.Method, url.URL,
-					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
-			}
-
-			// set token
-			utils.TokenFlag = tt.Token
-
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
-			// setting up log to grab logs
-			b := utils.SetupMeshkitLoggerTesting(t, false)
-			DesignCmd.SetOut(b)
-			DesignCmd.SetArgs(tt.Args)
-			err := DesignCmd.Execute()
-			if err != nil {
-				// if we're supposed to get an error
-				if tt.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
-
-					utils.Equals(t, expectedResponse, err.Error())
-					return
-				}
-				t.Error(err)
-			}
-
-			// response being printed in console
-			actualResponse := b.String()
-
-			// write it in file
-			if *update {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
-
-			utils.Equals(t, expectedResponse, actualResponse)
-		})
-		t.Log("Apply Design Test Passed")
-	}
-
-	// stop mock server
-	utils.StopMockery(t)
+	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
 }

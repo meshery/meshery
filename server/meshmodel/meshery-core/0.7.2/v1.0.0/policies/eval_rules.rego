@@ -68,7 +68,7 @@ patch_mutators_action(relationship, design_file) := {action |
 	}
 }
 
-same_relationship_identitfier(rel_a, rel_b) if {
+same_relationship_identifier(rel_a, rel_b) if {
 	rel_a.kind == rel_b.kind
 	rel_a.type == rel_b.type
 	rel_a.subType == rel_b.subType
@@ -82,7 +82,7 @@ same_relationship_selector_clause(clause_a, clause_b) if {
 }
 
 relationships_are_same(rel_a, rel_b) if {
-	same_relationship_identitfier(rel_a, rel_b)
+	same_relationship_identifier(rel_a, rel_b)
 
 	some selector_a in rel_a.selectors
 	some selector_b in rel_b.selectors
@@ -100,10 +100,10 @@ relationship_already_exists(design_file, relationship) if {
 
 ## Matching
 #  Match supports multiple strategies
-#  equal : complete equality of numbers,strigns,arrays,objects
+#  equal : complete equality of numbers,strings,arrays,objects
 #  equal_as_strings : coerses values to strings before equality
 #  to_contains_from : checks if from is a superset of to ( for objects and arrays)
-#  not_null : checks if both values are not nulll
+#  not_null : checks if both values are not null
 #
 #  These strategies can be grouped into a list to check if the values at mutator/mutated path match
 #  And the the arrays can be grouped into a match_strategy to form a ordered list of strategies for each path

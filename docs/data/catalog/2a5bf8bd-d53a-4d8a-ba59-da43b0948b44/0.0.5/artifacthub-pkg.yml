@@ -1,0 +1,24 @@
+version: 0.0.5
+name: -url-shortener-application
+displayName: "\tURL Shortener Application"
+createdAt: "2025-07-17T09:48:25Z"
+description: A simple and scalable URL Shortener using FastAPI backend, Redis database, and Nginx frontend for serving the web interface.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2a5bf8bd-d53a-4d8a-ba59-da43b0948b44/0.0.5/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Redis is used without persistent volume. Replace Nginx image with your own built React frontend image for production use. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: d574bd52-93e6-44b7-ad69-edf67c643b2c
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2a5bf8bd-d53a-4d8a-ba59-da43b0948b44-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2a5bf8bd-d53a-4d8a-ba59-da43b0948b44-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

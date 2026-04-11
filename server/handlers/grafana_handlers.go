@@ -23,27 +23,6 @@ func init() {
 	gob.Register(&models.GrafanaClient{})
 }
 
-// swagger:route GET /api/telemetry/metrics/grafana/config GrafanaAPI idGetGrafanaConfig
-// Handle GET request for Grafana configuration
-//
-// Used for fetching Grafana configuration
-// responses:
-// 	200: grafanaConfigResponseWrapper
-
-// swagger:route POST /api/telemetry/metrics/grafana/config GrafanaAPI idPostGrafanaConfig
-// Handle POST request for Grafana configuration
-//
-// Used for persisting Grafana configuration
-// responses:
-// 	200:
-
-// swagger:route DELETE /api/telemetry/metrics/grafana/config GrafanaAPI idDeleteGrafanaConfig
-// Handle DELETE request for Grafana configuration
-//
-// Used for Delete Grafana configuration
-// responses:
-// 	200:
-
 // GrafanaConfigHandler is used for fetching or persisting or removing Grafana configuration
 func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
 	sysID := h.SystemID
@@ -52,13 +31,17 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	if req.Method == http.MethodGet {
+	switch req.Method {
+	case http.MethodGet:
 		req = mux.SetURLVars(req, map[string]string{"connectionKind": "grafana"})
 		h.GetConnectionsByKind(w, req, prefObj, user, p)
 		return
-	}
 
-	if req.Method == http.MethodPost {
+	case http.MethodDelete:
+		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
+		return
+
+	case http.MethodPost:
 		grafanaURL := req.FormValue("grafanaURL")
 		grafanaAPIKey := req.FormValue("grafanaAPIKey")
 		credName := req.FormValue("grafanaCredentialName")
@@ -86,7 +69,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 
 		userUUID := user.ID
 		credential, err := p.SaveUserCredential(token, &models.Credential{
-			UserID: &userUUID,
+			UserId: &userUUID,
 			Type:   "grafana",
 			Secret: grafanaCred,
 			Name:   credName,
@@ -95,7 +78,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			_err := models.ErrPersistCredential(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to persist credential information for the connection %s", credName)).
 				WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = p.PersistEvent(*event, nil)
+			_ = p.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
@@ -108,46 +91,40 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			MetaData:         grafanaConn,
 			CredentialSecret: grafanaCred,
 			Name:             connName,
-			CredentialID:     &credential.ID,
+			CredentialID:     credential.ID,
 		}, token, false)
 
 		if err != nil {
 			_err := models.ErrPersistConnection(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", connName)).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = p.PersistEvent(*event, nil)
+			_ = p.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
 		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with grafana created at %s", connName, grafanaURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
-		_ = p.PersistEvent(*event, nil)
+		_ = p.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
 		h.log.Debug(fmt.Sprintf("connection to grafana @ %s succeeded", grafanaURL))
 
 		_ = json.NewEncoder(w).Encode(connection)
-	} else if req.Method == http.MethodDelete {
-		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
 		return
 	}
-
 }
-
-// swagger:route GET /api/telemetry/metrics/grafana/ping/{connectionID} GrafanaAPI idGetGrafanaPing
-// Handle GET request for Grafana ping
-//
-// Used to initiate a Grafana ping
-// responses:
-// 	200:
 
 // GrafanaPingHandler - used to initiate a Grafana ping
 func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "grafana" {
+		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
 		return
 	}
 
@@ -167,13 +144,6 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 	_, _ = w.Write([]byte("{}"))
 }
 
-// swagger:route GET /api/telemetry/metrics/grafana/boards/{connectionID} GrafanaAPI idGetGrafanaBoards
-// Handle GET request for Grafana boards
-//
-// Used for fetching Grafana boards and panels
-// responses:
-// 	200: grafanaBoardsResponseWrapper
-
 // GrafanaBoardsHandler is used for fetching Grafana boards and panels
 func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
 	if req.Method == http.MethodPost {
@@ -182,11 +152,15 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	h.log.Debug("connection id : ", connectionID)
 	if err != nil {
 		h.log.Error(err)
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "grafana" {
+		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
 		return
 	}
 
@@ -220,22 +194,19 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-// swagger:route GET /api/telemetry/metrics/grafana/query/{connectionID} GrafanaAPI idGetGrafanaQuery
-// Handle GET request for Grafana queries
-//
-// Used for handling Grafana queries
-// responses:
-// 	200:
-
 // GrafanaQueryHandler is used for handling Grafana queries
 func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 
 	reqQuery := req.URL.Query()
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "grafana" {
+		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
 		return
 	}
 
@@ -270,9 +241,13 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "grafana")
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "grafana" {
+		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
 		return
 	}
 
@@ -301,13 +276,6 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-// swagger:route POST /api/telemetry/metrics/grafana/boards/{connectionID} GrafanaAPI idPostGrafanaBoards
-// Handle POST request for Grafana boards
-//
-// Used for persist Grafana boards and panel selections
-// responses:
-// 	200:
-
 // SaveSelectedGrafanaBoardsHandler is used to persist board and panel selection
 func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
 	if req.Method != http.MethodPost {
@@ -335,9 +303,13 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "grafana" {
+		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
 		return
 	}
 

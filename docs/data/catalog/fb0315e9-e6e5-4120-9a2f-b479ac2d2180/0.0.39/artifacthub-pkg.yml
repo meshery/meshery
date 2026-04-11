@@ -1,0 +1,24 @@
+version: 0.0.39
+name: senthil-app-new
+displayName: senthil-app-new
+createdAt: "2024-08-05T06:14:33Z"
+description: A simple kubernetes cluster with pod which contains an ngnix container
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/fb0315e9-e6e5-4120-9a2f-b479ac2d2180/0.0.39/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "A simple kubernetes cluster with pod which contains an ngnix container \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 2e870246-92f8-4266-bf2e-1dc261185018
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/fb0315e9-e6e5-4120-9a2f-b479ac2d2180-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/fb0315e9-e6e5-4120-9a2f-b479ac2d2180-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

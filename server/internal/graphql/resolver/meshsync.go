@@ -50,16 +50,29 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			if err != nil {
 				return "", err
 			}
-			defer fin.Close()
 
 			fout, err := os.Create(dst)
 			if err != nil {
+				if closeErr := fin.Close(); closeErr != nil {
+					return "", errors.Join(err, closeErr)
+				}
 				return "", err
 			}
-			defer fout.Close()
 
 			_, err = io.Copy(fout, fin)
 			if err != nil {
+				if closeErr := errors.Join(fin.Close(), fout.Close()); closeErr != nil {
+					return "", errors.Join(err, closeErr)
+				}
+				return "", err
+			}
+			if err := fin.Close(); err != nil {
+				if closeErr := fout.Close(); closeErr != nil {
+					return "", errors.Join(err, closeErr)
+				}
+				return "", err
+			}
+			if err := fout.Close(); err != nil {
 				return "", err
 			}
 
@@ -174,6 +187,10 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	}
 
 	if actions.ReSync == "true" {
+		if actions.HardReset == "true" {
+			r.Log.Info("Skipping resync after hard reset due to missing Kubernetes context")
+			return model.StatusProcessing, nil
+		}
 		handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
 		if !ok {
 			return "", ErrResyncCluster(

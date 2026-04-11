@@ -9,8 +9,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/core"
 
 	"github.com/meshery/meshkit/encoding"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
@@ -32,7 +32,7 @@ func (h *Handler) handleError(rw http.ResponseWriter, err error, logMsg string) 
 	http.Error(rw, logMsg, http.StatusInternalServerError)
 }
 
-func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID uuid.UUID, provider models.Provider, message string, errMsg string, response *models.RegistryAPIResponse) {
+func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID core.Uuid, provider models.Provider, message string, errMsg string, response *models.RegistryAPIResponse, token string) {
 	if errMsg != "" {
 		if message != "" {
 			response.ErrMsg = message + ", " + errMsg
@@ -45,7 +45,7 @@ func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID uuid.UUID, 
 		response.ErrMsg = message
 		h.log.Info(response.ErrMsg)
 	}
-	h.sendFileEvent(userID, provider, response)
+	h.sendFileEvent(userID, provider, response, token)
 	rw.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(rw).Encode(response); err != nil {
 		h.log.Error(err)
@@ -171,11 +171,14 @@ func incrementCountersOnErr(mu *sync.Mutex, entityType entity.EntityType, respon
 	mu.Lock()
 	defer mu.Unlock()
 	response.EntityCount.TotalErrCount++
-	if entityType == entity.ComponentDefinition {
+	switch entityType {
+	case entity.ComponentDefinition:
 		response.EntityCount.ErrCompCount++
-	} else if entityType == entity.RelationshipDefinition {
+
+	case entity.RelationshipDefinition:
 		response.EntityCount.ErrRelCount++
-	} else if entityType == entity.Model {
+
+	case entity.Model:
 		response.EntityCount.ErrModelCount++
 	}
 }
@@ -183,20 +186,23 @@ func incrementCountersOnErr(mu *sync.Mutex, entityType entity.EntityType, respon
 func incrementCountersOnSuccess(mu *sync.Mutex, entityType entity.EntityType, compCount *int, relCount *int, modelCount *int) {
 	mu.Lock()
 	defer mu.Unlock()
-	if entityType == entity.ComponentDefinition {
+	switch entityType {
+	case entity.ComponentDefinition:
 		*compCount++
-	} else if entityType == entity.RelationshipDefinition {
+
+	case entity.RelationshipDefinition:
 		*relCount++
-	} else if entityType == entity.Model {
+
+	case entity.Model:
 		*modelCount++
 	}
 }
 
-func (h *Handler) sendErrorEvent(userID uuid.UUID, provider models.Provider, description string, err error) {
+func (h *Handler) sendErrorEvent(userID core.Uuid, provider models.Provider, description string, err error, token string) {
 	event := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithAction("register").WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
 		"error": err,
 	}).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 
@@ -286,7 +292,7 @@ func (h *Handler) handleRegistrationAndError(registrationHelper registration.Reg
 		}
 	}
 }
-func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, response *models.RegistryAPIResponse) {
+func (h *Handler) sendFileEvent(userID core.Uuid, provider models.Provider, response *models.RegistryAPIResponse, token string) {
 	// Initialize metadata map
 	metadata := map[string]interface{}{
 		"ModelImportMessage": response.ErrMsg,
@@ -352,7 +358,7 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 		WithMetadata(metadata).
 		Build()
 
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 func getFirst42Chars(s string) string {
@@ -361,7 +367,7 @@ func getFirst42Chars(s string) string {
 	}
 	return s
 }
-func (h *Handler) sendEventForImport(userID uuid.UUID, provider models.Provider, compsCount int, modelName string, isCsv bool) {
+func (h *Handler) sendEventForImport(userID core.Uuid, provider models.Provider, compsCount int, modelName string, isCsv bool, token string) {
 
 	var description string
 	var componentWord string
@@ -384,7 +390,7 @@ func (h *Handler) sendEventForImport(userID uuid.UUID, provider models.Provider,
 		WithSeverity(events.Informational).
 		WithMetadata(metadata).
 		Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 func writeMessageString(response *models.RegistryAPIResponse) string {

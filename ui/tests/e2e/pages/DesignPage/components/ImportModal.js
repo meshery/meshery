@@ -24,6 +24,7 @@ export class ImportModal {
     }
   }
 
+  // TODO: filechooser is nolonger shown but a intemediate import modal is shown
   async _importDesignFromFile(filePath, designName) {
     await this.designFileInput.fill(designName);
     const fileChooserPromoise = this.page.waitForEvent('filechooser');

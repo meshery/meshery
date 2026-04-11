@@ -70,22 +70,19 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		patternNameOrID := strings.Join(args, " ")
 		design, isID, err := utils.ValidId(mctlCfg.GetBaseMesheryURL(), patternNameOrID, "pattern")
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		if !isID {
 			if design, err = fetchPatternIDByName(baseUrl, design); err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 		}
 
@@ -95,8 +92,7 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 		}
 
 		if err := exportDesign(baseUrl, design, designType); err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		return nil
@@ -121,7 +117,7 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	}
 	buf, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", ErrReadFromBody(err)
+		return "", utils.ErrReadFromBody(err)
 	}
 	var response struct {
 		TotalCount int                     `json:"total_count"`
@@ -133,12 +129,15 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 
 	switch response.TotalCount {
 	case 0:
-		return "", ErrDesignNotFound()
+		return "", ErrDesignNotFound(patternName)
 	case 1:
 		return response.Patterns[0].ID.String(), nil
 	}
 
-	selectedPattern := selectPatternPrompt(response.Patterns, baseUrl)
+	selectedPattern, err := selectPatternPrompt(response.Patterns, baseUrl)
+	if err != nil {
+		return "", err
+	}
 	return selectedPattern.ID.String(), nil
 }
 
@@ -169,14 +168,14 @@ func exportDesign(baseUrl, design, designType string) error {
 
 	buf := new(bytes.Buffer)
 	if _, err = buf.ReadFrom(resp.Body); err != nil {
-		return ErrReadFromBody(err)
+		return utils.ErrReadFromBody(err)
 	}
 
 	filename := generateFilename(pattern.Name, design, designType)
 	outputFilePath := filepath.Join(outputDir, filename)
 	outputFilePath = getUniqueFilename(outputFilePath)
 
-	if err = os.MkdirAll(filepath.Dir(outputFilePath), 0755); err != nil {
+	if err = os.MkdirAll(filepath.Dir(outputFilePath), 0o755); err != nil {
 		return models.ErrMakeDir(err, outputFilePath)
 	}
 
@@ -196,12 +195,12 @@ func fetchPatternData(dataURL string) (*models.MesheryPattern, error) {
 
 	buf := new(bytes.Buffer)
 	if _, err = buf.ReadFrom(resp.Body); err != nil {
-		return nil, ErrReadFromBody(err)
+		return nil, utils.ErrReadFromBody(err)
 	}
 
 	var pattern models.MesheryPattern
 	if err = encoding.Unmarshal(buf.Bytes(), &pattern); err != nil {
-		return nil, err
+		return nil, utils.ErrUnmarshal(err)
 	}
 
 	return &pattern, nil
@@ -260,7 +259,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 	var userProfile models.User
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", ErrReadFromBody(err)
+		return "", utils.ErrReadFromBody(err)
 	}
 
 	if err := encoding.Unmarshal([]byte(body), &userProfile); err != nil {
@@ -270,7 +269,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 	return fmt.Sprintf("%s %s", userProfile.FirstName, userProfile.LastName), nil
 }
 
-func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) models.MesheryPattern {
+func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) (models.MesheryPattern, error) {
 	columns := []string{"Design Name", "Created At", "Updated At", "Type", "Owner", "Pattern ID"}
 	widths := []int{20, 20, 20, 20, 20, 10}
 
@@ -327,12 +326,13 @@ func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) model
 
 	for {
 		i, _, err := prompt.Run()
-		if err == nil {
-			if i == 0 {
-				continue
-			}
-			return patterns[i-1]
+		if err != nil {
+			return models.MesheryPattern{}, utils.ErrPromptCancelled()
 		}
+		if i == 0 {
+			continue // skip header row, re-prompt
+		}
+		return patterns[i-1], nil
 	}
 }
 

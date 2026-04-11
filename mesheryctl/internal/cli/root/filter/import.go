@@ -23,7 +23,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -44,7 +43,7 @@ mesheryctl filter import /path/to/filter.wasm
 // Import a filter file from a remote URI
 mesheryctl filter import https://example.com/myfilter.wasm
 
-// Add WASM configuration 
+// Add WASM configuration
 // If the string is a valid file in the filesystem, the file is read and passed as a string. Otherwise, the string is passed as is.
 // Use quotes if the string contains spaces
 mesheryctl filter import /path/to/filter.wasm --wasm-config [filepath|string]
@@ -54,16 +53,18 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// for formatting errors
+		subCmdUsed := cmd.Use
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
 
 		if len(args) == 0 {
-			return errors.New(utils.FilterImportError("URI is required\nUse 'mesheryctl filter import --help' to display usage guide\n"))
+			return ErrFilterURIRequired(subCmdUsed)
 		}
 
 		body := models.MesheryFilterRequestBody{
@@ -78,14 +79,12 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 		} else {
 			filterFile, err := os.ReadFile(uri)
 			if err != nil {
-				utils.Log.Error(utils.ErrFileRead(err))
-				return nil
+				return utils.ErrFileRead(err)
 			}
 
 			fileInfo, err := os.Stat(uri)
 			if err != nil {
-				utils.Log.Error(utils.ErrFileRead(err))
-				return nil
+				return utils.ErrFileRead(err)
 			}
 
 			content := filterFile
@@ -100,8 +99,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 				utils.Log.Info("Reading config file")
 				cfgFile, err := os.ReadFile(cfg)
 				if err != nil {
-					utils.Log.Error(utils.ErrReadConfigFile(err))
-					return nil
+					return utils.ErrReadConfigFile(err)
 				}
 
 				content := string(cfgFile)
@@ -119,29 +117,24 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 		// Convert the request body to JSON
 		marshalledBody, err := json.Marshal(body)
-
 		if err != nil {
-			utils.Log.Error(utils.ErrMarshal(err))
-			return nil
+			return utils.ErrMarshal(err)
 		}
 
 		req, err := utils.NewRequest("POST", filterURL, bytes.NewBuffer(marshalledBody))
 		if err != nil {
-			utils.Log.Error(utils.ErrCreatingRequest(err))
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(utils.ErrCreatingRequest(err))
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 
 		if resp.StatusCode == 200 {
 			utils.Log.Info("filter imported")
 		} else {
-			utils.Log.Error(utils.ErrResponseStatus(resp.StatusCode))
-			return nil
+			return utils.ErrResponseStatus(resp.StatusCode)
 		}
 
 		return nil

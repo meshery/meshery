@@ -1,0 +1,24 @@
+version: 0.0.3
+name: publishing-test-microserivce-architecture-using-spring-cloud
+displayName: Publishing test microserivce architecture using spring cloud
+createdAt: "2025-10-06T03:18:47Z"
+description: A test of the emails for Darshan
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/b1e81bd2-787a-4bd2-88cd-932d53a57405/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "and the rest of the team \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: b7b7de05-4f68-4663-8249-15301cc0eb80
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/b1e81bd2-787a-4bd2-88cd-932d53a57405-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/b1e81bd2-787a-4bd2-88cd-932d53a57405-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

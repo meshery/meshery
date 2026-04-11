@@ -1,0 +1,24 @@
+version: 0.0.2
+name: ms-filestorage-rest
+displayName: ms-filestorage-rest
+createdAt: "2025-10-10T20:53:59Z"
+description: This chart provides the configuration for deploying the ms-filestorage-rest microservice in Kubernetes, based on the CodeDesignPlus SDK. It leverages the ms-base chart for best practices and common features such as deployment, service configuration, probes, autoscaling, Vault integration, Istio, and more.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/580d0f01-839b-4b44-90c3-a05656bfc2ab/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The caveats apply to how you design your application, handle performance, and manage files, especially when dealing with large volumes or concurrent access.  \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4646b30e-e97e-4119-bf70-ef976df6d175
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/580d0f01-839b-4b44-90c3-a05656bfc2ab-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/580d0f01-839b-4b44-90c3-a05656bfc2ab-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

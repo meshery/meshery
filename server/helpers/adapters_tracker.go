@@ -69,7 +69,7 @@ func (a *AdaptersTracker) GetAdapters(_ context.Context) []models.Adapter {
 }
 
 // AddAdapter is used to add new adapters to the collection
-func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adapter) error {
+func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adapter) (err error) {
 	platform := utils.GetPlatform()
 
 	// Deploy to current platform
@@ -79,7 +79,11 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		if err != nil {
 			return ErrDeployingAdapterInDocker(err)
 		}
-		defer cli.Close()
+		defer func() {
+			if closeErr := cli.Close(); err == nil && closeErr != nil {
+				err = ErrDeployingAdapterInDocker(closeErr)
+			}
+		}()
 
 		containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
 		if err != nil {
@@ -99,7 +103,11 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrDeployingAdapterInDocker(err)
 		}
 
-		defer resp.Close()
+		defer func() {
+			if closeErr := resp.Close(); err == nil && closeErr != nil {
+				err = ErrDeployingAdapterInDocker(closeErr)
+			}
+		}()
 		_, err = io.ReadAll(resp)
 		if err != nil {
 			return ErrDeployingAdapterInDocker(err)
@@ -214,7 +222,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 }
 
 // RemoveAdapter is used to remove existing adapters from the collection
-func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Adapter) error {
+func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Adapter) (err error) {
 	platform := utils.GetPlatform()
 
 	// Undeploy from current platform
@@ -224,7 +232,11 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		if err != nil {
 			return ErrUnDeployingAdapterInDocker(err)
 		}
-		defer cli.Close()
+		defer func() {
+			if closeErr := cli.Close(); err == nil && closeErr != nil {
+				err = ErrUnDeployingAdapterInDocker(closeErr)
+			}
+		}()
 
 		containers, err := cli.ContainerList(ctx, container.ListOptions{})
 		if err != nil {
