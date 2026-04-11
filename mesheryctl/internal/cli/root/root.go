@@ -87,7 +87,6 @@ mesheryctl -v [or] --verbose
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the RootCmd.
-// Execute adds all child commands
 func Execute() error {
 	//log formatter for improved UX
 	// Removing printing command usage on error
@@ -196,7 +195,7 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		utils.Log.Debugf("unable to read config file: %v", err)
 	} else {
-		utils.Log.Debugf("Using config file:%s", viper.ConfigFileUsed())
+		utils.Log.Debugf("Using config file: %s", viper.ConfigFileUsed())
 	}
 }
 
