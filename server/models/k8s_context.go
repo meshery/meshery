@@ -12,6 +12,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/internal/sql"
@@ -30,10 +32,10 @@ type K8sContext struct {
 	Auth               sql.Map    `json:"auth,omitempty" yaml:"auth,omitempty"`
 	Cluster            sql.Map    `json:"cluster,omitempty" yaml:"cluster,omitempty"`
 	Server             string     `json:"server,omitempty" yaml:"server,omitempty"`
-	Owner              *uuid.UUID `json:"owner,omitempty" gorm:"-" yaml:"owner,omitempty"`
-	CreatedBy          *uuid.UUID `json:"created_by,omitempty" gorm:"-" yaml:"created_by,omitempty"`
-	MesheryInstanceID  *uuid.UUID `json:"meshery_instance_id,omitempty" yaml:"meshery_instance_id,omitempty"`
-	KubernetesServerID *uuid.UUID `json:"kubernetes_server_id,omitempty" yaml:"kubernetes_server_id,omitempty"`
+	Owner              *core.Uuid `json:"owner,omitempty" gorm:"-" yaml:"owner,omitempty"`
+	CreatedBy          *core.Uuid `json:"created_by,omitempty" gorm:"-" yaml:"created_by,omitempty"`
+	MesheryInstanceID  *core.Uuid `json:"meshery_instance_id,omitempty" yaml:"meshery_instance_id,omitempty"`
+	KubernetesServerID *core.Uuid `json:"kubernetes_server_id,omitempty" yaml:"kubernetes_server_id,omitempty"`
 	DeploymentType     string     `json:"deployment_type,omitempty" yaml:"deployment_type,omitempty" default:"out_cluster"`
 	Version            string     `json:"version,omitempty" yaml:"version,omitempty"`
 	UpdatedAt          *time.Time `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
@@ -86,7 +88,7 @@ type InternalKubeConfig struct {
 	Users          []map[string]interface{} `json:"users,omitempty" yaml:"users,omitempty"`
 }
 
-func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *uuid.UUID, log logger.Handler) (K8sContext, string) {
+func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *core.Uuid, log logger.Handler) (K8sContext, string) {
 	cluster := map[string]interface{}{}
 	user := map[string]interface{}{}
 	context := map[string]interface{}{}
@@ -140,7 +142,7 @@ func NewK8sContextWithServerID(
 	clusters map[string]interface{},
 	users map[string]interface{},
 	server string,
-	instanceID *uuid.UUID,
+	instanceID *core.Uuid,
 	log logger.Handler,
 ) (*K8sContext, error) {
 	ctx, _ := NewK8sContext(contextName, clusters, users, server, instanceID, log)
@@ -176,7 +178,7 @@ func NewK8sContextWithServerID(
 
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
 // kubernetes contexts from it
-func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *uuid.UUID, eventMetadata map[string]interface{}, log logger.Handler) []*K8sContext {
+func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler) []*K8sContext {
 	kcs := []*K8sContext{}
 
 	parsed, _, err := kubernetes.ProcessConfig(kubeconfig, "")
@@ -279,7 +281,7 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, k
 	return kcs
 }
 
-func NewK8sContextFromInClusterConfig(contextName string, instanceID *uuid.UUID, log logger.Handler) (*K8sContext, error) {
+func NewK8sContextFromInClusterConfig(contextName string, instanceID *core.Uuid, log logger.Handler) (*K8sContext, error) {
 	const (
 		tokenFile  = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 		rootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
@@ -333,7 +335,7 @@ func NewK8sContext(
 	cluster map[string]interface{},
 	user map[string]interface{},
 	server string,
-	instanceID *uuid.UUID,
+	instanceID *core.Uuid,
 	log logger.Handler,
 ) (K8sContext, string) {
 	ctx := K8sContext{
@@ -461,7 +463,7 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 }
 
 // FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
-func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, userID string, mesheryInstanceID *uuid.UUID, log logger.Handler) {
+func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, userID string, mesheryInstanceID *core.Uuid, log logger.Handler) {
 	ctxID := k8sContext.ID
 	ctxUUID, _ := uuid.FromString(ctxID)
 	userUUID, _ := uuid.FromString(userID)

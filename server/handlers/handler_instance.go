@@ -2,7 +2,6 @@
 package handlers
 
 import (
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/broker"
@@ -11,6 +10,7 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/core/policies"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils/events"
+	"github.com/meshery/schemas/models/core"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/spf13/viper"
 	"github.com/vmihailenco/taskq/v3"
@@ -27,7 +27,7 @@ type Handler struct {
 	K8sCompRegHelper                        *models.ComponentsRegistrationHelper
 	MesheryCtrlsHelper                      *models.MesheryControllersHelper
 	Provider                                string // When set, all endpoints consider tokens / identities / capabilities valid from the single, designated provider.
-	SystemID                                *uuid.UUID
+	SystemID                                *core.Uuid
 	dbHandler                               *database.Handler
 	registryManager                         *meshmodel.RegistryManager
 	EventsBuffer                            *events.EventStreamer
@@ -65,7 +65,7 @@ func NewHandlerInstance(
 		registryManager:                         regManager,
 		Provider:                                provider,
 		Rego:                                    rego,
-		SystemID:                                viper.Get("INSTANCE_ID").(*uuid.UUID),
+		SystemID:                                viper.Get("INSTANCE_ID").(*core.Uuid),
 		ConnectionToStateMachineInstanceTracker: connToInstanceTracker,
 		MeshsyncDefaultDeploymentMode:           meshsyncDefaultDeploymentMode,
 	}

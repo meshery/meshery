@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/database"
@@ -95,7 +97,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 			Description:    ws.Description,
 			ID:             ws.ID,
 			Name:           ws.Name,
-			OrganizationId: uuid.UUID(ws.OrganizationID),
+			OrganizationId: core.Uuid(ws.OrganizationID),
 			OwnerId:        ws.Owner,
 			UpdatedAt:      ws.UpdatedAt,
 		}
@@ -178,7 +180,7 @@ func (wp *WorkspacePersister) UpdateWorkspaceByID(selectedWorkspace *workspace.W
 }
 
 // Get workspace by ID
-func (wp *WorkspacePersister) GetWorkspace(id uuid.UUID) (*workspace.Workspace, error) {
+func (wp *WorkspacePersister) GetWorkspace(id core.Uuid) (*workspace.Workspace, error) {
 	workspace := workspace.Workspace{}
 	query := wp.DB.Where("id = ?", id)
 	err := query.First(&workspace).Error
@@ -186,7 +188,7 @@ func (wp *WorkspacePersister) GetWorkspace(id uuid.UUID) (*workspace.Workspace, 
 }
 
 // GetWorkspaceByID returns a single workspace by ID
-func (wp *WorkspacePersister) GetWorkspaceByID(workspaceID uuid.UUID) ([]byte, error) {
+func (wp *WorkspacePersister) GetWorkspaceByID(workspaceID core.Uuid) ([]byte, error) {
 	workspace, err := wp.GetWorkspace(workspaceID)
 	if err != nil {
 		return nil, err
@@ -201,7 +203,7 @@ func (wp *WorkspacePersister) GetWorkspaceByID(workspaceID uuid.UUID) ([]byte, e
 }
 
 // UpdateWorkspaceByID updates a single workspace by ID
-func (wp *WorkspacePersister) UpdateWorkspace(workspaceID uuid.UUID, payload *workspace.WorkspaceUpdatePayload) (*workspace.Workspace, error) {
+func (wp *WorkspacePersister) UpdateWorkspace(workspaceID core.Uuid, payload *workspace.WorkspaceUpdatePayload) (*workspace.Workspace, error) {
 	ws, err := wp.GetWorkspace(workspaceID)
 	if err != nil {
 		return nil, err
@@ -213,7 +215,7 @@ func (wp *WorkspacePersister) UpdateWorkspace(workspaceID uuid.UUID, payload *wo
 	if payload.Description != "" {
 		ws.Description = payload.Description
 	}
-	organizationID := uuid.UUID(payload.OrganizationID)
+	organizationID := core.Uuid(payload.OrganizationID)
 	if organizationID != uuid.Nil {
 		ws.OrganizationID = organizationID
 	}
@@ -222,7 +224,7 @@ func (wp *WorkspacePersister) UpdateWorkspace(workspaceID uuid.UUID, payload *wo
 }
 
 // DeleteWorkspaceByID deletes a single workspace by ID
-func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID uuid.UUID) ([]byte, error) {
+func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID core.Uuid) ([]byte, error) {
 	ws, err := wp.GetWorkspace(workspaceID)
 	if err != nil {
 		return nil, err
@@ -232,7 +234,7 @@ func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID uuid.UUID) ([]byte
 }
 
 // AddEnvironmentToWorkspace adds an environment to a workspace
-func (wp *WorkspacePersister) AddEnvironmentToWorkspace(workspaceID, environmentID uuid.UUID) ([]byte, error) {
+func (wp *WorkspacePersister) AddEnvironmentToWorkspace(workspaceID, environmentID core.Uuid) ([]byte, error) {
 	wsEnvMapping := workspace.WorkspacesEnvironmentsMapping{
 		EnvironmentId: environmentID,
 		WorkspaceId:   workspaceID,
@@ -265,7 +267,7 @@ type WorkspaceFilter struct {
 }
 
 // GetWorkspaceEnvironments returns environments for a workspace
-func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, search, order, page, pageSize, filter string) ([]byte, error) {
+func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, search, order, page, pageSize, filter string) ([]byte, error) {
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {
@@ -353,7 +355,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, se
 }
 
 // DeleteEnvironmentFromWorkspace deletes an environment from a workspace
-func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, environmentID uuid.UUID) ([]byte, error) {
+func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, environmentID core.Uuid) ([]byte, error) {
 	var wsEnvMapping workspace.WorkspacesEnvironmentsMapping
 
 	// Find the specific environment mapping
@@ -377,7 +379,7 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID uuid.UUID) ([]byte, error) {
+func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID core.Uuid) ([]byte, error) {
 
 	// delete any existing mapping for the design in the workspace
 	_, err := wp.DeleteDesignFromWorkspace(workspaceID, designID)
@@ -412,7 +414,7 @@ func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID uuid.UU
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID uuid.UUID) ([]byte, error) {
+func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID core.Uuid) ([]byte, error) {
 	var wsDesignMapping workspace.WorkspacesDesignsMapping
 
 	// Find the specific design mapping
@@ -436,7 +438,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID uu
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search, order, page, pageSize, filter string, visibility []string) ([]byte, error) {
+func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search, order, page, pageSize, filter string, visibility []string) ([]byte, error) {
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {
@@ -538,7 +540,7 @@ func schemaMesheryPatterns(patterns []*MesheryPattern) ([]patternv1beta1.Meshery
 	return decoded, nil
 }
 
-func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID uuid.UUID) ([]byte, error) {
+func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID core.Uuid) ([]byte, error) {
 	wsViewMapping := workspace.WorkspacesViewsMapping{
 		ViewId:      viewID,
 		WorkspaceId: workspaceID,
@@ -564,7 +566,7 @@ func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID uuid.UUID) 
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID uuid.UUID) ([]byte, error) {
+func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID core.Uuid) ([]byte, error) {
 	var wsViewMapping workspace.WorkspacesViewsMapping
 
 	if err := wp.DB.Where("workspace_id = ? AND view_id = ?", workspaceID, viewID).First(&wsViewMapping).Error; err != nil {
@@ -586,7 +588,7 @@ func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID uuid.U
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID uuid.UUID, search, order, page, pageSize, filter string) ([]byte, error) {
+func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, order, page, pageSize, filter string) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
@@ -666,7 +668,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID uuid.UUID, search, o
 	return viewsJSON, nil
 }
 
-func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID uuid.UUID) ([]byte, error) {
+func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID core.Uuid) ([]byte, error) {
 	wsTeamMapping := workspace.WorkspacesTeamsMapping{
 		TeamId:      teamID,
 		WorkspaceId: workspaceID,
@@ -692,7 +694,7 @@ func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID uuid.UUID) 
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) DeleteTeamFromWorkspace(workspaceID, teamID uuid.UUID) ([]byte, error) {
+func (wp *WorkspacePersister) DeleteTeamFromWorkspace(workspaceID, teamID core.Uuid) ([]byte, error) {
 	var wsTeamMapping workspace.WorkspacesTeamsMapping
 
 	if err := wp.DB.Where("workspace_id = ? AND team_id = ?", workspaceID, teamID).First(&wsTeamMapping).Error; err != nil {
@@ -714,7 +716,7 @@ func (wp *WorkspacePersister) DeleteTeamFromWorkspace(workspaceID, teamID uuid.U
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID uuid.UUID, search, order, page, pageSize, filter string) ([]byte, error) {
+func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, order, page, pageSize, filter string) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
@@ -764,7 +766,7 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID uuid.UUID, search, o
 	}
 
 	type Team struct {
-		ID        uuid.UUID  `json:"id" db:"id"`
+		ID        core.Uuid  `json:"id" db:"id"`
 		Name      string     `json:"name" db:"name"`
 		CreatedAt time.Time  `json:"created_at" db:"created_at"`
 		UpdatedAt time.Time  `json:"updated_at" db:"updated_at"`

@@ -16,9 +16,9 @@ import (
 	mcore "github.com/meshery/meshery/server/models/meshmodel/core"
 
 	// for GKE kube API authentication
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/core"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
 	"github.com/meshery/meshkit/models/events"
@@ -339,7 +339,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	// userUUID := uuid.FromStringOrNil(userID)
 
 	// Get meshery instance ID
-	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
+	mid, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
 	if !ok {
 		return contexts, models.ErrMesheryInstanceID
 	}

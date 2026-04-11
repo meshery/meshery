@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-
 	"strings"
 
 	gofrs "github.com/gofrs/uuid"
@@ -12,6 +11,7 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	mutils "github.com/meshery/meshkit/utils"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
 )
 
@@ -99,7 +99,7 @@ func failedMsgCompute(failedMsg string, hostName string, regLog *RegistrationFai
 	return failedMsg, nil
 }
 
-func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider *Provider, userID string, ec *Broadcast, regErrorStore *RegistrationFailureLog) (string, error) {
+func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *Provider, userID string, ec *Broadcast, regErrorStore *RegistrationFailureLog) (string, error) {
 	failedMsg, err := failedMsgCompute("", hostname, regErrorStore)
 	if err != nil {
 		return "", err

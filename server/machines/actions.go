@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -33,7 +35,7 @@ func (da *DefaultConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx i
 func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
 
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
 
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
@@ -65,7 +67,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 			WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), _err
 	}
 
-	var credentialID *uuid.UUID
+	var credentialID *core.Uuid
 	if ok {
 		idStr, isStr := existingCredID.(string)
 		if !isStr {

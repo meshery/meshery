@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
@@ -102,7 +101,7 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 }
 
 // getComponentById retrieves a component from the design by its ID
-func getComponentById(design pattern.PatternFile, id uuid.UUID) *component.ComponentDefinition {
+func getComponentById(design pattern.PatternFile, id core.Uuid) *component.ComponentDefinition {
 	for _, comp := range design.Components {
 		if comp.ID == id {
 			return comp

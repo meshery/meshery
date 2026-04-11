@@ -2,14 +2,13 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
-
-	"encoding/json"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -19,6 +18,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	_events "github.com/meshery/meshkit/utils/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 var (
@@ -27,11 +27,11 @@ var (
 
 type eventStatusPayload struct {
 	Status    string       `json:"status"`
-	StatusIDs []*uuid.UUID `json:"ids"`
+	StatusIDs []*core.Uuid `json:"ids"`
 }
 
 type statusIDs struct {
-	IDs []*uuid.UUID `json:"ids"`
+	IDs []*core.Uuid `json:"ids"`
 }
 
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -381,7 +381,7 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 		}
 	}
 }
-func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID uuid.UUID, userID string) {
+func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID core.Uuid, userID string) {
 	log.Debug("Received a stream client...")
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	userUUID := uuid.FromStringOrNil(userID)
