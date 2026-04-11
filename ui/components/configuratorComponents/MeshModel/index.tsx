@@ -13,8 +13,8 @@ import {
 } from '@sistent/sistent';
 import React, { useEffect, useRef, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '../../../assets/icons/DeleteIcon';
+import DoneIcon from '../../../assets/icons/DoneIcon';
 import { NoSsr } from '@sistent/sistent';
 import { iconMedium } from '../../../css/icons.styles';
 import { useMeshModelComponents } from '../../../utils/hooks/useMeshModelComponents';
@@ -23,9 +23,9 @@ import CodeEditor from '../CodeEditor';
 import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
 import { useRouter } from 'next/router';
-import { ArrowBack } from '@mui/icons-material';
+import LeftArrowIcon from '../../../assets/icons/LeftArrowIcon';
 import TooltipButton from '../../../utils/TooltipButton';
-import { SaveAs as SaveAsIcon } from '@mui/icons-material';
+import CopyIcon from '../../../assets/icons/CopyIcon';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
@@ -82,7 +82,7 @@ export default function DesignConfigurator() {
     <NoSsr>
       <TooltipButton title="Back" placement="left">
         <IconButton onClick={() => router.back()}>
-          <ArrowBack />
+          <LeftArrowIcon />
         </IconButton>
       </TooltipButton>
       <AppBarComponent position="static" elevation={0} data-testid="design-configurator-app-bar">
@@ -194,7 +194,7 @@ export default function DesignConfigurator() {
                 onClick={designSave}
                 disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
               >
-                <SaveAsIcon style={iconMedium} />
+                <CopyIcon style={iconMedium} />
               </IconButton>
             </div>
           </CustomTooltip>
@@ -208,7 +208,7 @@ export default function DesignConfigurator() {
                     onClick={designUpdate}
                     disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                   >
-                    <SaveIcon style={iconMedium} />
+                    <DoneIcon style={iconMedium} />
                   </IconButton>
                 </div>
               </CustomTooltip>
