@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
@@ -77,6 +77,8 @@ const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 const GRID_COLS = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 const BREAKPOINTS = Object.keys(GRID_COLS);
 const compareByRowThenColumn = (a, b) => (a.y !== b.y ? a.y - b.y : a.x - b.x);
+const ensureLayoutShape = (layouts = {}) =>
+  Object.fromEntries(BREAKPOINTS.map((bp) => [bp, layouts[bp] || []]));
 
 const pickLayoutFields = (items = []) =>
   items.map(({ i, x, y, w, h }) => ({ i, x, y, w, h })).sort(compareByRowThenColumn);
@@ -177,6 +179,7 @@ const Dashboard = () => {
   );
   const availableHandles = ['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne'];
   const cols = GRID_COLS;
+  const hasPersistedHealedLayout = useRef(false);
 
   const clampLayoutItem = (item, breakpoint) => {
     const maxCols = GRID_COLS[breakpoint];
@@ -200,17 +203,26 @@ const Dashboard = () => {
       BREAKPOINTS.map((bp) => [bp, (layouts[bp] || []).map((item) => clampLayoutItem(item, bp))]),
     );
 
+  const getHasLargeVerticalGaps = (items, breakpoint) => {
+    const normalized = items.map((item) => clampLayoutItem(item, breakpoint));
+    const compacted = compactLayout(normalized);
+    const compactedById = Object.fromEntries(compacted.map((item) => [item.i, item]));
+    return normalized.some((item) => item.y - (compactedById[item.i]?.y ?? item.y) >= 2);
+  };
+
+  const shouldHealLayouts = (layouts) =>
+    BREAKPOINTS.some((bp) => {
+      const items = layouts[bp] || [];
+      return !isLayoutValid(items, bp) || getHasLargeVerticalGaps(items, bp);
+    });
+
   const sanitizeLayouts = (layouts) =>
     Object.fromEntries(
       BREAKPOINTS.map((bp) => {
         const items = layouts[bp] || [];
         const normalized = items.map((item) => clampLayoutItem(item, bp));
-        const compacted = compactLayout(normalized);
-        const compactedById = Object.fromEntries(compacted.map((item) => [item.i, item]));
-        const hasGaps = normalized.some(
-          (item) => item.y - (compactedById[item.i]?.y ?? item.y) >= 2,
-        );
-        return [bp, !isLayoutValid(items, bp) || hasGaps ? compacted : normalized];
+        const shouldHeal = !isLayoutValid(items, bp) || getHasLargeVerticalGaps(items, bp);
+        return [bp, shouldHeal ? compactLayout(normalized) : normalized];
       }),
     );
   const isWidgetAlreadyAdded = (key, layout, breakpoint) => {
@@ -224,10 +236,30 @@ const Dashboard = () => {
         (widget) => widget?.isEnabled?.() && !isWidgetAlreadyAdded(widget.key, layout, breakpoint),
       );
   };
-  const orgDashboardLayout = useMemo(
-    () => normalizeLayouts(userData?.dashboardPreferences || defaultLayout),
-    [userData?.dashboardPreferences, defaultLayout],
+  const persistedDashboardLayout = useMemo(
+    () => ensureLayoutShape(userData?.dashboardPreferences),
+    [userData?.dashboardPreferences],
   );
+  const shouldHealPersistedLayout = useMemo(
+    () => shouldHealLayouts(persistedDashboardLayout),
+    [persistedDashboardLayout],
+  );
+  const healedPersistedDashboardLayout = useMemo(
+    () => sanitizeLayouts(persistedDashboardLayout),
+    [persistedDashboardLayout],
+  );
+  const orgDashboardLayout = useMemo(() => {
+    if (!userData?.dashboardPreferences) {
+      return normalizeLayouts(defaultLayout);
+    }
+    return shouldHealPersistedLayout ? healedPersistedDashboardLayout : persistedDashboardLayout;
+  }, [
+    userData?.dashboardPreferences,
+    defaultLayout,
+    shouldHealPersistedLayout,
+    healedPersistedDashboardLayout,
+    persistedDashboardLayout,
+  ]);
   const [dashboardLayout, setDashboardLayout] = useState(orgDashboardLayout);
 
   const {
@@ -367,6 +399,29 @@ const Dashboard = () => {
       sameLayouts(currentLayout, orgDashboardLayout) ? currentLayout : orgDashboardLayout,
     );
   }, [orgDashboardLayout]);
+
+  useEffect(() => {
+    if (
+      !userData?.dashboardPreferences ||
+      !shouldHealPersistedLayout ||
+      hasPersistedHealedLayout.current
+    ) {
+      return;
+    }
+    hasPersistedHealedLayout.current = true;
+    updateUserPref({ dashboardPreferences: healedPersistedDashboardLayout }).then((res) => {
+      if (res.error) {
+        hasPersistedHealedLayout.current = false;
+        handleError('failed to heal dashboard layout');
+      }
+    });
+  }, [
+    userData?.dashboardPreferences,
+    shouldHealPersistedLayout,
+    healedPersistedDashboardLayout,
+    updateUserPref,
+    handleError,
+  ]);
 
   const onLayoutChange = (_layout, layouts) => {
     setDashboardLayout((currentLayout) => {
