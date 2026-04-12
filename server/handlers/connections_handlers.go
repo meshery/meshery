@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/machines"
@@ -30,7 +32,13 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 
 	connectionRegisterPayload := connections.ConnectionPayload{}
 	userUUID := user.ID
-	err := json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
+	token, err := provider.GetProviderToken(req)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
+	err = json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
 	if err != nil {
 		http.Error(w, models.ErrUnmarshal(err, "connection registration payload").Error(), http.StatusInternalServerError)
 		return
@@ -61,7 +69,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 				"error": err,
 			}).Build()
 			if event != nil {
-				_ = provider.PersistEvent(*event, nil)
+				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 			h.log.Error(err)
@@ -74,7 +82,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			h.log.Error(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			if event != nil {
-				_ = provider.PersistEvent(*event, nil)
+				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 			return
@@ -131,12 +139,6 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 	}
 }
 
-// swagger:route POST /api/integrations/connections PostConnection idPostConnection
-// Handle POST request for creating a new connection
-//
-// Creates a new connection
-// responses:
-// 201: noContentWrapper
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	userID := user.ID
@@ -172,7 +174,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error creating connection %s", connection.Name)).WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
@@ -183,35 +185,13 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	description := fmt.Sprintf("Connection %s created.", connection.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info(description)
 	w.WriteHeader(http.StatusCreated)
 }
 
-// swagger:route GET /api/integrations/connections GetConnections idGetConnections
-// Handle GET request for getting all connections
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={}``` If search is non empty then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-//
-// ```?filter={filter}``` Filter connections with type or sub_type, eg /api/integrations/connections?filter=type%20platform or /api/integrations/connections?filter=sub_type%20management
-//
-// ```?status={status}``` Status takes array as param to filter connections based on status, eg /api/integrations/connections?status=["connected", "deleted"]
-//
-// ```?kind={kind}``` Kind takes array as param to filter connections based on kind, eg /api/integrations/connections?kind=["meshery", "kubernetes"]
-//
-// ```?type={type}``` Type takes array as param to filter connections based on type, eg /api/integrations/connections?type=["platform", "observability"]
-//
-// ```?name={name}``` Name filters connections by name (partial match), eg /api/integrations/connections?name=my-cluster
-// responses:
-// 200: mesheryConnectionsResponseWrapper
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 	page, _ := strconv.Atoi(q.Get("page"))
@@ -343,12 +323,6 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-// swagger:route GET /api/integrations/connections/{connectionId} GetConnectionById idGetConnectionById
-// Handle GET request for getting a single connection by its ID
-//
-// Fetches a single connection by its ID
-// responses:
-// 200: mesheryConnectionResponseWrapper
 func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	if connectionID == uuid.Nil {
@@ -374,12 +348,6 @@ func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ 
 	}
 }
 
-// swagger:route PUT /api/integrations/connections/{connectionId} PutConnectionById idPutConnectionById
-// Handle PUT request for updating an existing connection by connection ID
-//
-// Updates existing connection using ID
-// responses:
-// 200: mesheryConnectionResponseWrapper
 func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	userID := user.ID
@@ -425,7 +393,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 				"connection_id": connectionID.String(),
 			}
 			event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to handle meshsync deployment mode change").WithMetadata(metadata).Build()
-			_ = provider.PersistEvent(*event, nil)
+			_ = provider.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userID, event)
 
 			h.log.Error(meshSyncErr)
@@ -442,7 +410,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 				"connection_id":                connectionID.String(),
 			}
 			event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
-			_ = provider.PersistEvent(*event, nil)
+			_ = provider.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userID, event)
 
 			h.log.Info(description)
@@ -455,7 +423,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
 
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		return
@@ -467,7 +435,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error updating connection").WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
@@ -481,17 +449,17 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 	if connection.Status != "" {
 		event, _ := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
-		_ = provider.PersistEvent(event, nil)
+		_ = provider.PersistEvent(event, token)
 	}
 
 	event := eventBuilder.WithSeverity(events.Informational).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 	h.log.Info(description)
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, userID uuid.UUID, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
+func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, userID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
 	connectionID := connection.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
@@ -549,7 +517,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 			event, err := inst.SendEvent(context, machines.EventType(helpers.StatusToEvent(status)), nil)
 			if err != nil {
 				h.log.Error(err)
-				_ = provider.PersistEvent(*event, nil)
+				_ = provider.PersistEvent(*event, token)
 				h.config.EventBroadcaster.Publish(userID, event)
 				return
 			}
@@ -558,7 +526,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 				smInstanceTracker.Remove(inst.ID)
 			}
 
-			_ = provider.PersistEvent(*event, nil)
+			_ = provider.PersistEvent(*event, token)
 			h.config.EventBroadcaster.Publish(userID, event)
 		}(inst, connection.Status)
 	}
@@ -566,15 +534,15 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 	return *eventBuilder.Build(), nil
 }
 
-// swagger:route DELETE /api/integrations/connections/{connectionId} DeleteConnection idDeleteConnection
-// Handle DELETE request for deleting an existing connection by connection ID
-//
-// Deletes existing connection
-// responses:
-// 200: noContentWrapper
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	userID := user.ID
+	token, err := provider.GetProviderToken(req)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
@@ -585,7 +553,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error deleting connection").WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		if errors.GetCode(err) == models.ErrResultNotFoundCode {
@@ -601,7 +569,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	description := fmt.Sprintf("Connection %s deleted.", deletedConnection.Name)
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info("connection deleted.")
@@ -613,10 +581,10 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 // Returns: oldMode, newMode, changed, error
 func (h *Handler) handleMeshSyncDeploymentModeChange(
 	ctx context.Context,
-	connectionID uuid.UUID,
+	connectionID core.Uuid,
 	newConnection *connections.ConnectionPayload,
 	token string,
-	userID uuid.UUID,
+	userID core.Uuid,
 	provider models.Provider,
 ) (schemasConnection.MeshsyncDeploymentMode, schemasConnection.MeshsyncDeploymentMode, bool, error) {
 	if newConnection == nil {

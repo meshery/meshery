@@ -3,6 +3,8 @@ package kubernetes
 import (
 	"fmt"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/machines"
@@ -62,7 +64,7 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
 	return nil
 }
 
-func AssignControllerHandlers(machinectx *MachineCtx, systemID *uuid.UUID, provider models.Provider) {
+func AssignControllerHandlers(machinectx *MachineCtx, systemID *core.Uuid, provider models.Provider) {
 	machinectx.MesheryCtrlsHelper = models.NewMesheryControllersHelper(
 		machinectx.log,
 		models.NewOperatorDeploymentConfig(adapterTracker),

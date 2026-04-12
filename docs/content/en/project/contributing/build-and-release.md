@@ -48,8 +48,6 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `MESHERY_TOKEN`: General Meshery authentication token
 - `METAL_AUTH_TOKEN`: Authentication token for metal provider
 - `METAL_SERVER1`: Configuration for metal server 1
-- `NETLIFY_AUTH_TOKEN`: Authentication token for Netlify
-- `NETLIFY_SITE_ID`: Site ID for Netlify deployments
 - `PLAYGROUND_CONFIG`: Configuration for playground environments
 - `PROVIDER_TOKEN`: General provider authentication token
 - `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter

@@ -8,6 +8,7 @@ import { api, mesheryApiPath } from './index';
 import { initiateQuery } from './utils';
 import { useGetOrgsQuery } from './organization';
 import { useGetWorkspacesQuery } from './workspace';
+import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
 
 const Tags = {
   USER_PREF: 'userPref',
@@ -29,7 +30,7 @@ export const userApi = api
         }),
         providesTags: [Tags.LOAD_TEST_PREF],
         // Transform response to directly get the loadTestPrefs
-        transformResponse: (response) => response?.loadTestPrefs || {},
+        transformResponse: (response) => normalizeLoadTestPrefs(response?.loadTestPrefs),
       }),
 
       updateLoadTestPrefs: builder.mutation({
@@ -43,7 +44,7 @@ export const userApi = api
         invalidatesTags: [Tags.LOAD_TEST_PREF],
       }),
       getToken: builder.query({
-        query: () => `/api/user/token`,
+        query: () => ({ url: `/api/token`, method: 'GET', credentials: 'include' }),
         method: 'GET',
       }),
       getUserPref: builder.query({
@@ -223,7 +224,7 @@ export const userApi = api
       }),
       getAccessToken: builder.query({
         query: () => ({
-          url: `/api/user/token`,
+          url: `/api/token`,
         }),
         transformResponse: (response) => {
           return response?.token;
