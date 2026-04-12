@@ -17,13 +17,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v6
 
-      - name: Build Docker image
-        run: |
-          docker build -f install/docker/Dockerfile -t meshery-server:ci .
-  
-      - name: Export Docker image
-        run: |
-          docker save meshery-server:ci -o meshery.tar
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: install/docker/Dockerfile
+          tags: meshery-server:ci
+          outputs: type=tar,dest=meshery.tar
   
       - name: Upload Docker artifact
         uses: actions/upload-artifact@v6
