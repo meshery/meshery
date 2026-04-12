@@ -5,17 +5,24 @@ on:
     outputs:
       meshery-image:
         description: 'Name of the artifact'
-        value: 'meshery-image' 
-
+        value: ${{ jobs.build-image.outputs.artifact-name }}
     secrets: {}
 
 jobs:
   build-image:
     name: Build image
     runs-on: ubuntu-24.04
+    outputs:
+      artifact-name: ${{ steps.set-name.outputs.name }}
     steps:
       - name: Check out code
         uses: actions/checkout@v6
+      
+      - name: Compute artifact name
+        id: set-name
+        run: |
+          ID=${{ github.event.pull_request.number || github.run_id }}
+          echo "name=meshery-image-$ID" >> $GITHUB_OUTPUT
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -30,5 +37,5 @@ jobs:
       - name: Upload Docker artifact
         uses: actions/upload-artifact@v6
         with:
-          name: meshery-image
+          name: ${{ steps.set-name.outputs.name }}
           path: meshery.tar
