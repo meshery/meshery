@@ -22,7 +22,7 @@ jobs:
           context: .
           file: install/docker/Dockerfile
           tags: meshery-server:ci
-          outputs: type=tar,dest=meshery.tar
+          outputs: type=docker,dest=meshery.tar
   
       - name: Upload Docker artifact
         uses: actions/upload-artifact@v6
