@@ -4,7 +4,6 @@ package context
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/meshery/meshkit/models/meshmodel/entity"
@@ -118,11 +117,8 @@ func toSummary(c component.ComponentDefinition) ComponentSummary {
 	if c.Model != nil {
 		s.Model = c.Model.Name
 	}
-	if c.Metadata != nil {
-		desc := fmt.Sprintf("%v", c.Metadata["description"])
-		if desc != "<nil>" && desc != "" {
-			s.Description = desc
-		}
+	if c.Description != "" {
+		s.Description = c.Description
 	}
 
 	// Extract a trimmed properties map from the component schema if present.
