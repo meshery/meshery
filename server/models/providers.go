@@ -210,7 +210,8 @@ type K8sContextPersistResponse struct {
 
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
-	StatusCode int    `json:"status_code,omitempty"`
+	Headers    http.Header
+	StatusCode int `json:"status_code,omitempty"`
 }
 
 // Feature is a type to store the features of the provider

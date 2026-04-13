@@ -10,6 +10,46 @@ const TAGS = {
   VIEWS: 'workspaces_views',
   TEAMS: 'workspaces_teams',
 };
+
+const getProviderType = async (getState, baseQuery) => {
+  const cachedProviderType = getState()?.ui?.capabilitiesRegistry?.provider_type;
+  if (cachedProviderType) {
+    return cachedProviderType;
+  }
+
+  const providerCapabilities = await baseQuery({
+    url: mesheryApiPath('provider/capabilities'),
+    method: 'GET',
+  });
+
+  return providerCapabilities?.data?.provider_type;
+};
+
+const isLocalProvider = async (getState, baseQuery) =>
+  (await getProviderType(getState, baseQuery)) === 'local';
+
+const createEmptyPagedResult = (key, queryArg = {}) => ({
+  [key]: [],
+  total_count: 0,
+  page: queryArg.page ?? 0,
+  page_size: queryArg.pagesize === 'all' ? 0 : Number(queryArg.pagesize) || 0,
+});
+
+const createEmptyEventsResult = (queryArg = {}) => ({
+  data: [],
+  total_count: 0,
+  count_by_severity_level: [],
+  read_count: 0,
+  page: queryArg.page ?? 0,
+  page_size: queryArg.pagesize === 'all' ? 0 : Number(queryArg.pagesize) || 0,
+});
+
+const createUnsupportedWorkspaceExtensionError = (resource) => ({
+  status: 501,
+  data: {
+    message: `Workspace ${resource} are unavailable for the current provider.`,
+  },
+});
 const workspacesApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.WORKSPACES, TAGS.DESIGNS, TAGS.ENVIRONMENTS, TAGS.VIEWS, TAGS.TEAMS],
@@ -18,7 +58,7 @@ const workspacesApi = api
     endpoints: (builder) => ({
       getWorkspaces: builder.query({
         keepUnusedDataFor: 0,
-        queryFn: async (queryArgs, { dispatch }, _extraOptions, baseQuery) => {
+        queryFn: async (queryArgs, { dispatch, getState }, _extraOptions, baseQuery) => {
           const { expandInfo, ...otherArgs } = queryArgs;
           const params = urlEncodeParams(otherArgs);
           const workspaces = await baseQuery({
@@ -27,6 +67,7 @@ const workspacesApi = api
           });
 
           if (expandInfo && workspaces.data && !workspaces.error) {
+            const localProvider = await isLocalProvider(getState, baseQuery);
             const modifiedWorkspaces = await Promise.all(
               workspaces.data.workspaces.map(async (workspace) => {
                 const [designs, environments, views, teams] = await Promise.all([
@@ -46,20 +87,28 @@ const workspacesApi = api
                       pagesize: 1,
                     }),
                   ),
-                  dispatch(
-                    workspacesApi.endpoints.getViewsOfWorkspace.initiate({
-                      workspaceId: workspace.id,
-                      page: 0,
-                      pagesize: 1,
-                    }),
-                  ),
-                  dispatch(
-                    workspacesApi.endpoints.getTeamsOfWorkspace.initiate({
-                      workspaceId: workspace.id,
-                      page: 0,
-                      pagesize: 1,
-                    }),
-                  ),
+                  localProvider
+                    ? Promise.resolve({
+                        data: createEmptyPagedResult('views', { page: 0, pagesize: 1 }),
+                      })
+                    : dispatch(
+                        workspacesApi.endpoints.getViewsOfWorkspace.initiate({
+                          workspaceId: workspace.id,
+                          page: 0,
+                          pagesize: 1,
+                        }),
+                      ),
+                  localProvider
+                    ? Promise.resolve({
+                        data: createEmptyPagedResult('teams', { page: 0, pagesize: 1 }),
+                      })
+                    : dispatch(
+                        workspacesApi.endpoints.getTeamsOfWorkspace.initiate({
+                          workspaceId: workspace.id,
+                          page: 0,
+                          pagesize: 1,
+                        }),
+                      ),
                 ]);
 
                 return {
@@ -189,7 +238,11 @@ const workspacesApi = api
         invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       getViewsOfWorkspace: builder.query({
-        queryFn: async (queryArg, { dispatch }, _extraOptions, baseQuery) => {
+        queryFn: async (queryArg, { dispatch, getState }, _extraOptions, baseQuery) => {
+          if (await isLocalProvider(getState, baseQuery)) {
+            return { data: createEmptyPagedResult('views', queryArg) };
+          }
+
           const { expandUser, infiniteScroll: _infiniteScroll, ...otherArgs } = queryArg;
           const params = urlEncodeParams(otherArgs);
           const views = await baseQuery({
@@ -247,70 +300,106 @@ const workspacesApi = api
         providesTags: () => [{ type: TAGS.VIEWS }],
       }),
       assignViewToWorkspace: builder.mutation({
-        query: (queryArg) => ({
-          url: mesheryApiPath(
-            `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
-          ),
-          method: 'POST',
-        }),
+        queryFn: async (queryArg, { getState }, _extraOptions, baseQuery) => {
+          if (await isLocalProvider(getState, baseQuery)) {
+            return { error: createUnsupportedWorkspaceExtensionError('views') };
+          }
+
+          return baseQuery({
+            url: mesheryApiPath(
+              `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
+            ),
+            method: 'POST',
+          });
+        },
         invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
 
       unassignViewFromWorkspace: builder.mutation({
-        query: (queryArg) => ({
-          url: mesheryApiPath(
-            `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
-          ),
-          method: 'DELETE',
-        }),
+        queryFn: async (queryArg, { getState }, _extraOptions, baseQuery) => {
+          if (await isLocalProvider(getState, baseQuery)) {
+            return { error: createUnsupportedWorkspaceExtensionError('views') };
+          }
+
+          return baseQuery({
+            url: mesheryApiPath(
+              `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
+            ),
+            method: 'DELETE',
+          });
+        },
         invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
 
       getTeamsOfWorkspace: builder.query({
-        query: (queryArg) => ({
-          url: mesheryApiPath(`extensions/api/workspaces/${queryArg.workspaceId}/teams`),
-          params: {
-            search: queryArg.search,
-            order: queryArg.order,
-            page: queryArg.page,
-            pagesize: queryArg.pagesize,
-            filter: queryArg.filter,
-          },
-          method: 'GET',
-        }),
+        queryFn: async (queryArg, { getState }, _extraOptions, baseQuery) => {
+          if (await isLocalProvider(getState, baseQuery)) {
+            return { data: createEmptyPagedResult('teams', queryArg) };
+          }
+
+          return baseQuery({
+            url: mesheryApiPath(`extensions/api/workspaces/${queryArg.workspaceId}/teams`),
+            params: {
+              search: queryArg.search,
+              order: queryArg.order,
+              page: queryArg.page,
+              pagesize: queryArg.pagesize,
+              filter: queryArg.filter,
+            },
+            method: 'GET',
+          });
+        },
         providesTags: () => [{ type: TAGS.TEAMS }],
       }),
 
       assignTeamToWorkspace: builder.mutation({
-        query: (queryArg) => ({
-          url: mesheryApiPath(
-            `extensions/api/workspaces/${queryArg.workspaceId}/teams/${queryArg.teamId}`,
-          ),
-          method: 'POST',
-        }),
+        queryFn: async (queryArg, { getState }, _extraOptions, baseQuery) => {
+          if (await isLocalProvider(getState, baseQuery)) {
+            return { error: createUnsupportedWorkspaceExtensionError('teams') };
+          }
+
+          return baseQuery({
+            url: mesheryApiPath(
+              `extensions/api/workspaces/${queryArg.workspaceId}/teams/${queryArg.teamId}`,
+            ),
+            method: 'POST',
+          });
+        },
         invalidatesTags: () => [{ type: TAGS.TEAMS }],
       }),
 
       unassignTeamFromWorkspace: builder.mutation({
-        query: (queryArg) => ({
-          url: mesheryApiPath(
-            `extensions/api/workspaces/${queryArg.workspaceId}/teams/${queryArg.teamId}`,
-          ),
-          method: 'DELETE',
-        }),
+        queryFn: async (queryArg, { getState }, _extraOptions, baseQuery) => {
+          if (await isLocalProvider(getState, baseQuery)) {
+            return { error: createUnsupportedWorkspaceExtensionError('teams') };
+          }
+
+          return baseQuery({
+            url: mesheryApiPath(
+              `extensions/api/workspaces/${queryArg.workspaceId}/teams/${queryArg.teamId}`,
+            ),
+            method: 'DELETE',
+          });
+        },
         invalidatesTags: () => [{ type: TAGS.TEAMS }],
       }),
 
       getEventsOfWorkspace: builder.query({
-        query: (queryArg) => ({
-          url: mesheryApiPath(`extensions/api/workspaces/${queryArg.workspaceId}/events`),
-          params: {
-            page: queryArg.page,
-            pagesize: queryArg.pagesize,
-            search: queryArg.search,
-            order: queryArg.order,
-          },
-        }),
+        queryFn: async (queryArg, { getState }, _extraOptions, baseQuery) => {
+          if (await isLocalProvider(getState, baseQuery)) {
+            return { data: createEmptyEventsResult(queryArg) };
+          }
+
+          return baseQuery({
+            url: mesheryApiPath(`extensions/api/workspaces/${queryArg.workspaceId}/events`),
+            params: {
+              page: queryArg.page,
+              pagesize: queryArg.pagesize,
+              search: queryArg.search,
+              order: queryArg.order,
+            },
+          });
+        },
         invalidatesTags: () => [{ type: TAGS.TEAMS }],
       }),
 
