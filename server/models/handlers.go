@@ -246,6 +246,13 @@ type HandlerInterface interface {
 	K8sHealthzHandler(w http.ResponseWriter, r *http.Request)
 
 	ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string)
+
+	// AI Adapter handlers
+	HandleAIGenerate(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	HandleAIStream(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	HandleAIProviders(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	HandleAIHealth(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	HandleAIDesignGenerate(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods
