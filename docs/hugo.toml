@@ -1,5 +1,7 @@
 baseURL = "https://docs.meshery.io"
 title = "Documentation"
+relativeURLs = true
+canonifyURLs = false
 
 # Language settings
 contentDir = "content/en"
@@ -89,7 +91,8 @@ As a self-service engineering platform, Meshery enables collaborative design and
     style = "solarized-dark256"
     # Uncomment if you want your chosen highlight style used for code blocks without a specified language
     # guessSyntax = "true"
-
+    noClasses = false
+    
 # Everything below this are Site Params
 
 # Comment out if you don't want the "print entire section" link enabled.
@@ -137,7 +140,7 @@ github_repo = "https://github.com/meshery/meshery"
 github_project_repo = "https://github.com/meshery/meshery"
 
 # Specify a value here if your content directory is not in your repo's root directory
-# github_subdir = ""
+github_subdir = "docs"
 
 # Uncomment this if your GitHub repo does not have "main" as the default branch,
 # or specify a new value if you want to reference another branch in your GitHub links

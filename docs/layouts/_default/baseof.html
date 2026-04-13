@@ -6,18 +6,30 @@
     <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <script src="{{ .Site.BaseURL }}assets/js/error-code-handler.js"></script>
+    <script src="{{ "js/error-code-handler.js" | relURL }}"></script>
     
   </head>
 
-  <body class="td-{{ .Kind }} dark-mode {{ with .Params.body_class }}{{ . }}{{ end }}">
+  <body class="td-{{ .Kind }} {{ with .Params.body_class }}{{ . }}{{ end }}">
     <script>
-      if (localStorage.getItem("mode") === "light-mode") {
-        document.body.classList.remove("dark-mode");
-        document.querySelectorAll("#logo-dark-light").forEach(e => {
-          e.src = e.dataset.logoForLight;
+      (function() {
+        const savedMode = localStorage.getItem("mode");
+        const isLight = savedMode === "light-mode";
+        if (isLight) {
+          document.body.classList.remove("dark-mode");
+        } else {
+          document.body.classList.add("dark-mode");
+        }
+        // Update logos immediately
+        document.querySelectorAll(".logo-dark-light").forEach(logo => {
+          if (isLight) {
+            logo.src = logo.dataset.logoForLight;
+          } else {
+            logo.src = logo.dataset.logoForDark;
+          }
+          logo.style.visibility = "visible";
         });
-      }
+      })();
     </script>
 
     {{ partialCached "scripts/google-tagmanager-body.html" . }}
@@ -55,7 +67,12 @@
       </main>
 
       {{ if ne (.Params.display_toc | default true) false }}
-        {{ partial "toc.html" . }}
+        <div class="content-table-wrapper">
+          <div class="content-table" data-proofer-ignore>
+            {{ partial "page-meta-links.html" . }}
+            {{ partial "toc.html" . }}
+          </div>
+        </div>
       {{ end }}
     </div>
 

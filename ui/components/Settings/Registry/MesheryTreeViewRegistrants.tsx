@@ -1,5 +1,5 @@
 import React from 'react';
-import { TreeView } from '@mui/x-tree-view/TreeView';
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { CircularProgress } from '@sistent/sistent';
 import { REGISTRANTS } from '@/constants/navigator';
 import MinusSquare from '../../../assets/icons/MinusSquare';
@@ -34,12 +34,9 @@ const MesheryTreeViewRegistrants = ({
   showDetailsData,
 }: MesheryTreeViewRegistrantsProps) => {
   return (
-    <TreeView
+    <SimpleTreeView
       aria-label="controlled"
-      defaultExpanded={['3']}
-      defaultCollapseIcon={<MinusSquare />}
-      defaultExpandIcon={<PlusSquare />}
-      defaultEndIcon={<DotSquare />}
+      slots={{ collapseIcon: MinusSquare, expandIcon: PlusSquare, endIcon: DotSquare }}
       onExpandedItemsChange={handleToggle}
       onSelectedItemsChange={handleSelect}
       multiSelect
@@ -95,7 +92,7 @@ const MesheryTreeViewRegistrants = ({
         ))}
       <div ref={lastRegistrantRef} style={{ height: '48px' }}></div>
       {isRegistrantFetching && <CircularProgress />}
-    </TreeView>
+    </SimpleTreeView>
   );
 };
 

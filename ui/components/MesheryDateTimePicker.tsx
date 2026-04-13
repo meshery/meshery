@@ -6,7 +6,7 @@ import moment, { Moment } from 'moment';
 interface MesheryDateTimePickerProps {
   label: string;
   selectedDate?: Moment | string | null;
-  // eslint-disable-next-line no-unused-vars
+
   onChange: (date: Moment) => void;
   className?: string;
   disabled?: boolean;

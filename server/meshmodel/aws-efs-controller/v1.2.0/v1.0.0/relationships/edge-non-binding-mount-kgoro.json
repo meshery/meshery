@@ -12,18 +12,18 @@
     }
   },
   "model": {
-    "version": "",
-    "name": "aws-efs-controller",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.2.0"
+    },
+    "name": "aws-efs-controller",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "v1.2.0"
-    }
+    "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -34,16 +34,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "lambda-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "lambda-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
               "mutatorRef": [
@@ -69,16 +69,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "efs-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "efs-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
               "mutatedRef": [

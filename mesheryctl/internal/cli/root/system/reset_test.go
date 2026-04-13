@@ -1,14 +1,13 @@
 package system
 
 import (
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	log "github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
-
-	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
-	"github.com/stretchr/testify/assert"
 )
 
 // This is a Unit test
@@ -39,7 +38,7 @@ func TestResetCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			// setting up log to grab logs
-			b := utils.SetupLogrusGrabTesting(t, false)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()

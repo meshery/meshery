@@ -7,6 +7,7 @@ on:
       - "**.go"
       - "**.golden"
       - ".github/workflows/go-testing-ci.yml"
+      - ".github/.golangci.yml"
   pull_request:
     branches:
       - "master"
@@ -14,6 +15,7 @@ on:
       - "**.go"
       - "**.golden"
       - ".github/workflows/go-testing-ci.yml"
+      - ".github/.golangci.yml"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -22,12 +24,12 @@ on:
         default: "warning"
 
 jobs:
-  golangci:
+  golangci-server:
     strategy:
       matrix:
         go: [1.25]
         os: [ubuntu-24.04]
-    name: golangci-lint
+    name: golangci-lint-server
     if: github.repository == 'meshery/meshery'
     runs-on: ${{ matrix.os }}
     steps:
@@ -39,11 +41,12 @@ jobs:
         uses: golangci/golangci-lint-action@v9
         with:
           version: v2.7
-          args: --config=.github/.golangci.yml --timeout=10m
+          args: --config=../.github/.golangci.yml --timeout=10m
+          working-directory: ./server
   unit-tests-server:
     name: server Unit tests
     runs-on: ubuntu-24.04
-    needs: golangci
+    needs: golangci-server
     steps:
       - uses: actions/checkout@v6
         with:
@@ -52,12 +55,71 @@ jobs:
         uses: actions/setup-go@v6
         with:
           go-version: "1.25"
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
       - name: Run coverage
-        run: go test --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic
+        run: go test -json --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic > server-test-output.json
+      - name: Convert Go test results to Allure
+        if: ${{ !cancelled() }}
+        run: |
+          ALLURE_OUTPUT_PATH=server-allure-results \
+          ALLURE_LABELS="type=unit,env=ci" \
+          node server/gotest-to-allure.js server-test-output.json
+
+      - name: Checkout QA
+        uses: actions/checkout@v6
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        with:
+          repository: meshery/qa
+          path: ./qa
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Sync results with qa
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        working-directory: qa
+        run: make meshery-server-results-sync MESHERY_SERVER_RESULTS_PATH=../server-allure-results
+
+      - name: Pull latest qa changes
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        working-directory: qa
+        run: git pull --rebase --autostash origin master
+
+      - name: Commit & push to qa
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "[Meshery] Sync Go Unit Test Results - ${GITHUB_SHA}"
+          commit_options: "--signoff"
+          repository: qa
+          commit_user_name: meshery-ci
+          commit_user_email: ci@meshery.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+  golangci-cli:
+    strategy:
+      matrix:
+        go: [1.25]
+        os: [ubuntu-24.04]
+    name: golangci-lint-cli
+    if: github.repository == 'meshery/meshery'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go }}
+      - uses: actions/checkout@v6
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.7
+          args: --config=../.github/.golangci.yml --timeout=10m
+          working-directory: ./mesheryctl
   unit-tests-cli:
     name: mesheryctl Unit tests
     runs-on: ubuntu-24.04
-    needs: golangci
+    needs: golangci-cli
     steps:
       - uses: actions/checkout@v6
         with:
@@ -68,12 +130,54 @@ jobs:
         uses: actions/setup-go@v6
         with:
           go-version: "1.25"
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
       - name: Run mesheryctl coverage
-        run: go test --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic
+        run: go test -json --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic > mesheryctl-test-output.json
+      - name: Convert Go test results to Allure
+        if: ${{ !cancelled() }}
+        run: |
+          ALLURE_OUTPUT_PATH=mesheryctl-allure-results \
+          ALLURE_LABELS="project=mesheryctl,type=unit,env=ci" \
+          node server/gotest-to-allure.js mesheryctl-test-output.json
+
+      - name: Checkout QA
+        uses: actions/checkout@v6
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        with:
+          repository: meshery/qa
+          path: ./qa
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Sync results with qa
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        working-directory: qa
+        run: make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl-allure-results
+
+      - name: Pull latest qa changes
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        working-directory: qa
+        run: git pull --rebase --autostash origin master
+
+      - name: Commit & push to qa
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "[Mesheryctl] Sync Go Unit Test Results - ${GITHUB_SHA}"
+          commit_options: "--signoff"
+          repository: qa
+          commit_user_name: meshery-ci
+          commit_user_email: ci@meshery.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
   build-mesheryctl:
     name: Build Meshery Binaries
     runs-on: ubuntu-24.04
-    needs: golangci
+    needs: 
+      - golangci-cli
+      - golangci-server
     steps:
       - uses: actions/checkout@v6
         with:
@@ -95,7 +199,7 @@ jobs:
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-24.04
-    needs: [golangci, build-mesheryctl]
+    needs: build-mesheryctl
     strategy:
       fail-fast: false # ensure all matrix combinations run even if one fails
       matrix:

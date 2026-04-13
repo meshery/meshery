@@ -1,105 +1,147 @@
-<div class="sidebar-menu">
-  <form class="sidebar__search-form" action="{{ "search" | relURL }}" method="GET">
-    <div class="td-search__icon" aria-hidden="true"></div>
-    <input
-      type="search"
-      name="q"
-      id="sidebar-search-input"
-      class="form-control sidebar__search-input"
-      placeholder="Search..."
-      aria-label="Search this site..."
-      autocomplete="off"
-    >
-  </form>
-  <script type="text/javascript">
-    // Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
-    // Ref: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move
-    (() => {
-      window.addEventListener("load", function () {
-        let scrollElem = document.getElementsByClassName("sidebar-nav__section-link active").item(0);
-        if (scrollElem) {
-         scrollElem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+{{ $sidebarCacheLimit := .Site.Params.ui.sidebar_cache_limit | default 2000 -}}
+{{ $cacheSidebar := ge (len .Site.Pages) $sidebarCacheLimit -}}
+{{ $sidebarRoot := .Site.Home -}}
+{{ $sidebarRootID := $sidebarRoot.RelPermalink -}}
+{{ $args := dict
+    "context" .
+    "cacheSidebar" $cacheSidebar
+    "sidebarRoot" $sidebarRoot
+    "sidebarRootID" $sidebarRootID
+-}}
+{{ if $cacheSidebar -}}
+  {{ $mid := printf "m-%s" (.RelPermalink | anchorize) }}
+  <script>
+    $(function() {
+    $("#td-section-nav a").removeClass("active");
+    $("#td-section-nav #{{ $mid }}").addClass("active");
+    $("#td-section-nav #{{ $mid }}-li span").addClass("td-sidebar-nav-active-item");
+    $("#td-section-nav #{{ $mid }}").parents("li").addClass("active-path show");
+    $("#td-section-nav #{{ $mid }}").parents("li").siblings("li").addClass("show");
+    $("#td-section-nav #{{ $mid }}-li").siblings("li").addClass("show");
+    $("#td-section-nav #{{ $mid }}-li").children("ul").children("li").addClass("show");
+    $("#td-sidebar-menu").removeClass("d-none"); 
+    });
+  </script>
+  {{ partialCached "sidebar-tree.html" $args $sidebarRootID }}
+{{ else -}}
+  {{ partial "sidebar-tree.html" $args }}
+{{- end }}
+<script>
+  (function() {
+    function injectToggleButton(li, icon, position, extraClass) {
+      // Only process sections that actually have children (ul exists)
+      var ul = li.querySelector(":scope > ul");
+      var a = li.querySelector(":scope > a.td-sidebar-link");
+      if (!a || !ul) return;
+      
+      if (li.querySelector(':scope > .sidebar-section-flex-wrapper')) return;
+      
+      var btn = document.createElement("button");
+      btn.className = "sidebar-section-toggle " + (extraClass || "");
+      btn.setAttribute("aria-label", "Toggle section");
+      btn.innerHTML = icon;
+      btn.onclick = function(e) {
+        e.preventDefault();
+        
+        var $ul = $(ul);
+        var childLis = ul.querySelectorAll(":scope > li");
+        var isClosed = childLis.length > 0 && !childLis[0].classList.contains("show");
+        
+        if (isClosed) {
+          $ul.hide();
+          childLis.forEach(function(childLi) {
+            childLi.classList.add("show");
+          });
         }
-        let activeSections = document.querySelectorAll(".sidebar-nav__section-link.active");
-        activeSections.forEach(function (activeSection) {
-          let parentCollapse = activeSection.closest(".collapse");
-          if (parentCollapse) {
-            parentCollapse.classList.add("show");
+        
+        $ul.slideToggle(400, function() {
+          if ($ul.css("display") === "none") {
+            childLis.forEach(function(childLi) {
+              childLi.classList.remove("show");
+            });
+            $ul.css("display", "");
           }
         });
-      });
-    })();
-  </script>
 
-  <nav class="sidebar-nav" id="td-section-nav">
-    {{ $currentPage := . }}
-    {{ $pageUrl := replace .RelPermalink "/" "" }}
-    {{ range $sectionIndex, $section := .Site.Data.toc }}
-    <ul class="sidebar-nav__section">
-      {{ $sectionUrl := replace (default "" $section.url) "/" "" }}
+        li.classList.toggle("active-path");
+      };
+      
+      var wrapper = document.createElement("div");
+      wrapper.className = "sidebar-section-flex-wrapper";
+      a.parentNode.insertBefore(wrapper, a);
+      
+      if (position === "after") {
+        wrapper.style.justifyContent = "space-between";
+        wrapper.appendChild(a);
+        wrapper.appendChild(btn);
+      } else {
+        wrapper.appendChild(btn);
+        wrapper.appendChild(a);
+      }
+    }
 
-      <li class="sidebar-nav__section-title">
-        <!-- Toggle button -->
-        <div class="toggle" data-toggle="collapse" data-target="#section{{ $sectionIndex }}" aria-expanded="false" aria-controls="section{{ $sectionIndex }}"> ⇅ </div>
-        <a
-          href="{{ if $section.url }}{{ $currentPage.Site.BaseURL }}{{ $section.url }}{{ else }}{{ $section.external_url }}{{ end }}"
-          class="toggle align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section {{ if eq $pageUrl $sectionUrl }}active{{ end }}"
-          data-toggle="collapse"
-          data-target="#section{{ $sectionIndex }}"
-          aria-expanded="false"
-          aria-controls="section{{ $sectionIndex }}"
-        >
-          {{ $section.title }}
-        </a>
-  
-        {{ if $section.links }}
-        <ul class="td-sidebar-nav__section collapse" id="section{{ $sectionIndex }}">
-          {{ range $entryIndex, $entry := sort $section.links "title" }}
-          {{ $entryUrl := replace (default "" $entry.url) "/" "" }}
-          <li class="sidebar-nav__section-link {{ if eq $entryUrl $pageUrl }}active{{ end }}">
-            <a
-              href="{{ if $entry.url }}{{ $currentPage.Site.BaseURL }}{{ $entry.url }}{{ else }}{{ $entry.external_url }}{{ end }}"
-              class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
-            >{{ $entry.title }}</a>
-          </li>
-          {{ if or (in $currentPage.RelPermalink $entry.url) (eq $pageUrl $sectionUrl) }}
-            {{ if $entry.children }}
-            <ul style="margin-bottom: 0;">
-              {{ range $childIndex, $child := sort $entry.children "title" }}
-              {{ $childUrl := cond (isset $child "url") (printf "%s%s" $currentPage.Site.BaseURL $child.url) $child.external_url }}
-              {{ $childTitle := replace $childUrl "/" "" }}
-              <li id="{{ anchorize $child.title }}">
-                <a
-                  class="sidebar-nav__section-link {{ if in $pageUrl $childTitle }}active{{ end }}"
-                  id="m-{{ anchorize $section.title }}-{{ anchorize $entry.title }}-{{ anchorize $child.title }}"
-                  href="{{ $childUrl }}"
-                >{{ $child.title }}</a>
-              </li>
-              {{ if $child.grandchildren }}
-              <ul style="margin-bottom: 0;">
-                {{ range $grandchildIndex, $grandchild := sort $child.grandchildren "title" }}
-                {{ $grandchildUrl := cond (isset $grandchild "url") (printf "%s%s" $currentPage.Site.BaseURL $grandchild.url) $grandchild.external_url }}
-                {{ $grandchildTitle := replace $grandchildUrl "/" "" }}
-                <li id="{{ anchorize $grandchild.title }}">
-                  <a
-                    class="sidebar-nav__section-link {{ if in $pageUrl $grandchildTitle }}active{{ end }}"
-                    id="m-{{ anchorize $section.title }}-{{ anchorize $entry.title }}-{{ anchorize $grandchild.title }}"
-                    href="{{ $grandchildUrl }}"
-                    style="font-weight: normal;"
-                  >{{ $grandchild.title }}</a>
-                </li>
-                {{ end }} <!-- grandchild -->
-              </ul>
-              {{ end }} <!-- end grandchildren -->
-              {{ end }} <!-- children -->
-            </ul>
-            {{ end }} <!-- end if children -->
-          {{ end }} <!-- end if pageurl -->
-          {{ end }} <!-- section.links -->
-        </ul>
-        {{ end }} <!-- section.links -->
-      </li>
-    </ul> <!-- end of "sidebar-nav__section" -->
-    {{ end }}
-  </nav>
-</div>
+    var rootLis = document.querySelectorAll(".td-sidebar-nav .ul-1 > li.with-child");
+    rootLis.forEach(function(li) {
+      injectToggleButton(li, "⇅", "before", "");
+    });
+
+    var childLis = document.querySelectorAll(".td-sidebar-nav .ul-1 ul li.with-child");
+    childLis.forEach(function(li) {
+      injectToggleButton(li, "⇅", "before", "child-toggle");
+    });
+  })();
+</script>
+
+<script>
+  $(function() {
+    function getSiteRootUrl() {
+      const rootLink = document.querySelector("a.navbar-brand, #td-section-nav a.tree-root");
+      const href = rootLink ? rootLink.getAttribute("href") : "/";
+      return new URL(href || "/", window.location.href);
+    }
+
+    function buildSearchUrl(query) {
+      const url = new URL("search/", getSiteRootUrl());
+
+      if (query) {
+        url.searchParams.set("q", query);
+      }
+
+      return url.toString();
+    }
+
+    const $rootSidebarItem = $("#td-section-nav > ul > li").filter(function() {
+      return $(this).find('> a.tree-root, > label > a.tree-root').length > 0;
+    }).first();
+    const $sidebarSearchForm = $("#td-sidebar-menu form.td-sidebar__search");
+    const $sidebarSearchInput = $sidebarSearchForm.find('input[name="q"]').first();
+
+    if ($rootSidebarItem.length) {
+      $rootSidebarItem.addClass("td-sidebar-root-hidden");
+    }
+
+    if (!$sidebarSearchForm.length || !$sidebarSearchInput.length) {
+      return;
+    }
+
+    $sidebarSearchForm.attr("action", buildSearchUrl(""));
+    $sidebarSearchForm.attr("method", "get");
+
+    $sidebarSearchInput.attr("id", "sidebar-search-input");
+    $sidebarSearchInput.attr("placeholder", "Search...");
+    $sidebarSearchInput.attr("aria-label", "Search this site");
+
+    $sidebarSearchForm.on("submit", function(event) {
+      const query = ($sidebarSearchInput.val() || "").trim();
+
+      if (!query) {
+        event.preventDefault();
+        $sidebarSearchInput.focus();
+        return;
+      }
+
+      event.preventDefault();
+      window.location.assign(buildSearchUrl(query));
+    });
+  });
+</script>

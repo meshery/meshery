@@ -1,0 +1,20 @@
+version: 0.0.1
+name: brainstorming-template
+displayName: Brainstorming Template
+createdAt: "2024-10-28T18:10:05Z"
+description: Brainstorming Template
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/b5f5dc10-40e3-473d-b77d-83e329285bdf/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 912f4e40-cb07-4c22-981f-3329f71c0cb4
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

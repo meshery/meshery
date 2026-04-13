@@ -292,7 +292,7 @@ server-playground: dep-check
 
 ## Lint check Meshery Server.
 golangci: error dep-check
-	golangci-lint run
+	golangci-lint run --config=.github/.golangci.yml --timeout=10m
 
 ## Build Meshery's protobufs.
 proto-build:
@@ -407,8 +407,14 @@ docs: check-go
 docs-serve: check-go
 	cd docs; hugo server -D -F --watch=false
 
+## Run Meshery Docs. Do not listen for changes.
+docs-clean: check-go
+	cd docs; hugo --cleanDestinationDir
+	make docs
+
+
 ## Build Meshery Docs on your local machine.
-docs-build:
+docs-build: check-go
 	cd docs; hugo 
 
 ## Build Meshery Docs for production. BASE_URL is optional.
@@ -468,24 +474,7 @@ helm-meshery-lint:
 #-----------------------------------------------------------------------------
 # Meshery APIs
 #-----------------------------------------------------------------------------
-.PHONY: swagger-build swagger swagger-docs-build graphql-docs-build graphql-build
-## Build Meshery REST API specifications
-swagger-build:
-	swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
-
-## Generate and serve Meshery REST API specifications
-swagger: swagger-build
-	swagger serve ./server/helpers/swagger.yaml
-
-## Build Meshery REST API documentation
-swagger-docs-build:
-	swagger generate spec -o ./docs/data/swagger.yml --scan-models; \
-	swagger flatten ./docs/data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
-
-
-## Building Meshery docs with redocly
-redocly-docs-build:
-	npx @redocly/cli build-docs ./docs/data/swagger.yml --config='redocly.yaml' -t custom.hbs
+.PHONY: graphql-docs-build graphql-build
 
 ## Build Meshery GraphQL API documentation
 graphql-docs-build:

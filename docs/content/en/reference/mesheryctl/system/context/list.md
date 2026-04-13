@@ -11,7 +11,8 @@ list contexts
 
 ## Synopsis
 
-List current context and available contexts
+List current context and available contexts.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context list [flags]

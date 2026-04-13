@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	googleuuid "github.com/google/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	mErrors "github.com/meshery/meshkit/errors"
@@ -52,17 +53,19 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 		}
 
 		if !utils.IsUUID(createEnvironmentFlagsProvided.orgID) {
-			return utils.ErrInvalidUUID(fmt.Errorf("invalid Environment ID: %s", createEnvironmentFlagsProvided.orgID))
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid Organization ID: %s", createEnvironmentFlagsProvided.orgID))
 		}
 
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// PreRunE already validated the UUID format; Parse here only to get the typed value.
+		orgUUID := googleuuid.MustParse(createEnvironmentFlagsProvided.orgID)
 
 		payload := &environment.EnvironmentPayload{
 			Name:        createEnvironmentFlagsProvided.name,
 			Description: createEnvironmentFlagsProvided.description,
-			OrgId:       createEnvironmentFlagsProvided.orgID, // TODO update OrgId in schema to OrgID
+			OrgId:       orgUUID,
 		}
 
 		payloadBytes, err := json.Marshal(payload)

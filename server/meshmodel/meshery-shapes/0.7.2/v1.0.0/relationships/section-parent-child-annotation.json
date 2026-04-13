@@ -16,18 +16,18 @@
     }
   },
   "model": {
-    "version": "",
-    "name": "meshery-shapes",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "0.7.2"
+    },
+    "name": "meshery-shapes",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "0.7.2"
-    }
+    "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -37,16 +37,16 @@
             "kind": "*",
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "*",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "*",
               "registrant": {
                 "kind": ""
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": null
           }
@@ -57,16 +57,16 @@
             "kind": "Section",
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "meshery-core",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "meshery-core",
               "registrant": {
                 "kind": ""
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": null
           }

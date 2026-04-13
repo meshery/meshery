@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  update-jekyll:
+  post-test-results:
     if: >
         github.repository == 'meshery/meshery' && 
         github.event.workflow_run.event == 'push' && 
@@ -42,7 +42,7 @@ jobs:
       - name: Pull changes from remote
         run: git pull origin master
 
-      - name: Commit artifact to Jekyll folder
+      - name: Commit artifact
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: "docs/layouts/shortcodes/test-report.md"
@@ -50,4 +50,4 @@ jobs:
           commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
-          commit_message: "[Docs] Updated test report in Jekyll"
+          commit_message: "[Docs] Updated test report"

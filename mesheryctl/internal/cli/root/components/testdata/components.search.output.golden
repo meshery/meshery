@@ -1,4 +1,4 @@
-[H[2JTotal number of components: 1
+Total number of components: 1
 Page: 2
 ID                                    NAME  MODEL             VERSION                             
 fda1c4e7-14ae-4435-8236-adfb9cea0395  Test  component-test-0  memorydb.aws.kubeform.com/v1alpha1  

@@ -5,4 +5,5 @@ display_title: false
 hide_summary: true
 service-mesh: cilium
 subheading: "Meshery-cilium"
+toc_hide: true
 ---

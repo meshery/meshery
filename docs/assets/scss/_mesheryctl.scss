@@ -17,6 +17,26 @@ table.mesherycomponents {
   margin-bottom: 2rem;
 }
 
+.mesheryctl-reference-page {
+  .td-content > table,
+  .td-content table.mesheryctl-reference-table {
+    display: table;
+    width: max-content;
+    min-width: 100%;
+    table-layout: auto;
+    overflow-x: visible;
+  }
+
+  .td-content > table th,
+  .td-content > table td,
+  .td-content table.mesheryctl-reference-table th,
+  .td-content table.mesheryctl-reference-table td {
+    max-width: none;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+}
+
 /* INSTALLATION */
 div.prereqs {
   background-color: project.$charcoal;

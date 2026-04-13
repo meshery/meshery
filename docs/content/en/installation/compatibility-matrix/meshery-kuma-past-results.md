@@ -5,4 +5,5 @@ display_title: false
 hide_summary: true
 service-mesh: kuma
 subheading: meshery-kuma
+toc_hide: true
 ---

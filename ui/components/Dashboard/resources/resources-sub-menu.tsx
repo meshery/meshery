@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* eslint-disable react/jsx-filename-extension */
+
 import React from 'react';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';
@@ -35,21 +35,15 @@ const ResourcesSubMenu = (props) => {
 
   const CRDsModelName = isCRDS && CRDsKeys.map((key) => key.model);
   const CRDsKind = isCRDS && CRDsKeys.map((key) => key.name);
-  if (!selectedResource) {
-    let resourceNames;
-    if (isCRDS) {
-      resourceNames = CRDsKind;
-    } else {
-      resourceNames = Object.keys(resource.tableConfig());
-    }
-    handleChangeSelectedResource(resourceNames[0]);
-  }
 
-  let TABS;
-  if (isCRDS) {
-    TABS = CRDsKind;
-  } else {
-    TABS = Object.keys(resource.tableConfig());
+  // Call tableConfig() unconditionally to keep hook count stable across renders.
+  // Config functions (e.g. WorkloadTableConfig) contain React hooks internally,
+  // so they must always be called regardless of whether the result is used.
+  const tableConfigResult = resource.tableConfig();
+  const TABS = isCRDS ? CRDsKind : Object.keys(tableConfigResult);
+
+  if (!selectedResource && TABS.length > 0) {
+    handleChangeSelectedResource(TABS[0]);
   }
 
   if (TABS.length > 0 && selectedResource && !TABS.includes(selectedResource)) {
@@ -84,7 +78,7 @@ const ResourcesSubMenu = (props) => {
           centered
         >
           {TABS.map((key, index) => {
-            const title = isCRDS ? key : resource.tableConfig()[key].name;
+            const title = isCRDS ? key : tableConfigResult[key].name;
             return (
               <SecondaryTab
                 key={index}

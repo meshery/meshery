@@ -19,7 +19,7 @@ Various components of Meshery will need to be upgraded as new releases become av
 
 Some of the components must be upgraded simultaneously, while others may be upgraded independently. The following table depicts components, their versions, and deployment units (deployment groups).
 
-### Versioning of Meshery components
+### Versioning of Meshery Components
 
 <table class="mesherycomponents">
     <tr>

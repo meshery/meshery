@@ -25,35 +25,44 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrHealthCheckFailedCode             = "mesheryctl-1060"
-	ErrStopMesheryCode                   = "mesheryctl-1062"
-	ErrResetMeshconfigCode               = "mesheryctl-1063"
-	ErrApplyManifestCode                 = "mesheryctl-1064"
-	ErrApplyOperatorManifestCode         = "mesheryctl-1065"
-	ErrCreateDirCode                     = "mesheryctl-1066"
-	ErrUnsupportedPlatformCode           = "mesheryctl-1067"
-	ErrRetrievingCurrentContextCode      = "mesheryctl-1068"
-	ErrSettingDefaultContextToConfigCode = "mesheryctl-1069"
-	ErrSettingTemporaryContextCode       = "mesheryctl-1070"
-	ErrRestartMesheryCode                = "mesheryctl-1072"
-	ErrK8sQueryCode                      = "mesheryctl-1073"
-	ErrK8sConfigCode                     = "mesheryctl-1074"
-	ErrInitPortForwardCode               = "mesheryctl-1075"
-	ErrRunPortForwardCode                = "mesheryctl-1076"
-	ErrFailedGetEphemeralPortCode        = "mesheryctl-1077"
-	ErrUnmarshalDockerComposeCode        = "mesheryctl-1078"
-	ErrCreatingDockerClientCode          = "mesheryctl-1079"
-	ErrWriteConfigCode                   = "mesheryctl-1080"
-	ErrContextContentCode                = "mesheryctl-1081"
-	ErrSwitchChannelResponseCode         = "mesheryctl-1082"
-	ErrGetCurrentContextCode             = "mesheryctl-1083"
-	ErrSetCurrentContextCode             = "mesheryctl-1084"
-	ErrTokenContextCode                  = "mesheryctl-1085"
-	ErrProviderInfoCode                  = "mesheryctl-1086"
-	ErrValidProviderCode                 = "mesheryctl-1087"
-	ErrUnmarshallConfigCode              = "mesheryctl-1088"
-	ErrUploadFileParamsCode              = "mesheryctl-1089"
-	ErrContextNotExistsCode              = "mesheryctl-1196"
+	ErrHealthCheckFailedCode              = "mesheryctl-1060"
+	ErrStopMesheryCode                    = "mesheryctl-1062"
+	ErrResetMeshconfigCode                = "mesheryctl-1063"
+	ErrApplyManifestCode                  = "mesheryctl-1064"
+	ErrApplyOperatorManifestCode          = "mesheryctl-1065"
+	ErrCreateDirCode                      = "mesheryctl-1066"
+	ErrUnsupportedPlatformCode            = "mesheryctl-1067"
+	ErrRetrievingCurrentContextCode       = "mesheryctl-1068"
+	ErrSettingDefaultContextToConfigCode  = "mesheryctl-1069"
+	ErrSettingTemporaryContextCode        = "mesheryctl-1070"
+	ErrRestartMesheryCode                 = "mesheryctl-1072"
+	ErrK8sQueryCode                       = "mesheryctl-1073"
+	ErrK8sConfigCode                      = "mesheryctl-1074"
+	ErrInitPortForwardCode                = "mesheryctl-1075"
+	ErrRunPortForwardCode                 = "mesheryctl-1076"
+	ErrFailedGetEphemeralPortCode         = "mesheryctl-1077"
+	ErrUnmarshalDockerComposeCode         = "mesheryctl-1078"
+	ErrCreatingDockerClientCode           = "mesheryctl-1079"
+	ErrWriteConfigCode                    = "mesheryctl-1080"
+	ErrContextContentCode                 = "mesheryctl-1081"
+	ErrSwitchChannelResponseCode          = "mesheryctl-1082"
+	ErrGetCurrentContextCode              = "mesheryctl-1083"
+	ErrSetCurrentContextCode              = "mesheryctl-1084"
+	ErrTokenContextCode                   = "mesheryctl-1085"
+	ErrProviderInfoCode                   = "mesheryctl-1086"
+	ErrValidProviderCode                  = "mesheryctl-1087"
+	ErrUnmarshallConfigCode               = "mesheryctl-1088"
+	ErrUploadFileParamsCode               = "mesheryctl-1089"
+	ErrContextNotExistsCode               = "mesheryctl-1196"
+	ErrSystemSetInvalidReleaseChannelCode = "mesheryctl-1205"
+	ErrSystemSetInvalidEdgeReleaseCode    = "mesheryctl-1206"
+	ErrSystemCheckInvalidCliVersionCode   = "mesheryctl-1207"
+	ErrDockerNotRunningCode               = "mesheryctl-1208"
+	ErrDockerContextCode                  = "mesheryctl-1209"
+	ErrDockerStartCode                    = "mesheryctl-1210"
+	ErrDockerUnknownCode                  = "mesheryctl-1211"
+	ErrOperatorUnsupportedPlatformCode    = "mesheryctl-1219"
+	ErrLogoutCode                         = "mesheryctl-1229"
 )
 
 var (
@@ -339,4 +348,92 @@ func ErrUploadFileParams(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to upload parameters from config file with provided context"},
 		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
+}
+
+func ErrSystemSetInvalidReleaseChannel(channel string) error {
+	return errors.New(
+		ErrSystemSetInvalidReleaseChannelCode,
+		errors.Fatal,
+		[]string{"Invalid release channel"},
+		[]string{fmt.Sprintf("Unable to set release channel to %s", channel)},
+		[]string{"A wrong release channel was specified"},
+		[]string{"Specify a valid release channel. Valid channels are 'stable' and 'edge'. "})
+}
+
+func ErrSystemSetInvalidEdgeRelease(channel string) error {
+	return errors.New(
+		ErrSystemSetInvalidEdgeReleaseCode,
+		errors.Fatal,
+		[]string{"Invalid edge release version"},
+		[]string{fmt.Sprintf("Unable to set edge release channel to %s", channel)},
+		[]string{"A wrong edge release version was specified"},
+		[]string{"The edge release channel only supports 'latest' as version argument. "})
+}
+
+func ErrSystemCheckInvalidCliVersion(version string) error {
+	return errors.New(
+		ErrSystemCheckInvalidCliVersionCode,
+		errors.Fatal,
+		[]string{"Invalid CLI version"},
+		[]string{fmt.Sprintf("The CLI version %s is not supported", version)},
+		[]string{"The CLI version is incompatible with the Meshery Server version"},
+		[]string{"Please upgrade your CLI to the latest version or to a version compatible with your Meshery Server. "})
+}
+
+func ErrDockerNotRunning(err error) error {
+	return errors.New(
+		ErrDockerNotRunningCode,
+		errors.Fatal,
+		[]string{"Docker is not running"},
+		[]string{err.Error()},
+		[]string{"Docker daemon is not running"},
+		[]string{"Please start Docker and run the command again. "})
+}
+
+func ErrDockerContext(err error) error {
+	return errors.New(
+		ErrDockerContextCode,
+		errors.Fatal,
+		[]string{"Docker context issue"},
+		[]string{err.Error()},
+		[]string{"The Docker context selected is not configured properly to connect to the Docker daemon"},
+		[]string{"Please ensure that the correct Docker context is selected and configured properly to connect to the Docker daemon. Use `docker context ls` to list all available contexts and `docker context inspect [context-name]` to inspect the configuration of a specific context."})
+}
+
+func ErrDockerStart(err error) error {
+	return errors.New(
+		ErrDockerStartCode,
+		errors.Fatal,
+		[]string{"Failed to start Docker"},
+		[]string{err.Error()},
+		[]string{"Docker daemon failed to start"},
+		[]string{"Please check the Docker installation and try starting Docker manually. If the issue persists, refer to Docker's documentation or support for troubleshooting steps."})
+}
+
+func ErrDockerUnknown(err error) error {
+	return errors.New(
+		ErrDockerUnknownCode,
+		errors.Fatal,
+		[]string{"Docker error"},
+		[]string{err.Error()},
+		[]string{"An unknown error occurred while trying to connect / interact with Docker"},
+		[]string{"Please ensure Docker is installed and running. If the issue persists, check the Docker configuration and logs for more details."})
+}
+
+func ErrOperatorUnsupportedPlatform(platform string) error {
+	return errors.New(
+		ErrOperatorUnsupportedPlatformCode,
+		errors.Fatal,
+		[]string{"Operator unsupported platform"},
+		[]string{fmt.Sprintf("The platform %s is not supported for operator health checks", platform)},
+		[]string{"The operator health checks can only be run on Kubernetes platform"},
+		[]string{"Please switch to a Kubernetes context to run operator health checks. "})
+}
+
+func ErrLogout(err error) error {
+	return errors.New(ErrLogoutCode, errors.Fatal,
+		[]string{"Logout failed"},
+		[]string{err.Error()},
+		[]string{"Unable to complete the logout operation"},
+		[]string{"Check the token file path and permissions. The underlying error will provide more details."})
 }

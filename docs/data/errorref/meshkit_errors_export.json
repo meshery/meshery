@@ -1685,6 +1685,78 @@
         "short_description": "Could not get endpoint for port of the controller",
         "probable_cause": "Client configuration may not be valid",
         "suggested_remediation": "Make sure the client configuration is valid"
+      },
+      "11320": {
+        "name": "ErrInvalidRegistrationCode",
+        "code": "11320",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid schema registration",
+        "probable_cause": "The schema registration is missing a schema reference or an embedded schema location",
+        "suggested_remediation": "Provide a schemaVersion or type and a non-empty embedded schema location"
+      },
+      "11321": {
+        "name": "ErrDetectSchemaVersionCode",
+        "code": "11321",
+        "severity": "Alert",
+        "long_description": "The supplied document does not declare schemaVersion",
+        "short_description": "Unable to detect schemaVersion",
+        "probable_cause": "The validator can only auto-detect schemas for documents that include schemaVersion",
+        "suggested_remediation": "Provide Ref{Type: ...} explicitly when validating documents without schemaVersion"
+      },
+      "11322": {
+        "name": "ErrResolveSchemaCode",
+        "code": "11322",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to resolve schema",
+        "probable_cause": "The supplied schemaVersion is not registered\nThe document type was not provided as a fallback",
+        "suggested_remediation": "Use one of the built-in Meshery schema versions\nRegister a custom schema location before validating custom document types"
+      },
+      "11323": {
+        "name": "ErrDecodeDocumentCode",
+        "code": "11323",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to decode document",
+        "probable_cause": "The supplied document is not valid JSON or YAML",
+        "suggested_remediation": "Ensure that the document is valid JSON or YAML before validating it"
+      },
+      "11324": {
+        "name": "ErrCompileSchemaCode",
+        "code": "11324",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to compile schema",
+        "probable_cause": "The embedded schema or one of its references could not be resolved or contains unsupported syntax",
+        "suggested_remediation": "Ensure the schema location is registered correctly\nVerify that the referenced schema files are available in the embedded schemas module"
+      },
+      "11325": {
+        "name": "ErrValidateDocumentCode",
+        "code": "11325",
+        "severity": "Alert",
+        "long_description": "The supplied document does not conform to the selected Meshery schema",
+        "short_description": "Meshery document validation failed",
+        "probable_cause": "The document contains fields or values that violate one or more schema constraints",
+        "suggested_remediation": "Inspect the returned validation details to identify the invalid fields and values"
+      },
+      "11326": {
+        "name": "ErrDecodeTypedDocumentCode",
+        "code": "11326",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to decode validated document",
+        "probable_cause": "The document is valid against the schema but could not be decoded into the requested Go type",
+        "suggested_remediation": "Ensure the destination Go type matches the target schema model"
+      },
+      "11327": {
+        "name": "ErrUnmarshalSchemaAssetCode",
+        "code": "11327",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to unmarshal embedded schema asset",
+        "probable_cause": "The embedded schema asset is not valid JSON or YAML",
+        "suggested_remediation": "Ensure the embedded schema asset is valid JSON or YAML"
       }
     }
   }

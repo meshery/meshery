@@ -1,13 +1,14 @@
 package models
 
 import (
-	"github.com/gofrs/uuid"
 	"time"
+
+	"github.com/meshery/schemas/models/core"
 )
 
 type CatalogRequest struct {
-	ID          uuid.UUID            `json:"id,omitempty" db:"id"`
-	ContentID   uuid.UUID            `json:"content_id,omitempty" db:"content_id"`
+	ID          core.Uuid            `json:"id,omitempty" db:"id"`
+	ContentID   core.Uuid            `json:"content_id,omitempty" db:"content_id"`
 	ContentName string               `json:"content_name,omitempty" db:"content_name"`
 	ContentType CatalogContentType   `json:"content_type,omitempty" db:"content_type"`
 	FirstName   string               `json:"first_name,omitempty" db:"first_name"`

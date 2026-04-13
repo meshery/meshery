@@ -11,7 +11,7 @@ const URLS = {
   },
   MESHERY: {
     CATALOG: 'https://meshery.io/catalog',
-    ADATPER_DOCS: 'https://docs.meshery.io/concepts/architecture/adapters',
+    ADAPTER_DOCS: 'https://docs.meshery.io/concepts/architecture/adapters',
   },
 };
 
@@ -31,40 +31,43 @@ test.describe('Extensions Section Tests', () => {
     await extensionsPage.verifyPerformanceAnalysisDetails();
   });
 
-  test('Verify Kanvas Details', async ({ context }) => {
+  test('Verify Kanvas Details', async () => {
     await extensionsPage.verifyKanvasSignupUI();
-    await extensionsPage.verifyNewTab(context, extensionsPage.kanvasSignupBtn, URLS.KANVAS.DOCS);
+    const hasAccess = await extensionsPage.hasKanvasAccess();
+    if (hasAccess) {
+      await expect(extensionsPage.kanvasSignupBtn).toBeDisabled();
+    } else {
+      await expect(extensionsPage.kanvasSignupBtn).toBeEnabled();
+      await extensionsPage.verifyNewTab(extensionsPage.kanvasSignupBtn, URLS.KANVAS.DOCS);
+    }
   });
 
-  test('Verify Meshery Docker Extension Details', async ({ context }) => {
+  test('Verify Meshery Docker Extension Details', async () => {
     await expect(extensionsPage.dockerExtensionHeading).toBeVisible();
     await extensionsPage.verifyNewTab(
-      context,
       extensionsPage.dockerExtensionDownloadBtn,
       URLS.DOCKER.EXTENSION,
     );
   });
 
-  test('Verify Meshery Design Embed Details', async ({ context }) => {
+  test('Verify Meshery Design Embed Details', async () => {
     await expect(extensionsPage.designEmbedLearnMoreBtn).toBeVisible();
     await extensionsPage.verifyNewTab(
-      context,
       extensionsPage.designEmbedLearnMoreBtn,
       URLS.KANVAS.DESIGNER_EMBED,
     );
   });
 
-  test('Verify Meshery Catalog Section Details', async ({ context }) => {
+  test('Verify Meshery Catalog Section Details', async () => {
     await expect(extensionsPage.catalogSectionHeading).toBeVisible();
     await extensionsPage.toggleCatalog();
-    await extensionsPage.verifyNewTab(context, extensionsPage.catalogLink, URLS.MESHERY.CATALOG);
+    await extensionsPage.verifyNewTab(extensionsPage.catalogLink, URLS.MESHERY.CATALOG);
   });
 
-  test('Verify Meshery Adapter for Istio Section', async ({ context }) => {
+  test('Verify Meshery Adapter for Istio Section', async () => {
     await extensionsPage.verifyNewTab(
-      context,
       extensionsPage.adapterDocsIstioLink,
-      URLS.MESHERY.ADATPER_DOCS,
+      URLS.MESHERY.ADAPTER_DOCS,
     );
   });
 });

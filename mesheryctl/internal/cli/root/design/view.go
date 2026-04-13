@@ -110,6 +110,7 @@ mesheryctl design view [design-name | ID]
 
 		outputFormatFactory := display.OutputFormatterFactory[interface{}]{}
 		outputFormatter, err := outputFormatFactory.New(designViewFlagsProvided.OutputFormat, designData)
+		outputFormatter.WithOutput(cmd.OutOrStdout())
 		if err != nil {
 			return err
 		}

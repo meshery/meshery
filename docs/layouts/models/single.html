@@ -1,6 +1,6 @@
 {{ define "main" }}
 <article>
-    <p>{{ .Params.subtitle }}</p>
+    {{ with .Params.subtitle }}<p>{{ . }}</p>{{ end }}
     {{ .Content }}
     <!-- components -->
     <div>
@@ -127,7 +127,8 @@
                 "language" .Lang
                 "section_title" true
                 "display_suggested_reading" true
-            ) }}
+                "currentPage" .
+            ) .RelPermalink }}
 
         {{ end }}
 

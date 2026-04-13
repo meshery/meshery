@@ -1208,33 +1208,48 @@ relationship:
           name: -t, --type
           description: type of relationships
 
+workspace:
+  name: workspace
+  description: View list of workspaces and detail of workspaces
+  usage: mesheryctl workspace [command] [flags]
+  flags:
+  subcommands:
+    create:
+      name: create
+      description: create a new workspace by providing the name, description, and organization ID
+      usage: mesheryctl workspace create [flags]
+      flags:
+        description:
+          name: -d, --description
+          description: description of the workspace
+        name:
+          name: -n, --name
+          description: name of the workspace
+        org:
+          name: -o, --orgId
+          description: organization id
+          usage: mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+    list:
+      name: list
+      description: list name of all registered workspaces
+      usage: mesheryctl workspace list [flags]
+      flags:
+        org:
+          name: -o, --orgId
+          description: organization id
+    view:
+      name: view
+      description: view a workspace by its ID or name
+      usage: mesheryctl workspace view [workspace-name|workspace-id] [flags]
+      flags:
+        output-format:
+          name: -o, --output-format
+          description: (optional) format to display in [json|yaml] (default "yaml")
+        save:
+          name: -s, --save
+          description: (optional) save output as a JSON/YAML file
+        orgId:
+          name: --orgId
+          description: (optional) organization ID to search workspace by name
+
 exp:
-  workspace:
-    name: workspace
-    description: View list of workspaces and detail of workspaces
-    usage: mesheryctl exp workspace [command] [flags]
-    flags:
-    subcommands:
-      create:
-        name: create
-        description: create a new workspace by providing the name, description, and organization ID
-        usage: mesheryctl exp workspace create [flags]
-        flags:
-          description:
-            name: -d, --description
-            description: description of the workspace
-          name:
-            name: -n, --name
-            description: name of the workspace
-          org:
-            name: -o, --orgId
-            description: organization id
-            usage: mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
-      list:
-        name: list
-        description: list name of all registered workspaces
-        usage: mesheryctl exp workspace list [flags]
-        flags:
-          org:
-            name: -o, -orgId
-            description: organization id 

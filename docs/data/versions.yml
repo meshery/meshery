@@ -1,5 +1,7 @@
 - version: "latest"
   url: ""
+- version: "v0.9"
+  url: "v0.9"
 - version: "v0.8"
   url: "v0.8"
 - version: "v0.7"

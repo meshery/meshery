@@ -4,6 +4,7 @@
     // File Layout
     // "rootDir": "./src",
     // "outDir": "./dist",
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["components/*"],
@@ -12,6 +13,8 @@
       "@/constants/*": ["constants/*"],
       "@/api/*": ["api/*"],
       "@/assets/*": ["assets/*"],
+      "@/theme": ["theme/index"],
+      "@/theme/*": ["theme/*"],
       "@/themes/*": ["themes/*"],
       "@/store/*": ["store/*"]
     },
@@ -43,7 +46,7 @@
     // "noUnusedParameters": true,
     // "noFallthroughCasesInSwitch": true,
     // "noPropertyAccessFromIndexSignature": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,

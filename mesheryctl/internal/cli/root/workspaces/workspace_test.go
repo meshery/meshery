@@ -16,6 +16,7 @@ var validWorkspaceName = "workspace-test"
 var workspaceDescription = "integration test"
 
 func TestWorkspaces(t *testing.T) {
+	utils.SetupContextEnv(t)
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -43,7 +44,7 @@ func TestWorkspaces(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list]. Use 'mesheryctl exp workspace --help' to display usage guide", "invalidCommand")),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list]. Use 'mesheryctl workspace --help' to display usage guide", "invalidCommand")),
 		},
 	}
 

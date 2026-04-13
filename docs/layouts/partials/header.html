@@ -9,7 +9,7 @@
 
 <header>
   <nav class="js-navbar-scroll navbar">
-    <a class="navbar-brand" href="{{ .Site.BaseURL }}{{ $linkUrlSelected }}">
+    <a class="navbar-brand" href="{{ .Site.BaseURL }}{{ strings.TrimPrefix "/" $linkUrlSelected }}">
       <div class="navbar-logo">
         {{ partial "svg/meshery-docs.html" . }}
       </div>
@@ -26,7 +26,7 @@
         <li class="nav-item">
           <a
             class="nav-link"
-            href="{{ if .url }}{{ $.Site.BaseURL }}{{ .url }}{{ else }}{{ .external_url }}{{ end }}">
+            href="{{ if .url }}{{ $.Site.BaseURL }}{{ strings.TrimPrefix "/" .url }}{{ else }}{{ .external_url }}{{ end }}">
             <span>{{ .title }}</span>
           </a>
         </li>
@@ -55,7 +55,7 @@
 
             <option
               {{ $selected }}
-              value="{{ $.Site.BaseURL }}{{ .url }}/"
+              value="{{ if .url }}{{ $.Site.BaseURL }}{{ strings.TrimPrefix "/" .url }}/{{ else }}{{ $.Site.BaseURL }}{{ end }}"
               class="nav-item mr-4 mb-2 text-black">
               {{ .version }}
             </option>
@@ -85,7 +85,8 @@
 
       <button class="nav-mode-icon" id="mode-toggle-btn">
         <img
-          id="logo-dark-light"
+          class="logo-dark-light"
+          style="visibility: hidden;"
           src="{{ .Site.BaseURL }}images/nav-icons/mode-toggle-icon-moon.png"
           data-logo-for-dark="{{ .Site.BaseURL }}images/nav-icons/mode-toggle-icon-moon.png"
           data-logo-for-light="{{ .Site.BaseURL }}images/nav-icons/mode-toggle-icon-sun.png"

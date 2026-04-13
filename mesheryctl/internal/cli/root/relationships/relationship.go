@@ -115,7 +115,7 @@ func generateRelationshipDataToDisplay(relationshipResponse *MeshmodelRelationsh
 	rows := make([][]string, 0, len(relationshipResponse.Relationships))
 	for _, rel := range relationshipResponse.Relationships {
 		rows = append(rows, []string{
-			defaultIfEmpty(rel.Id.String()),
+			defaultIfEmpty(rel.ID.String()),
 			string(rel.Kind),
 			rel.Version,
 			defaultIfEmpty(rel.Model.Name),

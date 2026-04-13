@@ -20,15 +20,16 @@ This comprehensive guide covers everything you need to know to contribute to the
 8. [Adding a New Schema](#adding-a-new-schema)
 9. [Modifying Existing Schemas](#modifying-existing-schemas)
 10. [Code Generation](#code-generation)
-11. [Go Helper Files](#go-helper-files)
-12. [TypeScript Integration](#typescript-integration)
-13. [Common Schema Patterns](#common-schema-patterns)
-14. [Template Files](#template-files)
-15. [What NOT to Commit](#what-not-to-commit)
-16. [Testing Your Changes](#testing-your-changes)
-17. [Common Mistakes to Avoid](#common-mistakes-to-avoid)
-18. [Checklist for Schema Changes](#checklist-for-schema-changes)
-19. [Getting Help](#getting-help)
+11. [Vendor Extensions (`x-*` Annotations)](#vendor-extensions-x--annotations)
+12. [Go Helper Files](#go-helper-files)
+13. [TypeScript Integration](#typescript-integration)
+14. [Common Schema Patterns](#common-schema-patterns)
+15. [Template Files](#template-files)
+16. [What NOT to Commit](#what-not-to-commit)
+17. [Testing Your Changes](#testing-your-changes)
+18. [Common Mistakes to Avoid](#common-mistakes-to-avoid)
+19. [Checklist for Schema Changes](#checklist-for-schema-changes)
+20. [Getting Help](#getting-help)
 
 ---
 
@@ -265,6 +266,10 @@ components:
 - Version strings follow **k8s-style**: `v1`, `v1alpha1`, `v1beta1`
 - Semver fields use **standard SemVer**: `1.0.0`, `2.3.1`
 
+### DB-Mirrored Fields
+
+DB-mirrored fields such as `created_at`, `updated_at`, and `user_id` intentionally remain **snake_case** to mirror existing database columns. Do not rename these to camelCase.
+
 ---
 
 ## Adding a New Schema
@@ -448,6 +453,19 @@ paths:
 
 The build system generates code from your schemas automatically.
 
+### Build Pipeline
+
+```text
+schemas/constructs/**/*.yml  (you write these)
+    │
+    ▼
+bundle-openapi.js            (bundles + dereferences schemas)
+    │
+    ├──▶ generate-golang.js  → models/**/*.go       (Go structs via oapi-codegen)
+    ├──▶ generate-typescript.js → typescript/generated/  (TypeScript types)
+    └──▶ generate-rtk.js     → typescript/rtk/      (RTK Query hooks)
+```
+
 ### What Gets Generated
 
 | Output | Location | Description |
@@ -474,6 +492,143 @@ Schemas are discovered automatically by scanning `schemas/constructs/` for direc
 
 ---
 
+## Vendor Extensions (`x-*` Annotations)
+
+OpenAPI vendor extensions provide metadata that the Meshery build pipeline uses to control code generation behavior.
+
+### `x-oapi-codegen-extra-tags`
+
+Added to individual properties to inject custom Go struct tags into generated code. Commonly used for JSON, YAML, and database column mappings.
+
+```yaml
+roleName:
+  type: string
+  x-oapi-codegen-extra-tags:
+    json: "role_name,omitempty"
+    yaml: "role_name,omitempty"
+    db: "role_name"
+```
+
+Do **not** add this to properties that already inherit it through a `$ref` to a core schema — the tags are already defined in the referenced definition.
+
+### `x-go-type` and `x-go-type-import`
+
+Tells `oapi-codegen` to use a specific Go type for a property instead of generating a new struct. Use this for cross-package references and for complex field types like `core.Map`.
+
+```yaml
+metadata:
+  type: object
+  additionalProperties: true
+  x-go-type: "core.Map"
+  x-go-type-skip-optional-pointer: true
+  x-oapi-codegen-extra-tags:
+    db: "metadata"
+```
+
+For cross-package references:
+
+```yaml
+plan:
+  $ref: "../plan/api.yml#/components/schemas/Plan"
+  x-go-type: "planv1beta1.Plan"
+  x-go-type-import:
+    path: "github.com/meshery/schemas/models/v1beta1/plan"
+    name: planv1beta1
+```
+
+### `x-internal`
+
+Applied to individual API operations (`get`, `post`, etc.) to scope them to a specific deployment target. The build pipeline uses this tag to split the merged OpenAPI spec into `cloud_openapi.yml` (for Meshery Cloud) and `meshery_openapi.yml` (for Meshery OSS).
+
+```yaml
+paths:
+  /api/entitlement/plans:
+    get:
+      x-internal: ["cloud"]   # Only included in the cloud bundle
+      operationId: getPlans
+```
+
+Operations without `x-internal` are included in **all** bundles.
+
+### `x-generate-db-helpers`
+
+`x-generate-db-helpers: true` is an **optional, schema-level** annotation placed on a named component under `components/schemas` (not on individual properties). It directs the Go generator to automatically produce `Scan()` and `Value()` SQL driver methods for that type in the auto-generated file `zz_generated.helpers.go`.
+
+These methods implement Go's `sql.Scanner` and `driver.Valuer` interfaces, allowing the struct to be transparently serialized as JSON when reading from or writing to a database column.
+
+#### When to use it
+
+Use `x-generate-db-helpers: true` when **both** of the following are true:
+
+1. The schema type has a **dedicated OpenAPI schema component** with explicit, named properties.
+2. The type is **persisted as a JSON blob in a single database column**, not spread across a dedicated relational table with one column per field.
+
+#### When NOT to use it
+
+Do not use `x-generate-db-helpers` for:
+
+- **Amorphous types** with no fixed property set (e.g., a freeform `metadata` object). Use `x-go-type: "core.Map"` for those fields instead.
+- **Types that map to a full database table** with individual columns for each property — these are handled by normal DB tag generation on each field.
+
+#### Example
+
+```yaml
+components:
+  schemas:
+    Quiz:
+      x-generate-db-helpers: true   # schema-level annotation
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          $ref: "../../v1alpha1/core/api.yml#/components/schemas/uuid"
+        title:
+          type: string
+        # ... additional properties
+```
+
+The generator produces the following in `zz_generated.helpers.go`:
+
+```go
+func (value *Quiz) Scan(src interface{}) error {
+    if src == nil {
+        *value = Quiz{}
+        return nil
+    }
+    mapVal := core.Map{}
+    if err := mapVal.Scan(src); err != nil {
+        return err
+    }
+    return core.MapToStruct(mapVal, value)
+}
+
+func (value Quiz) Value() (driver.Value, error) {
+    mapVal, err := core.StructToMap(value)
+    if err != nil {
+        return nil, err
+    }
+    return core.Map(mapVal).Value()
+}
+```
+
+#### Counter-example — `metadata`
+
+A `metadata` field is also stored as a JSON blob in the database, but it is amorphous — it has no fixed property list. For this reason it uses `x-go-type: "core.Map"` rather than `x-generate-db-helpers`:
+
+```yaml
+metadata:
+  type: object
+  additionalProperties: true
+  x-go-type: "core.Map"
+  x-go-type-skip-optional-pointer: true
+  x-oapi-codegen-extra-tags:
+    db: "metadata"
+```
+
+---
+
 ## Go Helper Files
 
 While Go structs are auto-generated from schemas, you often need to add **custom methods** to make these structs compatible with databases, implement interfaces, or add utility functions. This is done through manually created **helper files**.
@@ -484,7 +639,7 @@ Create a helper file (`*_helper.go` or `helpers.go`) in the generated package wh
 
 | Use Case | Description |
 |----------|-------------|
-| **SQL Driver Compatibility** | Implement `database/sql/driver.Scanner` and `driver.Valuer` interfaces |
+| **SQL Driver Compatibility** | Implement `database/sql/driver.Scanner` and `driver.Valuer` interfaces (consider using [`x-generate-db-helpers`](#x-generate-db-helpers) instead for types with fixed schemas stored as JSON blobs) |
 | **Entity Interface** | Implement the `entity.Entity` interface for database CRUD operations |
 | **GORM Table Names** | Define custom table names via `TableName()` method |
 | **Utility Methods** | Add helper functions for serialization, validation, or business logic |
@@ -512,6 +667,8 @@ models/
 ```
 
 ### SQL Driver Interface Implementation
+
+> **Tip**: For types with a fixed schema that are stored as a JSON blob in a single database column, prefer the [`x-generate-db-helpers: true`](#x-generate-db-helpers) annotation on the schema component. This auto-generates the `Scan` and `Value` methods for you. Use manual helper files only when the auto-generated methods are insufficient (e.g., custom serialization logic is needed).
 
 To store complex types (structs, maps, slices) in SQL databases, implement `Scan` and `Value` methods:
 
@@ -948,6 +1105,8 @@ npm run build
 12. ❌ **Forgetting `// This is not autogenerated.`** comment in helper files
 13. ❌ **Missing `TableName()` method** in helper files for GORM entities
 14. ❌ **Not implementing `Scan()`/`Value()`** for complex types stored in SQL
+15. ❌ **Writing manual `Scan()`/`Value()` methods** when `x-generate-db-helpers: true` on the schema component would auto-generate them
+16. ❌ **Using `x-generate-db-helpers`** on amorphous types (use `x-go-type: "core.Map"` instead)
 
 ---
 
@@ -961,7 +1120,8 @@ Before submitting a PR, verify:
 - [ ] Used non-deprecated `v1alpha1/core/api.yml` references
 - [ ] Updated corresponding template files with default values
 - [ ] Removed redundant `x-oapi-codegen-extra-tags` when using core refs
-- [ ] Created helper files (`*_helper.go`) if Go structs need SQL compatibility
+- [ ] Used `x-generate-db-helpers: true` for types with fixed schemas stored as JSON blobs
+- [ ] Created helper files (`*_helper.go`) only for cases not covered by auto-generation
 - [ ] Added `// This is not autogenerated.` comment to helper files
 - [ ] Implemented `TableName()`, `Scan()`, `Value()` as needed in helper files
 - [ ] Used `sync.Mutex` for thread-safe `Create()` methods
@@ -1050,9 +1210,17 @@ make golang-generate
 *Why it matters:* Docs are often the first impression contributors get. Schema-driven clarity starts here.
 
 ## Getting Help
+
 - [GitHub Issues](https://github.com/meshery/schemas/issues) - Report bugs or request features
 - [Community Slack](https://slack.meshery.io) - Real-time discussions with maintainers
 - [Weekly Meetings](https://meshery.io/calendar) - Join our community calls
+
+## Further Reading
+
+- [meshery/schemas README](https://github.com/meshery/schemas/blob/master/README.md) - Full reference for schema authoring
+- [AGENTS.md](https://github.com/meshery/schemas/blob/master/AGENTS.md) - Contributor checklist
+- [Core schema definitions](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1alpha1/core/api.yml) - Reusable building blocks
+- [Academy construct](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta1/academy/api.yml) - Exemplar for advanced patterns including `x-generate-db-helpers`
 
 ---
 > **Community Resources**

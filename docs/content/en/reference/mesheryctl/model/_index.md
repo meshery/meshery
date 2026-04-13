@@ -30,7 +30,7 @@ mesheryctl model --count
 </div>
 </pre> 
 
-Export registred models
+Export registered models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [model-name]
@@ -38,10 +38,18 @@ mesheryctl model export [model-name]
 </div>
 </pre> 
 
-Generate model(s)
+Generate a model from a CSV directory
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export [model-name]
+mesheryctl model generate [path-to-csv-directory]
+
+</div>
+</pre> 
+
+Generate a model from a URL based on a JSON template
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model generate --file [URL] --template [path-to-template.json]
 
 </div>
 </pre> 
@@ -62,7 +70,7 @@ mesheryctl model list
 </div>
 </pre> 
 
-Delete avaialbe model(s)
+Delete available model(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model delete [model-id]

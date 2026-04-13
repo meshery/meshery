@@ -12,18 +12,18 @@
     }
   },
   "model": {
-    "version": "",
-    "name": "azure-alerts-management",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+    },
+    "name": "azure-alerts-management",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
-    }
+    "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -33,16 +33,16 @@
             "kind": "SmartDetectorAlertRule",
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "azure-alerts-management",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "azure-alerts-management",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
               "mutatedRef": [
@@ -78,16 +78,16 @@
             "kind": "ActionGroup",
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "azure-insights",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "azure-insights",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
               "mutatorRef": [
