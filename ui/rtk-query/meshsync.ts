@@ -1,5 +1,5 @@
 import { urlEncodeParams } from '@/utils/utils';
-import { api } from './index';
+import { api, mesheryApiPath } from './index';
 
 const TAGS = {
   MESH_SYNC: 'meshsync',
@@ -13,7 +13,7 @@ const meshSyncApi = api
     endpoints: (builder) => ({
       getMeshSyncResources: builder.query({
         query: (queryArg) => ({
-          url: `system/meshsync/resources`,
+          url: mesheryApiPath(`system/meshsync/resources`),
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -24,8 +24,10 @@ const meshSyncApi = api
             ...(queryArg.namespace ? { namespace: queryArg.namespace } : {}),
             clusterIds: queryArg.clusterIds,
             label: queryArg.label,
+            labels: queryArg.labels,
             status: queryArg.status,
             annotation: queryArg.annotation,
+            annotations: queryArg.annotations,
             spec: queryArg.spec,
             apiVersion: queryArg.apiVersion,
           },
@@ -42,14 +44,14 @@ const meshSyncApi = api
             pagesize,
             order,
           });
-          return `system/meshsync/resources/summary?${params}`;
+          return mesheryApiPath(`system/meshsync/resources/summary?${params}`);
         },
 
         providesTags: () => [{ type: TAGS.MESH_SYNC }],
       }),
       deleteMeshsyncResource: builder.mutation({
         query: (resourceId) => ({
-          url: `system/meshsync/resources/${resourceId}`,
+          url: mesheryApiPath(`system/meshsync/resources/${resourceId}`),
           method: 'DELETE',
           credentials: 'include',
         }),
@@ -60,6 +62,7 @@ const meshSyncApi = api
 
 export const {
   useGetMeshSyncResourcesQuery,
+  useLazyGetMeshSyncResourcesQuery,
   useGetMeshSyncResourceKindsQuery,
   useDeleteMeshsyncResourceMutation,
 } = meshSyncApi;

@@ -16,9 +16,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Github",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "github",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",

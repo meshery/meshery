@@ -5,11 +5,13 @@ import (
 	"strings"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestViewProviderCmd(t *testing.T) {
 	setupContextTestEnv(t)
+	mesheryctlflags.InitValidators(SystemCmd)
 	tests := []CmdTestInput{
 		{
 			Name:             "given provider context when provider view then display provided provider",

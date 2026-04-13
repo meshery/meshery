@@ -10,10 +10,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshery/server/models/pattern/core"
+	patterncore "github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshery/server/models/pattern/patterns"
 	"github.com/spf13/viper"
 
@@ -35,20 +37,6 @@ import (
 	patternHelpers "github.com/meshery/meshkit/models/patterns"
 )
 
-// swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
-// Handle POST request for Pattern Deploy
-//
-// Deploy an attached pattern with the request
-// responses:
-// 	200:
-
-// swagger:route DELETE /api/pattern/deploy PatternsAPI idDeleteDeployPattern
-// Handle DELETE request for Pattern Deploy
-//
-// Delete a deployed pattern with the request
-// responses:
-// 	200:
-
 // PatternFileHandler handles the requested related to pattern files
 func (h *Handler) PatternFileHandler(
 	rw http.ResponseWriter,
@@ -58,7 +46,12 @@ func (h *Handler) PatternFileHandler(
 	provider models.Provider,
 ) {
 	userID := user.ID
-	// token, _ := r.Context().Value(models.TokenCtxKey).(string)
+	token, ok := r.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		h.log.Error(ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token")))
+		http.Error(rw, ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token")).Error(), http.StatusInternalServerError)
+		return
+	}
 	var payload models.MesheryPatternFileDeployPayload
 	var patternFileByte []byte
 
@@ -105,7 +98,7 @@ func (h *Handler) PatternFileHandler(
 	if err != nil {
 		err = ErrPatternFile(err)
 		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
@@ -121,7 +114,7 @@ func (h *Handler) PatternFileHandler(
 		}, eventBuilder)
 
 		event := eventBuilder.Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		if err != nil {
@@ -132,7 +125,7 @@ func (h *Handler) PatternFileHandler(
 		patternFileByte = []byte(patternFileStr)
 	}
 
-	patternFile, err := core.NewPatternFile(patternFileByte)
+	patternFile, err := patterncore.NewPatternFile(patternFileByte)
 	if err != nil {
 		h.log.Error(ErrPatternFile(err))
 		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
@@ -161,7 +154,7 @@ func (h *Handler) PatternFileHandler(
 		description = fmt.Sprintf("Deployment completed for design '%s'", patternFile.Name)
 	}
 
-	opts := &core.ProcessPatternOptions{
+	opts := &patterncore.ProcessPatternOptions{
 		Context:                r.Context(),
 		Provider:               provider,
 		Pattern:                patternFile,
@@ -188,7 +181,7 @@ func (h *Handler) PatternFileHandler(
 		}
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(err)
@@ -215,7 +208,7 @@ func (h *Handler) PatternFileHandler(
 		event = eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
 	}
 
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go func() {
 		h.config.EventBroadcaster.Publish(userID, event)
 
@@ -225,7 +218,7 @@ func (h *Handler) PatternFileHandler(
 	_ = ec.Encode(response)
 }
 
-func _processPattern(opts *core.ProcessPatternOptions) (map[string]interface{}, error) {
+func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interface{}, error) {
 	resp := make(map[string]interface{})
 
 	// Get the token from the context
@@ -312,7 +305,7 @@ func _processPattern(opts *core.ProcessPatternOptions) (map[string]interface{}, 
 			Process(&stages.Data{
 				Pattern:                       &opts.Pattern,
 				Other:                         map[string]interface{}{},
-				DeclartionToDefinitionMapping: make(map[uuid.UUID]component.ComponentDefinition),
+				DeclartionToDefinitionMapping: make(map[core.Uuid]component.ComponentDefinition),
 			})
 		return resp, sap.err
 	}
@@ -325,7 +318,7 @@ type serviceInfoProvider struct {
 	opIsDelete bool
 }
 
-func (sip *serviceInfoProvider) GetMesheryPatternResource(name, namespace, typ, oamType string) (*uuid.UUID, error) {
+func (sip *serviceInfoProvider) GetMesheryPatternResource(name, namespace, typ, oamType string) (*core.Uuid, error) {
 	const page = "0"
 	const pageSize = "1"
 	res, err := sip.provider.GetMesheryPatternResources(sip.token, pageSize, page, "", "", name, namespace, typ, oamType)
@@ -404,7 +397,7 @@ func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 // v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
 // NOTE: Currently tied to kubernetes
 // Returns ComponentName->ContextID->Response
-func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
+func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition) (resp map[string]map[string]patterncore.DryRunResponseWrapper, err error) {
 	for _, cmp := range comps {
 		for ctxID, kc := range sap.ctxTokubeconfig {
 			cl, err := meshkube.New([]byte(kc))
@@ -416,10 +409,10 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 				return resp, err
 			}
 			if resp == nil {
-				resp = make(map[string]map[string]core.DryRunResponseWrapper)
+				resp = make(map[string]map[string]patterncore.DryRunResponseWrapper)
 			}
 			if resp[cmp.DisplayName] == nil {
-				resp[cmp.DisplayName] = make(map[string]core.DryRunResponseWrapper)
+				resp[cmp.DisplayName] = make(map[string]patterncore.DryRunResponseWrapper)
 			}
 			resp[cmp.DisplayName][ctxID] = dResp
 		}
@@ -427,13 +420,13 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 	return
 }
 
-func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, isDelete bool) (core.DryRunResponseWrapper, error) {
+func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, isDelete bool) (patterncore.DryRunResponseWrapper, error) {
 	st, ok, err := k8s.DryRunHelper(cl, *cmd, isDelete)
-	dResp := core.DryRunResponseWrapper{Success: ok, Component: cmd}
+	dResp := patterncore.DryRunResponseWrapper{Success: ok, Component: cmd}
 	if ok {
 		dResp.Component.Configuration = filterConfiguration(st)
 	} else if err != nil {
-		dResp.Error = &core.DryRunResponse{Status: err.Error()}
+		dResp.Error = &patterncore.DryRunResponse{Status: err.Error()}
 	} else {
 		dResp.Error = parseDryRunFailure(st, cmd.DisplayName)
 	}
@@ -450,7 +443,7 @@ func filterConfiguration(configuration map[string]interface{}) map[string]interf
 	return filteredConfiguration
 }
 
-func parseDryRunFailure(settings map[string]interface{}, name string) *core.DryRunResponse {
+func parseDryRunFailure(settings map[string]interface{}, name string) *patterncore.DryRunResponse {
 	byt, err := json.Marshal(settings)
 	if err != nil {
 		return nil
@@ -460,7 +453,7 @@ func parseDryRunFailure(settings map[string]interface{}, name string) *core.DryR
 	if err != nil {
 		return nil
 	}
-	dResp := core.DryRunResponse{}
+	dResp := patterncore.DryRunResponse{}
 	if kubeStatus.Status != "" {
 		dResp.Status = kubeStatus.Status
 	}
@@ -469,7 +462,7 @@ func parseDryRunFailure(settings map[string]interface{}, name string) *core.DryR
 		ErrStatus: kubeStatus,
 	})
 
-	dResp.Causes = make([]core.DryRunFailureCause, 0)
+	dResp.Causes = make([]patterncore.DryRunFailureCause, 0)
 	if kubeStatus.Details != nil && len(kubeStatus.Details.Causes) > 0 {
 		for i, c := range kubeStatus.Details.Causes {
 			msg := longDescription[i+1]
@@ -483,12 +476,12 @@ func parseDryRunFailure(settings map[string]interface{}, name string) *core.DryR
 				typ = string(c.Type)
 			}
 
-			failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
+			failureCase := patterncore.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
 			dResp.Causes = append(dResp.Causes, failureCase)
 		}
 	} else {
 		for _, msg := range longDescription {
-			failureCase := core.DryRunFailureCause{
+			failureCase := patterncore.DryRunFailureCause{
 				Message:   msg,
 				FieldPath: "unknown",
 				Type:      "Failure",
@@ -621,7 +614,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 	return msgs, nil
 }
 
-// func (sap *serviceActionProvider) Persist(name string, svc core.Service, isUpdate bool) error {
+// func (sap *serviceActionProvider) Persist(name string, svc patterncore.Service, isUpdate bool) error {
 // 	if !sap.opIsDelete {
 // 		if isUpdate {
 // 			// Do nothing

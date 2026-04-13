@@ -10,6 +10,8 @@ import (
 	"path"
 	"time"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/fsnotify/fsnotify"
 
 	"github.com/gofrs/uuid"
@@ -247,6 +249,8 @@ func main() {
 		workspace.Workspace{},
 		workspace.WorkspacesEnvironmentsMapping{},
 		workspace.WorkspacesDesignsMapping{},
+		workspace.WorkspacesTeamsMapping{},
+		workspace.WorkspacesViewsMapping{},
 		_events.Event{},
 	)
 	if err != nil {
@@ -390,7 +394,7 @@ func main() {
 		&instanceID,
 	)
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
-		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
+		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine, 0),
 	}
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)

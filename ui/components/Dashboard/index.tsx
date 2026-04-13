@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
@@ -30,20 +30,26 @@ import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
 import { Responsive, WidthProvider } from 'react-grid-layout/legacy';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
+import { applyMinSizeConstraints } from './layoutConstraints';
 import Popup from '../General/Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
 import { useSelector } from 'react-redux';
+import useUnsavedChanges from './useUnsavedChanges';
+import UnsavedChangesModal from './UnsavedChangesModal';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
+const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
+
 const useDashboardRouter = () => {
   const router = useRouter();
-  const { query, push: pushRoute, route } = router;
+  const { query, push: pushRoute, route, isReady } = router;
 
-  const resourceCategory = query.resourceCategory || 'Overview';
-  const selectedResource = query.resource;
+  // Use 'Overview' until router is hydrated with query params
+  const resourceCategory = isReady ? query.resourceCategory || 'Overview' : 'Overview';
+  const selectedResource = isReady ? query.resource : undefined;
 
   const changeResourceTab = (resourceCategory) => {
     if (query.resourceCategory === resourceCategory) {
@@ -107,17 +113,25 @@ const Dashboard = () => {
   const { k8sConfig } = useSelector((state) => state.ui);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const iconsProps = {
-    fill: theme.palette.icon.default,
-    primaryFill: theme.palette.icon.default,
-    secondaryFill: theme.palette.icon.secondary,
-    width: '40',
-  };
+  const iconsProps = useMemo(
+    () => ({
+      fill: theme.palette.icon.default,
+      primaryFill: theme.palette.icon.default,
+      secondaryFill: theme.palette.icon.secondary,
+      width: '40',
+    }),
+    [theme.palette.icon.default, theme.palette.icon.secondary],
+  );
 
-  const WIDGETS = getWidgets({ iconsProps, isEditMode });
+  const WIDGETS = useMemo(() => getWidgets({ iconsProps, isEditMode }), [iconsProps, isEditMode]);
+  const widgetSizing = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(WIDGETS).map(([key, widget]) => [key, widget.defaultSizing]),
+      ),
+    [WIDGETS],
+  );
   const availableHandles = ['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne'];
-
-  const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 
   const isWidgetAlreadyAdded = (key, layout, breakpoint) => {
     return Boolean(layout[breakpoint].find((item) => item.i == key));
@@ -132,6 +146,30 @@ const Dashboard = () => {
   };
   const orgDashboardLayout = getCurrentDashboardLayoutFromOrgPrefs(userData?.dashboardPreferences);
   const [dashboardLayout, setDashboardLayout] = useState(orgDashboardLayout);
+
+  const {
+    showModal: showUnsavedModal,
+    confirmNavigation,
+    cancelNavigation,
+  } = useUnsavedChanges({
+    isEditMode,
+    dashboardLayout,
+    savedLayout: orgDashboardLayout,
+  });
+
+  const handleDiscardAndNavigate = () => {
+    cancelEditing();
+    confirmNavigation();
+  };
+
+  const handleSaveAndNavigate = async () => {
+    const isSaved = await saveLayout();
+    if (!isSaved) {
+      return;
+    }
+    setIsEditMode(false);
+    confirmNavigation();
+  };
 
   const widgetsToAdd = getWidgetsAvailableToBeAdded(dashboardLayout, currentBreakPoint);
 
@@ -162,12 +200,19 @@ const Dashboard = () => {
   const { handleError, handleSuccess } = useNotificationHandlers();
 
   const updateLayout = async (dashboardLayout) => {
-    const res = await updateUserPref({ dashboardPreferences: dashboardLayout });
+    const constrainedLayoutToSave = applyMinSizeConstraints(
+      dashboardLayout,
+      defaultLayout,
+      cols,
+      widgetSizing,
+    );
+    const res = await updateUserPref({ dashboardPreferences: constrainedLayoutToSave });
     if (res.error) {
       handleError('failed to save layout');
-      return;
+      return false;
     }
     handleSuccess('Layout saved');
+    return true;
   };
 
   const toggleEditMode = () => {
@@ -179,7 +224,7 @@ const Dashboard = () => {
   };
 
   const saveLayout = () => {
-    updateLayout(dashboardLayout);
+    return updateLayout(dashboardLayout);
   };
 
   const resetLayout = () => {
@@ -212,8 +257,11 @@ const Dashboard = () => {
     SAVE_AND_CLOSE: {
       label: 'Save and Close',
       Icon: OutlinedValidateIcon,
-      action: () => {
-        saveLayout();
+      action: async () => {
+        const isSaved = await saveLayout();
+        if (!isSaved) {
+          return;
+        }
         toggleEditMode();
       },
 
@@ -267,6 +315,11 @@ const Dashboard = () => {
       return { ...updatedLayouts };
     });
   };
+
+  const constrainedLayouts = useMemo(
+    () => applyMinSizeConstraints(dashboardLayout, defaultLayout, cols, widgetSizing),
+    [dashboardLayout, defaultLayout, widgetSizing],
+  );
 
   return (
     <>
@@ -331,7 +384,7 @@ const Dashboard = () => {
               </Stack>
 
               <ResponsiveReactGridLayout
-                layouts={dashboardLayout}
+                layouts={constrainedLayouts}
                 resizeHandles={availableHandles}
                 isResizable={isEditMode}
                 isDraggable={isEditMode}
@@ -416,6 +469,12 @@ const Dashboard = () => {
         })}
       </>
       <Popup />
+      <UnsavedChangesModal
+        open={showUnsavedModal}
+        onClose={cancelNavigation}
+        onDiscard={handleDiscardAndNavigate}
+        onSave={handleSaveAndNavigate}
+      />
     </>
   );
 };

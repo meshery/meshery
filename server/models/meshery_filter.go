@@ -3,14 +3,14 @@ package models
 import (
 	"time"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/internal/sql"
+	"github.com/meshery/schemas/models/core"
 	"gopkg.in/yaml.v2"
 )
 
 // MesheryFilter represents the filters that needs to be saved
 type MesheryFilter struct {
-	ID *uuid.UUID `json:"id,omitempty"`
+	ID *core.Uuid `json:"id,omitempty"`
 
 	Name       string `json:"name,omitempty"`
 	FilterFile []byte `json:"filter_file"`
@@ -27,7 +27,7 @@ type MesheryFilter struct {
 }
 
 type MesheryFilterPayload struct {
-	ID *uuid.UUID `json:"id,omitempty"`
+	ID *core.Uuid `json:"id,omitempty"`
 
 	Name       string `json:"name,omitempty"`
 	FilterFile []byte `json:"filter_file"`
@@ -46,7 +46,7 @@ type MesheryFilterPayload struct {
 
 // MesheryCatalogFilterRequestBody refers to the type of request body that PublishCatalogFilter would receive
 type MesheryCatalogFilterRequestBody struct {
-	ID          uuid.UUID `json:"id,omitempty"`
+	ID          core.Uuid `json:"id,omitempty"`
 	CatalogData sql.Map   `json:"catalog_data,omitempty"`
 }
 

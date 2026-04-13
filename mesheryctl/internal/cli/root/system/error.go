@@ -62,7 +62,7 @@ const (
 	ErrDockerStartCode                    = "mesheryctl-1210"
 	ErrDockerUnknownCode                  = "mesheryctl-1211"
 	ErrOperatorUnsupportedPlatformCode    = "mesheryctl-1219"
-	ErrDockerComposeFileMissingCode       = "mesheryctl-1223"
+	ErrLogoutCode                         = "mesheryctl-1229"
 )
 
 var (
@@ -430,12 +430,10 @@ func ErrOperatorUnsupportedPlatform(platform string) error {
 		[]string{"Please switch to a Kubernetes context to run operator health checks. "})
 }
 
-func ErrDockerComposeFileMissing(err error) error {
-	return errors.New(
-		ErrDockerComposeFileMissingCode,
-		errors.Fatal,
-		[]string{"Docker Compose file not found"},
+func ErrLogout(err error) error {
+	return errors.New(ErrLogoutCode, errors.Fatal,
+		[]string{"Logout failed"},
 		[]string{err.Error()},
-		[]string{"Docker Compose file is missing from the Meshery folder"},
-		[]string{"Run `mesheryctl system start` again to download and generate docker-compose file based on your context"})
+		[]string{"Unable to complete the logout operation"},
+		[]string{"Check the token file path and permissions. The underlying error will provide more details."})
 }
