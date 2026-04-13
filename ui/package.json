@@ -24,7 +24,11 @@
     "relay": "relay-compiler",
     "prepare": "cd .. && { [ -e .git ] && husky ui/.husky || true; }",
     "postinstall": "patch-package",
-    "clean": "rm -rf .next,out"
+    "clean": "rm -rf .next,out",
+    "audit:mui": "node scripts/audit-mui.js",
+    "audit:hex": "node scripts/audit-hex.js",
+    "audit:size": "node scripts/audit-size.js",
+    "audit:all": "node scripts/audit-mui.js && node scripts/audit-hex.js && node scripts/audit-size.js"
   },
   "keywords": [],
   "author": "Meshery Authors",
