@@ -41,7 +41,9 @@ import {
   PROMETHEUS,
   OVERVIEW,
   REGISTRY,
+  AI,
 } from '@/constants/navigator';
+import AISettingsComponent from '../AI/AISettingsComponent';
 import { removeDuplicateVersions } from './Registry/helper';
 import MeshModelComponent from './Registry/MeshModelComponent';
 import DefaultError from '../General/error-404';
@@ -323,9 +325,24 @@ const MesherySettings = () => {
                     icon={<DatabaseIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Reset"
                     data-testid="settings-tab-reset"
-                    // tab="systemReset"
                     value={RESET}
-                    // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
+                  />
+                </CustomTooltip>
+
+                <CustomTooltip title="AI Provider Settings" placement="top" value={AI}>
+                  <Tab
+                    icon={
+                      <img
+                        src="/static/img/meshery-logo/meshery-logo.svg"
+                        alt="AI"
+                        height={24}
+                        width={24}
+                        style={{ filter: 'saturate(2)' }}
+                      />
+                    }
+                    label="AI"
+                    data-testid="settings-tab-ai"
+                    value={AI}
                   />
                 </CustomTooltip>
               </Tabs>
@@ -446,6 +463,12 @@ const MesherySettings = () => {
             {tabVal === RESET && (
               <TabContainer>
                 <DatabaseSummary promptRef={systemResetPromptRef} />
+              </TabContainer>
+            )}
+
+            {tabVal === AI && (
+              <TabContainer>
+                <AISettingsComponent />
               </TabContainer>
             )}
             {backToPlay}

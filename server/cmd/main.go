@@ -17,6 +17,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/handlers"
+	"github.com/meshery/meshery/server/internal/ai/providers"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/internal/graphql"
@@ -404,6 +405,40 @@ func main() {
 	policies.SyncRelationship.Lock()
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &rego, &connToInstanceTracker, meshsyncDefaultDeploymentMode)
 	policies.SyncRelationship.Unlock()
+
+	// Initialize AI service from environment variables.
+	// Any provider whose required credentials are absent is silently skipped.
+	{
+		var aiCfgs []providers.Config
+		if key := viper.GetString("MESHERY_AI_OPENAI_API_KEY"); key != "" {
+			aiCfgs = append(aiCfgs, providers.Config{
+				Type:     providers.ProviderOpenAI,
+				APIKey:   key,
+				Endpoint: viper.GetString("MESHERY_AI_OPENAI_ENDPOINT"),
+				Model:    viper.GetString("MESHERY_AI_OPENAI_MODEL"),
+			})
+		}
+		if key := viper.GetString("MESHERY_AI_ANTHROPIC_API_KEY"); key != "" {
+			aiCfgs = append(aiCfgs, providers.Config{
+				Type:     providers.ProviderAnthropic,
+				APIKey:   key,
+				Endpoint: viper.GetString("MESHERY_AI_ANTHROPIC_ENDPOINT"),
+				Model:    viper.GetString("MESHERY_AI_ANTHROPIC_MODEL"),
+			})
+		}
+		// Ollama is local and needs no API key; always include it if an endpoint is set
+		// or fall back to the default localhost endpoint.
+		ollamaEndpoint := viper.GetString("MESHERY_AI_OLLAMA_ENDPOINT")
+		if ollamaEndpoint == "" {
+			ollamaEndpoint = "http://localhost:11434"
+		}
+		aiCfgs = append(aiCfgs, providers.Config{
+			Type:     providers.ProviderOllama,
+			Endpoint: ollamaEndpoint,
+			Model:    viper.GetString("MESHERY_AI_OLLAMA_MODEL"),
+		})
+		h.InitAIService(aiCfgs)
+	}
 
 	b := broadcast.NewBroadcaster(100)
 	defer func() {
