@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"github.com/meshery/meshery/server/internal/ai"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	gopolicies "github.com/meshery/meshery/server/policies"
@@ -37,6 +38,7 @@ type Handler struct {
 	ConnectionToStateMachineInstanceTracker *machines.ConnectionToStateMachineInstanceTracker
 	MeshsyncDefaultDeploymentMode           schemasConnection.MeshsyncDeploymentMode
 	evalTracker                             *evaluationTracker
+	aiService                               *ai.Service
 }
 
 // NewHandlerInstance returns a Handler instance

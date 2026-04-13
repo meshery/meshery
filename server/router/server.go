@@ -441,6 +441,13 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	}).
 		Methods("GET")
 
+	// AI Adapter routes
+	gMux.Handle("/api/ai/generate", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.HandleAIGenerate), models.ProviderAuth))).Methods("POST")
+	gMux.Handle("/api/ai/stream", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.HandleAIStream), models.ProviderAuth))).Methods("POST")
+	gMux.Handle("/api/ai/providers", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.HandleAIProviders), models.ProviderAuth))).Methods("GET")
+	gMux.Handle("/api/ai/health", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.HandleAIHealth), models.ProviderAuth))).Methods("GET")
+	gMux.Handle("/api/ai/design/generate", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.HandleAIDesignGenerate), models.ProviderAuth))).Methods("POST")
+
 	// Kubernetes Health Probes
 	gMux.HandleFunc("/healthz/live", h.K8sHealthzHandler).Methods("GET")
 	gMux.HandleFunc("/healthz/ready", h.K8sHealthzHandler).Methods("GET")

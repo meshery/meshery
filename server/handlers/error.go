@@ -162,6 +162,14 @@ const (
 	ErrFileTypeCode                        = "meshery-server-1366"
 	ErrCreatingOPAInstanceCode             = "meshery-server-1367"
 	ErrEncodeResponseCode                  = "meshery-server-1374"
+
+	// AI Adapter error codes
+	ErrAIProviderNotConfiguredCode = "meshery-server-1380"
+	ErrAIInvalidRequestCode        = "meshery-server-1381"
+	ErrAICompleteCode              = "meshery-server-1382"
+	ErrAIStreamCode                = "meshery-server-1383"
+	ErrAIEmbedCode                 = "meshery-server-1384"
+	ErrAIProviderNotFoundCode      = "meshery-server-1385"
 )
 
 var (
@@ -667,4 +675,54 @@ func ErrEncodeResponse(err error) error {
 }
 func ErrCreatingOPAInstance(err error) error {
 	return errors.New(ErrCreatingOPAInstanceCode, errors.Alert, []string{"Error creating OPA Instance."}, []string{err.Error()}, []string{"Unable to create OPA instance, policies will not be evaluated."}, []string{"Ensure relationships are registered"})
+}
+
+// AI Adapter errors
+
+func ErrAIProviderNotConfigured(provider string) error {
+	return errors.New(ErrAIProviderNotConfiguredCode, errors.Alert,
+		[]string{fmt.Sprintf("AI provider %q is not configured", provider)},
+		[]string{"provider not registered"},
+		[]string{"The requested AI provider has not been registered with the AI service"},
+		[]string{"Configure the provider via environment variables or Meshery settings"})
+}
+
+func ErrAIInvalidRequest(err error) error {
+	return errors.New(ErrAIInvalidRequestCode, errors.Alert,
+		[]string{"Invalid AI request"},
+		[]string{err.Error()},
+		[]string{"Request body is missing required fields"},
+		[]string{"Provide a valid request body with prompt and provider fields"})
+}
+
+func ErrAIComplete(err error) error {
+	return errors.New(ErrAICompleteCode, errors.Alert,
+		[]string{"AI completion failed"},
+		[]string{err.Error()},
+		[]string{"The AI provider returned an error", "The provider may be unreachable or misconfigured"},
+		[]string{"Check the provider API key and endpoint configuration"})
+}
+
+func ErrAIStream(err error) error {
+	return errors.New(ErrAIStreamCode, errors.Alert,
+		[]string{"AI streaming failed"},
+		[]string{err.Error()},
+		[]string{"The AI provider returned an error during streaming"},
+		[]string{"Check the provider API key and endpoint configuration"})
+}
+
+func ErrAIEmbed(err error) error {
+	return errors.New(ErrAIEmbedCode, errors.Alert,
+		[]string{"AI embedding failed"},
+		[]string{err.Error()},
+		[]string{"The AI provider returned an error", "The provider may not support embeddings"},
+		[]string{"Use a provider that supports embeddings (e.g. OpenAI, Ollama)"})
+}
+
+func ErrAIProviderNotFound(name string) error {
+	return errors.New(ErrAIProviderNotFoundCode, errors.Alert,
+		[]string{fmt.Sprintf("AI provider %q not found", name)},
+		[]string{"provider not registered"},
+		[]string{"The requested AI provider has not been registered"},
+		[]string{"Register the provider before using it"})
 }
