@@ -50,7 +50,7 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
 	github.com/meshery/meshkit v1.0.2
-	github.com/meshery/meshsync v0.8.26
+	github.com/meshery/meshsync v1.0.0
 	github.com/meshery/schemas v1.0.5
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.3.1
@@ -61,7 +61,7 @@ require (
 	github.com/prometheus/client_golang v1.23.2
 	github.com/prometheus/common v0.67.4
 	github.com/qri-io/jsonschema v0.2.1
-	github.com/sirupsen/logrus v1.9.4-0.20230606125235-dd1b4c2e81af
+	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
 	github.com/spf13/viper v1.21.0
@@ -79,10 +79,10 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.31.1
-	k8s.io/api v0.35.1
+	k8s.io/api v0.35.2
 	k8s.io/apiextensions-apiserver v0.35.1
-	k8s.io/apimachinery v0.35.1
-	k8s.io/client-go v0.35.1
+	k8s.io/apimachinery v0.35.2
+	k8s.io/client-go v0.35.2
 	sigs.k8s.io/controller-runtime v0.22.4
 )
 
@@ -423,12 +423,12 @@ require (
 	gorm.io/driver/postgres v1.6.0 // indirect
 	helm.sh/helm/v3 v3.20.2 // indirect
 	k8s.io/apiserver v0.35.1 // indirect
-	k8s.io/cli-runtime v0.35.1 // indirect
-	k8s.io/component-base v0.35.1 // indirect
-	k8s.io/component-helpers v0.35.1 // indirect
+	k8s.io/cli-runtime v0.35.2 // indirect
+	k8s.io/component-base v0.35.2 // indirect
+	k8s.io/component-helpers v0.35.2 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20251125145642-4e65d59e963e // indirect
-	k8s.io/kubectl v0.35.1 // indirect
+	k8s.io/kubectl v0.35.2 // indirect
 	k8s.io/utils v0.0.0-20251002143259-bc988d571ff4 // indirect
 	oras.land/oras-go/v2 v2.6.0 // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
