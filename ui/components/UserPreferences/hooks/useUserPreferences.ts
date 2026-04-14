@@ -108,7 +108,7 @@ export const useUserPreferences = (
     } else if (isUserDataError) {
       console.error(userDataError);
     }
-  }, [isUserDataFetched, userData]);
+  }, [isUserDataFetched, userData, isUserDataError, userDataError]);
 
   return {
     anonymousStats,
