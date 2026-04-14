@@ -3368,6 +3368,24 @@
         "short_description": "Invalid input for workspace operation",
         "probable_cause": "The workspace ID and organization ID are required for this operation.",
         "suggested_remediation": "Ensure that both WorkspaceID and OrgID are provided and not empty."
+      },
+      "1376": {
+        "name": "ErrApplyPatchCode",
+        "code": "1376",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to apply configuration patches",
+        "probable_cause": "component configuration may be incompatible with patch",
+        "suggested_remediation": "verify the relationship definition's mutatorRef and mutatedRef paths"
+      },
+      "1377": {
+        "name": "ErrParsePayloadCode",
+        "code": "1377",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to parse action payload",
+        "probable_cause": "action value may be malformed",
+        "suggested_remediation": "check the policy engine action output"
       }
     }
   }

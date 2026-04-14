@@ -1,4 +1,4 @@
-import { api } from './index';
+import { api, mesheryApiPath } from './index';
 
 const TAGS = {
   SYSTEM: 'system',
@@ -10,7 +10,7 @@ const systemApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getDatabaseSummary: builder.query({
       query: (queryArg) => ({
-        url: `system/database`,
+        url: mesheryApiPath(`system/database`),
         params: {
           page: queryArg.page,
           pagesize: queryArg.pagesize,
@@ -23,7 +23,7 @@ const systemApi = api.injectEndpoints({
     }),
     getAdapters: builder.query({
       query: () => ({
-        url: 'system/adapters',
+        url: mesheryApiPath('system/adapters'),
         method: 'GET',
         credentials: 'include',
       }),
@@ -32,7 +32,7 @@ const systemApi = api.injectEndpoints({
 
     getAvailableAdapters: builder.query({
       query: () => ({
-        url: 'system/availableAdapters',
+        url: mesheryApiPath('system/availableAdapters'),
         method: 'GET',
         credentials: 'include',
       }),
@@ -41,7 +41,7 @@ const systemApi = api.injectEndpoints({
 
     pingAdapter: builder.query({
       query: (adapterLoc) => ({
-        url: `system/adapters`,
+        url: mesheryApiPath(`system/adapters`),
         params: { adapter: adapterLoc },
         credentials: 'include',
       }),
@@ -49,7 +49,7 @@ const systemApi = api.injectEndpoints({
     }),
     getSystemSync: builder.query({
       query: () => ({
-        url: 'system/sync',
+        url: mesheryApiPath('system/sync'),
         method: 'GET',
         credentials: 'include',
       }),
@@ -58,7 +58,7 @@ const systemApi = api.injectEndpoints({
 
     getKubernetesContexts: builder.query({
       query: (queryArg) => ({
-        url: 'system/kubernetes/contexts',
+        url: mesheryApiPath('system/kubernetes/contexts'),
         params: {
           pagesize: queryArg?.pagesize || 10,
           search: queryArg?.search || '',
@@ -70,7 +70,7 @@ const systemApi = api.injectEndpoints({
 
     adapterOperation: builder.mutation({
       query: (queryArg) => ({
-        url: queryArg.url || 'system/adapter/operation',
+        url: mesheryApiPath(queryArg.url || 'system/adapter/operation'),
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
@@ -80,7 +80,7 @@ const systemApi = api.injectEndpoints({
 
     getSmiResults: builder.query({
       query: (queryArg) => ({
-        url: 'smi/results',
+        url: mesheryApiPath('smi/results'),
         params: {
           page: queryArg?.page,
           pagesize: queryArg?.pagesize,
@@ -96,7 +96,7 @@ const systemApi = api.injectEndpoints({
       query: (queryArg) => {
         if (queryArg.method === 'DELETE') {
           return {
-            url: `system/adapter/manage`,
+            url: mesheryApiPath(`system/adapter/manage`),
             method: 'DELETE',
             credentials: 'include',
             params: { adapter: queryArg.adapter },
@@ -104,7 +104,7 @@ const systemApi = api.injectEndpoints({
         }
 
         return {
-          url: 'system/adapter/manage',
+          url: mesheryApiPath('system/adapter/manage'),
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },

@@ -16,7 +16,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
-	"github.com/meshery/meshkit/errors"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	meshkitutils "github.com/meshery/meshkit/utils"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
@@ -75,12 +74,7 @@ mesheryctl model import --file [path-to-csv-directory]
 		}
 
 		if utils.IsValidUrl(path) {
-			err := registerModel(nil, nil, nil, "", "urlImport", path, true)
-			if err != nil {
-				utils.Log.Error(err)
-				return nil
-			}
-			return nil
+			return registerModel(nil, nil, nil, "", "urlImport", path, true)
 		}
 
 		hasCSVs := hasCSVs(path)
@@ -88,20 +82,7 @@ mesheryctl model import --file [path-to-csv-directory]
 		if hasCSVs {
 			modelcsvpath, componentcsvpath, relationshipcsvpath, err := meshkitRegistryUtils.GetCsv(path)
 			if err != nil {
-				utils.Log.Infof("%s: %s", utils.BoldString("ERROR"), "Error importing model using CSV files")
-				if meshkitErr, ok := err.(*errors.Error); ok {
-					if len(meshkitErr.ProbableCause) != 0 {
-						utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), strings.Join(meshkitErr.ProbableCause, ". "))
-					}
-					if len(meshkitErr.SuggestedRemediation) != 0 {
-						utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("SUGGESTED REMEDIATION"), strings.Join(meshkitErr.SuggestedRemediation, ". "))
-					}
-				} else {
-					utils.Log.Error(err)
-				}
-
 				return err
-
 			} else {
 				modelData, err := os.ReadFile(modelcsvpath)
 				if err != nil {
@@ -220,10 +201,6 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 	}
 
 	defer func() { _ = resp.Body.Close() }()
-	if resp.StatusCode != http.StatusOK {
-		err = models.ErrDoRequest(err, resp.Request.Method, url)
-		return err
-	}
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		err = models.ErrDataRead(err, "response body")

@@ -1,4 +1,4 @@
-import { api } from './index';
+import { api, mesheryApiPath } from './index';
 
 const TAGS = {
   GRAFANA: 'grafana',
@@ -8,7 +8,7 @@ const telemetryApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getGrafanaBoards: builder.query({
       query: ({ connectionID, grafanaBoardSearch }) => ({
-        url: `telemetry/metrics/grafana/boards/${connectionID}`,
+        url: mesheryApiPath(`telemetry/metrics/grafana/boards/${connectionID}`),
         params: { dashboardSearch: grafanaBoardSearch },
         method: 'GET',
         credentials: 'include',
@@ -18,7 +18,7 @@ const telemetryApi = api.injectEndpoints({
 
     getGrafanaConfig: builder.query({
       query: () => ({
-        url: `telemetry/metrics/grafana/config`,
+        url: mesheryApiPath(`telemetry/metrics/grafana/config`),
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
@@ -26,8 +26,8 @@ const telemetryApi = api.injectEndpoints({
     }),
 
     getStaticPrometheusBoardConfig: builder.query({
-      query: () => ({
-        url: `telemetry/metrics/static-board`,
+      query: (connectionID) => ({
+        url: mesheryApiPath(`telemetry/metrics/static-board/${connectionID}`),
         method: 'GET',
         credentials: 'include',
       }),
@@ -35,7 +35,7 @@ const telemetryApi = api.injectEndpoints({
 
     updateGrafanaBoards: builder.mutation({
       query: ({ connectionID, selectedBoardsConfigs }) => ({
-        url: `telemetry/metrics/grafana/boards/${connectionID}`,
+        url: mesheryApiPath(`telemetry/metrics/grafana/boards/${connectionID}`),
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
@@ -46,7 +46,7 @@ const telemetryApi = api.injectEndpoints({
 
     configureGrafana: builder.mutation({
       query: ({ params }) => ({
-        url: `telemetry/metrics/grafana/config`,
+        url: mesheryApiPath(`telemetry/metrics/grafana/config`),
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
@@ -56,14 +56,14 @@ const telemetryApi = api.injectEndpoints({
     }),
     getPrometheusConfig: builder.query({
       query: () => ({
-        url: 'telemetry/metrics/config',
+        url: mesheryApiPath('telemetry/metrics/config'),
         method: 'GET',
         credentials: 'include',
       }),
     }),
     postBoardImport: builder.mutation({
       query: ({ connectionID, body }) => ({
-        url: `/telemetry/metrics/board_import/${connectionID}`,
+        url: mesheryApiPath(`/telemetry/metrics/board_import/${connectionID}`),
         method: 'POST',
         body,
         credentials: 'include',
@@ -72,28 +72,28 @@ const telemetryApi = api.injectEndpoints({
     }),
     queryTemplateVars: builder.query({
       query: ({ connectionID, query }) => ({
-        url: `/telemetry/metrics/query/${connectionID}?${query}`,
+        url: mesheryApiPath(`/telemetry/metrics/query/${connectionID}?${query}`),
         method: 'GET',
         credentials: 'include',
       }),
     }),
     pingPrometheus: builder.query({
       query: ({ connectionId }) => ({
-        url: `telemetry/metrics/ping/${connectionId}`,
+        url: mesheryApiPath(`telemetry/metrics/ping/${connectionId}`),
         method: 'GET',
         credentials: 'include',
       }),
     }),
     queryRange: builder.query({
       query: ({ type, connectionID, queryParams }) => ({
-        url: `${type}/query_range/${connectionID}?${queryParams}`,
+        url: mesheryApiPath(`${type}/query_range/${connectionID}?${queryParams}`),
         method: 'GET',
         credentials: 'include',
       }),
     }),
     pingGrafana: builder.query({
       query: ({ connectionId }) => ({
-        url: `telemetry/metrics/grafana/ping/${connectionId}`,
+        url: mesheryApiPath(`telemetry/metrics/grafana/ping/${connectionId}`),
         method: 'GET',
         credentials: 'include',
       }),

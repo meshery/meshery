@@ -46,10 +46,10 @@ test_component_view_format() {
         return 1
     fi
 
-    FILE_TO_CLEANUP="${HOME}/.meshery/component_${COMPONENT_NAME}.${format}"
+    run bash -c "printf '\n' | $MESHERYCTL_BIN component view \"${COMPONENT_NAME}\" -o ${format} --save"
 
-    printf '\n' | $MESHERYCTL_BIN component view "${COMPONENT_NAME}" -o "${format}" --save
-
+    assert_success
+    FILE_TO_CLEANUP="$(echo "$output" | sed -n 's/.*Data saved to file: //p')"
     assert_file_exist "${FILE_TO_CLEANUP}"
     run bash -c "${validation_tool[$format]} -e \"$COMPONENT_REQUIRED_FIELDS\" \"${FILE_TO_CLEANUP}\""
 
@@ -59,31 +59,32 @@ test_component_view_format() {
 
 test_view_save() {
   local format=$1
-  FILE_TO_CLEANUP="${HOME}/.meshery/component_${COMPONENT_NAME}.${format}"
 
-  local expected_success_message="Data saved to file: ${FILE_TO_CLEANUP}"
   run bash -c "printf '\n' | $MESHERYCTL_BIN component view \"${COMPONENT_NAME}\" -o ${format} --save"
 
   assert_success
 
-  assert_output --partial "$expected_success_message"
+  assert_output --partial "Data saved to file:"
+  FILE_TO_CLEANUP="$(echo "$output" | sed -n 's/.*Data saved to file: //p')"
   assert_file_exist "$FILE_TO_CLEANUP"
+}
+
+assert_invalid_view_args() {
+  assert_failure
+  assert_output --partial "Error: Only one argument must be provided"
+  assert_output --partial "Invalid Argument"
+  assert_output --partial "Usage: mesheryctl component view [component-name | component-id]"
+  assert_output --partial "Run 'mesheryctl component view --help' to see detailed help message"
 }
 
 @test "given no component-name provided when mesheryctl component view then an error message is displayed" {
   run $MESHERYCTL_BIN component view
-  assert_failure
-  assert_output --partial "Error: [component name] is required but not specified"
-  assert_output --partial "Usage: mesheryctl component view [component-name]"
-  assert_output --partial "Run 'mesheryctl component view --help' to see detailed help message"
+  assert_invalid_view_args
 }
 
 @test "given a multiple component-name provided when mesheryctl component view component1 component2 then an error message is displayed" {
   run $MESHERYCTL_BIN component view comp1 comp2
-  assert_failure
-  assert_output --partial "Error: too many arguments specified"
-  assert_output --partial "Usage: mesheryctl component view [component-name]"
-  assert_output --partial "Run 'mesheryctl component view --help' to see detailed help message"
+  assert_invalid_view_args
 }
 
 @test "given an invalid format provided when mesheryctl component view component-name -o xml then an error message is displayed" {
@@ -91,7 +92,8 @@ test_view_save() {
 
   assert_failure
   assert_output --partial "Error"
-  assert_output --partial "Invalid Output Format"
+  assert_output --partial "Invalid flag(s) provided"
+  assert_output --partial "Invalid value for --output-format 'xml': valid values are json yaml"
 }
 
 @test "given a valid format provided when mesheryctl component view component-name -o json then the output is displayed in specified format" {
