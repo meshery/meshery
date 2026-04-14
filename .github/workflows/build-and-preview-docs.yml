@@ -27,6 +27,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       HUGO_VERSION: 0.157.0
+      PREVIEW_RETENTION_LIMIT: 6
 
     steps:
       - name: Checkout PR code
@@ -92,6 +93,47 @@ jobs:
           umbrella-dir: pr-preview
           action: auto
           comment: false
+
+      - name: Checkout gh-pages for preview retention
+        if: github.event.action != 'closed'
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          fetch-depth: 0
+          path: gh-pages-maintenance
+
+      - name: Prune old PR previews
+        if: github.event.action != 'closed'
+        run: |
+          cd gh-pages-maintenance
+          mkdir -p pr-preview
+
+          mapfile -t previews < <(
+            while IFS= read -r preview; do
+              timestamp="$(git log -1 --format=%ct -- "pr-preview/$preview" 2>/dev/null || echo 0)"
+              printf '%s %s\n' "$timestamp" "$preview"
+            done < <(find pr-preview -mindepth 1 -maxdepth 1 -type d -name 'pr-*' -printf '%f\n') \
+              | sort -nr \
+              | awk '{print $2}'
+          )
+
+          if (( ${#previews[@]} <= PREVIEW_RETENTION_LIMIT )); then
+            exit 0
+          fi
+
+          for preview in "${previews[@]:PREVIEW_RETENTION_LIMIT}"; do
+            rm -rf "pr-preview/$preview"
+          done
+
+          if git diff --quiet -- pr-preview; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pr-preview
+          git commit -m "Prune old PR previews"
+          git push
 
       - name: Comment PR with Preview URL
         if: github.event.action != 'closed'
