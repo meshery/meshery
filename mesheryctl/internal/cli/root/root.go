@@ -184,7 +184,8 @@ func initConfig() {
 			)
 
 			if err != nil {
-				utils.Log.Fatal(err)
+				utils.Log.Errorf("failed to initialize config: %v", err)
+				return
 			}
 		}
 	}
