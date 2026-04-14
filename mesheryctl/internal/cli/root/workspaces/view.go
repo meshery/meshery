@@ -66,10 +66,10 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 		var urlPath string
 		var displayData display.DisplayDataAsync
 
+		viewUrlValue := url.Values{}
+		viewUrlValue.Add("orgID", workspaceViewFlagsProvided.OrgID)
 		if utils.IsUUID(workspaceNameOrID) {
-			query := url.Values{}
-			query.Set("orgID", workspaceViewFlagsProvided.OrgID)
-			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(workspaceNameOrID), query.Encode())
+			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(workspaceNameOrID), viewUrlValue.Encode())
 			fetchedWorkspace, err := api.Fetch[workspace.AvailableWorkspace](urlPath)
 			if err != nil {
 				return err
@@ -84,8 +84,6 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			}
 		} else {
 			selectedAvailableWorkspace := new(workspace.AvailableWorkspace)
-			viewUrlValue := url.Values{}
-			viewUrlValue.Add("orgID", workspaceViewFlagsProvided.OrgID)
 			viewUrlValue.Add("search", workspaceNameOrID)
 
 			urlPath = fmt.Sprintf("%s?%s", workspacesApiPath, viewUrlValue.Encode())
@@ -106,20 +104,13 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 				return err
 			}
 
-			query := url.Values{}
-			query.Set("orgID", workspaceViewFlagsProvided.OrgID)
-			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(selectedAvailableWorkspace.ID.String()), query.Encode())
-			fetchedWorkspace, err := api.Fetch[workspace.AvailableWorkspace](urlPath)
-			if err != nil {
-				return err
-			}
 			selectedWorkspace = workspace.Workspace{
-				ID:             fetchedWorkspace.ID,
-				Name:           fetchedWorkspace.Name,
-				Description:    fetchedWorkspace.Description,
-				OrganizationID: fetchedWorkspace.OrganizationId,
-				CreatedAt:      fetchedWorkspace.CreatedAt,
-				UpdatedAt:      fetchedWorkspace.UpdatedAt,
+				ID:             selectedAvailableWorkspace.ID,
+				Name:           selectedAvailableWorkspace.Name,
+				Description:    selectedAvailableWorkspace.Description,
+				OrganizationID: selectedAvailableWorkspace.OrganizationId,
+				CreatedAt:      selectedAvailableWorkspace.CreatedAt,
+				UpdatedAt:      selectedAvailableWorkspace.UpdatedAt,
 			}
 		}
 
