@@ -190,7 +190,7 @@ func (p *Provider) post(ctx context.Context, path string, body, out interface{})
 	if err != nil {
 		return fmt.Errorf("do request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return &ai.RetryableError{

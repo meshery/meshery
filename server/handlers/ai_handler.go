@@ -164,7 +164,7 @@ func (h *Handler) HandleAIStream(w http.ResponseWriter, r *http.Request, _ *mode
 	for {
 		chunk, err := reader.Recv()
 		if err == io.EOF {
-			fmt.Fprint(w, "data: [DONE]\n\n")
+			_, _ = fmt.Fprint(w, "data: [DONE]\n\n")
 			if canFlush {
 				flusher.Flush()
 			}
@@ -172,7 +172,7 @@ func (h *Handler) HandleAIStream(w http.ResponseWriter, r *http.Request, _ *mode
 		}
 		if err != nil {
 			h.log.Error(ErrAIStream(err))
-			fmt.Fprintf(w, "data: {\"error\":%q}\n\n", err.Error())
+			_, _ = fmt.Fprintf(w, "data: {\"error\":%q}\n\n", err.Error())
 			if canFlush {
 				flusher.Flush()
 			}
@@ -184,7 +184,7 @@ func (h *Handler) HandleAIStream(w http.ResponseWriter, r *http.Request, _ *mode
 			h.log.Error(ErrAIStream(err))
 			continue
 		}
-		fmt.Fprintf(w, "data: %s\n\n", bs)
+		_, _ = fmt.Fprintf(w, "data: %s\n\n", bs)
 		if canFlush {
 			flusher.Flush()
 		}
