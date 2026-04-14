@@ -214,31 +214,37 @@ type ollamaStreamReader struct {
 }
 
 func (r *ollamaStreamReader) Recv() (ai.StreamChunk, error) {
-	if !r.scanner.Scan() {
-		_ = r.body.Close()
-		if err := r.scanner.Err(); err != nil {
-			return ai.StreamChunk{}, err
+	for {
+		if !r.scanner.Scan() {
+			if err := r.body.Close(); err != nil {
+				return ai.StreamChunk{}, fmt.Errorf("ollama stream close: %w", err)
+			}
+			if err := r.scanner.Err(); err != nil {
+				return ai.StreamChunk{}, err
+			}
+			return ai.StreamChunk{}, io.EOF
 		}
-		return ai.StreamChunk{}, io.EOF
-	}
 
-	line := r.scanner.Text()
-	if line == "" {
-		return r.Recv()
-	}
+		line := r.scanner.Text()
+		if line == "" {
+			continue
+		}
 
-	var msg ollamaChatResponse
-	if err := json.Unmarshal([]byte(line), &msg); err != nil {
-		return ai.StreamChunk{}, fmt.Errorf("ollama stream parse: %w", err)
-	}
+		var msg ollamaChatResponse
+		if err := json.Unmarshal([]byte(line), &msg); err != nil {
+			return ai.StreamChunk{}, fmt.Errorf("ollama stream parse: %w", err)
+		}
 
-	chunk := ai.StreamChunk{Content: msg.Message.Content}
-	if msg.Done {
-		chunk.FinishReason = "stop"
-		_ = r.body.Close()
-	}
+		chunk := ai.StreamChunk{Content: msg.Message.Content}
+		if msg.Done {
+			chunk.FinishReason = "stop"
+			if err := r.body.Close(); err != nil {
+				return chunk, fmt.Errorf("ollama stream close: %w", err)
+			}
+		}
 
-	return chunk, nil
+		return chunk, nil
+	}
 }
 
 // ------- helpers -------

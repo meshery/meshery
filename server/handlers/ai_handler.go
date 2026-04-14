@@ -179,7 +179,11 @@ func (h *Handler) HandleAIStream(w http.ResponseWriter, r *http.Request, _ *mode
 			return
 		}
 
-		bs, _ := json.Marshal(chunk)
+		bs, err := json.Marshal(chunk)
+		if err != nil {
+			h.log.Error(ErrAIStream(err))
+			continue
+		}
 		fmt.Fprintf(w, "data: %s\n\n", bs)
 		if canFlush {
 			flusher.Flush()

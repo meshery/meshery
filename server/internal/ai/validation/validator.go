@@ -92,6 +92,11 @@ func stripMarkdownFences(s string) string {
 		idx := strings.Index(s, "\n")
 		if idx != -1 {
 			s = s[idx+1:]
+		} else {
+			// Single-line fence: strip fence and common language tags
+			s = strings.TrimPrefix(s, "```")
+			s = strings.TrimPrefix(s, "json")
+			s = strings.TrimPrefix(s, "yaml")
 		}
 	}
 	if strings.HasSuffix(s, "```") {

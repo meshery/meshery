@@ -87,11 +87,14 @@ func (b *SchemaBuilder) findRelevantComponents(prompt string) []component.Compon
 	seen := map[string]bool{}
 
 	for _, kw := range keywords {
-		entities, _, _, _ := b.registry.GetEntities(&regv1beta1.ComponentFilter{
+		entities, _, _, err := b.registry.GetEntities(&regv1beta1.ComponentFilter{
 			DisplayName: kw,
 			Greedy:      true,
 			Limit:       10,
 		})
+		if err != nil {
+			continue
+		}
 		for _, e := range entities {
 			c, ok := e.(*component.ComponentDefinition)
 			if !ok || seen[c.Component.Kind] {
