@@ -164,13 +164,11 @@ func initConfig() {
 
 	if cfgFile != utils.DefaultConfigPath {
 
-		viper.SetConfigFile(cfgFile)
-
 	} else {
 
 		needsMutation, err := config.NeedsMutation(utils.DefaultConfigPath)
 		if err != nil {
-			utils.Log.Infof("Cannot access Meshery config file at %s. Error: %v", utils.DefaultConfigPath, err)
+			utils.Log.Errorf("Cannot access Meshery config file at %s. Error: %v", utils.DefaultConfigPath, err)
 			return
 		}
 
