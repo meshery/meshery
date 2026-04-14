@@ -437,7 +437,9 @@ func main() {
 			Endpoint: ollamaEndpoint,
 			Model:    viper.GetString("MESHERY_AI_OLLAMA_MODEL"),
 		})
-		h.InitAIService(aiCfgs)
+		if hh, ok := h.(*handlers.Handler); ok {
+			hh.InitAIService(aiCfgs)
+		}
 	}
 
 	b := broadcast.NewBroadcaster(100)
