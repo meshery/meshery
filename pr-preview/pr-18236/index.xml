@@ -32740,7 +32740,7 @@ Learn how to use Kubernetes CronJobs to schedule and automate periodic backups o
  &lt;input id="tab1" type="radio" name="tabs" checked&gt;
  &lt;label for="tab1" data-icon="&amp;#xf1cb;"&gt;REST API&lt;/label&gt;
  &lt;section class="tabbed" id="content1"&gt;
- &lt;p&gt;Meshery Server's REST API is available at &lt;code&gt;[hostname]:[port]/api/&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Extensibility: Authorization</title><link>/reference/extensibility/authorization/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/extensibility/authorization/</guid><description>&lt;p&gt;Meshery features an extensible authorization system that offers the ability to deliver fine-grained access control across it&amp;rsquo;s web-based user interface, &lt;a href="./concepts/architecture/"&gt;Meshery UI&lt;/a&gt;.&lt;/p&gt;
+ &lt;p&gt;Meshery Server's REST API is available at &lt;code&gt;[hostname]:[port]/api/&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Extensibility: Authorization</title><link>/reference/extensibility/authorization/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/extensibility/authorization/</guid><description>&lt;p&gt;Meshery features an extensible authorization system that offers the ability to deliver fine-grained access control across it&amp;rsquo;s web-based user interface, &lt;a href="./concepts/architecture"&gt;Meshery UI&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="authorization-keys"&gt;
 	Authorization Keys
 &lt;/h2&gt;
@@ -33236,7 +33236,7 @@ A &lt;strong&gt;&lt;a href="./concepts/logical/designs/"&gt;design&lt;/a&gt;&lt;
 	Suggested Reading
 &lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;Examine &lt;a href="./concepts/architecture/"&gt;Meshery&amp;rsquo;s architecture&lt;/a&gt; and how adapters fit in as a component.&lt;/li&gt;
+&lt;li&gt;Examine &lt;a href="./concepts/architecture"&gt;Meshery&amp;rsquo;s architecture&lt;/a&gt; and how adapters fit in as a component.&lt;/li&gt;
 &lt;li&gt;Learn more about &lt;a href="./concepts/architecture/adapters/"&gt;Meshery Adapters&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Meshery Adapter for Traefik Mesh</title><link>/extensions/adapters/traefik-mesh/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/traefik-mesh/</guid><description>&lt;h3 id="sample-applications"&gt;
 	Sample Applications
@@ -33254,7 +33254,7 @@ A &lt;strong&gt;&lt;a href="./concepts/logical/designs/"&gt;design&lt;/a&gt;&lt;
 	Suggested Topics
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;Examine &lt;a href="./concepts/architecture/"&gt;Meshery&amp;rsquo;s architecture&lt;/a&gt; and how adapters fit in as a component.&lt;/li&gt;
+&lt;li&gt;Examine &lt;a href="./concepts/architecture"&gt;Meshery&amp;rsquo;s architecture&lt;/a&gt; and how adapters fit in as a component.&lt;/li&gt;
 &lt;li&gt;Learn more about &lt;a href="./concepts/architecture/adapters/"&gt;Meshery Adapters&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Meshery CLI Style Guide</title><link>/project/contributing/contributing-cli-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-cli-guide/</guid><description>&lt;p&gt;These guidelines are a collection of principles and conventions that need to be followed while designing mesheryctl commands.&lt;/p&gt;
 &lt;h2 id="design-principles"&gt;
