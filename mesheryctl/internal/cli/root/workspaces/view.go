@@ -61,7 +61,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		workspaceNameOrID := args[0]
-		selectedWorkspace := new(workspace.Workspace)
+		var selectedWorkspace workspace.Workspace
 
 		var urlPath string
 		var displayData display.DisplayDataAsync
@@ -70,11 +70,18 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			query := url.Values{}
 			query.Set("orgID", workspaceViewFlagsProvided.OrgID)
 			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(workspaceNameOrID), query.Encode())
-			fetchedWorkspace, err := api.Fetch[workspace.Workspace](urlPath)
+			fetchedWorkspace, err := api.Fetch[workspace.AvailableWorkspace](urlPath)
 			if err != nil {
 				return err
 			}
-			*selectedWorkspace = *fetchedWorkspace
+			selectedWorkspace = workspace.Workspace{
+				ID:             fetchedWorkspace.ID,
+				Name:           fetchedWorkspace.Name,
+				Description:    fetchedWorkspace.Description,
+				OrganizationID: fetchedWorkspace.OrganizationId,
+				CreatedAt:      fetchedWorkspace.CreatedAt,
+				UpdatedAt:      fetchedWorkspace.UpdatedAt,
+			}
 		} else {
 			selectedAvailableWorkspace := new(workspace.AvailableWorkspace)
 			viewUrlValue := url.Values{}
@@ -102,15 +109,22 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			query := url.Values{}
 			query.Set("orgID", workspaceViewFlagsProvided.OrgID)
 			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(selectedAvailableWorkspace.ID.String()), query.Encode())
-			fetchedWorkspace, err := api.Fetch[workspace.Workspace](urlPath)
+			fetchedWorkspace, err := api.Fetch[workspace.AvailableWorkspace](urlPath)
 			if err != nil {
 				return err
 			}
-			*selectedWorkspace = *fetchedWorkspace
+			selectedWorkspace = workspace.Workspace{
+				ID:             fetchedWorkspace.ID,
+				Name:           fetchedWorkspace.Name,
+				Description:    fetchedWorkspace.Description,
+				OrganizationID: fetchedWorkspace.OrganizationId,
+				CreatedAt:      fetchedWorkspace.CreatedAt,
+				UpdatedAt:      fetchedWorkspace.UpdatedAt,
+			}
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[workspace.Workspace]{}
-		outputFormatter, err := outputFormatterFactory.New(workspaceViewFlagsProvided.OutputFormat, *selectedWorkspace)
+		outputFormatter, err := outputFormatterFactory.New(workspaceViewFlagsProvided.OutputFormat, selectedWorkspace)
 		if err != nil {
 			return err
 		}
