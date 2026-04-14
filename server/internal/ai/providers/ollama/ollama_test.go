@@ -3,6 +3,7 @@ package ollama_test
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -195,11 +196,7 @@ func TestComplete_SendsSystemPrompt(t *testing.T) {
 	}
 }
 
-// isRetryableError is a helper that avoids importing errors package in the test.
+// isRetryableError uses errors.As to unwrap the error chain and find a RetryableError.
 func isRetryableError(err error, target **ai.RetryableError) bool {
-	re, ok := err.(*ai.RetryableError)
-	if ok {
-		*target = re
-	}
-	return ok
+	return errors.As(err, target)
 }
