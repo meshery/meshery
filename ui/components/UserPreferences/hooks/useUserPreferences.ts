@@ -76,7 +76,7 @@ export const useUserPreferences = (
   };
 
   const handleError = (msg: string) => {
-    dispatch(updateProgress({ showProgress: false }));
+    updateProgress({ showProgress: false });
     notify({ message: msg, event_type: EVENT_TYPES.ERROR });
   };
 
@@ -98,11 +98,11 @@ export const useUserPreferences = (
       anonymousPerfResults: name === 'anonymousPerfResults' ? val : perfResultStats,
     });
 
-    dispatch(updateProgress({ showProgress: true }));
+    updateProgress({ showProgress: true });
     updateUserPrefWithContext({ body: requestBody })
       .unwrap()
       .then((result) => {
-        dispatch(updateProgress({ showProgress: false }));
+        updateProgress({ showProgress: false });
         if (typeof result !== 'undefined') {
           notify({ message: msg, event_type: val ? EVENT_TYPES.SUCCESS : EVENT_TYPES.INFO });
         }
