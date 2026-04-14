@@ -27,7 +27,7 @@ export const REMOTE_PROVIDERS = [
 export const SELECTED_REMOTE_PROVIDER =
     REMOTE_PROVIDERS.find(
         (provider) =>
-            provider.name === process.env.REACT_APP_REMOTE_PROVIDER_NAME,
+            provider.name === import.meta.env.VITE_REMOTE_PROVIDER_NAME,
     ) ?? REMOTE_PROVIDERS[0];
 
 export const SELECTED_PROVIDER_NAME = SELECTED_REMOTE_PROVIDER.name;

@@ -1,6 +1,7 @@
 {
   "name": "ui",
   "version": "1.0.0",
+  "type": "module",
   "homepage": "./",
   "description": "the cloud native management plane",
   "main": "index.js",
@@ -18,44 +19,41 @@
     "@mui/styles": "^6.4.8",
     "@sistent/mui-datatables": "^5.1.4",
     "@sistent/sistent": "0.16.10",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.1",
     "@xstate/react": "^6.0.0",
     "ajv": "^8.18.0",
-    "assert": "^2.1.0",
     "billboard.js": "^3.18.0",
-    "fs": "^0.0.1-security",
-    "https-browserify": "^1.0.0",
     "isomorphic-unfetch": "^4.0.2",
-    "os": "^0.1.2",
-    "os-browserify": "^0.3.0",
-    "process": "^0.11.10",
     "react": "^19.2.4",
-    "react-app-rewired": "^2.2.1",
     "react-dom": "^19.2.4",
     "react-joyride": "^3.0.0",
-    "react-scripts": "5.0.1",
-    "sans-serif": "^1.0.0",
-    "stream-browserify": "^3.0.0",
-    "stream-http": "^3.2.0",
     "styled-components": "^6.3.9",
-    "url": "^0.11.4",
     "web-pingjs": "^1.0.1",
-    "web-vitals": "^5.1.0",
     "xstate": "^5.26.0"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject"
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+      "eslint:recommended",
+      "plugin:react/recommended",
+      "plugin:react-hooks/recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2021,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    }
   },
   "browserslist": {
     "production": [
@@ -70,6 +68,8 @@
     ]
   },
   "devDependencies": {
-    "path-browserify": "^1.0.1"
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.0.8",
+    "vite-plugin-node-polyfills": "^0.22.0"
   }
 }
