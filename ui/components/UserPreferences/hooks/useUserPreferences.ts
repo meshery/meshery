@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
 import ExtensionPointSchemaValidator from '../../../utils/ExtensionPointSchemaValidator';
@@ -27,7 +26,7 @@ export const useUserPreferences = (
   const [providerInfo, setProviderInfo] = useState({});
 
   const dispatch = useDispatch();
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state: any) => state.ui);
 
   const {
     data: userData,
@@ -77,7 +76,7 @@ export const useUserPreferences = (
   };
 
   const handleError = (msg: string) => {
-    updateProgress({ showProgress: false });
+    dispatch(updateProgress({ showProgress: false }));
     notify({ message: msg, event_type: EVENT_TYPES.ERROR });
   };
 
@@ -99,11 +98,11 @@ export const useUserPreferences = (
       anonymousPerfResults: name === 'anonymousPerfResults' ? val : perfResultStats,
     });
 
-    updateProgress({ showProgress: true });
+    dispatch(updateProgress({ showProgress: true }));
     updateUserPrefWithContext({ body: requestBody })
       .unwrap()
       .then((result) => {
-        updateProgress({ showProgress: false });
+        dispatch(updateProgress({ showProgress: false }));
         if (typeof result !== 'undefined') {
           notify({ message: msg, event_type: val ? EVENT_TYPES.SUCCESS : EVENT_TYPES.INFO });
         }
@@ -116,7 +115,7 @@ export const useUserPreferences = (
   const handleUpdateUserPref = (key: string, value: unknown) => {
     if (!userData) return;
     const updates = _.set(_.cloneDeep(userData), key, value);
-    updateUserPrefWithContext(updates);
+    updateUserPrefWithContext({ body: JSON.stringify(updates) });
   };
 
   useEffect(() => {

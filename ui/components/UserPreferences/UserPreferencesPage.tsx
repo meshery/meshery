@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState } from 'react';
 import { Tab, Tabs, CustomTooltip, NoSsr, TachometerIcon, useTheme } from '@sistent/sistent';
 import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
@@ -32,7 +31,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
     userData,
     handleCatalogContentToggle,
     handleToggle,
-    handleUpdateUserPref,
   } = useUserPreferences(props.anonymousStats, props.perfResultStats);
 
   const handleTabValChange = (_event: React.SyntheticEvent, newVal: number) => {
@@ -83,7 +81,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
               perfResultStats={perfResultStats}
               handleCatalogContentToggle={handleCatalogContentToggle}
               handleToggle={handleToggle}
-              handleUpdateUserPref={handleUpdateUserPref}
             />
           )}
           {tabVal === 1 && <MesherySettingsPerformanceComponent />}

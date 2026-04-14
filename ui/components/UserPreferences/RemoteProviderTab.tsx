@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState } from 'react';
 import {
   Typography,
@@ -36,8 +35,25 @@ function convertToTitleCase(str: string): string {
   return words.join(' ');
 }
 
+interface Capability {
+  feature: string;
+  endpoint: string;
+}
+
+interface ExtensionEntry {
+  component: string;
+  type: string;
+}
+
+interface ProviderInfoData {
+  provider_description?: string[];
+  capabilities?: Capability[];
+  extensions?: Record<string, ExtensionEntry[]>;
+  [key: string]: unknown;
+}
+
 interface ProviderInfoTabProps {
-  providerInfo: Record<string, unknown>;
+  providerInfo: ProviderInfoData;
   userData?: {
     remoteProviderPreferences?: {
       theme?: string;
@@ -270,24 +286,30 @@ const ProviderInfoDetails: React.FC<ProviderInfoTabProps> = ({ providerInfo, use
                     </Typography>
                   </GridExtensionHeader>
 
-                  <GridExtensionItem
-                    size={{ xs: 6 }}
-                    style={{
-                      borderRadius: '0 0 0 10px',
-                      padding: '20px 20px',
-                    }}
-                  >
-                    <Typography variant="body1">{extension[0].component}</Typography>
-                  </GridExtensionItem>
-                  <GridExtensionItem
-                    size={{ xs: 6 }}
-                    style={{
-                      borderRadius: '0 0 10px 0',
-                      padding: '20px 20px',
-                    }}
-                  >
-                    <Typography variant="body1">{convertToTitleCase(extension[0].type)}</Typography>
-                  </GridExtensionItem>
+                  {extension[0] && (
+                    <>
+                      <GridExtensionItem
+                        size={{ xs: 6 }}
+                        style={{
+                          borderRadius: '0 0 0 10px',
+                          padding: '20px 20px',
+                        }}
+                      >
+                        <Typography variant="body1">{extension[0].component}</Typography>
+                      </GridExtensionItem>
+                      <GridExtensionItem
+                        size={{ xs: 6 }}
+                        style={{
+                          borderRadius: '0 0 10px 0',
+                          padding: '20px 20px',
+                        }}
+                      >
+                        <Typography variant="body1">
+                          {convertToTitleCase(extension[0].type)}
+                        </Typography>
+                      </GridExtensionItem>
+                    </>
+                  )}
                 </Grid2>
               </div>
             ))}
@@ -298,7 +320,7 @@ const ProviderInfoDetails: React.FC<ProviderInfoTabProps> = ({ providerInfo, use
 };
 
 interface RemoteProviderTabProps {
-  providerInfo: Record<string, unknown>;
+  providerInfo: ProviderInfoData;
   userData?: {
     remoteProviderPreferences?: {
       theme?: string;

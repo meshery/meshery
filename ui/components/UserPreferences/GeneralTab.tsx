@@ -1,40 +1,21 @@
-// @ts-nocheck
 import React from 'react';
 import { FormGroup, FormControlLabel, Switch } from '@sistent/sistent';
 import { ThemeTogglerCore } from '@/themes/hooks';
 import { FormContainerWrapper, FormGroupWrapper, FormLegend } from './style';
-
-interface ThemeTogglerProps {
-  handleUpdateUserPref: (key: string, value: string) => void;
-}
 
 interface ThemeComponentProps {
   mode: 'light' | 'dark';
   toggleTheme: () => void;
 }
 
-const ThemeToggler: React.FC<ThemeTogglerProps> = ({ handleUpdateUserPref }) => {
-  const Component: React.FC<ThemeComponentProps> = ({ mode, toggleTheme }) => {
-    return (
-      <div>
-        <Switch
-          color="primary"
-          checked={mode === 'dark'}
-          onChange={() => {
-            toggleTheme();
-            handleUpdateUserPref(
-              'remoteProviderPreferences.theme',
-              mode === 'dark' ? 'light' : 'dark',
-            );
-          }}
-        />
-        Dark Mode
-      </div>
-    );
-  };
+const ThemeComponent: React.FC<ThemeComponentProps> = ({ mode, toggleTheme }) => (
+  <div>
+    <Switch color="primary" checked={mode === 'dark'} onChange={toggleTheme} />
+    Dark Mode
+  </div>
+);
 
-  return <ThemeTogglerCore Component={Component}></ThemeTogglerCore>;
-};
+const ThemeToggler: React.FC = () => <ThemeTogglerCore Component={ThemeComponent} />;
 
 interface GeneralTabProps {
   catalogContent: boolean;
@@ -42,7 +23,6 @@ interface GeneralTabProps {
   perfResultStats?: boolean;
   handleCatalogContentToggle: () => void;
   handleToggle: (name: string) => () => void;
-  handleUpdateUserPref: (key: string, value: unknown) => void;
 }
 
 const GeneralTab: React.FC<GeneralTabProps> = ({
@@ -51,13 +31,12 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
   perfResultStats,
   handleCatalogContentToggle,
   handleToggle,
-  handleUpdateUserPref,
 }) => {
   return (
     <>
       <FormContainerWrapper>
-        <FormGroupWrapper component="fieldset">
-          <FormLegend component="legend">Extensions</FormLegend>
+        <FormGroupWrapper component={'fieldset' as React.ElementType}>
+          <FormLegend>Extensions</FormLegend>
           <FormGroup>
             <FormControlLabel
               key="CatalogContentPreference"
@@ -76,8 +55,8 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
         </FormGroupWrapper>
       </FormContainerWrapper>
       <FormContainerWrapper>
-        <FormGroupWrapper component="fieldset">
-          <FormLegend component="legend">Analytics and Improvement Program</FormLegend>
+        <FormGroupWrapper component={'fieldset' as React.ElementType}>
+          <FormLegend>Analytics and Improvement Program</FormLegend>
           <FormGroup>
             <FormControlLabel
               key="UsageStatsPreference"
@@ -109,10 +88,10 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
         </FormGroupWrapper>
       </FormContainerWrapper>
       <FormContainerWrapper>
-        <FormGroupWrapper component="fieldset">
-          <FormLegend component="legend">Theme</FormLegend>
+        <FormGroupWrapper component={'fieldset' as React.ElementType}>
+          <FormLegend>Theme</FormLegend>
           <FormGroup>
-            <ThemeToggler handleUpdateUserPref={handleUpdateUserPref} />
+            <ThemeToggler />
           </FormGroup>
         </FormGroupWrapper>
       </FormContainerWrapper>
