@@ -65,7 +65,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                 label={<TabLabel>Performance</TabLabel>}
               />
             </CustomTooltip>
-            {userPrefs && providerType != 'local' && (
+            {userPrefs && providerType !== 'local' && (
               <CustomTooltip title="Remote Provider preferences" placement="top">
                 <Tab
                   icon={<SettingsRemoteIcon style={iconMedium} />}
@@ -88,11 +88,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
           )}
           {tabVal === 1 && <MesherySettingsPerformanceComponent />}
           {tabVal === 2 && userPrefs && providerType !== 'local' && (
-            <RemoteProviderTab
-              userPrefs={userPrefs}
-              providerInfo={providerInfo}
-              userData={userData}
-            />
+            <RemoteProviderTab providerInfo={providerInfo} userData={userData} />
           )}
         </StatsWrapper>
       </NoSsr>

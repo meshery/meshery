@@ -165,7 +165,7 @@ const ProviderInfoDetails: React.FC<ProviderInfoTabProps> = ({ providerInfo, use
               }
             />
             <CardContent>
-              <Typography>
+              <Typography component="div">
                 <ul>
                   {providerInfo.provider_description &&
                     providerInfo.provider_description.map((desc, index) => (
@@ -298,7 +298,6 @@ const ProviderInfoDetails: React.FC<ProviderInfoTabProps> = ({ providerInfo, use
 };
 
 interface RemoteProviderTabProps {
-  userPrefs: unknown;
   providerInfo: Record<string, unknown>;
   userData?: {
     remoteProviderPreferences?: {
@@ -307,11 +306,7 @@ interface RemoteProviderTabProps {
   };
 }
 
-const RemoteProviderTab: React.FC<RemoteProviderTabProps> = ({
-  userPrefs,
-  providerInfo,
-  userData,
-}) => {
+const RemoteProviderTab: React.FC<RemoteProviderTabProps> = ({ providerInfo, userData }) => {
   const [value, setValue] = useState(0);
   const { width } = useWindowDimensions();
 
