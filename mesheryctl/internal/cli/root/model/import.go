@@ -194,7 +194,12 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 		importRequest.ImportBody.ModelFile = data
 	default:
 		if data != nil {
-			err = encoding.Unmarshal(data, &importRequest.ImportBody.Model)
+			flattenedData, err := flattenModelScaffold(data)
+			if err != nil {
+				return err
+			}
+
+			err = encoding.Unmarshal(flattenedData, &importRequest.ImportBody.Model)
 			if err != nil {
 				return err
 			}
@@ -243,6 +248,59 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 	}
 
 	return nil
+}
+
+func flattenModelScaffold(data []byte) ([]byte, error) {
+	var rawMap map[string]interface{}
+	if err := encoding.Unmarshal(data, &rawMap); err != nil {
+		return nil, err
+	}
+
+	flatModel := make(map[string]interface{})
+
+	for _, key := range []string{"name", "displayName", "version"} {
+		if val, exists := rawMap[key]; exists {
+			flatModel[key] = val
+		}
+	}
+
+	if mod, ok := rawMap["model"].(map[string]interface{}); ok {
+		if version, exists := mod["version"].(string); exists {
+			flatModel["version"] = version
+		}
+	}
+
+	if cat, ok := rawMap["category"].(map[string]interface{}); ok {
+		if name, exists := cat["name"].(string); exists {
+			flatModel["category"] = name
+		}
+	} else if cat, ok := rawMap["category"].(string); ok {
+		flatModel["category"] = cat
+	}
+
+	if subCat, ok := rawMap["subCategory"].(map[string]interface{}); ok {
+		if name, exists := subCat["name"].(string); exists {
+			flatModel["subCategory"] = name
+		}
+	} else if subCat, ok := rawMap["subCategory"].(string); ok {
+		flatModel["subCategory"] = subCat
+	}
+
+	if reg, ok := rawMap["registrant"].(map[string]interface{}); ok {
+		if hostname, exists := reg["hostname"].(string); exists {
+			flatModel["registrant"] = hostname
+		} else if name, exists := reg["name"].(string); exists {
+			flatModel["registrant"] = name
+		}
+	} else if reg, ok := rawMap["registrant"].(string); ok {
+		flatModel["registrant"] = reg
+	}
+
+	if meta, ok := rawMap["metadata"].(map[string]interface{}); ok {
+		flatModel["metadata"] = meta
+	}
+
+	return json.Marshal(flatModel)
 }
 
 func displayEntities(response *models.RegistryAPIResponse) {
