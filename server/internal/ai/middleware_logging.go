@@ -7,10 +7,11 @@ import (
 )
 
 // Logger is the minimal logging interface used by the logging middleware.
-// Compatible with meshkit/logger.Handler.
+// Matches the meshkit/logger.Handler interface signatures.
 type Logger interface {
 	Info(args ...interface{})
-	Error(args ...interface{})
+	Error(err error)
+	Errorf(format string, args ...interface{})
 }
 
 // LoggingMiddleware returns a middleware that logs request metadata and latency
@@ -32,8 +33,8 @@ func (p *loggingProvider) Complete(ctx context.Context, req CompleteRequest) (Co
 	elapsed := time.Since(start)
 
 	if err != nil {
-		p.log.Error(fmt.Sprintf("[ai] Complete provider=%s model=%s latency=%s error=%v",
-			req.Context.Provider, req.Context.Model, elapsed, err))
+		p.log.Errorf("[ai] Complete provider=%s model=%s latency=%s error=%v",
+			req.Context.Provider, req.Context.Model, elapsed, err)
 	} else {
 		tokens := 0
 		if resp.Usage != nil {
@@ -52,8 +53,8 @@ func (p *loggingProvider) Stream(ctx context.Context, req StreamRequest) (Stream
 	elapsed := time.Since(start)
 
 	if err != nil {
-		p.log.Error(fmt.Sprintf("[ai] Stream provider=%s model=%s latency=%s error=%v",
-			req.Context.Provider, req.Context.Model, elapsed, err))
+		p.log.Errorf("[ai] Stream provider=%s model=%s latency=%s error=%v",
+			req.Context.Provider, req.Context.Model, elapsed, err)
 	} else {
 		p.log.Info(fmt.Sprintf("[ai] Stream provider=%s model=%s ttft=%s",
 			req.Context.Provider, req.Context.Model, elapsed))
@@ -68,8 +69,8 @@ func (p *loggingProvider) Embed(ctx context.Context, req EmbedRequest) (EmbedRes
 	elapsed := time.Since(start)
 
 	if err != nil {
-		p.log.Error(fmt.Sprintf("[ai] Embed provider=%s model=%s latency=%s error=%v",
-			req.Context.Provider, req.Context.Model, elapsed, err))
+		p.log.Errorf("[ai] Embed provider=%s model=%s latency=%s error=%v",
+			req.Context.Provider, req.Context.Model, elapsed, err)
 	} else {
 		p.log.Info(fmt.Sprintf("[ai] Embed provider=%s model=%s latency=%s dims=%d",
 			req.Context.Provider, req.Context.Model, elapsed, len(resp.Vector)))

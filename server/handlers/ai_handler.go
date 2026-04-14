@@ -61,7 +61,7 @@ type aiProvidersResponse struct {
 //	200: aiGenerateResponseWrapper
 func (h *Handler) HandleAIGenerate(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	if h.aiService == nil {
-		h.log.Error("AI service is not configured")
+		h.log.Errorf("AI service is not configured")
 		http.Error(w, "AI service is not configured", http.StatusServiceUnavailable)
 		return
 	}
@@ -116,7 +116,7 @@ func (h *Handler) HandleAIGenerate(w http.ResponseWriter, r *http.Request, _ *mo
 // Streams an AI-generated response for the supplied natural-language prompt.
 func (h *Handler) HandleAIStream(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	if h.aiService == nil {
-		h.log.Error("AI service is not configured")
+		h.log.Errorf("AI service is not configured")
 		http.Error(w, "AI service is not configured", http.StatusServiceUnavailable)
 		return
 	}
