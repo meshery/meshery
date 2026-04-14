@@ -14,7 +14,7 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from '@sistent/sistent';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from '../../assets/icons/ExpandMoreIcon';
 import RJSFWrapper from '../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import cloneDeep from 'lodash/cloneDeep';
 import { useMeshModelComponents } from '@/utils/hooks/useMeshModelComponents';
