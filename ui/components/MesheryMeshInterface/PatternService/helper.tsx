@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { Colors } from '@/themes/app';
+import DOMPurify from 'isomorphic-dompurify';
 
 /**
  * Returns a value safe to use as React child or tooltip/label text.
@@ -203,7 +204,13 @@ const getHyperLinkWithDescription = (description) => {
 };
 
 export const getHyperLinkDiv = (text) => (
-  <div dangerouslySetInnerHTML={{ __html: getHyperLinkWithDescription(text) }} />
+  <div
+    dangerouslySetInnerHTML={{
+      __html: DOMPurify.sanitize(getHyperLinkWithDescription(text), {
+        ADD_ATTR: ['target'],
+      }),
+    }}
+  />
 );
 /**
  * Returns the schema for the credentials.
