@@ -238,9 +238,6 @@ func (r *ollamaStreamReader) Recv() (ai.StreamChunk, error) {
 		chunk := ai.StreamChunk{Content: msg.Message.Content}
 		if msg.Done {
 			chunk.FinishReason = "stop"
-			if err := r.body.Close(); err != nil {
-				return chunk, fmt.Errorf("ollama stream close: %w", err)
-			}
 		}
 
 		return chunk, nil
