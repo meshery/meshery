@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Tab, Tabs, CustomTooltip, NoSsr, TachometerIcon, useTheme } from '@sistent/sistent';
-import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
+// eslint-disable-next-line no-restricted-imports
 import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import MesherySettingsPerformanceComponent from '../Settings/MesherySettingsPerformanceComponent';
 import { iconMedium } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
 import { useUserPreferences } from './hooks/useUserPreferences';
 import GeneralTab from './GeneralTab';
-import RemoteProviderTab from './RemoteProviderTab';
 import { StatsWrapper, StyledPaper, TabLabel, IconStyled } from './style';
 
 interface UserPreferenceProps {
@@ -17,7 +16,7 @@ interface UserPreferenceProps {
 }
 
 const UserPreference: React.FC<UserPreferenceProps> = (props) => {
-  const [tabVal, setTabVal] = useState(0);
+  const [tabVal, setTabVal] = useState('general');
   const { width } = useWindowDimensions();
   const theme = useTheme();
 
@@ -25,15 +24,11 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
     anonymousStats,
     perfResultStats,
     catalogContent,
-    userPrefs,
-    providerType,
-    providerInfo,
-    userData,
     handleCatalogContentToggle,
     handleToggle,
   } = useUserPreferences(props.anonymousStats, props.perfResultStats);
 
-  const handleTabValChange = (_event: React.SyntheticEvent, newVal: number) => {
+  const handleTabValChange = (_event: React.SyntheticEvent, newVal: string) => {
     setTabVal(newVal);
   };
 
@@ -53,28 +48,22 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
           >
             <CustomTooltip title="General preferences" placement="top">
               <Tab
+                value="general"
                 icon={<IconStyled as={SettingsCellIcon} />}
                 label={<TabLabel>General</TabLabel>}
               />
             </CustomTooltip>
             <CustomTooltip title="Choose Performance Test Defaults" placement="top">
               <Tab
+                value="performance"
                 icon={<TachometerIcon {...iconMedium} fill={theme.palette.icon.default} />}
                 label={<TabLabel>Performance</TabLabel>}
               />
             </CustomTooltip>
-            {userPrefs && providerType !== 'local' && (
-              <CustomTooltip title="Remote Provider preferences" placement="top">
-                <Tab
-                  icon={<SettingsRemoteIcon style={iconMedium} />}
-                  label={<TabLabel>Remote Provider</TabLabel>}
-                />
-              </CustomTooltip>
-            )}
           </Tabs>
         </StyledPaper>
         <StatsWrapper>
-          {tabVal === 0 && (
+          {tabVal === 'general' && (
             <GeneralTab
               catalogContent={catalogContent}
               anonymousStats={anonymousStats}
@@ -83,10 +72,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
               handleToggle={handleToggle}
             />
           )}
-          {tabVal === 1 && <MesherySettingsPerformanceComponent />}
-          {tabVal === 2 && userPrefs && providerType !== 'local' && (
-            <RemoteProviderTab providerInfo={providerInfo} userData={userData} />
-          )}
+          {tabVal === 'performance' && <MesherySettingsPerformanceComponent />}
         </StatsWrapper>
       </NoSsr>
     </>

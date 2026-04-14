@@ -1,15 +1,12 @@
 import { useState, useEffect } from 'react';
-import _ from 'lodash';
-import ExtensionPointSchemaValidator from '../../../utils/ExtensionPointSchemaValidator';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import {
-  useGetProviderCapabilitiesQuery,
   useGetUserPrefQuery,
   useUpdateUserPrefMutation,
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
 
 export const useUserPreferences = (
@@ -18,15 +15,10 @@ export const useUserPreferences = (
 ) => {
   const [anonymousStats, setAnonymousStats] = useState(initialAnonymousStats);
   const [perfResultStats, setPerfResultStats] = useState(initialPerfResultStats);
-  const [userPrefs, setUserPrefs] = useState(ExtensionPointSchemaValidator('user_prefs')());
-  const [providerType, setProviderType] = useState('');
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
-  const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
-  const [providerInfo, setProviderInfo] = useState({});
 
   const dispatch = useDispatch();
-  const { capabilitiesRegistry } = useSelector((state: any) => state.ui);
 
   const {
     data: userData,
@@ -34,9 +26,6 @@ export const useUserPreferences = (
     isError: isUserDataError,
     error: userDataError,
   } = useGetUserPrefQuery();
-
-  const { data: capabilitiesData, isSuccess: isCapabilitiesDataFetched } =
-    useGetProviderCapabilitiesQuery();
 
   const [updateUserPref] = useUpdateUserPrefMutation();
   const [updateUserPrefWithContext] = useUpdateUserPrefWithContextMutation();
@@ -112,22 +101,6 @@ export const useUserPreferences = (
       });
   };
 
-  const handleUpdateUserPref = (key: string, value: unknown) => {
-    if (!userData) return;
-    const updates = _.set(_.cloneDeep(userData), key, value);
-    updateUserPrefWithContext({ body: JSON.stringify(updates) });
-  };
-
-  useEffect(() => {
-    if (capabilitiesRegistry && !capabilitiesLoaded) {
-      setCapabilitiesLoaded(true);
-      setUserPrefs(
-        ExtensionPointSchemaValidator('user_prefs')(capabilitiesRegistry?.extensions?.user_prefs),
-      );
-      setProviderType(capabilitiesRegistry?.provider_type);
-    }
-  }, [capabilitiesRegistry]);
-
   useEffect(() => {
     if (isUserDataFetched && userData) {
       setExtensionPreferences(userData?.usersExtensionPreferences);
@@ -137,22 +110,11 @@ export const useUserPreferences = (
     }
   }, [isUserDataFetched, userData]);
 
-  useEffect(() => {
-    if (isCapabilitiesDataFetched && capabilitiesData) {
-      setProviderInfo(capabilitiesData);
-    }
-  }, [isCapabilitiesDataFetched, capabilitiesData]);
-
   return {
     anonymousStats,
     perfResultStats,
     catalogContent,
-    userPrefs,
-    providerType,
-    providerInfo,
-    userData,
     handleCatalogContentToggle,
     handleToggle,
-    handleUpdateUserPref,
   };
 };
