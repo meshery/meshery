@@ -60,9 +60,10 @@ Invoke this skill when you need to define a new relationship between two or more
     - `metadata.capabilities.designer.edit`: Must be `true` for a relationship to be editable in MeshMap.
     - `description`: A clear, human-readable description of the relationship's purpose.
 
-## Output Format
+## Examples
 
-The output should be a JSON object compliant with the following template:
+### 1. Peer-to-Peer Reference (Edge)
+**Reasoning**: The Deployment is the originator of the reference, containing the field that must match the source PVC. The PVC provides its identity (mutator) to the Deployment's volume configuration (mutated).
 
 ```json
 {
@@ -71,11 +72,9 @@ The output should be a JSON object compliant with the following template:
   "type": "non-binding",
   "subType": "reference",
   "metadata": {
-    "description": "Short description of the relationship logic",
+    "description": "Deployment referencing a PVC via claimName",
     "capabilities": {
-      "designer": {
-        "edit": true
-      }
+      "designer": { "edit": true }
     }
   },
   "selectors": [
@@ -83,27 +82,110 @@ The output should be a JSON object compliant with the following template:
       "allow": {
         "from": [
           {
-            "kind": "SourceKind",
-            "model": "model-name",
+            "kind": "Deployment",
+            "model": "kubernetes",
             "patch": {
-              "mutatorRef": [["path", "to", "source"]]
+              "mutatedRef": [["configuration", "spec", "template", "spec", "volumes", "0", "persistentVolumeClaim", "claimName"]]
             }
           }
         ],
         "to": [
           {
-            "kind": "TargetKind",
-            "model": "model-name",
+            "kind": "PersistentVolumeClaim",
+            "model": "kubernetes",
             "patch": {
-              "mutatedRef": [["path", "to", "target"]]
+             "mutatorRef": [["configuration", "metadata", "name"]]
             }
           }
         ]
       }
     }
-  ],
-  "evaluationQuery": "Optional OPA query for complex validation",
-  "status": "enabled"
+  ]
+}
+```
+
+### 2. Hierarchical Inventory (Parent)
+**Reasoning**: The Namespace is the authoritative parent defining the logical scope. It provides its name (mutator) to be injected into the namespace field of all child components (mutated).
+
+```json
+{
+  "schemaVersion": "relationships.meshery.io/v1beta1",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "Namespace-level resource containment",
+    "capabilities": {
+      "designer": { "edit": true }
+    }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Namespace",
+            "model": "kubernetes",
+            "patch": {
+             "mutatorRef": [["configuration", "metadata", "name"]]
+             
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "*",
+            "model": "kubernetes",
+            "patch": {
+              "mutatedRef": [["configuration", "metadata", "namespace"]]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+### 3. Network Connectivity (Edge)
+**Reasoning**: The Service is the originator of the network connection, defining selection criteria. It provides its selector labels (mutator) to match or be mirrored by the Deployment's pod labels (mutated).
+
+```json
+{
+  "schemaVersion": "relationships.meshery.io/v1beta1",
+  "kind": "edge",
+  "type": "binding",
+  "subType": "network",
+  "metadata": {
+    "description": "Service targeting deployment pods",
+    "capabilities": {
+      "designer": { "edit": true }
+    }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Service",
+            "model": "kubernetes",
+            "patch": {
+              "mutatorRef": [["configuration", "spec", "selector"]]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "mutatedRef": [["configuration", "spec", "template", "metadata", "labels"]]
+            }
+          }
+        ]
+      }
+    }
+  ]
 }
 ```
 
