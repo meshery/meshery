@@ -1,53 +1,233 @@
 name: Update Test Report
 
 on:
+  # Manual dispatch is kept available so the workflow can be replayed against a known
+  # upstream run while we debug artifact publishing or push behavior.
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Workflow run ID that contains the e2e-test-reporter artifact
+        required: false
+        type: string
+      notification_issue_number:
+        description: Optional issue or pull request number to receive workflow status comments
+        required: false
+        type: string
+      debug_mode:
+        description: Enable debug logging
+        required: false
+        default: false
+        type: boolean
   workflow_run:
-    workflows: ['Meshery UI and Server']  
+    workflows: ['Meshery UI and Server']
     types: [completed]
+
+# Serializing this workflow avoids two report-updater runs from racing each other while they both
+# try to write the same generated file back onto master.
+concurrency:
+  group: update-e2e-test-report
+  cancel-in-progress: false
 
 permissions:
   actions: read
   contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   post-test-results:
     if: >
-        github.repository == 'meshery/meshery' && 
-        github.event.workflow_run.event == 'push' && 
-        github.event.workflow_run.head_branch == 'master'
+      github.repository == 'meshery/meshery' &&
+      (
+        github.event_name == 'workflow_dispatch' ||
+        (
+          github.event.workflow_run.event == 'push' &&
+          github.event.workflow_run.head_branch == 'master'
+        )
+      )
     runs-on: ubuntu-24.04
+    env:
+      TARGET_BRANCH: master
     steps:
-      - name: Checkout Repository
+      - name: Introspect inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_mode || 'false' }}"
+          echo "Run ID Input: ${{ github.event_name == 'workflow_dispatch' && inputs.run_id || '' }}"
+          echo "Notification Target: ${{ github.event_name == 'workflow_dispatch' && inputs.notification_issue_number || '' }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Workflow Run ID: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || '' }}"
+          echo "Workflow Run Conclusion: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion || '' }}"
+          echo "Head Branch: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_branch || github.ref_name }}"
+          echo "::endgroup::"
+
+      - name: Resolve workflow context
+        id: workflow-context
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const isManualDispatch = context.eventName === 'workflow_dispatch';
+            const targetRunId = isManualDispatch
+              ? core.getInput('run_id')
+              : String(context.payload.workflow_run.id);
+
+            if (!targetRunId) {
+              core.setFailed('A target run ID is required to download the e2e-test-reporter artifact.');
+              return;
+            }
+
+            const sameRepoPullRequest = context.payload.workflow_run?.pull_requests?.find((pullRequest) =>
+              pullRequest.url?.includes(`/repos/${context.repo.owner}/${context.repo.repo}/pulls/`),
+            );
+
+            const notificationIssueNumber = isManualDispatch
+              ? core.getInput('notification_issue_number')
+              : String(sameRepoPullRequest?.number || '');
+
+            core.setOutput('target-run-id', targetRunId);
+            core.setOutput('notification-issue-number', notificationIssueNumber);
+            core.info(`Resolved artifact source run: ${targetRunId}`);
+            core.info(
+              notificationIssueNumber
+                ? `Resolved notification target: #${notificationIssueNumber}`
+                : 'No issue or pull request target was resolved for workflow comments.',
+            );
+
+      - name: Comment workflow start
+        if: steps.workflow-context.outputs.notification-issue-number != ''
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number('${{ steps.workflow-context.outputs.notification-issue-number }}'),
+              body: `### Update Test Report\nStatus: started\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
+
+      # The cloud-comment action is required by our workflow standards. It is wired as a safe no-op
+      # unless a compatible Cloud PR number is explicitly provided through PR_NUMBER.
+      - name: Post workflow start to Cloud comment channel
+        if: always()
+        uses: layer5labs/meshery-extensions-packages/.github/actions/cloud-comment@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          PR_NUMBER: ''
+        with:
+          message: |
+            ### Update Test Report
+            Status: started
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          append: 'false'
+          recreate: 'true'
+          id: update-test-report
+
+      - name: Checkout repository
         uses: actions/checkout@v6
         with:
           token: ${{ secrets.RELEASE_NOTES_PAT }}
-          ref: 'master'
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
 
       - name: Download e2e test report artifact
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
-           name: e2e-test-reporter
-           path: e2e-test-reporter
-           github-token: ${{ secrets.GITHUB_TOKEN }}
-           run-id: ${{ github.event.workflow_run.id }}
-      
+          name: e2e-test-reporter
+          path: e2e-test-reporter
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ steps.workflow-context.outputs.target-run-id }}
+
       - name: Move test report to shortcodes folder
         run: |
-            if [ ! -f e2e-test-reporter/ui/test-report.md ]; then
+          if [ ! -f e2e-test-reporter/ui/test-report.md ]; then
             echo "Error: Test report not found!" && exit 1
-            fi
-            mkdir -p docs/layouts/shortcodes 
-            mv e2e-test-reporter/ui/test-report.md docs/layouts/shortcodes/test-report.md
-            
-      - name: Pull changes from remote
-        run: git pull origin master
+          fi
 
-      - name: Commit artifact
-        uses: stefanzweifel/git-auto-commit-action@v7
+          mkdir -p docs/layouts/shortcodes
+          mv e2e-test-reporter/ui/test-report.md docs/layouts/shortcodes/test-report.md
+
+      - name: Commit artifact with retry-on-rebase push
+        id: commit-report
+        run: |
+          set -euo pipefail
+
+          report_path="docs/layouts/shortcodes/test-report.md"
+
+          git config user.name "l5io"
+          git config user.email "ci@meshery.io"
+
+          if git diff --quiet -- "$report_path"; then
+            echo "push-status=no-change" >> "$GITHUB_OUTPUT"
+            echo "No report changes detected."
+            exit 0
+          fi
+
+          git add "$report_path"
+          git commit --signoff -m "[Docs] Updated test report"
+
+          for attempt in 1 2 3; do
+            echo "Push attempt ${attempt}: rebasing onto origin/${TARGET_BRANCH} before publishing the updated report."
+            if git pull --rebase origin "$TARGET_BRANCH" && git push origin "HEAD:${TARGET_BRANCH}"; then
+              echo "push-status=updated" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            git rebase --abort || true
+
+            if [ "$attempt" -eq 3 ]; then
+              echo "push-status=failed" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+
+            sleep $((attempt * 5))
+          done
+
+      - name: Comment workflow completion
+        if: always() && steps.workflow-context.outputs.notification-issue-number != ''
+        uses: actions/github-script@v8
         with:
-          file_pattern: "docs/layouts/shortcodes/test-report.md"
-          commit_user_name: l5io
-          commit_user_email: ci@meshery.io
-          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "[Docs] Updated test report"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pushStatus = '${{ steps.commit-report.outputs.push-status }}' || 'not-run';
+            const jobStatus = '${{ job.status }}';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number('${{ steps.workflow-context.outputs.notification-issue-number }}'),
+              body: `### Update Test Report\nStatus: ${jobStatus}\nPush Result: ${pushStatus}\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
+
+      - name: Post workflow completion to Cloud comment channel
+        if: always()
+        uses: layer5labs/meshery-extensions-packages/.github/actions/cloud-comment@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          PR_NUMBER: ''
+        with:
+          message: |
+            ### Update Test Report
+            Status: ${{ job.status }}
+            Push Result: ${{ steps.commit-report.outputs.push-status || 'not-run' }}
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          append: 'false'
+          recreate: 'true'
+          id: update-test-report
+
+      - name: Email alert on failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v7
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "Workflow Failed: ${{ github.workflow }}"
+          from: |
+            "Update Test Report" <no-reply@meshery.io>
+          to: developers@meshery.io
+          body: |
+            The ${{ github.workflow }} workflow failed in ${{ github.repository }}.
+            Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Triggering actor: ${{ github.actor }}
