@@ -3,6 +3,7 @@
   z-index: 9;
   height: calc(100vh - var(--navbar-height));
   transition: all 0.5s ease-in-out;
+  margin-left: calc(-1 * (var(--sidebar-width) + 1rem));
   margin-top: calc(var(--navbar-height));
   top: calc(var(--navbar-height));
   & .sidebar-container-wrapper {
@@ -14,24 +15,24 @@
   & .icon-container {
     height: fit-content;
     z-index: 9;
-    display: none;
-    @media (max-width: 75em) {
-      margin-top: 3rem;
-      position: absolute;
-      right: -3rem;
-      display: block;
+    display: block;
+    position: absolute;
+    right: -2rem;
+    bottom: 3rem;
+
+    @media(max-width: 37.5em) {
+      bottom: 7rem;
     }
   }
   @media (max-width: 75em) {
     margin-top: 0;
-    transform: translateX(-100%);
+    margin-left: calc(-1 * var(--sidebar-width));
     position: fixed;
     display: flex;
-    width: 320px;
     left: -1rem;
   }
   &--active {
-    transform: translateX(0%);
+    margin-left: 0px;
     & .nav-toggle-btn--document svg {
       transform: rotate(180deg);
     }
@@ -68,9 +69,9 @@
   height: calc(100vh - var(--navbar-height));
   transition: all 0.5s ease-in-out;
   font-size: 1.5rem;
-  width: 320px;
-  max-width: 320px;
-  min-width: 320px;
+  width: var(--sidebar-width);
+  max-width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
   height: 100%;
 
   &::-webkit-scrollbar {
