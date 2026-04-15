@@ -29,7 +29,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	encoding "github.com/meshery/meshkit/encoding"
-	meshkitutils "github.com/meshery/meshkit/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -235,7 +234,8 @@ func generateFilename(patternName, design, designType string) string {
 }
 
 func writeToFile(outputFilePath string, buf *bytes.Buffer) error {
-	if err := meshkitutils.WriteToFile(outputFilePath, buf.String()); err != nil {
+	err := os.WriteFile(outputFilePath, buf.Bytes(), 0644)
+	if err != nil {
 		return err
 	}
 	utils.Log.Info("Design exported to ", outputFilePath)
@@ -346,8 +346,7 @@ func getUniqueFilename(filename string) string {
 	dir := filepath.Dir(filename)
 	base := filepath.Base(filename)
 
-	ext := ""
-	name := base
+	var name, ext string
 
 	// handle .tar.gz properly
 	if strings.HasSuffix(base, ".tar.gz") {
