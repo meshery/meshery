@@ -1,9 +1,7 @@
-import React from 'react';
-import { useContext } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { capitalize } from 'lodash';
 import { Loading } from '@/components/DesignLifeCycle/common';
 import { NotificationCenterContext } from '@/components/NotificationCenter';
-import { useEffect } from 'react';
 import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
 import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
 import {
@@ -11,6 +9,28 @@ import {
   ModelImportMessages,
 } from '@/components/NotificationCenter/formatters/model_registration';
 import { ErrorMetadataFormatter } from '@/components/NotificationCenter/formatters/error';
+
+const isImportRequestReady = (requestBody: any) => {
+  const importBody = requestBody?.importBody;
+
+  if (!requestBody?.uploadType || !importBody) {
+    return false;
+  }
+
+  switch (requestBody.uploadType) {
+    case 'csv':
+      return Boolean(
+        importBody.model_csv && importBody.component_csv && importBody.relationship_csv,
+      );
+    case 'file':
+      return Boolean(importBody.model_file);
+    case 'url':
+    case 'urlImport':
+      return Boolean(importBody.url);
+    default:
+      return true;
+  }
+};
 
 const FinishModelGenerateStep = ({
   requestBody,
@@ -22,14 +42,7 @@ const FinishModelGenerateStep = ({
   const [generateEvent, setGenerateEvent] = React.useState<any>();
   const { operationsCenterActorRef } = useContext(NotificationCenterContext);
   const [importMeshModel, { isLoading, error }] = useImportMeshModelMutation();
-
-  useEffect(() => {
-    const performImport = async () => {
-      await importMeshModel({ importBody: requestBody });
-    };
-
-    performImport();
-  }, []);
+  const hasStartedImportRef = useRef(false);
 
   useEffect(() => {
     const subscription = operationsCenterActorRef.on(
@@ -44,6 +57,20 @@ const FinishModelGenerateStep = ({
 
     return () => subscription.unsubscribe();
   }, [operationsCenterActorRef, generateType]);
+
+  useEffect(() => {
+    if (hasStartedImportRef.current || !isImportRequestReady(requestBody)) {
+      return;
+    }
+
+    hasStartedImportRef.current = true;
+
+    const performImport = async () => {
+      await importMeshModel({ importBody: requestBody });
+    };
+
+    void performImport();
+  }, [importMeshModel, requestBody]);
 
   const progressMessage = `${capitalize(generateType)}ing model`;
 
