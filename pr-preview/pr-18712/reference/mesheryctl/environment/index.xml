@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mesheryctl-environment on Documentation</title><link>/reference/mesheryctl/environment/</link><description>Recent content in mesheryctl-environment on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/reference/mesheryctl/environment/index.xml" rel="self" type="application/rss+xml"/><item><title>mesheryctl-environment-create</title><link>/reference/mesheryctl/environment/create/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/environment/create/</guid><description>&lt;h1 id="mesheryctl-environment-create"&gt;
+	mesheryctl environment create
+&lt;/h1&gt;
+&lt;p&gt;Create a new environment&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Create a new environment by providing the name and description of the environment&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl environment create [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Create a new environment&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -d, --description string Description of the environment
+ -h, --help help for create
+ -n, --name string Name of the environment
+ -o, --orgID string Organization ID
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-environment-delete</title><link>/reference/mesheryctl/environment/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/environment/delete/</guid><description>&lt;h1 id="mesheryctl-environment-delete"&gt;
+	mesheryctl environment delete
+&lt;/h1&gt;
+&lt;p&gt;Delete an environment&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Delete an environment by providing the environment ID&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl environment delete [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;delete a new environment&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl environment delete [environmentId]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for delete
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-environment-list</title><link>/reference/mesheryctl/environment/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/environment/list/</guid><description>&lt;h1 id="mesheryctl-environment-list"&gt;
+	mesheryctl environment list
+&lt;/h1&gt;
+&lt;p&gt;List registered environments&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;List detailed information of all registered environments&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl environment list [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;List all registered environment&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl environment list --orgID [orgID]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;List count of all registered environment&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl environment list --orgID [orgID] --count
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;List all registered environment at a specific page&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl environment list --orgID [orgID] --page [page]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;List all registered environment with a specific page size&lt;/p&gt;</description></item><item><title>mesheryctl-environment-view</title><link>/reference/mesheryctl/environment/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/environment/view/</guid><description>&lt;h1 id="mesheryctl-environment-view"&gt;
+	mesheryctl environment view
+&lt;/h1&gt;
+&lt;p&gt;View registered environmnents&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;View details of an environment registered in Meshery Server for a specific organization&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl environment view [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;View details of a specific environment&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl environment view --orgID [orgID]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for view
+ --orgID string Organization ID
+ -o, --output-format string (optional) format to display in [json|yaml] (default "yaml")
+ -s, --save (optional) save output as a JSON/YAML file
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item></channel></rss>
