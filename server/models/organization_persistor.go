@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta1/organization"
@@ -60,7 +62,7 @@ func (op *OrganizationPersister) SaveOrganization(org *organization.Organization
 	return marshalOrganizations([]organization.Organization{*org}), op.DB.Save(org).Error
 }
 
-func (op *OrganizationPersister) GetOrganzation(id uuid.UUID) ([]byte, error) {
+func (op *OrganizationPersister) GetOrganzation(id core.Uuid) ([]byte, error) {
 	var organization organization.Organization
 	err := op.DB.First(&organization, id).Error
 	return marshalOrganization(&organization), err

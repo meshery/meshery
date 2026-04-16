@@ -3,14 +3,14 @@ package models
 import (
 	"time"
 
-	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/core"
 )
 
 // PatternResource represents a pattern resource that is provisioned
 // by meshery
 type PatternResource struct {
-	ID        *uuid.UUID `json:"id,omitempty"`
-	UserID    *uuid.UUID `json:"user_id,omitempty"`
+	ID        *core.Uuid `json:"id,omitempty"`
+	UserID    *core.Uuid `json:"user_id,omitempty"`
 	Name      string     `json:"name,omitempty"`
 	Namespace string     `json:"namespace,omitempty"`
 	Type      string     `json:"type,omitempty"`

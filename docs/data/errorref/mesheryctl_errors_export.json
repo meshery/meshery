@@ -1884,6 +1884,15 @@
         "probable_cause": "You are not on correct context. \nMeshery is not reachable. \nThere might be some issue with your Docker or Kubernetes environment. ",
         "suggested_remediation": "Please ensure Meshery is installed. \nValidate that you are in the correct context. "
       },
+      "1228": {
+        "name": "ErrDockerComposeStopCode",
+        "code": "1228",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to stop Meshery containers",
+        "probable_cause": "An error occurred while trying to stop Meshery containers using Docker Compose",
+        "suggested_remediation": "Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder."
+      },
       "1229": {
         "name": "ErrLogoutCode",
         "code": "1229",

@@ -134,6 +134,126 @@ module.exports = [
       'no-dupe-keys': 'error',
       'react/prop-types': 'off',
       'prettier/prettier': ['error', { endOfLine: 'lf' }],
+
+      // ---------------------------------------------------------------------
+      // UI restructure guardrails (warn mode, phase 1).
+      //
+      // These rules encode the target architecture: one design system
+      // (@sistent/sistent), one theme source (@/theme), and a size budget
+      // for component files. They ship as warnings so CI stays green on
+      // day one; a later phase will allowlist today's offenders and promote
+      // the rules to errors.
+      // ---------------------------------------------------------------------
+
+      // Ban Material UI and legacy theme imports. @sistent/sistent is the
+      // only UI kit; @/theme is the approved Phase 1 theme entry point.
+      'no-restricted-imports': [
+        'warn',
+        {
+          paths: [
+            {
+              name: '@/theme/index',
+              message: 'Use @/theme; do not deep-import the local theme entry point.',
+            },
+            {
+              name: '@mui/material',
+              message: 'Use @sistent/sistent instead.',
+            },
+            {
+              name: '@mui/icons-material',
+              message: 'Use @sistent/sistent icons, or add an SVG component to ui/assets/icons.',
+            },
+            {
+              name: '@mui/x-date-pickers',
+              message:
+                'Wrap @mui/x-date-pickers in a single shared primitive; do not import it directly.',
+            },
+            {
+              name: '@mui/x-tree-view',
+              message:
+                'Wrap @mui/x-tree-view in a single shared primitive; do not import it directly.',
+            },
+            {
+              name: '@rjsf/mui',
+              message: 'Use the shared RJSF wrapper; do not import @rjsf/mui directly.',
+            },
+            {
+              name: '@/themes',
+              message: 'Use @/theme, the approved Phase 1 theme entry point.',
+            },
+            {
+              name: '@/themes/app',
+              message: 'Use @/theme and theme.palette.* instead of the legacy Colors object.',
+            },
+            {
+              name: '@/themes/index',
+              message: 'Use @/theme and theme.palette.* instead of NOTIFICATIONCOLORS.',
+            },
+            {
+              name: '@/constants/colors',
+              message: 'Use @/theme and theme.palette.* instead of legacy color constants.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@mui/*'],
+              message: 'Use @sistent/sistent instead.',
+            },
+            {
+              group: ['@material-ui/*'],
+              message: 'Material UI v4 is deprecated in this project — use @sistent/sistent.',
+            },
+          ],
+        },
+      ],
+
+      // Size budget for component files. 1000 lines is the hard ceiling;
+      // the plan is to drop this to 600 once the eight giant files are
+      // broken up in phase 5.
+      'max-lines': ['warn', { max: 1000, skipComments: true, skipBlankLines: true }],
+    },
+  },
+
+  // ---------------------------------------------------------------------
+  // Ban hex (#RRGGBB) and rgb()/rgba() literals in source files.
+  //
+  // Colors must come from theme.palette.* (or be composed with alpha() /
+  // lighten() / darken() from @sistent/sistent). The only places allowed
+  // to contain a literal color are:
+  //
+  //   - ui/theme/**       (the theme module itself)
+  //   - ui/themes/**      (legacy theme module, scheduled for deletion)
+  //   - ui/assets/**      (SVG icons encoded as React components)
+  //   - ui/constants/**   (legacy color constants, scheduled for deletion)
+  //   - ui/lib/**         (third-party integration helpers)
+  //   - ui/public/**      (static assets)
+  // ---------------------------------------------------------------------
+  {
+    files: ['**/*.{ts,tsx,js,jsx}'],
+    ignores: [
+      'theme/**',
+      'themes/**',
+      'assets/**',
+      'constants/**',
+      'lib/**',
+      'public/**',
+      'tests/**',
+      'scripts/**',
+      'eslint.config.js',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: 'Literal[value=/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]',
+          message: 'Hex color literals are forbidden outside ui/theme/. Use theme.palette.*.',
+        },
+        {
+          selector: 'Literal[value=/rgba?\\(/]',
+          message:
+            'rgb()/rgba() literals are forbidden outside ui/theme/. Use theme.palette.* (or alpha() from @sistent/sistent).',
+        },
+      ],
     },
   },
 
