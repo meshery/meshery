@@ -163,10 +163,7 @@ export const NavigatorListItem = styled(ListItemButton, {
     textDecoration: 'none',
   },
   '&:hover': {
-    backgroundColor:
-      theme.palette.mode === 'dark'
-        ? alpha(theme.palette.background.constant.white, 0.14)
-        : alpha(theme.palette.background.brand.default, 0.14),
+    backgroundColor: alpha(theme.palette.navigation.hover, 0.14),
     color: theme.palette.text.default,
     fill: theme.palette.text.default,
     '& $expandMoreIcon': {
@@ -191,10 +188,7 @@ export const NavigatorListItemII = styled(ListItemButton, {
   color: isActive ? theme.palette.text.brand : theme.palette.text.secondary,
   fill: isActive ? theme.palette.text.brand : theme.palette.text.secondary,
   '&:hover': {
-    backgroundColor:
-      theme.palette.mode === 'dark'
-        ? alpha(theme.palette.background.constant.white, 0.14)
-        : alpha(theme.palette.background.brand.default, 0.14),
+    backgroundColor: alpha(theme.palette.navigation.hover, 0.14),
     color: theme.palette.text.default,
     fill: theme.palette.text.default,
     '& $expandMoreIcon': {
@@ -219,10 +213,7 @@ export const NavigatorListItemIII = styled(ListItemButton, {
   color: isActive ? theme.palette.text.brand : theme.palette.text.secondary,
   fill: isActive ? theme.palette.text.brand : theme.palette.text.secondary,
   '&:hover': {
-    backgroundColor:
-      theme.palette.mode === 'dark'
-        ? alpha(theme.palette.background.constant.white, 0.14)
-        : alpha(theme.palette.background.brand.default, 0.14),
+    backgroundColor: alpha(theme.palette.navigation.hover, 0.14),
     color: theme.palette.text.default,
     fill: theme.palette.text.default,
     '& $expandMoreIcon': {
@@ -247,10 +238,7 @@ export const SideBarListItem = styled(ListItemButton, {
   },
   '&:hover': {
     ...(link && {
-      backgroundColor:
-        theme.palette.mode === 'dark'
-          ? alpha(theme.palette.background.constant.white, 0.14)
-          : alpha(theme.palette.background.brand.default, 0.14),
+      backgroundColor: alpha(theme.palette.navigation.hover, 0.14),
     }),
     color: theme.palette.text.default,
     fill: theme.palette.text.default,
