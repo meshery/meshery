@@ -57,7 +57,7 @@ const debounceWidthProvider = <P extends object>(
         if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
         observer.disconnect();
       };
-    }, [debounceTimeout, mounted]);
+    }, [debounceTimeout]);
 
     return (
       <div
