@@ -517,8 +517,10 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 			event, err := inst.SendEvent(context, machines.EventType(helpers.StatusToEvent(status)), nil)
 			if err != nil {
 				h.log.Error(err)
-				_ = provider.PersistEvent(*event, token)
-				h.config.EventBroadcaster.Publish(userID, event)
+				if event != nil {
+					_ = provider.PersistEvent(*event, token)
+					h.config.EventBroadcaster.Publish(userID, event)
+				}
 				return
 			}
 
@@ -526,8 +528,10 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 				smInstanceTracker.Remove(inst.ID)
 			}
 
-			_ = provider.PersistEvent(*event, token)
-			h.config.EventBroadcaster.Publish(userID, event)
+			if event != nil {
+				_ = provider.PersistEvent(*event, token)
+				h.config.EventBroadcaster.Publish(userID, event)
+			}
 		}(inst, connection.Status)
 	}
 
