@@ -18,7 +18,7 @@ mesheryctl environment create [flags]
 &lt;p&gt;Create a new environment&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+mesheryctl environment create --orgId [orgId] --name [name] --description [description]
 
 &lt;/div&gt;
 &lt;/pre&gt; 
@@ -30,7 +30,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
  -d, --description string Description of the environment
  -h, --help help for create
  -n, --name string Name of the environment
- -o, --orgID string Organization ID
+ -o, --orgId string Organization ID
 
 &lt;/div&gt;
 &lt;/pre&gt;
@@ -113,21 +113,21 @@ mesheryctl environment list [flags]
 &lt;p&gt;List all registered environment&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-mesheryctl environment list --orgID [orgID]
+mesheryctl environment list --orgId [orgId]
 
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;List count of all registered environment&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-mesheryctl environment list --orgID [orgID] --count
+mesheryctl environment list --orgId [orgId] --count
 
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;List all registered environment at a specific page&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-mesheryctl environment list --orgID [orgID] --page [page]
+mesheryctl environment list --orgId [orgId] --page [page]
 
 &lt;/div&gt;
 &lt;/pre&gt; 
@@ -151,7 +151,7 @@ mesheryctl environment view [flags]
 &lt;p&gt;View details of a specific environment&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-mesheryctl environment view --orgID [orgID]
+mesheryctl environment view --orgId [orgId]
 
 &lt;/div&gt;
 &lt;/pre&gt; 
@@ -161,7 +161,7 @@ mesheryctl environment view --orgID [orgID]
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
  -h, --help help for view
- --orgID string Organization ID
+ --orgId string Organization ID
  -o, --output-format string (optional) format to display in [json|yaml] (default "yaml")
  -s, --save (optional) save output as a JSON/YAML file
 
