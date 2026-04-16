@@ -131,11 +131,11 @@ mesheryctl workspace view [workspace-name|workspace-id] [flags]
 &lt;p&gt;View details of a specific workspace by ID&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-mesheryctl workspace view [workspace-id]
+mesheryctl workspace view [workspace-id] --orgId [orgId]
 
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;View details of a specific workspace by name (requires &amp;ndash;orgId)&lt;/p&gt;
+&lt;p&gt;View details of a specific workspace by name&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl workspace view [workspace-name] --orgId [orgId]
@@ -145,7 +145,7 @@ mesheryctl workspace view [workspace-name] --orgId [orgId]
 &lt;p&gt;View details of a specific workspace in JSON format&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-mesheryctl workspace view [workspace-id] --output-format json
+mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json
 
 &lt;/div&gt;
 &lt;/pre&gt; 
