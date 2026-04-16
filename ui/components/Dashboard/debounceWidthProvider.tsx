@@ -11,9 +11,7 @@ interface DebounceWidthProviderProps {
 }
 
 const debounceWidthProvider = <P extends object>(
-  ComposedComponent: React.ComponentType<
-    P & { width: number; innerRef?: React.Ref<HTMLDivElement> }
-  >,
+  ComposedComponent: React.ComponentType<P & { width: number }>,
 ) => {
   const Wrapper = (props: Omit<P, 'width'> & DebounceWidthProviderProps) => {
     const { measureBeforeMount = false, className, style, debounceTimeout = 0, ...rest } = props;
@@ -47,7 +45,7 @@ const debounceWidthProvider = <P extends object>(
         if (!entries[0]) return;
         if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = requestAnimationFrame(() => {
-          scheduleWidthUpdate(entries[0].contentRect.width);
+          scheduleWidthUpdate(Math.floor(entries[0].contentRect.width));
           rafIdRef.current = null;
         });
       });
@@ -61,24 +59,14 @@ const debounceWidthProvider = <P extends object>(
       };
     }, [debounceTimeout, mounted]);
 
-    if (measureBeforeMount && !mounted) {
-      return (
-        <div
-          className={[className, layoutClassName].filter(Boolean).join(' ')}
-          style={style}
-          ref={elementRef}
-        />
-      );
-    }
-
     return (
-      <ComposedComponent
-        innerRef={elementRef}
-        className={className}
+      <div
+        className={[className, layoutClassName].filter(Boolean).join(' ')}
         style={style}
-        {...(rest as P)}
-        width={width}
-      />
+        ref={elementRef}
+      >
+        {(!measureBeforeMount || mounted) && <ComposedComponent {...(rest as P)} width={width} />}
+      </div>
     );
   };
 
