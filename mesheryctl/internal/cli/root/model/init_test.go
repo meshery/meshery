@@ -213,7 +213,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "test_case_some_other_custom_dir",
 		},
 		{
-			Name: "model init fail if model/version folder esists",
+			Name: "given existing model/version folder when model init then throw error",
 			Args: []string{"init", initTestEC2Controller, "--path", ".", "--version", initTestInvalidVersion},
 			SetupHook: func() {
 				err := os.MkdirAll(filepath.Join(initTestEC2Controller, initTestInvalidVersion), initModelDirPerm)
@@ -228,7 +228,7 @@ func TestModelInit(t *testing.T) {
 			ExpectedError:      ErrModelInitFromString(fmt.Sprintf(errInitFolderExists, filepath.Join(initTestEC2Controller, initTestInvalidVersion))),
 		},
 		{
-			Name:             "model init with invalid version format",
+			Name:             "given invalid version format when model init then throw error",
 			Args:             []string{"init", initTestEC2Controller, "--version", "1.2"},
 			ExpectError:      true,
 			ExpectedResponse: "",
@@ -236,7 +236,7 @@ func TestModelInit(t *testing.T) {
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --version '1.2': version must be in format vX.X.X")),
 		},
 		{
-			Name:             "model init with invalid output format",
+			Name:             "given invalid output format when model init then throw error",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "--output-format", "protobuf"},
 			ExpectError:      true,
 			ExpectedResponse: "",
@@ -244,28 +244,28 @@ func TestModelInit(t *testing.T) {
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --output-format 'protobuf': valid values are json yaml")),
 		},
 		{
-			Name:             "model init no model name",
+			Name:             "given no model name provided when model init then throw error",
 			Args:             []string{"init", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(errInitOneArg),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%s", errInitOneArg)),
 		},
 		{
-			Name:             "model init too many arguments",
+			Name:             "given too many arguments when model init then throw error",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "test-case-aws-dynamodb-controller", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(errInitOneArg),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%s", errInitOneArg)),
 		},
 		{
-			Name:             "model init invalid model name (underscore)",
+			Name:             "given invalid model name when model init then throw error",
 			Args:             []string{"init", "test-case_aws-ec2-controller", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInit(fmt.Errorf("invalid model name: name must match pattern ^[a-z0-9-]+$")),
+			ExpectedError:    ErrModelInit(fmt.Errorf("%s", "invalid model name: name must match pattern ^[a-z0-9-]+$")),
 		},
 	}
 

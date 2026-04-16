@@ -152,11 +152,7 @@ jobs:
         with:
           header: pr-preview
           message: |
-            🚀 **Preview deployment for PR #${{ github.event.pull_request.number }}**
-
-            🌐 **Preview URL**: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/
-
-            _This preview will be updated automatically when you push new commits to this PR._
+            🚀 Preview deployment: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/
 
       - name: Comment on pruned previews
         if: github.event.action != 'closed' && steps.prune-previews.outputs.removed_prs_json != '[]'
