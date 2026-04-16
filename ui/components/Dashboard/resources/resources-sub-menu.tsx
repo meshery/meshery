@@ -3,12 +3,12 @@
 import React from 'react';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';
+import { TABS_SCROLL_BUTTONS_CLASS } from '../constants';
 
 import { SecondaryTab, SecondaryTabs, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
 import { iconMedium } from 'css/icons.styles';
 import { styled } from '@sistent/sistent';
-import { tabsClasses } from '@mui/material';
 
 const DashboardIconText = styled('div')({
   display: 'flex',
@@ -62,7 +62,7 @@ const ResourcesSubMenu = (props) => {
       <WrapperPaper>
         <SecondaryTabs
           sx={{
-            [`& .${tabsClasses.scrollButtons}`]: {
+            [`& .${TABS_SCROLL_BUTTONS_CLASS}`]: {
               '&.Mui-disabled': { display: 'none' },
             },
             '& .MuiTabs-scroller': {
