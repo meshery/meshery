@@ -156,16 +156,19 @@ export const NavigatorListItem = styled(ListItemButton, {
 })(({ theme, isDrawerCollapsed, isActive }) => ({
   paddingLeft: isDrawerCollapsed ? theme.spacing(2) : '',
   paddingRight: isDrawerCollapsed ? '16px' : '',
-  color: isActive
-    ? theme.palette.background.brand.default
-    : theme.palette.background.constant.disabled,
-  fill: isActive ? theme.palette.background.brand.default : theme.palette.background.constant.white,
+  color: isActive ? theme.palette.text.brand : theme.palette.text.secondary,
+  fill: isActive ? theme.palette.text.brand : theme.palette.text.secondary,
   '& a': {
     color: 'inherit',
     textDecoration: 'none',
   },
   '&:hover': {
-    backgroundColor: alpha(theme.palette.background.brand.default, 0.5),
+    backgroundColor:
+      theme.palette.mode === 'dark'
+        ? alpha(theme.palette.background.constant.white, 0.14)
+        : alpha(theme.palette.background.brand.default, 0.14),
+    color: theme.palette.text.default,
+    fill: theme.palette.text.default,
     '& $expandMoreIcon': {
       opacity: 1,
       transition: 'opacity 200ms ease-in',
@@ -185,12 +188,15 @@ export const NavigatorListItemII = styled(ListItemButton, {
       ? theme.spacing(3)
       : theme.spacing(5),
   paddingRight: isDrawerCollapsed ? '16px' : '',
-  color: isActive
-    ? theme.palette.background.brand.default
-    : theme.palette.background.constant.disabled,
-  fill: isActive ? theme.palette.background.brand.default : theme.palette.background.constant.white,
+  color: isActive ? theme.palette.text.brand : theme.palette.text.secondary,
+  fill: isActive ? theme.palette.text.brand : theme.palette.text.secondary,
   '&:hover': {
-    backgroundColor: alpha(theme.palette.background.brand.default, 0.5),
+    backgroundColor:
+      theme.palette.mode === 'dark'
+        ? alpha(theme.palette.background.constant.white, 0.14)
+        : alpha(theme.palette.background.brand.default, 0.14),
+    color: theme.palette.text.default,
+    fill: theme.palette.text.default,
     '& $expandMoreIcon': {
       opacity: 1,
       transition: 'opacity 200ms ease-in',
@@ -210,12 +216,15 @@ export const NavigatorListItemIII = styled(ListItemButton, {
       ? theme.spacing(3)
       : theme.spacing(5),
   paddingRight: isDrawerCollapsed ? '16px' : '',
-  color: isActive
-    ? theme.palette.background.brand.default
-    : theme.palette.background.constant.disabled,
-  fill: isActive ? theme.palette.background.brand.default : theme.palette.background.constant.white,
+  color: isActive ? theme.palette.text.brand : theme.palette.text.secondary,
+  fill: isActive ? theme.palette.text.brand : theme.palette.text.secondary,
   '&:hover': {
-    backgroundColor: alpha(theme.palette.background.brand.default, 0.5),
+    backgroundColor:
+      theme.palette.mode === 'dark'
+        ? alpha(theme.palette.background.constant.white, 0.14)
+        : alpha(theme.palette.background.brand.default, 0.14),
+    color: theme.palette.text.default,
+    fill: theme.palette.text.default,
     '& $expandMoreIcon': {
       opacity: 1,
       transition: 'opacity 200ms ease-in',
@@ -230,18 +239,21 @@ export const NavigatorListItemIII = styled(ListItemButton, {
 export const SideBarListItem = styled(ListItemButton, {
   shouldForwardProp: (prop) => prop !== 'link' && prop !== 'isActive' && prop !== 'isShow',
 })(({ link, isActive, isShow, theme }) => ({
-  color: isActive
-    ? theme.palette.background.brand.default
-    : theme.palette.background.constant.disabled,
-  fill: isActive ? theme.palette.background.brand.default : theme.palette.background.constant.white,
+  color: isActive ? theme.palette.text.brand : theme.palette.text.secondary,
+  fill: isActive ? theme.palette.text.brand : theme.palette.text.secondary,
   '& a': {
     color: 'inherit',
     textDecoration: 'none',
   },
   '&:hover': {
     ...(link && {
-      backgroundColor: alpha(theme.palette.background.constant.white, 0.5),
+      backgroundColor:
+        theme.palette.mode === 'dark'
+          ? alpha(theme.palette.background.constant.white, 0.14)
+          : alpha(theme.palette.background.brand.default, 0.14),
     }),
+    color: theme.palette.text.default,
+    fill: theme.palette.text.default,
 
     '.svg-inline--fa': {
       opacity: 1,
@@ -258,12 +270,15 @@ export const SideBarListItem = styled(ListItemButton, {
 export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
   opacity: drawerCollapsed ? 0 : 1,
   transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
-  fontSize: '14px',
+  fontSize: '1rem',
+  color: 'inherit',
   '& .MuiListItemText-primary': {
-    fontSize: '14px',
+    fontSize: '1rem',
+    color: 'inherit',
   },
   '& .MuiTypography-root': {
-    fontSize: '14px',
+    fontSize: '1rem',
+    color: 'inherit',
   },
 }));
 
