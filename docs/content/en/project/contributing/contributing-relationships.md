@@ -359,12 +359,18 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
 
 Before submitting your relationship, verify that it works visually in Meshery Kanvas.
 
-#### Option 1: Test Locally
+#### Option 1: Test Locally (Primary method)
 1. Run `make ui-server` from meshery root
 2. Open `localhost:9081` in your browser
 3. Navigate to Kanvas
 
-#### Option 2: Test in Playground
+### Playground Limitation
+
+1. Meshery Playground currently loads relationships from the official Meshery registry. This means that any newly defined or modified relationships in your local branch will not be reflected in the Playground unless they are merged into the registry.
+
+
+#### Option 2: Test in Playground (for already merged relationships only)
+
 1. Go to `https://playground.meshery.io` and sign in with GitHub
 2. Navigate to Kanvas
 
