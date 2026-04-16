@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { useState } from 'react';
-import { ComponentIcon, DEPLOYMENT_TYPE, Loading, processDesign } from './common';
+import { ComponentIcon, DEPLOYMENT_TYPE, Loading, getSvgWhiteForComponent, processDesign } from './common';
 import {
   designValidatorCommands,
   designValidatorEvents,
@@ -58,7 +58,7 @@ const ExpandableComponentErrors = ({
   validationMachine,
   currentComponentName, // if dry run is initiated by clicking on node's error badge
 }) => {
-  const componentIcon = component ? `/${component?.styles?.svgWhite}` : null;
+  const componentIcon = getSvgWhiteForComponent(component);
 
   const isCurrentComponent = (name) => name == currentComponentName;
   const [isComponentAccordionOpen, setIsComponentAccordionOpen] = useState(
@@ -97,7 +97,7 @@ const ExpandableComponentErrors = ({
       ref={isCurrentComponent(componentName) ? currentComponentErrorRef : null}
     >
       <DryRunComponentLabel button onClick={() => setIsComponentAccordionOpen((p) => !p)}>
-        {componentIcon && <ComponentIcon iconSrc={componentIcon} />}
+        <ComponentIcon iconSrc={componentIcon} />
         <ListItemText primary={componentName} />({errors.length})
         {isComponentAccordionOpen ? <ExpandLess /> : <ExpandMore />}
       </DryRunComponentLabel>
