@@ -8,6 +8,7 @@ import ResourcesSubMenu from './resources/resources-sub-menu';
 import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon';
 import { TabPanel } from './tabpanel';
+import { TABS_SCROLL_BUTTONS_CLASS } from './constants';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
 import { useState } from 'react';
@@ -34,13 +35,11 @@ import { applyMinSizeConstraints } from './layoutConstraints';
 import Popup from '../General/Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
-import { tabsClasses } from '@mui/material';
 import { useSelector } from 'react-redux';
 import useUnsavedChanges from './useUnsavedChanges';
 import UnsavedChangesModal from './UnsavedChangesModal';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-
 const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 
 const useDashboardRouter = () => {
@@ -327,7 +326,7 @@ const Dashboard = () => {
         <WrapperPaper>
           <Tabs
             sx={{
-              [`& .${tabsClasses.scrollButtons}`]: {
+              [`& .${TABS_SCROLL_BUTTONS_CLASS}`]: {
                 '&.Mui-disabled': { display: 'none' },
               },
             }}

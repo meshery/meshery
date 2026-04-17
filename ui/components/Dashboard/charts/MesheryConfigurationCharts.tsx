@@ -6,7 +6,6 @@ import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { InfoOutlined } from '@mui/icons-material';
 import { useGetPatternsQuery } from '@/rtk-query/design';
 import { useGetFiltersQuery } from '@/rtk-query/filter';
 import CAN from '@/utils/can';
@@ -15,7 +14,7 @@ import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
 
-import { Box, Typography, useTheme } from '@sistent/sistent';
+import { Box, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
 
 export default function MesheryConfigurationChart() {
   const router = useRouter();
