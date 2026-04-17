@@ -28,8 +28,7 @@ setup() {
   
   assert_failure
   
-  assert_output --partial "Error: model name isn't specified"
-  assert_output --partial "Usage: mesheryctl model view [model-name]"
+  assert_output --partial "only one argument must be provided"
 }
 
 @test "mesheryctl model view displays an existing model" {

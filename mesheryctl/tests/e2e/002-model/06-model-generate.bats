@@ -3,7 +3,7 @@
 setup() {
     load "$E2E_HELPERS_PATH/bats_libraries"
     _load_bats_libraries
-    export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/model"
+    export TESTDATA_DIR="${TEMP_DATA_DIR:-$HOME/.meshery/e2e-temp}/testdata/model"
     mkdir -p "$TESTDATA_DIR"  
     export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures"
 }
