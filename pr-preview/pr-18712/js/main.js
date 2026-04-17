@@ -92,28 +92,20 @@ clipboard.on("success", (e)=>{
 const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
 
 toggleBtnSidebarNav.addEventListener("click",()=>{
-    let sidebar=document.querySelector(".left-container")
-    if(sidebar){
-        isActiveState = localStorage.getItem('sidebar-state')
-        if (isActiveState === 'active') {
-            localStorage.setItem('sidebar-state', 'inactive')
-        } else {
-            localStorage.setItem('sidebar-state', 'active')
-        }
-        sidebar.classList.toggle('left-container--active')
+    let sidebarNav=document.querySelector(".left-container")
+    if(sidebarNav){
+        sidebarNav.classList.toggle("left-container--active")
     }
 })
 
 const toggleBtnMainNav=document.querySelector(".nav-toggle-btn--main");
 
-if (toggleBtnMainNav) {
-    toggleBtnMainNav.addEventListener("click",()=>{
-        let sidebarNav=document.getElementById("main_navbar")
-        if(sidebarNav){
-            sidebarNav.classList.toggle("main-navbar--active")
-        }
-    })
-}
+toggleBtnMainNav.addEventListener("click",()=>{
+    let sidebarNav=document.getElementById("main_navbar")
+    if(sidebarNav){
+        sidebarNav.classList.toggle("main-navbar--active")
+    }
+})
 
 document.addEventListener("click", (event) => {
     let sidebarNav = document.getElementById("main_navbar")
