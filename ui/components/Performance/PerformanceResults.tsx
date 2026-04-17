@@ -6,14 +6,14 @@ import MesheryChart from '../MesheryChart';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import GenericModal from '../General/Modals/GenericModal';
 import { BarChart as BarChartIcon, Info as InfoIcon, Reply as ReplyIcon } from '../icons';
-import fetchPerformanceResults from '../graphql/queries/PerformanceResultQuery';
+import fetchPerformanceResults from '@/graphql/queries/PerformanceResultQuery';
 import NodeDetails from './NodeDetails';
 import FacebookIcon from './assets/facebookIcon';
 import LinkedinIcon from './assets/linkedinIcon';
 import TwitterIcon from './assets/twitterIcon';
 import { iconMedium, iconLarge } from '../../css/icons.styles';
 import { TwitterShareButton, LinkedinShareButton, FacebookShareButton } from 'react-share';
-import subscribePerformanceResults from '../graphql/subscriptions/PerformanceResultSubscription';
+import subscribePerformanceResults from '@/graphql/subscriptions/PerformanceResultSubscription';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import {
