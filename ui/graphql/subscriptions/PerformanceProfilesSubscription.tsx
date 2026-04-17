@@ -1,5 +1,5 @@
 import { graphql } from 'react-relay';
-import { createSubscription } from '../../../lib/subscriptionHelper';
+import { createSubscription } from 'lib/subscriptionHelper';
 
 const performanceProfilesSubscription = graphql`
   subscription PerformanceProfilesSubscription($selector: PageFilter!) {

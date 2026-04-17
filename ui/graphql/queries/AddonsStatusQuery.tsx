@@ -1,6 +1,5 @@
 import { fetchQuery, graphql } from 'relay-runtime';
-import { createRelayEnvironment } from '../../../lib/relayEnvironment';
-
+import { createRelayEnvironment } from 'lib/relayEnvironment';
 interface ServiceMeshFilter {
   [key: string]: unknown;
 }

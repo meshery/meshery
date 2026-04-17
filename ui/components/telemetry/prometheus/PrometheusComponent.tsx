@@ -12,7 +12,7 @@ import GrafanaDisplaySelection from '../grafana/GrafanaDisplaySelection';
 import GrafanaCustomCharts from '../grafana/GrafanaCustomCharts';
 import PrometheusConfigComponent from './PrometheusConfigComponent';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
-import fetchAvailableAddons from '../../graphql/queries/AddonsStatusQuery';
+import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';

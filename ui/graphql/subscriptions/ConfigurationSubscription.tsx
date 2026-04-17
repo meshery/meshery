@@ -1,5 +1,5 @@
 import { graphql } from 'react-relay';
-import { createSubscription } from '../../../lib/subscriptionHelper';
+import { createSubscription } from 'lib/subscriptionHelper';
 
 const configurationSubscription = graphql`
   subscription ConfigurationSubscription(
