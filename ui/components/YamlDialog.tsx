@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Dialog,
   DialogActions,
@@ -7,10 +8,10 @@ import {
   Tooltip,
 } from '@sistent/sistent';
 import { UnControlled as CodeMirror } from './CodeMirror';
-import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import SaveIcon from '@mui/icons-material/Save';
+import ExpandLessIcon from '../assets/icons/ExpandLessIcon';
+import ExpandMoreIcon from '../assets/icons/ExpandMoreIcon';
+import DeleteIcon from '../assets/icons/DeleteIcon';
+import DoneIcon from '../assets/icons/DoneIcon';
 import { YamlDialogTitleText, StyledDialog } from './MesheryPatterns/style';
 import { StyledCodeMirrorWrapper } from './MesheryPatterns/Cards.styles';
 
@@ -34,9 +35,13 @@ const YAMLDialog = ({
     >
       <StyledDialog disableTypography id="filter-dialog-title">
         <YamlDialogTitleText variant="h6">{name}</YamlDialogTitleText>
-        <Tooltip title="Exit Fullscreen" arrow placement="bottom">
+        <Tooltip
+          title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+          arrow
+          placement="bottom"
+        >
           <IconButton onClick={toggleFullScreen} size="large">
-            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            {fullScreen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </IconButton>
         </Tooltip>
       </StyledDialog>
@@ -63,7 +68,7 @@ const YAMLDialog = ({
         <DialogActions>
           <Tooltip title="Update Pattern">
             <IconButton aria-label="Update" color="primary" onClick={updateHandler} size="large">
-              <SaveIcon />
+              <DoneIcon />
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete Filter">
