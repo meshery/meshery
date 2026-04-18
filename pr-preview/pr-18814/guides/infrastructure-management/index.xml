@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Infrastructure Management Guides on Documentation</title><link>/guides/infrastructure-management/</link><description>Recent content in Infrastructure Management Guides on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/guides/infrastructure-management/index.xml" rel="self" type="application/rss+xml"/><item><title>Deploying Sample Applications</title><link>/guides/infrastructure-management/sample-apps/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/sample-apps/</guid><description>&lt;p&gt;Meshery includes a few sample applications to help you explore cloud native infrastructure. Each is a collection of microservices for experimental purposes of learning about running workloads in Kubernetes clusters both on and off of cloud native infrastructure. When deploying a sample app onto your cloud native infrastructure, your sample application needs will need to be externaally exposed from the cluster, if you would like to access it externally. There are a myriad of ways to do this, specific to the infrastructure you are using.&lt;/p&gt;</description></item><item><title>Envoy WASM Filter Management</title><link>/guides/infrastructure-management/filter-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/filter-management/</guid><description>&lt;p&gt;Meshery offers powerful features that simplify the management of Envoy WASM filters in Istio.&lt;/p&gt;
+&lt;h3 id="meshery-ui-and-cli-integration"&gt;
+	Meshery UI and CLI Integration
+&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Import WASM Envoy Filters&lt;/strong&gt;: Easily import your WebAssembly Envoy filters into Meshery using the intuitive UI or the command-line interface (&lt;a href="https://docs.meshery.io/reference/mesheryctl#data-plane-intelligence"&gt;CLI&lt;/a&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Publish and Clone Filters&lt;/strong&gt;: Share your filters with the community by publishing them in the &lt;a href="https://meshery.io/catalog"&gt;Meshery Catalog&lt;/a&gt; and make it effortless for others to clone them.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Download WASM Binaries&lt;/strong&gt;: Access and download WebAssembly binaries directly from your Remote Provider like &lt;a href="https://cloud.layer5.io/"&gt;Layer5 Cloud&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Efficient Data Plane Design&lt;/strong&gt;: Seamlessly design and deploy Istio and Envoy data planes using extensions like &lt;a href="https://layer5.io/cloud-native-management/kanvas"&gt;Kanvas&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Contribute to Open Source&lt;/strong&gt;: Get involved with the cloud native community by contributing to any of the open source &lt;a href="https://github.com/layer5io/wasm-filters"&gt;wasm-filters&lt;/a&gt; developed by the Meshery community.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;img src="https://mcusercontent.com/6b50be5aea3dfe1fd4c041d80/images/a07ef29a-4cf8-986e-9bd3-78db7dc00ce1.png" width="100px" style="float:left;position:relative;margin: 1rem 1rem 1rem 0rem" /&gt;
+&lt;h2 id="envoy-wasm-filter-management"&gt;
+	Envoy WASM Filter Management
+&lt;/h2&gt;
+&lt;p&gt;As of Meshery v0.7, the management of Envoy WASM filters includes:&lt;/p&gt;</description></item><item><title>GitOps with Meshery</title><link>/guides/infrastructure-management/gitops-with-meshery/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/gitops-with-meshery/</guid><description>&lt;h2 id="kanvas-snapshot-github-action"&gt;
+	&lt;img style="height: 4rem; width: 4rem;" src="./images/kanvas-icon-color.svg" /&gt; Kanvas Snapshot GitHub Action
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;See your deployment before you merge&lt;/li&gt;
+&lt;li&gt;Connect Kanvas to your GitHub repo and see changes pull request-to-pull request&lt;/li&gt;
+&lt;li&gt;Get snapshots of your infrastructure directly in your PRs&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Using Meshery's SnapShot GitHub Action&lt;/h3&gt;
+See your deployment before you merge. Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
+&lt;p&gt;See &lt;a href="../../extensions/snapshot"&gt;Extension: Kanvas Snapshot&lt;/a&gt; for more details.&lt;/p&gt;</description></item><item><title>Infrastructure Discovery</title><link>/guides/infrastructure-management/registering-a-connection/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/registering-a-connection/</guid><description>&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;MeshSync&lt;/div&gt;
+&lt;p&gt;Managed by the &lt;a href='../../concepts/architecture/operator'&gt;Meshery Operator&lt;/a&gt;, MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of the Kubernetes clusters and their workloads. Learn more about &lt;a href='../../concepts/architecture/meshsync'&gt;MeshSync&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;MeshSync is your tool for efficient management and synchronization of Kubernetes clusters! This user guide will walk you through how to establish a connection with any element that Meshery is able to connect to and manage. Use the MeshSync page to register connections, view connection metadata, and perform connectivity tests, as weel as to manage credentials and environments.&lt;/p&gt;</description></item><item><title>Infrastructure Management</title><link>/guides/infrastructure-management/overview/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/overview/</guid><description>&lt;h2 id="using-meshery-designs-to-manage-your-infrastructure"&gt;
+	Using Meshery Designs to Manage Your Infrastructure
+&lt;/h2&gt;
+&lt;p&gt;Meshery is a versatile platform designed to streamline the lifecycle, configuration, and performance management of infrastructure across Kubernetes clusters.&lt;/p&gt;
+&lt;h3 id="designs-in-meshery"&gt;
+	Designs in Meshery
+&lt;/h3&gt;
+&lt;p&gt;Meshery employs the concept of &lt;a href="../../concepts/logical/designs/"&gt;Designs&lt;/a&gt; as a fundamental construct for managing infrastructure. Designs provide a structured way to organize and deploy various components of your infrastructure. To do so, Meshery utilizes a declarative approach to infrastructure management, similar to Kubernetes manifests. Meshery Designs are written in YAML and are validated against a schema.&lt;/p&gt;</description></item><item><title>Managing Connections</title><link>/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Meshery manages hundreds of different types of cloud native infrastructure. See the &lt;a href="../../extensibility/integrations"&gt;full set of integrations&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="cloud-native-infrastructure-lifecycle-management"&gt;
+	Cloud Native Infrastructure Lifecycle Management
+&lt;/h2&gt;
+&lt;p&gt;&lt;a href="../../guides/infrastructure-management/lifecycle-management/images/states-for-kubernetes-cluster-connections.svg"&gt;&lt;img class="content-image" src="./images/states-for-kubernetes-cluster-connections.svg" alt="Lifecycle Management" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Meshery Adapters can optionally be deployed to provide deep support of different types of infrastructure, so that you can learn and compare different infrastructure functionality. Once you have selected to operate a given infrastructure, Meshery will assist you with ongoing operations.&lt;/p&gt;
+&lt;p&gt;Meshery automates the provisioning of various infrastructurees, allowing users to select different configuration profiles in order to support a variety of deployment models.&lt;/p&gt;</description></item><item><title>Managing Events with Notification Center</title><link>/guides/infrastructure-management/notification-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/notification-management/</guid><description>&lt;p&gt;Meshery continuously tracks activities affecting your infrastructure and workloads. Meshery generates a variety of events, reflecting activities affecting the design and operation of your infrastructure whether those activities are directly or indirectly performed through Meshery operations.&lt;/p&gt;
+&lt;h3 id="what-is-the-notification-center"&gt;
+	What is the Notification Center?
+&lt;/h3&gt;
+&lt;p&gt;The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.&lt;/p&gt;</description></item></channel></rss>
