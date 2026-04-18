@@ -1,14 +1,15 @@
 // @ts-nocheck
 import React, { useState } from 'react';
-import { ArrowBack } from '@mui/icons-material';
 import { TooltipIconButton } from '../../utils/TooltipButton';
 import {
+  ArrowBackIcon as ArrowBack,
   Box,
   ErrorBoundary,
   OperatorDataFormatter,
-  useResourceCleanData,
   Paper,
+  styled,
   Typography,
+  useResourceCleanData,
 } from '@sistent/sistent';
 import { ALL_VIEW } from './resources/config';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
@@ -18,7 +19,6 @@ import { getK8sContextFromClusterId } from '@/utils/multi-ctx';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from '../connections/ConnectionChip';
 import ResourceDetailFormatData, { JSONViewFormatter } from './view-component';
-import { styled } from '@mui/system';
 import { useRouter } from 'next/router';
 import GetKubernetesNodeIcon from './utils';
 import { CONNECTION_STATES } from '@/utils/Enum';

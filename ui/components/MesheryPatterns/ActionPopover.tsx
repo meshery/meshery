@@ -4,11 +4,11 @@ import {
   IconButton,
   MenuItem,
   MenuList,
+  MoreVertIcon,
   Paper,
   Popper,
   Tooltip,
 } from '@sistent/sistent';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const ActionPopover = ({ actions = [] }) => {
   const [open, setOpen] = React.useState(false);

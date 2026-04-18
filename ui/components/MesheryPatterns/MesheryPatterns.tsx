@@ -146,7 +146,7 @@ const YamlDialogTitleText = styled(Typography)(() => ({
 }));
 
 function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
-  const [yaml, setYaml] = useState(pattern.pattern_file);
+  const [yaml, setYaml] = useState(pattern.patternFile);
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -195,7 +195,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
       <DialogContent>
         <FullScreenCodeMirrorWrapper>
           <CodeMirror
-            value={pattern.pattern_file}
+            value={pattern.patternFile}
             options={{
               theme: 'material',
               lineNumbers: true,
@@ -1081,7 +1081,7 @@ function MesheryPatterns({
               label: 'Validate Design',
               icon: <CheckIcon data-cy="verify-button" />,
               onClick: (e) => {
-                openValidateModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                openValidateModal(e, rowData.patternFile, rowData.name, rowData.id);
               },
               disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
             },
@@ -1089,7 +1089,7 @@ function MesheryPatterns({
               label: 'Dry Run',
               icon: <DryRunIcon data-cy="verify-button" />,
               onClick: (e) => {
-                openDryRunModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                openDryRunModal(e, rowData.patternFile, rowData.name, rowData.id);
               },
               disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
             },
@@ -1097,7 +1097,7 @@ function MesheryPatterns({
               label: 'Undeploy',
               icon: <UndeployIcon fill="#F91313" data-cy="undeploy-button" />,
               onClick: (e) => {
-                openUndeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                openUndeployModal(e, rowData.patternFile, rowData.name, rowData.id);
               },
               disabled: !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject),
             },
@@ -1105,7 +1105,7 @@ function MesheryPatterns({
               label: 'Deploy',
               icon: <DoneAllIcon data-cy="deploy-button" />,
               onClick: (e) => {
-                openDeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                openDeployModal(e, rowData.patternFile, rowData.name, rowData.id);
               },
               disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
             },

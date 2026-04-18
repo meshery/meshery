@@ -6,7 +6,6 @@ import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { InfoOutlined } from '@mui/icons-material';
 import {
   useGetCategoriesSummary,
   useGetComponentsQuery,
@@ -18,7 +17,7 @@ import { DashboardSection } from '../style';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-import { Typography, useTheme, Grid2 } from '@sistent/sistent';
+import { Grid2, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
 
 function MeshModelContructs() {
   const params = {
@@ -73,6 +72,7 @@ function MeshModelContructs() {
     <Link
       href="/settings?settingsCategory=Registry"
       style={{
+        textDecoration: 'none',
         pointerEvents: !CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)
           ? 'none'
           : 'auto',
@@ -156,7 +156,7 @@ function MeshModelCategories() {
   );
 
   return (
-    <Link href="/settings?settingsCategory=Registry&tab=Models">
+    <Link href="/settings?settingsCategory=Registry&tab=Models" style={{ textDecoration: 'none' }}>
       <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom>

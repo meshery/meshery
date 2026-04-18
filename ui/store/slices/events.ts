@@ -1,6 +1,5 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { SEVERITY, STATUS } from '../../components/NotificationCenter/constants';
-import { BellIcon } from '@sistent/sistent';
 
 const initialState = {
   current_view: {
@@ -21,10 +20,9 @@ const initialState = {
   },
 
   ui: {
-    history_mode: false, // used to determine if the notification center is in history mode . so we render in a different way
-    title: 'Notifications', // title of the operation center
-    empty_message: 'No notifications found', // message to show when there are no notifications
-    icon: BellIcon,
+    history_mode: false,
+    title: 'Notifications',
+    empty_message: 'No notifications found',
   },
   isNotificationCenterOpen: false,
 };

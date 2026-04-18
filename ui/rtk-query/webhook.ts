@@ -1,10 +1,10 @@
-import { api } from './index';
+import { api, mesheryApiPath } from './index';
 
 const webhookApi = api.injectEndpoints({
   endpoints: (builder) => ({
     supportWebHook: builder.mutation({
       query: (queryArg) => ({
-        url: `extensions/api/webhook/${queryArg.type}`,
+        url: mesheryApiPath(`extensions/api/webhook/${queryArg.type}`),
         method: 'POST',
         body: queryArg.body,
       }),

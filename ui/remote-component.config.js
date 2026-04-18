@@ -64,6 +64,7 @@ module.exports = {
     '@mui/icons-material/LibraryAdd': require('@mui/icons-material/LibraryAdd'),
     '@mui/icons-material/DoneAll': require('@mui/icons-material/DoneAll'),
     '@mui/icons-material': require('@mui/icons-material'),
+    '@mui/icons-material/KeyboardArrowDownRounded': require('@mui/icons-material/KeyboardArrowDownRounded'),
     '@mui/icons-material/InsertChart': require('@mui/icons-material/InsertChart'),
     '@mui/icons-material/TouchApp': require('@mui/icons-material/TouchApp'),
     '@mui/icons-material/CheckCircle': require('@mui/icons-material/CheckCircle'),
@@ -134,7 +135,6 @@ module.exports = {
     rxjs: require('rxjs'),
     'rxjs/operators': require('rxjs/operators'),
     xstate: require('xstate'),
-    axios: require('axios'),
     '@reduxjs/toolkit': require('@reduxjs/toolkit'),
     '@reduxjs/toolkit/query/react': require('@reduxjs/toolkit/query/react'),
     'react-redux': require('react-redux'),
@@ -153,5 +153,52 @@ module.exports = {
     'ajv/dist/runtime/ucs2length': require('ajv/dist/runtime/ucs2length'),
     'ajv/dist/runtime/uri': require('ajv/dist/runtime/uri'),
     'ajv/dist/runtime/validation_error': require('ajv/dist/runtime/validation_error'),
+    '@emotion/react': require('@emotion/react'),
+    '@emotion/styled': require('@emotion/styled'),
+    '@mui/material': require('@mui/material'),
+    '@mui/material/styles': require('@mui/material/styles'),
+    ajv: require('ajv'),
+    '@rjsf/core': require('@rjsf/core'),
+    '@rjsf/mui': require('@rjsf/mui'),
+    '@rjsf/utils': require('@rjsf/utils'),
+    '@rjsf/validator-ajv8': require('@rjsf/validator-ajv8'),
+
+    // Extension Point: Shared runtime for extensions
+    // Extensions that want to use these packages need to:
+    // 1. keep versions in lockstep.
+    // 2. configure an `externalDeps` tracking file or similar
+    cytoscape: require('cytoscape'),
+    'cytoscape-automove': require('cytoscape-automove'),
+    'cytoscape-autopan-on-drag': require('cytoscape-autopan-on-drag'),
+    'cytoscape-bubblesets': require('cytoscape-bubblesets'),
+    'cytoscape-clipboard': require('cytoscape-clipboard'),
+    'cytoscape-cola': require('cytoscape-cola'),
+    'cytoscape-dagre': require('cytoscape-dagre'),
+    'cytoscape-dblclick': require('cytoscape-dblclick'),
+    'cytoscape-edgehandles': require('cytoscape-edgehandles'),
+    'cytoscape-fcose': require('cytoscape-fcose'),
+    'cytoscape-layers': require('cytoscape-layers'),
+    'cytoscape-popper': require('cytoscape-popper'),
+
+    // Extension Point: Shared runtime for extensions
+    dockview: require('dockview'),
+    'emoji-picker-react': require('emoji-picker-react'),
+    '@xterm/xterm': require('@xterm/xterm'),
+    '@xterm/addon-fit': require('@xterm/addon-fit'),
+    '@xterm/addon-search': require('@xterm/addon-search'),
+
+    // Extension Point: Shared runtime for extensions
+    '@dnd-kit/core': require('@dnd-kit/core'),
+    '@dnd-kit/utilities': require('@dnd-kit/utilities'),
+    '@tippyjs/react': require('@tippyjs/react'),
+    'tippy.js': require('tippy.js'),
+    '@reactour/tour': require('@reactour/tour'),
+    'react-mentions': require('react-mentions'),
+    'hotkeys-js': require('hotkeys-js'),
+    'styled-components': require('styled-components'),
+    immer: require('immer'),
+    'resize-observer-polyfill': require('resize-observer-polyfill'),
+    'prop-types': require('prop-types'),
+    pluralize: require('pluralize'),
   },
 };

@@ -1,5 +1,5 @@
-import { graphql, requestSubscription } from 'react-relay';
-import { createRelayEnvironment } from '../../../lib/relayEnvironment';
+import { graphql } from 'react-relay';
+import { createSubscription } from '../../../lib/subscriptionHelper';
 
 const performanceResultSubscription = graphql`
   subscription PerformanceResultSubscription($selector: PageFilter!, $profileID: String!) {
@@ -23,12 +23,12 @@ const performanceResultSubscription = graphql`
     }
   }
 `;
-export default function subscribePerformanceProfiles(dataCB, variables) {
-  const environment = createRelayEnvironment({});
-  return requestSubscription(environment, {
+
+export default function subscribePerformanceResults(dataCB, variables) {
+  return createSubscription({
     subscription: performanceResultSubscription,
-    variables: variables,
+    variables,
     onNext: dataCB,
-    onError: (error) => console.log(`requestSubscription error:`, error),
+    subscriptionName: 'PerformanceResult',
   });
 }
