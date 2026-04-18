@@ -756,7 +756,7 @@ const NavigatorContent = () => {
                 <Collapse
                   in={openItems.includes(childId)}
                   style={{
-                    backgroundColor: theme.palette.background.tabs,
+                    backgroundColor: theme.palette.navigation.secondary,
                     opacity: '100%',
                   }}
                 >
