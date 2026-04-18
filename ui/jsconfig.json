@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["components/*"],
-      "@/graphql/*" : ["graphql/*"],
+      "@/graphql/*": ["graphql/*"],
       "@/utils/*": ["utils/*"],
       "@/rtk-query/*": ["rtk-query/*"],
       "@/constants/*": ["constants/*"],
