@@ -1,4 +1,4 @@
-name: Update Test Report
+name: Update E2E Artifacts
 
 on:
   workflow_run:
@@ -51,3 +51,52 @@ jobs:
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated test report"
+
+  publish-qa-results:
+    if: >
+        github.repository == 'meshery/meshery' &&
+        github.event.workflow_run.conclusion != 'cancelled' &&
+        (
+          github.event.workflow_run.event == 'push' ||
+          github.event.workflow_run.event == 'pull_request_target'
+        )
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download e2e allure results artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: e2e-allure-results
+          path: e2e-allure-results
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Checkout QA
+        uses: actions/checkout@v6
+        with:
+          repository: meshery/qa
+          path: qa
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Sync results with qa
+        working-directory: qa
+        run: |
+          if [ ! -d ../e2e-allure-results ]; then
+            echo "Allure results not found!" && exit 1
+          fi
+          make meshery-results-sync MESHERY_RESULTS_PATH=../e2e-allure-results
+
+      - name: Pull changes from remote
+        working-directory: qa
+        run: git pull --rebase --autostash origin master
+
+      - name: Commit & push to qa
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          file_pattern: "meshery-results/*"
+          repository: qa
+          commit_message: "[meshery] Sync E2E Allure results - ${{ github.event.workflow_run.head_sha }}"
+          commit_options: "--signoff"
+          commit_user_name: meshery-ci
+          commit_user_email: ci@meshery.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
