@@ -14,7 +14,7 @@
   padding: 1rem;
   background: transparent;
   text-decoration: none;
-  transition: all 200ms cubic-bezier(.08,.52,.52,1);
+  transition: border-color 200ms cubic-bezier(.08,.52,.52,1), background-color 200ms cubic-bezier(.08,.52,.52,1);
 
   &:hover {
     border-color: var(--brand-color-secondary);
@@ -39,6 +39,7 @@
   color: var(--color-secondary-medium);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
+  transition: color 200ms cubic-bezier(.08,.52,.52,1);
 }
 
 .toc-title {
@@ -48,11 +49,13 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  transition: color 200ms cubic-bezier(.08,.52,.52,1);
 
   .fa-chevron-right::before,
   .fa-chevron-left::before {
     color: var(--brand-color-secondary);
     font-size: 1rem;
+    transition: color 200ms cubic-bezier(.08,.52,.52,1);
   }
 }
 
