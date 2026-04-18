@@ -23,7 +23,7 @@ setup() {
   export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/model-view"
 }
 
-@test "mesheryctl model view displays usage instructions when no model name is provided" {
+@test "mesheryctl model view displays error when no model name is provided" {
   run $MESHERYCTL_BIN model view
   
   assert_failure
