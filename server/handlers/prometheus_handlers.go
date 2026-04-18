@@ -274,7 +274,9 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
 func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, _ models.Provider) {
 	defer func() {
-		_ = req.Body.Close()
+		if err := req.Body.Close(); err != nil {
+			h.log.Warn(models.ErrCloseIoReader(err))
+		}
 	}()
 
 	boardData, err := io.ReadAll(req.Body)
@@ -427,7 +429,9 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 
 	defer func() {
-		_ = req.Body.Close()
+		if err := req.Body.Close(); err != nil {
+			h.log.Warn(models.ErrCloseIoReader(err))
+		}
 	}()
 
 	body, err := io.ReadAll(req.Body)
