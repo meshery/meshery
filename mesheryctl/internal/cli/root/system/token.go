@@ -21,7 +21,6 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -39,14 +38,8 @@ var tokenCmd = &cobra.Command{
 	Long: `
 	Manipulate user tokens and their context assignments in your meshconfig`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			if err := cmd.Help(); err != nil {
-				return errors.Wrap(err, "displaying help menu")
-			}
-			return nil
-		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+			return utils.ErrInvalidArgument(fmt.Errorf("invalid command: %q", args[0]))
 		}
 		return nil
 	},
@@ -54,8 +47,13 @@ var tokenCmd = &cobra.Command{
 
 func checkTokenName(n int) cobra.PositionalArgs {
 	return func(cmd *cobra.Command, args []string) error {
-		if len(args) != n || args[0] == "" {
-			return fmt.Errorf("token name is required in command, accepts %d arg(s), received %d or empty string", n, len(args))
+
+		if n <= 0 {
+		return ErrTokenNotProvided()
+	}
+	
+		if len(args) < n || args[0] == "" {
+			return ErrTokenNotProvided()
 		}
 		return nil
 	}
@@ -72,31 +70,37 @@ mesheryctl system token create [token-name] -f [token-path] --set
 	`,
 	Args: checkTokenName(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		tokenName := args[0]
-		configPath := utils.GetActiveConfigPath()
-		if tokenPath == "" {
-			tokenPath = "auth.json"
-		}
 
-		token := config.Token{
-			Name:     tokenName,
-			Location: tokenPath,
+	tokenName := args[0]
+
+	configPath := utils.GetActiveConfigPath()
+	if tokenPath == "" {
+		tokenPath = "auth.json"
+	}
+
+	token := config.Token{
+		Name:     tokenName,
+		Location: tokenPath,
+	}
+
+	if err := config.AddTokenToConfig(token, configPath); err != nil {
+		return ErrWriteConfig(err)
+	}
+
+	utils.Log.Info(fmt.Sprintf("Token %s created.", tokenName))
+
+	if set {
+		if ctx == "" {
+			ctx = viper.GetString("current-context")
 		}
-		if err := config.AddTokenToConfig(token, configPath); err != nil {
-			return errors.Wrap(err, "Could not create specified token to config")
+		if err = config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
+			return ErrTokenContext(err)
 		}
-		utils.Log.Info(fmt.Sprintf("Token %s created.", tokenName))
-		if set {
-			if ctx == "" {
-				ctx = viper.GetString("current-context")
-			}
-			if err = config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
-				return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
-			}
-			utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, ctx))
-		}
-		return nil
-	},
+		utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, ctx))
+	}
+
+	return nil
+},
 }
 var deleteTokenCmd = &cobra.Command{
 	Use:   "delete",
@@ -111,7 +115,7 @@ mesheryctl system token delete [token-name]
 		configPath := utils.GetActiveConfigPath()
 
 		if err = config.DeleteTokenFromConfig(tokenName, configPath); err != nil {
-			return errors.Wrapf(err, "Could not delete token \"%s\" from config", tokenName)
+			return utils.ErrInvalidArgument(err)
 		}
 		utils.Log.Infof("Token %s deleted.", tokenName)
 		return nil
@@ -133,7 +137,7 @@ mesheryctl system token set [token-name]
 		}
 
 		if err = config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
-			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
+			return utils.ErrInvalidArgument(err)
 
 		}
 		utils.Log.Infof("Token %s set for context %s", tokenName, ctx)
