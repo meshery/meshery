@@ -19,7 +19,7 @@
     },
     "name": "azure-batch",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "version": ""
   },
@@ -77,7 +77,8 @@
             "patch": {
               "mutatorRef": [
                 [
-                  "displayName"
+                  "metadata",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"

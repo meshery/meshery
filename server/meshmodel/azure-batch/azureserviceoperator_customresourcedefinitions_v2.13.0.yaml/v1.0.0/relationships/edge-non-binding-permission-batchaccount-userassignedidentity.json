@@ -19,7 +19,7 @@
     },
     "name": "azure-batch",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "version": ""
   },
@@ -98,16 +98,15 @@
             "patch": {
               "mutatorRef": [
                 [
-                  "configuration",
+                  "model",
+                  "model",
                   "group"
                 ],
                 [
-                  "configuration",
                   "kind"
                 ],
                 [
-                  "configuration",
-                  "spec",
+                  "metadata",
                   "name"
                 ]
               ],
