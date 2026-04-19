@@ -1,11 +1,39 @@
 .left-container {
   position: sticky;
   z-index: 9;
+  flex-shrink: 0;
+
+  width: var(--sidebar-width);
   height: calc(100vh - var(--navbar-height));
-  transition: all 0.5s ease-in-out;
-  margin-left: calc(-1 * (var(--sidebar-width) + 1rem));
-  margin-top: calc(var(--navbar-height));
+
   top: calc(var(--navbar-height));
+  margin-top: calc(var(--navbar-height));
+  margin-right: calc(-1 * (var(--sidebar-width)));
+  
+  transform: translateX(calc(-1 * var(--sidebar-width)));
+  transition: 0.5s ease-in-out, margin-right 0.5s ease-in-out;
+
+  @media (max-width: 75em) {
+    position: fixed;
+
+    margin-top: 0;
+    margin-right: 0;
+  }
+
+  @media (max-width: 37.5em) {
+    top: calc(var(--navbar-height) - 10);
+    height: 100vh;
+  }
+
+  &--active {
+      transform: translateX(0);
+      margin-right: 0;
+    
+    & .nav-toggle-btn--document svg {
+      transform: rotate(180deg);
+    }
+  }
+
   & .sidebar-container-wrapper {
     height: 100%;
     padding: 0.5rem;
@@ -20,27 +48,9 @@
     right: -2rem;
     bottom: 3rem;
     
-    @media(max-width: 37.5em) {
+    @media (max-width: 37.5em) {
       bottom: 7rem;
     }
-  }
-  @media (max-width: 75em) {
-    margin-top: 0;
-    margin-left: calc(-1 * var(--sidebar-width));
-    position: fixed;
-    display: flex;
-    left: -1rem;
-  }
-  &--active {
-    margin-left: 0px;
-    & .nav-toggle-btn--document svg {
-      transform: rotate(180deg);
-    }
-  }
-
-  @media (max-width: 37.5em) {
-    top: calc(var(--navbar-height) - 10);
-    height: 100vh;
   }
 }
 
@@ -100,7 +110,7 @@
     width: 100%;
     height: calc(100vh - var(--navbar-height));
     z-index: 9;
-    transition: all 0.5s ease-in-out;
+    transition: 0.5s ease-in-out;
     padding: 1rem 2rem;
   }
 

@@ -38,22 +38,18 @@
       <div class="left-container">
         <script>
           (function () {
-            let state = localStorage.getItem('sidebar-state')
-            if (!state) {
-              const isDesktop = window.matchMedia("(min-width: 75em)").matches;
-              state = isDesktop ? 'active' : 'inactive'
-
-              localStorage.setItem('sidebar-state', state)
-            }
-
             let sidebar = document.querySelector('.left-container');
-            if (sidebar) {
-               if (state === 'active'){
-                sidebar.classList.add('left-container--active')
-              } else {
-                sidebar.classList.remove('left-container--active')
-              }
+            if (!sidebar) return
+
+            let state = localStorage.getItem('sidebar-state');
+
+            if (!state) {  
+              const isDesktop = window.matchMedia("(min-width: 75em)").matches;
+              state =  isDesktop ? 'active' : 'inactive';
+              localStorage.setItem('sidebar-state', state);
             }
+            
+            sidebar.classList.toggle('left-container--active', state === 'active')
           })();
         </script>
 
