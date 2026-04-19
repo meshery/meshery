@@ -5,7 +5,7 @@
   position: sticky;
   z-index: 9;
   height: calc(100vh - var(--navbar-height));
-  transition: all 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out;
   margin-top: calc(var(--navbar-height));
   top: calc(var(--navbar-height));
   &::after {
@@ -93,7 +93,6 @@
   min-width: 250px;
   height: 100%;
   position: relative;
-  user-select: none;
   transition: none;
   scrollbar-gutter: stable;
 
