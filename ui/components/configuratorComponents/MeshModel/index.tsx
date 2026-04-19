@@ -24,7 +24,6 @@ import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
 import { useRouter } from 'next/router';
 import { ArrowBack } from '@mui/icons-material';
-import TooltipButton from '../../../utils/TooltipButton';
 import { SaveAs as SaveAsIcon } from '@mui/icons-material';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -80,11 +79,11 @@ export default function DesignConfigurator() {
 
   return (
     <NoSsr>
-      <TooltipButton title="Back" placement="left">
+      <CustomTooltip title="Back" placement="right">
         <IconButton onClick={() => router.back()}>
           <ArrowBack />
         </IconButton>
-      </TooltipButton>
+      </CustomTooltip>
       <AppBarComponent position="static" elevation={0} data-testid="design-configurator-app-bar">
         <Toolbar>
           <div style={{ flexGrow: 1 }}>

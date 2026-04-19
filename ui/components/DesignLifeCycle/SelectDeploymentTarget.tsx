@@ -5,13 +5,14 @@ import {
 import {
   Box,
   Checkbox,
-  Stack,
-  Typography,
-  useTheme,
-  styled,
+  CustomTooltip,
+  EditIcon as Edit,
   EnvironmentIcon,
   IconButton,
-  CustomTooltip,
+  Stack,
+  styled,
+  Typography,
+  useTheme,
 } from '@sistent/sistent';
 import { Loading, StepHeading } from './common';
 import { K8sContextConnectionChip } from '../Header';
@@ -26,7 +27,6 @@ import {
 } from '@/store/slices/globalEnvironmentContext';
 import { Button } from '@sistent/sistent';
 import { AddIcon } from '@sistent/sistent';
-import { Edit } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const DeploymentTargetContext = createContext({
