@@ -153,6 +153,7 @@ jobs:
           header: pr-preview
           message: |
             🚀 Preview deployment: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/
+            > *Note: Preview may take a moment (GitHub Pages deployment in progress). Please wait and refresh. Track deployment [here](https://github.com/${{ github.repository }}/actions/workflows/pages/pages-build-deployment)*
 
       - name: Comment on pruned previews
         if: github.event.action != 'closed' && steps.prune-previews.outputs.removed_prs_json != '[]'
