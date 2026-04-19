@@ -16,6 +16,29 @@ jobs:
         cd provider-ui && npm ci && cd ..
     - name: Run ESLint Meshery-UI
       run: cd ui && npm run lint
+    - name: Run UI Kit Guardrail Lint
+      run: cd ui && npm run lint:ui-kit
+
+    - name: Run UI Guardrail Audits
+      run: |
+        cd ui
+        npm run audit:mui | tee audit-mui.log
+        npm run audit:hex | tee audit-hex.log
+        npm run audit:size | tee audit-size.log
+
+    - name: Publish UI Guardrail Audit Summary
+      if: always()
+      run: |
+        {
+          echo "## UI Guardrail Baseline Counts"
+          echo
+          echo '```'
+          grep '^AUDIT mui ' ui/audit-mui.log || true
+          grep '^AUDIT hex ' ui/audit-hex.log || true
+          grep '^AUDIT size ' ui/audit-size.log || true
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"
+
     - name: Run ESLint Provider-UI
       run: cd provider-ui && npm run lint
 
