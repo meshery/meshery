@@ -4363,13 +4363,12 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 		StatusCode: resp.StatusCode,
 	}
 
-	// check for all success status codes
-	statusOK := response.StatusCode >= 200 && response.StatusCode < 300
-	if statusOK {
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		l.Log.Warn(ErrFetch(fmt.Errorf("remote provider returned status %d", resp.StatusCode), string(bdr), resp.StatusCode))
+	} else {
 		l.Log.Info("response retrieved from remote provider.")
-		return response, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("failed to communicate with remote provider. "), string(bdr), resp.StatusCode)
+	return response, nil
 }
 
 func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {

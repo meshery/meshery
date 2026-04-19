@@ -1,7 +1,16 @@
-import { BasicMarkdown, CircularProgress, styled, lighten, Box } from '@sistent/sistent';
+import {
+  BasicMarkdown,
+  Box,
+  CheckCircleIcon as CheckCircle,
+  CircularProgress,
+  ErrorIcon as Error,
+  InfoIcon as Info,
+  lighten,
+  styled,
+  WarningIcon as Warning,
+} from '@sistent/sistent';
 import { SnackbarContent } from 'notistack';
 import { forwardRef } from 'react';
-import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
 
 const drawerWidth = 256;
 

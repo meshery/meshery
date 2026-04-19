@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 15th 2026, 11:42:33 pm
+- Testing started at: April 18th 2026, 11:38:36 pm
 
 **📦 Test Result Summary**
 
-- ✅ 139 passed
-- ❌ 2 failed
+- ✅ 140 passed
+- ❌ 1 failed
 - ⚠️ 0 flaked
 - ⏩ 3 skipped
 
-⌛ _Duration: 6 minutes and 42 seconds_
+⌛ _Duration: 7 minutes and 58 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -38,7 +38,7 @@
 | 15 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 16 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 17 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
-| 18 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
+| 18 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ❌ |
 | 19 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 20 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 21 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
@@ -51,7 +51,7 @@
 | 28 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 29 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 30 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
-| 31 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ❌ |
+| 31 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 32 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 33 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 34 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
@@ -124,7 +124,7 @@
 | 101 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 102 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 103 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
-| 104 | None | chromium-local-provider | evaluation idempotency | relationship | ❌ |
+| 104 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 105 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 106 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 107 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
@@ -182,60 +182,16 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
-<summary>❌ evaluation idempotency (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ config patching correctness (Meshery - chromium-meshery-provider)</summary>
 
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/relationship_evaluation_properties.spec.js`
-
-**Error Message:**
-```
-Error: re-evaluation produced 11 unexpected actions
-
-[2mexpect([22m[31mreceived[39m[2m).[22mtoHaveLength[2m([22m[32mexpected[39m[2m)[22m
-
-Expected length: [32m0[39m
-Received length: [31m11[39m
-Received array:  [31m[{"op": "delete_relationship", "value": {"id": "0612297f-4a8b-47a7-b825-8f3e76c96dc5", "relationship": {"evaluationQuery": "", "id": "0612297f-4a8b-47a7-b825-8f3e76c96dc5", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "08fb8500-b08b-4b18-8380-0b011ddddf28", "relationship": {"evaluationQuery": "", "id": "08fb8500-b08b-4b18-8380-0b011ddddf28", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "09a7a9a2-2600-4c19-b4e3-042d0679877c", "relationship": {"evaluationQuery": "", "id": "09a7a9a2-2600-4c19-b4e3-042d0679877c", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "4ecc9b0b-84b9-4771-8d20-738d4a6e94fa", "relationship": {"evaluationQuery": "", "id": "4ecc9b0b-84b9-4771-8d20-738d4a6e94fa", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "5f4c340b-21d6-4ee3-b0ff-40e88693582e", "relationship": {"evaluationQuery": "", "id": "5f4c340b-21d6-4ee3-b0ff-40e88693582e", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "8ba1b21c-ed51-4dc7-81d5-0bd7830dbdf0", "relationship": {"evaluationQuery": "", "id": "8ba1b21c-ed51-4dc7-81d5-0bd7830dbdf0", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "a6b2302b-7788-40cb-866f-bd9e64866327", "relationship": {"evaluationQuery": "", "id": "a6b2302b-7788-40cb-866f-bd9e64866327", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "acf09f33-f4b1-430a-bfc8-7116dae90b6b", "relationship": {"evaluationQuery": "", "id": "acf09f33-f4b1-430a-bfc8-7116dae90b6b", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "b2c1e2f5-6ebf-4e3f-b0cd-cc1564a7a37e", "relationship": {"evaluationQuery": "", "id": "b2c1e2f5-6ebf-4e3f-b0cd-cc1564a7a37e", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "cf493816-46a1-4be3-8cc1-8a99c7ac892e", "relationship": {"evaluationQuery": "", "id": "cf493816-46a1-4be3-8cc1-8a99c7ac892e", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, …][39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 282 |[39m           meaningfulActions[33m,[39m
- [90m 283 |[39m           [32m`re-evaluation produced ${meaningfulActions.length} unexpected actions`[39m[33m,[39m
-[31m[1m>[22m[39m[90m 284 |[39m         )[33m.[39mtoHaveLength([35m0[39m)[33m;[39m
- [90m     |[39m           [31m[1m^[22m[39m
- [90m 285 |[39m       })[33m;[39m
- [90m 286 |[39m     })[33m;[39m
- [90m 287 |[39m   }[0m
-```
-
-</details>
-
-<details>
-<summary>❌ evaluation idempotency (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/relationship_evaluation_properties.spec.js`
+**File Location:** `Not Found`
 
 **Error Message:**
 ```
-Error: re-evaluation produced 11 unexpected actions
-
-[2mexpect([22m[31mreceived[39m[2m).[22mtoHaveLength[2m([22m[32mexpected[39m[2m)[22m
-
-Expected length: [32m0[39m
-Received length: [31m11[39m
-Received array:  [31m[{"op": "delete_relationship", "value": {"id": "182be68e-0d36-4e0e-a1d9-b9442565b55a", "relationship": {"evaluationQuery": "", "id": "182be68e-0d36-4e0e-a1d9-b9442565b55a", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "183de379-662d-4d34-9d7f-e0b7fe0c240a", "relationship": {"evaluationQuery": "", "id": "183de379-662d-4d34-9d7f-e0b7fe0c240a", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "874a4a7c-e588-45c6-abba-f1c1e18990d4", "relationship": {"evaluationQuery": "", "id": "874a4a7c-e588-45c6-abba-f1c1e18990d4", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "956ce149-0e61-44c4-a463-87063c6579e7", "relationship": {"evaluationQuery": "", "id": "956ce149-0e61-44c4-a463-87063c6579e7", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "b41b4891-f7da-4500-99eb-e20b6da4ba5e", "relationship": {"evaluationQuery": "", "id": "b41b4891-f7da-4500-99eb-e20b6da4ba5e", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "ba4e609c-de4d-45b8-99b6-6734fc7c6976", "relationship": {"evaluationQuery": "", "id": "ba4e609c-de4d-45b8-99b6-6734fc7c6976", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "bff79104-dc1e-4d1a-a436-fe75e9e03870", "relationship": {"evaluationQuery": "", "id": "bff79104-dc1e-4d1a-a436-fe75e9e03870", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "cdbddeaf-f2a3-4a56-b69d-f593dab96670", "relationship": {"evaluationQuery": "", "id": "cdbddeaf-f2a3-4a56-b69d-f593dab96670", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "d27e5b23-0cf4-4793-8dc3-9e88d564c9d2", "relationship": {"evaluationQuery": "", "id": "d27e5b23-0cf4-4793-8dc3-9e88d564c9d2", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, {"op": "delete_relationship", "value": {"id": "da43e4e6-bd0e-4cef-9b35-790cfa1ae755", "relationship": {"evaluationQuery": "", "id": "da43e4e6-bd0e-4cef-9b35-790cfa1ae755", "kind": "hierarchical", "metadata": {"description": "", "isAnnotation": false, "styles": [Object]}, "model": {"displayName": "Kubernetes", "id": "00000000-0000-0000-0000-000000000000", "model": [Object], "name": "kubernetes", "registrant": [Object], "version": "v1.0.0"}, "schemaVersion": "relationships.meshery.io/v1beta2", "selectors": [[Object]], "status": "deleted", "subType": "matchlabels", "type": "sibling", "version": "v1.0.0"}}}, …][39m
+[31mTest timeout of 60000ms exceeded.[39m
 ```
 
-**Code Snippet:**
-```
-[0m [90m 282 |[39m           meaningfulActions[33m,[39m
- [90m 283 |[39m           [32m`re-evaluation produced ${meaningfulActions.length} unexpected actions`[39m[33m,[39m
-[31m[1m>[22m[39m[90m 284 |[39m         )[33m.[39mtoHaveLength([35m0[39m)[33m;[39m
- [90m     |[39m           [31m[1m^[22m[39m
- [90m 285 |[39m       })[33m;[39m
- [90m 286 |[39m     })[33m;[39m
- [90m 287 |[39m   }[0m
-```
+
 
 </details>
 
@@ -252,8 +208,8 @@ Received array:  [31m[{"op": "delete_relationship", "value": {"id": "182be68e-0
 
 | Kind | Type | SubType | From | To | Model | Design Name | Status |
 | :---: | :---: | :---: | :---: | :---: | :---: | :--- | :---: |
-| edge | binding | permission | ClusterRole | ServiceAccount | kubernetes | Understanding Relationships | ❌ |
-| edge | binding | permission | Role | ServiceAccount | kubernetes | Understanding Relationships | ❌ |
+| edge | binding | permission | ClusterRole | ServiceAccount | kubernetes | Understanding Relationships | ✅ |
+| edge | binding | permission | Role | ServiceAccount | kubernetes | Understanding Relationships | ✅ |
 | edge | non-binding | network | Service | Deployment | kubernetes | service-to-deployment-network | ✅ |
 | edge | non-binding | network | Service | Deployment | kubernetes | meshery-design-fixture.json | ✅ |
 | edge | non-binding | reference | ClusterRoleBinding | ClusterRole | kubernetes | meshery-design-fixture.json | ❌ |
