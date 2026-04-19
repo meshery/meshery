@@ -125,4 +125,73 @@ document.addEventListener("click", (event) => {
             sidebarNav.classList.remove("main-navbar--active")
         }
     }
-})
+});
+
+;(function() {
+  'use strict';
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initResize);
+  } else {
+    initResize();
+  }
+  
+  function initResize() {
+    var leftContainer = document.querySelector('.left-container');
+    var sidebar = document.querySelector('.sidebar-container');
+
+    if (!leftContainer || !sidebar) {
+      console.log('Resize: Elements not found');
+      return;
+    }
+    
+    if (window.innerWidth <= 1200) {
+      console.log('Resize: Skipped on mobile');
+      return;
+    }
+
+    console.log('Resize: Initialized');
+    
+    var isResizing = false;
+
+    leftContainer.addEventListener('mousedown', function(e) {
+      var rect = leftContainer.getBoundingClientRect();
+      if (e.clientX >= rect.right - 10) {
+        console.log('Resize: Started');
+        isResizing = true;
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('mousemove', function(e) {
+  if (!isResizing) return;
+
+  var containerRect = leftContainer.getBoundingClientRect();
+  var newWidth = e.clientX - containerRect.left;
+
+  if (newWidth < 250) newWidth = 250;
+  if (newWidth > 450) newWidth = 450;
+
+  leftContainer.style.width = newWidth + 'px';
+  leftContainer.style.flexBasis = newWidth + 'px';
+  leftContainer.style.flexShrink = '0';
+  
+  var wrapper = leftContainer.querySelector('.sidebar-container-wrapper');
+  if (wrapper) {
+    wrapper.style.width = newWidth + 'px';
+  }
+  
+  sidebar.style.width = newWidth + 'px';
+});
+
+    document.addEventListener('mouseup', function() {
+      if (!isResizing) return;
+      isResizing = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      console.log('Resize: Ended');
+    });
+  }
+})();

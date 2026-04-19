@@ -1,3 +1,6 @@
+.flex-container {
+  display: flex;
+  }
 .left-container {
   position: sticky;
   z-index: 9;
@@ -5,11 +8,29 @@
   transition: all 0.5s ease-in-out;
   margin-top: calc(var(--navbar-height));
   top: calc(var(--navbar-height));
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 999;
+    background: transparent;
+    pointer-events: auto;
+  }
+  
+  &:hover::after {
+    background: transparent;
+  }
   & .sidebar-container-wrapper {
     height: 100%;
     padding: 0.5rem;
     background: var(--background-grey);
     box-shadow: var(--box-shadow-primary);
+    overflow-y: auto;
+    position: relative;
   }
   & .icon-container {
     height: fit-content;
@@ -64,14 +85,18 @@
 .sidebar-container {
   overscroll-behavior: contain;
   padding: .25rem min(2vh, 2vw);
-  overflow-y: scroll;
+  overflow-y: visible;
   height: calc(100vh - var(--navbar-height));
-  transition: all 0.5s ease-in-out;
   font-size: 1.5rem;
   width: 320px;
-  max-width: 320px;
-  min-width: 320px;
+  max-width: 400px;
+  min-width: 250px;
   height: 100%;
+  position: relative;
+  user-select: none;
+  transition: none;
+  scrollbar-gutter: stable;
+
 
   &::-webkit-scrollbar {
     overscroll-behavior: contain;
