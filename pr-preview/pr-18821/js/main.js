@@ -137,27 +137,17 @@ document.addEventListener("click", (event) => {
   }
   
   function initResize() {
-    var leftContainer = document.querySelector('.left-container');
-    var sidebar = document.querySelector('.sidebar-container');
+    const leftContainer = document.querySelector('.left-container');
+    const sidebar = document.querySelector('.sidebar-container');
 
-    if (!leftContainer || !sidebar) {
-      console.log('Resize: Elements not found');
-      return;
-    }
+    if (!leftContainer || !sidebar) return;
+    if (window.innerWidth <= 1200) return;
     
-    if (window.innerWidth <= 1200) {
-      console.log('Resize: Skipped on mobile');
-      return;
-    }
-
-    console.log('Resize: Initialized');
-    
-    var isResizing = false;
+    let isResizing = false;
 
     leftContainer.addEventListener('mousedown', function(e) {
-      var rect = leftContainer.getBoundingClientRect();
+      const rect = leftContainer.getBoundingClientRect();
       if (e.clientX >= rect.right - 10) {
-        console.log('Resize: Started');
         isResizing = true;
         document.body.style.cursor = 'col-resize';
         document.body.style.userSelect = 'none';
@@ -166,32 +156,28 @@ document.addEventListener("click", (event) => {
     });
 
     document.addEventListener('mousemove', function(e) {
-  if (!isResizing) return;
+      if (!isResizing) return;
 
-  var containerRect = leftContainer.getBoundingClientRect();
-  var newWidth = e.clientX - containerRect.left;
+      const containerRect = leftContainer.getBoundingClientRect();
+      const newWidth = Math.min(Math.max(e.clientX - containerRect.left, 250), 400);
 
-  if (newWidth < 250) newWidth = 250;
-  if (newWidth > 450) newWidth = 450;
-
-  leftContainer.style.width = newWidth + 'px';
-  leftContainer.style.flexBasis = newWidth + 'px';
-  leftContainer.style.flexShrink = '0';
-  
-  var wrapper = leftContainer.querySelector('.sidebar-container-wrapper');
-  if (wrapper) {
-    wrapper.style.width = newWidth + 'px';
-  }
-  
-  sidebar.style.width = newWidth + 'px';
-});
+      leftContainer.style.width = newWidth + 'px';
+      leftContainer.style.flexBasis = newWidth + 'px';
+      leftContainer.style.flexShrink = '0';
+      
+      const wrapper = leftContainer.querySelector('.sidebar-container-wrapper');
+      if (wrapper) {
+        wrapper.style.width = newWidth + 'px';
+      }
+      
+      sidebar.style.width = newWidth + 'px';
+    });
 
     document.addEventListener('mouseup', function() {
       if (!isResizing) return;
       isResizing = false;
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
-      console.log('Resize: Ended');
     });
   }
 })();
