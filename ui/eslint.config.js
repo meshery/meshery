@@ -25,81 +25,105 @@ const patchedNextConfig = nextConfig.map((cfg) => {
   return cfg;
 });
 
-// Temporary allowlists for legacy files that still violate the new UI guardrails.
-// Keep the rules active for new/clean files while letting incremental refactors
-// remove entries from these lists over time.
+// Temporary allowlists for legacy files that still violate the new UI guardrails
+// established in Phase 1 (issue #18722). These entries represent the baseline debt
+// that will be eliminated in Phases 2–3. Each entry must be removed once the
+// corresponding file no longer imports from any forbidden package.
+//
+// Forbidden packages (§8.1 + §8.5 of ui/restructure-plan.md):
+//   @mui/material, @mui/icons-material, @mui/x-date-pickers, @mui/x-tree-view,
+//   @rjsf/mui, @material-ui/*, @/themes, @/themes/app, @/themes/index,
+//   @/themes/hooks, @/constants/colors
+//
+// DO NOT add new files here. Fix the import instead.
 const legacyRestrictedImportOffenders = [
-  'components/Dashboard/charts/NodeStatusChart.tsx',
-  'components/Dashboard/charts/PodStatusChart.tsx',
-  'components/Dashboard/index.tsx',
-  'components/Dashboard/resources/resources-sub-menu.tsx',
-  'components/Dashboard/widgets/HoneyComb/HoneyCombComponent.tsx',
+  // --- @mui/icons-material ---
+  'components/configuratorComponents/MeshModel/index.tsx',
+  'components/configuratorComponents/NameToIcon.tsx',
   'components/DataFormatter/index.tsx',
-  'components/DesignLifeCycle/DeploymentSummary.tsx',
   'components/DesignLifeCycle/DryRun.tsx',
   'components/DesignLifeCycle/ValidateDesign.tsx',
-  'components/DesignLifeCycle/styles.tsx',
-  'components/ExportModal.tsx',
   'components/General/Modals/Information/InfoModal.tsx',
   'components/General/Modals/Modal.tsx',
-  'components/General/Popup.tsx',
   'components/Header.tsx',
+  'components/icons/index.ts',
   'components/Lifecycle/Environments/environment-card.tsx',
   'components/Lifecycle/Environments/index.tsx',
+  'components/MesheryFilters/FiltersCard.tsx',
+  'components/MesheryMeshInterface/PatternServiceForm.tsx',
+  'components/MesheryPatterns/MesheryPatternCard.tsx',
+  'components/MesheryPatterns/MesheryPatterns.tsx',
+  'components/NotificationCenter/formatters/common.tsx',
+  'components/Performance/index.tsx',
+  'components/Performance/style.tsx',
+  'components/SpacesSwitcher/components.tsx',
+  'components/SpacesSwitcher/MainDesignsContent.tsx',
+  'components/telemetry/grafana/GrafanaDateRangePicker.tsx',
+  'components/ViewInfoModal.tsx',
+  'pages/_app.tsx',
+
+  // --- @mui/material ---
+  'components/Dashboard/index.tsx',
+  'components/Dashboard/resources/resources-sub-menu.tsx',
+  'components/RelationshipBuilder/RelationshipFormStepper.tsx',
+
+  // --- @mui/x-date-pickers ---
+  'components/MesheryDateTimePicker.tsx',
+  // pages/_app.tsx (already listed above)
+
+  // --- @mui/x-tree-view ---
+  'components/Settings/Registry/ComponentTree.tsx',
+  'components/Settings/Registry/MesheryTreeViewModel.tsx',
+  'components/Settings/Registry/MesheryTreeViewRegistrants.tsx',
+  'components/Settings/Registry/MeshModel.style.ts',
+  'components/Settings/Registry/RelationshipTree.tsx',
+
+  // --- @rjsf/mui ---
+  'components/MesheryMeshInterface/PatternService/RJSF.tsx',
+
+  // --- @mui/* (mixed / additional) ---
+  'components/connections/ConnectionChip.tsx',
+  'components/connections/ConnectionTable.tsx',
+  'components/Dashboard/charts/NodeStatusChart.tsx',
+  'components/Dashboard/charts/PodStatusChart.tsx',
+  'components/Dashboard/widgets/HoneyComb/HoneyCombComponent.tsx',
   'components/Lifecycle/Workspaces/WorkspaceGridView.tsx',
   'components/MesheryAdapterPlayComponent.tsx',
   'components/MesheryChart.tsx',
-  'components/MesheryDateTimePicker.tsx',
   'components/MesheryFilters/Filters.tsx',
-  'components/MesheryFilters/FiltersCard.tsx',
-  'components/MesheryMeshInterface/PatternService/RJSF.tsx',
   'components/MesheryMeshInterface/PatternService/RJSFCustomComponents/ArrayFieldTemlate.tsx',
   'components/MesheryMeshInterface/PatternService/RJSFCustomComponents/CustomFileWidget.tsx',
   'components/MesheryMeshInterface/PatternService/RJSFCustomComponents/CustomSelectWidget.tsx',
   'components/MesheryMeshInterface/PatternService/helper.tsx',
-  'components/MesheryMeshInterface/PatternServiceForm.tsx',
-  'components/MesheryPatterns/MesheryPatternCard.tsx',
-  'components/MesheryPatterns/MesheryPatterns.tsx',
   'components/MesheryPlayComponent.tsx',
   'components/MesherySettingsEnvButtons.tsx',
-  'components/NotificationCenter/formatters/common.tsx',
-  'components/NotificationCenter/index.tsx',
-  'components/NotificationCenter/notificationCenter.style.tsx',
+  'components/NotificationCenter/index.tsx', // @mui/lab
+  'components/NotificationCenter/notificationCenter.style.tsx', // @mui/lab
   'components/Performance/MesheryResults.tsx',
   'components/Performance/PerformanceCard.tsx',
   'components/Performance/PerformanceResults.tsx',
-  'components/Performance/index.tsx',
-  'components/Performance/style.tsx',
   'components/ReactSelectWrapper.tsx',
   'components/Registry/RegistryModal.tsx',
-  'components/RelationshipBuilder/RelationshipFormStepper.tsx',
-  'components/Settings/Registry/ComponentTree.tsx',
-  'components/Settings/Registry/MeshModel.style.ts',
+  'components/Settings/MesherySettingsPerformanceComponent.tsx', // @mui/* (added in audit)
   'components/Settings/Registry/MeshModelComponent.tsx',
   'components/Settings/Registry/MeshModelDetails.tsx',
   'components/Settings/Registry/MesheryTreeView.tsx',
-  'components/Settings/Registry/MesheryTreeViewModel.tsx',
-  'components/Settings/Registry/MesheryTreeViewRegistrants.tsx',
-  'components/Settings/Registry/RelationshipTree.tsx',
   'components/Settings/Registry/Stepper/CSVStepper.tsx',
   'components/Settings/Registry/Stepper/UrlStepper.tsx',
-  'components/SpacesSwitcher/MainDesignsContent.tsx',
   'components/SpacesSwitcher/WorkspaceModal.tsx',
-  'components/SpacesSwitcher/components.tsx',
+  'components/telemetry/grafana/GrafanaCustomChart.tsx',
+  'components/telemetry/prometheus/PrometheusSelectionComponent.tsx',
   'components/TroubleshootingModalComponent.tsx',
   'components/UserPreferences/index.tsx',
-  'components/ViewInfoModal.tsx',
   'components/ViewSwitch.tsx',
   'components/YamlDialog.tsx',
-  'components/configuratorComponents/MeshModel/index.tsx',
-  'components/configuratorComponents/NameToIcon.tsx',
-  'components/connections/ConnectionChip.tsx',
-  'components/connections/ConnectionTable.tsx',
-  'components/icons/index.ts',
-  'components/telemetry/grafana/GrafanaCustomChart.tsx',
-  'components/telemetry/grafana/GrafanaDateRangePicker.tsx',
-  'components/telemetry/prometheus/PrometheusSelectionComponent.tsx',
-  'pages/_app.tsx',
+  'components/ExportModal.tsx',
+  'components/General/Popup.tsx',
+
+  // --- @/themes/* and @/constants/colors ---
+  'components/DesignLifeCycle/DeploymentSummary.tsx',
+  'components/DesignLifeCycle/styles.tsx',
+  'components/NavigatorExtension.tsx', // @/themes/hooks (added in audit)
 ];
 
 const legacyLiteralColorOffenders = [
@@ -369,6 +393,12 @@ module.exports = [
             {
               name: '@/constants/colors',
               message: 'Use @/theme and theme.palette.* instead of legacy color constants.',
+            },
+            // @/themes/hooks — the legacy theme toggler hook; migrate to @/theme/useThemePreference
+            {
+              name: '@/themes/hooks',
+              message:
+                'Use @/theme/useThemePreference (future) or the Sistent theme hook instead of the legacy @/themes/hooks module.',
             },
           ],
           patterns: [
