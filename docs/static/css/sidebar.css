@@ -1,5 +1,5 @@
 /* Light mode sidebar improvements */
-:root {
+.light-mode {
   --sidebar-text-color: #333;
   --sidebar-link-color: #0066cc;
   --sidebar-link-hover: #0052a3;
