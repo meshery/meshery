@@ -74,10 +74,10 @@ func ErrModelBuild(err error) error {
 	return errors.New(ErrModelBuildCode, errors.Fatal, []string{"Error model build"}, []string{err.Error()}, []string{"Error during run of model build command"}, []string{"Ensure passing all params according to the command description"})
 }
 
-func ErrDeleteModel(err error, nameOrID string) error {
+func ErrDeleteModel(nameOrID string) error {
 	return errors.New(ErrDeleteModelCode, errors.Alert,
 		[]string{"Failed to delete model"},
-		[]string{fmt.Sprintf("Failed to delete model with name or ID '%s': %s", nameOrID, err.Error())},
+		[]string{fmt.Sprintf("Failed to delete model with name or ID '%s'", nameOrID)},
 		[]string{"The specified model name or ID may not exist"},
 		[]string{"Verify the model name or ID using 'mesheryctl model list' and try again"})
 }
