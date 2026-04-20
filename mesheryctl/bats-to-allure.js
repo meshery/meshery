@@ -5,6 +5,7 @@ const path = require("path");
 const crypto = require("crypto");
 
 const ALLURE_RESULTS_DIR = "allure-results";
+const ALLURE_LABELS="project=mesheryctl,framework=bats,language=bash,type=end-to-end";
 
 // TAP regex patterns
 const TAP_TEST_RE = /^(ok|not ok)\s+\d+\s+(.*)/;
@@ -12,7 +13,7 @@ const TAP_DIAGNOSTIC_RE = /^\s*#\s?(.*)/;
 
 // Parse labels from env: key=value,key=value
 function parseExtraLabels() {
-  const raw = process.env.ALLURE_LABELS;
+  const raw = process.env.ALLURE_LABELS || ALLURE_LABELS;
   if (!raw) return [];
 
   return raw.split(",")
