@@ -1,5 +1,5 @@
 /* Light mode sidebar improvements */
-:root {
+.light-mode {
   --sidebar-text-color: #333;
   --sidebar-link-color: #0066cc;
   --sidebar-link-hover: #0052a3;
@@ -10,11 +10,11 @@
   color: var(--sidebar-link-color) !important;
 }
 
-.td-sidebar-nav a:hover {
+.light-mode .td-sidebar-nav a:hover {
   color: var(--sidebar-link-hover) !important;
 }
 
-.td-sidebar-nav span,
-.td-sidebar-nav li {
+.light-mode .td-sidebar-nav span,
+.light-mode .td-sidebar-nav li {
   color: var(--sidebar-text-color) !important;
 }
