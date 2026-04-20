@@ -19,7 +19,7 @@ setup() {
     
 }
 
-@test "given a non existing model name when running mesheryctl model delete then no model found message is displayed" {
+@test "given a non existing model name when running mesheryctl model delete then an error message is displayed" {
     NONEXISTENT_NAME="nonexistent-model-name"
 
     run $MESHERYCTL_BIN model delete "$NONEXISTENT_NAME"
@@ -28,7 +28,7 @@ setup() {
     assert_output --partial "Error"
 }
 
-@test "given a non existing model-id when running mesheryctl model delete then no model found message is displayed" {
+@test "given a non existing model-id when running mesheryctl model delete then an error message is displayed" {
     NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"
 
     run $MESHERYCTL_BIN model delete "$NONEXISTENT_ID"
