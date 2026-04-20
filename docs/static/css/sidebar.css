@@ -10,7 +10,7 @@
   color: var(--sidebar-link-color) !important;
 }
 
-.td-sidebar-nav a:hover {
+.light-mode .td-sidebar-nav a:hover {
   color: var(--sidebar-link-hover) !important;
 }
 
