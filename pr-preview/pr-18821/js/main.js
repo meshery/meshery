@@ -127,6 +127,7 @@ document.addEventListener("click", (event) => {
     }
 });
 
+
 ;(function() {
   'use strict';
   
@@ -137,17 +138,23 @@ document.addEventListener("click", (event) => {
   }
   
   function initResize() {
+    const MIN_SIDEBAR_WIDTH = 250;
+    const MAX_SIDEBAR_WIDTH = 400;
+    const RESIZE_HANDLE_WIDTH = 10;
+    const MOBILE_BREAKPOINT = 1200;
+
     const leftContainer = document.querySelector('.left-container');
     const sidebar = document.querySelector('.sidebar-container');
 
     if (!leftContainer || !sidebar) return;
-    if (window.innerWidth <= 1200) return;
-    
+        
     let isResizing = false;
 
     leftContainer.addEventListener('mousedown', function(e) {
+      if(window.innerWidth <= MOBILE_BREAKPOINT) return;
+
       const rect = leftContainer.getBoundingClientRect();
-      if (e.clientX >= rect.right - 10) {
+      if (e.clientX >= rect.right - RESIZE_HANDLE_WIDTH) {
         isResizing = true;
         document.body.style.cursor = 'col-resize';
         document.body.style.userSelect = 'none';
@@ -156,22 +163,24 @@ document.addEventListener("click", (event) => {
     });
 
     document.addEventListener('mousemove', function(e) {
-      if (!isResizing) return;
+  if (!isResizing) return;
 
-      const containerRect = leftContainer.getBoundingClientRect();
-      const newWidth = Math.min(Math.max(e.clientX - containerRect.left, 250), 400);
+  requestAnimationFrame(function() {
+    const containerRect = leftContainer.getBoundingClientRect();
+    const newWidth = Math.min(Math.max(e.clientX - containerRect.left, 250), 400);
 
-      leftContainer.style.width = newWidth + 'px';
-      leftContainer.style.flexBasis = newWidth + 'px';
-      leftContainer.style.flexShrink = '0';
-      
-      const wrapper = leftContainer.querySelector('.sidebar-container-wrapper');
-      if (wrapper) {
-        wrapper.style.width = newWidth + 'px';
-      }
-      
-      sidebar.style.width = newWidth + 'px';
-    });
+    leftContainer.style.width = newWidth + 'px';
+    leftContainer.style.flexBasis = newWidth + 'px';
+    leftContainer.style.flexShrink = '0';
+    
+    const wrapper = leftContainer.querySelector('.sidebar-container-wrapper');
+    if (wrapper) {
+      wrapper.style.width = newWidth + 'px';
+    }
+    
+    sidebar.style.width = newWidth + 'px';
+  });
+});
 
     document.addEventListener('mouseup', function() {
       if (!isResizing) return;
