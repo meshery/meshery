@@ -109,7 +109,7 @@ func TestInitDefaultConfig(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "Given os.MkdirAll fails, When InitDefaultConfig is called, Then error is returned",
+			name: "Given invalid mesheryFolder path, When InitDefaultConfig is called, Then error is returned",
 			setup: func(_ string, _ *testing.T) {},
 			configPath: func(p string) string { return p },
 			mesheryFolder: func(_ string) string {
