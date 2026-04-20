@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm run lint:fix && node ui_dev_server.js",
-    "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx .",
-    "lint:ui-kit": "eslint --cache --ext .js,.jsx,.ts,.tsx components pages utils store rtk-query machines api theme themes lib hooks",
-    "lint:fix": "eslint --cache --fix --ext .js,.jsx,.ts,.tsx .",
+    "lint": "eslint --cache .",
+    "lint:ui-kit": "eslint --cache --no-error-on-unmatched-pattern components pages utils store rtk-query machines api theme themes lib",
+    "lint:fix": "eslint --cache --fix .",
     "format": "npx prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
     "build": "npm run clean && cross-env next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
