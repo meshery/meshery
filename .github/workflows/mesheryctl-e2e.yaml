@@ -100,7 +100,7 @@ jobs:
           E2E_HELPERS_PATH: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers"
 
       - name: Convert TAP to Allure results
-        if: ${{ !cancelled() && github.event_name == 'push' }}
+        if: ${{ !cancelled() && (github.event_name == 'push'  || (github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' && inputs.publish_to_qa == 'true')) }}
         working-directory: ./mesheryctl
         run: |
           if [ ! -f tests/e2e/bats.tap ]; then
@@ -112,20 +112,20 @@ jobs:
         
       - name: Checkout QA
         uses: actions/checkout@v6
-        if: ${{ !cancelled() && ((github.event_name == 'push' && matrix.publish_to_qa == true) || (github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' && inputs.publish_to_qa == 'true')) }}
+        if: ${{ !cancelled() && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' && inputs.publish_to_qa == 'true')) }}
         with:
           repository: meshery/qa
           path: ./qa
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Sync results with qa
-        if: ${{ !cancelled() && ((github.event_name == 'push' && matrix.publish_to_qa == true) || (github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' && inputs.publish_to_qa == 'true')) }}
+        if: ${{ !cancelled() && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' && inputs.publish_to_qa == 'true')) }}
         working-directory: qa
         run: |
           make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl/allure-results
 
       - name: Commit & push to qa
-        if: ${{ !cancelled() && ((github.event_name == 'push' && matrix.publish_to_qa == true) || (github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true')) }}
+        if: ${{ !cancelled() && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' && inputs.publish_to_qa == 'true')) }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "[mesheryctl] Sync mesheryctl E2E Test Results - ${GITHUB_SHA}"
