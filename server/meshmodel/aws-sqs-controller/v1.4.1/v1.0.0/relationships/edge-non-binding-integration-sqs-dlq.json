@@ -17,7 +17,7 @@
         "displayName": "",
         "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-            "kind": "artifacthub"
+            "kind": "github"
         },
         "model": {
             "version": "v1.4.1"
@@ -39,7 +39,7 @@
                             "displayName": "",
                             "id": "00000000-0000-0000-0000-000000000000",
                             "registrant": {
-                                "kind": "artifacthub"
+                                "kind": "github"
                             },
                             "model": {
                                 "version": ""
@@ -47,7 +47,7 @@
                         },
                         "patch": {
                             "patchStrategy": "replace",
-                            "mutatedrRef": [
+                            "mutatedRef": [
                                 [
                                     "configuration",
                                     "spec",
@@ -69,7 +69,7 @@
                             "displayName": "",
                             "id": "00000000-0000-0000-0000-000000000000",
                             "registrant": {
-                                "kind": "artifacthub"
+                                "kind": "github"
                             },
                             "model": {
                                 "version": ""
@@ -95,7 +95,7 @@
             }
         }
     ],
-    "subType": "integration",
+    "subType": "network",
     "status": "enabled",
     "type": "non-binding",
     "version": "v1.0.0"
