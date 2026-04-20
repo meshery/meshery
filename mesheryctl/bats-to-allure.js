@@ -5,7 +5,7 @@ const path = require("path");
 const crypto = require("crypto");
 
 const ALLURE_RESULTS_DIR = "allure-results";
-const ALLURE_LABELS="project=mesheryctl,unit=ci,type=end2end";
+const ALLURE_LABELS="project=mesheryctl,env=ci,type=end2end";
 
 // TAP regex patterns
 const TAP_TEST_RE = /^(ok|not ok)\s+\d+\s+(.*)/;
