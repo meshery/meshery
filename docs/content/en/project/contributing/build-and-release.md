@@ -2,12 +2,11 @@
 title: Build & Release (CI)
 description: Details of Meshery's build and release strategy.
 categories: [contributing]
-training-video: "https://www.youtube.com/watch?v=dlr_nzJV16Q"
 ---
 
 Meshery’s build and release system incorporates many tools, organized into different workflows each triggered by different events. Meshery’s build and release system does not run on a schedule, but is event-driven. GitHub Actions are used to define Meshery’s CI workflows. New builds of Meshery and its various components are automatically generated upon push, release, and other similar events, typically in relation to their respective master branches.
 
-{{% alert color="info" title="Meshery Test Documents" %}} The Meshery Test Strategy (<a href='https://docs.google.com/document/d/11nAxYtz2SUusCYZ0JeNRrOLIxkgmmbUVWz63MBZV2oE/edit'>1</a>,<a href='https://docs.google.com/document/d/14vbwnKafqxrr-cJOmLWEvvj75MFrxFKiUdfPwZRhg64/edit'>2</a>) is a comprehensive document that outlines the approach to testing, types of tests, frameworks used - test strategy - for each of Meshery's architectural components. The <a href='https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit'>Meshery Test Plan</a> is a tactical spreadsheet that *itemizes* specific integration and end-to-end test cases and tracks their status. It includes a list of GitHub workflows and their purpose. Join the <a href='https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#'>Meshery CI meeting</a> and/or the <a href='https://meshery.io/subscribe'>developers mailing list</a> to get involved. {{% /alert %}}
+{{% alert color="info" title="Meshery Test Documents" %}} The Meshery Test Strategy (<a href='https://docs.google.com/document/d/11nAxYtz2SUusCYZ0JeNRrOLIxkgmmbUVWz63MBZV2oE/edit'>1</a>,<a href='https://docs.google.com/document/d/14vbwnKafqxrr-cJOmLWEvvj75MFrxFKiUdfPwZRhg64/edit'>2</a>) is a comprehensive document that outlines the approach to testing, types of tests, frameworks used - test strategy - for each of Meshery's architectural components. The <a href='https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit'>Meshery Test Plan</a> is a tactical spreadsheet that *itemizes* specific integration and end-to-end test cases and tracks their status. It includes a list of GitHub workflows and their purpose. Join the <a href='https://meshery.io/subscribe'>developers mailing list</a> to get involved. {{% /alert %}}
 
 ## Artifacts
 
@@ -319,7 +318,7 @@ The Meshery Release Lead plays a crucial role in coordinating and executing the 
   - Coordinate resolution of critical issues
 
 - **Communication**
-  - Lead weekly Meshery build and release meetings
+  - Coordinate release status updates with the community
   - Provide regular status updates to the community
 
 - **Documentation Updates**
