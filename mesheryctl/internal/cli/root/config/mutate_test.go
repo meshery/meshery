@@ -79,12 +79,13 @@ func TestNeedsMutation(t *testing.T) {
 
 func TestInitDefaultConfig(t *testing.T) {
 	tests := []struct {
-		name         string
-		setup        func(string, *testing.T)
-		configPath   func(string) string
-		createConfig func(string) func() error
-		wantErr      bool
-	}{
+	name         string
+	setup        func(string, *testing.T)
+	configPath   func(string) string
+	mesheryFolder func(string) string
+	createConfig func(string) func() error
+	wantErr      bool
+}{
 		{
 			name: "Given valid setup, When InitDefaultConfig is called, Then no error is returned",
 			setup: func(_ string, _ *testing.T) {},
@@ -110,7 +111,10 @@ func TestInitDefaultConfig(t *testing.T) {
 		{
 			name: "Given os.MkdirAll fails, When InitDefaultConfig is called, Then error is returned",
 			setup: func(_ string, _ *testing.T) {},
-			configPath: func(_ string) string { return "/invalid/path/config.yaml" },
+			configPath: func(p string) string { return p },
+			mesheryFolder: func(_ string) string {
+				return string([]byte{0}) // portable invalid path
+			},
 			createConfig: func(_ string) func() error {
 				return func() error { return nil }
 			},
@@ -170,6 +174,10 @@ func TestInitDefaultConfig(t *testing.T) {
 			basePath := filepath.Join(tmpDir, "config.yaml")
 			configPath := tt.configPath(basePath)
 			mesheryFolder := filepath.Join(tmpDir, ".meshery")
+			
+			if tt.mesheryFolder != nil {
+				mesheryFolder = tt.mesheryFolder(mesheryFolder)
+			}
 
 			tt.setup(configPath, t)
 
