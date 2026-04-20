@@ -17,7 +17,7 @@
         "displayName": "",
         "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-            "kind": ""
+            "kind": "github"
         },
         "model": {
             "version": "v1.4.1"
@@ -39,18 +39,29 @@
                             "displayName": "",
                             "id": "00000000-0000-0000-0000-000000000000",
                             "registrant": {
-                                "kind": "artifacthub"
+                                "kind": "github"
                             },
                             "model": {
                                 "version": ""
                             }
+                        },
+                        "patch": {
+                            "patchStrategy": "replace",
+                            "mutatorRef": [
+                                [
+                                    "configuration",
+                                    "status",
+                                    "ackResourceMetadata",
+                                    "arn"
+                                ]
+                            ]
                         }
                     }
                 ],
                 "to": [
                     {
                         "id": null,
-                        "kind": "Function",
+                        "kind": "EventSourceMapping",
                         "match": {},
                         "match_strategy_matrix": null,
                         "model": {
@@ -59,11 +70,21 @@
                             "displayName": "",
                             "id": "00000000-0000-0000-0000-000000000000",
                             "registrant": {
-                                "kind": "artifacthub"
+                                "kind": "github"
                             },
                             "model": {
                                 "version": ""
                             }
+                        },
+                        "patch": {
+                            "patchStrategy": "replace",
+                            "mutatedRef": [
+                                [
+                                    "configuration",
+                                    "spec",
+                                    "eventSourceARN"
+                                ]
+                            ]
                         }
                     }
                 ]
@@ -74,7 +95,7 @@
             }
         }
     ],
-    "subType": "integration",
+    "subType": "network",
     "status": "enabled",
     "type": "non-binding",
     "version": "v1.0.0"
