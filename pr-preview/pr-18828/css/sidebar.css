@@ -5,16 +5,15 @@
   --sidebar-link-hover: #0052a3;
 }
 
-.light-mode .td-sidebar-nav a,
-.td-sidebar-nav a {
-  color: var(--sidebar-link-color) !important;
+.light-mode .td-sidebar-nav a{
+  color: var(--sidebar-link-color);
 }
 
 .light-mode .td-sidebar-nav a:hover {
-  color: var(--sidebar-link-hover) !important;
+  color: var(--sidebar-link-hover);
 }
 
 .light-mode .td-sidebar-nav span,
 .light-mode .td-sidebar-nav li {
-  color: var(--sidebar-text-color) !important;
+  color: var(--sidebar-text-color) ;
 }
