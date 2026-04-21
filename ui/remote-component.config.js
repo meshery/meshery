@@ -162,5 +162,43 @@ module.exports = {
     '@rjsf/mui': require('@rjsf/mui'),
     '@rjsf/utils': require('@rjsf/utils'),
     '@rjsf/validator-ajv8': require('@rjsf/validator-ajv8'),
+
+    // Extension Point: Shared runtime for extensions
+    // Extensions that want to use these packages need to:
+    // 1. keep versions in lockstep.
+    // 2. configure an `externalDeps` tracking file or similar
+    cytoscape: require('cytoscape'),
+    'cytoscape-automove': require('cytoscape-automove'),
+    'cytoscape-autopan-on-drag': require('cytoscape-autopan-on-drag'),
+    'cytoscape-bubblesets': require('cytoscape-bubblesets'),
+    'cytoscape-clipboard': require('cytoscape-clipboard'),
+    'cytoscape-cola': require('cytoscape-cola'),
+    'cytoscape-dagre': require('cytoscape-dagre'),
+    'cytoscape-dblclick': require('cytoscape-dblclick'),
+    'cytoscape-edgehandles': require('cytoscape-edgehandles'),
+    'cytoscape-fcose': require('cytoscape-fcose'),
+    'cytoscape-layers': require('cytoscape-layers'),
+    'cytoscape-popper': require('cytoscape-popper'),
+
+    // Extension Point: Shared runtime for extensions
+    dockview: require('dockview'),
+    'emoji-picker-react': require('emoji-picker-react'),
+    '@xterm/xterm': require('@xterm/xterm'),
+    '@xterm/addon-fit': require('@xterm/addon-fit'),
+    '@xterm/addon-search': require('@xterm/addon-search'),
+
+    // Extension Point: Shared runtime for extensions
+    '@dnd-kit/core': require('@dnd-kit/core'),
+    '@dnd-kit/utilities': require('@dnd-kit/utilities'),
+    '@tippyjs/react': require('@tippyjs/react'),
+    'tippy.js': require('tippy.js'),
+    '@reactour/tour': require('@reactour/tour'),
+    'react-mentions': require('react-mentions'),
+    'hotkeys-js': require('hotkeys-js'),
+    'styled-components': require('styled-components'),
+    immer: require('immer'),
+    'resize-observer-polyfill': require('resize-observer-polyfill'),
+    'prop-types': require('prop-types'),
+    pluralize: require('pluralize'),
   },
 };

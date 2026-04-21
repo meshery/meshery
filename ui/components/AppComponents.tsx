@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import { Hidden, Typography, useTheme } from '@sistent/sistent';
+import { FavoriteIcon, Hidden, Typography, useTheme } from '@sistent/sistent';
 import Navigator from './Navigator';
 import subscribeK8sContext from './graphql/subscriptions/K8sContextSubscription';
 import CAN from '@/utils/can';

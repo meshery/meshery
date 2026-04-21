@@ -501,7 +501,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		if k8ctx == nil {
 			continue
 		}
-		if k8ctx.KubernetesServerID.String() == sid {
+		if k8ctx.KubernetesServerID != nil && k8ctx.KubernetesServerID.String() == sid {
 			refCount++
 		}
 	}

@@ -231,6 +231,7 @@ export const userApi = api
         },
       }),
     }),
+    overrideExisting: true,
   });
 
 export const {

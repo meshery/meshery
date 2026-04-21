@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import RemoveIcon from '@mui/icons-material/Remove';
 import Link from 'next/link';
-import HelpIcon from '@mui/icons-material/Help';
-import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
-import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
-import ExtensionIcon from '../public/static/img/drawer-icons/extensions_svg';
-import PatternIcon from '../public/static/img/drawer-icons/pattern_svg';
-import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
-import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
-import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
-import ConfigurationIcon from '../assets/icons/ConfigurationIcon';
-import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
-  CatalogIcon,
   CustomTooltip,
   ListItemIcon,
   Grow,
@@ -23,9 +10,11 @@ import {
   Box,
   NoSsr,
   Zoom,
+  HelpOutlinedIcon,
   LeftArrowIcon,
   ExternalLinkIcon as IconExternalLink,
-  TachographDigitalIcon,
+  OpenInNewIcon,
+  RemoveIcon,
   useTheme,
   SlackIcon,
   FileIcon,
@@ -36,23 +25,15 @@ import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidato
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import {
-  DESIGN,
   CONFIGURATION,
   DASHBOARD,
   CATALOG,
   LIFECYCLE,
   SERVICE_MESH,
-  PERFORMANCE,
-  PROFILES,
   TOGGLER,
-  CONNECTION,
-  ENVIRONMENT,
-  WORKSPACE,
-  EXTENSIONS,
 } from '../constants/navigator';
 import { iconSmall } from '../css/icons.styles';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import {
   HideScrollbar,
@@ -81,7 +62,6 @@ import {
   SidebarDrawer,
   ExpandMore,
 } from './General/style';
-import DashboardIcon from '@/assets/icons/DashboardIcon';
 import { useMediaQuery } from '@sistent/sistent';
 import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
 import { useDispatch, useSelector } from 'react-redux';
@@ -94,181 +74,9 @@ import {
 } from '@/store/slices/mesheryUi';
 import { useRouter } from 'next/router';
 import { setAdapter } from '@/store/slices/adapter';
+import { getNavigatorComponents } from './navigatorComponents';
 
-const drawerIconsStyle = { height: '19.36px', width: '19.36px', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '17.76px', fontSize: '1.11rem' };
-
-const getNavigatorComponents = (
-  /** @type {CapabilitiesRegistry} */ capabilityRegistryObj,
-  theme,
-) => [
-  {
-    id: DASHBOARD,
-    icon: <DashboardIcon style={drawerIconsStyle} />,
-    hovericon: <DashboardIcon style={drawerIconsStyle} />,
-    href: '/',
-    title: 'Dashboard',
-    show: capabilityRegistryObj.isNavigatorComponentEnabled([DASHBOARD]),
-    link: true,
-    submenu: true,
-  },
-  {
-    id: LIFECYCLE,
-    icon: <LifecycleIcon style={drawerIconsStyle} />,
-    hovericon: <LifecycleHover style={drawerIconsStyle} />,
-    title: 'Lifecycle',
-    link: true,
-    href: '/management/connections',
-    show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE]),
-    submenu: true,
-    children: [
-      {
-        id: CONNECTION,
-        href: '/management/connections',
-        title: 'Connections',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
-        link: true,
-        permission: {
-          action: keys.VIEW_CONNECTIONS.action,
-          subject: keys.VIEW_CONNECTIONS.subject,
-        },
-      },
-      {
-        id: ENVIRONMENT,
-        href: '/management/environments',
-        title: 'Environments',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
-        link: true,
-        permission: {
-          action: keys.VIEW_ENVIRONMENTS.action,
-          subject: keys.VIEW_ENVIRONMENTS.subject,
-        },
-      },
-      {
-        id: WORKSPACE,
-        href: '/management/workspaces',
-        title: 'Workspaces',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, WORKSPACE]),
-        link: true,
-        permission: {
-          action: keys.VIEW_WORKSPACE.action,
-          subject: keys.VIEW_WORKSPACE.subject,
-        },
-      },
-      {
-        id: SERVICE_MESH,
-        href: '/management/adapter',
-        title: 'Adapters',
-        link: true,
-        icon: <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,
-        show: true,
-        permission: {
-          action: keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
-          subject: keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
-        },
-      },
-    ],
-  },
-  {
-    id: CONFIGURATION,
-    icon: <ConfigurationIcon {...drawerIconsStyle} />,
-    hovericon: <ConfigurationHover style={drawerIconsStyle} />,
-    href: '/configuration/designs',
-    title: 'Configuration',
-    show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION]),
-    link: true,
-    submenu: true,
-    children: [
-      {
-        id: CATALOG,
-        icon: (
-          <>
-            <CatalogIcon
-              primaryFill={window.location.pathname === '/configuration/catalog' ? '#FFFFFF' : ''}
-              secondaryFill={window.location.pathname === '/configuration/catalog' ? '#FFFFFF' : ''}
-              tertiaryFill="transparent"
-              style={{ ...drawerIconsStyle }}
-            />
-          </>
-        ),
-        href: '/configuration/catalog',
-        title: 'Catalog',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, CATALOG]),
-        link: true,
-        isBeta: true,
-        permission: {
-          action: keys.VIEW_CATALOG.action,
-          subject: keys.VIEW_CATALOG.subject,
-        },
-      },
-      // {
-      //   id: FILTER,
-      //   icon: <FilterIcon style={{ ...drawerIconsStyle }} />,
-      //   href: '/configuration/filters',
-      //   title: 'Filters',
-      //   show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
-      //   link: true,
-      //   isBeta: true,
-      //   permission: {
-      //     action: keys.VIEW_FILTERS.action,
-      //     subject: keys.VIEW_FILTERS.subject,
-      //   },
-      // },
-      {
-        id: DESIGN,
-        icon: <PatternIcon style={{ ...drawerIconsStyle }} />,
-        href: '/configuration/designs',
-        title: 'Designs',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
-        link: true,
-        isBeta: true,
-        permission: {
-          action: keys.VIEW_DESIGNS.action,
-          subject: keys.VIEW_DESIGNS.subject,
-        },
-      },
-    ],
-  },
-  {
-    id: PERFORMANCE,
-    icon: <PerformanceIcon style={{ transform: 'scale(1.3)', ...drawerIconsStyle }} />,
-    hovericon: <PerformanceHover style={drawerIconsStyle} />,
-    href: '/performance',
-    title: 'Performance',
-    show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE]),
-    link: true,
-    submenu: true,
-    children: [
-      {
-        id: PROFILES,
-        icon: <TachographDigitalIcon fill={theme.palette.icon.default} />,
-        href: '/performance/profiles',
-        title: 'Profiles',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
-        link: true,
-        permission: {
-          action: keys.VIEW_PERFORMANCE_PROFILES.action,
-          subject: keys.VIEW_PERFORMANCE_PROFILES.subject,
-        },
-      },
-    ],
-  },
-  {
-    id: EXTENSIONS,
-    icon: <ExtensionIcon style={drawerIconsStyle} />,
-    hovericon: <ExtensionIcon style={drawerIconsStyle} />,
-    title: 'Extensions',
-    show: capabilityRegistryObj.isNavigatorComponentEnabled([EXTENSIONS]),
-    width: 12,
-    link: true,
-    href: '/extensions',
-    submenu: false,
-    permission: {
-      action: keys.VIEW_EXTENSIONS.action,
-      subject: keys.VIEW_EXTENSIONS.subject,
-    },
-  },
-];
 
 const NavigatorWrapper = () => {
   const isMobile = useMediaQuery('(max-width:599px)');
@@ -365,7 +173,9 @@ const Navigator_ = () => {
       href: 'https://docs.meshery.io',
       title: 'Documentation',
       icon: <FileIcon height="20px" width="20px" />,
-      hovericon: <FileIcon fill="#00b39f" height="20px" width="20px" />,
+      hovericon: (
+        <FileIcon fill={theme.palette.background.brand.default} height="20px" width="20px" />
+      ),
       external_icon: ExternalLinkIcon,
     },
     {
@@ -976,7 +786,10 @@ const Navigator_ = () => {
                 </SideBarListItem>
                 <Collapse
                   in={state.openItems.includes(childId)}
-                  style={{ backgroundColor: '#396679', opacity: '100%' }}
+                  style={{
+                    backgroundColor: theme.palette.background.tabs,
+                    opacity: '100%',
+                  }}
                 >
                   {renderChildren(childId, children, 1)}
                 </Collapse>
@@ -1035,14 +848,14 @@ const Navigator_ = () => {
             </HelpListItem>
           );
         })}
-        <ListItem style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
+        <ListItem key="help-button" style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
           <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
             <HelpButton isCollapsed={isDrawerCollapsed} onClick={toggleSpacing}>
-              <HelpIcon
+              <HelpOutlinedIcon
                 style={{
                   fontSize: '1.45rem',
                   ...iconSmall,
-                  color: '#fff',
+                  color: theme.palette.background.constant.white,
                   opacity: '0.7',
                   transition: 'opacity 200ms linear',
                   '&:hover': {
@@ -1068,7 +881,7 @@ const Navigator_ = () => {
         position: 'sticky',
         paddingLeft: 0,
         paddingRight: 0,
-        color: '#eeeeee',
+        color: theme.palette.background.constant.white,
         fontSize: '0.75rem',
       }}
     >
