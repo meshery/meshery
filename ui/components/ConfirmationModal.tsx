@@ -18,11 +18,12 @@ import {
   ModalBody,
   useTheme,
   Search,
+  alpha,
 } from '@sistent/sistent';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { RoundedTriangleShape } from './shapes/RoundedTriangle';
 import { notificationColors } from '../themes/app';
@@ -55,18 +56,16 @@ const ActionButton = styled(Button, {
   minWidth: 100,
   ...(isUndeploy &&
     !isDisabled && {
-      backgroundColor: '#B32700',
+      backgroundColor: theme.palette.error.main,
       '&:hover': {
-        backgroundColor: '#8f1f00',
-        boxShadow:
-          '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)',
+        backgroundColor: theme.palette.error.dark,
+        boxShadow: theme.shadows[4],
       },
     }),
   ...(!isUndeploy && {
-    color: '#fff',
+    color: theme.palette.common.white,
     '&:hover': {
-      boxShadow:
-        '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)',
+      boxShadow: theme.shadows[4],
     },
   }),
   ...(isDisabled && {
@@ -101,13 +100,13 @@ export const TriangleContainer = styled('div')({
   marginLeft: 2,
 });
 
-export const TriangleNumber = styled('div')({
+export const TriangleNumber = styled('div')(({ theme }) => ({
   position: 'absolute',
   bottom: 12,
   left: '37%',
-  color: '#fff',
+  color: theme.palette.common.white,
   fontSize: '0.8rem',
-});
+}));
 
 export const OctagonContainer = styled('div')({
   overflow: 'hidden',
@@ -119,12 +118,12 @@ export const OctagonContainer = styled('div')({
   marginLeft: 2,
 });
 
-export const OctagonText = styled('div')({
+export const OctagonText = styled('div')(({ theme }) => ({
   position: 'absolute',
   bottom: 9.5,
-  color: '#fff',
+  color: theme.palette.common.white,
   fontSize: '0.8rem',
-});
+}));
 
 function ConfirmationMsg(props) {
   const {
@@ -140,7 +139,6 @@ function ConfirmationMsg(props) {
   } = props;
 
   const [tabVal, setTabVal] = useState(tab);
-
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -152,11 +150,14 @@ function ConfirmationMsg(props) {
   const { k8sConfig: k8scontext } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
 
-  const isDisabled =
-    typeof selectedK8sContexts?.length === 'undefined' || selectedK8sContexts?.length === 0;
+  const isDisabled = !selectedK8sContexts?.length;
 
-  const filteredContexts =
-    searchQuery === '' ? k8scontext : k8scontext.filter((ctx) => ctx.name.includes(searchQuery));
+  const filteredContexts = useMemo(() => {
+    const contexts = k8scontext || [];
+    return searchQuery === ''
+      ? contexts
+      : contexts.filter((ctx) => ctx.name?.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [k8scontext, searchQuery]);
 
   const handleTabValChange = (event, newVal) => {
     setTabVal(newVal);
@@ -345,7 +346,7 @@ function ConfirmationMsg(props) {
                       onChange={(event) => searchContexts(event.target.value)}
                       style={{
                         width: '100%',
-                        backgroundColor: 'rgba(102, 102, 102, 0.12)',
+                        backgroundColor: alpha(theme.palette.text.secondary, 0.12),
                         margin: '1px 1px 8px ',
                       }}
                       InputProps={{
@@ -447,25 +448,21 @@ export default ConfirmationMsg;
 
 export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => {
   const dispatch = useDispatch();
+  const theme = useTheme();
+
   const deployableK8scontexts = useFilterK8sContexts(k8scontext, ({ operatorState }) => {
     return operatorState !== 'DISABLED';
   });
-  const [searchedContexts, setSearchedContexts] = useState(deployableK8scontexts);
+
+  const [searchQuery, setSearchQuery] = useState('');
   const selectedContexts = selectedK8sContexts;
 
-  const searchContexts = (search) => {
-    if (search === '') {
-      setSearchedContexts(k8scontext);
-      return;
-    }
-    let matchedCtx = [];
-    k8scontext.forEach((ctx) => {
-      if (ctx.name.includes(search)) {
-        matchedCtx.push(ctx);
-      }
-    });
-    setSearchedContexts(matchedCtx);
-  };
+  const filteredDeployableContexts = useMemo(() => {
+    const contexts = deployableK8scontexts || [];
+    return searchQuery === ''
+      ? contexts
+      : contexts.filter((ctx) => ctx.name?.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [deployableK8scontexts, searchQuery]);
 
   const setContextViewer = (id) => {
     if (id === 'all') {
@@ -499,17 +496,20 @@ export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => 
         label="Search"
         size="small"
         variant="outlined"
-        onChange={(event) => searchContexts(event.target.value)}
+        // Update to set the searchQuery string instead of managing an array
+        onChange={(event) => setSearchQuery(event.target.value)}
         style={{
           width: '100%',
-          backgroundColor: 'rgba(102, 102, 102, 0.12)',
+          backgroundColor: alpha(theme.palette.text.secondary, 0.12),
           margin: '1px 1px 8px ',
         }}
         InputProps={{
           endAdornment: <Search style={iconMedium} />,
         }}
       />
-      {searchedContexts.length > 0 ? (
+
+      {/* Map and check length against the newly derived filtered array */}
+      {filteredDeployableContexts.length > 0 ? (
         <Box display={'table'}>
           <Checkbox
             checked={selectedContexts?.includes('all')}
@@ -523,7 +523,7 @@ export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => 
       )}
 
       <ContextsContainer>
-        {deployableK8scontexts.map((ctx) => (
+        {filteredDeployableContexts.map((ctx) => (
           <K8sContextConnectionChip
             ctx={ctx}
             key={ctx.id}

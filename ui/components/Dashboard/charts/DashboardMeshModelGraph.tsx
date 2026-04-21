@@ -28,19 +28,20 @@ function MeshModelContructs() {
   const modelCount = useGetMeshModelsQuery({ params }).data?.total_count || 0;
   const componentCount = useGetComponentsQuery({ params }).data?.total_count || 0;
   const relationshipCount = useGetRelationshipsQuery({ params }).data?.total_count || 0;
-  const registrantsConut = useGetRegistrantsQuery({ params }).data?.total_count || 0;
+  const registrantsCount = useGetRegistrantsQuery({ params }).data?.total_count || 0;
   const theme = useTheme();
 
-  // Data Cleanup
-  const data = [
-    ['Models', modelCount],
-    ['Components', componentCount],
-    ['Relationships', relationshipCount],
-    ['Registrants', registrantsConut],
-  ];
   const router = useRouter();
-  const chartOptions = useMemo(
-    () => ({
+
+  const chartOptions = useMemo(() => {
+    const data = [
+      ['Models', modelCount],
+      ['Components', componentCount],
+      ['Relationships', relationshipCount],
+      ['Registrants', registrantsCount],
+    ];
+
+    return {
       data: {
         columns: data,
         type: donut(),
@@ -65,9 +66,8 @@ function MeshModelContructs() {
           },
         },
       },
-    }),
-    [data, router],
-  );
+    };
+  }, [modelCount, componentCount, relationshipCount, registrantsCount]);
 
   return (
     <Link
