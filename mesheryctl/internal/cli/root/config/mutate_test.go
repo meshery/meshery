@@ -123,7 +123,7 @@ func TestInitDefaultConfig(t *testing.T) {
 		{
 			name: "Given AddTokenToConfig fails, When InitDefaultConfig is called, Then error is returned",
 			setup: func(path string, t *testing.T) {
-				// Create directory instead of file → guaranteed failure
+				// Create directory instead of file → AddToken will fail
 				if err := os.Mkdir(path, 0o700); err != nil {
 					t.Fatalf("failed to create dir: %v", err)
 				}
@@ -140,23 +140,14 @@ func TestInitDefaultConfig(t *testing.T) {
 				if err := os.WriteFile(path, []byte("valid: yaml"), 0o644); err != nil {
 					t.Fatalf("write failed: %v", err)
 				}
-				
-				dir := filepath.Dir(path)
-				// Save original permissions
-				info, err := os.Stat(dir)
-				if err != nil {
-					t.Fatalf("stat failed: %v", err)
-				}
-				originalPerm := info.Mode()
-
-				// Make directory read-only
-				if err := os.Chmod(dir, 0o500); err != nil {
+		
+				// Make file read-only → deterministic failure
+				if err := os.Chmod(path, 0o400); err != nil {
 					t.Fatalf("chmod failed: %v", err)
 				}
-
-				// Restore permissions after test
+		
 				t.Cleanup(func() {
-					_ = os.Chmod(dir, originalPerm)
+					_ = os.Chmod(path, 0o644)
 				})
 			},
 			configPath: func(p string) string { return p },
@@ -165,7 +156,7 @@ func TestInitDefaultConfig(t *testing.T) {
 			},
 			wantErr: true,
 		},
-	}
+ }
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
