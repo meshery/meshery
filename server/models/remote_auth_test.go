@@ -11,7 +11,10 @@ import (
 	"sync/atomic"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
+	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
 
@@ -86,6 +89,97 @@ func TestRemoteProviderDoRequest_DoesNotRefreshAnonymousToken(t *testing.T) {
 
 	if got := atomic.LoadInt32(&refreshCalls); got != 0 {
 		t.Fatalf("expected anonymous token request not to hit /refresh, got %d calls", got)
+	}
+}
+
+func TestRemoteProviderGetCredentialByID_UsesResponseCache(t *testing.T) {
+	credentialUUID := uuid.FromStringOrNil("1f8b84e2-5af1-4c8c-a1d4-6f91f8c0c2b1")
+	credentialID := core.UUIDOrUUIDNil(&credentialUUID)
+
+	var credentialCalls int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/api/integrations/credentials/") {
+			atomic.AddInt32(&credentialCalls, 1)
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"id":"` + credentialID.String() + `","secret":{"secret":"abc"}}`))
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{
+		{Feature: PersistCredentials, Endpoint: "/api/integrations/credentials"},
+	}
+
+	cred1, statusCode1, err := provider.GetCredentialByID("token-a", credentialID)
+	if err != nil {
+		t.Fatalf("unexpected error on first fetch: %v", err)
+	}
+	if statusCode1 != http.StatusOK {
+		t.Fatalf("expected status %d, got %d", http.StatusOK, statusCode1)
+	}
+	if cred1 == nil {
+		t.Fatal("expected non-nil credential on first fetch")
+	}
+
+	cred2, statusCode2, err := provider.GetCredentialByID("token-a", credentialID)
+	if err != nil {
+		t.Fatalf("unexpected error on second fetch: %v", err)
+	}
+	if statusCode2 != http.StatusOK {
+		t.Fatalf("expected status %d, got %d", http.StatusOK, statusCode2)
+	}
+	if cred2 == nil {
+		t.Fatal("expected non-nil credential on second fetch")
+	}
+
+	if got := atomic.LoadInt32(&credentialCalls); got != 1 {
+		t.Fatalf("expected one remote credential request, got %d", got)
+	}
+}
+
+func TestRemoteProviderLoadAllK8sContext_UsesResponseCache(t *testing.T) {
+	instanceUUID := uuid.FromStringOrNil("90d7a88c-68a7-4f58-a67d-e9e3f8b4f3f0")
+	instanceID := core.UUIDOrUUIDNil(&instanceUUID)
+	viper.Set("INSTANCE_ID", &instanceID)
+
+	var k8sContextCalls int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/api/integrations/connections") {
+			atomic.AddInt32(&k8sContextCalls, 1)
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"page":0,"page_size":25,"total_count":0,"connections":[]}`))
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{
+		{Feature: PersistConnection, Endpoint: "/api/integrations/connections"},
+	}
+
+	contexts1, err := provider.LoadAllK8sContext("token-b")
+	if err != nil {
+		t.Fatalf("unexpected error on first contexts fetch: %v", err)
+	}
+	if len(contexts1) != 0 {
+		t.Fatalf("expected 0 contexts on first fetch, got %d", len(contexts1))
+	}
+
+	contexts2, err := provider.LoadAllK8sContext("token-b")
+	if err != nil {
+		t.Fatalf("unexpected error on second contexts fetch: %v", err)
+	}
+	if len(contexts2) != 0 {
+		t.Fatalf("expected 0 contexts on second fetch, got %d", len(contexts2))
+	}
+
+	if got := atomic.LoadInt32(&k8sContextCalls); got != 1 {
+		t.Fatalf("expected one remote k8s contexts request, got %d", got)
 	}
 }
 
