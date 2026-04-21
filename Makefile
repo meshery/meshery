@@ -318,7 +318,7 @@ ui-server: ui-meshery-build ui-provider-build server
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds.
 #-----------------------------------------------------------------------------
-.PHONY: ui-setup ui ui-meshery-build ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
+.PHONY: ui-setup ui ui-meshery-build ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test ui-lint-check ui-kit-guardrail-lint ui-guardrail-audits ui-provider-lint-check
 
 UI_BUILD_SCRIPT = build16
 UI_DEV_SCRIPT = dev16
@@ -360,9 +360,25 @@ ui-provider:
 ui-lint:
 	cd ui; npm i eslint; npx eslint . --fix; cd ..
 
+## Lint check Meshery UI on your local machine without auto-fixes.
+ui-lint-check:
+	cd ui; npm run lint; cd ..
+
+## Run targeted UI kit guardrail lint checks.
+ui-kit-guardrail-lint:
+	cd ui; npm run lint:ui-kit; cd ..
+
+## Run UI guardrail audits and emit audit logs.
+ui-guardrail-audits:
+	cd ui; npm run audit:mui | tee audit-mui.log; npm run audit:hex | tee audit-hex.log; npm run audit:size | tee audit-size.log; cd ..
+
 ## Lint check Meshery Provider UI on your local machine.
 ui-provider-lint:
 	cd provider-ui && npm i eslint && npx eslint .
+
+## Lint check Meshery Provider UI on your local machine without auto-installing eslint.
+ui-provider-lint-check:
+	cd provider-ui; npm run lint; cd ..
 
 ## Test Meshery Provider UI on your local machine.
 ui-provider-test:

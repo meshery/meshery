@@ -11,20 +11,14 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - name: Install dependencies in Meshery UI and Provider UI
-      run: |
-        cd ui && npm ci && cd ..
-        cd provider-ui && npm ci && cd ..
+      run: make ui-setup-ci
     - name: Run ESLint Meshery-UI
-      run: cd ui && npm run lint
+      run: make ui-lint-check
     - name: Run UI Kit Guardrail Lint
-      run: cd ui && npm run lint:ui-kit
+      run: make ui-kit-guardrail-lint
 
     - name: Run UI Guardrail Audits
-      run: |
-        cd ui
-        npm run audit:mui | tee audit-mui.log
-        npm run audit:hex | tee audit-hex.log
-        npm run audit:size | tee audit-size.log
+      run: make ui-guardrail-audits
 
     - name: Publish UI Guardrail Audit Summary
       if: always()
@@ -40,18 +34,4 @@ jobs:
         } >> "$GITHUB_STEP_SUMMARY"
 
     - name: Run ESLint Provider-UI
-      run: cd provider-ui && npm run lint
-
-    # Replace the steps above with the following make targets and autocommit when ready.
-    # - name: Run eslint Meshery UI
-    #   run: make ui-lint 
-    # - name: Run eslint Provider UI
-    #   run: make ui-provider-lint
-    # - name: Commit changes
-    #   uses: stefanzweifel/git-auto-commit-action@v7
-    #   with:
-    #     commit_user_name: mesheryci
-    #     commit_user_email: ci@meshery.io
-    #     commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-    #     commit_options: "--signoff"
-    #     commit_message: "[UI] Chore: eslint fixes"
+      run: make ui-provider-lint-check
