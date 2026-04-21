@@ -127,7 +127,6 @@ document.addEventListener("click", (event) => {
     }
 });
 
-
 ;(function() {
   'use strict';
   
@@ -139,54 +138,85 @@ document.addEventListener("click", (event) => {
   
   function initResize() {
     const MIN_SIDEBAR_WIDTH = 250;
-    const MAX_SIDEBAR_WIDTH = 400;
+    const MAX_SIDEBAR_WIDTH = 350;
     const RESIZE_HANDLE_WIDTH = 10;
     const MOBILE_BREAKPOINT = 1200;
-
+    const STORAGE_KEY = 'meshery-sidebar-width';
+    
     const leftContainer = document.querySelector('.left-container');
     const sidebar = document.querySelector('.sidebar-container');
 
     if (!leftContainer || !sidebar) return;
-        
+    
     let isResizing = false;
 
-    leftContainer.addEventListener('mousedown', function(e) {
-      if(window.innerWidth <= MOBILE_BREAKPOINT) return;
+      function applySidebarWidth(width) {
+      leftContainer.style.width = width + 'px';
+      leftContainer.style.flexBasis = width + 'px';
+      leftContainer.style.flexShrink = '0';
+      
+      const wrapper = leftContainer.querySelector('.sidebar-container-wrapper');
+      if (wrapper) {
+        wrapper.style.width = width + 'px';
+      }
+      
+      sidebar.style.width = width + 'px';
+      sidebar.style.maxWidth = MAX_SIDEBAR_WIDTH + 'px';
+      sidebar.style.minWidth = MIN_SIDEBAR_WIDTH + 'px';
+    }
 
+      const DEFAULT_SIDEBAR_WIDTH = 320;
+
+      function getInitialWidth() {
+        const savedWidth = localStorage.getItem(STORAGE_KEY);
+        if (savedWidth) {
+          const parsed = parseInt(savedWidth, 10);
+          if (!isNaN(parsed) && parsed >= MIN_SIDEBAR_WIDTH && parsed <= MAX_SIDEBAR_WIDTH) {
+            return parsed;
+          }
+        }
+        return DEFAULT_SIDEBAR_WIDTH;
+      }
+
+      if (window.innerWidth > MOBILE_BREAKPOINT) {
+        applySidebarWidth(getInitialWidth());
+      }
+
+    leftContainer.addEventListener('mousedown', function(e) {
+      if (window.innerWidth <= MOBILE_BREAKPOINT) return;
+      
       const rect = leftContainer.getBoundingClientRect();
       if (e.clientX >= rect.right - RESIZE_HANDLE_WIDTH) {
         isResizing = true;
-        document.body.style.cursor = 'col-resize';
+        document.body.style.cursor = 'ew-resize';
         document.body.style.userSelect = 'none';
         e.preventDefault();
       }
     });
 
     document.addEventListener('mousemove', function(e) {
-  if (!isResizing) return;
+      if (!isResizing) return;
 
-  requestAnimationFrame(function() {
-    const containerRect = leftContainer.getBoundingClientRect();
-    const newWidth = Math.min(Math.max(e.clientX - containerRect.left, 250), 400);
-
-    leftContainer.style.width = newWidth + 'px';
-    leftContainer.style.flexBasis = newWidth + 'px';
-    leftContainer.style.flexShrink = '0';
-    
-    const wrapper = leftContainer.querySelector('.sidebar-container-wrapper');
-    if (wrapper) {
-      wrapper.style.width = newWidth + 'px';
-    }
-    
-    sidebar.style.width = newWidth + 'px';
-  });
-});
+      requestAnimationFrame(function() {
+        if (!isResizing) return; 
+        
+        const containerRect = leftContainer.getBoundingClientRect();
+        const newWidth = Math.min(Math.max(e.clientX - containerRect.left, MIN_SIDEBAR_WIDTH), MAX_SIDEBAR_WIDTH);
+        
+        applySidebarWidth(newWidth);
+      });
+    });
 
     document.addEventListener('mouseup', function() {
       if (!isResizing) return;
       isResizing = false;
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
+      
+      const currentWidth = parseInt(leftContainer.style.width);
+      if (currentWidth && currentWidth >= MIN_SIDEBAR_WIDTH && currentWidth <= MAX_SIDEBAR_WIDTH) {
+        localStorage.setItem(STORAGE_KEY, currentWidth);
+      }
     });
   }
 })();

@@ -5,6 +5,7 @@
   transition: transform 0.5s ease-in-out;
   margin-top: calc(var(--navbar-height));
   top: calc(var(--navbar-height));
+  overflow-x: hidden;
   &::after {
     content: "";
     position: absolute;
@@ -12,14 +13,10 @@
     right: 0;
     width: 10px;
     height: 100%;
-    cursor: col-resize;
+    cursor: ew-resize;
     z-index: 999;
     background: transparent;
     pointer-events: auto;
-  }
-  
-  &:hover::after {
-    background: transparent;
   }
   & .sidebar-container-wrapper {
     height: 100%;
@@ -27,6 +24,7 @@
     background: var(--background-grey);
     box-shadow: var(--box-shadow-primary);
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
   }
   & .icon-container {
@@ -83,10 +81,10 @@
   overscroll-behavior: contain;
   padding: .25rem min(2vh, 2vw);
   overflow-y: visible;
+  overflow-x: hidden;
   height: calc(100vh - var(--navbar-height));
   font-size: 1.5rem;
   width: 320px;
-  max-width: 400px;
   min-width: 250px;
   height: 100%;
   position: relative;
@@ -178,8 +176,10 @@
     padding: 0;
     margin: 0;
     overflow-y: visible;
+    overflow-x: hidden;
     max-height: none;
     flex: 1 1 auto;
+    min-width: 0;
   }
 
   & .td-sidebar-nav>.td-sidebar-nav__section {
@@ -207,11 +207,13 @@
     display: flex;
     align-items: center;
     width: 100%;
+    min-width: 0;
     padding-bottom: 0.15rem;
 
     a.td-sidebar-link {
       padding-bottom: 0;
       flex-grow: 0;
+      flex-shrink: 1;
       min-width: 0;
     }
   }
@@ -292,7 +294,11 @@
     font-weight: 500;
 
     min-width: 0;
-    width: fit-content;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    word-break: break-word;
+    overflow-wrap: break-word;
 
     &>span {
       color: #dadddf;
