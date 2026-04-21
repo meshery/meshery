@@ -36,14 +36,17 @@ const cardData = [
 const MyDesignsWidget = (props) => {
   const [sortOrder, setSortOrder] = useState('updated_at desc');
   const { data: userData } = useGetLoggedInUserQuery();
-  const { data: patternsData, isFetching: isPatternsFetching } = useGetUserDesignsQuery({
-    expandUser: true,
-    page: 0,
-    pagesize: 7,
-    order: sortOrder,
-    user_id: userData?.id,
-    metrics: true,
-  });
+  const { data: patternsData, isFetching: isPatternsFetching } = useGetUserDesignsQuery(
+    {
+      expandUser: true,
+      page: 0,
+      pagesize: 7,
+      order: sortOrder,
+      user_id: userData?.id,
+      metrics: true,
+    },
+    { skip: !userData?.id },
+  );
   const theme = useTheme();
 
   return (
