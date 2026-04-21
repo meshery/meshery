@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/meshery/schemas/models/core"
@@ -257,7 +258,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		ClusterIds []string `json:"clusterIds"`
 	}{}
 
-	clusterIds := r.URL.Query().Get("clusterIds")
+	urlEncodedClusterIds := r.URL.Query().Get("clusterIds")
+	clusterIds, _ := url.QueryUnescape(urlEncodedClusterIds)
 	if clusterIds != "" {
 		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
 		if err != nil {
