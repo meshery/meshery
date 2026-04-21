@@ -18,7 +18,7 @@ func BreakupFunc() {
 	channelCmd.Flags().VisitAll(setFlagValueAsUndefined)
 	SystemCmd.PersistentFlags().VisitAll(setFlagValueAsUndefined)
 	showForAllContext = false
-	showProviderForAllContext = false
+	providerViewFlags.All = false
 	tempContext = ""
 	utils.SilentFlag = false
 }

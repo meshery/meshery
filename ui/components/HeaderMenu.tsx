@@ -1,6 +1,5 @@
 // @ts-nocheck
 import React, { useState, useRef, useEffect } from 'react';
-import MenuIcon from '@mui/icons-material/Menu';
 import { useRouter } from 'next/router';
 import { useGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
@@ -8,7 +7,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { NavigationNavbar, Popover } from '@sistent/sistent';
+import { MenuIcon, NavigationNavbar, Popover } from '@sistent/sistent';
 import { IconButtonMenu } from './Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateExtensionType, updateUser } from '@/store/slices/mesheryUi';

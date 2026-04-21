@@ -12,7 +12,11 @@ const WorkspaceActivityWidget = () => {
   );
 
   const [selectedWorkspace, setSelectedWorkspace] = useState('');
-  const { data: events, isLoading: isEventsLoading } = useGetEventsOfWorkspaceQuery(
+  const {
+    data: events,
+    isLoading: isEventsLoading,
+    isError: isEventsError,
+  } = useGetEventsOfWorkspaceQuery(
     {
       workspaceId: selectedWorkspace,
       pagesize: 5,
@@ -34,7 +38,7 @@ const WorkspaceActivityWidget = () => {
     <WorkspaceActivityCard
       selectedWorkspace={selectedWorkspace}
       handleWorkspaceChange={handleWorkspaceChange}
-      activities={events?.data}
+      activities={isEventsError ? [] : events?.data}
       workspaces={workspaces?.workspaces}
       isEventsLoading={isEventsLoading}
       workspacePagePath="/management/workspaces"

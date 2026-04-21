@@ -203,32 +203,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: ${{ secrets.IMAGE_NAME }}
-  # validate the swagger docs
-  swaggerci:
-    if: github.repository == 'meshery/meshery'
-    name: swagger-docs
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v6
-      - name: Check if handlers were modified
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            modified:
-              - added|modified: "handlers/**"
-      - name: Setup go-swagger
-        if: steps.changes.outputs.modified == 'true'
-        uses: minchao/setup-go-swagger@v1
-        with:
-          version: v0.26.1
-      - name: swagger-spec
-        if: steps.changes.outputs.modified == 'true'
-        run: swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
-      - name: swagger-docs
-        if: steps.changes.outputs.modified == 'true'
-        run: swagger generate spec -o ./docs/data/swagger.yml --scan-models && swagger flatten ./docs/data/swagger.yml -o ./docs/data/swagger.yml --with-expand --format=yaml
-
   # validate graphQL schema
   graphql_validate:
     name: Validate GraphQL schema

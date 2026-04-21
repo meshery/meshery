@@ -40,13 +40,6 @@ type jsonSchemaValidationType struct {
 	Schema string `json:"$schema,omitempty"`
 }
 
-// swagger:route POST /api/meshmodel/validate MeshmodelValidate idPostMeshModelValidate
-// Handle POST request for validate
-//
-// Validate the given value with the given schema
-// responses:
-// 	200:
-
 // request body should be json
 // request body should be of format - {validationItems: {[id]:{schema: string, value: string, valueType: "JSON"|"YAML"|"CUE"}}}
 // response format - {[id]: {isValid: bool, error: string}}

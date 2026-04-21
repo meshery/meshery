@@ -40,7 +40,7 @@ You are an expert-level software engineering agent specialized in contributing t
 - **Build System**: Make-based workflow (see `Makefile`)
 - **Containerization**: Docker, multi-stage builds
 - **Linting**: golangci-lint (Go), ESLint + Prettier (JavaScript)
-- **Version Control**: Git with DCO (Developer Certificate of Origin) sign-off
+- **Version Control**: Git with mandatory DCO (Developer Certificate of Origin) sign-off on every commit
 
 ## Meshery Design Principles
 
@@ -137,6 +137,7 @@ mesheryctl system context create mycontext --platform kubernetes  # Override
 ```bash
 # Format: [component] Brief description
 # Sign commits with DCO using -s flag
+# Every git commit must include a Signed-off-by: trailer
 # Reference issue numbers in commit messages
 
 # Example:

@@ -65,18 +65,23 @@ const WorkspaceDataTable = ({
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
   const { selectedOrganization: organization } = useGetSelectedOrganization();
-  const { id: org_id } = organization;
+  const orgId = organization?.id;
 
   const theme = useTheme();
 
-  const { data: workspaces } = useGetWorkspacesQuery({
-    page: page,
-    pagesize: pageSize,
-    search: search,
-    order: sortOrder,
-    orgID: org_id,
-    expandInfo: true,
-  });
+  const { data: workspaces } = useGetWorkspacesQuery(
+    {
+      page: page,
+      pagesize: pageSize,
+      search: search,
+      order: sortOrder,
+      orgID: orgId,
+      expandInfo: true,
+    },
+    {
+      skip: !orgId,
+    },
+  );
 
   const workspacesData = workspaces?.workspaces ? workspaces.workspaces : [];
 

@@ -1,18 +1,19 @@
 import { useGetUserProfileSummaryByIdQuery } from '@/rtk-query/user';
 import {
-  Divider,
-  CustomTooltip,
-  Skeleton,
-  VisibilityChipMenu,
-  getRelativeTime,
-  getFullFormattedTime,
   AvatarGroup,
-  FormControlLabel,
   Checkbox,
+  CustomTooltip,
+  Divider,
+  FormControlLabel,
   FormGroup,
+  getFullFormattedTime,
+  getRelativeTime,
+  LockIcon as Lock,
+  PublicIcon as Public,
+  Skeleton,
   Typography,
+  VisibilityChipMenu,
 } from '@sistent/sistent';
-import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
 import {
   StyledAvatarContainer,

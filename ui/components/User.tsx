@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Avatar, Button } from '@sistent/sistent';
-import NoSsr from '@mui/material/NoSsr';
+import { Avatar, Button, NoSsr } from '@sistent/sistent';
 import Link from 'next/link';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
