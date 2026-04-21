@@ -58,7 +58,7 @@ const getWidgets = ({ iconsProps, isEditMode }) => {
       thumbnail: MyDesignthumbnail?.src,
       defaultSizing: {
         w: 3,
-        h: 2,
+        h: 1.4,
       },
     },
     WORKSPACE_ACTIVITY: {
@@ -68,7 +68,7 @@ const getWidgets = ({ iconsProps, isEditMode }) => {
       thumbnail: WorkspaceActivityThumbnail?.src,
       defaultSizing: {
         w: 6,
-        h: 2,
+        h: 1.4,
       },
     },
     CONNECTIONS_STATUS_CHART: {

@@ -28,6 +28,10 @@ export const applyMinSizeConstraints = (
   const constrained: Layouts = {};
 
   for (const [bp, items] of Object.entries(layouts || {})) {
+    if (!Array.isArray(items)) {
+      continue;
+    }
+
     const maxCols = colsConfig[bp] ?? 12;
     const defaults = defaultLayouts?.[bp] ?? [];
 
