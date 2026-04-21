@@ -28,11 +28,11 @@ func TestCreateEnvironment(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(errors.New("[ Organization ID | Name | Description ] aren't specified\n\nUsage: mesheryctl environment create --orgID [orgID] --name [name] --description [description]\nRun 'mesheryctl environment create --help' to see detailed help message")),
+			ExpectedError:    utils.ErrInvalidArgument(errors.New("[ Organization ID | Name | Description ] aren't specified\n\nUsage: mesheryctl environment create --orgId [orgId] --name [name] --description [description]\nRun 'mesheryctl environment create --help' to see detailed help message")),
 		},
 		{
 			Name:             "Create environment successfully",
-			Args:             []string{"create", "--name", testConstants["environmentName"], "--description", "integration test", "--orgID", testConstants["orgID"]},
+			Args:             []string{"create", "--name", testConstants["environmentName"], "--description", "integration test", "--orgId", testConstants["orgId"]},
 			URL:              "/api/environments",
 			HttpMethod:       "POST",
 			HttpStatusCode:   200,

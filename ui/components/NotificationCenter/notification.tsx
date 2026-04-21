@@ -1,18 +1,19 @@
 // @ts-nocheck
 import * as React from 'react';
 import {
+  alpha,
   Avatar,
   Box,
+  Checkbox,
   Collapse,
-  Slide,
+  CustomTooltip,
+  FormattedTime,
   IconButton,
+  MoreVertIcon,
+  Popover,
+  Slide,
   Typography,
   useTheme,
-  Checkbox,
-  Popover,
-  alpha,
-  FormattedTime,
-  CustomTooltip,
 } from '@sistent/sistent';
 import {
   OptionList,
@@ -31,7 +32,6 @@ import {
 
 import { SEVERITY, SEVERITY_STYLE, STATUS } from './constants';
 import { iconLarge, iconMedium } from '../../css/icons.styles';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FacebookIcon from '../../assets/icons/FacebookIcon';
 import LinkedInIcon from '../../assets/icons/LinkedInIcon';
 import TwitterIcon from '../../assets/icons/TwitterIcon';
