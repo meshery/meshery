@@ -1,12 +1,13 @@
 package environments
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 )
 
 func TestCreateEnvironment(t *testing.T) {
@@ -20,7 +21,7 @@ func TestCreateEnvironment(t *testing.T) {
 	// Test scenarios for environment creation
 	tests := []utils.MesheryCommandTest{
 		{
-			Name:             "Create environment without arguments",
+			Name:             "given no flags provided when environment create then throw error",
 			Args:             []string{"create"},
 			URL:              "/api/environments",
 			HttpMethod:       "POST",
@@ -28,20 +29,75 @@ func TestCreateEnvironment(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(errors.New("[ Organization ID | Name | Description ] aren't specified\n\nUsage: mesheryctl environment create --orgId [orgId] --name [name] --description [description]\nRun 'mesheryctl environment create --help' to see detailed help message")),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId '', Invalid value for --name '', Invalid value for --description ''")),
 		},
 		{
-			Name:             "Create environment successfully",
+			Name:             "given invalid organization ID when environment create then throw error",
+			Args:             []string{"create", "--name", testConstants["environmentName"], "--description", "integration test", "--orgId", "invalid-org-id"},
+			URL:              "/api/environments",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgid 'invalid-org-id': must be a valid UUID")),
+		},
+		{
+			Name:             "given empty flag values when environment create then throw error",
+			Args:             []string{"create", "--name", "", "--description", "", "--orgId", ""},
+			URL:              "/api/environments",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId '', Invalid value for --name '', Invalid value for --description ''")),
+		},
+		{
+			Name:             "given missing flag orgId when environment create then throw error",
+			Args:             []string{"create", "--name", testConstants["environmentName"], "--description", "integration test"},
+			URL:              "/api/environments",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId ''")),
+		},
+		{
+			Name:             "given missing flag name when environment create then throw error",
+			Args:             []string{"create", "--orgId", testConstants["orgId"], "--description", "integration test"},
+			URL:              "/api/environments",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --name ''")),
+		},
+		{
+			Name:             "given missing flag description when environment create then throw error",
+			Args:             []string{"create", "--name", testConstants["environmentName"], "--orgId", testConstants["orgId"]},
+			URL:              "/api/environments",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --description ''")),
+		},
+		{
+			Name:             "given all flags provided when environment create then environment is created",
 			Args:             []string{"create", "--name", testConstants["environmentName"], "--description", "integration test", "--orgId", testConstants["orgId"]},
 			URL:              "/api/environments",
 			HttpMethod:       "POST",
-			HttpStatusCode:   200,
+			HttpStatusCode:   201,
 			Fixture:          "create.environment.response.golden",
 			ExpectedResponse: "create.environment.success.golden",
 			ExpectError:      false,
 		},
 	}
 
-	// Run tests
+	mesheryctlflags.InitValidators(EnvironmentCmd)
 	utils.InvokeMesheryctlTestCommand(t, update, EnvironmentCmd, tests, currDir, "environments")
 }

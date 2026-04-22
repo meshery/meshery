@@ -8,6 +8,8 @@ replace github.com/compose-spec/compose-go/v2 => github.com/compose-spec/compose
 
 // The following replaces are used for local development
 
+// replace github.com/meshery/schemas => ../schemas
+
 // replace github.com/meshery/meshkit => ../meshkit
 
 // replace github.com/meshery/meshsync v0.8.26 => ../meshsync
@@ -67,6 +69,7 @@ require (
 	github.com/vektah/gqlparser/v2 v2.5.31
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.64.0
+	go.opentelemetry.io/otel/sdk v1.43.0
 	golang.org/x/oauth2 v0.35.0
 	golang.org/x/text v0.35.0
 	gonum.org/v1/gonum v0.17.0
@@ -397,7 +400,6 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.39.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0 // indirect
 	go.opentelemetry.io/otel/metric v1.43.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.43.0 // indirect
 	go.opentelemetry.io/otel/sdk/metric v1.43.0 // indirect
 	go.opentelemetry.io/otel/trace v1.43.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
