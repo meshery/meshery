@@ -8,7 +8,7 @@ replace github.com/compose-spec/compose-go/v2 => github.com/compose-spec/compose
 
 // The following replaces are used for local development
 
-// replace github.com/meshery/schemas v0.8.92 => ../schemas
+// replace github.com/meshery/schemas => ../schemas
 
 // replace github.com/meshery/meshkit => ../meshkit
 
@@ -51,7 +51,7 @@ require (
 	github.com/meshery/meshery-operator v0.8.11
 	github.com/meshery/meshkit v1.0.2
 	github.com/meshery/meshsync v1.0.0
-	github.com/meshery/schemas v1.0.5
+	github.com/meshery/schemas v1.0.9
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.3.1
 	github.com/olekukonko/tablewriter v1.1.0
@@ -69,6 +69,7 @@ require (
 	github.com/vektah/gqlparser/v2 v2.5.31
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.64.0
+	go.opentelemetry.io/otel/sdk v1.43.0
 	golang.org/x/oauth2 v0.35.0
 	golang.org/x/text v0.35.0
 	gonum.org/v1/gonum v0.17.0
@@ -260,7 +261,7 @@ require (
 	github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	github.com/jackc/pgx/v5 v5.7.6 // indirect
+	github.com/jackc/pgx/v5 v5.9.0 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jhump/protoreflect v1.17.0 // indirect
@@ -399,7 +400,6 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.39.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0 // indirect
 	go.opentelemetry.io/otel/metric v1.43.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.43.0 // indirect
 	go.opentelemetry.io/otel/sdk/metric v1.43.0 // indirect
 	go.opentelemetry.io/otel/trace v1.43.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect

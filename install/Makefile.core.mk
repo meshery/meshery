@@ -33,10 +33,13 @@ SHELL := /usr/bin/env bash -o pipefail
 #-----------------------------------------------------------------------------
 # Components
 #-----------------------------------------------------------------------------
-# All Adapters
-# ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10002 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10009 localhost:10010 localhost:10012"
-# No Adapters
-ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10012 localhost:10013"
+# Adapters to dial on start. Default is empty so developers who do not run
+# adapters locally don't see meshery-server-1047 "connection refused" errors
+# every sync tick. To use adapters, export ADAPTER_URLS in your shell, e.g.:
+#   export ADAPTER_URLS='localhost:10000 localhost:10001 localhost:10012 localhost:10013'
+# or override on the make command line:
+#   make server-local ADAPTER_URLS='localhost:10000 localhost:10001'
+ADAPTER_URLS ?= ""
 
 #-----------------------------------------------------------------------------
 # Providers (Add your provider here. See https://docs.meshery.io/extensibility/providers)
@@ -58,8 +61,13 @@ PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provide
 MESHERY_K8S_SKIP_COMP_GEN ?= TRUE
 APPLICATIONCONFIGPATH="./apps.json"
 PORT:=9081
-# OpenTelemetry Config (Ansi-C string format)
-OTEL_CONFIG=$$'service_name: meshery-server\nservice_version: 1.0.0\nendpoint: localhost:4317\ninsecure: true'
+# OpenTelemetry Config (Ansi-C string format). Defaults to empty so tracing
+# is disabled unless a developer explicitly points it at a live collector.
+# Previously this defaulted to localhost:4317 which floods logs with
+# "traces export: ... connection refused" every ~10s when no collector is
+# running. To enable tracing from bash, override on the command line, e.g.:
+#   make server-local OTEL_CONFIG=$'service_name: meshery-server\nservice_version: 1.0.0\nendpoint: localhost:4317\ninsecure: true'
+OTEL_CONFIG ?=
 #-----------------------------------------------------------------------------
 # Build
 #-----------------------------------------------------------------------------

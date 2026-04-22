@@ -2163,7 +2163,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 
 	data, err := json.Marshal(map[string]interface{}{
-		"patternFile": pattern,
+		"patternData": pattern,
 		"save":        true,
 	})
 
@@ -4093,6 +4093,34 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			l.Log.Error(ErrSaveConnection(err))
 		}
 	}()
+
+	// Pre-warm the per-user capabilities cache so that the first client hit
+	// to /api/provider/capabilities after login doesn't pay for a full
+	// round-trip to the remote provider. loadCapabilities above has already
+	// fetched the data; here we just resolve the user and persist it under
+	// the user-scoped key that ProviderCapabilityHandler reads. Running in a
+	// goroutine because the redirect should not block on a secondary API call.
+	go func() {
+		synReq, err := http.NewRequest(http.MethodGet, "/", nil)
+		if err != nil {
+			return
+		}
+		synReq.AddCookie(&http.Cookie{Name: TokenCookieName, Value: tokenString})
+		user, err := l.GetUserDetails(synReq)
+		if err != nil || user == nil || user.ID == uuid.Nil {
+			l.Log.Debugf("[TokenHandler] pre-warm capabilities: skip (user lookup failed: %v)", err)
+			return
+		}
+		// Mirror GetProviderCapabilities: always persist ProviderURL as the
+		// configured RemoteProviderURL so the cached per-user payload matches
+		// what a subsequent /api/provider/capabilities call would write.
+		providerPropertiesForUser := providerProperties
+		providerPropertiesForUser.ProviderURL = l.RemoteProviderURL
+		if err := l.WriteCapabilitiesForUser(user.ID.String(), &providerPropertiesForUser); err != nil {
+			l.Log.Debugf("[TokenHandler] pre-warm capabilities: write failed for user %s: %v", user.ID.String(), err)
+		}
+	}()
+
 	l.Log.Info(fmt.Sprintf("[AUTH_FLOW] step=TokenHandler action=redirect target=%s reason=auth_complete", redirectURL))
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
