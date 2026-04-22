@@ -28,12 +28,14 @@ export const applyMinSizeConstraints = (
   const constrained: Layouts = {};
 
   for (const [bp, items] of Object.entries(layouts || {})) {
+    const defaults = defaultLayouts?.[bp] ?? [];
+
     if (!Array.isArray(items)) {
+      constrained[bp] = defaults;
       continue;
     }
 
     const maxCols = colsConfig[bp] ?? 12;
-    const defaults = defaultLayouts?.[bp] ?? [];
 
     constrained[bp] = items.map((item) => {
       const defaultItem = defaults.find((d) => d.i === item.i);

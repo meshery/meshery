@@ -124,8 +124,8 @@ export const DEFAULT_LAYOUT = {
       x: 0,
       y: 0,
     },
-    { h: 1.4, i: 'MY_DESIGNS', moved: false, static: false, w: 2, x: 0, y: 2 },
-    { h: 1.4, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 0, y: 4 },
+    { h: 2, i: 'MY_DESIGNS', moved: false, static: false, w: 2, x: 0, y: 2 },
+    { h: 2, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 0, y: 4 },
     { h: 2, i: 'CONNECTIONS_STATUS_CHART', moved: false, static: false, w: 6, x: 0, y: 6 },
   ],
   xxs: [
@@ -156,8 +156,8 @@ export const DEFAULT_LAYOUT = {
       x: 0,
       y: 0,
     },
-    { h: 1.4, i: 'MY_DESIGNS', moved: false, static: false, w: 2, x: 0, y: 2 },
-    { h: 1.4, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 0, y: 4 },
+    { h: 2, i: 'MY_DESIGNS', moved: false, static: false, w: 2, x: 0, y: 2 },
+    { h: 2, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 0, y: 4 },
     { h: 2, i: 'CONNECTIONS_STATUS_CHART', moved: false, static: false, w: 6, x: 0, y: 6 },
   ],
 };
