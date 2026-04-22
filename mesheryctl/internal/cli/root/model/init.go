@@ -48,7 +48,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 		// validate model name
 		if len(args) != 1 {
-			return ErrModelInitFromString(errInitOneArg)
+			return utils.ErrInvalidArgument(fmt.Errorf("%s", errInitOneArg))
 		}
 		modelName := args[0]
 		input := map[string]any{"name": modelName}

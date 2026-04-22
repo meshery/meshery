@@ -4,11 +4,11 @@ import {
   IconButton,
   MenuItem,
   MenuList,
+  MoreVertIcon,
   Paper,
   Popper,
   Tooltip,
 } from '@sistent/sistent';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const ActionPopover = ({ actions = [] }) => {
   const [open, setOpen] = React.useState(false);
@@ -42,7 +42,7 @@ const ActionPopover = ({ actions = [] }) => {
         </Tooltip>
       </div>
 
-      <ClickAwayListener onClickAway={handleClose}>
+      <ClickAwayListener mouseEvent="onMouseDown" onClickAway={handleClose}>
         <Popper
           sx={{ zIndex: 1 }}
           open={open}

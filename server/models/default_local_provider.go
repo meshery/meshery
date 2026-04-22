@@ -800,7 +800,7 @@ func (l *DefaultLocalProvider) RemotePatternFile(_ *http.Request, resourceURL, p
 		if len(parsedPath) < 3 {
 			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
 		}
-		if len(parsedPath) >= 4 && parsedPath[3] == "tree" {
+		if len(parsedPath) >= 4 && (parsedPath[3] == "tree" || parsedPath[3] == "blob") {
 			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
 		}
 
@@ -808,7 +808,7 @@ func (l *DefaultLocalProvider) RemotePatternFile(_ *http.Request, resourceURL, p
 		repo := parsedPath[2]
 		branch := "master"
 
-		if len(parsedPath) == 4 {
+		if len(parsedPath) >= 4 && parsedPath[3] != "" {
 			branch = parsedPath[3]
 		}
 		if path == "" && len(parsedPath) > 4 {
@@ -914,18 +914,18 @@ func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, pa
 	// Check if hostname is github
 	if parsedURL.Host == "github.com" {
 		parsedPath := strings.Split(parsedURL.Path, "/")
-		if parsedPath[3] == "tree" {
-			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
-		}
 		if len(parsedPath) < 3 {
 			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
+		}
+		if len(parsedPath) >= 4 && (parsedPath[3] == "tree" || parsedPath[3] == "blob") {
+			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
 		}
 
 		owner := parsedPath[1]
 		repo := parsedPath[2]
 		branch := "master"
 
-		if len(parsedPath) == 4 {
+		if len(parsedPath) >= 4 && parsedPath[3] != "" {
 			branch = parsedPath[3]
 		}
 		if path == "" && len(parsedPath) > 4 {
@@ -1349,7 +1349,7 @@ func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Cred
 	if result.Error != nil {
 		return nil, fmt.Errorf("error saving user credentials: %v", result.Error)
 	}
-	return nil, nil
+	return credential, nil
 }
 
 func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID core.Uuid) (*Credential, int, error) {

@@ -408,7 +408,10 @@ const Navigator_ = () => {
               title={`Newer version of Meshery available: ${latest}`}
               placement="right"
             >
-              <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
+              <OpenInNewIcon
+                fill={theme.palette.background.constant.white}
+                style={{ width: '0.85rem', verticalAlign: 'middle' }}
+              />
             </CustomTextTooltip>
           </a>
         </span>
@@ -428,7 +431,10 @@ const Navigator_ = () => {
           rel="noreferrer"
           style={{ color: 'white' }}
         >
-          <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
+          <OpenInNewIcon
+            fill={theme.palette.background.constant.white}
+            style={{ width: '0.85rem', verticalAlign: 'middle' }}
+          />
         </a>
       );
 
@@ -439,7 +445,10 @@ const Navigator_ = () => {
         rel="noreferrer"
         style={{ color: 'white' }}
       >
-        <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
+        <OpenInNewIcon
+          fill={theme.palette.background.constant.white}
+          style={{ width: '0.85rem', verticalAlign: 'middle' }}
+        />
       </a>
     );
   };
