@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 19th 2026, 11:36:35 pm
+- Testing started at: April 22nd 2026, 4:11:55 am
 
 **📦 Test Result Summary**
 
-- ✅ 139 passed
-- ❌ 2 failed
+- ✅ 141 passed
+- ❌ 0 failed
 - ⚠️ 0 flaked
 - ⏩ 3 skipped
 
-⌛ _Duration: 7 minutes and 51 seconds_
+⌛ _Duration: 6 minutes and 4 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
@@ -38,7 +38,7 @@
 | 15 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 16 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 17 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
-| 18 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ❌ |
+| 18 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 19 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 20 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 21 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
@@ -111,7 +111,7 @@
 | 88 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 89 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 90 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
-| 91 | None | chromium-local-provider | config patching correctness | relationship | ❌ |
+| 91 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 92 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 93 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 94 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
@@ -171,42 +171,6 @@
 | 148 | None | remote-setup | authenticate with Remote Provider |  | ✅ |
 
 </div>
-</details>
-
-
-
-
-**❌ Failed Test Details**
-
-The following tests failed. Click on each to see the failure reason:
-
-
-<details>
-<summary>❌ config patching correctness (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ config patching correctness (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
 </details>
 
 
