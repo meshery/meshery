@@ -1,4 +1,49 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 17 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.9</title><link>/project/releases/v1.0.9/</link><pubDate>Fri, 17 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.9/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Wed, 22 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.10</title><link>/project/releases/v1.0.10/</link><pubDate>Wed, 22 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.10/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;server: adopt MesheryPatternImportRequestBody schema type + enforce oneOf contract @jamieplu (#18845)&lt;/li&gt;
+&lt;li&gt;[Docs] Standardize README formatting and fix grammar @vanshkamra12 (#17569)&lt;/li&gt;
+&lt;li&gt;make go engine default for evaluation in local server @aabidsofi19 (#18781)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(auth,extensions): close extension load loop and quiet local-dev log noise @jamieplu (#18851)&lt;/li&gt;
+&lt;li&gt;fix(ui): host tippy.js + xterm CSS subpaths for extensions @jamieplu (#18852)&lt;/li&gt;
+&lt;li&gt;[UI] Fix release link icon color in sidebar @Rajesh-Nagarajan-11 (#18840)&lt;/li&gt;
+&lt;li&gt;Fix dashboard grid resize jitter with debounced width updates @Rajesh-Nagarajan-11 (#18822)&lt;/li&gt;
+&lt;li&gt;[Chore]: Update to Sistent v0.18.8 @l5io (#18799)&lt;/li&gt;
+&lt;li&gt;[UI] Fix remote component eslint formatting @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#18800)&lt;/li&gt;
+&lt;li&gt;fix(extensions): forward upstream responses and return JSON errors @alexquincy (#18803)&lt;/li&gt;
+&lt;li&gt;[UI] expose Kanvas shared runtime deps via remote-component @yi-nuo426 (#18798)&lt;/li&gt;
+&lt;li&gt;[UI] Migrate @mui icon/system imports to @sistent/sistent @alexquincy (#18796)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump github.com/jackc/pgx/v5 from 5.7.6 to 5.9.0 @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#18779)&lt;/li&gt;
+&lt;li&gt;Update preview deployment message in workflow @CodexRaunak (#18816)&lt;/li&gt;
+&lt;li&gt;Bump github.com/go-git/go-git/v5 from 5.16.5 to 5.18.0 @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#18802)&lt;/li&gt;
+&lt;li&gt;Bump github.com/moby/spdystream from 0.5.0 to 0.5.1 @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#18778)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;docs: Add text note on biweekly CI/CD meetings section @zulkiflidev (#18838)&lt;/li&gt;
+&lt;li&gt;[Docs] Rename \Integrations\ to \Models\ on homepage #18811 @Cypher-CP0 (#18813)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@CodexRaunak, @Copilot, @Cypher-CP0, @PragalvaXFREZ, @Rajesh-Nagarajan-11, @aabidsofi19, @alexquincy, @dependabot[bot], @fitzergerald, @hamza-mohd, @jamieplu, @l5io, @leecalcote, @meshery-ci, @pontusringblom, @ritzorama, @saurabhraghuvanshii, @vanshkamra12, @yi-nuo426, @zulkiflidev, [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.9</title><link>/project/releases/v1.0.9/</link><pubDate>Fri, 17 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.9/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -32139,7 +32184,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.9&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.10&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
