@@ -153,8 +153,6 @@ document.addEventListener("click", (event) => {
 
     function applySidebarWidth(width) {
       leftContainer.style.width = width + 'px';
-      leftContainer.style.minWidth = MIN_SIDEBAR_WIDTH + 'px';
-      leftContainer.style.maxWidth = MAX_SIDEBAR_WIDTH + 'px';
       leftContainer.style.flexBasis = width + 'px';
       leftContainer.style.flexShrink = '0';
 
@@ -164,8 +162,6 @@ document.addEventListener("click", (event) => {
       }
 
       sidebar.style.width = width + 'px';
-      sidebar.style.maxWidth = MAX_SIDEBAR_WIDTH + 'px';
-      sidebar.style.minWidth = MIN_SIDEBAR_WIDTH + 'px';
     }
 
     function getInitialWidth() {
