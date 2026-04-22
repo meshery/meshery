@@ -8,8 +8,6 @@ replace github.com/compose-spec/compose-go/v2 => github.com/compose-spec/compose
 
 // The following replaces are used for local development
 
-// replace github.com/meshery/schemas v0.8.92 => ../schemas
-
 // replace github.com/meshery/meshkit => ../meshkit
 
 // replace github.com/meshery/meshsync v0.8.26 => ../meshsync
@@ -51,7 +49,7 @@ require (
 	github.com/meshery/meshery-operator v0.8.11
 	github.com/meshery/meshkit v1.0.2
 	github.com/meshery/meshsync v1.0.0
-	github.com/meshery/schemas v1.0.5
+	github.com/meshery/schemas v1.0.9
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.3.1
 	github.com/olekukonko/tablewriter v1.1.0
