@@ -1,7 +1,5 @@
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
 import { Footer, KubernetesSubscription, NavigationBar } from '../components/AppComponents';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
 import 'billboard.js/dist/theme/dark.min.css';
@@ -96,6 +94,7 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
 import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import { MesheryDatePickerProvider } from '@/components/shared/DatePicker';
 
 export const mesheryExtensionRoute = '/extension/meshmap';
 function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
@@ -553,7 +552,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                                     padding: extensionType === 'navigator' && '0px',
                                   }}
                                 >
-                                  <LocalizationProvider dateAdapter={AdapterMoment}>
+                                  <MesheryDatePickerProvider>
                                     <ErrorBoundary customFallback={CustomErrorFallback}>
                                       <Component
                                         pageContext={pageContext}
@@ -564,7 +563,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                                         {...pageProps}
                                       />
                                     </ErrorBoundary>
-                                  </LocalizationProvider>
+                                  </MesheryDatePickerProvider>
                                 </StyledMainContent>
                                 <Footer
                                   handleMesheryCommunityClick={handleMesheryCommunityClick}
@@ -622,9 +621,9 @@ const MesheryAppWrapper = ({ emotionCache = clientSideEmotionCache, ...props }) 
           <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
           <title>Meshery</title>
         </Head>
-        <LocalizationProvider dateAdapter={AdapterMoment}>
+        <MesheryDatePickerProvider>
           <MesheryApp {...props} emotionCache={emotionCache} />
-        </LocalizationProvider>
+        </MesheryDatePickerProvider>
       </ProviderStoreWrapper>
     </CacheProvider>
   );
