@@ -27,6 +27,7 @@ import (
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	servercore "github.com/meshery/meshery/server/core"
+	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/encoding"
@@ -77,9 +78,18 @@ type RemoteProvider struct {
 	Log                logger.Handler
 
 	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
+
+	cacheMut      sync.RWMutex
+	responseCache map[string]remoteProviderCacheEntry
 }
+
+type remoteProviderCacheEntry struct {
+	value     interface{}
+	expiresAt time.Time
+}
+
 type AnonymousFlowResponse struct {
-	AccessToken string          `json:"access_token"`
+	AccessToken string    `json:"access_token"`
 	UserID      core.Uuid `json:"user_id,omitempty"`
 }
 
@@ -98,7 +108,200 @@ const (
 	remoteUploadURL   = "/upload"
 	remoteDownloadURL = "/download"
 	refURLCookie      = "meshery_ref"
+
+	remoteProviderUserDetailsCacheTTL = 30 * time.Second
+	remoteProviderCredentialCacheTTL  = 30 * time.Second
+	remoteProviderConnectionCacheTTL  = 30 * time.Second
+	remoteProviderK8sContextsCacheTTL = 15 * time.Second
+
+	remoteProviderUserDetailsCachePrefix = "user-details"
+	remoteProviderCredentialCachePrefix  = "credential"
+	remoteProviderConnectionCachePrefix  = "connection"
+	remoteProviderK8sContextsCachePrefix = "k8s-contexts"
 )
+
+func (l *RemoteProvider) getRemoteProviderCacheEntry(cacheKey string) (interface{}, bool) {
+	l.cacheMut.RLock()
+	entry, ok := l.responseCache[cacheKey]
+	l.cacheMut.RUnlock()
+	if !ok {
+		return nil, false
+	}
+
+	if time.Now().After(entry.expiresAt) {
+		l.cacheMut.Lock()
+		delete(l.responseCache, cacheKey)
+		l.cacheMut.Unlock()
+		return nil, false
+	}
+
+	return entry.value, true
+}
+
+func (l *RemoteProvider) setRemoteProviderCacheEntry(cacheKey string, value interface{}, ttl time.Duration) {
+	l.cacheMut.Lock()
+	if l.responseCache == nil {
+		l.responseCache = make(map[string]remoteProviderCacheEntry)
+	}
+	l.responseCache[cacheKey] = remoteProviderCacheEntry{
+		value:     value,
+		expiresAt: time.Now().Add(ttl),
+	}
+	l.cacheMut.Unlock()
+}
+
+func (l *RemoteProvider) invalidateRemoteProviderCache(prefixes ...string) {
+	l.cacheMut.Lock()
+	if len(l.responseCache) == 0 {
+		l.cacheMut.Unlock()
+		return
+	}
+
+	for key := range l.responseCache {
+		for _, prefix := range prefixes {
+			if strings.HasPrefix(key, prefix+":") {
+				delete(l.responseCache, key)
+				break
+			}
+		}
+	}
+	l.cacheMut.Unlock()
+}
+
+func remoteProviderCacheKey(prefix string, values ...string) string {
+	return prefix + ":" + strings.Join(values, ":")
+}
+
+// cloneUser performs a shallow copy of User. This is safe because User contains
+// only scalar types (strings, UUIDs). No reference types (maps, slices, pointers)
+// are mutated by callers after retrieval from cache.
+func cloneUser(user *User) *User {
+	if user == nil {
+		return nil
+	}
+	cloned := *user
+	return &cloned
+}
+
+// cloneConnection performs a deep copy of Connection, handling reference types:
+// - Metadata map[string]interface{} is shallow-copied into new map
+// - CredentialID *core.Uuid pointer is copied if non-nil
+func cloneConnection(conn *connections.Connection) *connections.Connection {
+	if conn == nil {
+		return nil
+	}
+
+	// Start with shallow copy of all scalar fields
+	cloned := *conn
+
+	// Deep copy Metadata map (if exists)
+	if conn.Metadata != nil {
+		cloned.Metadata = make(map[string]interface{})
+		for k, v := range conn.Metadata {
+			cloned.Metadata[k] = v
+		}
+	}
+
+	// Deep copy CredentialID pointer
+	if conn.CredentialID != nil {
+		credIDCopy := *conn.CredentialID
+		cloned.CredentialID = &credIDCopy
+	}
+
+	return &cloned
+}
+
+// cloneCredential performs a deep copy of Credential, handling reference types:
+// - Secret map[string]interface{} is shallow-copied into new map
+func cloneCredential(cred *Credential) *Credential {
+	if cred == nil {
+		return nil
+	}
+
+	// Start with shallow copy
+	cloned := *cred
+
+	// Deep copy Secret map (if exists)
+	if cred.Secret != nil {
+		cloned.Secret = make(map[string]interface{})
+		for k, v := range cred.Secret {
+			cloned.Secret[k] = v
+		}
+	}
+
+	return &cloned
+}
+
+// cloneK8sContext performs a deep copy of K8sContext, handling reference types:
+// - Auth and Cluster are sql.Map types (internally map[string]interface{})
+// - UUID pointers (Owner, CreatedBy, MesheryInstanceID, KubernetesServerID) are copied if non-nil
+// - Time pointers (UpdatedAt, CreatedAt) are copied if non-nil
+func cloneK8sContext(ctx *K8sContext) *K8sContext {
+	if ctx == nil {
+		return nil
+	}
+
+	// Start with shallow copy
+	cloned := *ctx
+
+	// Deep copy Auth map (if exists)
+	if ctx.Auth != nil {
+		cloned.Auth = make(sql.Map)
+		for k, v := range ctx.Auth {
+			cloned.Auth[k] = v
+		}
+	}
+
+	// Deep copy Cluster map (if exists)
+	if ctx.Cluster != nil {
+		cloned.Cluster = make(sql.Map)
+		for k, v := range ctx.Cluster {
+			cloned.Cluster[k] = v
+		}
+	}
+
+	// Deep copy UUID pointers
+	if ctx.Owner != nil {
+		ownerCopy := *ctx.Owner
+		cloned.Owner = &ownerCopy
+	}
+	if ctx.CreatedBy != nil {
+		createdByCopy := *ctx.CreatedBy
+		cloned.CreatedBy = &createdByCopy
+	}
+	if ctx.MesheryInstanceID != nil {
+		mesheryInstIDCopy := *ctx.MesheryInstanceID
+		cloned.MesheryInstanceID = &mesheryInstIDCopy
+	}
+	if ctx.KubernetesServerID != nil {
+		k8sServerIDCopy := *ctx.KubernetesServerID
+		cloned.KubernetesServerID = &k8sServerIDCopy
+	}
+
+	// Deep copy time pointers
+	if ctx.UpdatedAt != nil {
+		updatedAtCopy := *ctx.UpdatedAt
+		cloned.UpdatedAt = &updatedAtCopy
+	}
+	if ctx.CreatedAt != nil {
+		createdAtCopy := *ctx.CreatedAt
+		cloned.CreatedAt = &createdAtCopy
+	}
+
+	return &cloned
+}
+
+// cloneK8sContexts creates a new slice with deep-cloned K8sContext entries.
+func cloneK8sContexts(contexts []*K8sContext) []*K8sContext {
+	if contexts == nil {
+		return nil
+	}
+	cloned := make([]*K8sContext, 0, len(contexts))
+	for _, c := range contexts {
+		cloned = append(cloned, cloneK8sContext(c))
+	}
+	return cloned
+}
 
 // Initialize function will initialize the RemoteProvider instance with the metadata
 // fetched from the remote providers capabilities endpoint
@@ -554,6 +757,13 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return nil, err
 	}
 
+	userDetailsCacheKey := remoteProviderCacheKey(remoteProviderUserDetailsCachePrefix, token)
+	if cachedUser, ok := l.getRemoteProviderCacheEntry(userDetailsCacheKey); ok {
+		if user, castOk := cachedUser.(*User); castOk {
+			return cloneUser(user), nil
+		}
+	}
+
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		if resp == nil {
@@ -585,6 +795,8 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences) {
 		_ = l.WriteToPersister(up.UserId, up.Preferences)
 	}
+
+	l.setRemoteProviderCacheEntry(userDetailsCacheKey, cloneUser(&up.User), remoteProviderUserDetailsCacheTTL)
 
 	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
 	// l.Log.Debug("retrieved user: %v", up.User)
@@ -1065,6 +1277,13 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 }
 
 func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
+	k8sContextsCacheKey := remoteProviderCacheKey(remoteProviderK8sContextsCachePrefix, token)
+	if cachedContexts, ok := l.getRemoteProviderCacheEntry(k8sContextsCacheKey); ok {
+		if contexts, castOk := cachedContexts.([]*K8sContext); castOk {
+			return cloneK8sContexts(contexts), nil
+		}
+	}
+
 	page := 0
 	pageSize := 25
 	results := []*K8sContext{}
@@ -1087,6 +1306,8 @@ func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) 
 
 		page++
 	}
+
+	l.setRemoteProviderCacheEntry(k8sContextsCacheKey, cloneK8sContexts(results), remoteProviderK8sContextsCacheTTL)
 
 	return results, nil
 }
@@ -4441,6 +4662,7 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 		l.Log.Debug("connections, ", connectionPage)
 		// On POST request to Remote Provider API, the response always contains single entry/connection.
 		if len(connectionPage.Connections) > 0 {
+			l.invalidateRemoteProviderCache(remoteProviderConnectionCachePrefix, remoteProviderK8sContextsCachePrefix)
 			return connectionPage.Connections[0], nil
 		}
 		return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
@@ -4520,10 +4742,17 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID core.Uuid)
 		l.Log.Error(ErrInvalidCapability("PersistConnection", l.ProviderName))
 		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
+
+	connectionCacheKey := remoteProviderCacheKey(remoteProviderConnectionCachePrefix, token, connectionID.String())
+	if cachedConn, ok := l.getRemoteProviderCacheEntry(connectionCacheKey); ok {
+		if conn, castOk := cachedConn.(*connections.Connection); castOk {
+			return cloneConnection(conn), http.StatusOK, nil
+		}
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
-	fmt.Println("\n\n url :", remoteProviderURL.String())
 
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
@@ -4549,6 +4778,7 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID core.Uuid)
 			l.Log.Error(ErrUnmarshal(err, "connection"))
 			return nil, http.StatusInternalServerError, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
 		}
+		l.setRemoteProviderCacheEntry(connectionCacheKey, cloneConnection(&conn), remoteProviderConnectionCacheTTL)
 		return &conn, resp.StatusCode, nil
 	}
 
@@ -4594,6 +4824,7 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID c
 		if err = json.Unmarshal(bdr, &conn); err != nil {
 			return nil, http.StatusInternalServerError, ErrUnmarshal(err, "connection")
 		}
+		l.invalidateRemoteProviderCache(remoteProviderConnectionCachePrefix, remoteProviderK8sContextsCachePrefix)
 		return &conn, resp.StatusCode, nil
 	}
 
@@ -4641,6 +4872,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 		if err = json.Unmarshal(bdr, &conn); err != nil {
 			return nil, err
 		}
+		l.invalidateRemoteProviderCache(remoteProviderConnectionCachePrefix, remoteProviderK8sContextsCachePrefix)
 		return &conn, nil
 	}
 
@@ -4687,6 +4919,7 @@ func (l *RemoteProvider) UpdateConnectionById(token string, connection *connecti
 		if err = json.Unmarshal(bdr, &conn); err != nil {
 			return nil, ErrUnmarshal(err, "connection")
 		}
+		l.invalidateRemoteProviderCache(remoteProviderConnectionCachePrefix, remoteProviderK8sContextsCachePrefix)
 		return &conn, nil
 	}
 
@@ -4735,6 +4968,7 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID core.U
 		if err = json.Unmarshal(bdr, &conn); err != nil {
 			return nil, err
 		}
+		l.invalidateRemoteProviderCache(remoteProviderConnectionCachePrefix, remoteProviderK8sContextsCachePrefix)
 		return &conn, nil
 	}
 	err = ErrDelete(fmt.Errorf("error while deleting connection: %s", bdr), string(bdr), resp.StatusCode)
@@ -4935,6 +5169,7 @@ func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential
 		if err != nil {
 			return nil, ErrUnmarshal(err, "created credential")
 		}
+		l.invalidateRemoteProviderCache(remoteProviderCredentialCachePrefix, remoteProviderK8sContextsCachePrefix)
 		return &createdCredential, nil
 	}
 
@@ -4990,6 +5225,14 @@ func (l *RemoteProvider) GetCredentialByID(token string, credentialID core.Uuid)
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, http.StatusForbidden, ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
+
+	credentialCacheKey := remoteProviderCacheKey(remoteProviderCredentialCachePrefix, token, credentialID.String())
+	if cachedCredential, ok := l.getRemoteProviderCacheEntry(credentialCacheKey); ok {
+		if cred, castOk := cachedCredential.(*Credential); castOk {
+			return cloneCredential(cred), http.StatusOK, nil
+		}
+	}
+
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, credentialID))
@@ -5018,6 +5261,7 @@ func (l *RemoteProvider) GetCredentialByID(token string, credentialID core.Uuid)
 	if err = json.Unmarshal(bdr, &cp); err != nil {
 		return nil, http.StatusInternalServerError, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
 	}
+	l.setRemoteProviderCacheEntry(credentialCacheKey, cloneCredential(&cp), remoteProviderCredentialCacheTTL)
 	return &cp, resp.StatusCode, nil
 }
 
@@ -5061,6 +5305,7 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 		if err = json.Unmarshal(bdr, &cred); err != nil {
 			return nil, err
 		}
+		l.invalidateRemoteProviderCache(remoteProviderCredentialCachePrefix, remoteProviderK8sContextsCachePrefix)
 		return &cred, nil
 	}
 
@@ -5108,6 +5353,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID co
 
 	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("credential deleted from remote provider")
+		l.invalidateRemoteProviderCache(remoteProviderCredentialCachePrefix, remoteProviderK8sContextsCachePrefix)
 		return nil, nil
 	}
 	err = ErrDelete(fmt.Errorf("error while deleting credential: %s", bdr), string(bdr), resp.StatusCode)
