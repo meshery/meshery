@@ -80,11 +80,12 @@
 .sidebar-container {
   overscroll-behavior: contain;
   padding: .25rem min(2vh, 2vw);
-  overflow-y: visible;
+  overflow-y: scroll;
   overflow-x: hidden;
   height: calc(100vh - var(--navbar-height));
   font-size: 1.5rem;
   width: 320px;
+  max-width: 350px;
   min-width: 250px;
   height: 100%;
   position: relative;
