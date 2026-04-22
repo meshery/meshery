@@ -79,7 +79,7 @@ type RemoteProvider struct {
 	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
 }
 type AnonymousFlowResponse struct {
-	AccessToken string          `json:"access_token"`
+	AccessToken string    `json:"access_token"`
 	UserID      core.Uuid `json:"user_id,omitempty"`
 }
 
@@ -3303,91 +3303,6 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	}
 
 	return bdr, ErrPost(fmt.Errorf("could not send filter to remote provider: %s", string(bdr)), string(bdr), resp.StatusCode)
-}
-
-// SaveMesheryApplication saves given application with the provider
-func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error) {
-	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
-		l.Log.Error(ErrOperationNotAvailable)
-		return nil, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
-	}
-
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
-
-	data, err := json.Marshal(map[string]interface{}{
-		"application_data": application,
-		"save":             true,
-	})
-
-	if err != nil {
-		err = ErrMarshal(err, "meshery metrics for shipping")
-		return nil, err
-	}
-
-	l.Log.Debug(fmt.Sprintf("Application size: %d", len(data)))
-	l.Log.Info("attempting to save application to remote provider")
-	bf := bytes.NewBuffer(data)
-
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-
-	if err != nil {
-		return nil, err
-	}
-	resp, err := l.DoRequest(cReq, tokenString)
-	if err != nil {
-		if resp == nil {
-			return nil, ErrUnreachableRemoteProvider(err)
-		}
-		return nil, ErrPost(err, "Application", resp.StatusCode)
-	}
-
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	bdr, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, ErrDataRead(err, "Application")
-	}
-
-	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("application sent to remote provider: ", string(bdr))
-		return bdr, nil
-	}
-
-	return bdr, ErrPost(fmt.Errorf("failed to send application to remote provider: %s", string(bdr)), string(bdr), resp.StatusCode)
-}
-
-// SaveApplicationSourceContent saves given application source content with the provider after successful save of Application with the provider
-func (l *RemoteProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) error {
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
-
-	l.Log.Debug("Application Content size ", len(sourceContent))
-	bf := bytes.NewBuffer(sourceContent)
-
-	uploadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteUploadURL, applicationID)
-	remoteProviderURL, _ := url.Parse(uploadURL)
-
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-
-	resp, err := l.DoRequest(cReq, tokenString)
-	if err != nil {
-		if resp == nil {
-			return ErrUnreachableRemoteProvider(err)
-		}
-		return ErrPost(err, "Application Source Content", resp.StatusCode)
-	}
-
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-
-	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("application source uploaded to remote provider")
-		return nil
-	}
-
-	return ErrPost(fmt.Errorf("failed to upload application source to remote provider"), "", resp.StatusCode)
 }
 
 // GetApplicationSourceContent returns application source-content from provider
