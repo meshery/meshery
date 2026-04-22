@@ -30,7 +30,7 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 	}
 	if orgID == "" {
 		h.log.Error(models.ErrWorkspaceMissingInput())
-		http.Error(w, models.ErrWorkspaceMissingInput().Error(), http.StatusBadRequest)
+		writeJSONError(w, models.ErrWorkspaceMissingInput().Error(), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetWorkspaces(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
@@ -57,7 +57,7 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 	}
 	if orgID == "" {
 		h.log.Error(models.ErrWorkspaceMissingInput())
-		http.Error(w, models.ErrWorkspaceMissingInput().Error(), http.StatusBadRequest)
+		writeJSONError(w, models.ErrWorkspaceMissingInput().Error(), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetWorkspaceByID(r, workspaceID, orgID)

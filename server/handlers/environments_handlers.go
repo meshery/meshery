@@ -23,7 +23,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 
 	orgID := q.Get("orgId")
 	if orgID == "" {
-		http.Error(w, "orgId is required", http.StatusBadRequest)
+		writeJSONError(w, "orgId is required", http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
@@ -44,7 +44,7 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	q := r.URL.Query()
 	orgID := q.Get("orgId")
 	if orgID == "" {
-		http.Error(w, "orgId is required", http.StatusBadRequest)
+		writeJSONError(w, "orgId is required", http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetEnvironmentByID(r, environmentID, orgID)
