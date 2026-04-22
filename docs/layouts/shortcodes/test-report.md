@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 20th 2026, 11:42:22 pm
+- Testing started at: April 21st 2026, 11:41:37 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 3 skipped
 
-⌛ _Duration: 7 minutes and 57 seconds_
+⌛ _Duration: 7 minutes and 52 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -57,7 +57,7 @@
 | 34 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 35 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 36 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 37 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
+| 37 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ❌ |
 | 38 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
 | 39 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
 | 40 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
@@ -111,7 +111,7 @@
 | 88 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 89 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 90 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
-| 91 | None | chromium-local-provider | config patching correctness | relationship | ❌ |
+| 91 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 92 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 93 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 94 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
@@ -196,7 +196,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ config patching correctness (None - chromium-local-provider)</summary>
+<summary>❌ Import a Model via CSV Import (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
