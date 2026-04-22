@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useSelector } from '@xstate/react';
 import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import { CollapseAllIcon as ExpandLess, ExpandMoreIcon as ExpandMore } from '@sistent/sistent';
 import { ComponentIcon, Loading, getSvgWhiteForComponent, processDesign } from './common';
 import {
   designValidatorCommands,

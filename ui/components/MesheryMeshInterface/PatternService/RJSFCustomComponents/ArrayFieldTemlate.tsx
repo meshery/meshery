@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Grid2, Paper, Button, IconButton, Typography, useTheme } from '@sistent/sistent';
-import AddIcon from '@mui/icons-material/Add';
+import { AddIcon } from '@sistent/sistent';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';

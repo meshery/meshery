@@ -1,16 +1,16 @@
 import {
-  AddCircle,
-  BuildRounded,
-  DirectionsCar,
-  Filter,
-  SimCard,
-  SupervisedUserCircle,
-  TouchApp,
-} from '@mui/icons-material';
-import ExploreIcon from '@mui/icons-material/Explore';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import LockIcon from '@mui/icons-material/Lock';
+  AddCircleIcon,
+  BuildRoundedIcon,
+  DirectionsCarIcon,
+  ExploreIcon,
+  FileCopyIcon,
+  FilterIcon,
+  ListAltIcon,
+  LockIcon,
+  SimCardIcon,
+  SupervisedUserCircleIcon,
+  TouchAppIcon,
+} from '@sistent/sistent';
 import React from 'react';
 
 /**
@@ -26,28 +26,28 @@ export default function NameToIcon({ name, color = '#607D8B', ...other }) {
   switch (name) {
     //core
     case 'Application':
-      return <CustomIcon Icon={TouchApp} />;
+      return <CustomIcon Icon={TouchAppIcon} />;
     case 'Kubernetes Service':
-      return <CustomIcon Icon={BuildRounded} />;
+      return <CustomIcon Icon={BuildRoundedIcon} />;
     // Istio
     case 'AuthorizationPolicy':
       return <CustomIcon Icon={LockIcon} />;
     case 'DestinationRule':
       return <CustomIcon Icon={ExploreIcon} />;
     case 'EnvoyFilter':
-      return <CustomIcon Icon={Filter} />;
+      return <CustomIcon Icon={FilterIcon} />;
     case 'Gateway':
       return <CustomIcon Icon={ListAltIcon} />;
     case 'PeerAuthentication':
       return <CustomIcon Icon={FileCopyIcon} />;
     case 'Sidecar':
-      return <CustomIcon Icon={DirectionsCar} />;
+      return <CustomIcon Icon={DirectionsCarIcon} />;
     case 'VirtualService':
-      return <CustomIcon Icon={SupervisedUserCircle} />;
+      return <CustomIcon Icon={SupervisedUserCircleIcon} />;
     case 'WorkloadEntry':
-      return <CustomIcon Icon={SimCard} />;
+      return <CustomIcon Icon={SimCardIcon} />;
     // default
     default:
-      return <CustomIcon Icon={AddCircle} />;
+      return <CustomIcon Icon={AddCircleIcon} />;
   }
 }

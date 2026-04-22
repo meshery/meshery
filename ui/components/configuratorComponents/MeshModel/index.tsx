@@ -10,11 +10,12 @@ import {
   Toolbar,
   CustomTooltip,
   styled,
+  ArrowBackIcon as ArrowBack,
+  DeleteIcon,
+  SaveAsIcon,
 } from '@sistent/sistent';
 import React, { useEffect, useRef, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SaveIcon from '@mui/icons-material/Save';
 import { NoSsr } from '@sistent/sistent';
 import { iconMedium } from '../../../css/icons.styles';
 import { useMeshModelComponents } from '../../../utils/hooks/useMeshModelComponents';
@@ -23,8 +24,6 @@ import CodeEditor from '../CodeEditor';
 import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
 import { useRouter } from 'next/router';
-import { ArrowBack } from '@mui/icons-material';
-import { SaveAs as SaveAsIcon } from '@mui/icons-material';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
@@ -207,7 +206,7 @@ export default function DesignConfigurator() {
                     onClick={designUpdate}
                     disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                   >
-                    <SaveIcon style={iconMedium} />
+                    <SaveAsIcon style={iconMedium} />
                   </IconButton>
                 </div>
               </CustomTooltip>
