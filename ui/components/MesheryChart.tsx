@@ -25,7 +25,8 @@ import {
   LinkedinIcon,
   FacebookIcon,
 } from 'react-share';
-import ReplyIcon from '@mui/icons-material/Reply';
+import { Reply as ReplyIcon } from './icons';
+import { Colors } from '@/theme';
 
 const ChartTitle = styled(Typography)(({ theme }) => ({
   textAlign: 'center',
@@ -209,7 +210,7 @@ function MesheryChart(props) {
           data: {
             xs: xAxisTracker,
             columns: [...xAxes, ...yAxes],
-            colors: { ...colors, 'Cumulative %': 'rgb(71,126,150)' },
+            colors: { ...colors, 'Cumulative %': Colors.mesheryBlue },
             axes,
             types,
           },

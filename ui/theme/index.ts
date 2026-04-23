@@ -44,14 +44,28 @@ export const BrandColors = {
   linkedin: '#0077b5',
 } as const;
 
+export const Colors = {
+  mesheryTeal: '#00B39F',
+  mesheryBlue: '#477E96',
+  secondary: '#667C89',
+  keppel: '#237986',
+  charcoal: '#393A3D',
+  doveGray: '#626469',
+  silverSand: '#C1C1C1',
+  gainsboro: '#E6E6E6',
+  nero: '#222222',
+  whisper: '#E0E0E0',
+  boulder: '#BDBDBD',
+} as const;
+
 export const CHART_COLORS = [
-  '#393A3D',
-  '#626469',
-  '#C1C1C1',
-  '#E6E6E6',
-  '#222222',
-  '#E0E0E0',
-  '#BDBDBD',
+  Colors.charcoal,
+  Colors.doveGray,
+  Colors.silverSand,
+  Colors.gainsboro,
+  Colors.nero,
+  Colors.whisper,
+  Colors.boulder,
 ];
 
 export const notificationColors = {

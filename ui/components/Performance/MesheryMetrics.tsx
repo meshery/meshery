@@ -1,7 +1,9 @@
 import React from 'react';
-import { AddCircleIcon as AddIcon, Button, styled, Typography } from '@sistent/sistent';
+import { Typography, Button, styled } from '@sistent/sistent';
+import { AddCircleOutline as AddIcon } from '../icons';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import { iconMedium } from '../../css/icons.styles';
+
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
@@ -19,14 +21,16 @@ const MetricsContainer = styled('div')({
   flexDirection: 'column',
 });
 
-const MetricsTitle = styled(Typography)({
+const MetricsTitle = styled(Typography)(({ theme }) => ({
   margin: '0 0 2.5rem 0',
-});
+  color: theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.text.primary,
+}));
 
-const NoMetricsText = styled(Typography)({
+const NoMetricsText = styled(Typography)(({ theme }) => ({
   fontSize: '1.5rem',
   marginBottom: '2rem',
-});
+  color: theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.text.secondary,
+}));
 
 function MesheryMetrics({
   boardConfigs = [],
