@@ -1,0 +1,113 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.4.3"
+    },
+    "name": "aws-sqs-controller",
+    "registrant": {
+      "kind": ""
+    },
+    "version": ""
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Topic",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "sns-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "subscriptions"
+                ],
+                [
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Queue",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "sqs-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "policy"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "firewall",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}

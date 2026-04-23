@@ -14,7 +14,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	patternv1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
-	viewv1beta1 "github.com/meshery/schemas/models/v1beta1/view"
+	viewv1beta2 "github.com/meshery/schemas/models/v1beta2/view"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"gorm.io/gorm"
 )
@@ -23,6 +23,15 @@ import (
 // workspaces on the database
 type WorkspacePersister struct {
 	DB *database.Handler
+}
+
+// uuidPtr returns a pointer to the given core.Uuid. Schemas generated
+// from meshery/schemas v1.0.9+ use `*core.Uuid` for optional UUID
+// fields, so callers building those struct literals need a pointer to
+// a local copy. Extracting this out of the hot loop in GetWorkspaces
+// keeps the struct literal readable.
+func uuidPtr(u core.Uuid) *core.Uuid {
+	return &u
 }
 
 func (wp *WorkspacePersister) fetchUserDetails() *User {
@@ -97,7 +106,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 			Description:    ws.Description,
 			ID:             ws.ID,
 			Name:           ws.Name,
-			OrganizationId: core.Uuid(ws.OrganizationID),
+			OrganizationId: uuidPtr(ws.OrganizationID),
 			OwnerId:        ws.Owner,
 			UpdatedAt:      ws.UpdatedAt,
 		}
@@ -637,7 +646,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 		pageSize = "10"
 	}
 
-	viewsFetched := []workspace.MesheryView{}
+	viewsFetched := []viewv1beta2.MesheryViewWithLocation{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
@@ -653,7 +662,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&viewsFetched)
 	}
 
-	viewsPage := &viewv1beta1.MesheryViewPage{
+	viewsPage := &viewv1beta2.MesheryViewPage{
 		Page:       int(pageUint),
 		PageSize:   len(viewsFetched),
 		TotalCount: int(count),

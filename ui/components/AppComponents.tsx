@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import { Hidden, Typography, useTheme } from '@sistent/sistent';
+import { FavoriteIcon, Hidden, Typography, useTheme } from '@sistent/sistent';
 import Navigator from './Navigator';
 import subscribeK8sContext from './graphql/subscriptions/K8sContextSubscription';
 import CAN from '@/utils/can';
@@ -39,8 +38,8 @@ export const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }) =>
               {' '}
               Built with{' '}
               <FavoriteIcon
+                fill={theme.palette.background.brand.default}
                 style={{
-                  color: theme.palette.background.brand.default,
                   display: 'inline',
                   verticalAlign: 'bottom',
                 }}

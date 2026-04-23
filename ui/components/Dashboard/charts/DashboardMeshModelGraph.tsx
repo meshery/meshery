@@ -6,7 +6,6 @@ import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { InfoOutlined } from '@mui/icons-material';
 import {
   useGetCategoriesSummary,
   useGetComponentsQuery,
@@ -18,7 +17,7 @@ import { DashboardSection } from '../style';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-import { Typography, useTheme, Grid2 } from '@sistent/sistent';
+import { Grid2, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
 
 function MeshModelContructs() {
   const params = {
