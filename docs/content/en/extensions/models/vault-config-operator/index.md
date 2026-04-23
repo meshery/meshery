@@ -161,7 +161,51 @@ components:
   colorIcon: content/en/extensions/models/vault-config-operator/components/cert-auth-engine-role/icons/color/cert-auth-engine-role-color.svg
   whiteIcon: content/en/extensions/models/vault-config-operator/components/cert-auth-engine-role/icons/white/cert-auth-engine-role-white.svg
   description: 
-components-count: 38
+- name: audit-request-header
+  colorIcon: content/en/extensions/models/vault-config-operator/components/audit-request-header/icons/color/audit-request-header-color.svg
+  whiteIcon: content/en/extensions/models/vault-config-operator/components/audit-request-header/icons/white/audit-request-header-white.svg
+  description: 
+- name: audit
+  colorIcon: content/en/extensions/models/vault-config-operator/components/audit/icons/color/audit-color.svg
+  whiteIcon: content/en/extensions/models/vault-config-operator/components/audit/icons/white/audit-white.svg
+  description: 
+- name: entity
+  colorIcon: content/en/extensions/models/vault-config-operator/components/entity/icons/color/entity-color.svg
+  whiteIcon: content/en/extensions/models/vault-config-operator/components/entity/icons/white/entity-white.svg
+  description: 
+- name: entity-alias
+  colorIcon: content/en/extensions/models/vault-config-operator/components/entity-alias/icons/color/entity-alias-color.svg
+  whiteIcon: content/en/extensions/models/vault-config-operator/components/entity-alias/icons/white/entity-alias-white.svg
+  description: 
+- name: identity-oidc-assignment
+  colorIcon: content/en/extensions/models/vault-config-operator/components/identity-oidc-assignment/icons/color/identity-oidc-assignment-color.svg
+  whiteIcon: content/en/extensions/models/vault-config-operator/components/identity-oidc-assignment/icons/white/identity-oidc-assignment-white.svg
+  description: 
+- name: identity-oidc-client
+  colorIcon: content/en/extensions/models/vault-config-operator/components/identity-oidc-client/icons/color/identity-oidc-client-color.svg
+  whiteIcon: content/en/extensions/models/vault-config-operator/components/identity-oidc-client/icons/white/identity-oidc-client-white.svg
+  description: 
+- name: identity-oidc-provider
+  colorIcon: content/en/extensions/models/vault-config-operator/components/identity-oidc-provider/icons/color/identity-oidc-provider-color.svg
+  whiteIcon: content/en/extensions/models/vault-config-operator/components/identity-oidc-provider/icons/white/identity-oidc-provider-white.svg
+  description: 
+- name: identity-oidc-scope
+  colorIcon: content/en/extensions/models/vault-config-operator/components/identity-oidc-scope/icons/color/identity-oidc-scope-color.svg
+  whiteIcon: content/en/extensions/models/vault-config-operator/components/identity-oidc-scope/icons/white/identity-oidc-scope-white.svg
+  description: 
+- name: identity-token-config
+  colorIcon: content/en/extensions/models/vault-config-operator/components/identity-token-config/icons/color/identity-token-config-color.svg
+  whiteIcon: content/en/extensions/models/vault-config-operator/components/identity-token-config/icons/white/identity-token-config-white.svg
+  description: 
+- name: identity-token-key
+  colorIcon: content/en/extensions/models/vault-config-operator/components/identity-token-key/icons/color/identity-token-key-color.svg
+  whiteIcon: content/en/extensions/models/vault-config-operator/components/identity-token-key/icons/white/identity-token-key-white.svg
+  description: 
+- name: identity-token-role
+  colorIcon: content/en/extensions/models/vault-config-operator/components/identity-token-role/icons/color/identity-token-role-color.svg
+  whiteIcon: content/en/extensions/models/vault-config-operator/components/identity-token-role/icons/white/identity-token-role-white.svg
+  description: 
+components-count: 49
 relationships: 
 relationship-count: 0
 featureList: [
