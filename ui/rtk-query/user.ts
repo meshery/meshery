@@ -381,7 +381,7 @@ export const useGetSelectedWorkspace = () => {
       page: 0,
       pagesize: 'all',
       order: 'updated_at desc',
-      orgID: selectedOrganization?.id,
+      orgId: selectedOrganization?.id,
     },
     {
       skip: !selectedOrganization?.id,

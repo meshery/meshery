@@ -554,7 +554,18 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q["populate"], q["class"], q["technology"], q["type"], q["orgID"], q["workspaceID"], q["userid"])
+	// Canonical form is `orgId`; `orgID` is dual-accepted during the Phase 2
+	// deprecation window. Merge both lists (canonical first, legacy appended
+	// unless duplicate) so the provider sees every caller's intended org
+	// filter. Retire once Phase 3 consumer migration completes.
+	orgIDs := append([]string{}, q["orgId"]...)
+	for _, legacy := range q["orgID"] {
+		if !slices.Contains(orgIDs, legacy) {
+			orgIDs = append(orgIDs, legacy)
+		}
+	}
+
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q["populate"], q["class"], q["technology"], q["type"], orgIDs, q["workspaceID"], q["userid"])
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)

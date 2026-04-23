@@ -75,7 +75,7 @@ const WorkspaceDataTable = ({
       pagesize: pageSize,
       search: search,
       order: sortOrder,
-      orgID: orgId,
+      orgId: orgId,
       expandInfo: true,
     },
     {

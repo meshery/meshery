@@ -41,12 +41,12 @@ export const designsApi = api
             page: queryArg.page,
             pagesize: queryArg.pagesize,
             order: queryArg.order,
-            user_id: queryArg.user_id,
+            userId: queryArg.userId,
             expandUser: queryArg.expandUser,
             metrics: queryArg.metrics,
             search: queryArg.search,
             visibility: queryArg.visibility,
-            orgID: queryArg.orgID,
+            orgId: queryArg.orgId,
             shared: queryArg.shared || false,
           });
           return mesheryApiPath(`extensions/api/content/patterns?${params}`);

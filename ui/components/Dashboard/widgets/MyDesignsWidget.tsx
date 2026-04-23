@@ -41,7 +41,7 @@ const MyDesignsWidget = (props) => {
     page: 0,
     pagesize: 7,
     order: sortOrder,
-    user_id: userData?.id,
+    userId: userData?.id,
     metrics: true,
   });
   const theme = useTheme();
