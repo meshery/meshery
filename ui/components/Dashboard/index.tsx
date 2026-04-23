@@ -28,8 +28,7 @@ import {
 import { WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
-import { Responsive } from 'react-grid-layout/legacy';
-import debounceWidthProvider from './debounceWidthProvider';
+import { Responsive, WidthProvider } from 'react-grid-layout/legacy';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
 import { applyMinSizeConstraints } from './layoutConstraints';
 import Popup from '../General/Popup';
@@ -38,9 +37,9 @@ import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
 import { useSelector } from 'react-redux';
 import useUnsavedChanges from './useUnsavedChanges';
-import UnsavedChangesModal from './UnsavedChangesModal';
+import UnsavedChangesModal from '../shared/Modal/UnsavedChangesModal';
 
-const ResponsiveReactGridLayout = debounceWidthProvider(Responsive);
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 

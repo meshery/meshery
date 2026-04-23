@@ -24,8 +24,7 @@ import {
   ControlsContainer,
   NoResourcesText,
 } from '../../style';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { ArrowUpward as ArrowUpwardIcon, ArrowDownward as ArrowDownwardIcon } from '../../../icons';
 import { useResourceOptions, useResourceFiltering, SORT_DIRECTIONS } from './useResourceOptions';
 import GetKubernetesNodeIcon from '../../utils';
 

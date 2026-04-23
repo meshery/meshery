@@ -3,22 +3,24 @@ import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
-  AddCircleIcon as AddIcon,
-  Button,
+  AddCircleOutline as AddIcon,
+  Edit as EditIcon,
+  PlayArrow as PlayArrowIcon,
+} from '../icons';
+import {
   CustomColumnVisibilityControl,
-  CustomTooltip,
-  EditIcon,
-  IconButton,
   Modal,
-  Paper,
-  PlayArrowIcon,
   PROMPT_VARIANTS,
   ResponsiveDataTable,
   SearchBar,
+  Button,
+  Paper,
+  Typography,
+  IconButton,
+  useTheme,
+  CustomTooltip,
   TableCell,
   TableRow,
-  Typography,
-  useTheme,
 } from '@sistent/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';

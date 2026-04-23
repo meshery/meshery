@@ -1,5 +1,6 @@
 import React from 'react';
-import { CustomTooltip, DeleteIcon, IconButton } from '@sistent/sistent';
+import { IconButton, CustomTooltip } from '@sistent/sistent';
+import { Delete as DeleteIcon } from '@/components/icons';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 

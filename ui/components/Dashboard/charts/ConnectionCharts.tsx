@@ -7,12 +7,13 @@ import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
+import { InfoOutlined } from '@/components/icons';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
+import { Box, Typography, useTheme } from '@sistent/sistent';
 
 export default function ConnectionStatsChart() {
   const { data: connectionsData } = useGetConnectionsQuery({

@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { ExpandMoreIcon, NoSsr } from '@sistent/sistent';
+import { NoSsr } from '@sistent/sistent';
+import { ExpandMore as ExpandMoreIcon } from '../../icons';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { StyledAccordion, StyledAccordionSummary } from '../../StyledAccordion';
 import GrafanaCustomChart from './GrafanaCustomChart';

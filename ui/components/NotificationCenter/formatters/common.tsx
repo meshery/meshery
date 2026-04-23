@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import { Typography } from '@sistent/sistent';
-import { Launch as LaunchIcon } from '@mui/icons-material';
+import { Launch as LaunchIcon } from '@/components/icons';
 import { TextWithLinks } from '../../DataFormatter';
 
 export const TitleLink = ({ href, children, ...props }) => {
