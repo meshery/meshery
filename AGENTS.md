@@ -26,6 +26,66 @@ performance management, and multi-tenancy capabilities across any cloud or on-pr
 - **/.github** – GitHub Actions workflows, issue templates, Copilot agent definitions, and community
   health files.
 
+## Identifier Naming Conventions — MANDATORY
+
+This repository adheres to the canonical camelCase-wire identifier-naming contract
+defined authoritatively in `meshery/schemas/AGENTS.md § Casing rules at a
+glance`. The contract is **not optional**; deviations block PRs via the
+schemas consumer-audit CI gate.
+
+### The rule in one sentence
+
+*Wire is camelCase everywhere; DB is snake_case; Go fields follow Go
+idiom; the ORM layer is the sole translation boundary.*
+
+### Per-layer canonical forms
+
+| Layer | Form |
+|---|---|
+| DB column / `db:` tag | `snake_case` — `user_id`, `org_id`, `created_at` |
+| Go struct field | `PascalCase` with Go-idiomatic initialisms — `UserID`, `OrgID`, `CreatedAt` |
+| JSON tag | `camelCase` — `json:"userId"`, `json:"orgId"`, `json:"createdAt"` |
+| URL query/path param | `camelCase + Id` — `{orgId}`, `?userId=...` |
+| TypeScript property | `camelCase` — `response.userId`, `queryArg.orgId` |
+| OpenAPI schema property | `camelCase` |
+| OpenAPI `operationId` | `lower camelCase verbNoun` — `getWorkspaces` |
+| `components/schemas` type name | `PascalCase` — `WorkspacePayload` |
+
+### Forbidden (MUST NOT)
+
+- MUST NOT introduce a `json:` tag that matches the `db:` tag on a new
+  DB-backed field. Wire is camel; DB is snake; they differ by design.
+- MUST NOT declare an RTK query endpoint hand-rolled when
+  `@meshery/schemas/{mesheryApi,cloudApi}` provides a canonical equivalent.
+- MUST NOT locally redeclare a Go type that has an equivalent in
+  `github.com/meshery/schemas/models/...`.
+- MUST NOT use `ID` (ALL CAPS) in URL query parameters, JSON tags, or
+  TypeScript properties. `Id` (camelCase) is canonical.
+- MUST NOT mix casing conventions within a single resource. If wire
+  format must change, introduce a new API version per
+  `schemas/AGENTS.md § Dual-Schema Pattern`.
+
+### Required on every PR
+
+- MUST run the schemas validator locally before pushing:
+  `cd ../schemas && make validate-schemas && make consumer-audit`.
+- MUST include test updates for any casing or tag change.
+- MUST include doc updates for any user-visible API change.
+- MUST sign off commits (`git commit -s`).
+
+### Authority
+
+`meshery/schemas/AGENTS.md` is authoritative. On any conflict between
+this repo's documentation and the schemas AGENTS.md, schemas wins. File
+discrepancies as issues against `meshery/schemas`, not locally.
+
+### Migration
+
+The identifier-naming migration is tracked at
+`meshery/schemas/docs/identifier-naming-migration.md`. All
+contributors — human and AI agents — MUST read this plan before making
+any schema-aware change.
+
 ## Build & Development Commands
 
 ### Server (Go)
