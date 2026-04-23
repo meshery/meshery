@@ -46,8 +46,8 @@ export const StyledTreeItemRoot = styled(TreeItem)(
         backgroundColor: `transparent`,
       },
       '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
-        backgroundColor: `#00bfa030`,
-        borderLeft: '3px solid #00bfa0',
+        backgroundColor: `${theme.palette.primary.main}30`,
+        borderLeft: `3px solid ${theme.palette.primary.main}`,
       },
       [`& .${treeItemClasses.label}`]: {
         fontWeight: theme.typography.fontWeightRegular,

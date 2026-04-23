@@ -1,5 +1,5 @@
 import { CONNECTION_STATES } from '../../utils/Enum';
-import { notificationColors, Colors } from '../../theme';
+import { keppel } from '@sistent/sistent';
 import {
   Box,
   Button,
@@ -52,14 +52,14 @@ export const ConnectionTab = styled(Tab)(({ theme }) => ({
   paddingLeft: 0,
   paddingRight: 0,
   '&.Mui-selected': {
-    color: theme.palette.mode === 'dark' ? Colors.mesheryTeal : theme.palette.primary,
+    color: theme.palette.primary.main,
   },
 }));
 
 export const ConnectionTabs = styled(Tabs)(({ theme }) => ({
   height: '55px',
   '& .MuiTabs-indicator': {
-    backgroundColor: theme.palette.mode === 'dark' ? Colors.mesheryTeal : theme.palette.primary,
+    backgroundColor: theme.palette.primary.main,
   },
 }));
 
@@ -103,7 +103,7 @@ export const ChipWrapper = styled(Chip)(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
 
-const baseChipStyles = {
+const baseChipStyles = ({ theme }) => ({
   minWidth: '142px !important',
   maxWidth: 'max-content !important',
   display: 'flex !important',
@@ -121,76 +121,76 @@ const baseChipStyles = {
     boxShadow: '0px 1px 2px 0px rgba(0, 0, 0, 0.25)',
   },
   textTransform: 'capitalize',
-};
+});
 
-export const DiscoveredChip = styled(Chip)(() => ({
-  ...baseChipStyles,
+export const DiscoveredChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles({ theme }),
   '& .MuiChip-label': {
-    color: notificationColors.info,
+    color: theme.palette.info.main,
   },
-  background: `${notificationColors.info}30 !important`,
+  background: `${theme.palette.info.main}30 !important`,
   '& .MuiSvgIcon-root': {
-    color: `${notificationColors.info} !important`,
+    color: `${theme.palette.info.main} !important`,
   },
 }));
 
 export const DeletedChip = styled(Chip)(({ theme }) => ({
-  ...baseChipStyles,
+  ...baseChipStyles({ theme }),
   '& .MuiChip-label': {
-    color: theme.palette.background.error.default,
+    color: theme.palette.error.main,
   },
-  background: `${theme.palette.background.error.default}30 !important`,
+  background: `${theme.palette.error.main}30 !important`,
   '& .MuiSvgIcon-root': {
-    color: `${theme.palette.background.error.default} !important`,
+    color: `${theme.palette.error.main} !important`,
   },
 }));
 
 export const RegisteredChip = styled(Chip)(({ theme }) => ({
-  ...baseChipStyles,
+  ...baseChipStyles({ theme }),
   '& .MuiChip-label': {
-    color: theme.palette.mode === 'dark' ? '#86B2C6' : '#477E96',
+    color: keppel,
   },
-  background: `${theme.palette.mode === 'dark' ? '#86B2C6' : '#477E96'}30 !important`,
+  background: `${keppel}30 !important`,
   '& .MuiSvgIcon-root': {
-    color: `${theme.palette.mode === 'dark' ? '#86B2C6' : '#477E96'} !important`,
+    color: `${keppel} !important`,
   },
 }));
 
 export const ConnectedChip = styled(Chip)(({ theme }) => ({
-  ...baseChipStyles,
+  ...baseChipStyles({ theme }),
   '& .MuiChip-label': {
-    color: theme.palette.background.success.default,
+    color: theme.palette.success.main,
   },
-  background: `${theme.palette.background.success.default}30 !important`,
+  background: `${theme.palette.success.main}30 !important`,
   '& .MuiSvgIcon-root': {
-    color: `${theme.palette.background.success.default} !important`,
+    color: `${theme.palette.success.main} !important`,
   },
 }));
 
 export const IgnoredChip = styled(Chip)(({ theme }) => ({
-  ...baseChipStyles,
+  ...baseChipStyles({ theme }),
   '& .MuiChip-label': {
-    color: theme.palette.mode === 'dark' ? '#9FAFB6' : '#51636B',
+    color: theme.palette.text.secondary,
   },
-  background: `${theme.palette.mode === 'dark' ? '#9FAFB6' : '#51636B'}30 !important`,
+  background: `${theme.palette.text.secondary}30 !important`,
   '& .MuiSvgIcon-root': {
-    color: `${theme.palette.mode === 'dark' ? '#9FAFB6' : '#51636B'} !important`,
+    color: `${theme.palette.text.secondary} !important`,
   },
 }));
 
 export const DisconnectedChip = styled(Chip)(({ theme }) => ({
-  ...baseChipStyles,
+  ...baseChipStyles({ theme }),
   '& .MuiChip-label': {
-    color: theme.palette.background.warning.default,
+    color: theme.palette.warning.main,
   },
-  background: `${theme.palette.background.warning.default}30 !important`,
+  background: `${theme.palette.warning.main}30 !important`,
   '& .MuiSvgIcon-root': {
-    color: `${theme.palette.background.warning.default} !important`,
+    color: `${theme.palette.warning.main} !important`,
   },
 }));
 
 export const NotFoundChip = styled(Chip)(({ theme }) => ({
-  ...baseChipStyles,
+  ...baseChipStyles({ theme }),
   '& .MuiChip-label': {
     color: theme.palette.text.disabled,
   },
@@ -200,14 +200,14 @@ export const NotFoundChip = styled(Chip)(({ theme }) => ({
   },
 }));
 
-export const MaintainanceChip = styled(Chip)(() => ({
-  ...baseChipStyles,
+export const MaintainanceChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles({ theme }),
   '& .MuiChip-label': {
-    color: notificationColors.lightwarning,
+    color: theme.palette.warning.main,
   },
-  background: `${notificationColors.lightwarning}30 !important`,
+  background: `${theme.palette.warning.main}30 !important`,
   '& .MuiSvgIcon-root': {
-    color: `${notificationColors.lightwarning} !important`,
+    color: `${theme.palette.warning.main} !important`,
   },
 }));
 
@@ -251,8 +251,8 @@ export const CustomLabelStyle = styled(StepLabel)(() => ({
 
 export const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   alternativeLabel: { top: 22 },
-  active: { '& $line': { background: Colors.mesheryTeal, transition: 'all 1s ease-in' } },
-  completed: { '& $line': { background: Colors.mesheryTeal, transition: 'all 1s ease-in' } },
+  active: { '& $line': { background: theme.palette.primary.main, transition: 'all 1s ease-in' } },
+  completed: { '& $line': { background: theme.palette.primary.main, transition: 'all 1s ease-in' } },
   line: {
     height: 3,
     border: 0,
@@ -261,14 +261,3 @@ export const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
     transition: 'all 0.5s ease-out ',
   },
 }));
-
-export const CONNECTION_STATE_COLORS = {
-  [CONNECTION_STATES.CONNECTED]: Colors.mesheryTeal,
-  [CONNECTION_STATES.REGISTERED]: Colors.mesheryTeal,
-  [CONNECTION_STATES.DISCOVERED]: Colors.warningOrange,
-  [CONNECTION_STATES.IGNORED]: Colors.warningOrange,
-  [CONNECTION_STATES.DELETED]: Colors.errorRed,
-  [CONNECTION_STATES.MAINTENANCE]: Colors.warningOrange,
-  [CONNECTION_STATES.DISCONNECTED]: Colors.warningOrange,
-  [CONNECTION_STATES.NOTFOUND]: Colors.warningOrange,
-};

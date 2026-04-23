@@ -10,7 +10,6 @@ import {
   InfoOutlined as InfoOutlinedIcon,
 } from '@/components/icons';
 import BadgeAvatars from '../CustomAvatar';
-import { notificationColors } from '../../themes';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import {
   CONNECTION_STATE_TO_TRANSITION_MAP,
@@ -150,10 +149,11 @@ const ConnectedStateChip = ({ value }) => {
 };
 
 const DisconnectedStateChip = ({ value }) => {
+  const theme = useTheme();
   return (
     <ConnectionStyledMenuItem value={value}>
       <DisconnectedChip
-        avatar={<DisconnectIcon fill={notificationColors.lightwarning} width={24} height={24} />}
+        avatar={<DisconnectIcon fill={theme.palette.warning.main} width={24} height={24} />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />

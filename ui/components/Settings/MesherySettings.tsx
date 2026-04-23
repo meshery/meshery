@@ -50,7 +50,6 @@ import ConnectionStatsChart from '../Dashboard/charts/ConnectionCharts';
 import { SecondaryTab, SecondaryTabs } from '../Dashboard/style';
 import { useSelector } from 'react-redux';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
-import { Colors } from '@/theme';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -72,7 +71,7 @@ const StyledIcon = styled('img')(({ theme }) => ({
 
 const RootClass = styled('div')(({ theme }) => ({
   backgroundColor:
-    theme.palette.mode === 'dark' ? Colors.settingsBackgroundDark : Colors.settingsBackgroundLight,
+    theme.palette.mode === 'dark' ? theme.palette.background.secondary : theme.palette.background.secondary,
   marginTop: '1rem',
 }));
 

@@ -44,49 +44,8 @@ export const BrandColors = {
   linkedin: '#0077b5',
 } as const;
 
-export const Colors = {
-  mesheryTeal: '#00B39F',
-  mesheryBlue: '#477E96',
-  mesheryDarkBlue: '#396679',
-  secondary: '#667C89',
-  keppel: '#237986',
-  charcoal: '#393A3D',
-  doveGray: '#626469',
-  silverSand: '#C1C1C1',
-  gainsboro: '#E6E6E6',
-  nero: '#222222',
-  whisper: '#E0E0E0',
-  boulder: '#BDBDBD',
-  settingsBackgroundLight: '#eaeff1',
-  settingsBackgroundDark: '#303030',
-} as const;
-
-export const CHART_COLORS = [
-  Colors.charcoal,
-  Colors.doveGray,
-  Colors.silverSand,
-  Colors.gainsboro,
-  Colors.nero,
-  Colors.whisper,
-  Colors.boulder,
-];
-
-export const notificationColors = {
-  error: '#F24C3D',
-  warning: '#F3AA60',
-  info: '#22B14C',
-  success: '#22B14C',
-};
-
-export const darkNotificationColors = {
-  error: '#F24C3D',
-  warning: '#F3AA60',
-  info: '#22B14C',
-  success: '#22B14C',
-};
-
 export const RE_JSON_Theme = (themeType: string) => ({
-  base00: themeType === 'dark' ? Colors.settingsBackgroundDark : '#ffffff',
+  base00: themeType === 'dark' ? '#303030' : '#ffffff',
   base01: '#444c56',
   base02: themeType === 'dark' ? '#586069' : '#abb2bf',
   base03: '#6a737d',
