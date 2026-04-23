@@ -12,6 +12,7 @@ import (
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/database"
 	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
+	schemasEnvironment "github.com/meshery/schemas/models/v1beta3/environment"
 	"gorm.io/gorm"
 )
 
@@ -63,15 +64,16 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 
 	connectionsFetched := []*connections.Connection{}
 	query.Table("connections").Count(&count)
-	environmentsFetched := []*environments.EnvironmentData{}
 	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
 
 	for _, connectionFetched := range connectionsFetched {
+		environmentsFetched := []*environments.EnvironmentData{}
+
 		cp.DB.Table("environment_connection_mappings").Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").Select("environments.*").
 			Where("connection_id = ?", connectionFetched.ID).
 			Find(&environmentsFetched)
 
-		connectionFetched.Environments = environmentsFetched
+		connectionFetched.Environments = toSchemaEnvironments(environmentsFetched)
 	}
 	statusSummary, err := cp.getConnectionsStatusSummary()
 	if err != nil {
@@ -87,6 +89,38 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 	}
 
 	return connectionsPage, nil
+}
+
+func toSchemaEnvironments(environmentsFetched []*environments.EnvironmentData) []*schemasEnvironment.Environment {
+	if len(environmentsFetched) == 0 {
+		return nil
+	}
+
+	schemaEnvironments := make([]*schemasEnvironment.Environment, 0, len(environmentsFetched))
+	for _, env := range environmentsFetched {
+		if env == nil {
+			continue
+		}
+
+		schemaEnvironments = append(schemaEnvironments, &schemasEnvironment.Environment{
+			ID:             env.ID,
+			SchemaVersion:  env.SchemaVersion,
+			Name:           env.Name,
+			Description:    env.Description,
+			OrganizationID: env.OrganizationID,
+			Owner:          env.Owner,
+			CreatedAt:      env.CreatedAt,
+			Metadata:       env.Metadata,
+			UpdatedAt:      env.UpdatedAt,
+			DeletedAt:      env.DeletedAt,
+		})
+	}
+
+	if len(schemaEnvironments) == 0 {
+		return nil
+	}
+
+	return schemaEnvironments
 }
 
 // getConnectionsStatusSummary returns a map of connection status to count.
