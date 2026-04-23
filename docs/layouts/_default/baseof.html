@@ -10,20 +10,53 @@
     
   </head>
 
-  <body class="td-{{ .Kind }} dark-mode {{ with .Params.body_class }}{{ . }}{{ end }}">
+  <body class="td-{{ .Kind }} {{ with .Params.body_class }}{{ . }}{{ end }}">
     <script>
-      if (localStorage.getItem("mode") === "light-mode") {
-        document.body.classList.remove("dark-mode");
-        document.querySelectorAll("#logo-dark-light").forEach(e => {
-          e.src = e.dataset.logoForLight;
+      (function() {
+        const savedMode = localStorage.getItem("mode");
+        const isLight = savedMode === "light-mode";
+        if (isLight) {
+          document.body.classList.remove("dark-mode");
+        } else {
+          document.body.classList.add("dark-mode");
+        }
+        // Update logos immediately
+        document.querySelectorAll(".logo-dark-light").forEach(logo => {
+          if (isLight) {
+            logo.src = logo.dataset.logoForLight;
+          } else {
+            logo.src = logo.dataset.logoForDark;
+          }
+          logo.style.visibility = "visible";
         });
-      }
+      })();
     </script>
 
     {{ partialCached "scripts/google-tagmanager-body.html" . }}
 
     <div class="flex-container">
       <div class="left-container">
+        <script>
+          (function () {
+            let state = localStorage.getItem('sidebar-state')
+            if (!state) {
+              const isDesktop = window.matchMedia("(min-width: 75em)").matches;
+              state = isDesktop ? 'active' : 'inactive'
+
+              localStorage.setItem('sidebar-state', state)
+            }
+
+            let sidebar = document.querySelector('.left-container');
+            if (sidebar) {
+               if (state === 'active'){
+                sidebar.classList.add('left-container--active')
+              } else {
+                sidebar.classList.remove('left-container--active')
+              }
+            }
+          })();
+        </script>
+
         <div class="sidebar-container-wrapper">
           <div class="sidebar-container">
             {{ partial "sidebar.html" . }}
@@ -67,5 +100,6 @@
     {{ partialCached "footer.html" . }}
     {{ partialCached "scripts.html" . }}
     {{ partialCached "scripts/google-analytics.html" . }}
+
   </body>
 </html>

@@ -83,6 +83,20 @@
   {{ end }}
 {{ end }}
 
+{{ $sortedTagEntries := slice }}
+{{ range $tagName := $orderedTags }}
+  {{ $tagMeta := partial "rest-apis/tag-meta.html" (dict "name" $tagName "tags" $tagIndex) }}
+  {{ $sortedTagEntries = $sortedTagEntries | append (dict
+    "name" $tagName
+    "label" (index $tagMeta "label")
+  ) }}
+{{ end }}
+{{ $sortedTagEntries = sort $sortedTagEntries "label" }}
+{{ $orderedTags = slice }}
+{{ range $sortedTagEntries }}
+  {{ $orderedTags = $orderedTags | append .name }}
+{{ end }}
+
 {{ if gt (len $operations) 0 }}
   <div class="rest-api-page" data-rest-api-root>
     <section class="rest-api-overview" aria-label="REST API overview">
@@ -172,6 +186,19 @@
                 {{ if gt $tagCount 0 }}
                   {{ $groupTags = $groupTags | append $tagName }}
                 {{ end }}
+              {{ end }}
+              {{ $groupTagEntries := slice }}
+              {{ range $tagName := $groupTags }}
+                {{ $subsectionMeta := partial "rest-apis/tag-subsection-meta.html" (dict "name" $tagName "tags" $tagIndex) }}
+                {{ $groupTagEntries = $groupTagEntries | append (dict
+                  "name" $tagName
+                  "label" (index $subsectionMeta "label")
+                ) }}
+              {{ end }}
+              {{ $groupTagEntries = sort $groupTagEntries "label" }}
+              {{ $groupTags = slice }}
+              {{ range $groupTagEntries }}
+                {{ $groupTags = $groupTags | append .name }}
               {{ end }}
 
               {{ if gt (len $groupTags) 0 }}

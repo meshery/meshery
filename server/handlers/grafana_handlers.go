@@ -69,7 +69,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 
 		userUUID := user.ID
 		credential, err := p.SaveUserCredential(token, &models.Credential{
-			UserId: &userUUID,
+			UserId: userUUID,
 			Type:   "grafana",
 			Secret: grafanaCred,
 			Name:   credName,
@@ -78,7 +78,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			_err := models.ErrPersistCredential(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to persist credential information for the connection %s", credName)).
 				WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = p.PersistEvent(*event, nil)
+			_ = p.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
@@ -91,19 +91,19 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			MetaData:         grafanaConn,
 			CredentialSecret: grafanaCred,
 			Name:             connName,
-			CredentialID:     credential.ID,
+			CredentialID:     &credential.ID,
 		}, token, false)
 
 		if err != nil {
 			_err := models.ErrPersistConnection(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", connName)).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = p.PersistEvent(*event, nil)
+			_ = p.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
 		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with grafana created at %s", connName, grafanaURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
-		_ = p.PersistEvent(*event, nil)
+		_ = p.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
 		h.log.Debug(fmt.Sprintf("connection to grafana @ %s succeeded", grafanaURL))

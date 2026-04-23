@@ -1,4 +1,5 @@
 import {
+  alpha,
   Box,
   Button,
   ButtonGroup,
@@ -158,13 +159,13 @@ export const NavigatorListItem = styled(ListItemButton, {
   color: isActive
     ? theme.palette.background.brand.default
     : theme.palette.background.constant.disabled,
-  fill: isActive ? theme.palette.background.brand.default : '#fff',
+  fill: isActive ? theme.palette.background.brand.default : theme.palette.background.constant.white,
   '& a': {
     color: 'inherit',
     textDecoration: 'none',
   },
   '&:hover': {
-    backgroundColor: 'rgba(0, 187, 166, 0.5)',
+    backgroundColor: alpha(theme.palette.background.brand.default, 0.5),
     '& $expandMoreIcon': {
       opacity: 1,
       transition: 'opacity 200ms ease-in',
@@ -187,9 +188,9 @@ export const NavigatorListItemII = styled(ListItemButton, {
   color: isActive
     ? theme.palette.background.brand.default
     : theme.palette.background.constant.disabled,
-  fill: isActive ? theme.palette.background.brand.default : '#fff',
+  fill: isActive ? theme.palette.background.brand.default : theme.palette.background.constant.white,
   '&:hover': {
-    backgroundColor: 'rgba(0, 187, 166, 0.5)',
+    backgroundColor: alpha(theme.palette.background.brand.default, 0.5),
     '& $expandMoreIcon': {
       opacity: 1,
       transition: 'opacity 200ms ease-in',
@@ -212,9 +213,9 @@ export const NavigatorListItemIII = styled(ListItemButton, {
   color: isActive
     ? theme.palette.background.brand.default
     : theme.palette.background.constant.disabled,
-  fill: isActive ? theme.palette.background.brand.default : '#fff',
+  fill: isActive ? theme.palette.background.brand.default : theme.palette.background.constant.white,
   '&:hover': {
-    backgroundColor: 'rgba(0, 187, 166, 0.5)',
+    backgroundColor: alpha(theme.palette.background.brand.default, 0.5),
     '& $expandMoreIcon': {
       opacity: 1,
       transition: 'opacity 200ms ease-in',
@@ -232,14 +233,14 @@ export const SideBarListItem = styled(ListItemButton, {
   color: isActive
     ? theme.palette.background.brand.default
     : theme.palette.background.constant.disabled,
-  fill: isActive ? theme.palette.background.brand.default : '#fff',
+  fill: isActive ? theme.palette.background.brand.default : theme.palette.background.constant.white,
   '& a': {
     color: 'inherit',
     textDecoration: 'none',
   },
   '&:hover': {
     ...(link && {
-      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+      backgroundColor: alpha(theme.palette.background.constant.white, 0.5),
     }),
 
     '.svg-inline--fa': {
@@ -283,8 +284,8 @@ export const RootDiv = styled('div', {
 
 export const HideScrollbar = styled(List)(() => ({
   overflow: 'hidden auto',
-  'scrollbar-width': 'none',
-  '-ms-overflow-style': 'none',
+  scrollbarWidth: 'none',
+  msOverflowStyle: 'none',
   '&::-webkit-scrollbar': {
     display: 'none',
   },
@@ -293,7 +294,7 @@ export const HideScrollbar = styled(List)(() => ({
 export const SecondaryDivider = styled(Divider)(({ theme }) => ({
   marginTop: theme.spacing(1),
   marginBottom: theme.spacing(1),
-  borderColor: '#404854',
+  borderColor: theme.palette.divider,
 }));
 
 export const MainListIcon = styled(ListItemIcon)(({ theme }) => ({
@@ -370,10 +371,13 @@ export const NavigatorFooter = styled('div')({
 export const ChevronButtonWrapper = styled('div', {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
 })(({ isCollapsed, theme }) => ({
-  backgroundColor: isCollapsed ? '#515b60' : theme.palette.background.tabs,
-  color: isCollapsed ? '#ffffff' : 'inherit',
+  backgroundColor: theme.palette.background.tabs,
+  color: isCollapsed ? theme.palette.background.constant.white : 'inherit',
   boxShadow: !isCollapsed
-    ? '0.5px 0px 0px 0px rgb(0 0 0 / 20%), 1.5px 0px 0px 0px rgb(0 0 0 / 14%), 2.5px 1px 3px 0px rgb(0 0 0 / 12%)'
+    ? `0.5px 0px 0px 0px ${alpha(theme.palette.common.black, 0.2)}, 1.5px 0px 0px 0px ${alpha(
+        theme.palette.common.black,
+        0.14,
+      )}, 2.5px 1px 3px 0px ${alpha(theme.palette.common.black, 0.12)}`
     : 'none',
   position: 'fixed',
   borderRadius: '0 5px 5px 0',

@@ -1,3 +1,5 @@
+import normalizeURI from './normalizeURI';
+
 /**
  * @typedef {Object} NavigatorSchema
  * @property {string} title
@@ -74,7 +76,13 @@ function NavigatorExtensionSchemaDecoder(content) {
         href: prepareHref(item.href),
         component: item.component || '',
         onClickCallback: item?.on_click_callback || 0,
-        icon: (item.icon && '/api/provider/extension/' + item.icon) || '',
+        // Mirror createPathForRemoteComponent's prefix-then-normalizeURI shape
+        // so the icon URL never picks up a double slash. Without this, an
+        // item.icon starting with "/" concatenated onto a prefix ending in "/"
+        // produced "/api/provider/extension//provider/..." which the browser
+        // treated as a distinct URL from the single-slash form, causing two
+        // fetches (one of which stalled) for the same asset.
+        icon: (item.icon && '/api/provider/extension' + normalizeURI(item.icon)) || '',
         show: !!item.show,
         children: NavigatorExtensionSchemaDecoder(item.children),
         full_page: item.full_page,

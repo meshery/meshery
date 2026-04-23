@@ -548,7 +548,11 @@ paths:
       operationId: getPlans
 ```
 
-Operations without `x-internal` are included in **all** bundles.
+Use explicit annotations for all operations:
+
+- `x-internal: ["meshery"]` for Meshery OSS only
+- `x-internal: ["cloud"]` for Meshery Cloud only
+- `x-internal: ["meshery", "cloud"]` for operations shared by both bundles
 
 ### `x-generate-db-helpers`
 
@@ -985,8 +989,9 @@ paths:
       # ...
 ```
 
-- **With `x-internal`**: Included only in the specified clients
-- **Without `x-internal`**: Included in **all** clients
+- `x-internal: ["meshery"]`: Included only in `meshery_openapi.yml`
+- `x-internal: ["cloud"]`: Included only in `cloud_openapi.yml`
+- `x-internal: ["meshery", "cloud"]`: Included in both bundles
 
 ---
 

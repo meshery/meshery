@@ -85,7 +85,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	description := fmt.Sprintf("Delete request received for kubernetes context \"%s\"", k8scontext.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 
 	machineCtx := &kubernetes.MachineCtx{
 		K8sContext:         k8scontext,
@@ -128,7 +128,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			"error": err,
 		})
 		event := eventBuilder.Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
 	// go h.config.EventBroadcaster.Publish(userID, event)

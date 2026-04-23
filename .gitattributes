@@ -1,2 +1,4 @@
 # Set the default behavior, in case people don't have core.autocrlf set.
 * text=auto
+
+.github/workflows/*.lock.yml linguist-generated=true merge=ours

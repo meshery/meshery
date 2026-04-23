@@ -189,7 +189,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 		userUUID := user.ID
 		credential, err := provider.SaveUserCredential(token, &models.Credential{
-			UserId: &userUUID,
+			UserId: userUUID,
 			Type:   "prometheus",
 			Secret: promCred,
 			Name:   credName,
@@ -198,7 +198,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			_err := models.ErrPersistCredential(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to persist credential information for the connection %s", credName)).
 				WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = provider.PersistEvent(*event, nil)
+			_ = provider.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
@@ -211,19 +211,19 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			MetaData:         promConn,
 			CredentialSecret: promCred,
 			Name:             connName,
-			CredentialID:     credential.ID,
+			CredentialID:     &credential.ID,
 		}, token, false)
 
 		if err != nil {
 			_err := models.ErrPersistConnection(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", connName)).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = provider.PersistEvent(*event, nil)
+			_ = provider.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
 		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with Prometheus created at %s", connName, promURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
-		_ = provider.PersistEvent(*event, nil)
+		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
 		h.log.Debug("Prometheus URL %s saved", promURL)

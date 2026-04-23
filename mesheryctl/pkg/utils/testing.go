@@ -346,7 +346,7 @@ func formatToTabs(data string) string {
 	return s
 }
 
-// AssertMeshkitErrorsEqual compares  relevant fields of two meshkit errors
+// AssertMeshkitErrorsEqual compares relevant fields of two meshkit errors
 func AssertMeshkitErrorsEqual(t *testing.T, got, expected error) {
 	t.Helper()
 	assert.Equal(t, reflect.TypeOf(got), reflect.TypeOf(expected), "error type mismatch")
