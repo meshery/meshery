@@ -15,7 +15,6 @@ import {
   DoneIcon,
   RemoveDoneIcon,
   Modal,
-  ModalBody,
   useTheme,
   Search,
 } from '@sistent/sistent';

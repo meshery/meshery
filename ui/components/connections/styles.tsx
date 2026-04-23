@@ -1,5 +1,4 @@
-import { CONNECTION_STATES } from '../../utils/Enum';
-import { alpha, keppel } from '@sistent/sistent';
+import { keppel } from '@sistent/sistent';
 import {
   Box,
   Button,

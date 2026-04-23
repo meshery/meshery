@@ -20,7 +20,9 @@ const DeploymentComponentFormatter = ({ componentDetail, deploymentType }) => {
   const theme = useTheme();
   return (
     <StyledDetailBox
-      severityColor={componentDetail.Success ? theme.palette.success.main : theme.palette.error.main}
+      severityColor={
+        componentDetail.Success ? theme.palette.success.main : theme.palette.error.main
+      }
       bgOpacity={0.1}
       display="flex"
       gap={2}
