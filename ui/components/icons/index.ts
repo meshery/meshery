@@ -46,4 +46,5 @@ export {
   Cached,
   Code,
   SaveOutlined,
+  Download,
 } from '@mui/icons-material';

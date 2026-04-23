@@ -10,11 +10,12 @@ import {
   useTheme,
   Button,
 } from '@sistent/sistent';
-import DownloadIcon from '@mui/icons-material/Download';
+import {
+  Download as DownloadIcon,
+  ExpandMore as ExpandMoreIcon,
+} from '../../icons';
 import { REGISTRY_ITEM_STATES } from '@/utils/Enum';
 import { normalizeStaticImagePath } from '@/utils/fallback';
-// import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-// import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
   useUpdateEntityStatusMutation,
   useGetComponentsQuery,
@@ -23,7 +24,7 @@ import {
 import _ from 'lodash';
 import { JustifyAndAlignCenter } from './MeshModel.style';
 import { reactJsonTheme } from './helper';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 import { Accordion, AccordionDetails, AccordionSummary, styled } from '@sistent/sistent';
 import dynamic from 'next/dynamic';
 
@@ -500,11 +501,12 @@ const MeshModelDetails = ({
   view: string;
   showDetailsData: { type: string; data: any };
 }) => {
+  const theme = useTheme();
   const isEmptyDetails =
     Object.keys(showDetailsData.data).length === 0 || showDetailsData.type === 'none';
 
   const renderEmptyDetails = () => (
-    <p style={{ color: '#979797', margin: 'auto' }}>No {view} selected</p>
+    <p style={{ color: theme.palette.text.secondary, margin: 'auto' }}>No {view} selected</p>
   );
 
   const getContent = (type) => {
