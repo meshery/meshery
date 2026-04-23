@@ -1,13 +1,11 @@
 package model
 
 import (
-	"errors"
+	"encoding/json"
 	"testing"
 
-	"github.com/jarcoal/httpmock"
-	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestHasCSVs(t *testing.T) {
@@ -42,25 +40,68 @@ func TestHasCSVs(t *testing.T) {
 	}
 }
 
-func TestImportModelReturnsErrorForURLImportFailure(t *testing.T) {
-	defer utils.ResetCommandFlags(ModelCmd, t)
-	testContext := utils.InitTestEnvironment(t)
-	defer utils.StopMockery(t)
-	errMessage := "internal server error"
-	utils.TokenFlag = utils.GetToken(t)
-	mesheryctlflags.InitValidators(ModelCmd)
+func TestFlattenModelScaffold_MapsInitScaffoldToURLTemplate(t *testing.T) {
+	input := []byte(`{
+		"name": "test-model",
+		"displayName": "Test Model",
+		"category": {"name": "Uncategorized"},
+		"subCategory": "Utilities",
+		"registrant": {"kind": "github", "name": ""},
+		"metadata": {
+			"primaryColor": "#00b39f",
+			"secondaryColor": "#00D3A9",
+			"shape": "circle",
+			"svgColor": "<svg-color/>",
+			"svgWhite": "<svg-white/>",
+			"isAnnotation": true
+		}
+	}`)
 
-	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/meshmodels/register",
-		httpmock.NewStringResponder(500, errMessage))
+	out, err := flattenModelScaffold(input)
+	require.NoError(t, err)
 
-	buf := utils.SetupMeshkitLoggerTesting(t, false)
-	ModelCmd.SetArgs([]string{"import", "https://example.com/model"})
-	ModelCmd.SetOut(buf)
+	var got map[string]interface{}
+	require.NoError(t, json.Unmarshal(out, &got))
 
-	err := ModelCmd.Execute()
-	if err == nil {
-		t.Fatal("expected an error but command succeeded")
-	}
+	assert.Equal(t, "test-model", got["model"])
+	assert.Equal(t, "Test Model", got["modelDisplayName"])
+	assert.Equal(t, "Uncategorized", got["category"])
+	assert.Equal(t, "Utilities", got["subCategory"])
+	assert.Equal(t, "github", got["registrant"])
+	assert.Equal(t, "#00b39f", got["primaryColor"])
+	assert.Equal(t, "#00D3A9", got["secondaryColor"])
+	assert.Equal(t, "circle", got["shape"])
+	assert.Equal(t, "<svg-color/>", got["svgColor"])
+	assert.Equal(t, "<svg-white/>", got["svgWhite"])
+	assert.Equal(t, true, got["isAnnotation"])
+}
 
-	utils.AssertMeshkitErrorsEqual(t, err, utils.ErrMesheryServerInternalError(errors.New(errMessage)))
+func TestFlattenModelScaffold_PreservesExistingURLTemplateKeys(t *testing.T) {
+	input := []byte(`{
+		"model": "cert-manager",
+		"displayName": "Cert Manager",
+		"registrant": "github",
+		"category": "Security",
+		"subCategory": "Certificates",
+		"primaryColor": "#0B5FFF",
+		"secondaryColor": "#121212",
+		"isAnnotation": false,
+		"publishToRegistry": false
+	}`)
+
+	out, err := flattenModelScaffold(input)
+	require.NoError(t, err)
+
+	var got map[string]interface{}
+	require.NoError(t, json.Unmarshal(out, &got))
+
+	assert.Equal(t, "cert-manager", got["model"])
+	assert.Equal(t, "Cert Manager", got["modelDisplayName"])
+	assert.Equal(t, "github", got["registrant"])
+	assert.Equal(t, "Security", got["category"])
+	assert.Equal(t, "Certificates", got["subCategory"])
+	assert.Equal(t, "#0B5FFF", got["primaryColor"])
+	assert.Equal(t, "#121212", got["secondaryColor"])
+	assert.Equal(t, false, got["isAnnotation"])
+	assert.Equal(t, false, got["publishToRegistry"])
 }

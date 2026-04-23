@@ -50,7 +50,7 @@ mesheryctl model generate --f [path-to-csv-directory]
 mesheryctl model generate --f [URL] -t [path-to-template.json]
 
 // Generate a model from a URL based on a JSON template skipping registration
-mesheryctl model generate --f [URL] -t [path-to-template.json] -r
+mesheryctl model generate --file [URL] --template [path-to-template.json] --skip-registration
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &modelGenerateFlags)
@@ -118,7 +118,7 @@ func init() {
 
 	generateModelCmd.Flags().StringVarP(&modelGenerateFlags.File, "file", "f", "", "Specify path to the file or directory")
 	generateModelCmd.Flags().StringVarP(&modelGenerateFlags.Template, "template", "t", "", "Specify path to the template JSON file")
-	generateModelCmd.Flags().BoolVarP(&modelGenerateFlags.Register, "register", "r", false, "Skip registration of the model")
+	generateModelCmd.Flags().BoolVarP(&modelGenerateFlags.Register, "skip-registration", "", false, "Skip registration of the model (default is false)")
 
 }
 

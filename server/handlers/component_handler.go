@@ -1136,6 +1136,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		filePath := filepath.Join(modelDirPath, model.Model+".json")
 		modelDef := model.CreateModelDefinition(version, utils.DefVersion)
+		modelDef.Status = _model.Enabled
 		err = modelDef.WriteModelDefinition(filePath, "json")
 		if err != nil {
 			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
@@ -1157,6 +1158,16 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			dir = registration.NewDir(modelDirPath)
 			registrationHelper.Register(dir)
 		} else {
+			response.EntityCount.CompCount = lengthofComps
+			response.EntityCount.ModelCount = 1
+			response.ModelName = append(response.ModelName, model.Model)
+			response.EntityTypeSummary.SuccessfulModels = append(response.EntityTypeSummary.SuccessfulModels, map[string]interface{}{
+				"Model":       model.Model,
+				"DisplayName": model.ModelDisplayName,
+				"Version":     modelDef.Model.Version,
+			})
+			message = fmt.Sprintf("Generated %d components for model %s", lengthofComps, model.Model)
+			h.sendSuccessResponse(rw, userID, provider, message, "", &response, token)
 			return
 		}
 
