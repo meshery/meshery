@@ -46,26 +46,6 @@ import (
 /**Meshmodel endpoints **/
 const DefaultPageSizeForMeshModelComponents = 25
 
-// swagger:route GET /api/meshmodels/categories/{category}/models GetMeshmodelModelsByCategories idGetMeshmodelModelsByCategories
-//
-// Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
-//
-// ```?version={version}``` If version is unspecified then all models are returned
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={modelname}``` If search is non empty then a greedy search is performed
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// ```?annotations={["true"/"false"/]}``` When this query parameter is "true", only models with the "isAnnotation" property set to true are returned. When  this query parameter is "false", all models except those considered to be annotation models are returned. Any other value of the query parameter results in both annoations as well as non-annotation models being returned.
-// responses:
-// ```?annotations={["true"/"false"/]}``` If "true" models having "isAnnotation" property as true are "only" returned, If false all models except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation models being returned.
-//
-//	200: []meshmodelModelsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -119,25 +99,6 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories/{category}/models/{model} GetMeshmodelModelsByCategoriesByModel idGetMeshmodelModelsByCategoriesByModel
-//
-// Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
-//
-// ```?version={version}``` If version is unspecified then all models are returned
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// responses:
-// ```?annotations={["true"/"false"/]}``` If "true" models having "isAnnotation" property as true are "only" returned, If false all models except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation models being returned.
-//
-//	200: []meshmodelModelsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -194,26 +155,6 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 }
 
-// swagger:route GET /api/meshmodels/models GetMeshmodelModels idGetMeshmodelModels
-// Handle GET request for getting all meshmodel models
-//
-// # Returns a list of registered models across all categories
-//
-// ```?version={version}``` If version is unspecified then all models are returned
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={modelname}``` If search is non empty then a greedy search is performed
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// responses:
-// ```?annotations={["true"/"false"/]}``` If "true" models having "isAnnotation" property as true are "only" returned, If false all models except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation models being returned.
-//
-//	200: meshmodelModelsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -274,26 +215,6 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route GET /api/meshmodels/models/{model} GetMeshmodelModelsByName idGetMeshmodelModelsByName
-// Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
-//
-// # Returns a list of registered models across all categories
-//
-// ```?version={version}``` If version is unspecified then all models are returned
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// responses:
-// ```?annotations={["true"/"false"/]}``` If "true" models having "isAnnotation" property as true are "only" returned, If false all models except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation models being returned.
-//
-//	200: []meshmodelModelsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -351,21 +272,6 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories GetMeshmodelCategories idGetMeshmodelCategories
-// Handle GET request for getting all meshmodel categories
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?search={categoryName}``` If search is non empty then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// responses:
-//
-//	200: []meshmodelCategoriesResponseWrapper
 func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -407,21 +313,6 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories/{category} GetMeshmodelCategoriesByName idGetMeshmodelCategoriesByName
-// Handle GET request for getting all meshmodel categories of a given name
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-// responses:
-//
-//	200: []meshmodelCategoriesResponseWrapper
 func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -464,29 +355,6 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories/{category}/models/{model}/components/{name} GetMeshmodelComponentsByNameByModelByCategory idGetMeshmodelComponentsByNameByModelByCategory
-// Handle GET request for getting meshmodel components of a specific type by model and category.
-//
-// Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components/Namespace
-// Components can be further filtered through query parameter
-//
-// ```?version={version}``` If version is unspecified then all model versions are returned
-//
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
-// responses:
-// 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -541,32 +409,6 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories/{category}/components/{name} GetMeshmodelComponentsByNameByCategory idGetMeshmodelComponentsByNameByCategory
-// Handle GET request for getting meshmodel components of a specific type category.
-//
-// Example: ```/api/meshmodels/categories/Orchestration``` and Management/components/Namespace
-// Components can be further filtered through query parameter
-//
-// ```?model={model}``` If model is unspecified then all models are returned
-//
-// ```?version={version}``` If version is unspecified then all model versions are returned
-//
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
-// responses:
-//
-//	200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -619,30 +461,6 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	}
 }
 
-// swagger:route GET /api/meshmodels/models/{model}/components/{name} GetMeshmodelComponentsByNameByModel idGetMeshmodelComponentsByNameByModel
-// Handle GET request for getting meshmodel components of a specific  model.
-//
-// Example: ```/api/meshmodels/models/kubernetes/components/Namespace```
-// Components can be further filtered through query parameter
-//
-// ```?version={version}``` If version is unspecified then all model versions are returned
-//
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned. returned.
-// responses:
-//
-//	200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -696,33 +514,6 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	}
 }
 
-// swagger:route GET /api/meshmodels/components/{name} GetAllMeshmodelComponentsByName idGetAllMeshmodelComponentsByName
-// Handle GET request for getting meshmodel components of a specific type by name across all models and categories
-//
-// Example: ```/api/meshmodels/components/Namespace```
-// Components can be further filtered through query parameter
-//
-// ```?model={model}``` If model is unspecified then all models are returned
-//
-// ```?version={version}``` If version is unspecified then all model versions are returned
-//
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
-// responses:
-// 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -774,31 +565,6 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	}
 }
 
-// swagger:route GET /api/meshmodels/models/{model}/components GetMeshmodelComponentByModel idGetMeshmodelComponentByModel
-// Handle GET request for getting meshmodel components of a specific model. The component type/model name should be lowercase like "kubernetes", "istio"
-//
-// Example: ```/api/meshmodels/models/kubernetes/components```
-// Components can be further filtered through query parameter
-//
-// ```?version={version}```
-//
-// ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
-//
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
-//
-// ```?search={componentname}``` If search is non empty then a greedy search is performed
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
-// responses:
-// 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -850,32 +616,6 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories/{category}/models/{model}/components GetMeshmodelComponentByModelByCategory idGetMeshmodelComponentByModelByCategory
-//
-// Handle GET request for getting meshmodel components of a specific model and category. The component type/model name should be lowercase like "kubernetes", "istio"
-//
-// Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components
-// Components can be further filtered through query parameter
-//
-// ```?version={version}```
-//
-// ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
-//
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={componentname}``` If search is non empty then a greedy search is performed
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
-// responses:
-// 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -927,31 +667,6 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	}
 }
 
-// swagger:route GET /api/meshmodels/categories/{category}/components GetMeshmodelComponentByCategory idGetMeshmodelComponentByCategory
-// Handle GET request for getting meshmodel components of a specific model and category.
-//
-// # Components can be further filtered through query parameter
-//
-// ```?version={version}```
-//
-// ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
-//
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={componentname}``` If search is non empty then a greedy search is performed
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
-// responses:
-//
-//	200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -1000,33 +715,6 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		}
 	}
 }
-
-// swagger:route GET /api/meshmodels/components GetAllMeshmodelComponents idGetAllMeshmodelComponents
-// Handle GET request for getting meshmodel components across all models and categories
-//
-// # Components can be further filtered through query parameter
-//
-// ```?version={version}```
-//
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={componentname}``` If search is non empty then a greedy search is performed
-//
-// ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?id={id}``` If id is non empty then only the component with the given id is returned
-//
-// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
-// responses:
-//  200: meshmodelComponentsDuplicateResponseWrapper
 
 func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
@@ -1077,13 +765,6 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 }
 
-// swagger:route POST /api/meshmodel/components/register MeshmodelValidate idPostMeshModelValidate
-// Handle POST request for registering meshmodel components.
-//
-// Validate the given value with the given schema
-// responses:
-// 	200:
-
 // request body should be json
 // request body should be of ComponentCapability format
 func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
@@ -1118,24 +799,6 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	}
 	go h.config.MeshModelSummaryChannel.Publish()
 }
-
-// swagger:route GET /api/meshmodels/registrants GetMeshmodelRegistrants
-// Handle GET request for getting all meshmodel registrants
-//
-// # Returns a list of registrants and summary count of its models, components, and relationships
-//
-// ```?page={pagenumber}``` Default page number is 1
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={Hostname}``` Gets host by the name
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// responses:
-//	200: []meshmodelRegistrantsResponseWrapper
 
 func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
@@ -1182,26 +845,24 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 }
 
-// swagger:route POST /api/meshmodel/update/status MeshModelUpdateEntityStatus idPostMeshModelUpdateEntityStatus
-// Handle POST request for updating the ignore status of a model.
-//
-// Update the ignore status of a model based on the provided parameters.
-//
-// responses:
-// 	200: noContentWrapper
-
 // request body should be json
 // request body should be of struct containing ID and Status fields
 func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	dec := json.NewDecoder(r.Body)
 	userID := user.ID
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
 	entityType := mux.Vars(r)["entityType"]
 	var updateData struct {
 		ID          string `json:"id"`
 		Status      string `json:"status"`
 		DisplayName string `json:"displayname"`
 	}
-	err := dec.Decode(&updateData)
+	err = dec.Decode(&updateData)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
@@ -1215,7 +876,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 			"error": err,
 		})
 		_event := eventBuilder.Build()
-		_ = provider.PersistEvent(*_event, nil)
+		_ = provider.PersistEvent(*_event, token)
 		go h.config.EventBroadcaster.Publish(userID, _event)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
@@ -1224,7 +885,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	// Respond with success status
@@ -1249,14 +910,6 @@ func processComponentDefinitions(entities []entity.Entity) []component.Component
 	return comps
 }
 
-// swagger:route POST /api/meshmodels/register RegisterMeshmodels idRegisterMeshmodels
-// Handle POST request for registering entites like components and relationships model.
-//
-// Register model based on thier Schema Version.
-//
-// responses:
-// 	200: noContentWrapper
-
 // request content byte in form value and header of the type in form
 
 func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
@@ -1270,13 +923,20 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	userID := user.ID
 	var message string
 
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
 	//Here the codes handles to decode and store the data from the payload
 	var importRequest schemav1beta1.ImportRequest
 
-	err := json.NewDecoder(r.Body).Decode(&importRequest)
+	err = json.NewDecoder(r.Body).Decode(&importRequest)
 	if err != nil {
 		h.log.Info("Error in unmarshalling request body")
-		h.sendErrorEvent(userID, provider, "Error in unmarshalling request body", err)
+		h.sendErrorEvent(userID, provider, "Error in unmarshalling request body", err, token)
 		http.Error(rw, "Invalid request format", http.StatusBadRequest)
 		return
 	}
@@ -1292,7 +952,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		err := meshkitRegistryUtils.SetLogger(false)
 		if err != nil {
 			h.handleError(rw, err, "Error setting logger")
-			h.sendErrorEvent(userID, provider, "Error setting logger", err)
+			h.sendErrorEvent(userID, provider, "Error setting logger", err, token)
 		}
 		fetchBase64DataFromDataURL := func(dataURL string) ([]byte, error) {
 			if strings.HasPrefix(dataURL, "data:text/csv;base64,") {
@@ -1304,14 +964,14 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		modelCSVData, err := fetchBase64DataFromDataURL(importRequest.ImportBody.ModelCsv)
 		if err != nil {
 			h.handleError(rw, err, "Error fetching or decoding Model CSV")
-			h.sendErrorEvent(userID, provider, "Error fetching or decoding Model CSV", err)
+			h.sendErrorEvent(userID, provider, "Error fetching or decoding Model CSV", err, token)
 			return
 		}
 		modelCsvFile, err := os.CreateTemp("", "model-*.csv")
 		if err != nil {
 			err = ErrCreateFile(err, "Error creating temp file for Model CSV")
 			h.handleError(rw, err, "Error creating temp file for Model CSV")
-			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err)
+			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err, token)
 			return
 		}
 		defer func() {
@@ -1324,14 +984,14 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = ErrWritingIntoFile(err, "Error writing Model CSV to temp file")
 			h.handleError(rw, err, "Error writing Model CSV to temp file")
-			h.sendErrorEvent(userID, provider, "Error writing Model CSV to temp file", err)
+			h.sendErrorEvent(userID, provider, "Error writing Model CSV to temp file", err, token)
 			return
 		}
 
 		componentCSVData, err := fetchBase64DataFromDataURL(importRequest.ImportBody.ComponentCsv)
 		if err != nil {
 			h.handleError(rw, err, "Error fetching or decoding Component CSV")
-			h.sendErrorEvent(userID, provider, "Error fetching or decoding Component CSV", err)
+			h.sendErrorEvent(userID, provider, "Error fetching or decoding Component CSV", err, token)
 			return
 		}
 
@@ -1339,7 +999,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = ErrCreateFile(err, "Error creating temp file for Component CSV")
 			h.handleError(rw, err, "Error creating temp file for Component CSV")
-			h.sendErrorEvent(userID, provider, "Error creating temp file for Component CSV", err)
+			h.sendErrorEvent(userID, provider, "Error creating temp file for Component CSV", err, token)
 			return
 		}
 		defer func() {
@@ -1352,21 +1012,21 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = ErrWritingIntoFile(err, "Error writing Component CSV to temp file")
 			h.handleError(rw, err, "Error writing Component CSV to temp file")
-			h.sendErrorEvent(userID, provider, "Error writing Component CSV to temp file", err)
+			h.sendErrorEvent(userID, provider, "Error writing Component CSV to temp file", err, token)
 			return
 		}
 
 		relationshipCSVData, err := fetchBase64DataFromDataURL(importRequest.ImportBody.RelationshipCSV)
 		if err != nil {
 			h.handleError(rw, err, "Error fetching or decoding Model CSV")
-			h.sendErrorEvent(userID, provider, "Error fetching or decoding Model CSV", err)
+			h.sendErrorEvent(userID, provider, "Error fetching or decoding Model CSV", err, token)
 			return
 		}
 		relationshipCsvFile, err := os.CreateTemp("", "relationship-*.csv")
 		if err != nil {
 			err = ErrCreateFile(err, "Error creating temp file for Model CSV")
 			h.handleError(rw, err, "Error creating temp file for Model CSV")
-			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err)
+			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err, token)
 			return
 		}
 		defer func() {
@@ -1379,7 +1039,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = ErrWritingIntoFile(err, "Error writing Model CSV to temp file")
 			h.handleError(rw, err, "Error writing Model CSV to temp file")
-			h.sendErrorEvent(userID, provider, "Error writing Model CSV to temp file", err)
+			h.sendErrorEvent(userID, provider, "Error writing Model CSV to temp file", err, token)
 			return
 		}
 
@@ -1392,7 +1052,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		tempDir, err := os.MkdirTemp("", "tempData")
 		if err != nil {
 			h.handleError(rw, err, "Error creating temporary directory")
-			h.sendErrorEvent(userID, provider, "Error creating temporary directory", err)
+			h.sendErrorEvent(userID, provider, "Error creating temporary directory", err, token)
 			return
 		}
 		defer func() {
@@ -1404,11 +1064,11 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
 		if err != nil {
 			h.handleError(rw, err, "Error invoking generation from sheet")
-			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err)
+			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err, token)
 			return
 		}
 
-		h.sendEventForImport(userID, provider, 0, "", true)
+		h.sendEventForImport(userID, provider, 0, "", true, token)
 		modelDirPaths, err := models.GetModelDirectoryPaths(tempDir)
 		if err != nil {
 			h.log.Error(models.ErrSeedingComponents(err))
@@ -1429,7 +1089,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		err = utils.CopyDirectory(tempDir, modelLocation)
 		if err != nil {
 			h.handleError(rw, err, "Error copying data to model location")
-			h.sendErrorEvent(userID, provider, "Error copying data to model location", err)
+			h.sendErrorEvent(userID, provider, "Error copying data to model location", err, token)
 			return
 		}
 
@@ -1458,13 +1118,13 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		pkg, version, err := meshkitRegistryUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error generating model")
-			h.sendErrorEvent(userID, provider, "Error generating model", err)
+			h.sendErrorEvent(userID, provider, "Error generating model", err, token)
 			return
 		}
 		modelDirPath, compDirPath, err := utils.CreateVersionedDirectoryForModelAndComp(version, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
-			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err)
+			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err, token)
 			return
 		}
 		filePath := filepath.Join(modelDirPath, model.Model+".json")
@@ -1472,7 +1132,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		err = modelDef.WriteModelDefinition(filePath, "json")
 		if err != nil {
 			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
-			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err)
+			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err, token)
 			return
 		}
 
@@ -1480,12 +1140,12 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		lengthofComps, _, err := meshkitRegistryUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef, model.Group)
 		if err != nil {
 			h.handleError(rw, err, "Error generating components")
-			h.sendErrorEvent(userID, provider, "Error generating components", err)
+			h.sendErrorEvent(userID, provider, "Error generating components", err, token)
 			return
 		}
 
 		//Event when the URL is used to show that we g
-		h.sendEventForImport(userID, provider, lengthofComps, model.Model, false)
+		h.sendEventForImport(userID, provider, lengthofComps, model.Model, false, token)
 		if importRequest.Register {
 			dir = registration.NewDir(modelDirPath)
 			registrationHelper.Register(dir)
@@ -1512,7 +1172,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, err.Error())
-			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
+			h.sendErrorEvent(userID, provider, "Error creating temp file", err, token)
 			return
 		}
 		defer func() {
@@ -1557,7 +1217,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		fileData, err := downloadFile(importRequest.ImportBody.Url)
 		if err != nil {
 			h.handleError(rw, err, "Error downloading file from URL")
-			h.sendErrorEvent(userID, provider, "Error downloading file from URL", err)
+			h.sendErrorEvent(userID, provider, "Error downloading file from URL", err, token)
 			return
 		}
 		isOCI := meshkitOci.IsOCIArtifact(fileData)
@@ -1571,7 +1231,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, "Error creating temp file")
-			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
+			h.sendErrorEvent(userID, provider, "Error creating temp file", err, token)
 			return
 		}
 		defer func() {
@@ -1596,21 +1256,9 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		errMsg = ErrMsgContruct(&response)
 	}
 
-	h.sendSuccessResponse(rw, userID, provider, message, errMsg, &response)
+	h.sendSuccessResponse(rw, userID, provider, message, errMsg, &response, token)
 
 }
-
-// swagger:route GET /api/meshmodels/export ExportModel idExportModel
-// Handle GET request for exporting a model.
-//
-// # Export model with the given id in the output format specified
-//
-// ```?id={id}```
-// ```?output_format={output_format}``` Can be `json`, `yaml`, or `oci`. Default is `oci`
-//
-// responses:
-//
-//	200: []byte
 
 func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelId := r.URL.Query().Get("id")
@@ -1851,13 +1499,6 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 	return meshkitutils.ErrInvalidSchemaVersion
 }
 
-// swagger:route DELETE /api/meshmodels/models/{id} MeshmodelAPI idDeleteModel
-// Handle DELETE request for a model by ID
-//
-// Deletes a model and its associated registry entries from the database.
-// responses:
-//
-//	204: noContentWrapper
 func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	modelID := mux.Vars(r)["id"]
 	modelUUID, err := uuid.FromString(modelID)

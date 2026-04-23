@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { SistentThemeProviderWithoutBaseLine, useTheme } from '@sistent/sistent';
+import { SistentThemeProviderWithoutBaseLine, useTheme } from '@/theme';
 
 interface UsesSistentProps {
   children: ReactNode;

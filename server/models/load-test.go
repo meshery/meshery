@@ -8,8 +8,8 @@ import (
 
 	"fortio.org/fortio/fhttp"
 	"fortio.org/fortio/periodic"
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
 )
 
 // LoadGenerator - represents the load generator type
@@ -104,10 +104,10 @@ type LoadTestResponse struct {
 
 // MesheryResult - represents the results from Meshery test run to be shipped
 type MesheryResult struct {
-	ID                 uuid.UUID              `json:"meshery_id,omitempty"`
+	ID                 core.Uuid              `json:"meshery_id,omitempty"`
 	Name               string                 `json:"name,omitempty"`
 	Mesh               string                 `json:"mesh,omitempty"`
-	PerformanceProfile *uuid.UUID             `json:"performance_profile,omitempty"`
+	PerformanceProfile *core.Uuid             `json:"performance_profile,omitempty"`
 	TestID             string                 `json:"test_id"`
 	Result             map[string]interface{} `json:"runner_results,omitempty" gorm:"type:JSONB"`
 

@@ -66,7 +66,7 @@ export const StyledSelect = styled(Select)(({ theme }) => ({
     display: 'none',
   },
   '& svg': {
-    fill: '#eee',
+    fill: theme.palette.background.constant.white,
   },
 
   [theme.breakpoints.down('md')]: {
@@ -103,7 +103,10 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
   marginRight: '0.625rem', // 10px converted to rem
   marginTop: '0.5rem', // 8px converted to rem
   '& .MuiInput-underline:after': {
-    borderBottomColor: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.text.default, // change the color here
+    borderBottomColor:
+      theme.palette.mode === 'dark'
+        ? theme.palette.background.brand.default
+        : theme.palette.text.default,
   },
 }));
 
@@ -120,8 +123,8 @@ export const StyledHeader = styled(Typography)(({ theme }) => ({
   },
   color: theme.palette.common.white,
 }));
-export const StyledBetaHeader = styled('sup')(() => ({
-  color: '#EEEEEE',
+export const StyledBetaHeader = styled('sup')(({ theme }) => ({
+  color: theme.palette.background.constant.white,
   fontWeight: '300',
   fontSize: '0.8125rem',
 }));
@@ -191,13 +194,13 @@ export function OrgMenu(props) {
                   <Grid2 container spacing={1} alignItems="flex-end" size="grow">
                     <Grid2 data-cy="mesh-adapter-url" size={{ xs: 12 }}>
                       <StyledSelect
-                        value={organization.id}
+                        value={organization?.id ?? ''}
                         onChange={handleOrgSelect}
                         SelectDisplayProps={{
                           style: {
                             display: 'flex',
                             flexDirection: 'row',
-                            fill: '#eee',
+                            fill: theme.palette.background.constant.white,
                             paddingBlock: '9px 8px',
                             paddingInline: '18px 34px',
                             color: fromMobileView

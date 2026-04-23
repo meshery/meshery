@@ -48,8 +48,6 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `MESHERY_TOKEN`: General Meshery authentication token
 - `METAL_AUTH_TOKEN`: Authentication token for metal provider
 - `METAL_SERVER1`: Configuration for metal server 1
-- `NETLIFY_AUTH_TOKEN`: Authentication token for Netlify
-- `NETLIFY_SITE_ID`: Site ID for Netlify deployments
 - `PLAYGROUND_CONFIG`: Configuration for playground environments
 - `PROVIDER_TOKEN`: General provider authentication token
 - `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter
@@ -487,6 +485,9 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 ## Bi-Weekly Meetings
 
 If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
+
+Note: This biweekly meeting series is currently on hiatus. We'll share an update when it resumes. Thank you for your patience!
+  
 
 <div class="training-video">
   <iframe width="560" height="315"

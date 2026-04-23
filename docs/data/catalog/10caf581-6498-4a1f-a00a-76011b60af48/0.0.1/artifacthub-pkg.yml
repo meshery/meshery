@@ -1,0 +1,20 @@
+version: 0.0.1
+name: oracle-e-commerce-microservices-on-kubernetes
+displayName: Oracle e-commerce microservices on kubernetes
+createdAt: "2025-10-30T07:47:08Z"
+description: Oracle e-commerce microservices on kubernetes
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/10caf581-6498-4a1f-a00a-76011b60af48/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c191d146-dd71-44ac-8ef9-bccac10068fe
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

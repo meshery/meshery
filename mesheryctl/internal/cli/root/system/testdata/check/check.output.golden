@@ -1,19 +1,19 @@
 
 Docker 
 --------------
-✓ Docker is running
-✓ docker-compose is available (via library)
+!! Docker is not running
+✓ docker-compose is available
 
 Kubernetes API 
 --------------
-✓ can initialize Kubernetes client
+!! cannot initialize Kubernetes client
 !! cannot query the Kubernetes API
 
 Kubernetes Version 
 --------------
 !! cannot check Kubernetes version
-!! exec: "kubectl": executable file not found in $PATH
+!! exit status 1
 
 --------------
 --------------
-✓✓ Meshery prerequisites met
+!! Meshery prerequisites not met

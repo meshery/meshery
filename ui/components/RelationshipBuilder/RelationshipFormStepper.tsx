@@ -15,7 +15,7 @@ import {
 } from '@sistent/sistent';
 import { GlobalStyles } from '@mui/material';
 import { styled } from '@sistent/sistent';
-import { RelationshipDefinitionV1Alpha3OpenApiSchema } from '@meshery/schemas';
+import { RelationshipDefinitionV1Beta2OpenApiSchema } from '@meshery/schemas';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CodeIcon from '@mui/icons-material/Code';
 import LinkIcon from '@mui/icons-material/Link';
@@ -40,14 +40,14 @@ const StyledDocsRedirectLink = styled('a')(({ theme }) => ({
 }));
 
 const RelationshipFormStepper = React.memo(({ handleClose }) => {
-  const RelationshipDefinitionV1Alpha3Schema =
-    RelationshipDefinitionV1Alpha3OpenApiSchema.components.schemas.RelationshipDefinition;
+  const RelationshipDefinitionSchema =
+    RelationshipDefinitionV1Beta2OpenApiSchema.components.schemas.RelationshipDefinition;
 
-  const filteredSchema = omit(RelationshipDefinitionV1Alpha3Schema, [
+  const filteredSchema = omit(RelationshipDefinitionSchema, [
     'properties.capabilities',
     'properties.selectors',
   ]);
-  const selectorsSchema = pick(RelationshipDefinitionV1Alpha3Schema.properties, ['selectors']);
+  const selectorsSchema = pick(RelationshipDefinitionSchema.properties, ['selectors']);
 
   // -> added zIndex so dropdown appears above the modal (mui default zIndex:1300)
   const globalStyles = (

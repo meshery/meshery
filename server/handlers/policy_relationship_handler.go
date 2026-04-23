@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -9,22 +11,24 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshery/server/models/pattern/utils"
-	"github.com/meshery/schemas/models/v1alpha1/capability"
-	"github.com/meshery/schemas/models/v1alpha1/core"
-	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/models/meshmodel/registry"
+	regv1alpha3 "github.com/meshery/meshkit/models/meshmodel/registry/v1alpha3"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	patternHelpers "github.com/meshery/meshkit/models/patterns"
 	mutils "github.com/meshery/meshkit/utils"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -63,10 +67,10 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 	from := fromSet[0]
 	to := toSet[0]
-	if from.Patch == nil || from.Patch.MutatedRef == nil {
+	if from.RelationshipDefinitionSelectorsPatch == nil || from.RelationshipDefinitionSelectorsPatch.MutatedRef == nil {
 		return alias, false
 	}
-	mutatedRefs := *from.Patch.MutatedRef
+	mutatedRefs := *from.RelationshipDefinitionSelectorsPatch.MutatedRef
 
 	if len(mutatedRefs) == 0 {
 		return alias, false
@@ -102,7 +106,7 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 }
 
 // getComponentById retrieves a component from the design by its ID
-func getComponentById(design pattern.PatternFile, id uuid.UUID) *component.ComponentDefinition {
+func getComponentById(design pattern.PatternFile, id core.Uuid) *component.ComponentDefinition {
 	for _, comp := range design.Components {
 		if comp.ID == id {
 			return comp
@@ -147,6 +151,103 @@ func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.Resolved
 
 }
 
+// mergeTraceUnique appends trace entries from src into dst, skipping duplicates by ID.
+func mergeTraceUnique(dst, src *pattern.Trace) {
+	compSeen := make(map[core.Uuid]bool)
+	for _, c := range dst.ComponentsAdded {
+		compSeen[c.ID] = true
+	}
+	for _, c := range dst.ComponentsUpdated {
+		compSeen[c.ID] = true
+	}
+	for _, c := range dst.ComponentsRemoved {
+		compSeen[c.ID] = true
+	}
+	relSeen := make(map[core.Uuid]bool)
+	for _, r := range dst.RelationshipsAdded {
+		relSeen[r.ID] = true
+	}
+	for _, r := range dst.RelationshipsUpdated {
+		relSeen[r.ID] = true
+	}
+	for _, r := range dst.RelationshipsRemoved {
+		relSeen[r.ID] = true
+	}
+
+	for _, c := range src.ComponentsAdded {
+		if !compSeen[c.ID] {
+			compSeen[c.ID] = true
+			dst.ComponentsAdded = append(dst.ComponentsAdded, c)
+		}
+	}
+	for _, c := range src.ComponentsRemoved {
+		if !compSeen[c.ID] {
+			compSeen[c.ID] = true
+			dst.ComponentsRemoved = append(dst.ComponentsRemoved, c)
+		}
+	}
+	for _, c := range src.ComponentsUpdated {
+		if !compSeen[c.ID] {
+			compSeen[c.ID] = true
+			dst.ComponentsUpdated = append(dst.ComponentsUpdated, c)
+		}
+	}
+	for _, r := range src.RelationshipsAdded {
+		if !relSeen[r.ID] {
+			relSeen[r.ID] = true
+			dst.RelationshipsAdded = append(dst.RelationshipsAdded, r)
+		}
+	}
+	for _, r := range src.RelationshipsRemoved {
+		if !relSeen[r.ID] {
+			relSeen[r.ID] = true
+			dst.RelationshipsRemoved = append(dst.RelationshipsRemoved, r)
+		}
+	}
+	for _, r := range src.RelationshipsUpdated {
+		if !relSeen[r.ID] {
+			relSeen[r.ID] = true
+			dst.RelationshipsUpdated = append(dst.RelationshipsUpdated, r)
+		}
+	}
+}
+
+// deduplicateActions removes duplicate actions by (op, id) key.
+func deduplicateActions(actions []pattern.Action) []pattern.Action {
+	type key struct {
+		op string
+		id string
+	}
+	seen := make(map[key]bool)
+	var result []pattern.Action
+	for _, a := range actions {
+		id := ""
+		if a.Value != nil {
+			if v, ok := a.Value["id"]; ok {
+				if s, ok := v.(string); ok {
+					id = s
+				}
+			}
+			// For add_component/add_relationship, the id is inside "item"
+			if id == "" {
+				if item, ok := a.Value["item"].(map[string]interface{}); ok {
+					if v, ok := item["id"]; ok {
+						if s, ok := v.(string); ok {
+							id = s
+						}
+					}
+				}
+			}
+		}
+		k := key{op: a.Op, id: id}
+		if !seen[k] {
+			seen[k] = true
+			result = append(result, a)
+		}
+	}
+	return result
+}
+
 func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 
 	for _, action := range response.Actions {
@@ -160,6 +261,18 @@ func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 
 // max number of time to keep revaluating the design till there are no reval triggering actions in the response
 const MAX_RE_EVALUATION_DEPTH = 5
+
+// defaultPolicyEvalTimeout bounds a single evaluation. Override via POLICY_EVAL_TIMEOUT.
+const defaultPolicyEvalTimeout = 3 * time.Minute
+
+var errEvalTimeout = errors.New("relationship policy evaluation timed out")
+
+func policyEvalTimeout() time.Duration {
+	if d := viper.GetDuration("POLICY_EVAL_TIMEOUT"); d > 0 {
+		return d
+	}
+	return defaultPolicyEvalTimeout
+}
 
 // Helper method to make design evaluation based on the relationship policies.
 // evalIterations is num of passes the evaluator needs to go through to do complete evaluation
@@ -178,13 +291,35 @@ func (h *Handler) EvaluateDesign(
 	var lastEvaluationResponse pattern.EvaluationResponse
 	lastEvaluationResponse.Design = relationshipPolicyEvalPayload.Design
 
+	useGoEngine := viper.GetBool("USE_GO_POLICY_ENGINE")
+
+	// Pre-fetch and convert registered relationships once, outside the re-evaluation loop.
+	var convertedRels []*relationship.RelationshipDefinition
+	if useGoEngine && h.GoEngine != nil {
+		registeredRels, _, _, relErr := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
+		if relErr != nil {
+			return lastEvaluationResponse, fmt.Errorf("failed to get relationships for Go engine: %w", relErr)
+		}
+		relInterfaces := make([]interface{}, len(registeredRels))
+		for idx, r := range registeredRels {
+			relInterfaces[idx] = r
+		}
+		convertedRels = gopolicies.ConvertRelationships(relInterfaces)
+	}
+
 	for i := range MAX_RE_EVALUATION_DEPTH {
 
-		// evaluate specified relationship policies
-		// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
-		evaluationResponse, err := h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,
-			RelationshipPolicyPackageName,
-		)
+		var evaluationResponse pattern.EvaluationResponse
+		var err error
+
+		if useGoEngine && h.GoEngine != nil {
+			evaluationResponse, err = h.GoEngine.EvaluateDesign(lastEvaluationResponse.Design, convertedRels)
+		} else {
+			// Use OPA/Rego policy engine (default)
+			evaluationResponse, err = h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,
+				RelationshipPolicyPackageName,
+			)
+		}
 
 		if err != nil {
 			h.log.Debug(err)
@@ -192,9 +327,15 @@ func (h *Handler) EvaluateDesign(
 			return pattern.EvaluationResponse{}, err
 		}
 
-		// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
-		now := time.Now()
+		// Save trace and clear it before processEvaluationResponse to prevent
+		// it from replacing components with pre-patch versions from trace.
+		// ComponentsAdded is kept for hydration (styles/icons).
+		savedTrace := evaluationResponse.Trace
+		evaluationResponse.Trace = pattern.Trace{
+			ComponentsAdded: savedTrace.ComponentsAdded,
+		}
 		_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
+		evaluationResponse.Trace = savedTrace
 
 		evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
 		if evaluationResponse.Design.Metadata == nil {
@@ -202,10 +343,9 @@ func (h *Handler) EvaluateDesign(
 		}
 		evaluationResponse.Design.Metadata.ResolvedAliases = &evaluatedAliases
 
-		mutils.TrackTime(h.log, now, "PostProcessEvaluationResponse")
-
 		lastEvaluationResponse.Design = evaluationResponse.Design
 		lastEvaluationResponse.Actions = append(lastEvaluationResponse.Actions, evaluationResponse.Actions...)
+		mergeTraceUnique(&lastEvaluationResponse.Trace, &evaluationResponse.Trace)
 
 		if evalIterations == i+1 || doesntNeedReeval(evaluationResponse) {
 			h.log.Info("Evaluation completed in iteration ", i+1)
@@ -220,6 +360,9 @@ func (h *Handler) EvaluateDesign(
 
 	currentTime := time.Now()
 	lastEvaluationResponse.Timestamp = &currentTime
+
+	// Deduplicate actions by (op, id) to avoid duplicates from re-evaluation iterations.
+	lastEvaluationResponse.Actions = deduplicateActions(lastEvaluationResponse.Actions)
 
 	// dehydrate the design file components to remove unnecessary details
 	patternHelpers.DehydratePattern(&lastEvaluationResponse.Design)
@@ -255,16 +398,18 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 		compFilter := &regv1beta1.ComponentFilter{
 			Name:       _c.Component.Kind,
 			APIVersion: _c.Component.Version,
-			Version:    _c.Model.Model.Version,
-			ModelName:  _c.Model.Name,
 			Limit:      1,
 			Trim:       true,
 		}
 
-		// NOTE: this is not deterministic as any version of the component can be used.
-		// NOTE: Confirm that the registry returns the latest version in case version is not specified.
-		if _c.Model.Model.Version == "*" {
-			compFilter.Version = ""
+		if _c.Model != nil {
+			compFilter.Version = _c.Model.Model.Version
+			compFilter.ModelName = _c.Model.Name
+			if _c.Model.Model.Version == "*" {
+				compFilter.Version = ""
+			}
+		} else {
+			compFilter.ModelName = _c.ModelReference.Name
 		}
 
 		entities, _, _, _ := registryManager.GetEntitiesMemoized(compFilter, registryCache)
@@ -343,11 +488,6 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 	return unknownComponents
 }
 
-// swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
-// Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
-//
-// responses:
-// 200
 func (h *Handler) EvaluateRelationshipPolicy(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -355,7 +495,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	user *models.User,
 	provider models.Provider,
 ) {
-	evalCtx := r.Context()
+	// Wall-clock timeout bounds the HTTP response; the eval goroutine
+	// may still run to completion in the background.
+	evalCtx, cancel := context.WithTimeout(r.Context(), policyEvalTimeout())
+	defer cancel()
+
+	token, _ := evalCtx.Value(models.TokenCtxKey).(string)
 
 	userUUID := user.ID
 	defer func() {
@@ -383,18 +528,39 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	patternUUID := relationshipPolicyEvalPayload.Design.ID
 	eventBuilder.ActedUpon(patternUUID)
 
-	evalRespChan := make(chan pattern.EvaluationResponse)
-	evalErrChan := make(chan error)
+	// Coalesce concurrent evaluations of the same design (rage-click guard).
+	designKey := patternUUID.String()
+	leader, waitCh := h.evalTracker.acquire(designKey)
+
+	if !leader {
+		h.log.Debug("coalescing relationship evaluation request for design ", designKey)
+		select {
+		case result := <-waitCh:
+			h.writeEvaluationResult(rw, result)
+			return
+		case <-evalCtx.Done():
+			h.writeEvalCtxError(rw, evalCtx)
+			return
+		}
+	}
+
+	evalRespChan := make(chan pattern.EvaluationResponse, 1)
+	evalErrChan := make(chan error, 1)
 
 	go func() {
-		// Evaluate specified relationship policies
-		// Perform the CPU-intensive work
+		// Skip evaluation if the request was already cancelled
+		if evalCtx.Err() != nil {
+			h.evalTracker.publish(designKey, evalResult{err: evalCtx.Err()})
+			return
+		}
 		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
 
 		if err != nil {
-			evalErrChan <- err // Send the error
+			h.evalTracker.publish(designKey, evalResult{err: err})
+			evalErrChan <- err
 		} else {
-			evalRespChan <- evaluationResponse // Send the response
+			h.evalTracker.publish(designKey, evalResult{resp: evaluationResponse})
+			evalRespChan <- evaluationResponse
 		}
 	}()
 
@@ -416,20 +582,39 @@ func (h *Handler) EvaluateRelationshipPolicy(
 				"evaluation_response": evaluationResponse,
 				"evaluated_at":        *evaluationResponse.Timestamp,
 			}).WithSeverity(events.Informational).Build()
-		_ = provider.PersistEvent(*event, nil)
+		go func() {
+			_ = provider.PersistEvent(*event, token)
+		}()
 
-		// write the response
-		ec := json.NewEncoder(rw)
-		err = ec.Encode(evaluationResponse)
-		if err != nil {
-			h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
-			http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
-			return
-		}
+		h.writeEvaluationResult(rw, evalResult{resp: evaluationResponse})
 	case <-evalCtx.Done():
-		h.log.Info("Evaluation terminated: request context closed")
+		// Unblock any followers waiting on this designID.
+		h.evalTracker.publish(designKey, evalResult{err: errEvalTimeout})
+		h.writeEvalCtxError(rw, evalCtx)
 		return
 	}
+}
+
+func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResult) {
+	if result.err != nil {
+		h.log.Debug(result.err)
+		http.Error(rw, result.err.Error(), http.StatusInternalServerError)
+		return
+	}
+	ec := json.NewEncoder(rw)
+	if err := ec.Encode(result.resp); err != nil {
+		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
+	}
+}
+
+func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context) {
+	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+		h.log.Warnf("relationship policy evaluation exceeded %s", policyEvalTimeout())
+		http.Error(rw, errEvalTimeout.Error(), http.StatusGatewayTimeout)
+		return
+	}
+	h.log.Info("Evaluation terminated: request context closed")
 }
 
 // Needs to be reinstiated inorder to load the policies based on the evaluation queries.
@@ -469,23 +654,6 @@ func (h *Handler) EvaluateRelationshipPolicy(
 // 	return
 // }
 
-// swagger:route GET /api/meshmodels/models/{model}/policies/{name} GetMeshmodelPoliciesByName idGetMeshmodelPoliciesByName
-// Handle GET request for getting meshmodel policies of a specific model by name.
-//
-// Example: ```/api/meshmodels/models/kubernetes/policies/{name}```
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// responses:
-//
-//	200: []meshmodelPoliciesResponseWrapper
 func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -529,23 +697,6 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 }
 
-// swagger:route GET /api/meshmodels/models/{model}/policies/ GetMeshmodelPolicies idGetMeshmodelPolicies
-// Handle GET request for getting meshmodel policies of a specific model by name.
-//
-// Example: ```/api/meshmodels/models/kubernetes/policies```
-//
-// // ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// responses:
-//
-//	200: []meshmodelPoliciesResponseWrapper
 func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)

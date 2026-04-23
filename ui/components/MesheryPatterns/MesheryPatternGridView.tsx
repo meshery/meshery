@@ -37,7 +37,7 @@ function PatternCardGridItem({
   isReadOnly = false,
 }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
-  const [yaml, setYaml] = useState(pattern.pattern_file);
+  const [yaml, setYaml] = useState(pattern.patternFile);
 
   return (
     <Grid2 size={gridProps}>
@@ -48,7 +48,7 @@ function PatternCardGridItem({
         name={pattern.name}
         updated_at={pattern.updated_at}
         created_at={pattern.created_at}
-        pattern_file={pattern.pattern_file}
+        pattern_file={pattern.patternFile}
         requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
@@ -214,16 +214,16 @@ function MesheryPatternGrid({
               pattern={pattern}
               handleClone={() => handleClone(pattern.id, pattern.name)}
               handleDeploy={(e) => {
-                openDeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
+                openDeployModal(e, pattern.patternFile, pattern.name, pattern.id);
               }}
               handleUnDeploy={(e) => {
-                openUndeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
+                openUndeployModal(e, pattern.patternFile, pattern.name, pattern.id);
               }}
               handleDryRun={(e) =>
-                openDryRunModal(e, pattern.pattern_file, pattern.name, pattern.id)
+                openDryRunModal(e, pattern.patternFile, pattern.name, pattern.id)
               }
               handleVerify={(e) =>
-                openValidationModal(e, pattern.pattern_file, pattern.name, pattern.id)
+                openValidationModal(e, pattern.patternFile, pattern.name, pattern.id)
               }
               handlePublishModal={() => handlePublishModal(pattern)}
               handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
