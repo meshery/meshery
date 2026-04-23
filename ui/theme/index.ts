@@ -13,21 +13,6 @@ import type { Theme } from '@sistent/sistent';
  * Sistent or from legacy `@/themes*` modules.
  *
  *   import { useTheme, styled, alpha } from '@/theme';
- *
- * Preferred theming conventions for new or touched UI code are:
- *   - Prefer colors from `theme.palette.*` instead of introducing new hex literals.
- *   - Prefer spacing from `theme.spacing()` instead of hard-coded pixel values where possible.
- *   - Prefer breakpoints from `theme.breakpoints.*`.
- *
- * Some legacy theme files in the UI still contain literal color and spacing
- * values; treat those as migration candidates rather than precedent for new code.
- *
- * `@/themes/hooks` remains for theme-preference plumbing until a later phase,
- * but new theme-entrypoint imports should start from `@/theme`.
- *
- * If Sistent is missing a token the app needs, open an issue or PR upstream
- * rather than redefining it here. This file must remain a thin wrapper:
- * re-exports plus palette accessors that read directly from `theme.palette.*`.
  */
 
 export {
@@ -49,6 +34,58 @@ export {
 } from '@sistent/sistent';
 
 export type { Theme };
+
+export const BrandColors = {
+  twitter: '#1da1f2',
+  slack: '#4A154B',
+  github: '#24292e',
+  docker: '#2496ed',
+  youtube: '#ff0000',
+  linkedin: '#0077b5',
+} as const;
+
+export const CHART_COLORS = [
+  '#393A3D',
+  '#626469',
+  '#C1C1C1',
+  '#E6E6E6',
+  '#222222',
+  '#E0E0E0',
+  '#BDBDBD',
+];
+
+export const notificationColors = {
+  error: '#F24C3D',
+  warning: '#F3AA60',
+  info: '#22B14C',
+  success: '#22B14C',
+};
+
+export const darkNotificationColors = {
+  error: '#F24C3D',
+  warning: '#F3AA60',
+  info: '#22B14C',
+  success: '#22B14C',
+};
+
+export const RE_JSON_Theme = (themeType: string) => ({
+  base00: themeType === 'dark' ? '#303030' : '#ffffff',
+  base01: '#444c56',
+  base02: themeType === 'dark' ? '#586069' : '#abb2bf',
+  base03: '#6a737d',
+  base04: '#477E96',
+  base05: '#9ea7a6',
+  base06: '#d8dee9',
+  base07: themeType === 'dark' ? '#FFF3C5' : '#002B36',
+  base08: '#2a5491',
+  base09: '#d19a66',
+  base0A: '#EBC017',
+  base0B: '#237986',
+  base0C: '#56b6c2',
+  base0D: '#B1B6B8',
+  base0E: '#e1e6cf',
+  base0F: '#647881',
+});
 
 export const palette = {
   status: {
