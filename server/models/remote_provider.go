@@ -2343,7 +2343,7 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 
 	if len(orgID) > 0 {
 		for _, org := range orgID {
-			q.Add("orgID", org)
+			q.Add("orgId", org)
 		}
 	}
 
@@ -5086,7 +5086,7 @@ func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, f
 		q.Set("filter", filter)
 	}
 	if orgID != "" {
-		q.Set("orgID", orgID)
+		q.Set("orgId", orgID)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 
@@ -5127,7 +5127,7 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + environmentID)
 	q := remoteProviderURL.Query()
 	if orgID != "" {
-		q.Set("orgID", orgID)
+		q.Set("orgId", orgID)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 
@@ -5519,7 +5519,7 @@ func (l *RemoteProvider) GetWorkspaces(token, page, pageSize, search, order, fil
 		q.Set("filter", filter)
 	}
 	if orgID != "" {
-		q.Set("orgID", orgID)
+		q.Set("orgId", orgID)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 
@@ -5583,7 +5583,7 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID)
 	q := remoteProviderURL.Query()
 	if orgID != "" {
-		q.Set("orgID", orgID)
+		q.Set("orgId", orgID)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 
