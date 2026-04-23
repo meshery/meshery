@@ -1901,6 +1901,15 @@
         "short_description": "Logout failed",
         "probable_cause": "Unable to complete the logout operation",
         "suggested_remediation": "Check the token file path and permissions. The underlying error will provide more details."
+      },
+      "1231": {
+        "name": "ErrGenerateDataForInvalidResponseCode",
+        "code": "1231",
+        "severity": "Fatal",
+        "long_description": "The response from the Meshery server is invalid and cannot be processed. ",
+        "short_description": "Invalid response received from Meshery server. \nThe response is nil or does not contain a body.",
+        "probable_cause": "An error occurred while processing the response from the Meshery server. ",
+        "suggested_remediation": "Ensure that the Meshery server is running and returning valid responses. "
       }
     }
   }

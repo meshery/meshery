@@ -38,8 +38,8 @@ export const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }) =>
               {' '}
               Built with{' '}
               <FavoriteIcon
+                fill={theme.palette.background.brand.default}
                 style={{
-                  color: theme.palette.background.brand.default,
                   display: 'inline',
                   verticalAlign: 'bottom',
                 }}
