@@ -16,10 +16,9 @@ import {
   styled,
 } from '@sistent/sistent';
 import Moment from 'react-moment';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import PropTypes from 'prop-types';
+import { AccessTime as AccessTimeIcon, Close } from '@/components/icons';
 import MesheryDateTimePicker from '../../MesheryDateTimePicker';
-import { Close } from '@mui/icons-material';
+import { Colors } from '@/theme';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -30,7 +29,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 const DialogTitleBar = styled('div')(() => ({
   display: 'flex',
   justifyContent: 'space-between',
-  backgroundColor: 'rgb(57, 102, 121)',
+  backgroundColor: Colors.mesheryDarkBlue,
   color: 'white',
 }));
 

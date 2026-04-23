@@ -47,6 +47,7 @@ export const BrandColors = {
 export const Colors = {
   mesheryTeal: '#00B39F',
   mesheryBlue: '#477E96',
+  mesheryDarkBlue: '#396679',
   secondary: '#667C89',
   keppel: '#237986',
   charcoal: '#393A3D',

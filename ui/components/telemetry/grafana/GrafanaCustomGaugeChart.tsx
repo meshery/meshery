@@ -2,13 +2,14 @@ import React, { useEffect } from 'react';
 import { Box, styled, useTheme } from '@sistent/sistent';
 import bb, { gauge } from 'billboard.js';
 import { NoSsr } from '@sistent/sistent';
+import { Colors } from '@/theme';
 
 const ChartRoot = styled(Box)(() => ({
   width: '100%',
   height: '75%',
   minHeight: '18rem',
   '& .bb-chart-arcs-background': {
-    fill: '#e0e0e0',
+    fill: Colors.whisper,
     stroke: 'none',
   },
 }));
