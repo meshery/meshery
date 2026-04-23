@@ -1,8 +1,5 @@
-// @ts-nocheck
-import { NOTIFICATIONCOLORS } from '../../themes';
 import AlertIcon from '../../assets/icons/AlertIcon';
 import ErrorIcon from '../../assets/icons/ErrorIcon';
-import { Colors } from '../../themes/app';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import { InfoIcon } from '@sistent/sistent';
 
@@ -32,31 +29,26 @@ export const STATUS = {
 export const STATUS_STYLE = {
   [STATUS.READ]: {
     icon: ReadIcon,
-    color: Colors.charcoal,
-    darkColor: '#BCC7CC',
+    colorKey: 'text.secondary',
   },
 };
 
 export const SEVERITY_STYLE = {
   [SEVERITY.INFO]: {
     icon: InfoIcon,
-    color: NOTIFICATIONCOLORS.INFO,
-    darkColor: NOTIFICATIONCOLORS.INFO,
+    colorKey: 'info.main',
   },
   [SEVERITY.ERROR]: {
     icon: ErrorIcon,
-    color: NOTIFICATIONCOLORS.ERROR,
-    darkColor: NOTIFICATIONCOLORS.ERROR_DARK,
+    colorKey: 'error.main',
   },
   [SEVERITY.WARNING]: {
     icon: AlertIcon,
-    color: NOTIFICATIONCOLORS.WARNING,
-    darkColor: NOTIFICATIONCOLORS.WARNING,
+    colorKey: 'warning.main',
   },
   [SEVERITY.SUCCESS]: {
     icon: InfoIcon,
-    color: NOTIFICATIONCOLORS.SUCCESS,
-    darkColor: NOTIFICATIONCOLORS.SUCCESS,
+    colorKey: 'success.main',
   },
 };
 

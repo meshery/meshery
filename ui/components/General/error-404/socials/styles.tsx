@@ -1,4 +1,4 @@
-import { styled, BrandColors } from '@/theme';
+import { styled, socialIcons, keppel } from '@sistent/sistent';
 import Message from '@/assets/icons/general/message';
 import Docker from '@/assets/icons/social/docker';
 import Github from '@/assets/icons/social/github';
@@ -35,8 +35,8 @@ export const SlackIcon = styled(Slack)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.slack,
-    color: BrandColors.slack,
+    fill: socialIcons.slack,
+    color: socialIcons.slack,
   },
 }));
 
@@ -46,30 +46,30 @@ export const TwitterIcon = styled(Twitter)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.twitter,
-    color: BrandColors.twitter,
+    fill: socialIcons.twitter,
+    color: socialIcons.twitter,
   },
 }));
 
-export const TwitterHandleIcon = styled(Twitter)(({ theme }) => ({
-  fill: theme.palette.keppelGreen,
-  color: theme.palette.keppelGreen,
+export const TwitterHandleIcon = styled(Twitter)(() => ({
+  fill: keppel,
+  color: keppel,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.twitter,
-    color: BrandColors.twitter,
+    fill: socialIcons.twitter,
+    color: socialIcons.twitter,
   },
 }));
 
-export const GithubHandleIcon = styled(Github)(({ theme }) => ({
-  fill: theme.palette.keppelGreen,
-  color: theme.palette.keppelGreen,
+export const GithubHandleIcon = styled(Github)(() => ({
+  fill: keppel,
+  color: keppel,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.github,
-    color: BrandColors.github,
+    fill: socialIcons.github,
+    color: socialIcons.github,
   },
 }));
 
@@ -79,8 +79,8 @@ export const GithubIcon = styled(Github)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.github,
-    color: BrandColors.github,
+    fill: socialIcons.github,
+    color: socialIcons.github,
   },
 }));
 
@@ -90,8 +90,8 @@ export const YoutubeIcon = styled(Youtube)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.youtube,
-    color: BrandColors.youtube,
+    fill: socialIcons.youtube,
+    color: socialIcons.youtube,
   },
 }));
 
@@ -101,7 +101,7 @@ export const DockerIcon = styled(Docker)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.docker,
-    color: BrandColors.docker,
+    fill: socialIcons.docker,
+    color: socialIcons.docker,
   },
 }));

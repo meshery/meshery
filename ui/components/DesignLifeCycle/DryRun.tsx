@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import { ExpandLess, ExpandMore } from '@/components/icons';
 import { useState } from 'react';
 import { ComponentIcon, DEPLOYMENT_TYPE, Loading, processDesign } from './common';
 import {
@@ -10,8 +10,7 @@ import {
   useIsValidatingDryRun,
 } from '../../machines/validator/designValidator';
 import { ErrorIcon } from '@sistent/sistent';
-import { NOTIFICATIONCOLORS } from '@/themes/index';
-import { FormatStructuredData } from '../DataFormatter';
+import { FormatStructuredData } from '@/components/DataFormatter';
 import {
   DryRunComponentLabel,
   DryRunComponentStyled,
@@ -123,7 +122,7 @@ const ExpandableComponentErrors = ({
                     height="24px"
                     width="24px"
                     bangFill="#fff"
-                    fill={NOTIFICATIONCOLORS.ERROR_DARK}
+                    fill={theme.palette.error.main}
                   />{' '}
                 </ListItemIcon>
 
@@ -199,11 +198,7 @@ export const FormatDryRunResponse = ({
             varaint="h6"
             disablePadding
             style={{
-              color: `${
-                totalDryRunErrors > 0
-                  ? NOTIFICATIONCOLORS.ERROR_DARK
-                  : NOTIFICATIONCOLORS.SUCCESS_V2
-              }`,
+              color: `${totalDryRunErrors > 0 ? theme.palette.error.main : theme.palette.success.main}`,
             }}
           >
             {`${totalDryRunErrors} error(s)`}

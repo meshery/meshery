@@ -12,7 +12,6 @@ import {
   useIsValidatingDesignSchema,
 } from '../../machines/validator/designValidator';
 import AlertIcon from '@/assets/icons/AlertIcon';
-import { NOTIFICATIONCOLORS } from '@/themes/index';
 import {
   ValidatedComponent,
   ValidationErrorListItem,
@@ -22,6 +21,7 @@ import {
 } from './styles';
 
 const ComponentErrorList = ({ component, errors, validatorActor, canTapErrors }) => {
+  const theme = useTheme();
   const onErrorTap = (error) => {
     if (!canTapErrors) {
       return;
@@ -55,7 +55,7 @@ const ComponentErrorList = ({ component, errors, validatorActor, canTapErrors })
               width="30px"
               outline="#fff"
               bangFill="#fff"
-              fill={NOTIFICATIONCOLORS.WARNING}
+              fill={theme.palette.warning.main}
             />{' '}
           </ListItemIcon>
           <ListItemText primary={message(error)} disableTypography></ListItemText>
@@ -111,9 +111,7 @@ const ValidationResults_ = (props) => {
               varaint="h6"
               disablePadding
               style={{
-                color: `${
-                  errorCount > 0 ? NOTIFICATIONCOLORS.WARNING : NOTIFICATIONCOLORS.SUCCESS_V2
-                }`,
+                color: `${errorCount > 0 ? theme.palette.warning.main : theme.palette.success.main}`,
               }}
             >
               {errorCount} error{errorCount === 1 ? '' : 's'}

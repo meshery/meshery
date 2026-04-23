@@ -6,7 +6,6 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import BadgeAvatars from '../CustomAvatar';
-import { notificationColors } from '../../themes';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import {

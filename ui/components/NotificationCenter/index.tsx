@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { get } from 'lodash';
 import { CustomTooltip, NoSsr } from '@sistent/sistent';
 import {
   Divider,
@@ -144,13 +145,15 @@ const NavbarNotificationIcon = () => {
         ? SEVERITY.WARNING
         : null;
   const currentSeverityStyle = currentTopSeverity ? SEVERITY_STYLE[currentTopSeverity] : null;
+  const theme = useTheme();
+  const notificationColor = get(theme.palette, currentSeverityStyle?.colorKey);
   const topSeverityCount = getSeverityCount(count_by_severity_level, currentTopSeverity);
   if (currentTopSeverity) {
     return (
       <StyledBadge
         id="notification-badge"
         badgeContent={topSeverityCount}
-        badgeColor={currentSeverityStyle?.color}
+        badgeColor={notificationColor}
       >
         <currentSeverityStyle.icon {...iconMedium} fill="#fff" />
       </StyledBadge>
@@ -162,9 +165,9 @@ const NavbarNotificationIcon = () => {
 const NotificationCountChip = ({ notificationStyle, count, type, handleClick, severity }) => {
   const theme = useTheme();
   const selectedSeverity = useSelector(selectSeverity);
-  const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
+  const notificationColor = get(theme.palette, notificationStyle?.colorKey);
   const chipStyles = {
-    fill: theme.palette.mode === 'dark' ? darkColor : notificationStyle?.color,
+    fill: notificationColor,
     height: '20px',
     width: '20px',
   };

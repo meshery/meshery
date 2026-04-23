@@ -23,16 +23,15 @@ import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers
 import { useLazyPingKubernetesQuery } from '@/rtk-query/connection';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import { useEffect, useState } from 'react';
-import { iconMedium, iconSmall } from '../css/icons.styles';
-import { RoundedTriangleShape } from './shapes/RoundedTriangle';
-import { notificationColors } from '../themes/app';
-import RedOctagonSvg from './shapes/Octagon';
-import PatternIcon from '../assets/icons/Pattern';
-import { useNotification } from '../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../lib/event-types';
-import { K8sEmptyState } from './EmptyState/K8sContextEmptyState';
-import { ACTIONS } from '../utils/Enum';
-import CAN from '../utils/can';
+import { iconMedium, iconSmall } from '@/css/icons.styles';
+import { RoundedTriangleShape } from '@/components/shapes/RoundedTriangle';
+import RedOctagonSvg from '@/components/shapes/Octagon';
+import PatternIcon from '@/assets/icons/Pattern';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
+import { K8sEmptyState } from '@/components/EmptyState/K8sContextEmptyState';
+import { ACTIONS } from '@/utils/Enum';
+import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { K8sContextConnectionChip } from './Header';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
@@ -55,9 +54,9 @@ const ActionButton = styled(Button, {
   minWidth: 100,
   ...(isUndeploy &&
     !isDisabled && {
-      backgroundColor: '#B32700',
+      backgroundColor: theme.palette.error.main,
       '&:hover': {
-        backgroundColor: '#8f1f00',
+        backgroundColor: theme.palette.error.dark,
         boxShadow:
           '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)',
       },
@@ -238,182 +237,7 @@ function ConfirmationMsg(props) {
       closeModal={handleClose}
       title={title ? title : 'Confirmation'}
       aria-describedby="alert-dialog-description"
-    >
-      <ModalBody>
-        <Tabs
-          value={validationBody ? tabVal : tabVal === 2 ? 1 : 0}
-          variant="scrollable"
-          scrollButtons="auto"
-          indicatorColor="primary"
-          textColor="primary"
-          centered
-        >
-          {!!validationBody && (
-            <Tab
-              data-cy="validate-btn-modal"
-              onClick={(event) => handleTabValChange(event, 0)}
-              label={
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <DoneIcon
-                    style={{
-                      margin: '2px',
-                      paddingRight: '2px',
-                      ...iconSmall,
-                    }}
-                    fill={theme.palette.icon.default}
-                    fontSize="small"
-                  />
-                  <TabLabelWrapper>Validate</TabLabelWrapper>
-                  {errors?.validationError > 0 && (
-                    <TriangleContainer>
-                      <RoundedTriangleShape
-                        color={notificationColors.warning}
-                      ></RoundedTriangleShape>
-                      <TriangleNumber style={errors.validationError > 10 ? { left: '25%' } : {}}>
-                        {errors.validationError}
-                      </TriangleNumber>
-                    </TriangleContainer>
-                  )}
-                </div>
-              }
-              disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.resource)}
-            />
-          )}
-          <Tab
-            disabled={
-              !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) ||
-              (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && disabled)
-            }
-            data-cy="Undeploy-btn-modal"
-            onClick={(event) => handleTabValChange(event, 1)}
-            label={
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ margin: '2px', paddingRight: '2px' }}>
-                  {' '}
-                  <RemoveDoneIcon
-                    style={iconSmall}
-                    width="20"
-                    height="20"
-                    fill={theme.palette.icon.default}
-                  />
-                </div>{' '}
-                <TabLabelWrapper>Undeploy</TabLabelWrapper>{' '}
-              </div>
-            }
-          />
-          <Tab
-            disabled={
-              !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) ||
-              (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && disabled)
-            }
-            data-cy="deploy-btn-modal"
-            onClick={(event) => handleTabValChange(event, 2)}
-            label={
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <DoneAllIcon
-                  style={{ margin: '2px', paddingRight: '2px', ...iconSmall }}
-                  fill={theme.palette.icon.default}
-                  fontSize="small"
-                />
-                <TabLabelWrapper>Deploy</TabLabelWrapper>
-                {errors?.deploymentError > 0 && (
-                  <OctagonContainer>
-                    <RedOctagonSvg fill={notificationColors.darkRed}></RedOctagonSvg>
-                    <OctagonText>{errors.deploymentError}</OctagonText>
-                  </OctagonContainer>
-                )}
-              </div>
-            }
-          />
-        </Tabs>
-
-        {(tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) && (
-          <>
-            <DialogSubtitle id="alert-dialog-description">
-              <div style={{ height: '100%' }}>{dryRunComponent && dryRunComponent}</div>
-              <div>
-                <Typography variant="subtitle1" style={{ marginBottom: '0.8rem' }}>
-                  {' '}
-                  {componentCount !== undefined ? (
-                    <>
-                      {' '}
-                      {componentCount} component{componentCount > 1 ? 's' : ''}{' '}
-                    </>
-                  ) : (
-                    ''
-                  )}
-                </Typography>
-                {k8scontext.length > 0 ? (
-                  <Typography variant="body1">
-                    <TextField
-                      id="search-ctx"
-                      label="Search"
-                      size="small"
-                      variant="outlined"
-                      onChange={(event) => searchContexts(event.target.value)}
-                      style={{
-                        width: '100%',
-                        backgroundColor: 'rgba(102, 102, 102, 0.12)',
-                        margin: '1px 1px 8px ',
-                      }}
-                      InputProps={{
-                        endAdornment: <Search style={iconMedium} />,
-                      }}
-                      // margin="none"
-                    />
-                    {context.length > 0 ? (
-                      <Box display={'table'}>
-                        <Checkbox
-                          checked={selectedK8sContexts?.includes('all')}
-                          onChange={() => setContextViewer('all')}
-                          color="primary"
-                        />
-                        <span style={{ fontWeight: 'bolder' }}>select all</span>
-                      </Box>
-                    ) : (
-                      <Typography variant="subtitle1">No Context found</Typography>
-                    )}
-
-                    <ContextsContainer>
-                      {context.map((ctx) => (
-                        <div
-                          key={ctx.id}
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'flex-wrap',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Checkbox
-                            checked={
-                              selectedK8sContexts?.includes(ctx.id) ||
-                              (selectedK8sContexts?.length > 0 && selectedK8sContexts[0] === 'all')
-                            }
-                            onChange={() => setContextViewer(ctx.id)}
-                            color="primary"
-                          />
-                          <TooltipWrappedConnectionChip
-                            title={ctx.name}
-                            handlePing={() => handleKubernetesClick(ctx.connection_id)}
-                            iconSrc={'/static/img/kubernetes.svg'}
-                          />
-                        </div>
-                      ))}
-                    </ContextsContainer>
-                  </Typography>
-                ) : (
-                  <K8sEmptyState />
-                )}
-              </div>
-            </DialogSubtitle>
-          </>
-        )}
-        {tabVal === ACTIONS.VERIFY && (
-          <DialogContent>
-            <DialogContentText>{validationBody}</DialogContentText>
-          </DialogContent>
-        )}
-
+      footer={
         <DialogStyledActions>
           {tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY ? (
             <>
@@ -447,7 +271,179 @@ function ConfirmationMsg(props) {
             </ActionButton>
           )}
         </DialogStyledActions>
-      </ModalBody>
+      }
+    >
+      <Tabs
+        value={validationBody ? tabVal : tabVal === 2 ? 1 : 0}
+        variant="scrollable"
+        scrollButtons="auto"
+        indicatorColor="primary"
+        textColor="primary"
+        centered
+      >
+        {!!validationBody && (
+          <Tab
+            data-cy="validate-btn-modal"
+            onClick={(event) => handleTabValChange(event, 0)}
+            label={
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <DoneIcon
+                  style={{
+                    margin: '2px',
+                    paddingRight: '2px',
+                    ...iconSmall,
+                  }}
+                  fill={theme.palette.icon.default}
+                  fontSize="small"
+                />
+                <TabLabelWrapper>Validate</TabLabelWrapper>
+                {errors?.validationError > 0 && (
+                  <TriangleContainer>
+                    <RoundedTriangleShape color={theme.palette.warning.main}></RoundedTriangleShape>
+                    <TriangleNumber style={errors.validationError > 10 ? { left: '25%' } : {}}>
+                      {errors.validationError}
+                    </TriangleNumber>
+                  </TriangleContainer>
+                )}
+              </div>
+            }
+            disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.resource)}
+          />
+        )}
+        <Tab
+          disabled={
+            !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) ||
+            (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && disabled)
+          }
+          data-cy="Undeploy-btn-modal"
+          onClick={(event) => handleTabValChange(event, 1)}
+          label={
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ margin: '2px', paddingRight: '2px' }}>
+                {' '}
+                <RemoveDoneIcon
+                  style={iconSmall}
+                  width="20"
+                  height="20"
+                  fill={theme.palette.icon.default}
+                />
+              </div>{' '}
+              <TabLabelWrapper>Undeploy</TabLabelWrapper>{' '}
+            </div>
+          }
+        />
+        <Tab
+          disabled={
+            !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) ||
+            (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && disabled)
+          }
+          data-cy="deploy-btn-modal"
+          onClick={(event) => handleTabValChange(event, 2)}
+          label={
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <DoneAllIcon
+                style={{ margin: '2px', paddingRight: '2px', ...iconSmall }}
+                fill={theme.palette.icon.default}
+                fontSize="small"
+              />
+              <TabLabelWrapper>Deploy</TabLabelWrapper>
+              {errors?.deploymentError > 0 && (
+                <OctagonContainer>
+                  <RedOctagonSvg fill={theme.palette.error.main}></RedOctagonSvg>
+                  <OctagonText>{errors.deploymentError}</OctagonText>
+                </OctagonContainer>
+              )}
+            </div>
+          }
+        />
+      </Tabs>
+
+      {(tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) && (
+        <>
+          <DialogSubtitle id="alert-dialog-description">
+            <div style={{ height: '100%' }}>{dryRunComponent && dryRunComponent}</div>
+            <div>
+              <Typography variant="subtitle1" style={{ marginBottom: '0.8rem' }}>
+                {' '}
+                {componentCount !== undefined ? (
+                  <>
+                    {' '}
+                    {componentCount} component{componentCount > 1 ? 's' : ''}{' '}
+                  </>
+                ) : (
+                  ''
+                )}
+              </Typography>
+              {k8scontext.length > 0 ? (
+                <Typography variant="body1">
+                  <TextField
+                    id="search-ctx"
+                    label="Search"
+                    size="small"
+                    variant="outlined"
+                    onChange={(event) => searchContexts(event.target.value)}
+                    style={{
+                      width: '100%',
+                      backgroundColor: 'rgba(102, 102, 102, 0.12)',
+                      margin: '1px 1px 8px ',
+                    }}
+                    InputProps={{
+                      endAdornment: <Search style={iconMedium} />,
+                    }}
+                    // margin="none"
+                  />
+                  {context.length > 0 ? (
+                    <Box display={'table'}>
+                      <Checkbox
+                        checked={selectedK8sContexts?.includes('all')}
+                        onChange={() => setContextViewer('all')}
+                        color="primary"
+                      />
+                      <span style={{ fontWeight: 'bolder' }}>select all</span>
+                    </Box>
+                  ) : (
+                    <Typography variant="subtitle1">No Context found</Typography>
+                  )}
+
+                  <ContextsContainer>
+                    {context.map((ctx) => (
+                      <div
+                        key={ctx.id}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'flex-wrap',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Checkbox
+                          checked={
+                            selectedK8sContexts?.includes(ctx.id) ||
+                            (selectedK8sContexts?.length > 0 && selectedK8sContexts[0] === 'all')
+                          }
+                          onChange={() => setContextViewer(ctx.id)}
+                          color="primary"
+                        />
+                        <TooltipWrappedConnectionChip
+                          title={ctx.name}
+                          handlePing={() => handleKubernetesClick(ctx.connection_id)}
+                          iconSrc={'/static/img/kubernetes.svg'}
+                        />
+                      </div>
+                    ))}
+                  </ContextsContainer>
+                </Typography>
+              ) : (
+                <K8sEmptyState />
+              )}
+            </div>
+          </DialogSubtitle>
+        </>
+      )}
+      {tabVal === ACTIONS.VERIFY && (
+        <DialogContent>
+          <DialogContentText>{validationBody}</DialogContentText>
+        </DialogContent>
+      )}
     </Modal>
   );
 }

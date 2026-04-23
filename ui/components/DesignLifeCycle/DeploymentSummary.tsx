@@ -1,4 +1,3 @@
-import { NOTIFICATIONCOLORS } from '@/themes/index';
 import { Box, Stack, Typography, styled, useTheme } from '@sistent/sistent';
 
 import { FormatStructuredData, TextWithLinks } from '../DataFormatter';
@@ -18,11 +17,10 @@ const StyledDetailBox = styled(Box)(() => ({
 
 // deployment_type is deploy/undeploy
 const DeploymentComponentFormatter = ({ componentDetail, deploymentType }) => {
+  const theme = useTheme();
   return (
     <StyledDetailBox
-      severityColor={
-        componentDetail.Success ? NOTIFICATIONCOLORS.SUCCESS : NOTIFICATIONCOLORS.ERROR
-      }
+      severityColor={componentDetail.Success ? theme.palette.success.main : theme.palette.error.main}
       bgOpacity={0.1}
       display="flex"
       gap={2}

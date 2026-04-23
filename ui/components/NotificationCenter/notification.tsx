@@ -53,7 +53,7 @@ import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 're
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
 import { FormattedLinkMetadata, FormattedMetadata, PropertyLinkFormatters } from './metadata';
-import { truncate } from 'lodash';
+import { truncate, get } from 'lodash';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { useDispatch } from 'react-redux';
 
@@ -285,9 +285,8 @@ export const Notification = ({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));
   const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
   const severityStyles = SEVERITY_STYLE[event.severity] || SEVERITY_STYLE[SEVERITY.INFO];
-  const eventStyle = SEVERITY_STYLE[event?.severity] || {};
-  const notificationColor = severityStyles?.color;
   const theme = useTheme();
+  const notificationColor = get(theme.palette, severityStyles?.colorKey);
   const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState(false);
   const handleExpandClick = (e) => {
@@ -336,7 +335,7 @@ export const Notification = ({ event_id }) => {
     <Expanded
       container
       style={{
-        backgroundColor: alpha(eventStyle?.color || SEVERITY_STYLE['informational'].color, 0.1),
+        backgroundColor: alpha(notificationColor || '#eee', 0.1),
         color: theme.palette.text.default,
         borderTop: `1px solid ${notificationColor}`,
       }}
@@ -403,7 +402,7 @@ export const Notification = ({ event_id }) => {
 
             <severityStyles.icon
               {...iconLarge}
-              fill={severityStyles?.color}
+              fill={notificationColor}
               style={{ paddingRight: '0.25rem' }}
             />
           </GridItem>
