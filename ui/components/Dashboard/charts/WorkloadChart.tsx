@@ -1,9 +1,9 @@
 // @ts-nocheck
 import React from 'react';
 import { donut } from 'billboard.js';
-import BBChart from '../../BBChart';
-import { dataToColors, isValidColumnName } from '../../../utils/charts';
-import ConnectClustersBtn from '../../General/ConnectClustersBtn';
+import BBChart from '@/components/BBChart';
+import { dataToColors, isValidColumnName } from '@/utils/charts';
+import ConnectClustersBtn from '@/components/General/ConnectClustersBtn';
 import Link from 'next/link';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';

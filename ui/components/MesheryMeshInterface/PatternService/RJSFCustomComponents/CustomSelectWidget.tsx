@@ -8,8 +8,7 @@ import {
   InputLabel,
   useTheme,
 } from '@sistent/sistent';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { HelpOutline as HelpOutlineIcon, ErrorOutline as ErrorOutlineIcon } from '@/components/icons';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import { CustomTextTooltip } from '../CustomTextTooltip';

@@ -22,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 export const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -31,8 +32,7 @@ export const ACTION_TYPES = {
 };
 
 const ResourcesTable = (props) => {
-  const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
-    props;
+  const { k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } = props;
   const router = useRouter();
 
   // Wait for router to be ready before rendering query-dependent content.
@@ -45,8 +45,7 @@ const ResourcesTable = (props) => {
 };
 
 const ResourcesTableInner = (props) => {
-  const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
-    props;
+  const { k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } = props;
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);

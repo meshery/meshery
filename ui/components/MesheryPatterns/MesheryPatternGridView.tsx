@@ -10,8 +10,8 @@ import {
   GridNoTextStyles,
   GridPaginationStyles,
 } from './Grid.styles';
-import { RJSFModalWrapper } from '../General/Modals/Modal';
-import ExportModal from '../ExportModal';
+import { RJSFModalWrapper } from '../shared/Modal/RJSFModalWrapper';
+import ExportDesignModal from '../designs/export/ExportDesignModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { Modal as SistentModal } from '@sistent/sistent';
@@ -282,7 +282,7 @@ function MesheryPatternGrid({
           />
         </SistentModal>
       )}
-      <ExportModal
+      <ExportDesignModal
         downloadModal={downloadModal}
         handleDownloadDialogClose={handleDownloadDialogClose}
         handleDesignDownload={handleDownload}

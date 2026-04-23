@@ -29,9 +29,7 @@ import {
   NoSsr,
   TableHead,
 } from '@sistent/sistent';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PlayIcon from '@mui/icons-material/PlayArrow';
+import { Add as AddIcon, Delete as DeleteIcon, PlayArrow as PlayIcon } from '@/components/icons';
 import MUIDataTable from '@sistent/mui-datatables';
 import { useRouter } from 'next/router';
 import { Controlled as CodeMirror } from './CodeMirror';
@@ -46,9 +44,9 @@ import {
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
 import MesheryMetrics from './Performance/MesheryMetrics';
-import MesheryResultDialog from './MesheryResultDialog';
+import MesheryResultModal from './shared/Modal/MesheryResultModal';
 import ReactSelectWrapper from './ReactSelectWrapper';
-import ConfirmationMsg from './ConfirmationModal';
+import ConfirmationMsg from './shared/Lifecycle/DeploymentModal';
 import { iconMedium } from '../css/icons.styles';
 import { ACTIONS } from '../utils/Enum';
 import { getModelByName } from '../api/meshmodel';
@@ -1139,7 +1137,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
   return (
     <NoSsr>
       {selectedRowData && selectedRowData !== null && Object.keys(selectedRowData).length > 0 && (
-        <MesheryResultDialog rowData={selectedRowData} close={resetSelectedRowData} />
+        <MesheryResultModal rowData={selectedRowData} close={resetSelectedRowData} />
       )}
       <React.Fragment>
         <AdapterSmWrapper>

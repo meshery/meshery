@@ -1,6 +1,7 @@
 import { MODELS, REGISTRANTS, COMPONENTS, RELATIONSHIPS } from '@/constants/navigator';
 import _ from 'lodash';
 import { findNestedObject } from '@/utils/objects';
+import { RE_JSON_Theme } from '@/theme';
 
 /**
  * Retrieves filtered data for the details component based on the selected item ID.
@@ -115,32 +116,26 @@ export const removeDuplicateVersions = (data: Array<any>) => {
 /**
  * To style JSON viewing in react-json-tree.
  * Refer to base-16 theme styling guidelines for more info.
- * https://github.com/chriskempson/base16/blob/main/styling.md
  * @type {Object}
- * @property {string} base00 - BACKGROUND_COLOR
- * @property {string} base02 - OBJECT_OUTLINE_COLOR
- * @property {string} base04 - OBJECT_DETAILS_COLOR
- * @property {string} base07 - OBJECT_KEY_COLOR
- * @property {string} base09 - ITEM_STRING_COLOR, DATE_COLOR, STRING_COLOR
- * @property {string} base0A - SYMBOL_COLOR, FUNCTION_COLOR, UNDEFINED_COLOR, NULL_COLOR
- * @property {string} base0D - ITEM_STRING_EXPANDED_COLOR, ARROW_COLOR
- * @property {string} base0E - BOOLEAN_COLOR, NUMBER_COLOR
  */
-export const reactJsonTheme = (themeType: string) => ({
-  base00: themeType === 'dark' ? '#303030' : '#ffffff',
-  base01: '#444c56',
-  base02: themeType === 'dark' ? '#586069' : '#abb2bf',
-  base03: '#6a737d',
-  base04: '#477E96',
-  base05: '#9ea7a6',
-  base06: '#d8dee9',
-  base07: themeType === 'dark' ? '#FFF3C5' : '#002B36',
-  base08: '#2a5491',
-  base09: '#d19a66',
-  base0A: '#EBC017',
-  base0B: '#237986',
-  base0C: '#56b6c2',
-  base0D: '#B1B6B8',
-  base0E: '#e1e6cf',
-  base0F: '#647881',
-});
+export const reactJsonTheme = (themeType: string) => {
+  const isDark = themeType === 'dark';
+  return {
+    base00: isDark ? RE_JSON_Theme.BASE00 : '#ffffff',
+    base01: RE_JSON_Theme.BASE01,
+    base02: isDark ? RE_JSON_Theme.BASE02 : '#abb2bf',
+    base03: RE_JSON_Theme.BASE03,
+    base04: RE_JSON_Theme.BASE04,
+    base05: RE_JSON_Theme.BASE05,
+    base06: RE_JSON_Theme.BASE06,
+    base07: isDark ? RE_JSON_Theme.BASE07 : '#002B36',
+    base08: RE_JSON_Theme.BASE08,
+    base09: RE_JSON_Theme.BASE09,
+    base0A: RE_JSON_Theme.BASE0A,
+    base0B: RE_JSON_Theme.BASE0B,
+    base0C: RE_JSON_Theme.BASE0C,
+    base0D: RE_JSON_Theme.BASE0D,
+    base0E: RE_JSON_Theme.BASE0E,
+    base0F: RE_JSON_Theme.BASE0F,
+  };
+};

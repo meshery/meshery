@@ -1,14 +1,14 @@
 import * as React from 'react';
 import {
-  ArrowDropDownIcon,
   Button,
   ButtonGroup,
-  ClickAwayListener,
-  MenuItem,
-  MenuList,
   Paper,
   Popper,
+  MenuItem,
+  MenuList,
+  ClickAwayListener,
 } from '@sistent/sistent';
+import { ArrowDropDown as ArrowDropDownIcon } from '@/components/icons';
 
 export default function ActionButton({ defaultActionClick, options }) {
   const [open, setOpen] = React.useState(false);
