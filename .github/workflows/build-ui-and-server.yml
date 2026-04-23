@@ -1,5 +1,12 @@
 name: Meshery UI and Server
 on:
+  workflow_dispatch:
+    inputs:
+      debug_mode:
+        description: Enable debug logging
+        required: false
+        default: false
+        type: boolean
   pull_request_target:
     types: [opened, synchronize, reopened]
     branches:
@@ -20,25 +27,175 @@ on:
 
 permissions: read-all
 
+concurrency:
+  group: build-ui-and-server-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  ui-build:
-    name: UI build
+  changes:
+    name: Detect relevant changes
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      checkout_ref: ${{ steps.detect.outputs.checkout_ref }}
+      run_build: ${{ steps.detect.outputs.run_build }}
+      run_docker: ${{ steps.detect.outputs.run_docker }}
+      run_graphql: ${{ steps.detect.outputs.run_graphql }}
+      run_rego: ${{ steps.detect.outputs.run_rego }}
+      run_qa_sync: ${{ steps.detect.outputs.run_qa_sync }}
     steps:
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || false }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "::endgroup::"
+      - name: Detect changed files
+        id: detect
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const ignoredPrefixes = ['docs/', 'mesheryctl/', '.github/'];
+            const ignoredExact = new Set(['Makefile']);
+            const graphQLFiles = new Set(['server/internal/graphql/schema/schema.graphql']);
+            const regoWorkflow = '.github/workflows/rego-lint-and-test.yml';
+
+            const isIgnored = (file) => {
+              return ignoredExact.has(file) || file.endsWith('.md') || ignoredPrefixes.some((prefix) => file.startsWith(prefix));
+            };
+
+            const listPullRequestFiles = async () => {
+              return github.paginate(
+                github.rest.pulls.listFiles,
+                {
+                  owner,
+                  repo,
+                  pull_number: context.payload.pull_request.number,
+                  per_page: 100,
+                },
+                (response) => response.data.map((file) => file.filename),
+              );
+            };
+
+            const listPushFiles = async () => {
+              const before = context.payload.before;
+              const after = context.payload.after || context.sha;
+
+              if (!before || /^0+$/.test(before)) {
+                const commit = await github.rest.repos.getCommit({
+                  owner,
+                  repo,
+                  ref: after,
+                  per_page: 100,
+                });
+
+                return (commit.data.files || []).map((file) => file.filename);
+              }
+
+              const comparison = await github.rest.repos.compareCommitsWithBasehead({
+                owner,
+                repo,
+                basehead: `${before}...${after}`,
+                per_page: 100,
+              });
+
+              return (comparison.data.files || []).map((file) => file.filename);
+            };
+
+            let files = [];
+            if (context.eventName === 'workflow_dispatch') {
+              files = [];
+            } else if (context.eventName === 'pull_request_target') {
+              files = await listPullRequestFiles();
+            } else {
+              files = await listPushFiles();
+            }
+
+            const uniqueFiles = [...new Set(files)];
+            core.info(`Changed files: ${uniqueFiles.length ? uniqueFiles.join(', ') : 'workflow_dispatch (full run)'}`);
+
+            const runAll = context.eventName === 'workflow_dispatch';
+            const hasRelevantChanges = runAll || uniqueFiles.some((file) => !isIgnored(file));
+            const runGraphql = runAll || uniqueFiles.some((file) => graphQLFiles.has(file));
+            const runRego = runAll || uniqueFiles.some((file) => file.endsWith('.rego') || file.startsWith('server/policies/') || file === regoWorkflow);
+            const checkoutRef = context.eventName === 'pull_request_target'
+              ? context.payload.pull_request.head.sha
+              : context.sha;
+
+            core.setOutput('checkout_ref', checkoutRef);
+            core.setOutput('run_build', String(hasRelevantChanges));
+            core.setOutput('run_docker', String(hasRelevantChanges));
+            core.setOutput('run_graphql', String(runGraphql));
+            core.setOutput('run_rego', String(runRego));
+            core.setOutput('run_qa_sync', String(context.eventName === 'push'));
+
+  backend-build:
+    name: Backend build
+    needs: [changes]
+    if: github.repository == 'meshery/meshery' && needs.changes.outputs.run_build == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || false }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Checkout Ref: ${{ needs.changes.outputs.checkout_ref }}"
+          echo "::endgroup::"
       - name: Check out code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
+          ref: ${{ needs.changes.outputs.checkout_ref }}
+        with:
+          ref: ${{ needs.changes.outputs.checkout_ref }}
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.25"
+          cache: true
+          cache-dependency-path: "**/*.sum"
+      - name: Build backend
+        run: make build-server
+      - name: Upload backend artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: meshery-backend
+          retention-days: 30
+          path: /home/runner/work/meshery/meshery/main
+
+  ui-build:
+    name: UI build
+    needs: [changes]
+    if: github.repository == 'meshery/meshery' && needs.changes.outputs.run_build == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || false }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Checkout Ref: ${{ needs.changes.outputs.checkout_ref }}"
+          echo "::endgroup::"
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.changes.outputs.checkout_ref }}
       - uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
       - name: Build meshery-ui and provider-ui
-        run: |
-          make ui-build
+        run: make ui-build
       - name: Upload meshery-ui artifacts
         uses: actions/upload-artifact@v6
         with:
@@ -51,36 +208,43 @@ jobs:
           name: provider-ui
           retention-days: 30
           path: /home/runner/work/meshery/meshery/provider-ui/out
+
   tests-ui-e2e:
-    needs: [ui-build]
     name: UI end-to-end tests
+    needs: [changes, backend-build, ui-build]
     environment: staging-playground
-    if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery' && needs.changes.outputs.run_build == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || false }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Checkout Ref: ${{ needs.changes.outputs.checkout_ref }}"
+          echo "::endgroup::"
       - name: Check out code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
+          ref: ${{ needs.changes.outputs.checkout_ref }}
 
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.13.0
         with:
           cluster_name: "kind-cluster"
-      - name: Setup Go
-        uses: actions/setup-go@master
-        with:
-          go-version: "1.25"
-          cache-dependency-path: "**/*.sum"
-          cache: true
       - name: Setup node
         uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
+      - name: Download backend artifact
+        uses: actions/download-artifact@v6
+        with:
+          name: meshery-backend
+          path: /home/runner/work/meshery/meshery
       - name: Download meshery-ui artifacts
         uses: actions/download-artifact@v6
         with:
@@ -93,8 +257,17 @@ jobs:
           path: /home/runner/work/meshery/meshery/provider-ui/out
       - name: Run Meshery UI and Server
         run: |
-          make server &
-          sleep 90
+          chmod +x ./main
+          ./main &
+          for attempt in $(seq 1 90); do
+            if curl --silent --fail http://localhost:9081/healthz/ready >/dev/null; then
+              echo "Meshery server is ready."
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Meshery server did not become ready within 90 seconds."
+          exit 1
       - name: Install Playwright
         run: make ui-setup-ci
       - name: Install Playwright Browsers
@@ -114,26 +287,25 @@ jobs:
 
       - name: Checkout QA
         uses: actions/checkout@v6
-        # run only for pushes to master
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
+        if: ${{ !cancelled() && needs.changes.outputs.run_qa_sync == 'true' }}
         with:
           repository: meshery/qa
           path: ./qa
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Sync results with qa
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
+        if: ${{ !cancelled() && needs.changes.outputs.run_qa_sync == 'true' }}
         working-directory: qa
         run: |
           make meshery-results-sync MESHERY_RESULTS_PATH=../ui/allure-results
 
       - name: Pull latest qa changes
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
+        if: ${{ !cancelled() && needs.changes.outputs.run_qa_sync == 'true' }}
         working-directory: qa
         run: git pull --rebase --autostash origin master
 
       - name: Commit & push academy to qa
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
+        if: ${{ !cancelled() && needs.changes.outputs.run_qa_sync == 'true' }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "[Meshery] Sync Meshery E2E Test Results - ${GITHUB_SHA}"
@@ -170,13 +342,21 @@ jobs:
 
   docker-build-test:
     name: Docker build
-    if: github.repository == 'meshery/meshery'
+    needs: [changes]
+    if: github.repository == 'meshery/meshery' && needs.changes.outputs.run_docker == 'true'
     runs-on: ubuntu-24.04
     steps:
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || false }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "::endgroup::"
       - name: Check out code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          ref: ${{ needs.changes.outputs.checkout_ref }}
       - name: Free disk space
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -203,60 +383,148 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: ${{ secrets.IMAGE_NAME }}
-  # validate graphQL schema
+
   graphql_validate:
     name: Validate GraphQL schema
-    if: github.repository == 'meshery/meshery'
+    needs: [changes]
+    if: github.repository == 'meshery/meshery' && needs.changes.outputs.run_graphql == 'true'
     runs-on: ubuntu-24.04
     steps:
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || false }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Checkout Ref: ${{ needs.changes.outputs.checkout_ref }}"
+          echo "::endgroup::"
       - name: Check out code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
-      - name: Check if schema was modified
-        uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            modified:
-              - added|modified: 'server/internal/graphql/schema/schema.graphql'
+          ref: ${{ needs.changes.outputs.checkout_ref }}
       - name: Set up Ruby
-        if: steps.filter.outputs.modified == 'true'
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2.6
           bundler-cache: true
       - name: graphql-docs
-        if: steps.filter.outputs.modified == 'true'
         run: |
           cd docs
           bundle install
           bundle exec rake graphql:compile_docs
 
-  # Run Rego policy tests
   rego-tests:
     name: Rego Policy Tests
-    if: >-
-      github.repository == 'meshery/meshery' && (
-      (
-        github.event_name == 'push' &&
-        (
-        contains(toJson(github.event.commits), '.rego') ||
-        contains(toJson(github.event.commits), 'server/policies/') ||
-        contains(toJson(github.event.commits), '.github/workflows/rego-lint-and-test.yml')
-        )
-      ) ||
-      (
-        github.event_name == 'pull_request_target' &&
-        (
-        contains(toJson(github.event.pull_request), '.rego') ||
-        contains(toJson(github.event.pull_request), 'server/policies/') ||
-        contains(toJson(github.event.pull_request), '.github/workflows/rego-lint-and-test.yml')
-        )
-      )
-      )
-
+    needs: [changes]
+    if: github.repository == 'meshery/meshery' && needs.changes.outputs.run_rego == 'true'
     uses: ./.github/workflows/rego-lint-and-test.yml
     permissions:
       contents: write
       pull-requests: write
+
+  notify:
+    name: Notify workflow status
+    needs:
+      - changes
+      - backend-build
+      - ui-build
+      - tests-ui-e2e
+      - docker-build-test
+      - graphql_validate
+      - rego-tests
+    if: ${{ always() && github.repository == 'meshery/meshery' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || false }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Needs: ${{ toJson(needs) }}"
+          echo "::endgroup::"
+      - name: Comment on PR status
+        if: github.event_name == 'pull_request_target'
+        uses: actions/github-script@v8
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          BACKEND_BUILD_RESULT: ${{ needs['backend-build'].result }}
+          UI_BUILD_RESULT: ${{ needs['ui-build'].result }}
+          UI_E2E_RESULT: ${{ needs['tests-ui-e2e'].result }}
+          DOCKER_BUILD_RESULT: ${{ needs['docker-build-test'].result }}
+          GRAPHQL_VALIDATE_RESULT: ${{ needs.graphql_validate.result }}
+          REGO_TESTS_RESULT: ${{ needs['rego-tests'].result }}
+        with:
+          script: |
+            const marker = '<!-- meshery-ui-and-server-status -->';
+            const statuses = {
+              changes: process.env.CHANGES_RESULT,
+              backendBuild: process.env.BACKEND_BUILD_RESULT,
+              uiBuild: process.env.UI_BUILD_RESULT,
+              uiEndToEndTests: process.env.UI_E2E_RESULT,
+              dockerBuild: process.env.DOCKER_BUILD_RESULT,
+              graphqlValidate: process.env.GRAPHQL_VALIDATE_RESULT,
+              regoTests: process.env.REGO_TESTS_RESULT,
+            };
+
+            const lines = Object.entries(statuses)
+              .filter(([, status]) => status && status !== 'skipped')
+              .map(([name, status]) => `- ${name}: ${status}`);
+
+            const body = [
+              marker,
+              '### Meshery UI and Server workflow update',
+              '',
+              `Workflow run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              '',
+              ...lines,
+            ].join('\n');
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const existing = comments.find((comment) => comment.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+      - name: Send email notification on failure
+        if: contains(needs.*.result, 'failure')
+        uses: dawidd6/action-send-mail@v7
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: Meshery UI and Server workflow failed - ${{ github.run_id }}
+          to: maintainers@meshery.io
+          from: Meshery UI and Server workflow
+          body: |
+            The Meshery UI and Server workflow failed.
+
+            Repository: ${{ github.repository }}
+            Event: ${{ github.event_name }}
+            Ref: ${{ github.ref }}
+            Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Job results: ${{ toJson(needs) }}
