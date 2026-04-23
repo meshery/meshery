@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 const WorkspaceActivityWidget = () => {
   const { organization: currentOrg } = useSelector((state) => state.ui);
   const { data: workspaces } = useGetWorkspacesQuery(
-    { orgID: currentOrg?.id },
+    { orgId: currentOrg?.id },
     { skip: !currentOrg?.id },
   );
 

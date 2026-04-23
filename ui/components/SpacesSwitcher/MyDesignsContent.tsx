@@ -72,11 +72,11 @@ const MyDesignsContent = () => {
       page: filters.page,
       pagesize: 10,
       order: filters.sortBy,
-      user_id: currentUser?.id,
+      userId: currentUser?.id,
       metrics: true,
       visibility: filters.visibility,
       search: filters.searchQuery,
-      orgID: currentOrganization?.id,
+      orgId: currentOrganization?.id,
     },
     {
       skip: !currentUser?.id,

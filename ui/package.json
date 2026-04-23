@@ -120,7 +120,7 @@
     "styled-components": "^6.4.0",
     "tippy.js": "^6.3.7",
     "universal-cookie": "^8.0.1",
-    "uuid": "^13.0.0",
+    "uuid": "^14.0.0",
     "xstate": "^5.28.0",
     "yjs": "^13.6.30"
   },
