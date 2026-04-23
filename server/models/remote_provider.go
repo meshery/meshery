@@ -2162,8 +2162,8 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 
 	data, err := json.Marshal(map[string]interface{}{
-		"patternData": pattern,
-		"save":        true,
+		"pattern_data": pattern,
+		"save":         true,
 	})
 
 	if err != nil {

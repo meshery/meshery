@@ -140,13 +140,39 @@ func patchMutatorsAction(rel *relationship.RelationshipDefinition, design *patte
 		for i := 0; i < count; i++ {
 			mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
 			oldValue := configurationForComponentAtPath(mutatedRefs[i], mutatedComp, design)
-			if mutatorValue == nil || deepEqual(mutatorValue, oldValue) {
+			if shouldSkipMutatorUpdate(mutatorValue, oldValue) {
 				continue
 			}
 			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedRefs[i]), mutatedID, mutatedRefs[i], mutatorValue))
 		}
 	}
 	return actions
+}
+
+// shouldSkipMutatorUpdate decides whether a (mutator, mutated) configuration
+// pair should emit a ComponentUpdateAction. Two cases short-circuit to skip:
+//
+//   1. mutatorValue and oldValue are deep-equal — the mutated side already
+//      holds the intended value, emitting an update would be a redundant
+//      no-op.
+//   2. mutatorValue is nil — the evaluation engine treats a nil mutator
+//      source as "nothing to propagate right now"; emitting an update with
+//      a nil value caused an observed infinite-loop because the patch
+//      pipeline does not clear the mutated field atomically, so the next
+//      iteration would see the same nil mutator vs. non-nil old value and
+//      re-emit.
+//
+// Trade-off worth calling out: skipping on nil means the engine cannot
+// express a deliberate "clear the mutated field" semantic through the
+// mutator/mutated channel. No relationship type in the current catalog
+// relies on that clearing behavior; if a future relationship needs it,
+// the guard should be narrowed to only skip when oldValue is also nil
+// and the patch pipeline should be updated to apply clears idempotently.
+func shouldSkipMutatorUpdate(mutatorValue, oldValue any) bool {
+	if deepEqual(mutatorValue, oldValue) {
+		return true
+	}
+	return mutatorValue == nil
 }
 
 // selectorItemID returns the ID string from a SelectorItem, or empty if nil.
