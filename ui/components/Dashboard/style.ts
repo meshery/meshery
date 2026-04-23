@@ -72,7 +72,10 @@ export const HoneycombContainer = styled('ul')(({ columnSize, columns, rowSize }
 }));
 
 export const HexagonWrapper = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#363636' : '#e9eff1', // TODO: this is the honeycomb color add this token in sistent
+  backgroundColor:
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.constant?.table
+      : theme.palette.background.code,
   position: 'absolute',
   inset: '3.5px',
   display: 'flex',
@@ -106,7 +109,10 @@ export const SelectedHexagon = styled('div')({
 export const SkeletonHexagon = styled('div')(({ theme }) => ({
   display: 'flex',
   height: '95%',
-  backgroundColor: theme.palette.mode === 'dark' ? '#363636' : '#e9eff1', // TODO: this is the honeycomb color add this token in sistent
+  backgroundColor:
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.constant?.table
+      : theme.palette.background.code,
   justifyContent: 'center',
   alignItems: 'center',
   opacity: 0.5,
