@@ -41,13 +41,6 @@ const nextConfig = {
     resolveAlias: {
       'remote-component.config.js': './remote-component.config.js',
     },
-    rules: {
-      // Handle markdown imports as raw text (replaces next-remove-imports)
-      '*.md': {
-        loaders: ['raw-loader'],
-        as: '*.js',
-      },
-    },
   },
 
   // Required for static export
