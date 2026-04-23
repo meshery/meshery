@@ -1,6 +1,7 @@
 package kubernetes
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/meshery/schemas/models/core"
@@ -14,6 +15,28 @@ import (
 	"github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/spf13/viper"
 )
+
+// extractActionContext pulls the user, system ID, and provider from the
+// action context. Returns a descriptive error if any of the three is
+// missing or of the wrong type, so lifecycle actions invoked without
+// upstream HTTP middleware populating the context (scheduler events,
+// internal invocations, timed-out contexts) can abort cleanly rather
+// than panic later on user.ID / *sysID / provider.X().
+func extractActionContext(ctx context.Context) (*models.User, *core.Uuid, models.Provider, error) {
+	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
+	if user == nil {
+		return nil, nil, nil, fmt.Errorf("kubernetes state machine: missing user in context")
+	}
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	if sysID == nil {
+		return nil, nil, nil, fmt.Errorf("kubernetes state machine: missing system ID in context")
+	}
+	// Provider may legitimately be a typed-nil interface (tests and
+	// internal invocations) and callers only use it after their own
+	// error paths; surface it as-is instead of rejecting here.
+	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return user, sysID, provider, nil
+}
 
 var (
 	adapterURLs    = viper.GetStringSlice("ADAPTER_URLS")

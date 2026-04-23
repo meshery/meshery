@@ -9,7 +9,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
-	"github.com/meshery/schemas/models/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -34,9 +33,10 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		logrus.Error(err)
 		os.Exit(1)
 	}
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	user, sysID, provider, err := extractActionContext(ctx)
+	if err != nil {
+		return machines.NoOp, nil, err
+	}
 	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")

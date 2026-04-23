@@ -8,7 +8,6 @@ import (
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
-	"github.com/meshery/schemas/models/core"
 )
 
 type DiscoverAction struct{}
@@ -19,10 +18,11 @@ func (da *DiscoverAction) ExecuteOnEntry(ctx context.Context, machineCtx interfa
 }
 
 func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	user, sysID, provider, err := extractActionContext(ctx)
+	if err != nil {
+		return machines.NoOp, nil, err
+	}
 	userUUID := user.ID
-	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 

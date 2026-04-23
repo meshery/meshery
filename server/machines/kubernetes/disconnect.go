@@ -5,9 +5,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/server/machines"
-	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
-	"github.com/meshery/schemas/models/core"
 )
 
 type DisconnectAction struct{}
@@ -17,8 +15,10 @@ func (da *DisconnectAction) ExecuteOnEntry(ctx context.Context, machineCtx inter
 
 }
 func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	user, sysID, _, err := extractActionContext(ctx)
+	if err != nil {
+		return machines.NoOp, nil, err
+	}
 	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
