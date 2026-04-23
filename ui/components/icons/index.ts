@@ -38,4 +38,12 @@ export {
   DeleteForever,
   Handyman,
   NotInterestedRounded,
+  BarChart,
+  PlayArrow,
+  MoreHoriz,
+  AccessTime,
+  OpenInNewOutlined,
+  Cached,
+  Code,
+  SaveOutlined,
 } from '@mui/icons-material';

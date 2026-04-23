@@ -82,8 +82,7 @@ const GrafanaComponent = (props) => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
 
-  const isValidGrafanaURL = (url) => {
-    const urlStr = url?.value;
+  const isValidGrafanaURL = (urlStr) => {
     return (
       Boolean(urlStr) &&
       (urlStr.toLowerCase().startsWith('http://') || urlStr.toLowerCase().startsWith('https://'))
@@ -93,7 +92,7 @@ const GrafanaComponent = (props) => {
   const handleGrafanaConfigure = () => {
     const { grafanaURL } = state;
     // Validate URL with regex
-    if (!isValidGrafanaURL(grafanaURL.value)) {
+    if (!isValidGrafanaURL(grafanaURL)) {
       updateState({ urlError: true });
       return;
     }
@@ -141,7 +140,7 @@ const GrafanaComponent = (props) => {
   const submitGrafanaConfigure = async () => {
     const { grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs } =
       state;
-    const urlStr = grafanaURL?.value;
+    const urlStr = grafanaURL;
     if (!urlStr) return;
 
     // Build URL-encoded params (using URLSearchParams for brevity)
@@ -405,7 +404,7 @@ const GrafanaComponent = (props) => {
       <NoSsr>
         <>
           <GrafanaSelectionComponent
-            grafanaURL={grafanaURL?.value}
+            grafanaURL={grafanaURL}
             grafanaBoards={grafanaBoards}
             grafanaBoardSearch={grafanaBoardSearch}
             handleGrafanaBoardSearchChange={handleChange}
