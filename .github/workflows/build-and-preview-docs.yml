@@ -59,6 +59,14 @@ jobs:
         if: github.event.action != 'closed'
         run: |
           sudo snap install dart-sass
+          echo "/snap/bin" >> "$GITHUB_PATH"
+          if [ -x /snap/bin/sass ]; then
+            sudo ln -sf /snap/bin/sass /usr/local/bin/sass
+          elif [ -x /snap/bin/dart-sass ]; then
+            sudo ln -sf /snap/bin/dart-sass /usr/local/bin/sass
+          fi
+          command -v sass
+          sass --version
 
       - name: Setup Node
         if: github.event.action != 'closed'
