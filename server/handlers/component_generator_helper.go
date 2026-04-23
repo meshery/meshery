@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -523,6 +524,63 @@ func setIfEmpty(field *string, defaultValue string) {
 		*field = defaultValue
 	}
 }
+
+// deriveModelNameFromURL attempts to extract a meaningful model name from a GitHub URL
+func deriveModelNameFromURL(sourceURL string) string {
+	if sourceURL == "" {
+		return ""
+	}
+	u, err := url.Parse(sourceURL)
+	if err != nil {
+		return ""
+	}
+	parts := strings.Split(strings.Trim(u.Path, "/"), "/")
+	if len(parts) >= 2 {
+		if strings.Contains(u.Host, "github.com") || strings.Contains(u.Host, "githubusercontent.com") {
+			return parts[1] // The repository name
+		}
+	}
+	return ""
+}
+
+// normalizeVersionFromURL returns a proper semantic version string.
+// The GitHub URL downloader uses the last URL path segment as the version,
+// which is often a filename (e.g. "cert-manager.crds.yaml").
+// When that happens, this function walks the URL path backwards to find a semver-like token.
+func normalizeVersionFromURL(version, sourceURL string) string {
+	knownExts := []string{".yaml", ".yml", ".json", ".tar.gz", ".tgz", ".zip"}
+	isFilename := false
+	lv := strings.ToLower(version)
+	for _, ext := range knownExts {
+		if strings.HasSuffix(lv, ext) {
+			isFilename = true
+			break
+		}
+	}
+
+	if !isFilename {
+		if version != "" && !strings.HasPrefix(version, "v") {
+			return "v" + version
+		}
+		return version
+	}
+
+	parts := strings.Split(sourceURL, "/")
+	for i := len(parts) - 1; i >= 0; i-- {
+		p := parts[i]
+		if p == "" {
+			continue
+		}
+		if strings.HasPrefix(p, "v") && len(p) > 1 && p[1] >= '0' && p[1] <= '9' {
+			return p
+		}
+		if p[0] >= '0' && p[0] <= '9' && strings.Contains(p, ".") {
+			return "v" + p
+		}
+	}
+	return version
+}
+
 func detectFileType(fileData []byte) string {
 	// Extract the first 512 bytes (or fewer if the file is smaller)
 	var bufSize int

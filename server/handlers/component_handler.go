@@ -23,6 +23,7 @@ import (
 	// "github.com/meshery/meshkit/errors"
 	// "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/utils/manifests"
 
 	meshkitOci "github.com/meshery/meshkit/models/oci"
 	"github.com/meshery/meshkit/models/registration"
@@ -1122,19 +1123,32 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		//Model generation strats from here
 		model.Model = strings.ToLower(model.Model)
 
+		// Infer model name from URL if it's the scaffold placeholder
+		if model.Model == "untitled-model" || model.Model == "" {
+			derivedName := deriveModelNameFromURL(importRequest.ImportBody.Url)
+			if derivedName != "" {
+				model.Model = derivedName
+				// Set display name to a readable format if it was also a placeholder
+				if model.ModelDisplayName == "Untitled Model" || model.ModelDisplayName == "" || model.ModelDisplayName == "untitled-model" {
+					model.ModelDisplayName = manifests.FormatToReadableString(derivedName)
+				}
+			}
+		}
+
 		pkg, version, err := meshkitRegistryUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error generating model")
 			h.sendErrorEvent(userID, provider, "Error generating model", err, token)
 			return
 		}
+		version = normalizeVersionFromURL(version, importRequest.ImportBody.Url)
 		modelDirPath, compDirPath, err := utils.CreateVersionedDirectoryForModelAndComp(version, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
 			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err, token)
 			return
 		}
-		filePath := filepath.Join(modelDirPath, model.Model+".json")
+		filePath := filepath.Join(modelDirPath, "model.json")
 		modelDef := model.CreateModelDefinition(version, utils.DefVersion)
 		modelDef.Status = _model.Enabled
 		err = modelDef.WriteModelDefinition(filePath, "json")
