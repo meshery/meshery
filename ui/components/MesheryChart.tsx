@@ -362,7 +362,10 @@ function MesheryChart(props) {
     <NoSsr>
       <ChartOuterWrapper>
         <ShareIconContainer>
-          <ShareIconButton aria-label="Share" onClick={(e) => handleSocialExpandClick(e, chartData)}>
+          <ShareIconButton
+            aria-label="Share"
+            onClick={(e) => handleSocialExpandClick(e, chartData)}
+          >
             <ReplyIcon />
           </ShareIconButton>
         </ShareIconContainer>
