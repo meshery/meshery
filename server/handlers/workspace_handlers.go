@@ -21,7 +21,13 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 
 	q := req.URL.Query()
 
-	orgID := q.Get("orgID")
+	// Canonical form is `orgId`; `orgID` is dual-accepted during the Phase 2
+	// deprecation window so mesheryctl and any other legacy client keeps
+	// working. Retire the fallback once Phase 3 consumer migration completes.
+	orgID := q.Get("orgId")
+	if orgID == "" {
+		orgID = q.Get("orgID")
+	}
 	if orgID == "" {
 		h.log.Error(models.ErrWorkspaceMissingInput())
 		http.Error(w, models.ErrWorkspaceMissingInput().Error(), http.StatusBadRequest)
@@ -43,7 +49,12 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(r)["id"]
 	q := r.URL.Query()
-	orgID := q.Get("orgID")
+	// Canonical form is `orgId`; `orgID` is dual-accepted during the Phase 2
+	// deprecation window. Retire once Phase 3 consumer migration completes.
+	orgID := q.Get("orgId")
+	if orgID == "" {
+		orgID = q.Get("orgID")
+	}
 	if orgID == "" {
 		h.log.Error(models.ErrWorkspaceMissingInput())
 		http.Error(w, models.ErrWorkspaceMissingInput().Error(), http.StatusBadRequest)

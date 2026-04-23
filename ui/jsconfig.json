@@ -9,6 +9,8 @@
       "@/constants/*": ["constants/*"],
       "@/api/*": ["api/*"],
       "@/assets/*": ["assets/*"],
+      "@/theme": ["theme/index"],
+      "@/theme/*": ["theme/*"],
       "@/themes/*": ["themes/*"],
       "@/store/*": ["store/*"],
       "lib/*": ["lib/*"],

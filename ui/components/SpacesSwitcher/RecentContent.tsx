@@ -105,7 +105,7 @@ const RecentContent = () => {
       metrics: true,
       search: filters.searchQuery,
       visibility: filters.visibility,
-      user_id: filters.author,
+      userId: filters.author,
     },
     {
       skip: filters.type !== RESOURCE_TYPE.DESIGN,
@@ -122,7 +122,7 @@ const RecentContent = () => {
       page: filters.viewsPage,
       pagesize: 10,
       order: filters.sortBy,
-      user_id: filters.author,
+      userId: filters.author,
       visibility: filters.visibility,
       search: filters.searchQuery,
     },

@@ -40,7 +40,7 @@ const credentialsApi = api.injectEndpoints({
       invalidatesTags: [TAGS.CREDENTIALS],
     }),
   }),
-  overrideExisting: false,
+  overrideExisting: true,
 });
 
 export const {

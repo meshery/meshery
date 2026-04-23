@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
-  issues: read
-  pull-requests: read
+features:
+  copilot-requests: true
 engine: copilot
 timeout-minutes: 30
 tools:
@@ -20,6 +20,12 @@ safe-outputs:
   create-discussion:
     category: "audits"
     close-older-discussions: true
+    fallback-to-issue: false
+  noop: false
+  missing-tool: false
+  missing-data: false
+  report-incomplete: false
+  report-failure-as-issue: false
 
 network:
   allowed:

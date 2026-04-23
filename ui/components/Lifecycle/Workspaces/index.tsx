@@ -180,7 +180,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       pagesize: pageSize,
       search: search,
       order: sortOrder,
-      orgID: organization?.id,
+      orgId: organization?.id,
     },
     {
       skip: !organization?.id ? true : false,
