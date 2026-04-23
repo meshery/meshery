@@ -4,11 +4,12 @@ import Moment from 'react-moment';
 import CustomToolbarSelect from '../CustomToolbarSelect';
 import MesheryChart from '../MesheryChart';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
-import Modal from '../shared/Modal/Modal';
-import { BarChart as BarChartIcon, Info as InfoIcon } from '../icons';
+import GenericModal from '../General/Modals/GenericModal';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import InfoIcon from '@mui/icons-material/Info';
 import fetchPerformanceResults from '../graphql/queries/PerformanceResultQuery';
 import NodeDetails from './NodeDetails';
-import { Reply as ReplyIcon } from '../icons';
+import ReplyIcon from '@mui/icons-material/Reply';
 import FacebookIcon from './assets/facebookIcon';
 import LinkedinIcon from './assets/linkedinIcon';
 import TwitterIcon from './assets/twitterIcon';
@@ -718,24 +719,31 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
         options={options}
       />
 
-      <Modal open={!!selectedRowChart} closeModal={() => setSelectedRowChart(undefined)}>
-        <ResultChart
-          result={selectedRowChart}
-          handleTabChange={handleTabChange}
-          tabValue={tabValue}
-        />
-      </Modal>
+      <GenericModal
+        open={!!selectedRowChart}
+        // @ts-ignore
+        Content={
+          <ResultChart
+            result={selectedRowChart}
+            handleTabChange={handleTabChange}
+            tabValue={tabValue}
+          />
+        }
+        handleClose={() => setSelectedRowChart(undefined)}
+      />
 
-      <Modal
+      <GenericModal
         open={!!selectedRowNodeDetails}
-        closeModal={() => setSelectedRowNodeDetails(undefined)}
-      >
-        <ResultNodeDetails
-          result={selectedRowNodeDetails}
-          handleTabChange={handleTabChange}
-          tabValue={tabValue}
-        />
-      </Modal>
+        // @ts-ignore
+        Content={
+          <ResultNodeDetails
+            result={selectedRowNodeDetails}
+            handleTabChange={handleTabChange}
+            tabValue={tabValue}
+          />
+        }
+        handleClose={() => setSelectedRowNodeDetails(undefined)}
+      />
     </NoSsr>
   );
 }

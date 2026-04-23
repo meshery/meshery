@@ -1,6 +1,7 @@
 // @ts-check
 import { AppBar, Box, IconButton, Toolbar, Tooltip, useTheme } from '@sistent/sistent';
-import { Delete, HelpOutline, Settings as SettingsIcon } from '@/components/icons';
+import { Delete, HelpOutline } from '@mui/icons-material';
+import SettingsIcon from '@mui/icons-material/Settings';
 import React, { useEffect } from 'react';
 import { iconSmall } from '../../css/icons.styles';
 import { pSBCr } from '../../utils/lightenOrDarkenColor';
@@ -81,8 +82,8 @@ function PatternServiceForm({
           <Box width={'100%'}>
             <AppBar
               style={{
-                boxShadow: `0px 2px 4px -1px ${theme.palette.text.secondary}`,
-                background: theme.palette.background.brand.default,
+                boxShadow: `0px 2px 4px -1px "#677E88"`,
+                background: `${theme.palette.mode === 'dark' ? '#202020' : '#647881'}`,
                 position: 'sticky',
                 zIndex: 'auto',
               }}

@@ -13,7 +13,7 @@ import {
   NoSsr,
 } from '@sistent/sistent';
 import { useRouter } from 'next/router';
-import { Settings as SettingsIcon } from '@/components/icons';
+import SettingsIcon from '@mui/icons-material/Settings';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAdapter } from '@/store/slices/adapter';

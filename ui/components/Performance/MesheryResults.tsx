@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import MUIDataTable from '@sistent/mui-datatables';
 import Moment from 'react-moment';
-import { MoreHoriz as MoreHorizIcon } from '../icons';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CustomToolbarSelect from '../CustomToolbarSelect';
 import MesheryChart from '../MesheryChart';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
-import MesheryResultModal from '../shared/Modal/MesheryResultModal';
+import MesheryResultDialog from '../MesheryResultDialog';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { Box, IconButton, NoSsr, TableRow, TableCell, TableSortLabel } from '@sistent/sistent';
@@ -389,7 +389,7 @@ const MesheryResults = () => {
   return (
     <NoSsr>
       {selectedRowData && (
-        <MesheryResultModal rowData={selectedRowData} close={resetSelectedRowData} />
+        <MesheryResultDialog rowData={selectedRowData} close={resetSelectedRowData} />
       )}
       <MUIDataTable
         title={

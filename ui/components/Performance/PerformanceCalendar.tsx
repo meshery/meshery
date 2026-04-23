@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import Modal from '../shared/Modal/Modal';
+import GenericModal from '../General/Modals/GenericModal';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import MesheryChart from '../MesheryChart';
 import { Typography, Paper } from '@sistent/sistent';
@@ -198,9 +198,12 @@ function PerformanceCalendar({ style }) {
         onSelectEvent={(results) => handleEventClick(results)}
       />
 
-      <Modal open={!!selectedEvent} closeModal={() => setSelectedEvent(undefined)}>
-        <ResultChart result={selectedEvent} />
-      </Modal>
+      <GenericModal
+        open={!!selectedEvent}
+        // @ts-ignore
+        Content={<ResultChart result={selectedEvent} />}
+        handleClose={() => setSelectedEvent(undefined)}
+      />
     </div>
   );
 }

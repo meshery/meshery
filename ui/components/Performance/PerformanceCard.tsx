@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { Delete as DeleteIcon, Edit as EditIcon } from '../icons';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import {
   CustomTooltip,
   Typography,
   Avatar,
   Button,
   useTheme,
+  Grid2,
   IconButton,
   Link,
   Table,
   TableCell,
   TableRow,
-  alpha,
 } from '@sistent/sistent';
+import FlipCard from '../FlipCard';
 import PerformanceResults from './PerformanceResults';
-import ResourceCard from '../shared/Card/ResourceCard';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
@@ -145,160 +146,186 @@ function PerformanceCard({
   }
 
   return (
-    <ResourceCard
-      title={name}
-      isFlippable={true}
-      onFlip={() => {
+    <FlipCard
+      onClick={() => {
         setRenderTable(false);
         requestSizeRestore();
       }}
-      headerRight={
-        <img
-          src={`/static/img/load-test/${loadGenerators[0]}.svg`}
-          alt="load-generator"
-          height="24px"
-        />
-      }
-      subtitle={
-        lastRun ? (
-          <Typography
-            variant="caption"
-            sx={{
-              fontStyle: 'italic',
-              color: (theme) =>
-                theme.palette.mode === 'dark'
-                  ? alpha(theme.palette.common.white, 0.7)
-                  : theme.palette.text.secondary,
-            }}
-          >
-            Last Run: {moment(lastRun).format('LLL')}
+      duration={600}
+    >
+      {/* FRONT PART */}
+      <>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography variant="h6" component="div">
+            {name}
           </Typography>
-        ) : null
-      }
-      footer={
-        <CardButton>
-          <Button
-            variant="outlined"
-            onClick={(ev) =>
-              genericClickHandler(ev, () => {
-                setRenderTable((renderTable) => {
-                  if (renderTable) {
-                    requestSizeRestore();
-                    return false;
-                  }
-
-                  requestFullSize();
-                  return true;
-                });
-              })
-            }
-            disabled={!CAN(keys.VIEW_RESULTS.action, keys.VIEW_RESULTS.subject)}
-            sx={{ marginRight: '0.5rem' }}
-          >
-            {renderTable ? 'Hide' : 'View'} Results
-          </Button>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={(ev) => genericClickHandler(ev, handleProfile)}
-            disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
-            sx={{ marginRight: '0.5rem' }}
-          >
-            Edit Profile
-          </Button>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={(ev) => genericClickHandler(ev, handleRunTest)}
-            disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
-          >
-            Run Test
-          </Button>
-        </CardButton>
-      }
-      backTitle={`${name} Details`}
-      backHeaderRight={
-        <div
-          style={{
-            width: 'fit-content',
-            margin: '0 0 0 auto',
-            display: 'flex',
-          }}
-        >
-          <CustomTooltip title="Edit">
-            <IconButton
-              onClick={(ev) => genericClickHandler(ev, handleEdit)}
-              data-testid={dataTestIDs('edit')}
-              disabled={!CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)}
-            >
-              <EditIcon style={iconMedium} />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip title="Delete">
-            <IconButton
-              onClick={(ev) => genericClickHandler(ev, handleDelete)}
-              data-testid={dataTestIDs('delete')}
-              disabled={
-                !CAN(keys.DELETE_PERFORMANCE_TEST.action, keys.DELETE_PERFORMANCE_TEST.subject)
-              }
-            >
-              <DeleteIcon style={iconMedium} />
-            </IconButton>
-          </CustomTooltip>
+          <img
+            src={`/static/img/load-test/${loadGenerators[0]}.svg`}
+            alt="load-generator"
+            height="24px"
+          />
         </div>
-      }
-      backContent={
-        <Table size="small">
+        <ResultContainer>
+          <div>
+            <Typography
+              variant="h2"
+              component="div"
+              style={{
+                marginRight: '0.75rem',
+                color: `${theme.palette.mode === 'dark' ? '#fff' : '#647881'}`,
+              }}
+            >
+              {(results || '0').toLocaleString('en')}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: theme.palette.text.disabled,
+              }}
+              component="div"
+            >
+              Results
+            </Typography>
+          </div>
+        </ResultContainer>
+        <div style={{}}>
+          <BottomPart>
+            <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.user_id}`} target="_blank">
+              <Avatar alt="profile-avatar" src={userAvatar} />
+            </Link>
+            <div
+              style={{
+                marginRight: '0.5rem',
+                marginLeft: '0.5rem',
+              }}
+            >
+              {lastRun && (
+                <Typography
+                  variant="caption"
+                  style={{
+                    fontStyle: 'italic',
+                    color: `${
+                      theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.7)' : '#647881'
+                    }`,
+                  }}
+                >
+                  Last Run: {moment(lastRun).format('LLL')}
+                </Typography>
+              )}
+            </div>
+          </BottomPart>
+          <CardButton>
+            <Button
+              variant="outlined"
+              onClick={(ev) =>
+                genericClickHandler(ev, () => {
+                  setRenderTable((renderTable) => {
+                    if (renderTable) {
+                      requestSizeRestore();
+                      return false;
+                    }
+
+                    requestFullSize();
+                    return true;
+                  });
+                })
+              }
+              disabled={!CAN(keys.VIEW_RESULTS.action, keys.VIEW_RESULTS.subject)}
+              sx={{ marginRight: '0.5rem' }}
+            >
+              {renderTable ? 'Hide' : 'View'} Results
+            </Button>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={(ev) => genericClickHandler(ev, handleProfile)}
+              disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
+              sx={{ marginRight: '0.5rem' }}
+            >
+              Edit Profile
+            </Button>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={(ev) => genericClickHandler(ev, handleRunTest)}
+              disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
+            >
+              Run Test
+            </Button>
+          </CardButton>
+        </div>
+        {renderTable ? (
+          <div onClick={(ev) => ev.stopPropagation()} style={{ marginTop: '0.5rem' }}>
+            <PerformanceResults
+              // @ts-ignore
+              CustomHeader={<Typography variant="h6">Test Results</Typography>}
+              // @ts-ignore
+              endpoint={`/api/user/performance/profiles/${id}/results`}
+              // @ts-ignore
+              elevation={0}
+            />
+          </div>
+        ) : null}
+      </>
+
+      {/* BACK PART */}
+      <>
+        <Grid2
+          sx={{
+            marginBottom: '0.25rem',
+            minHeight: '6rem',
+          }}
+          container
+          spacing={1}
+          alignContent="space-between"
+          alignItems="center"
+          size="grow"
+        >
+          <Grid2 size={{ xs: 8 }}>
+            <Typography variant="h6" gutterBottom>
+              {name} Details
+            </Typography>
+          </Grid2>
+          <Grid2 size={{ xs: 4 }}>
+            <div
+              style={{
+                width: 'fit-content',
+                margin: '0 0 0 auto',
+              }}
+            >
+              <CustomTooltip title="Edit">
+                <IconButton
+                  onClick={(ev) => genericClickHandler(ev, handleEdit)}
+                  data-testid={dataTestIDs('edit')}
+                  disabled={
+                    !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
+                  }
+                >
+                  <EditIcon style={iconMedium} />
+                </IconButton>
+              </CustomTooltip>
+              <CustomTooltip title="Delete">
+                <IconButton
+                  onClick={(ev) => genericClickHandler(ev, handleDelete)}
+                  data-testid={dataTestIDs('delete')}
+                  disabled={
+                    !CAN(keys.DELETE_PERFORMANCE_TEST.action, keys.DELETE_PERFORMANCE_TEST.subject)
+                  }
+                >
+                  <DeleteIcon style={iconMedium} />
+                </IconButton>
+              </CustomTooltip>
+            </div>
+          </Grid2>
+        </Grid2>
+        <Table size="small" dense>
           {tableData.map(function renderDesignTableRow(data) {
             const { name, value, omitEmpty } = data;
             return <DetailsTable key={name} rowKey={name} value={value} omitEmpty={omitEmpty} />;
           })}
         </Table>
-      }
-    >
-      <ResultContainer>
-        <div>
-          <Typography
-            variant="h2"
-            component="div"
-            style={{
-              marginRight: '0.75rem',
-              color: `${theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.text.secondary}`,
-            }}
-          >
-            {(results || '0').toLocaleString('en')}
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              color: theme.palette.text.disabled,
-            }}
-            component="div"
-          >
-            Results
-          </Typography>
-        </div>
-      </ResultContainer>
-
-      <BottomPart>
-        <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.user_id}`} target="_blank">
-          <Avatar alt="profile-avatar" src={userAvatar} />
-        </Link>
-      </BottomPart>
-
-      {renderTable ? (
-        <div onClick={(ev) => ev.stopPropagation()} style={{ marginTop: '0.5rem' }}>
-          <PerformanceResults
-            // @ts-ignore
-            CustomHeader={<Typography variant="h6">Test Results</Typography>}
-            // @ts-ignore
-            endpoint={`/api/user/performance/profiles/${id}/results`}
-            // @ts-ignore
-            elevation={0}
-          />
-        </div>
-      ) : null}
-    </ResourceCard>
+      </>
+    </FlipCard>
   );
 }
 

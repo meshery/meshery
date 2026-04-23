@@ -2,11 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@sistent/sistent';
 import moment from 'moment';
-import {
-  OpenInNewOutlined as OpenInNewIcon,
-  Warning as WarningIcon,
-  Cached as CachedIcon,
-} from '../../icons';
+import OpenInNewIcon from '@mui/icons-material/OpenInNewOutlined';
+import WarningIcon from '@mui/icons-material/Warning';
+import CachedIcon from '@mui/icons-material/Cached';
 import { useLazyQueryRangeQuery } from '@/rtk-query/telemetry';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 import bb, { area, line } from 'billboard.js';

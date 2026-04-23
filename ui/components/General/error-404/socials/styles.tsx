@@ -1,11 +1,10 @@
-import { styled } from '@/theme';
+import { styled } from '@sistent/sistent';
 import Message from '@/assets/icons/general/message';
 import Docker from '@/assets/icons/social/docker';
 import Github from '@/assets/icons/social/github';
 import Slack from '@/assets/icons/social/slack';
 import Twitter from '@/assets/icons/social/twitter';
 import Youtube from '@/assets/icons/social/youtube';
-import { BrandColors } from '@/theme';
 
 export const SocialMain = styled('div')(() => ({
   padding: '1.3rem 2rem',
@@ -36,8 +35,8 @@ export const SlackIcon = styled(Slack)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.SLACK,
-    color: BrandColors.SLACK,
+    fill: '#4A154B',
+    color: '#4A154B',
   },
 }));
 
@@ -47,30 +46,30 @@ export const TwitterIcon = styled(Twitter)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.TWITTER,
-    color: BrandColors.TWITTER,
+    fill: '#1da1f2',
+    color: '#1da1f2',
   },
 }));
 
 export const TwitterHandleIcon = styled(Twitter)(({ theme }) => ({
-  fill: theme.palette.primary.main,
-  color: theme.palette.primary.main,
+  fill: theme.palette.keppelGreen,
+  color: theme.palette.keppelGreen,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.TWITTER,
-    color: BrandColors.TWITTER,
+    fill: '#1da1f2',
+    color: '#1da1f2',
   },
 }));
 
 export const GithubHandleIcon = styled(Github)(({ theme }) => ({
-  fill: theme.palette.primary.main,
-  color: theme.palette.primary.main,
+  fill: theme.palette.keppelGreen,
+  color: theme.palette.keppelGreen,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.GITHUB,
-    color: BrandColors.GITHUB,
+    fill: '#24292e',
+    color: '#24292e',
   },
 }));
 
@@ -80,8 +79,8 @@ export const GithubIcon = styled(Github)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.GITHUB,
-    color: BrandColors.GITHUB,
+    fill: '#24292e',
+    color: '#24292e',
   },
 }));
 
@@ -91,8 +90,8 @@ export const YoutubeIcon = styled(Youtube)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.YOUTUBE,
-    color: BrandColors.YOUTUBE,
+    fill: '#ff0000',
+    color: '#ff0000',
   },
 }));
 
@@ -102,7 +101,7 @@ export const DockerIcon = styled(Docker)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: BrandColors.DOCKER,
-    color: BrandColors.DOCKER,
+    fill: '#2496ed',
+    color: '#2496ed',
   },
 }));

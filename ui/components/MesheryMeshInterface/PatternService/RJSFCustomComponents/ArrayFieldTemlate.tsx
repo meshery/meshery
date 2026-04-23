@@ -1,9 +1,11 @@
 import React from 'react';
 import { Box, Grid2, Paper, Button, IconButton, Typography, useTheme } from '@sistent/sistent';
-import { Add as AddIcon, Delete as DeleteIcon, HelpOutline as HelpOutlineIcon, ErrorOutline as ErrorOutlineIcon } from '@/components/icons';
+import AddIcon from '@mui/icons-material/Add';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
+import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { isMultiSelect, getDefaultFormState } from '@rjsf/utils';
+import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import pluralize from 'pluralize';
