@@ -1,53 +1,232 @@
 name: Update Test Report
 
 on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Workflow run ID that produced the e2e-test-reporter artifact'
+        required: true
+        type: string
+      target_ref:
+        description: 'Branch to update with the latest generated report'
+        required: false
+        default: 'master'
+        type: string
+      pr_number:
+        description: 'Optional PR number to receive workflow status comments'
+        required: false
+        default: ''
+        type: string
+      debug_mode:
+        description: 'Enable debug logging'
+        required: false
+        default: false
+        type: boolean
   workflow_run:
-    workflows: ['Meshery UI and Server']  
+    workflows: ['Meshery UI and Server']
     types: [completed]
 
 permissions:
   actions: read
   contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   post-test-results:
+    # Automatic updates only run for pushes that landed on master.
+    # Manual dispatch stays available for retries and operational testing.
     if: >
-        github.repository == 'meshery/meshery' && 
-        github.event.workflow_run.event == 'push' && 
-        github.event.workflow_run.head_branch == 'master'
+      github.repository == 'meshery/meshery' &&
+      (
+        github.event_name == 'workflow_dispatch' ||
+        (
+          github.event_name == 'workflow_run' &&
+          github.event.workflow_run.event == 'push' &&
+          github.event.workflow_run.head_branch == 'master'
+        )
+      )
     runs-on: ubuntu-24.04
+    env:
+      REPORT_RUN_ID: ${{ github.event_name == 'workflow_dispatch' && inputs.run_id || github.event.workflow_run.id }}
+      TARGET_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.target_ref || github.event.workflow_run.head_branch }}
+      COMMENT_PR_NUMBER: ${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || '' }}
+      COMMITTER_NAME: l5io
+      COMMITTER_EMAIL: ci@meshery.io
+      FILE_PATH: docs/layouts/shortcodes/test-report.md
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Resolved report run ID: ${REPORT_RUN_ID}"
+          echo "Resolved target ref: ${TARGET_REF}"
+          echo "Manual PR number: ${COMMENT_PR_NUMBER}"
+          echo "Workflow run conclusion: ${{ github.event.workflow_run.conclusion }}"
+          echo "Workflow run head SHA: ${{ github.event.workflow_run.head_sha }}"
+          echo "Workflow run head branch: ${{ github.event.workflow_run.head_branch }}"
+          echo "::endgroup::"
+
+      - name: Comment workflow start on PR
+        if: ${{ env.COMMENT_PR_NUMBER != '' }}
+        uses: actions/github-script@v8
         with:
-          token: ${{ secrets.RELEASE_NOTES_PAT }}
-          ref: 'master'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number(process.env.COMMENT_PR_NUMBER),
+              body: [
+                '### Update Test Report 🚀',
+                '',
+                `Status: started`,
+                `Run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                `Artifact source run: ${process.env.REPORT_RUN_ID}`,
+                `Target ref: ${process.env.TARGET_REF}`,
+              ].join('\n'),
+            });
 
       - name: Download e2e test report artifact
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
-           name: e2e-test-reporter
-           path: e2e-test-reporter
-           github-token: ${{ secrets.GITHUB_TOKEN }}
-           run-id: ${{ github.event.workflow_run.id }}
-      
-      - name: Move test report to shortcodes folder
-        run: |
-            if [ ! -f e2e-test-reporter/ui/test-report.md ]; then
-            echo "Error: Test report not found!" && exit 1
-            fi
-            mkdir -p docs/layouts/shortcodes 
-            mv e2e-test-reporter/ui/test-report.md docs/layouts/shortcodes/test-report.md
-            
-      - name: Pull changes from remote
-        run: git pull origin master
+          name: e2e-test-reporter
+          path: e2e-test-reporter
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ env.REPORT_RUN_ID }}
 
-      - name: Commit artifact
-        uses: stefanzweifel/git-auto-commit-action@v7
+      - name: Publish test report without repository checkout
+        id: publish-report
+        uses: actions/github-script@v8
+        env:
+          COMMIT_AUTHOR_EMAIL: ${{ github.actor }}@users.noreply.github.com
         with:
-          file_pattern: "docs/layouts/shortcodes/test-report.md"
-          commit_user_name: l5io
-          commit_user_email: ci@meshery.io
-          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "[Docs] Updated test report"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+
+            const reportPath = 'e2e-test-reporter/ui/test-report.md';
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const branch = process.env.TARGET_REF;
+            const filePath = process.env.FILE_PATH;
+            const committerName = process.env.COMMITTER_NAME;
+            const committerEmail = process.env.COMMITTER_EMAIL;
+            const actorEmail = process.env.COMMIT_AUTHOR_EMAIL;
+
+            if (!fs.existsSync(reportPath)) {
+              core.setFailed(`Expected report artifact at ${reportPath}, but it was not downloaded.`);
+              return;
+            }
+
+            const nextContent = fs.readFileSync(reportPath, 'utf8');
+            let existingSha;
+            let existingContent = '';
+
+            try {
+              const current = await github.rest.repos.getContent({
+                owner,
+                repo,
+                path: filePath,
+                ref: branch,
+              });
+
+              if (!('content' in current.data)) {
+                core.setFailed(`${filePath} resolved to a directory, not a file.`);
+                return;
+              }
+
+              existingSha = current.data.sha;
+              existingContent = Buffer.from(current.data.content, 'base64').toString('utf8');
+            } catch (error) {
+              if (error.status !== 404) {
+                throw error;
+              }
+            }
+
+            if (existingContent === nextContent) {
+              core.info('The generated test report is unchanged; skipping repository update.');
+              core.setOutput('changed', 'false');
+              return;
+            }
+
+            const commitMessage = [
+              '[Docs] Updated test report',
+              '',
+              `Source workflow run: ${process.env.REPORT_RUN_ID}`,
+              `Signed-off-by: ${context.actor} <${actorEmail}>`,
+            ].join('\n');
+
+            const response = await github.rest.repos.createOrUpdateFileContents({
+              owner,
+              repo,
+              path: filePath,
+              message: commitMessage,
+              content: Buffer.from(nextContent, 'utf8').toString('base64'),
+              sha: existingSha,
+              branch,
+              committer: {
+                name: committerName,
+                email: committerEmail,
+              },
+              author: {
+                name: context.actor,
+                email: actorEmail,
+              },
+            });
+
+            const commitSha = response.data.commit?.sha || '';
+            core.setOutput('changed', 'true');
+            core.setOutput('commit_sha', commitSha);
+            core.info(`Published ${filePath} on ${branch} with commit ${commitSha}.`);
+
+      - name: Comment workflow completion on PR
+        if: ${{ always() && env.COMMENT_PR_NUMBER != '' }}
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const changed = `${{ steps.publish-report.outputs.changed || 'false' }}`;
+            const commitSha = `${{ steps.publish-report.outputs.commit_sha || '' }}`;
+            const statusLine = 'Status: ${{ job.status }}';
+            const changeLine = changed === 'true'
+              ? `Updated ${process.env.FILE_PATH} with commit ${commitSha}.`
+              : `No content change was required for ${process.env.FILE_PATH}.`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number(process.env.COMMENT_PR_NUMBER),
+              body: [
+                '### Update Test Report ✅',
+                '',
+                statusLine,
+                changeLine,
+                `Run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              ].join('\n'),
+            });
+
+      - name: 🚨 Email Alert on Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v7
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "Workflow Failed: ${{ github.workflow }}"
+          to: maintainers@meshery.io
+          from: "Update Test Report workflow"
+          body: |
+            The Update Test Report workflow failed.
+
+            Repository: ${{ github.repository }}
+            Run ID: ${{ github.run_id }}
+            Actor: ${{ github.actor }}
+            Event: ${{ github.event_name }}
+            Source artifact run: ${{ env.REPORT_RUN_ID }}
+            Target ref: ${{ env.TARGET_REF }}
+
+            Review the logs at https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}.
