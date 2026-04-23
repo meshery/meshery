@@ -1,14 +1,17 @@
 import { Avatar, useTheme } from '@sistent/sistent';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import HandymanIcon from '@mui/icons-material/Handyman';
+import {
+  CheckCircle as CheckCircleIcon,
+  AssignmentTurnedIn as AssignmentTurnedInIcon,
+  Explore as ExploreIcon,
+  RemoveCircle as RemoveCircleIcon,
+  DeleteForever as DeleteForeverIcon,
+  Handyman as HandymanIcon,
+  NotInterestedRounded as NotInterestedRoundedIcon,
+  InfoOutlined as InfoOutlinedIcon,
+} from '@/components/icons';
 import BadgeAvatars from '../CustomAvatar';
 import { notificationColors } from '../../themes';
 import DisconnectIcon from '../../assets/icons/disconnect';
-import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import {
   CONNECTION_STATE_TO_TRANSITION_MAP,
   CONNECTION_STATES,

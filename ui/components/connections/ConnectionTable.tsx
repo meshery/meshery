@@ -32,13 +32,16 @@ import LoadingScreen from '../LoadingComponents/LoadingComponent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import {
+  MoreVert as MoreVertIcon,
+  Sync as SyncIcon,
+  InfoOutlined as InfoOutlinedIcon,
+} from '@/components/icons';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { iconMedium } from '../../css/icons.styles';
 import _PromptComponent from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
-import SyncIcon from '@mui/icons-material/Sync';
 
 import { CONNECTION_KINDS, CONNECTION_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
@@ -59,7 +62,6 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useGetConnectionsQuery, useUpdateConnectionByIdMutation } from '@/rtk-query/connection';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
-import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@sistent/sistent';
 
 import { formatDate } from '../DataFormatter';

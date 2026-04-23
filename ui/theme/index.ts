@@ -57,6 +57,8 @@ export const Colors = {
   nero: '#222222',
   whisper: '#E0E0E0',
   boulder: '#BDBDBD',
+  settingsBackgroundLight: '#eaeff1',
+  settingsBackgroundDark: '#303030',
 } as const;
 
 export const CHART_COLORS = [
@@ -84,7 +86,7 @@ export const darkNotificationColors = {
 };
 
 export const RE_JSON_Theme = (themeType: string) => ({
-  base00: themeType === 'dark' ? '#303030' : '#ffffff',
+  base00: themeType === 'dark' ? Colors.settingsBackgroundDark : '#ffffff',
   base01: '#444c56',
   base02: themeType === 'dark' ? '#586069' : '#abb2bf',
   base03: '#6a737d',

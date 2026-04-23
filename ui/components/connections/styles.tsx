@@ -1,5 +1,5 @@
 import { CONNECTION_STATES } from '../../utils/Enum';
-import { notificationColors } from '../../themes';
+import { notificationColors, Colors } from '../../theme';
 import {
   Box,
   Button,
@@ -52,14 +52,14 @@ export const ConnectionTab = styled(Tab)(({ theme }) => ({
   paddingLeft: 0,
   paddingRight: 0,
   '&.Mui-selected': {
-    color: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.primary,
+    color: theme.palette.mode === 'dark' ? Colors.mesheryTeal : theme.palette.primary,
   },
 }));
 
 export const ConnectionTabs = styled(Tabs)(({ theme }) => ({
   height: '55px',
   '& .MuiTabs-indicator': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.primary,
+    backgroundColor: theme.palette.mode === 'dark' ? Colors.mesheryTeal : theme.palette.primary,
   },
 }));
 
@@ -251,8 +251,8 @@ export const CustomLabelStyle = styled(StepLabel)(() => ({
 
 export const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   alternativeLabel: { top: 22 },
-  active: { '& $line': { background: '#00B39F', transition: 'all 1s ease-in' } },
-  completed: { '& $line': { background: '#00B39F', transition: 'all 1s ease-in' } },
+  active: { '& $line': { background: Colors.mesheryTeal, transition: 'all 1s ease-in' } },
+  completed: { '& $line': { background: Colors.mesheryTeal, transition: 'all 1s ease-in' } },
   line: {
     height: 3,
     border: 0,
@@ -263,12 +263,12 @@ export const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
 }));
 
 export const CONNECTION_STATE_COLORS = {
-  [CONNECTION_STATES.CONNECTED]: '#00B39F',
-  [CONNECTION_STATES.REGISTERED]: '#00B39F',
-  [CONNECTION_STATES.DISCOVERED]: '#FFC107',
-  [CONNECTION_STATES.IGNORED]: '#FFC107',
-  [CONNECTION_STATES.DELETED]: '#FF1744',
-  [CONNECTION_STATES.MAINTENANCE]: '#FFC107',
-  [CONNECTION_STATES.DISCONNECTED]: '#FFC107',
-  [CONNECTION_STATES.NOTFOUND]: '#FFC107',
+  [CONNECTION_STATES.CONNECTED]: Colors.mesheryTeal,
+  [CONNECTION_STATES.REGISTERED]: Colors.mesheryTeal,
+  [CONNECTION_STATES.DISCOVERED]: Colors.warningOrange,
+  [CONNECTION_STATES.IGNORED]: Colors.warningOrange,
+  [CONNECTION_STATES.DELETED]: Colors.errorRed,
+  [CONNECTION_STATES.MAINTENANCE]: Colors.warningOrange,
+  [CONNECTION_STATES.DISCONNECTED]: Colors.warningOrange,
+  [CONNECTION_STATES.NOTFOUND]: Colors.warningOrange,
 };

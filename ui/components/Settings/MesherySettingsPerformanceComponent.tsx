@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import { SaveIcon } from '@/components/icons';
+import { Colors } from '@/theme';
 import { durationOptions } from '../../lib/prePopulatedOptions';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -224,7 +225,7 @@ const tNum = t.length > 1 ? parseInt(t.substring(0, t.length - 1), 10) : NaN;
                             '&.Mui-checked': {
                               color:
                                 theme.palette.mode === 'dark'
-                                  ? '#00B39F'
+                                  ? Colors.mesheryTeal
                                   : theme.palette.primary.main,
                             },
                           }}
@@ -246,7 +247,7 @@ const tNum = t.length > 1 ? parseInt(t.substring(0, t.length - 1), 10) : NaN;
               onClick={handleSubmit}
               disabled={isSaving}
             >
-              <SaveOutlinedIcon style={{ marginRight: '3px' }} />
+              <SaveIcon style={{ marginRight: '3px' }} />
               {isSaving ? <CircularProgress size={30} /> : 'Save'}
             </Button>
           </div>

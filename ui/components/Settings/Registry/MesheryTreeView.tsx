@@ -5,6 +5,7 @@ import {
   Switch,
   CircularProgress,
   Typography,
+  useTheme,
 } from '@sistent/sistent';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constants/navigator';
 import SearchBar from '@/utils/custom-search';
@@ -12,11 +13,11 @@ import debounce from '@/utils/debounce';
 import { useWindowDimensions } from '@/utils/dimension';
 import { getFilteredDataForDetailsComponent } from './helper';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { InfoOutlined as InfoOutlinedIcon } from '@/components/icons';
 import _ from 'lodash';
 import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';
-import { Colors } from '@/themes/app';
+import { Colors } from '@/theme';
 import { JustifyAndAlignCenter, MesheryTreeViewWrapper } from './MeshModel.style';
 import { useRegistryRouter } from './hooks';
 import MesheryTreeViewModel from './MesheryTreeViewModel';
@@ -215,13 +216,14 @@ const MesheryTreeView = React.memo(
       return view === COMPONENTS;
     };
 
+    const theme = useTheme();
     const renderHeader = (type: string, hasRecords: boolean) => (
       <div
         style={{
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
-          borderBottom: '1px solid #d2d3d4',
+          borderBottom: `1px solid ${theme.palette.divider}`,
           width: '100%',
           height: '2.55rem',
         }}
