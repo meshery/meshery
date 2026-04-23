@@ -14,7 +14,7 @@ import React from 'react';
 import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
 import _PromptComponent from './PromptComponent';
-import { CloudUpload as CloudUploadIcon } from '@/components/icons';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { CONNECTION_STATES } from '../utils/Enum';

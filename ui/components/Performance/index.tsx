@@ -20,18 +20,14 @@ import {
   Autocomplete,
   RadioGroup,
   AccordionSummary,
-  useTheme,
 } from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
-import {
-  GetApp as GetAppIcon,
-  ExpandMore as ExpandMoreIcon,
-  HelpOutline as HelpOutlineOutlinedIcon,
-  SaveOutlined as SaveOutlinedIcon,
-  ArrowBack,
-} from '../icons';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import MesheryChart from '../MesheryChart';
-import LoadTestTimer from './LoadTestTimer';
+import LoadTestTimerDialog from '../load-test-timer-dialog';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import { durationOptions } from '../../lib/prePopulatedOptions';
 import fetchControlPlanes from '../graphql/queries/ControlPlanesQuery';
@@ -47,7 +43,7 @@ import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/Custom
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useGetMeshQuery } from '@/rtk-query/mesh';
-
+import { ArrowBack } from '@mui/icons-material';
 import {
   CenterTimer,
   ExpansionPanelComponent,
@@ -149,7 +145,6 @@ const infoloadGenerators = (
 
 let eventStream = null;
 const MesheryPerformanceComponent_ = (props) => {
-  const theme = useTheme();
   const {
     testName = '',
     meshName = '',
@@ -878,9 +873,7 @@ const MesheryPerformanceComponent_ = (props) => {
                     InputProps={{
                       endAdornment: (
                         <CustomTooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
-                          <HelpOutlineOutlinedIcon
-                            style={{ color: theme.palette.text.secondary }}
-                          />
+                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
                         </CustomTooltip>
                       ),
                     }}
@@ -931,9 +924,7 @@ const MesheryPerformanceComponent_ = (props) => {
                     InputProps={{
                       endAdornment: (
                         <CustomTooltip title="The Endpoint where the load will be generated and the performance test will run against.">
-                          <HelpOutlineOutlinedIcon
-                            style={{ color: theme.palette.text.secondary }}
-                          />
+                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
                         </CustomTooltip>
                       ),
                     }}
@@ -956,9 +947,7 @@ const MesheryPerformanceComponent_ = (props) => {
                     InputProps={{
                       endAdornment: (
                         <CustomTooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
-                          <HelpOutlineOutlinedIcon
-                            style={{ color: theme.palette.text.secondary }}
-                          />
+                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
                         </CustomTooltip>
                       ),
                     }}
@@ -981,9 +970,7 @@ const MesheryPerformanceComponent_ = (props) => {
                     InputProps={{
                       endAdornment: (
                         <CustomTooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
-                          <HelpOutlineOutlinedIcon
-                            style={{ color: theme.palette.text.secondary }}
-                          />
+                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
                         </CustomTooltip>
                       ),
                     }}
@@ -1017,9 +1004,7 @@ const MesheryPerformanceComponent_ = (props) => {
                       InputProps={{
                         endAdornment: (
                           <CustomTooltip title="Default duration is 30 seconds">
-                            <HelpOutlineOutlinedIcon
-                              style={{ color: theme.palette.text.secondary }}
-                            />
+                            <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
                           </CustomTooltip>
                         ),
                       }}
@@ -1281,7 +1266,7 @@ const MesheryPerformanceComponent_ = (props) => {
 
             {timerDialogOpenState ? (
               <CenterTimer>
-                <LoadTestTimer
+                <LoadTestTimerDialog
                   open={timerDialogOpenState}
                   t={tState}
                   onClose={handleTimerDialogClose}

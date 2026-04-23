@@ -1,5 +1,5 @@
-import { Accordion, FormControl, IconButton, styled, Radio, alpha } from '@sistent/sistent';
-import { HelpOutlineOutlined } from '../icons';
+import { Accordion, FormControl, IconButton, styled, Radio } from '@sistent/sistent';
+import { HelpOutlineOutlined } from '@mui/icons-material';
 import { Calendar } from 'react-big-calendar';
 
 export const CardButton = styled('div')(() => ({
@@ -100,13 +100,13 @@ export const IconButtonComp = styled(IconButton)(({ theme }) => ({
   color: theme.palette.icon.default,
 }));
 
-export const CenterTimer = styled('div')(({ theme }) => ({
+export const CenterTimer = styled('div')(() => ({
   width: '100%',
   height: '100%',
   position: 'absolute',
   top: '0',
   left: '0',
-  backgroundColor: alpha(theme.palette.common.black, 0.6),
+  backgroundColor: 'rgba(0, 0, 0, 0.6)',
   zIndex: 1201,
   display: 'flex',
   justifyContent: 'center',
@@ -128,9 +128,9 @@ export const RadioButton = styled(Radio)(({ theme }) => ({
   },
 }));
 
-export const ExpansionPanelComponent = styled(Accordion)(({ theme }) => ({
+export const ExpansionPanelComponent = styled(Accordion)(() => ({
   boxShadow: 'none',
-  border: `1px solid ${theme.palette.border.default}`,
+  border: '1px solid rgb(196,196,196)',
   background: 'none',
 }));
 
