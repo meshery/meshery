@@ -63,10 +63,15 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 
 	connectionsFetched := []*connections.Connection{}
 	query.Table("connections").Count(&count)
-	environmentsFetched := []*environments.EnvironmentData{}
 	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
 
 	for _, connectionFetched := range connectionsFetched {
+		// Declare a fresh slice per iteration so GORM's Find(&slice)
+		// populates a distinct underlying array for each connection. If
+		// the slice were hoisted out of the loop, all connections would
+		// end up sharing the same header and subsequent iterations would
+		// clobber earlier results.
+		environmentsFetched := []*environments.EnvironmentData{}
 		cp.DB.Table("environment_connection_mappings").Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").Select("environments.*").
 			Where("connection_id = ?", connectionFetched.ID).
 			Find(&environmentsFetched)
