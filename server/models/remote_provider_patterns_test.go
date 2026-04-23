@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"sync/atomic"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -18,7 +19,16 @@ import (
 // 400 "invalid request", which the server translates to the user-visible
 // "Bad request. The design might be corrupt" on the Kanvas save path.
 func TestSaveMesheryPattern_SendsPatternDataWrapperKey(t *testing.T) {
-	var capturedBody []byte
+	// Errors encountered inside the httptest handler goroutine are
+	// recorded onto these atomics and asserted after SaveMesheryPattern
+	// returns — calling t.Fatalf from a goroutine other than the test's
+	// would crash the test runner with "testing: Fatal called from
+	// goroutine".
+	var (
+		capturedBody []byte
+		handlerErr   atomic.Value // stored as error
+	)
+	setErr := func(err error) { handlerErr.Store(&err) }
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/patterns" {
@@ -27,7 +37,9 @@ func TestSaveMesheryPattern_SendsPatternDataWrapperKey(t *testing.T) {
 		}
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			t.Fatalf("failed to read request body: %v", err)
+			setErr(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 		capturedBody = body
 
@@ -51,6 +63,12 @@ func TestSaveMesheryPattern_SendsPatternDataWrapperKey(t *testing.T) {
 
 	if _, err := provider.SaveMesheryPattern("token", pattern); err != nil {
 		t.Fatalf("expected save to succeed, got error: %v", err)
+	}
+
+	if recorded := handlerErr.Load(); recorded != nil {
+		if e, ok := recorded.(*error); ok && e != nil && *e != nil {
+			t.Fatalf("test server handler recorded an error: %v", *e)
+		}
 	}
 
 	var envelope map[string]json.RawMessage
@@ -78,7 +96,7 @@ func TestSaveMesheryPattern_SendsPatternDataWrapperKey(t *testing.T) {
 	}
 	var innerFields map[string]json.RawMessage
 	if err := json.Unmarshal(inner, &innerFields); err != nil {
-		t.Fatalf("expected inner patternData object, got %v\nraw: %s", err, string(inner))
+		t.Fatalf("expected inner pattern_data object, got %v\nraw: %s", err, string(inner))
 	}
 	if _, ok := innerFields["patternFile"]; !ok {
 		t.Errorf("expected inner %q camelCase tag on the pattern content field, got keys: %v", "patternFile", keysOf(innerFields))

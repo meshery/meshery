@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -23,6 +24,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 
 	orgID := q.Get("orgId")
 	if orgID == "" {
+		h.log.Error(errors.New("orgId is required"))
 		writeJSONError(w, "orgId is required", http.StatusBadRequest)
 		return
 	}
@@ -44,6 +46,7 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	q := r.URL.Query()
 	orgID := q.Get("orgId")
 	if orgID == "" {
+		h.log.Error(errors.New("orgId is required"))
 		writeJSONError(w, "orgId is required", http.StatusBadRequest)
 		return
 	}
