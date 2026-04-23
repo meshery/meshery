@@ -4257,6 +4257,13 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	// splits the requested path into '/api/extensions' and '/<remote-provider-endpoint>'
 	p := req.URL.Path
 	split := strings.Split(p, "/api/extensions")
+	if len(split) < 2 {
+		// A manipulated or malformed request that reaches ExtensionProxy
+		// without /api/extensions in its path would panic here with
+		// "runtime error: index out of range" and crash the handler
+		// goroutine. Reject with a clear error instead.
+		return nil, fmt.Errorf("invalid extension proxy path %q: expected '/api/extensions/<endpoint>'", p)
+	}
 	path := split[1]
 	// gets the available query parameters
 	q := req.URL.Query().Encode()
