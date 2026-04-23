@@ -41,7 +41,7 @@ import (
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	schemasOrganization "github.com/meshery/schemas/models/v1beta1/organization"
+	schemasOrganization "github.com/meshery/schemas/models/v1beta2/organization"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"

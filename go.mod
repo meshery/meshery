@@ -51,7 +51,7 @@ require (
 	github.com/meshery/meshery-operator v0.8.11
 	github.com/meshery/meshkit v1.0.2
 	github.com/meshery/meshsync v1.0.0
-	github.com/meshery/schemas v1.0.9
+	github.com/meshery/schemas v1.1.0
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.3.1
 	github.com/olekukonko/tablewriter v1.1.0
@@ -261,7 +261,7 @@ require (
 	github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	github.com/jackc/pgx/v5 v5.9.0 // indirect
+	github.com/jackc/pgx/v5 v5.9.2 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jhump/protoreflect v1.17.0 // indirect

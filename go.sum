@@ -1348,8 +1348,8 @@ github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsI
 github.com/jackc/pgpassfile v1.0.0/go.mod h1:CEx0iS5ambNFdcRtxPj5JhEz+xB6uRky5eyVu/W2HEg=
 github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 h1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=
 github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761/go.mod h1:5TJZWKEWniPve33vlWYSoGYefn3gLQRzjfDlhSJ9ZKM=
-github.com/jackc/pgx/v5 v5.9.0 h1:T/dI+2TvmI2H8s/KH1/lXIbz1CUFk3gn5oTjr0/mBsE=
-github.com/jackc/pgx/v5 v5.9.0/go.mod h1:mal1tBGAFfLHvZzaYh77YS/eC6IX9OWbRV1QIIM0Jn4=
+github.com/jackc/pgx/v5 v5.9.2 h1:3ZhOzMWnR4yJ+RW1XImIPsD1aNSz4T4fyP7zlQb56hw=
+github.com/jackc/pgx/v5 v5.9.2/go.mod h1:mal1tBGAFfLHvZzaYh77YS/eC6IX9OWbRV1QIIM0Jn4=
 github.com/jackc/puddle/v2 v2.2.2 h1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=
 github.com/jackc/puddle/v2 v2.2.2/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
 github.com/jarcoal/httpmock v1.4.1 h1:0Ju+VCFuARfFlhVXFc2HxlcQkfB+Xq12/EotHko+x2A=
@@ -1494,8 +1494,8 @@ github.com/meshery/meshkit v1.0.2 h1:B4l624AapuSeM7aFYyxA+jYxx4YZRZNPPgDhzjnpZH0
 github.com/meshery/meshkit v1.0.2/go.mod h1:otsT6pbFm6npq2Tfjk6A0Nhv4c9UgzPyhPLVDS9Hhug=
 github.com/meshery/meshsync v1.0.0 h1:BIHEVG4BDjqOnSd3vBt9B4IfWJNTfMRAgdwLroBcCfY=
 github.com/meshery/meshsync v1.0.0/go.mod h1:mFsPXkZRiCSuk5DhxBTrkWdlo6peItRBUoIEEQCovIg=
-github.com/meshery/schemas v1.0.9 h1:6iQ3MIiApyHdr4wC1yvB2s+3FfcSfUChnGNF0x54keg=
-github.com/meshery/schemas v1.0.9/go.mod h1:QNARm+MBykXTSwefgaC1bopx6XtA5h4QvEGKa+Nwk/g=
+github.com/meshery/schemas v1.1.0 h1:DsZkEP15TZcD5E5NTnsEZPvELZAyjr3WKTGLi62j7Pw=
+github.com/meshery/schemas v1.1.0/go.mod h1:UrkQFIKza3S3CuLR9yKt5a7xZW3ksSVd6N0yUdhvhRE=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
 github.com/miekg/pkcs11 v1.0.2/go.mod h1:XsNlhZGX73bx86s2hdc/FuaLm2CPZJemRLMA+WTFxgs=

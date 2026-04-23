@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 22nd 2026, 8:02:46 am
+- Testing started at: April 23rd 2026, 5:20:33 pm
 
 **📦 Test Result Summary**
 
-- ✅ 140 passed
-- ❌ 1 failed
+- ✅ 141 passed
+- ❌ 0 failed
 - ⚠️ 0 flaked
 - ⏩ 3 skipped
 
-⌛ _Duration: 7 minutes and 57 seconds_
+⌛ _Duration: 7 minutes and 19 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
@@ -38,7 +38,7 @@
 | 15 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 16 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 17 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
-| 18 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ❌ |
+| 18 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 19 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 20 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 21 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
@@ -171,28 +171,6 @@
 | 148 | None | remote-setup | authenticate with Remote Provider |  | ✅ |
 
 </div>
-</details>
-
-
-
-
-**❌ Failed Test Details**
-
-The following tests failed. Click on each to see the failure reason:
-
-
-<details>
-<summary>❌ config patching correctness (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
 </details>
 
 
