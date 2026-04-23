@@ -108,7 +108,10 @@ const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
 
   const baseColor = notificationColors[variant] || notificationColors.info;
 
-  const backgroundColor = theme.palette.mode === 'light' ? lighten(baseColor, 0.95) : '#323232';
+  const backgroundColor =
+    theme.palette.mode === 'light'
+      ? lighten(baseColor, 0.95)
+      : theme.palette.background.elevatedComponents;
 
   return {
     backgroundColor,

@@ -1,4 +1,4 @@
-import { styled } from '@sistent/sistent';
+import { styled, BrandColors } from '@/theme';
 import Message from '@/assets/icons/general/message';
 import Docker from '@/assets/icons/social/docker';
 import Github from '@/assets/icons/social/github';
@@ -35,8 +35,8 @@ export const SlackIcon = styled(Slack)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: '#4A154B',
-    color: '#4A154B',
+    fill: BrandColors.slack,
+    color: BrandColors.slack,
   },
 }));
 
@@ -46,8 +46,8 @@ export const TwitterIcon = styled(Twitter)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: '#1da1f2',
-    color: '#1da1f2',
+    fill: BrandColors.twitter,
+    color: BrandColors.twitter,
   },
 }));
 
@@ -57,8 +57,8 @@ export const TwitterHandleIcon = styled(Twitter)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: '#1da1f2',
-    color: '#1da1f2',
+    fill: BrandColors.twitter,
+    color: BrandColors.twitter,
   },
 }));
 
@@ -68,8 +68,8 @@ export const GithubHandleIcon = styled(Github)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: '#24292e',
-    color: '#24292e',
+    fill: BrandColors.github,
+    color: BrandColors.github,
   },
 }));
 
@@ -79,8 +79,8 @@ export const GithubIcon = styled(Github)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: '#24292e',
-    color: '#24292e',
+    fill: BrandColors.github,
+    color: BrandColors.github,
   },
 }));
 
@@ -90,8 +90,8 @@ export const YoutubeIcon = styled(Youtube)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: '#ff0000',
-    color: '#ff0000',
+    fill: BrandColors.youtube,
+    color: BrandColors.youtube,
   },
 }));
 
@@ -101,7 +101,7 @@ export const DockerIcon = styled(Docker)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: '#2496ed',
-    color: '#2496ed',
+    fill: BrandColors.docker,
+    color: BrandColors.docker,
   },
 }));
