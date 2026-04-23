@@ -14,6 +14,8 @@ func (p *HierarchicalWalletPolicy) Identifier() string {
 	return "hierarchical_wallet"
 }
 
+func (p *HierarchicalWalletPolicy) Priority() int { return 0 }
+
 func (p *HierarchicalWalletPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinition) bool {
 	return strings.EqualFold(string(rel.Kind), "hierarchical") &&
 		strings.EqualFold(rel.RelationshipType, "parent") &&

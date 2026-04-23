@@ -6,8 +6,11 @@ import (
 )
 
 // RelationshipPolicy defines the interface each relationship type policy must implement.
+// Priority resolves conflicts when multiple policies emit actions on the same target;
+// higher priority wins, equal priority is a tie and the action is dropped.
 type RelationshipPolicy interface {
 	Identifier() string
+	Priority() int
 	IsImplicatedBy(rel *relationship.RelationshipDefinition) bool
 	IsInvalid(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool
 	AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool

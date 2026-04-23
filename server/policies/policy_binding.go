@@ -17,6 +17,8 @@ func (p *EdgeBindingPolicy) Identifier() string {
 	return "edge_binding"
 }
 
+func (p *EdgeBindingPolicy) Priority() int { return 0 }
+
 func (p *EdgeBindingPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinition) bool {
 	return strings.EqualFold(string(rel.Kind), "edge") &&
 		strings.EqualFold(rel.RelationshipType, "binding")

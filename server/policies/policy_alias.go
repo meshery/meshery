@@ -16,6 +16,8 @@ func (p *AliasPolicy) Identifier() string {
 	return "alias_relationships_policy"
 }
 
+func (p *AliasPolicy) Priority() int { return 0 }
+
 func (p *AliasPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinition) bool {
 	return isAliasRelationship(rel)
 }
