@@ -10,6 +10,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/spf13/cobra"
 )
@@ -74,11 +75,12 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			if err != nil {
 				return err
 			}
+
 			selectedWorkspace = workspace.Workspace{
 				ID:             fetchedWorkspace.ID,
 				Name:           fetchedWorkspace.Name,
 				Description:    fetchedWorkspace.Description,
-				OrganizationID: fetchedWorkspace.OrganizationId,
+				OrganizationID: core.UUIDOrUUIDNil(fetchedWorkspace.OrganizationId),
 				CreatedAt:      fetchedWorkspace.CreatedAt,
 				UpdatedAt:      fetchedWorkspace.UpdatedAt,
 			}
@@ -108,7 +110,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 				ID:             selectedAvailableWorkspace.ID,
 				Name:           selectedAvailableWorkspace.Name,
 				Description:    selectedAvailableWorkspace.Description,
-				OrganizationID: selectedAvailableWorkspace.OrganizationId,
+				OrganizationID: core.UUIDOrUUIDNil(selectedAvailableWorkspace.OrganizationId),
 				CreatedAt:      selectedAvailableWorkspace.CreatedAt,
 				UpdatedAt:      selectedAvailableWorkspace.UpdatedAt,
 			}
