@@ -45,6 +45,36 @@ func TestResolvePostLoginRedirect(t *testing.T) {
 			rawRef:   "not-base64",
 			expected: fallback,
 		},
+		// Regression coverage: /user/login and /api/user/token are auth
+		// initiation paths. Redirecting to them after a successful token
+		// exchange re-enters the OAuth dance and caused Kanvas to hang on
+		// the loading splash indefinitely (meshery-server-1345 followed by
+		// a second InitiateLogin in the same second).
+		{
+			name:     "plain /user/login ref falls back",
+			rawRef:   "/user/login",
+			expected: fallback,
+		},
+		{
+			name:     "/user/login with query falls back",
+			rawRef:   "/user/login?provider=Layer5",
+			expected: fallback,
+		},
+		{
+			name:     "encoded /user/login ref falls back",
+			rawRef:   base64.RawURLEncoding.EncodeToString([]byte("/user/login?provider=Layer5")),
+			expected: fallback,
+		},
+		{
+			name:     "plain /api/user/token ref falls back",
+			rawRef:   "/api/user/token",
+			expected: fallback,
+		},
+		{
+			name:     "/provider ref falls back",
+			rawRef:   "/provider?ref=xyz",
+			expected: fallback,
+		},
 	}
 
 	for _, tc := range tests {

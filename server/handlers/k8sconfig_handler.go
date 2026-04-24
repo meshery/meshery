@@ -24,7 +24,6 @@ import (
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/utils"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
@@ -140,9 +139,9 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		// Create context-specific metadata with appropriate meshsync deployment mode
 		k8sContextsMetadata := make(map[string]any, 1)
 		meshsyncMode := getMeshsyncModeForContext(ctx)
-		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+		connections.SetMeshsyncDeploymentModeToMetadata(
 			k8sContextsMetadata,
-			schemasConnection.MeshsyncDeploymentModeFromString(meshsyncMode),
+			connections.MeshsyncDeploymentModeFromString(meshsyncMode),
 		)
 
 		connection, err := provider.SaveK8sContext(token, *ctx, k8sContextsMetadata)

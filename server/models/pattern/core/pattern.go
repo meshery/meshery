@@ -15,9 +15,10 @@ import (
 	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshkit/utils/manifests"
 	"github.com/meshery/schemas/models/v1beta1/capability"
-	"github.com/meshery/schemas/models/v1beta1"
-	"github.com/meshery/schemas/models/v1beta1/component"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/component"
+	schemav1beta3 "github.com/meshery/schemas/models/v1beta3"
+	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
 	"gopkg.in/yaml.v2"
 )
@@ -334,7 +335,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 	registryCache := &registry.RegistryEntityCache{}
 
 	pattern := pattern.PatternFile{
-		SchemaVersion: v1beta1.DesignSchemaVersion,
+		SchemaVersion: schemav1beta3.DesignSchemaVersion,
 		Name:          fileName,
 		Components:    []*component.ComponentDefinition{},
 	}
@@ -445,8 +446,12 @@ func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager
 		return component.ComponentDefinition{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 
-	// just needs the first entry to grab meshmodel-metadata and other model requirements
-	comp, ok := componentList[0].(*component.ComponentDefinition)
+	// just needs the first entry to grab meshmodel-metadata and other model
+	// requirements. Registry stores v1beta3/component.ComponentDefinition
+	// (the canonical-casing version implementing entity.Entity); pattern
+	// storage is v1beta2 (per v1beta3/design's type graph), so we cast to
+	// v1beta3 here and then write through the v1beta2 declaration.
+	comp, ok := componentList[0].(*componentv1beta3.ComponentDefinition)
 	if !ok {
 		return component.ComponentDefinition{}, ErrCreatePatternService(fmt.Errorf("cannot cast to the component-definition for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
@@ -454,6 +459,11 @@ func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager
 	rest = Format.Prettify(rest, false)
 	uuidV4, _ := uuid.NewV4()
 	defaultCapabilities := []capability.Capability{} // only assign empty capabilities for component declarations
+	status := (*component.ComponentDefinitionStatus)(nil)
+	if comp.Status != nil {
+		st := component.ComponentDefinitionStatus(*comp.Status)
+		status = &st
+	}
 	declaration := component.ComponentDefinition{
 		ID:            uuidV4,
 		SchemaVersion: comp.SchemaVersion,
@@ -466,12 +476,20 @@ func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager
 		Model:         comp.Model,
 		Configuration: rest,
 		Capabilities:  &defaultCapabilities,
-		Metadata:      comp.Metadata,
-		Styles:        comp.Styles,
-		Status:        comp.Status,
+		Metadata: component.ComponentDefinition_Metadata{
+			Genealogy:             comp.Metadata.Genealogy,
+			IsAnnotation:          comp.Metadata.IsAnnotation,
+			IsNamespaced:          comp.Metadata.IsNamespaced,
+			Published:             comp.Metadata.Published,
+			InstanceDetails:       comp.Metadata.InstanceDetails,
+			ConfigurationUISchema: comp.Metadata.ConfigurationUISchema,
+			AdditionalProperties:  comp.Metadata.AdditionalProperties,
+		},
+		Styles: comp.Styles,
+		Status: status,
 	}
 
-	assignNamespaceForNamespacedScopedComp(&declaration, metadata, comp)
+	assignNamespaceForNamespacedScopedComp(&declaration, metadata, &declaration)
 	return declaration, nil
 }
 
