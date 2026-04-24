@@ -220,18 +220,25 @@ jobs:
           filters: |
             modified:
               - added|modified: 'server/internal/graphql/schema/schema.graphql'
-      - name: Set up Ruby
+      - name: Check GraphQL docs tooling
         if: steps.filter.outputs.modified == 'true'
+        id: graphql_docs
+        run: |
+          if [[ -f docs/Gemfile && -f docs/Rakefile ]]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "GraphQL docs generator files are not present; skipping docs regeneration."
+          fi
+      - name: Set up Ruby
+        if: steps.filter.outputs.modified == 'true' && steps.graphql_docs.outputs.available == 'true'
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2.6
           bundler-cache: true
       - name: graphql-docs
-        if: steps.filter.outputs.modified == 'true'
-        run: |
-          cd docs
-          bundle install
-          bundle exec rake graphql:compile_docs
+        if: steps.filter.outputs.modified == 'true' && steps.graphql_docs.outputs.available == 'true'
+        run: make graphql-docs-build
 
   # Run Rego policy tests
   rego-tests:

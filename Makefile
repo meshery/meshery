@@ -479,7 +479,11 @@ helm-meshery-lint:
 
 ## Build Meshery GraphQL API documentation
 graphql-docs-build:
-	cd docs; bundle exec rake graphql:compile_docs
+	@if [ -f docs/Gemfile ] && [ -f docs/Rakefile ]; then \
+		cd docs && bundle exec rake graphql:compile_docs; \
+	else \
+		echo "Skipping GraphQL docs build: docs/Gemfile and docs/Rakefile are not present."; \
+	fi
 
 ## Build Meshery GraphQl API specifications
 graphql-build: dep-check
