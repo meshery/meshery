@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"sort"
 	"strings"
 )
@@ -36,9 +37,18 @@ func resolveTies(actions []PolicyAction) ([]PolicyAction, []TieInfo) {
 		prints[key] = append(prints[key], fp{op: a.Op, value: canonicalJSON(a.UpdateValue)})
 	}
 
+	// Iterate groups in sorted key order so dropped-action order and the
+	// resulting ties slice are deterministic across runs.
+	sortedKeys := make([]string, 0, len(groups))
+	for k := range groups {
+		sortedKeys = append(sortedKeys, k)
+	}
+	sort.Strings(sortedKeys)
+
 	drop := make(map[int]bool)
 	var ties []TieInfo
-	for key, idxs := range groups {
+	for _, key := range sortedKeys {
+		idxs := groups[key]
 		if len(idxs) < 2 {
 			continue
 		}
@@ -81,10 +91,12 @@ func isComponentPatch(op string) bool {
 }
 
 // canonicalJSON produces a stable string representation for comparison.
+// On marshal failure it returns a type-tagged sentinel so unmarshalable values
+// of different types do not collapse into the same key (and thus falsely tie).
 func canonicalJSON(v interface{}) string {
 	b, err := json.Marshal(v)
 	if err != nil {
-		return ""
+		return fmt.Sprintf("<unmarshalable:%T:%v>", v, err)
 	}
 	return string(b)
 }

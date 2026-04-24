@@ -114,12 +114,13 @@ func (e *GoEngine) checkFlapping(designID string, actions []PolicyAction) error 
 	fp := actionsFingerprint(actions)
 	e.mu.Lock()
 	flap := recordAndCheckFlap(e.flapHist, designID, fp)
+	hist := append([]string(nil), e.flapHist[designID]...)
 	e.mu.Unlock()
 	if flap {
 		e.log.Warnf("flapping detected for design %s", designID)
 		return ErrFlappingDetected(designID)
 	}
-	if hist := e.flapHist[designID]; len(hist) >= 3 && hist[len(hist)-1] == hist[len(hist)-3] && hist[len(hist)-1] != hist[len(hist)-2] {
+	if len(hist) >= 3 && hist[len(hist)-1] == hist[len(hist)-3] && hist[len(hist)-1] != hist[len(hist)-2] {
 		e.log.Warnf("flapping candidate for design %s (1 inversion)", designID)
 	}
 	return nil
