@@ -1135,6 +1135,13 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			}
 		}
 
+		// Auto-detect registrant type from URL
+		if importRequest.ImportBody.Url != "" {
+			if strings.Contains(importRequest.ImportBody.Url, "github.com") || strings.Contains(importRequest.ImportBody.Url, "githubusercontent.com") {
+				model.Registrant = "github"
+			}
+		}
+
 		pkg, version, err := meshkitRegistryUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error generating model")
