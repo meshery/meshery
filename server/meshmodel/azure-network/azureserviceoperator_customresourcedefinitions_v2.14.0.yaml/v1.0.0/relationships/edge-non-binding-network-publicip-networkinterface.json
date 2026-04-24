@@ -12,7 +12,7 @@
         }
     },
     "model": {
-        "displayName": "",
+        "displayName": "Azure Network",
         "id": "00000000-0000-0000-0000-000000000000",
         "model": {
             "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
@@ -21,7 +21,7 @@
         "registrant": {
             "kind": "github"
         },
-        "version": ""
+        "version": "v1.0.0"
     },
     "schemaVersion": "relationships.meshery.io/v1beta2",
     "selectors": [
