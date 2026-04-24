@@ -25,11 +25,11 @@ import (
 
 	mesheryutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/schemas/models/v1beta1/category"
-	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta3"
 
 	_component "github.com/meshery/meshkit/utils/component"
 	"github.com/meshery/meshkit/utils/kubernetes"
@@ -207,7 +207,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 		}
 		apiVersion := crd.apiVersion
 		c := component.ComponentDefinition{
-			SchemaVersion: v1beta1.ComponentSchemaVersion,
+			SchemaVersion: v1beta3.ComponentSchemaVersion,
 			Version:       "v1.0.0",
 
 			Format: component.JSON,
@@ -219,7 +219,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 			Metadata:    compMetadata,
 			DisplayName: manifests.FormatToReadableString(crd.kind),
 			Model: &model.ModelDefinition{
-				SchemaVersion: v1beta1.ModelSchemaVersion,
+				SchemaVersion: v1beta3.ModelSchemaVersion,
 				Version:       "v1.0.0",
 
 				Model: model.Model{

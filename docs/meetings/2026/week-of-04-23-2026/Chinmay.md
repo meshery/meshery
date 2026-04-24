@@ -1,0 +1,1 @@
+Hi, I’m Chinmay, a backend developer with around 1 year of experience. I’m currently exploring the DevOps and SRE space, with a strong focus on Kubernetes, Docker, and Go. I enjoy building systems end-to-end—from APIs to deployment—and I’m actively working on improving my skills in cloud-native technologies and infrastructure.
