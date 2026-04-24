@@ -20,7 +20,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/meshery/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta3/component"
 
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"

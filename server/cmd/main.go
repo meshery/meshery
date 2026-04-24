@@ -39,7 +39,6 @@ import (
 	"github.com/meshery/meshkit/utils/broadcast"
 	"github.com/meshery/meshkit/utils/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	schemasOrganization "github.com/meshery/schemas/models/v1beta2/organization"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
@@ -126,7 +125,7 @@ func main() {
 	viper.SetDefault("SKIP_DOWNLOAD_EXTENSIONS", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
-	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", schemasConnection.MeshsyncDeploymentModeDefault)
+	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", connections.MeshsyncDeploymentModeDefault)
 	store.Initialize()
 
 	// initialize tracing. Skip entirely when OTEL_CONFIG is unset so local dev
@@ -268,12 +267,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	meshsyncDefaultDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromString(
+	meshsyncDefaultDeploymentMode := connections.MeshsyncDeploymentModeFromString(
 		viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
 	)
 
-	if meshsyncDefaultDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
-		meshsyncDefaultDeploymentMode = schemasConnection.MeshsyncDeploymentModeDefault
+	if meshsyncDefaultDeploymentMode == connections.MeshsyncDeploymentModeUndefined {
+		meshsyncDefaultDeploymentMode = connections.MeshsyncDeploymentModeDefault
 	}
 
 	lProv := &models.DefaultLocalProvider{

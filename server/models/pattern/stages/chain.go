@@ -4,8 +4,8 @@ import (
 	"sync"
 
 	"github.com/meshery/schemas/models/core"
-	"github.com/meshery/schemas/models/v1beta1/component"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/component"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 )
 
 // Data is the struct that will be passed on each stage

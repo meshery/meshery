@@ -163,24 +163,21 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			}
 			err = websiteSystem()
 		default:
-			err = fmt.Errorf("invalid system: %s", system) // update to meshkit
+			return ErrPublish(fmt.Errorf("invalid system: %s", system), system)
 		}
 
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrPublish(err, system)
 		}
 
 		err = modelCSVHelper.Cleanup()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrPublish(err, system)
 		}
 
 		err = componentCSVHelper.Cleanup()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrPublish(err, system)
 		}
 
 		return nil
