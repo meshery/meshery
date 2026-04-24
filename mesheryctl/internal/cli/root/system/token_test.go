@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -59,6 +60,7 @@ func TestTokenCreateCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			utils.SetupCustomContextEnv(t, currDir+"/testdata/token/"+tt.ExpectedResponseYaml)
+			mesheryctlflags.InitValidators(SystemCmd)
 
 			// Expected response
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
@@ -146,6 +148,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			utils.SetupCustomContextEnv(t, currDir+"/testdata/token/"+tt.ExpectedResponseYaml)
+			mesheryctlflags.InitValidators(SystemCmd)
 			var b *bytes.Buffer
 
 			// Expected response
@@ -246,6 +249,7 @@ func TestTokenSetCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			utils.SetupCustomContextEnv(t, currDir+"/testdata/token/"+tt.ExpectedResponseYaml)
+			mesheryctlflags.InitValidators(SystemCmd)
 			var b *bytes.Buffer
 
 			// Expected response
@@ -310,6 +314,7 @@ func TestTokenSetCmd(t *testing.T) {
 		})
 	}
 }
+
 func TestTokenViewCmd(t *testing.T) {
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
@@ -318,6 +323,7 @@ func TestTokenViewCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 	utils.SetupCustomContextEnv(t, currDir+"/testdata/token/view.yaml")
+	mesheryctlflags.InitValidators(SystemCmd)
 	tests := []utils.CmdTestInput{
 		{
 			Name:             "view the default2 token",
@@ -462,10 +468,11 @@ func TestTokenCreateUsesActiveConfigPath(t *testing.T) {
 	})
 
 	utils.SetupCustomContextEnv(t, activeConfigPath)
+	mesheryctlflags.InitValidators(SystemCmd)
 	utils.DefaultConfigPath = defaultConfigPath
-	tokenPath = ""
-	set = false
-	ctx = ""
+	tokenCreateFlags.Filepath = ""
+	tokenCreateFlags.Set = false
+	tokenSetFlags.Context = ""
 
 	b := utils.SetupMeshkitLoggerTesting(t, false)
 	SystemCmd.SetOut(b)
