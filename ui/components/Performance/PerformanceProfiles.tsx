@@ -184,8 +184,8 @@ function PerformanceProfile({ handleDelete }) {
   let colViews = [
     ['name', 'xs'],
     ['endpoints', 'l'],
-    ['last_run', 'l'],
-    ['next_run', 'na'],
+    ['lastRun', 'l'],
+    ['nextRun', 'na'],
     ['updated_at', 'l'],
     ['Actions', 'xs'],
   ];
@@ -230,7 +230,7 @@ function PerformanceProfile({ handleDelete }) {
       },
     },
     {
-      name: 'last_run',
+      name: 'lastRun',
       label: 'Last Run',
       options: {
         filter: false,
@@ -252,7 +252,7 @@ function PerformanceProfile({ handleDelete }) {
       },
     },
     {
-      name: 'next_run',
+      name: 'nextRun',
       label: 'Next Run',
       options: {
         filter: false,

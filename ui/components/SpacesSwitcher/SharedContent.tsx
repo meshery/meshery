@@ -106,7 +106,7 @@ const SharedContent = () => {
       search: filters.searchQuery,
       visibility: filters.visibility,
       shared: true,
-      user_id: filters.author,
+      userId: filters.author,
     },
     {
       skip: filters.type !== RESOURCE_TYPE.DESIGN,
@@ -125,7 +125,7 @@ const SharedContent = () => {
       order: filters.sortBy,
       visibility: filters.visibility,
       search: filters.searchQuery,
-      user_id: filters.author,
+      userId: filters.author,
       shared: true,
     },
     {

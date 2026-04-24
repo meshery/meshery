@@ -22,7 +22,7 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/core"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 )
 
 // FileToImport is the internal tuple of bytes + filename that the
@@ -339,8 +339,14 @@ func (h *Handler) DesignFileImportHandler(
 	// the request — leaving it unset should preserve whatever name the
 	// import pipeline parsed out of the source file (e.g. `metadata.name`
 	// from a design YAML, or the derived name from a Kubernetes manifest).
+	// Fall back to the filename (without extension) when neither the caller
+	// nor the conversion produced a name.
 	if variant.Name != "" {
 		design.Name = variant.Name
+	} else if design.Name == "" {
+		if name := pCore.DesignNameFromFileName(fileToImport.FileName); name != "" {
+			design.Name = name
+		}
 	}
 	patternFile, err := encoding.Marshal(design)
 

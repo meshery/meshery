@@ -60,7 +60,8 @@ PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provide
 #-----------------------------------------------------------------------------
 MESHERY_K8S_SKIP_COMP_GEN ?= TRUE
 APPLICATIONCONFIGPATH="./apps.json"
-PORT:=9081
+PORT ?= 9081
+USE_GO_POLICY_ENGINE ?= true
 # OpenTelemetry Config (Ansi-C string format). Defaults to empty so tracing
 # is disabled unless a developer explicitly points it at a live collector.
 # Previously this defaulted to localhost:4317 which floods logs with

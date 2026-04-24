@@ -1,9 +1,22 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 )
+
+// writeJSONError writes a JSON-encoded {"error": message} body with the given
+// HTTP status. Using JSON (instead of http.Error's plain text) keeps client
+// response parsers — notably RTK Query's default baseQuery, which parses by
+// Content-Type and treats application/json as JSON — from choking on error
+// bodies that happen to start with a letter (e.g. "WorkspaceID or OrgID ...").
+func writeJSONError(w http.ResponseWriter, message string, status int) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(status)
+	_ = json.NewEncoder(w).Encode(map[string]string{"error": message})
+}
 
 const (
 	defaultPageSize = 25

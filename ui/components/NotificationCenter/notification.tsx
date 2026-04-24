@@ -407,14 +407,14 @@ export const Notification = ({ event_id }) => {
               style={{ paddingRight: '0.25rem' }}
             />
           </GridItem>
-          <GridItem item xs={8} sm>
-            <Message variant="body1">
+          <GridItem item xs>
+            <Message variant="body1" style={{ paddingRight: '1rem' }}>
               {truncate(title, {
                 length: MAX_NOTIFICATION_DESCRIPTION_LENGTH,
               })}
             </Message>
           </GridItem>
-          <GridItem item xs="auto" style={{ justifyContent: 'end', gap: '0rem' }}>
+          <GridItem item xs="auto" style={{ gap: '0.5rem', marginLeft: 'auto', flexShrink: 0 }}>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
               <FormattedTime date={event.created_at} />
             </Box>

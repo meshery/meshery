@@ -13,7 +13,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/schemas/models/v1beta1/capability"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta3/component"
 
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"

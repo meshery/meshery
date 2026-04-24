@@ -64,19 +64,6 @@ func (maap *MesheryApplicationPersister) DeleteMesheryApplication(id core.Uuid) 
 	return marshalMesheryApplication(&application), err
 }
 
-func (maap *MesheryApplicationPersister) SaveMesheryApplication(application *MesheryApplication) ([]byte, error) {
-	if application.ID == nil {
-		id, err := uuid.NewV4()
-		if err != nil {
-			return nil, ErrGenerateUUID(err)
-		}
-
-		application.ID = &id
-	}
-
-	return marshalMesheryApplications([]MesheryApplication{*application}), maap.DB.Save(application).Error
-}
-
 // SaveMesheryApplications batch inserts the given applications
 func (maap *MesheryApplicationPersister) SaveMesheryApplications(applications []MesheryApplication) ([]byte, error) {
 	finalApplications := []MesheryApplication{}

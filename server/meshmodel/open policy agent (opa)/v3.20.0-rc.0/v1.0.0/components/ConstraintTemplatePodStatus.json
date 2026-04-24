@@ -204,6 +204,7 @@
     "kind": "ConstraintTemplatePodStatus",
     "schema": "{\n \"description\": \"ConstraintTemplatePodStatus is the Schema for the constrainttemplatepodstatuses API.\",\n \"properties\": {},\n \"title\": \"Constraint Template Pod Status\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

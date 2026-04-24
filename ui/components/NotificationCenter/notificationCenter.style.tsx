@@ -259,4 +259,5 @@ export const Summary = styled(Grid)(({ notificationcolor }) => ({
   paddingBlock: '0.5rem',
   cursor: 'pointer',
   backgroundColor: alpha(notificationcolor, 0.2),
+  alignItems: 'center',
 }));
