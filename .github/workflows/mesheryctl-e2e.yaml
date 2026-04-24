@@ -122,7 +122,7 @@ jobs:
         if: ${{ !cancelled() && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' && inputs.publish_to_qa == 'true')) }}
         working-directory: qa
         run: |
-          make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl/allure-results
+          make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl/allure-results/end2end
 
       - name: Commit & push to qa
         if: ${{ !cancelled() && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' && inputs.publish_to_qa == 'true')) }}

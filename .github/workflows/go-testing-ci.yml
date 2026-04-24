@@ -154,7 +154,7 @@ jobs:
       - name: Sync results with qa
         if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
         working-directory: qa
-        run: make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl-allure-results
+        run: make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl-allure-results/unit-test
 
       - name: Pull latest qa changes
         if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
