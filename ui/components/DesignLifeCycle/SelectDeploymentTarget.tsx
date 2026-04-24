@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   useGetEnvironmentConnectionsQuery,
   useGetEnvironmentsQuery,
@@ -26,7 +27,7 @@ import {
   selectSelectedK8sConnections,
 } from '@/store/slices/globalEnvironmentContext';
 import { Button } from '@sistent/sistent';
-import { AddIcon } from '@sistent/sistent';
+import { AddIcon, AddCircleIcon } from '@sistent/sistent';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const DeploymentTargetContext = createContext({
@@ -34,6 +35,12 @@ export const DeploymentTargetContext = createContext({
   connectionMetadataState: null,
   organization: null,
 });
+
+const InlineButton = styled(Button)(() => ({
+  textTransform: 'none',
+  minHeight: 'unset',
+  padding: '2px 4.5px',
+}));
 
 const StyledEnvironmentCard = styled(Box)(({ theme }) => ({
   borderRadius: '0.5rem',
@@ -70,11 +77,23 @@ const K8sContextConnection = ({ connection, environment }) => {
   );
 };
 
-const EnvironmentConnections = ({ environment, connections }) => {
+const EnvironmentConnections = ({ environment, connections, onAddConnection }) => {
+  const theme = useTheme();
   if (!connections || connections.length === 0) {
     return (
       <Box display="flex" alignItems="center" justifyContent="center" width="100%" py={2}>
-        No connections configured. Add a connection to get started.
+        <Typography variant="textB1Regular">
+          No connections configured.{' '}
+          <InlineButton
+            variant="contained"
+            color="primary"
+            onClick={onAddConnection}
+            startIcon={<AddCircleIcon />}
+          >
+            Add a connection
+          </InlineButton>{' '}
+          to get started.
+        </Typography>
       </Box>
     );
   }
@@ -91,7 +110,7 @@ const EnvironmentConnections = ({ environment, connections }) => {
   );
 };
 
-const EnvironmentCard = ({ environment }) => {
+const EnvironmentCard = ({ environment, onAddConnection }) => {
   const theme = useTheme();
   const { data, isLoading } = useGetEnvironmentConnectionsQuery({
     environmentId: environment.id,
@@ -129,7 +148,11 @@ const EnvironmentCard = ({ environment }) => {
         {isLoading ? (
           <Loading />
         ) : (
-          <EnvironmentConnections environment={environment} connections={connections} />
+          <EnvironmentConnections
+            environment={environment}
+            connections={connections}
+            onAddConnection={onAddConnection}
+          />
         )}
       </Box>
     </StyledEnvironmentCard>
@@ -160,6 +183,7 @@ export const EnvironmentsEmptyState = ({ message, onButtonClick }) => {
 };
 
 export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
+  const theme = useTheme();
   const organization = useContext(DeploymentTargetContext).organization;
   const { data, isLoading, isError } = useGetEnvironmentsQuery({ orgId: organization.id });
   const environments = data?.environments || [];
@@ -182,7 +206,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
                 onClick={() => setIsEnvrionmentModalOpen(true)}
                 aria-label="edit-environments"
               >
-                <Edit />
+                <Edit fill={theme.palette.icon.default} />
               </IconButton>
             </div>
           </CustomTooltip>
@@ -197,7 +221,11 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
 
       <Stack spacing={2}>
         {environments.map((env) => (
-          <EnvironmentCard key={env.id} environment={env} />
+          <EnvironmentCard
+            key={env.id}
+            environment={env}
+            onAddConnection={() => setIsEnvrionmentModalOpen(env)}
+          />
         ))}
       </Stack>
     </Stack>
