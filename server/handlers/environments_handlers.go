@@ -2,15 +2,57 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 )
+
+// environmentPayloadWire is a handler-local dual-accept wrapper around
+// environment.EnvironmentPayload. The schemas-generated struct tags
+// OrgId as json:"organization_id" (required by the current published
+// v1beta1 contract), but the canonical wire contract and every in-repo
+// consumer now emit the camelCase `organizationId`. Because Go's
+// encoding/json case-insensitive tag fallback will not match across an
+// underscore boundary, a struct tagged `organization_id` would silently
+// drop a JSON key of `organizationId`. This wrapper intercepts both
+// spellings during the Phase 2 deprecation window. Canonical wins when
+// both are present. Retire once schemas v1beta2 flips the tag and this
+// handler consumes the new version.
+type environmentPayloadWire struct {
+	environment.EnvironmentPayload
+}
+
+func (p *environmentPayloadWire) UnmarshalJSON(data []byte) error {
+	type alias environment.EnvironmentPayload
+	aux := struct {
+		*alias
+		OrgIdCamel  *openapi_types.UUID `json:"organizationId,omitempty"`
+		OrgIdSnake  *openapi_types.UUID `json:"organization_id,omitempty"`
+	}{alias: (*alias)(&p.EnvironmentPayload)}
+
+	// Zero OrgId so a reused receiver does not carry stale data when the
+	// next payload omits both spellings.
+	p.OrgId = openapi_types.UUID{}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	// Canonical wins when both are supplied.
+	switch {
+	case aux.OrgIdCamel != nil:
+		p.OrgId = *aux.OrgIdCamel
+	case aux.OrgIdSnake != nil:
+		p.OrgId = *aux.OrgIdSnake
+	}
+	return nil
+}
 
 func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
@@ -23,7 +65,8 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 
 	orgID := q.Get("orgId")
 	if orgID == "" {
-		http.Error(w, "orgId is required", http.StatusBadRequest)
+		h.log.Error(errors.New("orgId is required"))
+		writeJSONError(w, "orgId is required", http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
@@ -44,7 +87,8 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	q := r.URL.Query()
 	orgID := q.Get("orgId")
 	if orgID == "" {
-		http.Error(w, "orgId is required", http.StatusBadRequest)
+		h.log.Error(errors.New("orgId is required"))
+		writeJSONError(w, "orgId is required", http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetEnvironmentByID(r, environmentID, orgID)
@@ -68,8 +112,8 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 		return
 	}
 
-	environment := environment.EnvironmentPayload{}
-	err = json.Unmarshal(bd, &environment)
+	wire := environmentPayloadWire{}
+	err = json.Unmarshal(bd, &wire)
 	obj := "environment"
 
 	if err != nil {
@@ -78,6 +122,7 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 		return
 	}
 
+	environment := wire.EnvironmentPayload
 	resp, err := provider.SaveEnvironment(req, &environment, "", false)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
@@ -119,8 +164,8 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	environment := environment.EnvironmentPayload{}
-	err = json.Unmarshal(bd, &environment)
+	wire := environmentPayloadWire{}
+	err = json.Unmarshal(bd, &wire)
 	obj := "environment"
 
 	if err != nil {
@@ -129,6 +174,7 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
+	environment := wire.EnvironmentPayload
 	resp, err := provider.UpdateEnvironment(req, &environment, environmentID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))

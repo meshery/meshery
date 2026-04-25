@@ -17,6 +17,7 @@ var (
 	ErrGenerationTimeoutCode     = "mesheryctl-1129"
 	ErrParsingRelationshipCode   = "mesheryctl-1130"
 	ErrModelGenerationFailedCode = "mesheryctl-1159"
+	ErrPublishCode               = "mesheryctl-1231"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
@@ -49,6 +50,10 @@ func ErrGenerationTimeout(duration time.Duration) error {
 
 func ErrParsingRelationship(err error, modelName string) error {
 	return errors.New(ErrParsingRelationshipCode, errors.Alert, []string{fmt.Sprintf("error parsing relationships for model: %s", modelName)}, []string{err.Error()}, []string{"Invalid relationship definition format", "Missing required relationship fields", "Malformed selector in relationship"}, []string{"Verify the relationship CSV format", "Check that all required fields are present", "Validate the selector JSON syntax"})
+}
+
+func ErrPublish(err error, system string) error {
+	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("error publishing to %s", system)}, []string{err.Error()}, []string{"Invalid system specified", "Publishing process encountered an error"}, []string{"Ensure a valid system is provided (meshery, remote-provider, website)", "Check the publishing configuration and try again"})
 }
 
 func ErrModelGenerationFailed(modelName string, err error) error {

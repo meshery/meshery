@@ -9,7 +9,7 @@ import (
 	meshkitBroker "github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta3/component"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )

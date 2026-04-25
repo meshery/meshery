@@ -2,11 +2,19 @@
 package models
 
 import (
+	stderrors "errors"
 	"fmt"
 	"time"
 
 	"github.com/meshery/meshkit/errors"
 )
+
+// ErrUserIsSystemInstance is returned by Provider.GetUserByID when the
+// requested userID matches this Meshery instance's own INSTANCE_ID. Callers
+// can use errors.Is to detect the sentinel and return a policy-appropriate
+// response (e.g. a 204 so the UI renders a "system" placeholder) instead of
+// conflating it with a missing user.
+var ErrUserIsSystemInstance = stderrors.New("requested ID is the Meshery instance's system UUID, not a user")
 
 // Please reference the following before contributing an error code:
 // https://docs.meshery.io/project/contributing/contributing-error
@@ -616,6 +624,19 @@ func ErrMeshsyncDataHandler(err error) error {
 	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
 }
 
+// ErrWorkspaceMissingInput is used by both the list-workspaces handler
+// (which requires only orgId from the query string) and the
+// get-workspace-by-id handler (which reads workspaceId from the URL path
+// and orgId from the query string). The message is kept generic so the
+// same constructor fits both call sites; callers may log the specific
+// missing field alongside this error for clarity.
 func ErrWorkspaceMissingInput() error {
-	return errors.New(ErrWorkspaceMissingInputCode, errors.Alert, []string{"Invalid input for workspace operation"}, []string{"WorkspaceID or OrgID cannot be empty"}, []string{"The workspace ID and organization ID are required for this operation."}, []string{"Ensure that both WorkspaceID and OrgID are provided and not empty."})
+	return errors.New(
+		ErrWorkspaceMissingInputCode,
+		errors.Alert,
+		[]string{"Invalid input for workspace operation"},
+		[]string{"a required workspace input was not provided (orgId is required; workspaceId is required for single-workspace operations)"},
+		[]string{"Required workspace input values were not provided for this operation."},
+		[]string{"Ensure orgId is provided as a query parameter (and workspaceId is provided in the URL path for single-workspace operations)."},
+	)
 }

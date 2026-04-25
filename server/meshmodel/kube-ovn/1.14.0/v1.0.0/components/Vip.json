@@ -204,6 +204,7 @@
     "kind": "Vip",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"attachSubnets\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"macAddress\": {\n     \"type\": \"string\"\n    },\n    \"namespace\": {\n     \"type\": \"string\"\n    },\n    \"selector\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"subnet\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"type\": \"string\"\n    },\n    \"v4ip\": {\n     \"type\": \"string\"\n    },\n    \"v6ip\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vip\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

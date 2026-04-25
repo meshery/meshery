@@ -12,7 +12,7 @@ import (
 	"github.com/meshery/meshkit/generators/artifacthub"
 
 	meshkitmodels "github.com/meshery/meshkit/generators/models"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 )
 

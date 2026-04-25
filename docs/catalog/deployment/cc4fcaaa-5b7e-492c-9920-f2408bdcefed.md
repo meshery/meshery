@@ -3,7 +3,7 @@ layout: item
 name: LoxiLB 5G Load Balancer & LBO architecture
 publishedVersion: 0.0.1
 userId: 79c5452f-2f36-412e-a5c5-e09794b15055
-userName: Dominic Fatonade
+userName:  
 userAvatarURL: 
 type: deployment
 compatibility: 
