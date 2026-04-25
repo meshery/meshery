@@ -148,7 +148,6 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			&models.MesheryPattern{},
 			&models.MesheryFilter{},
 			&models.PatternResource{},
-			&models.MesheryApplication{},
 			&models.UserPreference{},
 			&models.PerformanceTestConfig{},
 			&models.SmiResultWithID{},

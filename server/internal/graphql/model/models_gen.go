@@ -27,25 +27,6 @@ type AddonStatusInput struct {
 	TargetStatus Status    `json:"targetStatus"`
 }
 
-type ApplicationPage struct {
-	Page         int                  `json:"page"`
-	PageSize     int                  `json:"page_size"`
-	TotalCount   int                  `json:"total_count"`
-	Applications []*ApplicationResult `json:"applications,omitempty"`
-}
-
-type ApplicationResult struct {
-	ID              string      `json:"id"`
-	Name            string      `json:"name"`
-	ApplicationFile string      `json:"application_file"`
-	Type            *NullString `json:"type"`
-	UserID          string      `json:"user_id"`
-	Location        *Location   `json:"location"`
-	Visibility      string      `json:"visibility"`
-	CreatedAt       *string     `json:"created_at,omitempty"`
-	UpdatedAt       *string     `json:"updated_at,omitempty"`
-}
-
 type CatalogFilter struct {
 	ID             string         `json:"id"`
 	Name           string         `json:"name"`
@@ -91,9 +72,8 @@ type ClusterResources struct {
 }
 
 type ConfigurationPage struct {
-	Applications *ApplicationPage   `json:"applications,omitempty"`
-	Patterns     *PatternPageResult `json:"patterns,omitempty"`
-	Filters      *FilterPage        `json:"filters,omitempty"`
+	Patterns *PatternPageResult `json:"patterns,omitempty"`
+	Filters  *FilterPage        `json:"filters,omitempty"`
 }
 
 type Container struct {

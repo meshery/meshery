@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"bytes"
-
 	"github.com/go-openapi/strfmt"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models"
@@ -232,25 +230,6 @@ type mesheryVersionRespWrapper struct {
 	Body Version
 }
 
-type applicationFilesResponseWrapper struct {
-	// in: body
-	Body *models.MesheryApplication
-}
-
-type applicationFileParamsWrapper struct {
-	FormFile *bytes.Buffer `json:"Upload Yaml/Yml File"`
-}
-
-type mesheryApplicationResponseWrapper struct {
-	// in: body
-	Body models.MesheryApplication
-}
-
-type mesheryApplicationsResponseWrapper struct {
-	// in: body
-	Body models.ApplicationsAPIResponse
-}
-
 type mesheryAdaptersRespWrapper struct {
 	// in: body
 	Body []*models.Adapter
@@ -342,11 +321,6 @@ type systemK8sContextsResponseWrapper struct {
 type smiResultsResponseWrapper struct {
 	// in: body
 	Body *models.SmiResultPage
-}
-
-type mesheryApplicationTypesResponseWrapper struct {
-	// in: body
-	Body []models.ApplicationTypeResponse
 }
 
 type mesheryConnectionResponseWrapper struct {
@@ -473,10 +447,6 @@ var (
 	_ listProvidersRespWrapper
 	_ providerPropertiesRespWrapper
 	_ mesheryVersionRespWrapper
-	_ applicationFilesResponseWrapper
-	_ applicationFileParamsWrapper
-	_ mesheryApplicationResponseWrapper
-	_ mesheryApplicationsResponseWrapper
 	_ mesheryAdaptersRespWrapper
 	_ mesheryAdapterParamsWrapper
 	_ adapterOpsParamsWrapper
@@ -495,7 +465,6 @@ var (
 	_ systemDatabaseResponseWrapper
 	_ systemK8sContextsResponseWrapper
 	_ smiResultsResponseWrapper
-	_ mesheryApplicationTypesResponseWrapper
 	_ mesheryConnectionResponseWrapper
 	_ mesheryConnectionsResponseWrapper
 	_ mesheryConnectionsStatusPage

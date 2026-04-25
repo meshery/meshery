@@ -29,12 +29,10 @@ export const NETWORK_SM = 'network_service_mesh';
 export const NIGHTHAWK = 'nighthawk';
 
 export const FILTER = 'filter';
-export const APPLICATION = 'application';
 export const PATTERN = 'pattern';
 export const DESIGN = 'design';
 export const WORKLOAD = 'workload';
 export const FILTER_PLURAL = 'filters';
-export const APPLICATION_PLURAL = 'applications';
 export const PATTERN_PLURAL = 'patterns';
 
 export const CATALOG = 'catalog';

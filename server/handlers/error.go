@@ -56,7 +56,6 @@ const (
 	ErrMeshClientCode                      = "meshery-server-1045"
 	ErrApplyChangeCode                     = "meshery-server-1046"
 	ErrRetrieveMeshDataCode                = "meshery-server-1047"
-	ErrApplicationFailureCode              = "meshery-server-1048"
 	ErrDecodingCode                        = "meshery-server-1049"
 	ErrRetrieveUserTokenCode               = "meshery-server-1050"
 	ErrFailToSaveCode                      = "meshery-server-1051"
@@ -94,7 +93,6 @@ const (
 	ErrFetchFilterCode                     = "meshery-server-1083"
 	ErrDeleteFilterCode                    = "meshery-server-1084"
 	ErrSavePatternCode                     = "meshery-server-1085"
-	ErrSaveApplicationCode                 = "meshery-server-1086"
 	ErrGetPatternCode                      = "meshery-server-1087"
 	ErrDeletePatternCode                   = "meshery-server-1088"
 	ErrFetchPatternCode                    = "meshery-server-1089"
@@ -107,8 +105,6 @@ const (
 	ErrInvalidKubeHandlerCode              = "meshery-server-1096"
 	ErrInvalidKubeContextCode              = "meshery-server-1097"
 	ErrValidateCode                        = "meshery-server-1098"
-	ErrApplicationContentCode              = "meshery-server-1099"
-	ErrRemoteApplicationURLCode            = "meshery-server-1100"
 	ErrClonePatternCode                    = "meshery-server-1101"
 	ErrCloneFilterCode                     = "meshery-server-1102"
 	ErrGenerateComponentsCode              = "meshery-server-1103"
@@ -124,8 +120,6 @@ const (
 	ErrDownlaodWASMFileCode                = "meshery-server-1113"
 	ErrFetchProfileCode                    = "meshery-server-1114"
 	ErrPerformanceTestCode                 = "meshery-server-1115"
-	ErrFetchApplicationCode                = "meshery-server-1116"
-	ErrDeleteApplicationCode               = "meshery-server-1117"
 	ErrGetEventsCode                       = "meshery-server-1118"
 	ErrUpdateEventCode                     = "meshery-server-1119"
 	ErrDeleteEventCode                     = "meshery-server-1120"
@@ -343,14 +337,6 @@ func ErrRetrieveMeshData(err error) error {
 	return errors.New(ErrRetrieveMeshDataCode, errors.Alert, []string{"Error getting operations for the adapter.", "Error getting component name."}, []string{err.Error()}, []string{"Unable to retrieve the requested data."}, []string{"Make sure adapter is reachable and running."})
 }
 
-func ErrApplicationFailure(err error, obj string) error {
-	return errors.New(ErrApplicationFailureCode, errors.Alert, []string{"failed to ", obj, "the application"}, []string{err.Error()}, []string{"uploaded application source content might be converted", "incorrect source type selected"}, []string{"Select the correct source type", "Make sure the uploaded application source content is valid"})
-}
-
-func ErrApplicationSourceContent(err error, obj string) error {
-	return errors.New(ErrApplicationContentCode, errors.Alert, []string{"failed to ", obj, "the application content"}, []string{err.Error()}, []string{"Remote provider might be not reachable", "Remote provider doesn't support this capability"}, []string{"Ensure you have required permissions or retry after sometime."})
-}
-
 func ErrDesignSourceContent(err error, obj string) error {
 	return errors.New(ErrDesignSourceContentCode, errors.Alert, []string{"failed to ", obj, "the design content"}, []string{err.Error()}, []string{"Remote provider might be not reachable.", "Remote provider doesn't support this capability."}, []string{"Ensure you have required permissions or retry after sometime."})
 }
@@ -474,18 +460,6 @@ func ErrSavePattern(err error) error {
 	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save design."}, []string{err.Error()}, []string{"Cannot save the design due to an invalid path or URL"}, []string{"Verify that you have an active user session. Try logging and in again.", "Confirm that you have sufficient permissions to save the design.", "Try reducing the size of the design file by removing the number of images, using alternative image formats or removing other non-critical components from the design. See https://docs.layer5.io/kanvas/advanced/performance/."})
 }
 
-func ErrSaveApplication(err error) error {
-	return errors.New(ErrSaveApplicationCode, errors.Alert, []string{"Error failed to save application."}, []string{err.Error()}, []string{"Cannot save the Application due to wrong path or URL."}, []string{"Check if the given path or URL of the Application is correct."})
-}
-
-func ErrFetchApplication(err error) error {
-	return errors.New(ErrFetchApplicationCode, errors.Alert, []string{"Error failed to fetch applications"}, []string{err.Error()}, []string{"Remote provider might be not reachable.", "Token might have expired."}, []string{"Refresh your browser"})
-}
-
-func ErrDeleteApplication(err error) error {
-	return errors.New(ErrDeleteApplicationCode, errors.Alert, []string{"Error failed to delete application"}, []string{err.Error()}, []string{"Application might already have been deleted", "You might not have enough permissions to perform the operation."}, []string{"Check the owner of the application."})
-}
-
 func ErrGetPattern(err error) error {
 	return errors.New(ErrGetPatternCode, errors.Alert, []string{"Error failed to get design"}, []string{err.Error()}, []string{"Cannot get the design with the given design ID"}, []string{"Check if the given design ID is correct"})
 }
@@ -520,10 +494,6 @@ func ErrParsePattern(err error) error {
 
 func ErrConvertPattern(err error) error {
 	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Error failed to convert design file to Cytoscape object"}, []string{err.Error()}, []string{}, []string{})
-}
-
-func ErrRemoteApplication(err error) error {
-	return errors.New(ErrRemoteApplicationURLCode, errors.Alert, []string{"Error failed to persist remote application"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrClonePattern(err error) error {

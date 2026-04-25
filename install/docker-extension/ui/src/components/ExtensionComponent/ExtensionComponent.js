@@ -32,7 +32,7 @@ import {
   PublishCard,
 } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
-import { randomApplicationNameGenerator } from "../../utils";
+import { randomDesignNameGenerator } from "../../utils";
 import CatalogChart from "../Catalog/Chart";
 import {
   CatalogCard,
@@ -315,10 +315,14 @@ const ExtensionsComponent = () => {
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
       let body = { save: true };
-      let name = randomApplicationNameGenerator();
+      let name = randomDesignNameGenerator();
+      // The MesheryApplication construct has been retired; compose imports
+      // now flow through the design pipeline using the docker-compose
+      // source-type, which produces the same Helm/Compose/k8s-manifest
+      // ingest path. The server route is /api/pattern/{sourcetype}.
       body = JSON.stringify({
         ...body,
-        application_data: { name, application_file: event.target.result },
+        pattern_data: { name, pattern_file: event.target.result },
       });
       if (!(type.includes(".yaml") || type.includes(".yml"))) {
         window.ddClient.desktopUI.toast.error(
@@ -327,7 +331,7 @@ const ExtensionsComponent = () => {
         return;
       }
 
-      fetch(proxyUrl + "/api/application", {
+      fetch(proxyUrl + "/api/pattern/docker-compose", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",

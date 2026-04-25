@@ -1754,7 +1754,7 @@ func (h *Handler) handlePatternUpdate(
 		http.Error(rw, "missing route variable \"source-type\"", http.StatusBadRequest)
 
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSaveApplication(fmt.Errorf("missing route variable \"source-type\" (one of %s, %s, %s)", models.K8sManifest, models.DockerCompose, models.HelmChart)),
+			"error": ErrSavePattern(fmt.Errorf("missing route variable \"source-type\" (one of %s, %s, %s)", models.K8sManifest, models.DockerCompose, models.HelmChart)),
 		}).WithDescription("Please provide design source-type").Build()
 
 		_ = provider.PersistEvent(*event, token)
@@ -1785,8 +1785,8 @@ func (h *Handler) handlePatternUpdate(
 	}
 	resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 	if err != nil {
-		errAppSave := ErrSaveApplication(err)
-		h.log.Error(errAppSave)
+		errSave := ErrSavePattern(err)
+		h.log.Error(errSave)
 
 		rw.WriteHeader(http.StatusBadRequest)
 		if _, writeErr := fmt.Fprintf(rw, "%s", err); writeErr != nil {
@@ -1794,7 +1794,7 @@ func (h *Handler) handlePatternUpdate(
 		}
 
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": errAppSave,
+			"error": errSave,
 		}).WithDescription(fmt.Sprintf("Error saving design %s", parsedBody.PatternData.Name)).Build()
 
 		_ = provider.PersistEvent(*event, token)
@@ -1891,8 +1891,8 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 	rw.Header().Set("Content-Type", mimeType)
 	_, err = io.Copy(rw, reader)
 	if err != nil {
-		h.log.Error(ErrApplicationSourceContent(err, "download"))
-		http.Error(rw, ErrApplicationSourceContent(err, "download").Error(), http.StatusInternalServerError)
+		h.log.Error(ErrDesignSourceContent(err, "download"))
+		http.Error(rw, ErrDesignSourceContent(err, "download").Error(), http.StatusInternalServerError)
 	}
 }
 

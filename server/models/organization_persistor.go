@@ -11,13 +11,12 @@ import (
 	"github.com/meshery/schemas/models/v1beta2/organization"
 )
 
-// MesheryApplicationPersister is the persister for persisting
-// applications on the database
+// OrganizationPersister persists Organizations to the database.
 type OrganizationPersister struct {
 	DB *database.Handler
 }
 
-// GetMesheryApplications returns all of the applications
+// GetOrganizations returns all of the organizations
 func (op *OrganizationPersister) GetOrganizations(search, order string, page, pageSize uint64, updatedAfter string) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
