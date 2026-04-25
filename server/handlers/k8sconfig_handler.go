@@ -195,15 +195,10 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			}
 
 			go func(inst *machines.StateMachine) {
-				defer func() {
-					if r := recover(); r != nil {
-						h.log.Error(ErrPanicRecovery(r))
-					}
-				}()
-
 				event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
 				if err != nil {
 					h.log.Error(err)
+					return
 				}
 				if event != nil {
 					_ = provider.PersistEvent(*event, token)

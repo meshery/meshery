@@ -315,15 +315,10 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
-			defer func() {
-				if r := recover(); r != nil {
-					h.log.Error(ErrPanicRecovery(r))
-				}
-			}()
-
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
 			if err != nil {
 				h.log.Error(err)
+				return
 			}
 			if event != nil {
 				_ = provider.PersistEvent(*event, token)
@@ -383,15 +378,10 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
-			defer func() {
-				if r := recover(); r != nil {
-					h.log.Error(ErrPanicRecovery(r))
-				}
-			}()
-
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
 			if err != nil {
 				h.log.Error(err)
+				return
 			}
 			if event != nil {
 				_ = provider.PersistEvent(*event, token)

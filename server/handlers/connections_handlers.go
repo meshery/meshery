@@ -514,19 +514,9 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 		}
 
 		go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
-			defer func() {
-				if r := recover(); r != nil {
-					h.log.Error(ErrPanicRecovery(r))
-				}
-			}()
-
 			event, err := inst.SendEvent(context, machines.EventType(helpers.StatusToEvent(status)), nil)
 			if err != nil {
 				h.log.Error(err)
-				if event != nil {
-					_ = provider.PersistEvent(*event, token)
-					h.config.EventBroadcaster.Publish(userID, event)
-				}
 				return
 			}
 
