@@ -71,7 +71,9 @@ const StyledIcon = styled('img')(({ theme }) => ({
 
 const RootClass = styled('div')(({ theme }) => ({
   backgroundColor:
-    theme.palette.mode === 'dark' ? theme.palette.background.secondary : theme.palette.background.secondary,
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.secondary
+      : theme.palette.background.secondary,
   marginTop: '1rem',
 }));
 

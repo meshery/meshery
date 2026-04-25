@@ -1,4 +1,3 @@
-import { CONNECTION_STATES } from '../../utils/Enum';
 import { keppel } from '@sistent/sistent';
 import {
   Box,
@@ -252,7 +251,9 @@ export const CustomLabelStyle = styled(StepLabel)(() => ({
 export const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   alternativeLabel: { top: 22 },
   active: { '& $line': { background: theme.palette.primary.main, transition: 'all 1s ease-in' } },
-  completed: { '& $line': { background: theme.palette.primary.main, transition: 'all 1s ease-in' } },
+  completed: {
+    '& $line': { background: theme.palette.primary.main, transition: 'all 1s ease-in' },
+  },
   line: {
     height: 3,
     border: 0,

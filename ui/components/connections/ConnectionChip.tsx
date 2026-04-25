@@ -7,7 +7,6 @@ import {
   DeleteForever as DeleteForeverIcon,
   Handyman as HandymanIcon,
   NotInterestedRounded as NotInterestedRoundedIcon,
-  InfoOutlined as InfoOutlinedIcon,
 } from '@/components/icons';
 import BadgeAvatars from '../CustomAvatar';
 import DisconnectIcon from '../../assets/icons/disconnect';

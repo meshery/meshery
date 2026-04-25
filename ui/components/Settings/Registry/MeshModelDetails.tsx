@@ -10,10 +10,7 @@ import {
   useTheme,
   Button,
 } from '@sistent/sistent';
-import {
-  Download as DownloadIcon,
-  ExpandMore as ExpandMoreIcon,
-} from '../../icons';
+import { Download as DownloadIcon, ExpandMore as ExpandMoreIcon } from '../../icons';
 import { REGISTRY_ITEM_STATES } from '@/utils/Enum';
 import { normalizeStaticImagePath } from '@/utils/fallback';
 import {

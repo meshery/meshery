@@ -2,11 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import {
-  AddIcon,
-  Edit as EditIcon,
-  PlayArrow as PlayArrowIcon,
-} from '../icons';
+import { AddIcon, Edit as EditIcon, PlayArrow as PlayArrowIcon } from '../icons';
 import {
   CustomColumnVisibilityControl,
   Modal,

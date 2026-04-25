@@ -44,6 +44,26 @@ export const BrandColors = {
   linkedin: '#0077b5',
 } as const;
 
+export const Colors = {
+  caribbeanGreen: '#00D3A9',
+  keppelGreen: '#00B39F',
+  charcoal: '#3C494F',
+  mesheryBlue: '#00D3A9',
+  mesheryDarkBlue: '#1E2117',
+  mesheryTeal: '#00B39F',
+  secondary: '#647881',
+  darkRed: '#B32700',
+  whisper: '#F6F8F8',
+  ...BrandColors,
+} as const;
+
+export const notificationColors = {
+  error: '#F91313',
+  warning: '#F0A303',
+  success: '#206D24',
+  info: '#2196F3',
+} as const;
+
 export const RE_JSON_Theme = (themeType: string) => ({
   base00: themeType === 'dark' ? '#303030' : '#ffffff',
   base01: '#444c56',

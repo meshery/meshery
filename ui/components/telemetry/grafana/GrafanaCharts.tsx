@@ -2,7 +2,7 @@ import React, { Suspense, lazy, useState } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@sistent/sistent';
 import { Grid2, ExpansionPanelDetails, Typography, styled } from '@sistent/sistent';
-import { ExpandMore as ExpandMoreIcon, AccessTime as AccessTimeIcon, Close as CloseIcon } from '@/components/icons';
+import { ExpandMore as ExpandMoreIcon } from '@/components/icons';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
 
