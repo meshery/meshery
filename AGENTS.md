@@ -28,14 +28,19 @@ performance management, and multi-tenancy capabilities across any cloud or on-pr
 
 ## Identifier Naming Conventions — MANDATORY
 
+Full canonical directory: <https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md> — the reader-friendly 26-row naming table with before/after and do/don't examples. The inline per-layer forms below remain the repo-scoped authority; the guide is the ecosystem-wide reference.
+
 This repository adheres to the canonical camelCase-wire identifier-naming contract
 defined authoritatively in `meshery/schemas/AGENTS.md § Casing rules at a
 glance`. The contract is **not optional**; deviations should be treated as
 repository policy and corrected before review or merge. The cross-repo
-consumer-audit gate lives in `meshery/schemas` and will flag divergence
-in this repo's server handlers and UI slices when Phase 2 and Phase 3 of
-the migration plan land — see `meshery/schemas/.github/workflows/schema-audit.yml`
-for the authoritative CI job.
+consumer-audit gate lives in `meshery/schemas` and flags divergence in
+this repo's server handlers and UI slices on every PR — the migration
+that armed it is **complete (2026-04-23)** per
+`meshery/schemas/docs/identifier-naming-impact-report.md`. See
+`meshery/schemas/.github/workflows/schema-audit.yml` for the authoritative
+CI job; the consumer-audit was promoted from advisory to **blocking** in
+Phase 4.B.
 
 ### The rule in one sentence
 
@@ -101,6 +106,76 @@ The identifier-naming migration is tracked at
 `meshery/schemas/docs/identifier-naming-migration.md`. All
 contributors — human and AI agents — MUST read this plan before making
 any schema-aware change.
+
+**Status: complete (2026-04-23).** Per
+`meshery/schemas/docs/identifier-naming-impact-report.md`, all 22
+in-scope resources have been migrated to canonical camelCase-on-wire
+versions, the consumer-audit CI gate has been promoted to blocking
+(Phase 4.B), and consumer-audit TypeScript findings against this repo
+are at zero (Phase 2 tail PR #18904 + the per-resource Phase 3 repoint
+PRs #18886, #18888, #18889, #18890, #18894, #18900). This repository's
+side of the migration is therefore **closed**; new work should not
+introduce snake_case wire properties or hand-rolled local Go types
+duplicating canonical schemas types.
+
+#### Server-side post-migration audit (2026-04-23)
+
+A retrospective canonical-conformance audit confirmed that this repo's
+server side is conformant with the contract:
+
+- **Local Go duplicates of canonical schemas types — none requiring
+  retirement.** The named candidates from the migration plan (§2.3) are
+  resolved as follows:
+  - `MesheryPattern` (`server/models/meshery_pattern.go`) — retained as
+    a deliberate **persistence/storage adapter shim**, not a duplicate.
+    The canonical `v1beta3/design.MesheryPattern` expresses the design
+    body as a typed `*PatternFile` struct; the server's storage model
+    persists the design as a YAML/JSON string in a single `pattern_file`
+    column. The local struct is the adapter that bridges the canonical
+    design representation and the server's persisted storage model and
+    cannot be displaced without first restructuring server-side
+    persistence — out of scope for an identifier-naming migration. The
+    five count fields (`viewCount`, `shareCount`, `downloadCount`,
+    `cloneCount`, `deploymentCount`) and `orgId` already wear canonical
+    camelCase JSON tags, and `UnmarshalJSON` dual-accepts the legacy
+    snake_case spellings for the deprecation window per the Phase 2.K
+    cascade contract.
+  - `MesheryPatternRequestBody` — not present locally. Of the two
+    locally defined wrappers, only `MesheryPatternUPDATERequestBody`
+    remains on an active request path; the POST handler uses
+    `DesignPostPayload`, which contains `design.PatternFile`, while
+    `MesheryPatternPOSTRequestBody` is deprecated. These local request
+    shapes dual-accept `patternData` / `pattern_data` wrapper keys per
+    the cascade contract.
+  - `MesheryFilter` (`server/models/meshery_filter.go`) — canonical
+    schemas `v1beta3/design.MesheryFilter` is a placeholder
+    (`map[string]interface{}`), not a typed struct. Local retention is
+    correct until schemas authors a structured filter resource.
+  - `MesheryApplication` (`server/models/meshery_application.go`) — no
+    canonical equivalent exists in `meshery/schemas`. Local retention
+    is correct.
+  - `PerformanceProfile` (`server/models/performance_profiles.go`) — no
+    canonical equivalent exists in `meshery/schemas`. Local retention
+    is correct.
+- **DB-column conformance — all canonical-declared `db:` tags
+  present.** Every column declared via `db:` on
+  `v1beta3/design.MesheryPattern` (`clone_count`, `created_at`,
+  `deployment_count`, `download_count`, `pattern_file`, `share_count`,
+  `updated_at`, `user_id`, `view_count`) has a corresponding gorm-mapped
+  column in `models.MesheryPattern`'s `AutoMigrate` registration in
+  `server/cmd/main.go`. No migration action required.
+- **Consumer audit clean.** The `consumer-audit` blocking CI in
+  `meshery/schemas` reports zero TypeScript findings against this repo
+  post-merge of PR #18904.
+
+**Reviewer guardrail: the residual local types listed above are
+intentional and MUST NOT be flagged as canonical-duplicate violations
+in code review.** They are documented as "intentional request-wrapper
+shims" in the impact report's row 42. If a future change makes
+displacement feasible (e.g., schemas adds a structured `MesheryFilter`
+or the server's persistence model is refactored), the displacement
+should be coordinated cross-repo per `meshery/schemas/AGENTS.md`'s
+"Source of Truth" directive — not unilaterally in this repo.
 
 ## Build & Development Commands
 

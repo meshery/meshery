@@ -2,11 +2,19 @@
 package models
 
 import (
+	stderrors "errors"
 	"fmt"
 	"time"
 
 	"github.com/meshery/meshkit/errors"
 )
+
+// ErrUserIsSystemInstance is returned by Provider.GetUserByID when the
+// requested userID matches this Meshery instance's own INSTANCE_ID. Callers
+// can use errors.Is to detect the sentinel and return a policy-appropriate
+// response (e.g. a 204 so the UI renders a "system" placeholder) instead of
+// conflating it with a missing user.
+var ErrUserIsSystemInstance = stderrors.New("requested ID is the Meshery instance's system UUID, not a user")
 
 // Please reference the following before contributing an error code:
 // https://docs.meshery.io/project/contributing/contributing-error
