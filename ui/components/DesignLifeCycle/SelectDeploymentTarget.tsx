@@ -78,11 +78,10 @@ const K8sContextConnection = ({ connection, environment }) => {
 };
 
 const EnvironmentConnections = ({ environment, connections, onAddConnection }) => {
-  const theme = useTheme();
   if (!connections || connections.length === 0) {
     return (
       <Box display="flex" alignItems="center" justifyContent="center" width="100%" py={2}>
-<Typography variant="textB1Regular" component="div">
+        <Typography variant="textB1Regular" component="div">
           No connections configured.{' '}
           <InlineButton
             variant="contained"
@@ -203,7 +202,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
           <CustomTooltip title="Configure Environments">
             <div>
               <IconButton
-                onClick={() => setIsEnvrionmentModalOpen(true)}
+                onClick={() => setIsEnvrionmentModalOpen(null)}
                 aria-label="edit-environments"
               >
                 <Edit fill={theme.palette.icon.default} />
@@ -215,7 +214,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
       {environments.length === 0 && (
         <EnvironmentsEmptyState
           message="No environments found. Add a new environment."
-          onButtonClick={() => setIsEnvrionmentModalOpen(true)}
+          onButtonClick={() => setIsEnvrionmentModalOpen(null)}
         />
       )}
 
