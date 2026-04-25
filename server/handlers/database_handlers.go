@@ -56,7 +56,6 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	totalTables := len(allTables)
 
-
 	start := offset
 	end := offset + limit
 	if limit == 0 || end > totalTables {
@@ -67,13 +66,13 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	}
 	pagedTables := allTables[start:end]
 
-	var tables []*models.TableSchema
+	var tables []*models.SqliteSchema
 	for _, tableName := range pagedTables {
 		var count int64
 		h.dbHandler.DB.Table(tableName).Count(&count)
 		recordCount += int(count)
 
-		tables = append(tables, &models.TableSchema{
+		tables = append(tables, &models.SqliteSchema{
 			Name:  tableName,
 			Type:  "table",
 			Count: count,
@@ -92,6 +91,7 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	val, err := json.Marshal(databaseSummary)
 	if err != nil {
+		fmt.Println(err)
 		h.log.Error(err)
 		http.Error(w, "Failed to marshal response", http.StatusInternalServerError)
 		return
