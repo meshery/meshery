@@ -3,7 +3,7 @@ layout: item
 name: Kubernetes Service Traffic Distribution
 publishedVersion: 0.0.1
 userId: 47e3b5f6-a705-4cd2-9eb0-1446126fb88f
-userName: Parth Patel
+userName:  
 userAvatarURL: 
 type: deployment
 compatibility: 

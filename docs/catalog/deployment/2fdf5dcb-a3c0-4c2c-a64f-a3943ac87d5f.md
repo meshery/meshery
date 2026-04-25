@@ -3,8 +3,8 @@ layout: item
 name: All relationships
 publishedVersion: 0.0.1
 userId: 830c0932-b05c-4c99-b12b-872f6cf12202
-userName: zihan 2
-userAvatarURL: https://avatars.githubusercontent.com/u/127078886?s=400&u=91e47105e7d418843a4757cd9bd3cc431e29deaf&v=4
+userName:  
+userAvatarURL: 
 type: deployment
 compatibility: 
 

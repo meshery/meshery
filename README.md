@@ -112,7 +112,7 @@ Find infrastructure configuration patterns in Meshery's <a href="https://meshery
 
 ### Multiple Kubernetes Clusters and Multiple Clouds
 
-<img src ="https://meshery.io/assets/images/screens/multi-cluster-management.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" align="center" /><br />
+<img src="https://meshery.io/assets/images/screens/multi-cluster-management.gif" width="50%" alt="Meshery managing multiple Kubernetes clusters across different cloud providers" loading="lazy" align="center" />
 
 Meshery provides a single pane of glass to manage multiple Kubernetes clusters across any infrastructure, including various cloud providers. Meshery enables consistent configuration, operation, and observability across your entire Kubernetes landscape.
 
@@ -134,7 +134,7 @@ Assess your cloud native infrastructure configuration against deployment and ope
 
 Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Meshery intelligently infers the manner in which each resource [interrelates](https://docs.meshery.io/concepts/logical/relationships) with each other. Meshery supports a broad variety of built-in relationships between components, which you can use to create your own custom relationships.
 
-<img src=".github/assets/images/readme/edge_mount_relationship_pod_persistent_volume.svg" width="50%" alt="Multi-cluster Kubernetes Manager" align="center" />
+<img src=".github/assets/images/readme/edge_mount_relationship_pod_persistent_volume.svg" width="50%" alt="Diagram showing Pod and PersistentVolume relationship with mount edge connection" loading="lazy" align="center" />
 
 <details><summary><img alt="OPA Logo" src=".github/assets/images/readme/opa-logo.svg" style="margin-right:10px;" width="25px" align="left" /><h4>Context-Aware Policies For Applications</h4></summary>
 <img alt="Meshery and Open Policy Agent Integration" src=".github/assets/images/readme/meshery-policies-2.png" style="margin:auto;text-align:center" width="50%" />
@@ -143,19 +143,19 @@ Using a GitOps-centric approach, visually and collaboratively design and manage 
 
 ## Workspaces: Your team's Google Drive for cloud native projects
 
-<img src=".github/assets/images/readme/workspace.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
+<img src=".github/assets/images/readme/workspace.gif" width="50%" alt="Meshery workspace interface showing team collaboration features" loading="lazy" />
 
 Workspaces let you organize your work and serve as the central point of collaboration for you and your teams and point of access control to Environments and their resources.
 
 <details><summary><h4>Manage your connections with Environments</h4></summary>
 
-<img src=".github/assets/images/readme/environments.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
+<img src=".github/assets/images/readme/environments.gif" width="50%" alt="Meshery environments interface for managing connections and credentials" loading="lazy" align="center" />
 <p><a href="https://docs.meshery.io/concepts/logical/environments">Environments</a>  make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.</p>
 </details>
 
 <details><summary><h4>See changes to your infra before you merge</h4></summary>
 
-<img src=".github/assets/images/readme/meshery-snapshot.png" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" align="center" />
+<img src=".github/assets/images/readme/meshery-snapshot.png" width="50%" alt="Infrastructure snapshot preview in GitHub pull request" loading="lazy" align="center" />
 
 Get snapshots of your infrastructure directly in your PRs. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting Kanvas to your GitHub repositories.
 </details>
@@ -187,7 +187,7 @@ Meshery's "multi-player" functionality refers to its collaborative features that
 
 Meshery offers load generation and performance characterization to help you assess and optimize the performance of your applications and infrastructure.
 
-<img src=".github/assets/images/readme/performance-metrics.gif" alt="Multi-cluster Kubernetes Manager" width="50%" />
+<img src=".github/assets/images/readme/performance-metrics.gif" alt="Meshery performance metrics dashboard showing load generation results" width="50%" loading="lazy" />
 
 <p>Create and reuse performance profiles for consistent characterization of the configuration of your infrastructure in context of how it performs.</p>
 
@@ -206,7 +206,7 @@ Baseline and track your cloud native performance from release to release.
 </details>
 
 <details>
-<summary><h4>Load Generation and Microservice Performance Characteristization</h4></summary>
+<summary><h4>Load Generation and Microservice Performance Characterization</h4></summary>
 
 <picture align="left">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg"  width="18%" align="left" style="margin-left:10px;" />
@@ -320,6 +320,8 @@ Learn more about the <a href="https://meshery.io/community#meshmates">MeshMates<
 ## Contributing
 
 Please do! We're a warm and welcoming community of open source contributors. Please join. All types of contributions are welcome. Be sure to read the [Contributor Guides](https://docs.meshery.io/project/contributing) for a tour of resources available to you and how to get started.
+
+**Naming conventions.** This repository adheres to the canonical camelCase-wire identifier-naming contract shared across the Meshery / Layer5 ecosystem. See the [identifier-naming contributor guide](https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md) in `meshery/schemas` for the full reader-friendly directory (26-row naming table with before/after and do/don't examples). Repo-specific mandates live in [`AGENTS.md § Identifier Naming Conventions`](./AGENTS.md).
 
 <!-- <a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="https://docs.meshery.io/assets/img/readme/deploying-linkerd-with-meshery.png" width="100%" align="center" /></a> -->
 

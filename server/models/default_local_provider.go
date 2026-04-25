@@ -29,10 +29,9 @@ import (
 	"github.com/meshery/meshkit/utils"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/meshkit/utils/walker"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	"github.com/meshery/schemas/models/v1beta1/organization"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/organization"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
@@ -67,7 +66,7 @@ type DefaultLocalProvider struct {
 	KubeClient       *mesherykube.Client
 	Log              logger.Handler
 
-	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
+	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 }
 
 // Initialize will initialize the local provider
@@ -288,8 +287,8 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 
 	maps.Copy(metadata, additionalMetadata)
 
-	if schemasConnection.MeshsyncDeploymentModeFromMetadata(metadata) == schemasConnection.MeshsyncDeploymentModeUndefined {
-		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+	if connections.MeshsyncDeploymentModeFromMetadata(metadata) == connections.MeshsyncDeploymentModeUndefined {
+		connections.SetMeshsyncDeploymentModeToMetadata(
 			metadata,
 			l.MeshsyncDefaultDeploymentMode,
 		)
@@ -953,16 +952,6 @@ func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, pa
 	}
 
 	return json.Marshal(ffs)
-}
-
-// SaveMesheryApplication saves given application with the provider
-func (l *DefaultLocalProvider) SaveMesheryApplication(_ string, application *MesheryApplication) ([]byte, error) {
-	return l.MesheryApplicationPersister.SaveMesheryApplication(application)
-}
-
-// SaveApplicationSourceContent nothing needs to be done as application is saved with source content for local provider
-func (l *DefaultLocalProvider) SaveApplicationSourceContent(_, _ string, _ []byte) error {
-	return nil
 }
 
 // GetApplicationSourceContent returns application source-content from provider

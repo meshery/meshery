@@ -21,7 +21,11 @@ components:
   colorIcon: content/en/extensions/models/vela-workflow/components/workflow/icons/color/workflow-color.svg
   whiteIcon: content/en/extensions/models/vela-workflow/components/workflow/icons/white/workflow-white.svg
   description: 
-components-count: 3
+- name: package
+  colorIcon: content/en/extensions/models/vela-workflow/components/package/icons/color/package-color.svg
+  whiteIcon: content/en/extensions/models/vela-workflow/components/package/icons/white/package-white.svg
+  description: 
+components-count: 4
 relationships: 
 relationship-count: 0
 featureList: [

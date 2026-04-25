@@ -83,6 +83,50 @@
   {{ end }}
 {{ end }}
 
+{{ $baseTagLabels := dict }}
+{{ $baseTagLabelCounts := dict }}
+{{ range $tagName := $orderedTags }}
+  {{ $tagMeta := partial "rest-apis/tag-meta.html" (dict "name" $tagName "tags" $tagIndex) }}
+  {{ $baseLabel := index $tagMeta "label" | default "Ungrouped" }}
+  {{ $baseTagLabels = merge $baseTagLabels (dict $tagName $baseLabel) }}
+  {{ $baseCount := index $baseTagLabelCounts $baseLabel | default 0 }}
+  {{ $baseTagLabelCounts = merge $baseTagLabelCounts (dict $baseLabel (add $baseCount 1)) }}
+{{ end }}
+
+{{ $tagLabels := dict }}
+{{ $sortedTagEntries := slice }}
+{{ range $tagName := $orderedTags }}
+  {{ $baseLabel := index $baseTagLabels $tagName | default "Ungrouped" }}
+  {{ $resolvedLabel := $baseLabel }}
+  {{ if gt (index $baseTagLabelCounts $baseLabel | default 0) 1 }}
+    {{ $parts := split $tagName "_" }}
+    {{ $suffixParts := after 1 $parts }}
+    {{ $suffixLabel := delimit $suffixParts " " }}
+    {{ if ne $suffixLabel "" }}
+      {{ $suffixLabel = $suffixLabel | title }}
+    {{ end }}
+    {{ if and (ne $suffixLabel "") (ne (lower $suffixLabel) (lower $baseLabel)) }}
+      {{ $resolvedLabel = printf "%s %s" $baseLabel $suffixLabel }}
+    {{ end }}
+  {{ end }}
+  {{ $tagLabels = merge $tagLabels (dict $tagName $resolvedLabel) }}
+  {{ $sortedTagEntries = $sortedTagEntries | append (dict
+    "name" $tagName
+    "label" $resolvedLabel
+  ) }}
+{{ end }}
+{{ $sortedTagEntries = sort $sortedTagEntries "label" }}
+{{ $orderedTags = slice }}
+{{ range $sortedTagEntries }}
+  {{ $orderedTags = $orderedTags | append .name }}
+{{ end }}
+
+{{ $normalizedOperations := slice }}
+{{ range $operations }}
+  {{ $normalizedOperations = $normalizedOperations | append (merge . (dict "tagLabel" ((index $tagLabels .tag) | default .tagLabel))) }}
+{{ end }}
+{{ $operations = $normalizedOperations }}
+
 {{ if gt (len $operations) 0 }}
   <div class="rest-api-page" data-rest-api-root>
     <section class="rest-api-overview" aria-label="REST API overview">
@@ -124,15 +168,15 @@
             <span class="rest-api-category-button__count">{{ len $operations }}</span>
           </button>
           {{ range $tagName := $orderedTags }}
-            {{ $tagMeta := partial "rest-apis/tag-meta.html" (dict "name" $tagName "tags" $tagIndex) }}
+            {{ $tagLabel := index $tagLabels $tagName | default $tagName }}
             <button
               type="button"
               class="rest-api-category-button"
               data-tag-filter="{{ $tagName }}"
-              data-tag-label="{{ index $tagMeta "label" }}"
+              data-tag-label="{{ $tagLabel }}"
               aria-pressed="false"
             >
-              <span>{{ index $tagMeta "label" }}</span>
+              <span>{{ $tagLabel }}</span>
               <span class="rest-api-category-button__count">{{ index $tagCounts $tagName }}</span>
             </button>
           {{ end }}
@@ -173,6 +217,18 @@
                   {{ $groupTags = $groupTags | append $tagName }}
                 {{ end }}
               {{ end }}
+              {{ $groupTagEntries := slice }}
+              {{ range $tagName := $groupTags }}
+                {{ $groupTagEntries = $groupTagEntries | append (dict
+                  "name" $tagName
+                  "label" ((index $tagLabels $tagName) | default $tagName)
+                ) }}
+              {{ end }}
+              {{ $groupTagEntries = sort $groupTagEntries "label" }}
+              {{ $groupTags = slice }}
+              {{ range $groupTagEntries }}
+                {{ $groupTags = $groupTags | append .name }}
+              {{ end }}
 
               {{ if gt (len $groupTags) 0 }}
                 {{ $groupLabel := replace ($tagGroup.name | default "Ungrouped") "_" " " }}
@@ -182,9 +238,8 @@
                 {{ $showHeading := gt (len $groupTags) 1 }}
                 {{ if and (not $showHeading) (gt (len $groupTags) 0) }}
                   {{ $onlyTag := index $groupTags 0 }}
-                  {{ $onlyMeta := partial "rest-apis/tag-subsection-meta.html" (dict "name" $onlyTag "tags" $tagIndex) }}
                   {{ $normalizedGroup := replaceRE "[^a-z0-9]+" "" (lower $groupLabel) }}
-                  {{ $normalizedOnly := replaceRE "[^a-z0-9]+" "" (lower (index $onlyMeta "label")) }}
+                  {{ $normalizedOnly := replaceRE "[^a-z0-9]+" "" (lower ((index $tagLabels $onlyTag) | default $onlyTag)) }}
                   {{ $showHeading = ne $normalizedGroup $normalizedOnly }}
                 {{ end }}
                 <section class="rest-api-nav-group" data-rest-api-group>
@@ -193,7 +248,7 @@
                   {{ end }}
                   <div class="rest-api-nav-group__items">
                     {{ range $tagName := $groupTags }}
-                      {{ $subsectionMeta := partial "rest-apis/tag-subsection-meta.html" (dict "name" $tagName "tags" $tagIndex) }}
+                      {{ $resolvedTagLabel := index $tagLabels $tagName | default $tagName }}
                       {{ $groupOperations := where $operations "tag" $tagName }}
                       {{ if gt (len $groupOperations) 0 }}
                         <section class="rest-api-nav-subgroup" data-rest-api-subgroup data-tag-name="{{ $tagName }}">
@@ -203,7 +258,7 @@
                             data-subgroup-toggle
                             aria-expanded="false"
                           >
-                            <span class="rest-api-nav-subgroup__title">{{ index $subsectionMeta "label" }}</span>
+                            <span class="rest-api-nav-subgroup__title">{{ $resolvedTagLabel }}</span>
                             <span class="rest-api-nav-subgroup__toggle-meta">
                               <span class="rest-api-nav-subgroup__count" data-subgroup-count data-total-count="{{ len $groupOperations }}">{{ len $groupOperations }}</span>
                               <span class="rest-api-nav-subgroup__chevron" aria-hidden="true"></span>
@@ -221,7 +276,7 @@
                                     data-path-id="{{ .pathId }}"
                                     data-tag-name="{{ .tag }}"
                                     data-tag-label="{{ .tagLabel }}"
-                                    data-search="{{ lower (printf "%s %s %s %s %s" .method .path .summary $groupLabel (index $subsectionMeta "label")) }}"
+                                    data-search="{{ lower (printf "%s %s %s %s %s" .method .path .summary $groupLabel .tagLabel) }}"
                                   >
                                     <span class="rest-api-nav-link__top">
                                       <span class="rest-api-method-badge rest-api-method-badge--{{ .method }}">{{ upper .method }}</span>
@@ -256,7 +311,7 @@
                 {{ end }}
                 <div class="rest-api-nav-group__items">
                   {{ range $tagName := $remainingTags }}
-                    {{ $tagMeta := partial "rest-apis/tag-subsection-meta.html" (dict "name" $tagName "tags" $tagIndex) }}
+                    {{ $resolvedTagLabel := index $tagLabels $tagName | default $tagName }}
                     {{ $groupOperations := where $operations "tag" $tagName }}
                     <section class="rest-api-nav-subgroup" data-rest-api-subgroup data-tag-name="{{ $tagName }}">
                       <button
@@ -265,7 +320,7 @@
                         data-subgroup-toggle
                         aria-expanded="false"
                       >
-                        <span class="rest-api-nav-subgroup__title">{{ index $tagMeta "label" }}</span>
+                        <span class="rest-api-nav-subgroup__title">{{ $resolvedTagLabel }}</span>
                         <span class="rest-api-nav-subgroup__toggle-meta">
                           <span class="rest-api-nav-subgroup__count" data-subgroup-count data-total-count="{{ len $groupOperations }}">{{ len $groupOperations }}</span>
                           <span class="rest-api-nav-subgroup__chevron" aria-hidden="true"></span>

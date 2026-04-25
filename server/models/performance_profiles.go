@@ -14,7 +14,7 @@ type PerformanceProfile struct {
 	ID *core.Uuid `json:"id,omitempty"`
 
 	Name              string         `json:"name,omitempty"`
-	LastRun           *sql.Time      `json:"last_run,omitempty" gorm:"type:datetime"`
+	LastRun           *sql.Time      `json:"lastRun,omitempty" gorm:"type:datetime"`
 	Schedule          *core.Uuid     `json:"schedule,omitempty"`
 	LoadGenerators    pq.StringArray `json:"load_generators,omitempty" gorm:"type:text[]"`
 	Endpoints         pq.StringArray `json:"endpoints,omitempty" gorm:"type:text[]"`

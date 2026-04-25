@@ -11,7 +11,7 @@ import (
 	"github.com/meshery/schemas/models/core"
 
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta3/component"
 	"gorm.io/gorm"
 )
 

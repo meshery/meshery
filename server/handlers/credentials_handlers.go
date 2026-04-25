@@ -23,7 +23,6 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 
 	userUUID := user.ID
 	credential := models.Credential{
-		UserId: &userUUID,
 		Secret: map[string]interface{}{},
 	}
 
@@ -33,6 +32,11 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 		http.Error(w, "unable to parse credential data", http.StatusInternalServerError)
 		return
 	}
+
+	// Bind credential ownership to the authenticated user AFTER unmarshal so a
+	// client-supplied `userId` in the request body cannot redirect a credential
+	// onto another user's account.
+	credential.UserId = userUUID
 
 	createdCredential, err := provider.SaveUserCredential(token, &credential)
 	if err != nil {
@@ -109,7 +113,6 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 
 	userUUID := user.ID
 	credential := &models.Credential{
-		UserId: &userUUID,
 		Secret: map[string]interface{}{},
 	}
 	err = json.Unmarshal(bd, credential)
@@ -118,6 +121,12 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 		http.Error(w, "unable to parse credential data", http.StatusInternalServerError)
 		return
 	}
+
+	// Bind credential ownership to the authenticated user AFTER unmarshal so a
+	// client-supplied `userId` in the request body cannot hijack another user's
+	// credential (the provider layer's authorization check should rely on this
+	// field to confirm the caller owns the credential being updated).
+	credential.UserId = userUUID
 
 	_, err = provider.UpdateUserCredential(req, credential)
 	if err != nil {

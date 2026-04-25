@@ -7,10 +7,78 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 )
+
+// workspacePayloadWire is a handler-local dual-accept wrapper around
+// workspace.WorkspacePayload. The schemas-generated struct tags
+// OrganizationID as json:"organization_id" (required by the current
+// published v1beta1 contract), but the canonical wire contract and every
+// in-repo consumer now emit the camelCase `organizationId`. Go's
+// encoding/json case-insensitive tag fallback does NOT match across an
+// underscore boundary, so a struct tagged `organization_id` silently drops
+// a JSON key of `organizationId`. This wrapper intercepts both spellings
+// during the Phase 2 deprecation window. Canonical wins when both are
+// present. Retire once schemas v1beta2 flips the tag to `organizationId`
+// and this handler consumes the new version.
+type workspacePayloadWire struct {
+	workspace.WorkspacePayload
+}
+
+func (p *workspacePayloadWire) UnmarshalJSON(data []byte) error {
+	type alias workspace.WorkspacePayload
+	aux := struct {
+		*alias
+		OrganizationIDCamel *openapi_types.UUID `json:"organizationId,omitempty"`
+		OrganizationIDSnake *openapi_types.UUID `json:"organization_id,omitempty"`
+	}{alias: (*alias)(&p.WorkspacePayload)}
+
+	// Zero OrganizationID so a reused receiver does not carry stale data
+	// when the next payload omits both spellings.
+	p.OrganizationID = openapi_types.UUID{}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	// Canonical wins when both are supplied.
+	switch {
+	case aux.OrganizationIDCamel != nil:
+		p.OrganizationID = *aux.OrganizationIDCamel
+	case aux.OrganizationIDSnake != nil:
+		p.OrganizationID = *aux.OrganizationIDSnake
+	}
+	return nil
+}
+
+// workspaceUpdatePayloadWire mirrors workspacePayloadWire for the PUT path.
+type workspaceUpdatePayloadWire struct {
+	workspace.WorkspaceUpdatePayload
+}
+
+func (p *workspaceUpdatePayloadWire) UnmarshalJSON(data []byte) error {
+	type alias workspace.WorkspaceUpdatePayload
+	aux := struct {
+		*alias
+		OrganizationIDCamel *openapi_types.UUID `json:"organizationId,omitempty"`
+		OrganizationIDSnake *openapi_types.UUID `json:"organization_id,omitempty"`
+	}{alias: (*alias)(&p.WorkspaceUpdatePayload)}
+
+	p.OrganizationID = openapi_types.UUID{}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	switch {
+	case aux.OrganizationIDCamel != nil:
+		p.OrganizationID = *aux.OrganizationIDCamel
+	case aux.OrganizationIDSnake != nil:
+		p.OrganizationID = *aux.OrganizationIDSnake
+	}
+	return nil
+}
 
 func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
@@ -21,10 +89,17 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 
 	q := req.URL.Query()
 
-	orgID := q.Get("orgID")
+	// Canonical form is `orgId`; `orgID` is dual-accepted during the Phase 2
+	// deprecation window so mesheryctl and any other legacy client keeps
+	// working. Retire the fallback once Phase 3 consumer migration completes.
+	orgID := q.Get("orgId")
 	if orgID == "" {
-		h.log.Error(models.ErrWorkspaceMissingInput())
-		http.Error(w, models.ErrWorkspaceMissingInput().Error(), http.StatusBadRequest)
+		orgID = q.Get("orgID")
+	}
+	if orgID == "" {
+		missingInput := models.ErrWorkspaceMissingInput()
+		h.log.Error(missingInput)
+		writeJSONError(w, missingInput.Error(), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetWorkspaces(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
@@ -43,10 +118,16 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(r)["id"]
 	q := r.URL.Query()
-	orgID := q.Get("orgID")
+	// Canonical form is `orgId`; `orgID` is dual-accepted during the Phase 2
+	// deprecation window. Retire once Phase 3 consumer migration completes.
+	orgID := q.Get("orgId")
 	if orgID == "" {
-		h.log.Error(models.ErrWorkspaceMissingInput())
-		http.Error(w, models.ErrWorkspaceMissingInput().Error(), http.StatusBadRequest)
+		orgID = q.Get("orgID")
+	}
+	if orgID == "" {
+		missingInput := models.ErrWorkspaceMissingInput()
+		h.log.Error(missingInput)
+		writeJSONError(w, missingInput.Error(), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetWorkspaceByID(r, workspaceID, orgID)
@@ -70,8 +151,8 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	workspace := workspace.WorkspacePayload{}
-	err = json.Unmarshal(bd, &workspace)
+	wire := workspacePayloadWire{}
+	err = json.Unmarshal(bd, &wire)
 	obj := "workspace"
 
 	if err != nil {
@@ -80,6 +161,7 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	workspace := wire.WorkspacePayload
 	bf, err := provider.SaveWorkspace(req, &workspace, "", false)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
@@ -121,8 +203,8 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	workspacePayload := workspace.WorkspaceUpdatePayload{}
-	err = json.Unmarshal(bd, &workspacePayload)
+	wire := workspaceUpdatePayloadWire{}
+	err = json.Unmarshal(bd, &wire)
 	obj := "workspace"
 
 	if err != nil {
@@ -131,6 +213,7 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
+	workspacePayload := wire.WorkspaceUpdatePayload
 	resp, err := provider.UpdateWorkspace(req, &workspacePayload, workspaceID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))

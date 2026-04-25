@@ -189,7 +189,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 		userUUID := user.ID
 		credential, err := provider.SaveUserCredential(token, &models.Credential{
-			UserId: &userUUID,
+			UserId: userUUID,
 			Type:   "prometheus",
 			Secret: promCred,
 			Name:   credName,
@@ -211,7 +211,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			MetaData:         promConn,
 			CredentialSecret: promCred,
 			Name:             connName,
-			CredentialID:     credential.ID,
+			CredentialID:     &credential.ID,
 		}, token, false)
 
 		if err != nil {
