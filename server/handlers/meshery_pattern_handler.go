@@ -1754,7 +1754,7 @@ func (h *Handler) handlePatternUpdate(
 		http.Error(rw, "missing route variable \"source-type\"", http.StatusBadRequest)
 
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSaveApplication(fmt.Errorf("missing route variable \"source-type\" (one of %s, %s, %s)", models.K8sManifest, models.DockerCompose, models.HelmChart)),
+			"error": ErrSavePattern(fmt.Errorf("missing route variable \"source-type\" (one of %s, %s, %s)", models.K8sManifest, models.DockerCompose, models.HelmChart)),
 		}).WithDescription("Please provide design source-type").Build()
 
 		_ = provider.PersistEvent(*event, token)
