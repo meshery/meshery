@@ -82,7 +82,7 @@ const EnvironmentConnections = ({ environment, connections, onAddConnection }) =
   if (!connections || connections.length === 0) {
     return (
       <Box display="flex" alignItems="center" justifyContent="center" width="100%" py={2}>
-        <Typography variant="textB1Regular">
+<Typography variant="textB1Regular" component="div">
           No connections configured.{' '}
           <InlineButton
             variant="contained"
