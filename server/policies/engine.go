@@ -41,12 +41,23 @@ func NewGoEngine(log Logger) *GoEngine {
 	}
 }
 
+func cloneTieInfo(t TieInfo) TieInfo {
+	cloned := t
+	if t.Path != nil {
+		cloned.Path = make([]string, len(t.Path))
+		copy(cloned.Path, t.Path)
+	}
+	return cloned
+}
+
 // LastTies returns the ties detected during the most recent evaluation.
 func (e *GoEngine) LastTies() []TieInfo {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	out := make([]TieInfo, len(e.lastTies))
-	copy(out, e.lastTies)
+	for i, tie := range e.lastTies {
+		out[i] = cloneTieInfo(tie)
+	}
 	return out
 }
 
@@ -104,11 +115,18 @@ func (e *GoEngine) EvaluateDesign(
 	return resp, nil
 }
 
+// hasTrackableDesignID reports whether designID is safe to use as a flapping
+// history key. Empty and zero UUID values are treated as "no design ID" and
+// should not share history across unrelated designs.
+func hasTrackableDesignID(designID string) bool {
+	return designID != "" && designID != "00000000-0000-0000-0000-000000000000"
+}
+
 // checkFlapping records the fingerprint of this evaluation's actions and
 // returns ErrFlappingDetected when the last four evaluations for designID
 // alternate between two results.
 func (e *GoEngine) checkFlapping(designID string, actions []PolicyAction) error {
-	if designID == "" {
+	if !hasTrackableDesignID(designID) {
 		return nil
 	}
 	fp := actionsFingerprint(actions)
