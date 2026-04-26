@@ -1222,7 +1222,7 @@ make golang-generate
 
 ## Further Reading
 
-- [meshery/schemas README](https://github.com/meshery/schemas/blob/master/README.md) - Full reference for schema authoring
+- [Schema-Driven Development Guide](https://docs.meshery.io/project/contributing/contributing-schemas) - Full reference for schema authoring
 - [AGENTS.md](https://github.com/meshery/schemas/blob/master/AGENTS.md) - Contributor checklist
 - [Core schema definitions](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1alpha1/core/api.yml) - Reusable building blocks
 - [Academy construct](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta1/academy/api.yml) - Exemplar for advanced patterns including `x-generate-db-helpers`
