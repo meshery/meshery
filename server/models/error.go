@@ -147,6 +147,10 @@ const (
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
 	ErrWorkspaceMissingInputCode          = "meshery-server-1375"
+	ErrSaveUserCredentialCode             = "meshery-server-1381"
+	ErrGetUserCredentialCode              = "meshery-server-1382"
+	ErrDeleteUserCredentialCode           = "meshery-server-1383"
+	ErrUpdateUserCredentialCode           = "meshery-server-1384"
 )
 
 var (
@@ -639,4 +643,20 @@ func ErrWorkspaceMissingInput() error {
 		[]string{"Required workspace input values were not provided for this operation."},
 		[]string{"Ensure orgId is provided as a query parameter (and workspaceId is provided in the URL path for single-workspace operations)."},
 	)
+}
+
+func ErrSaveUserCredential(err error) error {
+	return errors.New(ErrSaveUserCredentialCode, errors.Alert, []string{"Unable to save user credential"}, []string{err.Error()}, []string{"The credential data may be malformed or a credential with the same name already exists"}, []string{"Ensure all required credential fields are provided and the credential name is unique"})
+}
+
+func ErrGetUserCredential(err error) error {
+	return errors.New(ErrGetUserCredentialCode, errors.Alert, []string{"Unable to retrieve user credential"}, []string{err.Error()}, []string{"The credential may not exist or the database is unreachable"}, []string{"Verify the credential exists and the database connection is active"})
+}
+
+func ErrDeleteUserCredential(err error) error {
+	return errors.New(ErrDeleteUserCredentialCode, errors.Alert, []string{"Unable to delete user credential"}, []string{err.Error()}, []string{"The credential may not exist or the database is unreachable"}, []string{"Verify the credential exists and the database connection is active"})
+}
+
+func ErrUpdateUserCredential(err error) error {
+	return errors.New(ErrUpdateUserCredentialCode, errors.Alert, []string{"Unable to update user credential"}, []string{err.Error()}, []string{"The credential may not exist, the data may be malformed, or the database is unreachable"}, []string{"Verify the credential exists, ensure all fields are valid, and confirm the database connection is active"})
 }
