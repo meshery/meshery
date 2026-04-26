@@ -69,7 +69,11 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	var tables []*models.SqliteSchema
 	for _, tableName := range pagedTables {
 		var count int64
-		h.dbHandler.DB.Table(tableName).Count(&count)
+		
+		if h.dbHandler != nil && h.dbHandler.DB != nil {
+			h.dbHandler.DB.Table(tableName).Count(&count)
+		}
+		
 		recordCount += int(count)
 
 		tables = append(tables, &models.SqliteSchema{
