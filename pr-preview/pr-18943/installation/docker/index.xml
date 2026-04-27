@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Docker on Documentation</title><link>/installation/docker/</link><description>Recent content in Docker on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/installation/docker/index.xml" rel="self" type="application/rss+xml"/><item><title>Docker Extension</title><link>/installation/docker/docker-extension/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/docker/docker-extension/</guid><description>&lt;h1&gt;Quick Start with Docker Extension &lt;img src="../../installation/docker/images/docker.svg" style="width:35px;height:35px;" /&gt;&lt;/h1&gt;
+&lt;p&gt;The Docker Extension for Meshery extends Docker Desktop&amp;rsquo;s position as the developer&amp;rsquo;s go-to Kubernetes environment with easy access to the full capabilities of Meshery&amp;rsquo;s collaborative cloud native management features.&lt;/p&gt;
+&lt;h2 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;You need Docker Desktop version of 4.10 or higher for this.&lt;/li&gt;
+&lt;li&gt;This document applies only when Docker Desktop uses kubeadm with Kubernetes enabled. If you are using kind, please refer to the &lt;a href="../../installation/kubernetes/kind/"&gt;Kind&lt;/a&gt; section.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="install-the-docker-meshery-extension"&gt;
+	Install the Docker Meshery Extension
+&lt;/h2&gt;
+&lt;p&gt;Select one of the following three options to install the Docker Meshery Extension:&lt;/p&gt;</description></item></channel></rss>
