@@ -29,7 +29,31 @@ type LogLevelRequest struct {
 	// required: true
 	// enum: panic,fatal,error,warn,info,debug,trace
 	// example: debug
-	LogLevel string `json:"event_log_level"`
+	LogLevel string `json:"eventLogLevel"`
+}
+
+// UnmarshalJSON dual-accepts the canonical `eventLogLevel` wire key and the
+// legacy `event_log_level` spelling during the Phase 2 deprecation window.
+// Go's encoding/json case-insensitive tag fallback does NOT cross an
+// underscore boundary, so a struct tagged `eventLogLevel` would silently
+// drop a payload keyed `event_log_level`. Canonical wins when both are
+// present. Retire the fallback once Phase 3 consumer migration completes.
+func (r *LogLevelRequest) UnmarshalJSON(data []byte) error {
+	aux := struct {
+		Canonical *string `json:"eventLogLevel,omitempty"`
+		Legacy    *string `json:"event_log_level,omitempty"`
+	}{}
+	r.LogLevel = ""
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	switch {
+	case aux.Canonical != nil:
+		r.LogLevel = *aux.Canonical
+	case aux.Legacy != nil:
+		r.LogLevel = *aux.Legacy
+	}
+	return nil
 }
 
 // getAvailableLogLevels returns all valid logging levels supported by the system

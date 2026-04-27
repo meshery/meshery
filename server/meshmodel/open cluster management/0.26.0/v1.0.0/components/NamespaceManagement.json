@@ -203,6 +203,7 @@
     "kind": "NamespaceManagement",
     "schema": "{\n \"description\": \"NamespaceManagement is the Schema for the namespacemanagements API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NamespaceManagementSpec defines the desired state of NamespaceManagement\",\n   \"properties\": {\n    \"managedBy\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"managedBy\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Namespace Management\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }
