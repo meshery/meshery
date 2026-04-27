@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-
+    "github.com/stretchr/testify/assert"
 	config "github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
@@ -63,16 +63,11 @@ func TestNeedsMutation(t *testing.T) {
 
 			tt.setup(configPath, t)
 			configPath = tt.path(configPath)
-
+			
 			got, err := config.NeedsMutation(configPath)
-
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("error = %v, wantErr %v", err, tt.wantErr)
-			}
-
-			if got != tt.want {
-				t.Fatalf("NeedsMutation() = %v, want %v", got, tt.want)
-			}
+			
+			assert.Equal(t, tt.wantErr, err != nil, "error mismatch")
+			assert.Equal(t, tt.want, got, "result mismatch")
 		})
 	}
 }
