@@ -491,6 +491,15 @@ policy-test:
 	@echo "Running OPA Rego policy tests..."
 	@cd server/policies && go test -v ./...
 
+## Build the Go relationship engine as a wasm binary for browser/extension use
+.PHONY: wasm-engine
+wasm-engine:
+	@echo "Building Go relationship engine wasm..."
+	@cd server/policies/wasm && \
+		GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w" -o policy_engine.wasm .
+	@cp -f "$$(go env GOROOT)/lib/wasm/wasm_exec.js" server/policies/wasm/wasm_exec.js
+	@echo "Wrote server/policies/wasm/{policy_engine.wasm,wasm_exec.js}"
+
 
 #-----------------------------------------------------------------------------
 # Testing - MeshSync Integration Tests (Go)
