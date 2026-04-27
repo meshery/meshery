@@ -6,7 +6,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; None
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
 &lt;li&gt;
-&lt;p&gt;Selecting &lt;em&gt;Layer5&lt;/em&gt; will open a browser to complete the login and authentication process with Layer5 cloud. On successful authentication, you can close the window and return to the command prompt.&lt;/p&gt;</description></item><item><title>Bash</title><link>/installation/linux-mac/bash/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/linux-mac/bash/</guid><description>&lt;h1 id="install-meshery-cli-with-bash"&gt;
+&lt;p&gt;Selecting &lt;em&gt;Layer5&lt;/em&gt; will open a browser to complete the login and authentication process with Meshery Cloud. On successful authentication, you can close the window and return to the command prompt.&lt;/p&gt;</description></item><item><title>Bash</title><link>/installation/linux-mac/bash/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/linux-mac/bash/</guid><description>&lt;h1 id="install-meshery-cli-with-bash"&gt;
 	Install Meshery CLI with Bash
 &lt;/h1&gt;
 &lt;p&gt;To install or upgrade &lt;code&gt;mesheryctl&lt;/code&gt; using &lt;code&gt;bash&lt;/code&gt;, execute anyone of the following commands.&lt;/p&gt;
