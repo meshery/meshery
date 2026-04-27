@@ -65,7 +65,7 @@ function PerformanceCard({
     request_body: requestBody,
     request_cookies: requestCookies,
     request_headers: requestHeaders,
-    last_run: lastRun,
+    lastRun,
     metadata,
   } = profile;
 
@@ -136,7 +136,7 @@ function PerformanceCard({
     },
     {
       name: 'Last Run',
-      value: profile.last_run ? moment(profile.last_run).format('LLL') : 'unknown',
+      value: profile.lastRun ? moment(profile.lastRun).format('LLL') : 'unknown',
     },
   ];
 

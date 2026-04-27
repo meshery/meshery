@@ -297,7 +297,7 @@ export const Notification = ({ event_id }) => {
 
   const uiConfig = useSelector((state) => state.events.ui);
 
-  const { data: user } = useGetUserByIdQuery(event.user_id || '');
+  const { data: user } = useGetUserByIdQuery(event.user_id);
 
   const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
   const userAvatarUrl = user?.avatar_url || '';

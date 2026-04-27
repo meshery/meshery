@@ -63,8 +63,8 @@ const (
 	ErrDockerUnknownCode                  = "mesheryctl-1211"
 	ErrOperatorUnsupportedPlatformCode    = "mesheryctl-1219"
 	ErrLogoutCode                         = "mesheryctl-1229"
-	ErrSetTokenToConfigCode               = "mesheryctl-1233"
-	ErrDeleteTokenFromConfigCode          = "mesheryctl-1234"
+	ErrSetTokenToConfigCode               = "mesheryctl-1234"
+	ErrDeleteTokenFromConfigCode          = "mesheryctl-1235"
 )
 
 var (
