@@ -33168,13 +33168,22 @@ helm install meshery meshery/meshery --namespace meshery --create-namespace&lt;/
 &lt;code&gt;Content-Type: application/json; charset=utf-8&lt;/code&gt;. Clients should parse the body
 as JSON before surfacing errors to users.&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;Migration status:&lt;/strong&gt; the JSON contract is enforced for all server endpoints
-in &lt;code&gt;server/handlers/&lt;/code&gt; and &lt;code&gt;server/models/*provider*.go&lt;/code&gt; — any new &lt;code&gt;http.Error&lt;/code&gt;
-call there fails CI via the &lt;code&gt;forbidigo&lt;/code&gt; lint rule. Legitimate exceptions are
-the SSE error channel in &lt;code&gt;load_test_handler.go&lt;/code&gt;, healthz probes, the
-static-asset UI handler, and binary downloads. See PR
-&lt;a href="https://github.com/meshery/meshery/pull/18919"&gt;#18919&lt;/a&gt; for the migration
-history.&lt;/p&gt;</description></item><item><title>Hybridnet</title><link>/extensions/models/hybridnet/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/hybridnet/</guid><description/></item><item><title>Identifying Meshery Components</title><link>/guides/configuration-management/identifying-components/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/configuration-management/identifying-components/</guid><description>&lt;p&gt;Ever wondered what the different icons and shapes in Meshery represent? Whether you&amp;rsquo;re looking at a dashboard, a settings page, or a design, you&amp;rsquo;ll encounter a rich library of visual elements. This guide is here to help you understand what they mean.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Migration status:&lt;/strong&gt; the JSON contract is enforced across the &lt;code&gt;./server&lt;/code&gt;
+Go module by a &lt;code&gt;forbidigo&lt;/code&gt; lint rule that blocks any new &lt;code&gt;http.Error&lt;/code&gt; call
+at CI time, configured in
+&lt;a href="https://github.com/meshery/meshery/blob/master/.github/.golangci.yml"&gt;&lt;code&gt;.github/.golangci.yml&lt;/code&gt;&lt;/a&gt;.
+The migration landed in PR
+&lt;a href="https://github.com/meshery/meshery/pull/18919"&gt;#18919&lt;/a&gt; and the lint guard
+was flipped from advisory to fully blocking in PR
+&lt;a href="https://github.com/meshery/meshery/pull/18927"&gt;#18927&lt;/a&gt;. Legitimate
+non-JSON responders are handled in one of three ways: a file-level allowlist
+in &lt;code&gt;.github/.golangci.yml&lt;/code&gt; for the Kubernetes healthz probe handler
+(&lt;code&gt;k8s_healthz_handler.go&lt;/code&gt;) and the static-asset UI handler
+(&lt;code&gt;ui_handler.go&lt;/code&gt;); SSE stream handlers (&lt;code&gt;events_streamer.go&lt;/code&gt;,
+&lt;code&gt;load_test_handler.go&lt;/code&gt;) that don&amp;rsquo;t call &lt;code&gt;http.Error&lt;/code&gt; at all (they emit
+error events through the active SSE writer instead); and binary/tar/YAML
+downloads and HTTP redirects, which use &lt;code&gt;w.Write&lt;/code&gt; or &lt;code&gt;http.Redirect&lt;/code&gt;
+rather than &lt;code&gt;http.Error&lt;/code&gt; and so are not governed by the lint rule.&lt;/p&gt;</description></item><item><title>Hybridnet</title><link>/extensions/models/hybridnet/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/hybridnet/</guid><description/></item><item><title>Identifying Meshery Components</title><link>/guides/configuration-management/identifying-components/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/configuration-management/identifying-components/</guid><description>&lt;p&gt;Ever wondered what the different icons and shapes in Meshery represent? Whether you&amp;rsquo;re looking at a dashboard, a settings page, or a design, you&amp;rsquo;ll encounter a rich library of visual elements. This guide is here to help you understand what they mean.&lt;/p&gt;
 &lt;p&gt;The &lt;a href="./concepts/logical/components/"&gt;components&lt;/a&gt; in Meshery fall into two fundamental categories, distinguished by whether they can be orchestrated (managed) by Meshery during deployment:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
