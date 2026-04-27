@@ -22,9 +22,10 @@ export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose 
     : selectedResource;
   const resourceType = dataName === 'design' ? 'pattern' : dataName;
 
-  const { data: ownerData, isSuccess: isOwnerDataFetched } = useGetUserProfileSummaryByIdQuery({
-    id: firstSelectedResource?.user_id,
-  });
+  const { data: ownerData, isSuccess: isOwnerDataFetched } = useGetUserProfileSummaryByIdQuery(
+    { id: firstSelectedResource?.user_id },
+    { skip: !firstSelectedResource?.user_id },
+  );
 
   const { data: accessActorsInfoOfResource, isSuccess: accessActorsFetched } =
     useGetAccessActorsInfoOfResourceQuery({

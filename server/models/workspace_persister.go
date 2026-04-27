@@ -13,8 +13,14 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	// NOTE: workspace_persister stays on v1beta1/pattern for the
+	// MesheryPattern nested type because schemas' v1beta1/workspace and
+	// v1beta3/workspace both type their Designs field against
+	// v1beta1/pattern.MesheryPattern (the workspace resource itself is
+	// unchanged across versions). Migrating the type graph here would
+	// require an upstream schemas change to retype workspace.Designs.
 	patternv1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
-	viewv1beta1 "github.com/meshery/schemas/models/v1beta1/view"
+	viewv1beta2 "github.com/meshery/schemas/models/v1beta2/view"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"gorm.io/gorm"
 )
@@ -646,7 +652,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 		pageSize = "10"
 	}
 
-	viewsFetched := []workspace.MesheryView{}
+	viewsFetched := []viewv1beta2.MesheryViewWithLocation{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
@@ -662,7 +668,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&viewsFetched)
 	}
 
-	viewsPage := &viewv1beta1.MesheryViewPage{
+	viewsPage := &viewv1beta2.MesheryViewPage{
 		Page:       int(pageUint),
 		PageSize:   len(viewsFetched),
 		TotalCount: int(count),

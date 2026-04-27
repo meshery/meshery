@@ -63,3 +63,7 @@ area/tests:
   - any-glob-to-any-file:
     - "ui/tests/**/*"
     - "mesheryctl/tests/e2e/**/*"
+component/policy:
+- changed-files:
+  - any-glob-to-any-file:
+    - "server/policies"

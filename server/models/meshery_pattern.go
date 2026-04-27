@@ -17,7 +17,7 @@ import (
 type DesignType string
 
 type DesignTypeResponse struct {
-	Type                DesignType `json:"design_type"`
+	Type                DesignType `json:"designType"`
 	SupportedExtensions []string   `json:"supported_extensions"`
 }
 
@@ -101,13 +101,87 @@ type MesheryPattern struct {
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
-	ViewCount       int       `json:"view_count" db:"view_count"`
-	ShareCount      int       `json:"share_count" db:"share_count"`
-	DownloadCount   int       `json:"download_count" db:"download_count"`
-	CloneCount      int       `json:"clone_count" db:"clone_count"`
-	DeploymentCount int       `json:"deployment_count" db:"deployment_count"`
+	ViewCount       int       `json:"viewCount" db:"view_count"`
+	ShareCount      int       `json:"shareCount" db:"share_count"`
+	DownloadCount   int       `json:"downloadCount" db:"download_count"`
+	CloneCount      int       `json:"cloneCount" db:"clone_count"`
+	DeploymentCount int       `json:"deploymentCount" db:"deployment_count"`
 	WorkspaceID     core.Uuid `json:"workspace_id,omitempty" db:"-"`
 	OrgID           core.Uuid `json:"orgId,omitempty" db:"-"`
+}
+
+// UnmarshalJSON dual-accepts the canonical camelCase count keys
+// (`viewCount`, `shareCount`, `downloadCount`, `cloneCount`,
+// `deploymentCount`) and the legacy snake_case spellings
+// (`view_count`, `share_count`, `download_count`, `clone_count`,
+// `deployment_count`) on the MesheryPattern wire. This is the Phase 2.K
+// cascade shim: meshery/schemas v1.2.0 flipped the canonical property
+// names to camelCase, and inbound responses from remote providers may
+// still carry the legacy snake_case form during the deprecation window.
+// Canonical wins when both spellings are present for a given field.
+//
+// Other fields unmarshal via stdlib default rules through the
+// embedded-alias pattern; the five count fields are explicitly reset
+// before the precedence switch so a reused receiver does not carry
+// stale counts when the next payload omits both spellings.
+//
+// Remove once every known upstream producer (meshery-cloud remote
+// provider, Kanvas catalog API) has migrated off the snake_case
+// spellings.
+func (m *MesheryPattern) UnmarshalJSON(data []byte) error {
+	type alias MesheryPattern
+	aux := &struct {
+		*alias
+		ViewCountCanonical       *int `json:"viewCount,omitempty"`
+		ViewCountLegacy          *int `json:"view_count,omitempty"`
+		ShareCountCanonical      *int `json:"shareCount,omitempty"`
+		ShareCountLegacy         *int `json:"share_count,omitempty"`
+		DownloadCountCanonical   *int `json:"downloadCount,omitempty"`
+		DownloadCountLegacy      *int `json:"download_count,omitempty"`
+		CloneCountCanonical      *int `json:"cloneCount,omitempty"`
+		CloneCountLegacy         *int `json:"clone_count,omitempty"`
+		DeploymentCountCanonical *int `json:"deploymentCount,omitempty"`
+		DeploymentCountLegacy    *int `json:"deployment_count,omitempty"`
+	}{alias: (*alias)(m)}
+	if err := json.Unmarshal(data, aux); err != nil {
+		return err
+	}
+	m.ViewCount = 0
+	switch {
+	case aux.ViewCountCanonical != nil:
+		m.ViewCount = *aux.ViewCountCanonical
+	case aux.ViewCountLegacy != nil:
+		m.ViewCount = *aux.ViewCountLegacy
+	}
+	m.ShareCount = 0
+	switch {
+	case aux.ShareCountCanonical != nil:
+		m.ShareCount = *aux.ShareCountCanonical
+	case aux.ShareCountLegacy != nil:
+		m.ShareCount = *aux.ShareCountLegacy
+	}
+	m.DownloadCount = 0
+	switch {
+	case aux.DownloadCountCanonical != nil:
+		m.DownloadCount = *aux.DownloadCountCanonical
+	case aux.DownloadCountLegacy != nil:
+		m.DownloadCount = *aux.DownloadCountLegacy
+	}
+	m.CloneCount = 0
+	switch {
+	case aux.CloneCountCanonical != nil:
+		m.CloneCount = *aux.CloneCountCanonical
+	case aux.CloneCountLegacy != nil:
+		m.CloneCount = *aux.CloneCountLegacy
+	}
+	m.DeploymentCount = 0
+	switch {
+	case aux.DeploymentCountCanonical != nil:
+		m.DeploymentCount = *aux.DeploymentCountCanonical
+	case aux.DeploymentCountLegacy != nil:
+		m.DeploymentCount = *aux.DeploymentCountLegacy
+	}
+	return nil
 }
 
 // MesheryCatalogPatternRequestBody refers to the type of request body

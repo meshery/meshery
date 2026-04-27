@@ -82,7 +82,7 @@ function MesheryPatternCard_({
     setFullScreen(!fullScreen);
   };
 
-  const { data: owner } = useGetUserByIdQuery(pattern.user_id || '');
+  const { data: owner } = useGetUserByIdQuery(pattern.user_id);
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
   const theme = useTheme();
