@@ -175,8 +175,10 @@ func TestInitDefaultConfig(t *testing.T) {
 				tt.createConfig(configPath),
 			)
 
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("error = %v, wantErr %v", err, tt.wantErr)
+			if tt.wantErr {
+			    assert.Error(t, err)
+			} else {
+			    assert.NoError(t, err)
 			}
 
 			// Strong assertion for success case
