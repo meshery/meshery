@@ -63,27 +63,3 @@ func extractBoolQueryParams(r *http.Request, params ...string) (map[string]bool,
 	}
 	return result, nil
 }
-
-// TODO: Remone completely after confirm is no more needed
-// func getLatestKubeVersionFromRegistry(reg *registry.RegistryManager) string {
-// 	entities, _, _, _ := reg.GetEntities(&v1beta1.ModelFilter{
-// 		Name: "kubernetes",
-// 	})
-
-// 	versions := []string{}
-
-// 	for _, entity := range entities {
-// 		modelDef, err := utils.Cast[*model.ModelDefinition](entity)
-// 		if err != nil {
-// 			continue
-// 		}
-// 		versions = append(versions, modelDef.Model.Version)
-// 	}
-// 	if len(versions) == 0 {
-// 		return ""
-// 	}
-
-// 	versions = utils.SortDottedStringsByDigits(versions)
-
-// 	return versions[0]
-// }

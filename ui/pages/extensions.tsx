@@ -164,7 +164,7 @@ const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }) => {
 
 const MeshMapSnapShotCard = ({ githubActionEnabled = false }) => {
   const handleEnable = (e) => {
-    window.open('https://cloud.layer5.io/connect/github/new/', '_blank');
+    window.open('https://cloud.meshery.io/connect/github/new/', '_blank');
     e.stopPropagation();
   };
 
@@ -379,13 +379,13 @@ const Layer5CloudExtension = () => {
     <Grid2 size={GRID_SIZE}>
       <UnifiedCardContainer>
         <Typography data-testid="layer5-cloud-heading" variant="h5" component="div">
-          Layer5 Cloud
+          Meshery Cloud
         </Typography>
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
             src="/static/img/extensions/layer5.svg"
-            alt="Layer5 Cloud Logo"
+            alt="Meshery Cloud Logo"
             testId="layer5-cloud-image"
           />
           <div>
