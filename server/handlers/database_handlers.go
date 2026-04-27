@@ -7,6 +7,9 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
+	"sort"
+	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/models"
@@ -17,6 +20,29 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+const (
+	maxDatabaseArchives      = 5
+	maxDatabaseArchiveAge    = 30 * 24 * time.Hour
+	databaseArchiveDirectory = ".archive"
+)
+
+// swagger:route GET /api/system/database GetSystemDatabase idGetSystemDatabase
+// Handle GET request for getting summary about the system database.
+//
+// # Tables can be further filtered through query parameter
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10. To return all results: ```pagesize=all```
+//
+// ```?search={tablename}``` If search is non empty then a greedy search is performed
+// responses:
+//
+//	200: systemDatabaseResponseWrapper
 func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	var tables []*models.SqliteSchema
 	var recordCount int
@@ -180,5 +206,69 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 		if _, err := fmt.Fprint(w, "Database reset successful"); err != nil {
 			h.log.Error(err)
 		}
+
+		go h.pruneDatabaseBackups(path.Join(mesherydbPath, databaseArchiveDirectory), maxDatabaseArchives, maxDatabaseArchiveAge)
+	}
+}
+
+type archiveFile struct {
+	name    string
+	fullPath string
+	modTime time.Time
+}
+
+func (h *Handler) pruneDatabaseBackups(archiveDir string, maxBackups int, maxAge time.Duration) {
+	entries, err := os.ReadDir(archiveDir)
+	if err != nil {
+		h.log.Warnf("failed to read database archive directory %s: %v", archiveDir, err)
+		return
+	}
+
+	cutoff := time.Now().Add(-maxAge)
+	archives := make([]archiveFile, 0)
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+
+		name := entry.Name()
+		if !strings.HasPrefix(name, "mesherydb") || filepath.Ext(name) != ".sql" {
+			continue
+		}
+
+		info, statErr := entry.Info()
+		if statErr != nil {
+			h.log.Warnf("failed to stat archive file %s: %v", path.Join(archiveDir, name), statErr)
+			continue
+		}
+
+		filePath := path.Join(archiveDir, name)
+		if info.ModTime().Before(cutoff) {
+			if rmErr := os.Remove(filePath); rmErr != nil {
+				h.log.Warnf("failed to remove old database archive %s: %v", filePath, rmErr)
+				continue
+			}
+			h.log.Infof("removed old database archive file: %s", filePath)
+			continue
+		}
+
+		archives = append(archives, archiveFile{name: name, fullPath: filePath, modTime: info.ModTime()})
+	}
+
+	if len(archives) <= maxBackups {
+		return
+	}
+
+	sort.Slice(archives, func(i, j int) bool {
+		return archives[i].modTime.After(archives[j].modTime)
+	})
+
+	for _, file := range archives[maxBackups:] {
+		if err := os.Remove(file.fullPath); err != nil {
+			h.log.Warnf("failed to prune database archive %s: %v", file.fullPath, err)
+			continue
+		}
+		h.log.Infof("pruned database archive file: %s", file.fullPath)
 	}
 }
