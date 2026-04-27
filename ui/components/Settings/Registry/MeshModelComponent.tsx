@@ -147,7 +147,7 @@ const MeshModelComponent_ = ({
                 search: searchText || '',
               },
             },
-            true, // arg to use cache as default
+            true,
           );
           break;
         case COMPONENTS:
@@ -177,16 +177,12 @@ const MeshModelComponent_ = ({
           break;
         case REGISTRANTS:
           response = await getRegistrants();
-
           break;
         default:
           break;
       }
+
       if (response?.data && response.data[view.toLowerCase()]) {
-        // When search or "show duplicates" functionality is active:
-        // Avoid appending data to the previous dataset.
-        // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
-        // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
         let newData = [];
         if (response.data[view.toLowerCase()]) {
           newData =
@@ -195,19 +191,15 @@ const MeshModelComponent_ = ({
               : [...resourcesDetail, ...response.data[view.toLowerCase()]];
         }
 
-        // Set unique data
         setResourcesDetail(_.uniqWith(newData, _.isEqual));
 
-        // Deeplink may contain higher rowsPerPage val for first time fetch
-        // In such case set it to default as 14 after UI renders
-        // This ensures the correct pagesize for subsequent API calls triggered on scrolling tree.
         if (rowsPerPage !== 25) {
           setRowsPerPage(25);
         }
       }
     } catch (error) {
       console.error(`Failed to fetch ${view.toLowerCase()}:`, error);
-      setResourcesDetail([]); // Set empty array on error
+      setResourcesDetail([]);
     }
   }, [
     getMeshModelsData,
@@ -216,6 +208,8 @@ const MeshModelComponent_ = ({
     getRegistrantsData,
     modelFilters,
     registrantFilters,
+    componentsFilters,
+    relationshipsFilters,
     view,
     page,
     rowsPerPage,
@@ -323,10 +317,23 @@ const MeshModelComponent_ = ({
       });
     }
   }, [searchText]);
+  // Trigger parallel pre-fetching of all category counts on component mount.
+  // This ensures that when the user switches tabs, the counts are already
+  // available in the RTK-Query cache, preventing a "flash of zero."
+  useEffect(() => {
+    const fetchCounts = () => {
+      const params = { page: 0, pagesize: 1, search: '' };
+      getMeshModelsData({ params: { ...params, components: false, relationships: false } }, true);
+      getComponentsData({ params: { ...params, trim: true } }, true);
+      getRelationshipsData({ params: { ...params } }, true);
+      getRegistrantsData({ params }, true);
+    };
 
+    fetchCounts();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchData();
-  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
+  }, [fetchData]);
 
   // Update view when external view changes (for modal usage)
   useEffect(() => {
@@ -385,25 +392,37 @@ const MeshModelComponent_ = ({
           <InnerContainer>
             <TabCard
               label="Models"
-              count={modelsData?.total_count || 0}
+              count={modelsRes.isFetching && !modelsData ? '...' : modelsData?.total_count || 0}
               active={view === MODELS}
               onClick={() => handleTabClick(MODELS)}
             />
             <TabCard
               label="Components"
-              count={componentsData?.total_count || 0}
+              count={
+                componentsRes.isFetching && !componentsData
+                  ? '...'
+                  : componentsData?.total_count || 0
+              }
               active={view === COMPONENTS}
               onClick={() => handleTabClick(COMPONENTS)}
             />
             <TabCard
               label="Relationships"
-              count={relationshipsData?.total_count || 0}
+              count={
+                relationshipsRes.isFetching && !relationshipsData
+                  ? '...'
+                  : relationshipsData?.total_count || 0
+              }
               active={view === RELATIONSHIPS}
               onClick={() => handleTabClick(RELATIONSHIPS)}
             />
             <TabCard
               label="Registrants"
-              count={registrantsData?.total_count || 0}
+              count={
+                registrantsRes.isFetching && !registrantsData
+                  ? '...'
+                  : registrantsData?.total_count || 0
+              }
               active={view === REGISTRANTS}
               onClick={() => handleTabClick(REGISTRANTS)}
             />
