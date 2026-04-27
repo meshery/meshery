@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"sync"
 	"testing"
 	"time"
@@ -8,8 +9,10 @@ import (
 	"github.com/gofrs/uuid"
 	meshkitBroker "github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
+	meshkitErrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/schemas/models/v1beta3/component"
+	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -219,5 +222,172 @@ func TestMeshsyncDataHandlerStopIsIdempotent(t *testing.T) {
 
 	if stopCalls != 1 {
 		t.Fatalf("expected stopFunc to be called once, got %d", stopCalls)
+	}
+}
+
+type fakeMeshsyncLogger struct {
+	logger.Handler
+	mu     sync.Mutex
+	logged []error
+}
+
+func (f *fakeMeshsyncLogger) Error(err error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.logged = append(f.logged, err)
+}
+
+func (f *fakeMeshsyncLogger) getLogged() []error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	return append([]error(nil), f.logged...)
+}
+
+func (f *fakeMeshsyncLogger) Info(description ...interface{}) {}
+func (f *fakeMeshsyncLogger) Infof(format string, args ...interface{}) {}
+func (f *fakeMeshsyncLogger) Debug(description ...interface{}) {}
+func (f *fakeMeshsyncLogger) Warn(err error) {}
+
+func TestMeshsyncEventErrorWrappedWithMeshKit(t *testing.T) {
+	broker := &testMeshsyncBroker{}
+	logger := &fakeMeshsyncLogger{}
+	handler := &MeshsyncDataHandler{
+		broker: broker,
+		log:    logger,
+		stopCh: make(chan struct{}),
+	}
+	handler.listenerWg = &sync.WaitGroup{}
+	handler.listenerWg.Add(1)
+
+	go handler.subscribeToMeshsyncEvents()
+
+	// Give the goroutine a moment to subscribe
+	time.Sleep(100 * time.Millisecond)
+
+	broker.mu.Lock()
+	if len(broker.subscriptions) == 0 {
+		broker.mu.Unlock()
+		t.Fatalf("expected subscriber to register")
+	}
+	subChan := broker.subscriptions[0]
+	broker.mu.Unlock()
+
+	// Inject error event
+	subChan <- &meshkitBroker.Message{
+		EventType: meshkitBroker.ErrorEvent,
+		Object:    fmt.Errorf("simulated meshsync error"),
+	}
+
+	// Wait for processing
+	time.Sleep(100 * time.Millisecond)
+	handler.StopFunc = func() {}
+	close(handler.stopCh)
+
+	logged := logger.getLogged()
+	if len(logged) == 0 {
+		t.Fatalf("expected error to be logged by meshsync handler")
+	}
+
+	// Check if the error is wrapped with the correct MeshKit code
+	if mkErr, ok := logged[0].(*meshkitErrors.Error); ok {
+		assert.Equal(t, ErrMeshsyncEventCode, mkErr.Code)
+	} else {
+		t.Fatalf("expected logged error to be a *meshkitErrors.Error, got %T", logged[0])
+	}
+}
+
+func TestMeshsyncStoreUpdatesErrorWrappedWithMeshKit(t *testing.T) {
+	broker := &testMeshsyncBroker{}
+	logger := &fakeMeshsyncLogger{}
+	handler := &MeshsyncDataHandler{
+		broker: broker,
+		log:    logger,
+		stopCh: make(chan struct{}),
+	}
+	handler.listenerWg = &sync.WaitGroup{}
+	handler.listenerWg.Add(1)
+
+	statusChan := make(chan bool)
+	go handler.subsribeToStoreUpdates(statusChan)
+
+	// Wait for subscription to establish
+	<-statusChan
+
+	broker.mu.Lock()
+	if len(broker.subscriptions) == 0 {
+		broker.mu.Unlock()
+		t.Fatalf("expected subscriber to register")
+	}
+	subChan := broker.subscriptions[0]
+	broker.mu.Unlock()
+
+	// Inject error event
+	subChan <- &meshkitBroker.Message{
+		EventType: meshkitBroker.ErrorEvent,
+		Object:    fmt.Errorf("simulated store update error"),
+	}
+
+	// Wait for processing
+	time.Sleep(100 * time.Millisecond)
+	close(handler.stopCh)
+
+	logged := logger.getLogged()
+	if len(logged) == 0 {
+		t.Fatalf("expected error to be logged by meshsync handler")
+	}
+
+	// Check if the error is wrapped with the correct MeshKit code
+	if mkErr, ok := logged[0].(*meshkitErrors.Error); ok {
+		assert.Equal(t, ErrMeshsyncStoreUpdatesCode, mkErr.Code)
+	} else {
+		t.Fatalf("expected logged error to be a *meshkitErrors.Error, got %T", logged[0])
+	}
+}
+
+func TestMeshsyncStoreUpdatesNonErrorObjectWrapped(t *testing.T) {
+	broker := &testMeshsyncBroker{}
+	logger := &fakeMeshsyncLogger{}
+	handler := &MeshsyncDataHandler{
+		broker: broker,
+		log:    logger,
+		stopCh: make(chan struct{}),
+	}
+	handler.listenerWg = &sync.WaitGroup{}
+	handler.listenerWg.Add(1)
+
+	statusChan := make(chan bool)
+	go handler.subsribeToStoreUpdates(statusChan)
+
+	// Wait for subscription to establish
+	<-statusChan
+
+	broker.mu.Lock()
+	if len(broker.subscriptions) == 0 {
+		broker.mu.Unlock()
+		t.Fatalf("expected subscriber to register")
+	}
+	subChan := broker.subscriptions[0]
+	broker.mu.Unlock()
+
+	// Inject error event with a non-error object
+	subChan <- &meshkitBroker.Message{
+		EventType: meshkitBroker.ErrorEvent,
+		Object:    "this is not an error type",
+	}
+
+	// Wait for processing
+	time.Sleep(100 * time.Millisecond)
+	close(handler.stopCh)
+
+	logged := logger.getLogged()
+	if len(logged) == 0 {
+		t.Fatalf("expected error to be logged by meshsync handler")
+	}
+
+	// Check if the error is wrapped with the correct MeshKit code
+	if mkErr, ok := logged[0].(*meshkitErrors.Error); ok {
+		assert.Equal(t, ErrMeshsyncStoreUpdatesCode, mkErr.Code)
+	} else {
+		t.Fatalf("expected logged error to be a *meshkitErrors.Error, got %T", logged[0])
 	}
 }
