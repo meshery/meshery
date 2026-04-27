@@ -207,12 +207,13 @@ th, td {
 &lt;code&gt;Content-Type: application/json; charset=utf-8&lt;/code&gt;. Clients should parse the body
 as JSON before surfacing errors to users.&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;Migration status:&lt;/strong&gt; the contract below is the target shape. A small number of
-legacy endpoints still emit plain-text bodies during the migration tracked in
-&lt;a href="../../../../superpowers/plans/2026-04-24-plaintext-response-migration.md"&gt;&lt;code&gt;docs/superpowers/plans/2026-04-24-plaintext-response-migration.md&lt;/code&gt;&lt;/a&gt;.
-Clients should implement the JSON-first contract now — all new code and
-remediated endpoints follow it, and the plain-text escape hatches are being
-removed wave by wave.&lt;/p&gt;</description></item><item><title>Meshery CLI Style Guide</title><link>/project/contributing/contributing-cli-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-cli-guide/</guid><description>&lt;p&gt;These guidelines are a collection of principles and conventions that need to be followed while designing mesheryctl commands.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Migration status:&lt;/strong&gt; the JSON contract is enforced for all server endpoints
+in &lt;code&gt;server/handlers/&lt;/code&gt; and &lt;code&gt;server/models/*provider*.go&lt;/code&gt; — any new &lt;code&gt;http.Error&lt;/code&gt;
+call there fails CI via the &lt;code&gt;forbidigo&lt;/code&gt; lint rule. Legitimate exceptions are
+the SSE error channel in &lt;code&gt;load_test_handler.go&lt;/code&gt;, healthz probes, the
+static-asset UI handler, and binary downloads. See PR
+&lt;a href="https://github.com/meshery/meshery/pull/18919"&gt;#18919&lt;/a&gt; for the migration
+history.&lt;/p&gt;</description></item><item><title>Meshery CLI Style Guide</title><link>/project/contributing/contributing-cli-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-cli-guide/</guid><description>&lt;p&gt;These guidelines are a collection of principles and conventions that need to be followed while designing mesheryctl commands.&lt;/p&gt;
 &lt;h2 id="design-principles"&gt;
 	Design Principles
 &lt;/h2&gt;
