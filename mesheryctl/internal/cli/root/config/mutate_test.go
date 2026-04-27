@@ -176,9 +176,9 @@ func TestInitDefaultConfig(t *testing.T) {
 			)
 
 			if tt.wantErr {
-			    assert.Error(t, err)
+			    assert.Error(t, err, "expected an error but got nil")
 			} else {
-			    assert.NoError(t, err)
+			    assert.NoError(t, err, "unexpected error: %v", err)
 			}
 
 			// Strong assertion for success case
