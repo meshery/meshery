@@ -88,7 +88,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 				ctx = viper.GetString("current-context")
 			}
 			if err := config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
-				return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
+				return ErrSetTokenToConfig(err)
 			}
 			utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, ctx))
 		}
@@ -110,7 +110,7 @@ mesheryctl system token delete [token-name]
 		configPath := utils.GetActiveConfigPath()
 
 		if err := config.DeleteTokenFromConfig(tokenName, configPath); err != nil {
-			return errors.Wrapf(err, "Could not delete token \"%s\" from config", tokenName)
+			return ErrDeleteTokenFromConfig(err)
 		}
 		utils.Log.Infof("Token %s deleted.", tokenName)
 		return nil
@@ -143,7 +143,7 @@ mesheryctl system token set [token-name]
 		}
 
 		if err := config.SetTokenToConfig(tokenName, configPath, tokenSetFlags.Context); err != nil {
-			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, tokenSetFlags.Context)
+			return ErrSetTokenToConfig(err)
 		}
 		utils.Log.Infof("Token %s set for context %s", tokenName, tokenSetFlags.Context)
 		return nil
@@ -167,17 +167,16 @@ mesheryctl system token list
 
 		viper.SetConfigFile(configPath)
 		if err := viper.ReadInConfig(); err != nil {
-			utils.Log.Error(utils.ErrReadConfigFile(err))
-			return nil
+			return utils.ErrReadConfigFile(err)
 		}
 
-		mctlCfgLocal, err := config.GetMesheryCtl(viper.GetViper())
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
 		}
 		utils.Log.Info("Available tokens: ")
-		for _, t := range *mctlCfgLocal.GetTokens() {
+		for _, t := range *mctlCfg.GetTokens() {
 			utils.Log.Info(t.Name)
 		}
 		return nil
@@ -210,25 +209,24 @@ mesheryctl system token view (show token of current context)
 
 		viper.SetConfigFile(configPath)
 		if err := viper.ReadInConfig(); err != nil {
-			utils.Log.Error(utils.ErrReadConfigFile(err))
-			return nil
+			return utils.ErrReadConfigFile(err)
 		}
 
-		mctlCfgLocal, err := config.GetMesheryCtl(viper.GetViper())
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
 		}
 		if tokenViewFlags.All {
 			utils.Log.Info("Listing all available tokens...\n")
-			for _, t := range *mctlCfgLocal.GetTokens() {
+			for _, t := range *mctlCfg.GetTokens() {
 				utils.Log.Info("- token: ", t.Name)
 				utils.Log.Info("  location: ", t.Location)
 			}
 			return nil
 		}
 		if len(args) == 0 {
-			token, err := mctlCfgLocal.GetTokenForContext(viper.GetString("current-context"))
+			token, err := mctlCfg.GetTokenForContext(viper.GetString("current-context"))
 			if err != nil {
 				utils.Log.Error(ErrTokenContext(err))
 				return nil
@@ -240,7 +238,7 @@ mesheryctl system token view (show token of current context)
 		}
 		tokenName := args[0]
 		var tokenNames []string
-		for _, t := range mctlCfgLocal.Tokens {
+		for _, t := range mctlCfg.Tokens {
 			if t.Name == tokenName {
 				utils.Log.Info("token: ", t.Name)
 				utils.Log.Info("location: ", t.Location)
@@ -258,8 +256,8 @@ mesheryctl system token view (show token of current context)
 		if err != nil {
 			return err
 		}
-		utils.Log.Info("token: ", mctlCfgLocal.Tokens[i].Name)
-		utils.Log.Info("location: ", mctlCfgLocal.Tokens[i].Location)
+		utils.Log.Info("token: ", mctlCfg.Tokens[i].Name)
+		utils.Log.Info("location: ", mctlCfg.Tokens[i].Location)
 		return nil
 	},
 }
