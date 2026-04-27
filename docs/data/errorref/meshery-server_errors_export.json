@@ -3386,6 +3386,24 @@
         "short_description": "failed to parse action payload",
         "probable_cause": "action value may be malformed",
         "suggested_remediation": "check the policy engine action output"
+      },
+      "1379": {
+        "name": "ErrMeshsyncEventCode",
+        "code": "1379",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error processing MeshSync event",
+        "probable_cause": "MeshSync encountered an error while processing a broker event",
+        "suggested_remediation": "Check MeshSync logs for details. Ensure the Kubernetes cluster is reachable and MeshSync is running correctly."
+      },
+      "1380": {
+        "name": "ErrMeshsyncStoreUpdatesCode",
+        "code": "1380",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error processing MeshSync store update",
+        "probable_cause": "MeshSync encountered an error while processing a store update event",
+        "suggested_remediation": "Check MeshSync store logs. Verify that the database connection is active and the store is not corrupted."
       }
     }
   }

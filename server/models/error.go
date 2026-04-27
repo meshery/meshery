@@ -2,11 +2,19 @@
 package models
 
 import (
+	stderrors "errors"
 	"fmt"
 	"time"
 
 	"github.com/meshery/meshkit/errors"
 )
+
+// ErrUserIsSystemInstance is returned by Provider.GetUserByID when the
+// requested userID matches this Meshery instance's own INSTANCE_ID. Callers
+// can use errors.Is to detect the sentinel and return a policy-appropriate
+// response (e.g. a 204 so the UI renders a "system" placeholder) instead of
+// conflating it with a missing user.
+var ErrUserIsSystemInstance = stderrors.New("requested ID is the Meshery instance's system UUID, not a user")
 
 // Please reference the following before contributing an error code:
 // https://docs.meshery.io/project/contributing/contributing-error
@@ -139,6 +147,8 @@ const (
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
 	ErrWorkspaceMissingInputCode          = "meshery-server-1375"
+	ErrMeshsyncEventCode                  = "meshery-server-1379"
+	ErrMeshsyncStoreUpdatesCode           = "meshery-server-1380"
 )
 
 var (
@@ -631,4 +641,12 @@ func ErrWorkspaceMissingInput() error {
 		[]string{"Required workspace input values were not provided for this operation."},
 		[]string{"Ensure orgId is provided as a query parameter (and workspaceId is provided in the URL path for single-workspace operations)."},
 	)
+}
+
+func ErrMeshsyncEvent(err error) error {
+	return errors.New(ErrMeshsyncEventCode, errors.Alert, []string{"Error processing MeshSync event"}, []string{err.Error()}, []string{"MeshSync encountered an error while processing a broker event"}, []string{"Check MeshSync logs for details. Ensure the Kubernetes cluster is reachable and MeshSync is running correctly."})
+}
+
+func ErrMeshsyncStoreUpdates(err error) error {
+	return errors.New(ErrMeshsyncStoreUpdatesCode, errors.Alert, []string{"Error processing MeshSync store update"}, []string{err.Error()}, []string{"MeshSync encountered an error while processing a store update event"}, []string{"Check MeshSync store logs. Verify that the database connection is active and the store is not corrupted."})
 }

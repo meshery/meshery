@@ -205,11 +205,7 @@ components:
   colorIcon: content/en/extensions/models/vault-config-operator/components/identity-token-role/icons/color/identity-token-role-color.svg
   whiteIcon: content/en/extensions/models/vault-config-operator/components/identity-token-role/icons/white/identity-token-role-white.svg
   description: 
-- name: identity-token-role
-  colorIcon: content/en/extensions/models/vault-config-operator/components/identity-token-role/icons/color/identity-token-role-color.svg
-  whiteIcon: content/en/extensions/models/vault-config-operator/components/identity-token-role/icons/white/identity-token-role-white.svg
-  description: 
-components-count: 50
+components-count: 49
 relationships: 
 relationship-count: 0
 featureList: [
