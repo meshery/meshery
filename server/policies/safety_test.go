@@ -1,6 +1,7 @@
 package policies
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -41,6 +42,32 @@ func TestResolveTies_AgreementDeduplicated(t *testing.T) {
 	}
 	if len(ties) != 0 {
 		t.Errorf("expected no ties, got %d", len(ties))
+	}
+}
+
+func TestResolveTies_DotInPathSegmentNoCollision(t *testing.T) {
+	// Path segments containing '.' (e.g. Kubernetes annotation keys) must not
+	// collide with paths whose dotted-join would otherwise look identical.
+	actions := []PolicyAction{
+		newComponentUpdateAction(UpdateComponentConfigurationOp, "c1", []string{"metadata.annotations", "x"}, "alpha"),
+		newComponentUpdateAction(UpdateComponentConfigurationOp, "c1", []string{"metadata", "annotations.x"}, "beta"),
+	}
+	filtered, ties := resolveTies(actions)
+	if len(filtered) != 2 {
+		t.Errorf("expected both actions kept (different paths), got %d", len(filtered))
+	}
+	if len(ties) != 0 {
+		t.Errorf("expected no ties, got %d", len(ties))
+	}
+}
+
+func TestRecordAndCheckFlap_BoundedDesignCount(t *testing.T) {
+	hist := map[string][]string{}
+	for i := 0; i < flapHistMaxDesigns+50; i++ {
+		recordAndCheckFlap(hist, fmt.Sprintf("design-%d", i), "fp")
+	}
+	if len(hist) > flapHistMaxDesigns {
+		t.Errorf("history grew unbounded: got %d entries, cap %d", len(hist), flapHistMaxDesigns)
 	}
 }
 

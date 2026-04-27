@@ -6,8 +6,9 @@ import (
 )
 
 // RelationshipPolicy defines the interface each relationship type policy must implement.
-// Priority resolves conflicts when multiple policies emit actions on the same target;
-// higher priority wins, equal priority is a tie and the action is dropped.
+// Priority is reserved for future priority-aware tie resolution. All built-in
+// policies currently return 0, so any divergence on the same (component, path)
+// is treated as an equal-priority tie and the conflicting actions are dropped.
 type RelationshipPolicy interface {
 	Identifier() string
 	Priority() int

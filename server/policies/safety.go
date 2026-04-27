@@ -32,7 +32,9 @@ func resolveTies(actions []PolicyAction) ([]PolicyAction, []TieInfo) {
 		if !isComponentPatch(a.Op) || a.ID == "" {
 			continue
 		}
-		key := a.ID + "\x00" + strings.Join(a.UpdatePath, ".")
+		// Use \x00 between every segment so paths whose segments contain '.'
+		// (legal for many Kubernetes annotation/label keys) cannot collide.
+		key := a.ID + "\x00" + strings.Join(a.UpdatePath, "\x00")
 		groups[key] = append(groups[key], i)
 		prints[key] = append(prints[key], fp{op: a.Op, value: canonicalJSON(a.UpdateValue)})
 	}
@@ -108,14 +110,20 @@ func actionsFingerprint(actions []PolicyAction) string {
 	lines := make([]string, 0, len(actions))
 	for _, a := range actions {
 		switch a.Op {
-		case AddRelationshipOp, DeleteRelationshipOp, UpdateRelationshipOp:
+		case AddRelationshipOp, DeleteRelationshipOp:
 			id := a.ID
 			if id == "" && a.Relationship != nil {
 				id = a.Relationship.ID.String()
 			}
 			lines = append(lines, a.Op+"|"+id)
+		case UpdateRelationshipOp:
+			id := a.ID
+			if id == "" && a.Relationship != nil {
+				id = a.Relationship.ID.String()
+			}
+			lines = append(lines, a.Op+"|"+id+"|"+strings.Join(a.UpdatePath, "\x00")+"|"+canonicalJSON(a.UpdateValue))
 		case UpdateComponentOp, UpdateComponentConfigurationOp:
-			lines = append(lines, a.Op+"|"+a.ID+"|"+strings.Join(a.UpdatePath, ".")+"|"+canonicalJSON(a.UpdateValue))
+			lines = append(lines, a.Op+"|"+a.ID+"|"+strings.Join(a.UpdatePath, "\x00")+"|"+canonicalJSON(a.UpdateValue))
 		case AddComponentOp:
 			if a.Component != nil {
 				lines = append(lines, a.Op+"|"+a.Component.ID.String())
@@ -132,10 +140,23 @@ func actionsFingerprint(actions []PolicyAction) string {
 // flapHistoryLimit is the number of most-recent fingerprints kept per design.
 const flapHistoryLimit = 4
 
+// flapHistMaxDesigns caps the number of distinct designs whose flap history is
+// retained. Without a bound this map grows monotonically over the lifetime of
+// a long-running server.
+const flapHistMaxDesigns = 1024
+
 // recordAndCheckFlap appends current to the history for designID and returns
 // true if the last four evaluations form an A-B-A-B alternation (i.e. three
 // consecutive inversions).
 func recordAndCheckFlap(history map[string][]string, designID, current string) bool {
+	if _, exists := history[designID]; !exists && len(history) >= flapHistMaxDesigns {
+		// Evict an arbitrary entry to bound memory. Map iteration is randomized
+		// in Go, so this approximates random eviction.
+		for k := range history {
+			delete(history, k)
+			break
+		}
+	}
 	h := append(history[designID], current)
 	if len(h) > flapHistoryLimit {
 		h = h[len(h)-flapHistoryLimit:]
