@@ -203,6 +203,7 @@
     "kind": "Workspace",
     "schema": "{\n \"description\": \"Workspace is the Schema for the workspaces API.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"clusterLabels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"namespaceName\": {\n     \"description\": \"NamespaceName specifies the optional namespace name to use for the workspace. This field is immutable, only settable on create.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workspace\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

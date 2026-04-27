@@ -216,7 +216,7 @@ export const notificationCenterApi = api
           url: `/api/system/events/config`,
           method: 'PUT',
           body: {
-            event_log_level: logLevel,
+            eventLogLevel: logLevel,
           },
         }),
         onQueryStarted: async (logLevel, { dispatch, queryFulfilled }) => {

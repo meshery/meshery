@@ -3,7 +3,7 @@ package models
 import (
 	"encoding/gob"
 
-	userV1beta "github.com/meshery/schemas/models/v1beta1/user"
+	userV1beta2 "github.com/meshery/schemas/models/v1beta2/user"
 )
 
 func init() {
@@ -16,7 +16,7 @@ var (
 )
 
 // User - represents a user in Meshery
-type User = userV1beta.User
+type User = userV1beta2.User
 
 type AllUsers struct {
 	Page       int     `json:"page"`

@@ -46,9 +46,35 @@ const DesignViewListItem = ({
   showWorkspaceName = true,
   showOrganizationName = true,
 }) => {
-  const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
-    id: selectedItem.user_id,
-  });
+  // Parent queries (expandUser: true) already merge the owner's profile onto
+  // the design/view, so prefer the embedded fields and only fall back to the
+  // per-row lookup when they are missing. This also avoids N extra requests
+  // when rendering a page of results.
+  //
+  // user_id is required too — without it the downstream profile-link href
+  // would resolve to /user/undefined. If it's missing we let the query run
+  // (or be skipped by the guard below) rather than render a broken link.
+  const hasEmbeddedUser = Boolean(
+    selectedItem?.user_id &&
+    (selectedItem?.first_name ||
+      selectedItem?.last_name ||
+      selectedItem?.avatar_url ||
+      selectedItem?.email),
+  );
+  const { data: fetchedUserData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery(
+    { id: selectedItem?.user_id },
+    { skip: hasEmbeddedUser || !selectedItem?.user_id },
+  );
+  const userData = hasEmbeddedUser
+    ? {
+        id: selectedItem.user_id,
+        user_id: selectedItem.user_id,
+        first_name: selectedItem.first_name,
+        last_name: selectedItem.last_name,
+        avatar_url: selectedItem.avatar_url,
+        email: selectedItem.email,
+      }
+    : fetchedUserData;
   const { multiSelectedContent, setMultiSelectedContent } = useContext(WorkspaceModalContext);
   return (
     <>

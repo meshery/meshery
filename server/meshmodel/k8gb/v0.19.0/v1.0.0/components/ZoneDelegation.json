@@ -131,6 +131,7 @@
     "kind": "ZoneDelegation",
     "schema": "{\n \"description\": \"ZoneDelegation is the Schema for the zonedelegations API\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"dnsZoneNegTTL\": {\n     \"description\": \"DNSZoneNegTTL specifies the negative TTL for the DNS zone (in seconds)\",\n     \"type\": \"integer\"\n    },\n    \"loadBalancedZone\": {\n     \"description\": \"LoadBalancedZone is the DNS zone managed by this ZoneDelegation\",\n     \"type\": \"string\"\n    },\n    \"parentZone\": {\n     \"description\": \"ParentZone is the zone under which this load-balanced zone is delegated\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dnsZoneNegTTL\",\n    \"loadBalancedZone\",\n    \"parentZone\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Zone Delegation\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }
