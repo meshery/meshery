@@ -224,7 +224,6 @@ module.exports = {
     'tippy.js/animations/perspective-subtle.css': {},
     'tippy.js/animations/perspective-extreme.css': {},
     '@reactour/tour': require('@reactour/tour'),
-    'react-mentions': require('react-mentions'),
     'hotkeys-js': require('hotkeys-js'),
     'styled-components': require('styled-components'),
     immer: require('immer'),

@@ -106,7 +106,6 @@
     "react-codemirror2": "^9.0.1",
     "react-dom": "^19.2.4",
     "react-grid-layout": "^2.2.2",
-    "react-mentions": "^4.4.10",
     "react-moment": "^1.2.2",
     "react-redux": "9.2.0",
     "react-relay": "^20.1.1",
