@@ -2,20 +2,27 @@ package policies
 
 import (
 	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
-	"github.com/meshery/meshkit/logger"
 	relationshipv1alpha3 "github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
+// Logger is the minimal subset of meshkit/logger.Handler that the engine uses.
+// Declared here so js/wasm builds don't transitively pull in gorm/logrus via
+// the full Handler interface.
+type Logger interface {
+	Info(args ...any)
+	Warnf(format string, args ...any)
+}
+
 // GoEngine is the native Go policy evaluation engine.
 type GoEngine struct {
 	policies []RelationshipPolicy
-	log      logger.Handler
+	log      Logger
 }
 
 // NewGoEngine creates a new Go policy engine with all built-in policies registered.
-func NewGoEngine(log logger.Handler) *GoEngine {
+func NewGoEngine(log Logger) *GoEngine {
 	return &GoEngine{
 		log: log,
 		policies: []RelationshipPolicy{
