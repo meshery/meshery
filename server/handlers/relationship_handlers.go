@@ -45,7 +45,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 	response := models.MeshmodelRelationshipsAPIResponse{
 		Page:          page,
 		PageSize:      int(pgSize),
-		Count:         count,
+		TotalCount:    count,
 		Relationships: entities,
 	}
 
@@ -87,7 +87,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	response := models.MeshmodelRelationshipsAPIResponse{
 		Page:          page,
 		PageSize:      int(pgSize),
-		Count:         count,
+		TotalCount:    count,
 		Relationships: entities,
 	}
 

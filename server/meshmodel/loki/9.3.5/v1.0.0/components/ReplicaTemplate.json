@@ -132,6 +132,7 @@
     "kind": "ReplicaTemplate",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"labelSelector\": {\n     \"type\": \"string\"\n    },\n    \"replicas\": {\n     \"default\": 1,\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Replica Template\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }
