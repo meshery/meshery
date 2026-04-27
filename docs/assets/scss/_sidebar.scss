@@ -5,7 +5,6 @@
   transition: transform 0.5s ease-in-out;
   margin-top: calc(var(--navbar-height));
   top: calc(var(--navbar-height));
-  overflow-x: hidden;
   &::after {
     content: "";
     position: absolute;
@@ -23,9 +22,6 @@
     padding: 0.5rem;
     background: var(--background-grey);
     box-shadow: var(--box-shadow-primary);
-    overflow-y: auto;
-    overflow-x: hidden;
-    position: relative;
   }
   & .icon-container {
     height: fit-content;
