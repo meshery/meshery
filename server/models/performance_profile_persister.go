@@ -24,9 +24,21 @@ type PerformanceProfilePage struct {
 
 // GetPerformanceProfiles returns all of the performance profiles
 func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order string, page, pageSize uint64) ([]byte, error) {
-	order = SanitizeOrderInput(order, []string{"updated_at", "created_at", "name", "last_run"})
+	// Sort-input whitelist dual-accepts the canonical camelCase key
+	// (`lastRun`) and the legacy snake_case key (`last_run`) for the
+	// Phase 2.K cascade deprecation window. Once all UI callers emit
+	// `lastRun` exclusively, drop the snake_case entry.
+	order = SanitizeOrderInput(order, []string{"updated_at", "created_at", "name", "last_run", "lastRun"})
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
+	}
+	// Translate the canonical camelCase sort key to the SQL column
+	// alias (`last_run`) below, where the SELECT aliases the
+	// aggregated subquery back to snake_case. The wire contract is
+	// camelCase; the DB column layout stays snake_case per the
+	// identifier-naming migration (wire vs. DB are distinct layers).
+	if strings.HasPrefix(order, "lastRun") {
+		order = "last_run" + strings.TrimPrefix(order, "lastRun")
 	}
 
 	count := int64(0)

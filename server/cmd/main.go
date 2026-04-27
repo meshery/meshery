@@ -8,7 +8,10 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"time"
+
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -36,9 +39,8 @@ import (
 	"github.com/meshery/meshkit/utils/broadcast"
 	"github.com/meshery/meshkit/utils/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	schemasOrganization "github.com/meshery/schemas/models/v1beta1/organization"
+	schemasOrganization "github.com/meshery/schemas/models/v1beta2/organization"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -123,18 +125,25 @@ func main() {
 	viper.SetDefault("SKIP_DOWNLOAD_EXTENSIONS", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
-	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", schemasConnection.MeshsyncDeploymentModeDefault)
+	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", connections.MeshsyncDeploymentModeDefault)
 	store.Initialize()
 
-	// initialize tracing
-	otelConfigString := viper.GetString("OTEL_CONFIG")
-	log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
-	tracingProvider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
-
-	if err != nil {
-		log.Error(fmt.Errorf("failed to initialize OpenTelemetry tracing: %v", err))
+	// initialize tracing. Skip entirely when OTEL_CONFIG is unset so local dev
+	// doesn't pay for a failing OTLP gRPC exporter that logs
+	// "traces export: ... connection refused" every ~10s.
+	var tracingProvider *sdktrace.TracerProvider
+	otelConfigString := strings.TrimSpace(viper.GetString("OTEL_CONFIG"))
+	if otelConfigString == "" {
+		log.Info("OpenTelemetry config not set; tracing disabled")
 	} else {
-		log.Info("OpenTelemetry tracing initialized with config:" + otelConfigString)
+		log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
+		provider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
+		if err != nil {
+			log.Error(fmt.Errorf("failed to initialize OpenTelemetry tracing: %v", err))
+		} else {
+			tracingProvider = provider
+			log.Info("OpenTelemetry tracing initialized with config:" + otelConfigString)
+		}
 	}
 	// Defer shutdown of tracer provider
 	defer func() {
@@ -258,12 +267,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	meshsyncDefaultDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromString(
+	meshsyncDefaultDeploymentMode := connections.MeshsyncDeploymentModeFromString(
 		viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
 	)
 
-	if meshsyncDefaultDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
-		meshsyncDefaultDeploymentMode = schemasConnection.MeshsyncDeploymentModeDefault
+	if meshsyncDefaultDeploymentMode == connections.MeshsyncDeploymentModeUndefined {
+		meshsyncDefaultDeploymentMode = connections.MeshsyncDeploymentModeDefault
 	}
 
 	lProv := &models.DefaultLocalProvider{

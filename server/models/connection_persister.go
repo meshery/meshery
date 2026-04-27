@@ -11,7 +11,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/database"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
+	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
 	"gorm.io/gorm"
 )
 
@@ -63,10 +63,15 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 
 	connectionsFetched := []*connections.Connection{}
 	query.Table("connections").Count(&count)
-	environmentsFetched := []*environments.EnvironmentData{}
 	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
 
 	for _, connectionFetched := range connectionsFetched {
+		// Declare a fresh slice per iteration so GORM's Find(&slice)
+		// populates a distinct underlying array for each connection. If
+		// the slice were hoisted out of the loop, all connections would
+		// end up sharing the same header and subsequent iterations would
+		// clobber earlier results.
+		environmentsFetched := []*environments.EnvironmentData{}
 		cp.DB.Table("environment_connection_mappings").Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").Select("environments.*").
 			Where("connection_id = ?", connectionFetched.ID).
 			Find(&environmentsFetched)
@@ -89,8 +94,13 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 	return connectionsPage, nil
 }
 
-// getConnectionsStatusSummary returns a map of connection status to count
-func (cp *ConnectionPersister) getConnectionsStatusSummary() (*map[schemasConnection.ConnectionStatus]int, error) {
+// getConnectionsStatusSummary returns a map of connection status to count.
+// The v1beta3 connection schema narrowed ConnectionPage.StatusSummary from
+// map[ConnectionStatus]int to map[ConnectionStatusValue]int (the two types
+// carry the same canonical values but ConnectionStatusValue is the one the
+// paginated list envelope now speaks), so build the summary against the
+// page-side type directly.
+func (cp *ConnectionPersister) getConnectionsStatusSummary() (*map[schemasConnection.ConnectionStatusValue]int, error) {
 	var statusCounts []struct {
 		Status string `gorm:"column:status"`
 		Count  int    `gorm:"column:count"`
@@ -105,9 +115,9 @@ func (cp *ConnectionPersister) getConnectionsStatusSummary() (*map[schemasConnec
 		return nil, fmt.Errorf("error fetching connection status summary: %v", err)
 	}
 
-	summary := make(map[schemasConnection.ConnectionStatus]int)
+	summary := make(map[schemasConnection.ConnectionStatusValue]int)
 	for _, sc := range statusCounts {
-		summary[schemasConnection.ConnectionStatus(sc.Status)] = sc.Count
+		summary[schemasConnection.ConnectionStatusValue(sc.Status)] = sc.Count
 	}
 
 	return &summary, nil

@@ -70,7 +70,7 @@ const MyViewsContent = () => {
       order: filters.sortBy,
       visibility: filters.visibility,
       search: filters.searchQuery,
-      user_id: currentUser?.id,
+      userId: currentUser?.id,
     },
     {
       skip: !currentUser?.id,

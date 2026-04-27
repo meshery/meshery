@@ -24,7 +24,6 @@ import (
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/utils"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
@@ -140,9 +139,9 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		// Create context-specific metadata with appropriate meshsync deployment mode
 		k8sContextsMetadata := make(map[string]any, 1)
 		meshsyncMode := getMeshsyncModeForContext(ctx)
-		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+		connections.SetMeshsyncDeploymentModeToMetadata(
 			k8sContextsMetadata,
-			schemasConnection.MeshsyncDeploymentModeFromString(meshsyncMode),
+			connections.MeshsyncDeploymentModeFromString(meshsyncMode),
 		)
 
 		connection, err := provider.SaveK8sContext(token, *ctx, k8sContextsMetadata)
@@ -279,7 +278,15 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	connectionID := req.URL.Query().Get("connection_id")
+	// Canonical query param is `connectionId`; `connection_id` is
+	// dual-accepted during the Phase 2 deprecation window so any legacy
+	// client (mesheryctl, older UI bundles) keeps working. Retire the
+	// fallback once Phase 3 consumer migration completes.
+	q := req.URL.Query()
+	connectionID := q.Get("connectionId")
+	if connectionID == "" {
+		connectionID = q.Get("connection_id")
+	}
 	if connectionID != "" {
 		// Get the context associated with this ID
 		k8sContext, err := provider.GetK8sContext(token, connectionID)
@@ -315,7 +322,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		}
 		return
 	}
-	http.Error(w, "Empty contextID. Pass the context ID(in query parameter \"context\") of the kuberenetes to be pinged", http.StatusBadRequest)
+	http.Error(w, "Empty connection ID. Pass the connection ID of the kubernetes context to be pinged in the canonical query parameter \"connectionId\" (the legacy \"connection_id\" spelling is also accepted during the Phase 2 deprecation window).", http.StatusBadRequest)
 }
 
 func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {

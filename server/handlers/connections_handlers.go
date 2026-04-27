@@ -21,7 +21,6 @@ import (
 	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 )
 
 func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -375,7 +374,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	// In fact this method is used (for now) only for perform meshsync deployment mode change.
 	// If mode change fails return error.
 	// TODO: also check that kind = "kubernetes" (when client starts to send full connection object)
-	if schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.MetaData) != schemasConnection.MeshsyncDeploymentModeUndefined {
+	if connections.MeshsyncDeploymentModeFromMetadata(connection.MetaData) != connections.MeshsyncDeploymentModeUndefined {
 		// Handle meshsync deployment mode changes before connection update
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
 		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(
@@ -586,13 +585,13 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 	token string,
 	userID core.Uuid,
 	provider models.Provider,
-) (schemasConnection.MeshsyncDeploymentMode, schemasConnection.MeshsyncDeploymentMode, bool, error) {
+) (connections.MeshsyncDeploymentMode, connections.MeshsyncDeploymentMode, bool, error) {
 	if newConnection == nil {
-		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("new connection is nil, cannot compare meshsync deployment modes")
+		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("new connection is nil, cannot compare meshsync deployment modes")
 	}
 
 	if h.SystemID == nil {
-		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("system ID is not configured in handler")
+		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("system ID is not configured in handler")
 	}
 	// TODO is h.SystemID a correct instance id here?
 	mesheryInstanceID := *h.SystemID
@@ -600,22 +599,22 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 	// Retrieve existing connection for mode comparison
 	existingConnection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
-		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("failed to retrieve existing connection (status %d): %w", statusCode, err)
+		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("failed to retrieve existing connection (status %d): %w", statusCode, err)
 	}
 
 	if existingConnection == nil {
-		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
+		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
 	}
 
 	if existingConnection.Kind != "kubernetes" {
-		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("connection is not of kind kubernetes")
+		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("connection is not of kind kubernetes")
 	}
 
-	existingMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)
-	newMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(newConnection.MetaData)
+	existingMeshSyncMode := connections.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)
+	newMeshSyncMode := connections.MeshsyncDeploymentModeFromMetadata(newConnection.MetaData)
 
 	// draw back to default mode
-	if newMeshSyncMode == schemasConnection.MeshsyncDeploymentModeUndefined {
+	if newMeshSyncMode == connections.MeshsyncDeploymentModeUndefined {
 		newMeshSyncMode = h.MeshsyncDefaultDeploymentMode
 	}
 
