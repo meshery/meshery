@@ -203,6 +203,7 @@
     "kind": "Category",
     "schema": "{\n \"description\": \"Category is the Schema for the categories API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CategorySpec defines the desired state of HelmRepo\",\n   \"properties\": {\n    \"icon\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Category\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

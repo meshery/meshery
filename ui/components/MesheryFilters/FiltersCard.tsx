@@ -94,7 +94,7 @@ function FiltersCard_({
   const [fullScreen, setFullScreen] = useState(false);
   const [showCode, setShowCode] = useState(false);
 
-  const { data: owner } = useGetUserByIdQuery(ownerId || '');
+  const { data: owner } = useGetUserByIdQuery(ownerId);
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);

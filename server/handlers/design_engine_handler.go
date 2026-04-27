@@ -28,8 +28,8 @@ import (
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	meshkube "github.com/meshery/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1/component"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/component"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/pkg/errors"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -108,7 +108,7 @@ func (h *Handler) PatternFileHandler(
 	if isDesignInAlpha2Format {
 		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
 
-		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(&models.MesheryPattern{
+		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(&models.MesheryPattern{
 			ID:          &patternID,
 			PatternFile: payload.PatternFile,
 		}, eventBuilder)

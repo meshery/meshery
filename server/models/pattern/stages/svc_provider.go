@@ -5,8 +5,8 @@ import (
 	"github.com/meshery/meshery/server/models/pattern/patterns"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/core"
-	"github.com/meshery/schemas/models/v1beta1/component"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/component"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 )
 
 type ServiceInfoProvider interface {

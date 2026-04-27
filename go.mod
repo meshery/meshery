@@ -49,9 +49,9 @@ require (
 	github.com/lib/pq v1.12.1
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
-	github.com/meshery/meshkit v1.0.2
+	github.com/meshery/meshkit v1.0.6
 	github.com/meshery/meshsync v1.0.0
-	github.com/meshery/schemas v1.0.9
+	github.com/meshery/schemas v1.2.0
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.3.1
 	github.com/olekukonko/tablewriter v1.1.0
@@ -66,6 +66,7 @@ require (
 	github.com/spf13/pflag v1.0.10
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
+	github.com/tidwall/sjson v1.2.5
 	github.com/vektah/gqlparser/v2 v2.5.31
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.64.0
@@ -261,7 +262,7 @@ require (
 	github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	github.com/jackc/pgx/v5 v5.9.0 // indirect
+	github.com/jackc/pgx/v5 v5.9.2 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jhump/protoreflect v1.17.0 // indirect
@@ -368,7 +369,6 @@ require (
 	github.com/tidwall/gjson v1.18.0 // indirect
 	github.com/tidwall/match v1.2.0 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
-	github.com/tidwall/sjson v1.2.5 // indirect
 	github.com/tilt-dev/fsnotify v1.4.8-0.20220602155310-fff9c274a375 // indirect
 	github.com/tonistiigi/dchapes-mode v0.0.0-20250318174251-73d941a28323 // indirect
 	github.com/tonistiigi/fsutil v0.0.0-20250605211040-586307ad452f // indirect

@@ -9,6 +9,6 @@ type PatternsAPIResponse struct {
 }
 
 type PatternSourceTypesAPIResponse struct {
-	DesignType          string   `json:"design_type"`
+	DesignType          string   `json:"designType"`
 	SupportedExtensions []string `json:"supported_extensions"`
 }
