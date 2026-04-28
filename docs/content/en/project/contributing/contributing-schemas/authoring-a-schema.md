@@ -117,8 +117,8 @@ paths:
       tags:
         - Keychain
       parameters:
-        - $ref: "../../v1alpha1/core/api.yml#/components/parameters/page"
-        - $ref: "../../v1alpha1/core/api.yml#/components/parameters/pagesize"
+        - $ref: "../core/api.yml#/components/parameters/page"
+        - $ref: "../core/api.yml#/components/parameters/pagesize"
       responses:
         "200":
           description: Keychains
@@ -190,7 +190,7 @@ components:
         - name
       properties:
         id:
-          $ref: ../../v1alpha1/core/api.yml#/components/schemas/uuid
+          $ref: ../core/api.yml#/components/schemas/uuid
           description: Existing keychain ID for updates; omit on create.
           x-oapi-codegen-extra-tags:
             json: "id,omitempty"
@@ -199,17 +199,17 @@ components:
           maxLength: 100
           description: Keychain name.
         owner:
-          $ref: ../../v1alpha1/core/api.yml#/components/schemas/uuid
+          $ref: ../core/api.yml#/components/schemas/uuid
           description: User ID of the keychain owner.
     KeychainPage:
       type: object
       properties:
         page:
-          $ref: ../../v1alpha1/core/api.yml#/components/schemas/number
+          $ref: ../core/api.yml#/components/schemas/number
         page_size:
-          $ref: ../../v1alpha1/core/api.yml#/components/schemas/number
+          $ref: ../core/api.yml#/components/schemas/number
         total_count:
-          $ref: ../../v1alpha1/core/api.yml#/components/schemas/number
+          $ref: ../core/api.yml#/components/schemas/number
         keychains:
           type: array
           items:
@@ -385,7 +385,7 @@ Then verify each item:
 - [ ] Modified only schema YAML/JSON files (not generated code in `models/` or `typescript/generated/`)
 - [ ] Updated corresponding template files in `templates/` with correct default values
 - [ ] Template value types match the schema type (`[]` for array, `""` for string, `{}` for object)
-- [ ] Used non-deprecated `v1alpha1/core/api.yml` references (not `core.json`)
+- [ ] Used non-deprecated `core/api.yml` references (not `core.json`)
 - [ ] If adding new schemas, referenced them from `api.yml`
 - [ ] Removed redundant `x-oapi-codegen-extra-tags` when the property already inherits them via `$ref`
 - [ ] If a schema type is stored as a JSON blob in a single DB column AND has fixed properties, used `x-generate-db-helpers: true` at the schema component level (not per-property)
@@ -415,13 +415,13 @@ Then verify each item:
 1. ❌ Hand-editing generated Go code in `models/<pkg>/<pkg>.go` — it is overwritten on next `make build`
 2. ❌ Hand-editing generated TypeScript in `typescript/generated/` — same reason
 3. ❌ Hand-editing built files in `dist/`
-4. ❌ Using deprecated `core.json` references — use `v1alpha1/core/api.yml` instead
+4. ❌ Using deprecated `core.json` references — use the version's `core/api.yml` instead
 5. ❌ Adding redundant `x-oapi-codegen-extra-tags` on a property that already inherits them via `$ref`
 6. ❌ Forgetting to update template files in `templates/` when adding new required fields
 7. ❌ Not running `make build` after schema changes
 8. ❌ Placing template files outside the `templates/` subdirectory
-9. ❌ Using `.d.ts` extension in TypeScript import paths in `index.ts`
-10. ❌ Assuming schema property names are PascalCase — check the actual generated `.d.ts` files
+9. ❌ Using `ts` extension in TypeScript import paths in `index.ts`
+10. ❌ Assuming schema property names are PascalCase — check the actual generated `.ts` files
 11. ❌ Adding `x-generate-db-helpers` on individual properties — it must be at the schema component level
 12. ❌ Using `x-generate-db-helpers` on amorphous types with no fixed property list — use `x-go-type: "core.Map"` instead
 13. ❌ Using the full entity schema as a `POST`/`PUT` `requestBody` — always use a separate `*Payload` schema
@@ -489,5 +489,5 @@ When rendering a new field in the UI:
 
 ## Next steps {#next-steps}
 
-- [Schema Rules and Extensions](../schema-rules-and-extensions/) — all 42 validation rules and `x-*` extensions
+- [Schema Rules and Extensions](../schema-rules-and-extensions/) — all validation rules and `x-*` extensions
 - [Schema Consumers and Build](../schema-consumers-and-build/) — Go helpers, TypeScript, build pipeline details

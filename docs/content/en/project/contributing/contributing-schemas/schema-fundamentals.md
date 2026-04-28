@@ -11,15 +11,15 @@ Meshery uses **Schema-Driven Development (SDD)**: every API resource is defined 
 
 ```
 schemas/constructs/v1beta1/<construct>/
-├── <construct>.yaml        ← entity definition (response schema)
+├── <construct>.yaml        ← entity definition
 └── api.yml                 ← endpoints + Payload schemas
          │
          ▼  make build
     bundle-openapi
          │
          ├─▶ generate-golang  →  models/v1beta1/<construct>/<construct>.go
-         └─▶ generate-ts      →  typescript/generated/v1beta1/<Construct>/<Construct>.d.ts
-              └─▶ generate-rtk  →  typescript/rtk/  (RTK Query hooks)
+         ├─▶ generate-ts      →  typescript/generated/v1beta1/<Construct>/<Construct>.ts
+         └─▶ generate-rtk     →  typescript/rtk/  (RTK Query hooks)
 ```
 
 The pipeline runs in four stages:
@@ -27,9 +27,9 @@ The pipeline runs in four stages:
 1. **bundle-openapi** — resolves all `$ref` references and merges specs into `_openapi_build/`
 2. **generate-golang** — generates Go structs in `models/` via oapi-codegen
 3. **generate-ts** — generates TypeScript types in `typescript/generated/` via openapi-typescript
-4. **generate-rtk** — generates RTK Query client hooks in `typescript/rtk/`
+4. **generate-rtk** — generates RTK Query client hooks in `typescript/rtk/` from the bundled spec
 
-Run `make build` to execute all stages plus tests. Run individual targets when iterating.
+Stages 2–4 each consume the bundled spec from stage 1 and run independently. Run `make build` to execute all stages plus tests, or run individual targets when iterating.
 
 ## File structure for a construct {#file-structure}
 
@@ -43,6 +43,7 @@ schemas/constructs/v1beta1/<construct>/
     ├── <construct>_template.json    # Example instance (JSON)
     └── <construct>_template.yaml    # Example instance (YAML)
 ```
+&nbsp;
 
 | File | Role | Edit? |
 |---|---|---|
@@ -52,7 +53,7 @@ schemas/constructs/v1beta1/<construct>/
 | `templates/<construct>_template.yaml` | Same example in YAML | Yes |
 | `models/v1beta1/<construct>/<construct>.go` | Generated Go structs | **Never** |
 | `models/v1beta1/<construct>/<construct>_helper.go` | Manual SQL helpers + interface impl | Yes |
-| `typescript/generated/v1beta1/<Construct>/<Construct>.d.ts` | Generated TypeScript types | **Never** |
+| `typescript/generated/v1beta1/<Construct>/<Construct>.ts` | Generated TypeScript types | **Never** |
 
 ## The dual-schema pattern {#dual-schema-pattern}
 
@@ -66,8 +67,10 @@ The entity YAML represents the **full server-side object** as returned by API re
 - Define all server-generated fields in `properties`: `id`, `created_at`, `updated_at`, `deleted_at`
 - List always-present server-generated fields in `required`
 
+See the real file at [`schemas/constructs/v1beta1/environment/environment.yaml`](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta1/environment/environment.yaml) for the full property set (which also includes additional fields also)
+
 ```yaml
-# environment.yaml — correct
+# environment.yaml — simplified illustration
 $id: https://schemas.meshery.io/environment.yaml
 $schema: http://json-schema.org/draft-07/schema#
 title: Environment
@@ -77,6 +80,7 @@ required:
   - id
   - schemaVersion
   - name
+  - description
   - organization_id
 properties:
   id:
@@ -109,6 +113,8 @@ The Payload schema is defined in `api.yml` under `components/schemas`. It:
 - Makes `id` optional (`omitempty`) for upsert patterns
 - Is the schema referenced by all `POST`/`PUT` `requestBody` entries
 
+See the real `EnvironmentPayload` in [`schemas/constructs/v1beta1/environment/api.yml`](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta1/environment/api.yml).
+
 ```yaml
 # in api.yml — components/schemas
 EnvironmentPayload:
@@ -117,11 +123,6 @@ EnvironmentPayload:
     - name
     - organization_id
   properties:
-    id:
-      $ref: ../core/api.yml#/components/schemas/uuid
-      description: Existing environment ID for updates; omit on create.
-      x-oapi-codegen-extra-tags:
-        json: "id,omitempty"
     name:
       $ref: ../core/api.yml#/components/schemas/Text
       description: Environment name.
@@ -133,7 +134,11 @@ EnvironmentPayload:
       format: uuid
       maxLength: 500
       description: Organization this environment belongs to.
+      x-oapi-codegen-extra-tags:
+        json: organization_id
 ```
+
+Note that the `requestBody` object name is `environmentPayload` (camelCase) while the schema component name is `EnvironmentPayload` (PascalCase) — `requestBodies` keys are camelCase per [OpenAPI naming convention](#casing-rules), schema component names are PascalCase.
 
 ### Rule 3 — POST/PUT `requestBody` must reference `*Payload` only {#rule-3}
 
@@ -178,15 +183,15 @@ Every property is governed by exactly one authority:
 
 | Element | Casing | Example | Counter-example |
 |---|---|---|---|
-| DB-backed schema property | `snake_case` | `created_at`, `org_id`, `credential_id` | ~~`createdAt`~~, ~~`orgId`~~ |
-| Non-DB schema property | `camelCase` | `schemaVersion`, `displayName` | ~~`schema_version`~~, ~~`display_name`~~ |
-| Pagination envelope fields | `snake_case` (published contract) | `page_size`, `total_count` | ~~`pageSize`~~, ~~`totalCount`~~ |
-| `components/schemas` names | `PascalCase` | `Connection`, `KeychainPayload` | ~~`connection`~~, ~~`keychainPayload`~~ |
-| `operationId` | lower `camelCase` verbNoun | `createConnection`, `getPatterns` | ~~`CreateConnection`~~, ~~`get_patterns`~~ |
-| Path segments | `kebab-case` plural nouns | `/api/role-holders` | ~~`/api/roleHolders`~~ |
-| Path parameters | `camelCase` + `Id` suffix | `{orgId}`, `{connectionId}` | ~~`{orgID}`~~, ~~`{org_id}`~~ |
-| Query parameters | `camelCase` | `pageSize`, `orgId` | ~~`page_size`~~, ~~`orgID`~~ |
-| Enum values (new) | `lowercase` | `enabled`, `ignored` | ~~`Enabled`~~, ~~`ENABLED`~~ |
+| DB-backed schema property | `snake_case` | `created_at`, `org_id`, `credential_id` | ❌ `createdAt`, `orgId` |
+| Non-DB schema property | `camelCase` | `schemaVersion`, `displayName` | ❌ `schema_version`, `display_name` |
+| Pagination envelope fields | `snake_case` (published contract) | `page_size`, `total_count` | ❌ `pageSize`, `totalCount` |
+| `components/schemas` names | `PascalCase` | `Connection`, `KeychainPayload` | ❌ `connection`, `keychainPayload` |
+| `operationId` | lower `camelCase` verbNoun | `createConnection`, `getPatterns` | ❌ `CreateConnection`, `get_patterns` |
+| Path segments | `kebab-case` plural nouns | `/api/role-holders` | ❌ `/api/roleHolders` |
+| Path parameters | `camelCase` + `Id` suffix | `{orgId}`, `{connectionId}` | ❌ `{orgID}`, `{org_id}` |
+| Query parameters | `camelCase` | `pageSize`, `orgId` | ❌ `page_size`, `orgID` |
+| Enum values (new) | `lowercase` | `enabled`, `ignored` | ❌ `Enabled`, `ENABLED` |
 | Go struct field names | `PascalCase` (generated) | `CreatedAt`, `CredentialID` | — |
 | TypeScript property names | Verbatim from schema (generated) | `credential_id`, `schemaVersion` | — |
 | `json:"..."` tag | Verbatim from schema property name | `json:"credential_id"` | — |
@@ -269,17 +274,17 @@ New endpoints must be placed in the appropriate category. Path segments must be 
 
 ### Core schema references {#core-refs}
 
-Always use references from `v1alpha1/core/api.yml` — never the deprecated `core.json`:
+Always reference shared types from the version's `core/api.yml`. From a v1beta1 construct, the path is `../core/api.yml` (sibling directory). Adjust the relative path for other versions (`../../v1alpha1/core/api.yml` from a v1alpha1 sub-construct, etc.).
 
-| Type | Reference |
+| Type | Reference (from v1beta1 construct) |
 |---|---|
-| UUID | `../../v1alpha1/core/api.yml#/components/schemas/uuid` |
-| Timestamp (created) | `../../v1alpha1/core/api.yml#/components/schemas/created_at` |
-| Timestamp (updated) | `../../v1alpha1/core/api.yml#/components/schemas/updated_at` |
-| Nullable time | `../../v1alpha1/core/api.yml#/components/schemas/nullTime` |
-| Version string | `../../v1alpha1/core/api.yml#/components/schemas/versionString` |
-| Semver string | `../../v1alpha1/core/api.yml#/components/schemas/semverString` |
-| Input string | `../../v1alpha1/core/api.yml#/components/schemas/inputString` |
+| UUID | `../core/api.yml#/components/schemas/uuid` |
+| Timestamp (created) | `../core/api.yml#/components/schemas/created_at` |
+| Timestamp (updated) | `../core/api.yml#/components/schemas/updated_at` |
+| Nullable time | `../core/api.yml#/components/schemas/nullTime` |
+| Version string | `../core/api.yml#/components/schemas/versionString` |
+| Semver string | `../core/api.yml#/components/schemas/semverString` |
+| Input string | `../core/api.yml#/components/schemas/inputString` |
 
 ### Field ordering with `x-order` {#x-order}
 
@@ -314,5 +319,5 @@ model:
 ## Next steps {#next-steps}
 
 - [Authoring a Schema](../authoring-a-schema/) — add a new construct step by step with a worked example
-- [Schema Rules and Extensions](../schema-rules-and-extensions/) — all 42 validation rules and vendor extensions
+- [Schema Rules and Extensions](../schema-rules-and-extensions/) — all validation rules and vendor extensions
 - [Schema Consumers and Build](../schema-consumers-and-build/) — build pipeline, Go helpers, TypeScript

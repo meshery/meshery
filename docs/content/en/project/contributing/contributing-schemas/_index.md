@@ -13,7 +13,7 @@ git clone https://github.com/meshery/schemas.git
 cd schemas
 make setup          # go mod tidy + npm install
 make build          # generate Go, TypeScript, RTK, validate
-npm run build       # build TypeScript distribution (dist/)
+npm run build       # build TypeScript distribution
 ```
 
 ## Where to go next
@@ -22,7 +22,7 @@ npm run build       # build TypeScript distribution (dist/)
 |---|---|
 | Understand what schemas are and how they propagate | [Schema Fundamentals](./schema-fundamentals/) |
 | Add a new schema construct or modify an existing one | [Authoring a Schema](./authoring-a-schema/) |
-| Understand the 42 validation rules or vendor extensions | [Schema Rules and Extensions](./schema-rules-and-extensions/) |
+| Understand the validation rules or vendor extensions | [Schema Rules and Extensions](./schema-rules-and-extensions/) |
 | Work with generated Go/TypeScript code or run the build | [Schema Consumers and Build](./schema-consumers-and-build/) |
 | Contribute UI forms driven by schemas (RJSF / @sistent) | [Schema-Driven UI Development](./contributing-ui-schemas/) |
 
@@ -43,4 +43,4 @@ npm run build       # build TypeScript distribution (dist/)
 
 - [meshery/schemas README](https://github.com/meshery/schemas/blob/master/README.md)
 - [AGENTS.md — authoritative contributor contract](https://github.com/meshery/schemas/blob/master/AGENTS.md)
-- [Core schema definitions](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1alpha1/core/api.yml)
+- [Core schema definitions](https://github.com/meshery/schemas/blob/master/schemas/constructs/)

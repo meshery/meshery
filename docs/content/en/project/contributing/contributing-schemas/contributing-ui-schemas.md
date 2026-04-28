@@ -142,7 +142,7 @@ type EnvironmentFormValues = v1beta1.EnvironmentPayload;
 const EnvironmentForm = ({ onSubmit }: { onSubmit: (v: EnvironmentFormValues) => void }) => (
   <form onSubmit={...}>
     <input type="text" name="name" />
-    <input type="text" name="organizationId" />
+    <input type="text" name="organization_id" />
   </form>
 );
 ```
@@ -184,7 +184,7 @@ When the backend adds a new field to `Environment`, TypeScript immediately flags
 The schemas package ships RTK Query hooks that provide type-safe access to all API endpoints:
 
 ```typescript
-import { mesheryApi } from "@meshery/schemas/dist/mesheryApi";
+import { mesheryApi } from "@meshery/schemas/mesheryApi";
 
 // Type-safe data fetching
 const { data, isLoading } = mesheryApi.useGetEnvironmentsQuery({
@@ -195,7 +195,7 @@ const { data, isLoading } = mesheryApi.useGetEnvironmentsQuery({
 
 // Type-safe mutation
 const [createEnvironment] = mesheryApi.useCreateEnvironmentMutation();
-await createEnvironment({ name: "Production", organizationId: orgId });
+await createEnvironment({ name: "Production", organization_id: orgId });
 ```
 
 Do not hand-roll RTK query endpoints when `mesheryApi` provides a canonical equivalent. Hand-rolled endpoints diverge from the canonical schema types and break the consumer-audit CI gate.

@@ -23,7 +23,7 @@ schemas/constructs/**/*.yaml, api.yml   ← you write these
           │
           ├─▶ make generate-ts
           │     └── typescript/generated/v1beta1/<Construct>/
-          │         ├── <Construct>.d.ts       (TypeScript types)
+          │         ├── <Construct>.ts         (TypeScript types)
           │         └── <Construct>Schema.ts   (schema as const JS object)
           │
           └─▶ make generate-rtk
@@ -196,7 +196,7 @@ metadata:
 
 `make generate-ts` produces two files per construct in `typescript/generated/v1beta1/<Construct>/`:
 
-- `<Construct>.d.ts` — TypeScript interface definitions (types only, no runtime value)
+- `<Construct>.ts` — TypeScript interface definitions (types only, no runtime value)
 - `<Construct>Schema.ts` — the OpenAPI schema as a const JavaScript object (runtime value for validation)
 
 ### `typescript/index.ts` — the public API surface {#index-ts}
@@ -294,10 +294,10 @@ After `make build`, spot-check:
 grep "db:\"created_at\"" models/v1beta1/environment/environment.go
 
 # Check TypeScript has expected property names
-grep "organization_id" typescript/generated/v1beta1/environment/Environment.d.ts
+grep "organization_id" typescript/generated/v1beta1/environment/Environment.ts
 ```
 
 ## Next steps {#next-steps}
 
 - [Schema-Driven UI Development](../contributing-ui-schemas/) — RJSF forms, @sistent integration, x-rjsf-* patterns
-- [Schema Rules and Extensions](../schema-rules-and-extensions/) — all 42 validation rules
+- [Schema Rules and Extensions](../schema-rules-and-extensions/) — all validation rules

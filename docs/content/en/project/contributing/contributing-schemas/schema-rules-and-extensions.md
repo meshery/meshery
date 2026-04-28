@@ -1,17 +1,17 @@
 ---
 title: Schema Rules and Extensions
-description: All 42 schema validation rules, vendor extensions (x-* annotations), versioning, and the deprecation lifecycle in meshery/schemas.
+description: All schema validation rules, vendor extensions (x-* annotations), versioning, and the deprecation lifecycle in meshery/schemas.
 categories: [contributing]
 weight: 40
 ---
 
-The `meshery/schemas` repository enforces 42 validation rules via the `validation/` Go package. Rules 1–36 are **blocking** and must pass before a PR can merge. Rules 37–42 are **advisory** and reported separately.
+The `meshery/schemas` repository enforces a set of validation rules via the `validation/` Go package. Rules in the 1–36 range are **blocking** and must pass before a PR can merge. Rules in the 37–42 range are **advisory** and reported separately.
 
 ## Validator CLI targets {#validator-targets}
 
 ```bash
 make validate-schemas          # blocking rules only (CI gate)
-make validate-schemas-strict   # all 42 rules including advisory
+make validate-schemas-strict   # all rules including advisory
 make audit-schemas             # advisory report — new issues only vs baseline
 make audit-schemas-full        # full advisory backlog
 make consumer-audit            # check downstream consumers (meshery/meshery, layer5io/meshery-cloud)
@@ -338,22 +338,23 @@ properties:
 
 ### Version map
 
-| Version | Status | Notes |
+The authoritative source for what each version contains is the directory layout under [`schemas/constructs/`](https://github.com/meshery/schemas/tree/master/schemas/constructs) in the `meshery/schemas` repository.
+
+| Version | Status | Contents |
 |---|---|---|
-| `v1alpha1` | Active | Core shared types only (`core/api.yml`) |
-| `v1alpha2` | Active | Catalog |
-| `v1alpha3` | Active | Relationship |
-| `v1beta1` | Partially deprecated | Most constructs active; some deprecated in favour of v1beta2 |
+| `v1alpha1` | Active | Shared core types (`core/`), `capability/`, `catalog_data/` and `catalog_data.yaml`, `component.yaml`, `model.yaml`, `relationship.yaml`, `selector.yaml` |
+| `v1alpha2` | Active | `catalog/`, `design.yaml`, `relationship.yaml`, `selector.yaml` |
+| `v1alpha3` | Active | `relationship/`, `selector/` |
+| `v1beta1` | Partially deprecated | The bulk of constructs (academy, badge, capability, catalog, category, component, connection, core, credential, design, environment, evaluation, event, feature, invitation, key, keychain, model, organization, plan, relationship, role, schedule, selector, subcategory, subscription, team, token, user, view). Some are deprecated in favour of v1beta2. |
 | `v1beta2` | Active | Migrated constructs with canonical camelCase wire names |
+
+New versions are introduced selectively per construct. A construct can exist in multiple versions simultaneously while consumers migrate.
 
 ### When to introduce a new API version
 
-Introduce a new version (e.g., v1beta2) only when:
+The canonical trigger is a published wire-format change: if a wire-format field name (or any other published wire contract) must change, introduce a new API version (e.g., v1beta2) and migrate the resource consistently there.
 
-- A published wire-format field name must change (snake_case → camelCase or vice versa)
-- A breaking change to response schema shape is required
-
-Do **not** partially migrate a resource within the same version. A partial migration (renaming some fields but not others in the same construct) is forbidden — it creates an inconsistent wire format.
+Do **not** partially migrate a resource within the same version. A partial migration (renaming some fields but not others in the same construct) is forbidden. It creates an inconsistent wire format.
 
 ### Deprecation lifecycle
 
