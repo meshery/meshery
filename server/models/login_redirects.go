@@ -32,6 +32,7 @@ func resolvePostLoginRedirect(rawRef, fallback string) string {
 var authInitiationPaths = []string{
 	"/user/login",
 	"/auth/login",
+	"/login",
 	"/api/user/token",
 	"/provider",
 }

@@ -56,6 +56,11 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET")
 	gMux.HandleFunc("/auth/login", h.ProviderUIHandler).
 		Methods("GET")
+	// /login is the entry point used by Layer5 Cloud org-context flows and other
+	// integrations to initiate a Meshery auth session. Redirect to the normal
+	// login flow so the provider middleware can route the user correctly.
+	gMux.Handle("/login", h.NoCacheMiddleware(http.HandlerFunc(h.ProviderUIHandler))).
+		Methods("GET")
 	// gMux.PathPrefix("/provider/").
 	// 	Handler(http.StripPrefix("/provider/", http.FileServer(http.Dir("../provider-ui/out/")))).
 	// 	Methods("GET")
