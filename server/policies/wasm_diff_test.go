@@ -46,7 +46,7 @@ func wasmDiffEnv(t *testing.T) (root string, ok bool, skip string) {
 	t.Helper()
 	wasmEnvOnce.Do(func() {
 		wasmRoot = repoRoot(t)
-		if _, err := os.Stat(filepath.Join(wasmRoot, "ui/public/static/policy_engine.wasm")); err != nil {
+		if _, err := os.Stat(filepath.Join(wasmRoot, "server/policies/wasm/policy_engine.wasm")); err != nil {
 			wasmSkipMsg = "policy_engine.wasm not built; run `make wasm-engine` first"
 			return
 		}
