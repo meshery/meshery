@@ -1,4 +1,8 @@
 name: Build Meshery UI
+
+permissions:
+  contents: read
+
 on:
   workflow_call:
     outputs:
@@ -16,10 +20,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: 20
           check-latest: true
@@ -30,13 +34,13 @@ jobs:
         run: make ui-build
           
       - name: Upload meshery-ui artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: meshery-ui
           path: ui/out/
           
       - name: Upload provider-ui artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: meshery-provider-ui
           path: provider-ui/out/

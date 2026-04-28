@@ -1,4 +1,7 @@
 name: Golang Unit and Integration Tests
+
+permissions:
+  contents: read
 on:
   push:
     branches:
@@ -33,12 +36,12 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version: ${{ matrix.go }}
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v9
+        uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9
         with:
           version: v2.7
           args: --config=../.github/.golangci.yml --timeout=10m
@@ -48,15 +51,15 @@ jobs:
     runs-on: ubuntu-24.04
     needs: golangci-server
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 2
       - name: Setup Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version: "1.25"
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: 20
       - name: Run coverage
@@ -88,7 +91,7 @@ jobs:
 
       - name: Commit & push to qa
         if: ${{ !cancelled() && github.event_name == 'push' }}
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
         with:
           commit_message: "[Meshery] Sync Go Unit Test Results - ${GITHUB_SHA}"
           commit_options: "--signoff"
@@ -106,12 +109,12 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version: ${{ matrix.go }}
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v9
+        uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9
         with:
           version: v2.7
           args: --config=../.github/.golangci.yml --timeout=10m
@@ -121,17 +124,17 @@ jobs:
     runs-on: ubuntu-24.04
     needs: golangci-cli
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version: "1.25"
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: 20
       - name: Run mesheryctl coverage
@@ -163,7 +166,7 @@ jobs:
 
       - name: Commit & push to qa
         if: ${{ !cancelled() && github.event_name == 'push' }}
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
         with:
           commit_message: "[Mesheryctl] Sync Go Unit Test Results - ${GITHUB_SHA}"
           commit_options: "--signoff"
@@ -179,19 +182,19 @@ jobs:
       - golangci-cli
       - golangci-server
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version: "1.25"
       - name: Build Mesheryctl Binaries
         run: make
         working-directory: ./mesheryctl
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: mesheryctl-binary
           path: ./mesheryctl/mesheryctl
@@ -205,12 +208,12 @@ jobs:
       matrix:
         platform: [docker, kubernetes]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
         with:
           name: mesheryctl-binary
           path: ./mesheryctl/
@@ -220,9 +223,9 @@ jobs:
           docker compose ps
         working-directory: ./install/docker
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.13.0
+        uses: helm/kind-action@92086f6be054225fa813e0a4b13787fc9088faab # v1.13.0
         if: matrix.platform == 'kubernetes'
         with:
           cluster_name: "kind-cluster"

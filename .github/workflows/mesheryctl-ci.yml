@@ -1,4 +1,8 @@
 name: Meshery Docs CLI Reference Update
+
+permissions:
+  contents: write
+
 on:
   push:
     branches:
@@ -26,12 +30,12 @@ jobs:
           if [ "${{github.event_name }}" == "release" ];then
             echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
           fi
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           repository: meshery/meshery
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Setup go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version: "1.25"
           check-latest: "true"
@@ -47,7 +51,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit ✅
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
         with:
           file_pattern: docs
           commit_user_name: l5io

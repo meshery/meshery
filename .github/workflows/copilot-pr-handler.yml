@@ -91,7 +91,7 @@ jobs:
       # Step 2: Mark PR as ready for review if it's in draft state
       # -------------------------------------------------------------------------
       - name: 📝 Mark PR as Ready for Review
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           script: |
@@ -144,7 +144,7 @@ jobs:
       # Step 3: Approve pending workflow runs for this PR
       # -------------------------------------------------------------------------
       - name: ✅ Approve Pending Workflow Runs
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           script: |
@@ -210,7 +210,7 @@ jobs:
       # -------------------------------------------------------------------------
       - name: 📢 Post Status Comment
         if: always()
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           script: |
