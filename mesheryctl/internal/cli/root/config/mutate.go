@@ -34,7 +34,7 @@ func InitDefaultConfig(
 ) error {
 
 	if err := os.MkdirAll(mesheryFolder, 0o700); err != nil {
-		return err
+		return ErrCreateMesheryDir(err)
 	}
 
 	if err := createConfigFile(); err != nil {

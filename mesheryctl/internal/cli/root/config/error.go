@@ -22,6 +22,7 @@ const (
 	ErrReadMesheryConfigCode = "mesheryctl-1220"
 	ErrDuplicateContextCode  = "mesheryctl-1221"
 	ErrWriteMeshConfigCode   = "mesheryctl-1222"
+	ErrCreateMesheryDirCode =  "mesheryctl-1235"
 )
 
 func ErrInvalidMeshConfig(err error) error {
@@ -59,4 +60,15 @@ func ErrWriteMeshConfig(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to write to config file"},
 		[]string{"Ensure that you have the correct permissions to write to the config file at `$HOME/.meshery/config.yaml`."})
+}
+
+func ErrCreateMesheryDir(err error) error {
+	return errors.New(
+		ErrCreateMesheryDirCode,
+		errors.Alert,
+		[]string{"Unable to create Meshery directory"},
+		[]string{err.Error()},
+		[]string{"Failed to create the .meshery directory"},
+		[]string{"Check directory permissions or path and try again"},
+	)
 }
