@@ -104,6 +104,17 @@ export const userApi = api
         // All callers share one cache entry per user session (client-side Redux store).
         // This does not affect other users—each browser has its own isolated store.
         serializeQueryArgs: ({ endpointName }) => endpointName,
+        // The User schema (meshery/schemas userV1beta2.User) serializes with camelCase
+        // JSON tags (avatarUrl, firstName, …).  Spread the raw response and add
+        // snake_case aliases so that existing UI consumers continue to work without
+        // requiring a site-wide rename.
+        transformResponse: (response: Record<string, unknown>) => ({
+          ...response,
+          avatar_url: response.avatarUrl,
+          first_name: response.firstName,
+          last_name: response.lastName,
+          user_id: response.userId,
+        }),
       }),
       getProviderCapabilities: builder.query({
         query: () => '/api/provider/capabilities',
@@ -129,17 +140,18 @@ export const userApi = api
             }
           },
         }),
-        transformResponse: (response) => {
+        transformResponse: (response: Record<string, unknown>) => {
           if (!response || typeof response !== 'object') {
             return undefined;
           }
           return {
             id: response.id,
             email: response.email,
-            user_id: response.user_id,
-            avatar_url: response.avatar_url,
-            first_name: response.first_name,
-            last_name: response.last_name,
+            // Schema serialises in camelCase; alias to snake_case for UI consumers.
+            user_id: response.userId,
+            avatar_url: response.avatarUrl,
+            first_name: response.firstName,
+            last_name: response.lastName,
           };
         },
       }),
