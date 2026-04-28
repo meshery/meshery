@@ -88,9 +88,9 @@ const SearchBar = ({
   };
 
   const width = window.innerWidth;
-  let searchWidth = '12.5rem';
+  let searchWidth = '15rem';
   if (width <= 750) {
-    searchWidth = '7.5rem';
+    searchWidth = '10rem';
   }
   const theme = useTheme();
   return (

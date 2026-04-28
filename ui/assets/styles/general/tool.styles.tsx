@@ -11,6 +11,14 @@ export const ToolWrapper = styled(Box)(({ theme }) => ({
   borderRadius: '0.5rem',
   position: 'relative',
   zIndex: '101',
+  '& [data-testid="searchbar-input"]': {
+    minWidth: '12.5rem !important',
+  },
+  [theme.breakpoints.down('sm')]: {
+    '& [data-testid="searchbar-input"]': {
+      minWidth: '9rem !important',
+    },
+  },
 }));
 
 export const MeshModelToolbar = styled(Box)(() => ({
