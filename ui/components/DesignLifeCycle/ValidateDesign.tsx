@@ -2,7 +2,8 @@
 import React, { useRef, useEffect } from 'react';
 import { useSelector } from '@xstate/react';
 import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import ExpandLessIcon from '../../assets/icons/ExpandLessIcon';
+import ExpandMoreIcon from '../../assets/icons/ExpandMoreIcon';
 import { ComponentIcon, Loading, getSvgWhiteForComponent, processDesign } from './common';
 import {
   designValidatorCommands,
@@ -137,7 +138,8 @@ const ValidationResults_ = (props) => {
               {/* key can be error id?? */}
               <ComponentIcon iconSrc={getSvgWhiteForComponent(componentResult.component)} />
               <ListItemText primary={componentResult.component.displayName} disableTypography />(
-              {componentResult?.errors?.length}){open[index] ? <ExpandLess /> : <ExpandMore />}
+              {componentResult?.errors?.length})
+              {open[index] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </ComponentValidationListItem>
             <Collapse
               in={open[index]}
