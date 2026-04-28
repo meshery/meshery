@@ -104,10 +104,13 @@ export const userApi = api
         // All callers share one cache entry per user session (client-side Redux store).
         // This does not affect other users—each browser has its own isolated store.
         serializeQueryArgs: ({ endpointName }) => endpointName,
-        // The User schema (meshery/schemas userV1beta2.User) serializes with camelCase
-        // JSON tags (avatarUrl, firstName, …).  Spread the raw response and add
-        // snake_case aliases so that existing UI consumers continue to work without
-        // requiring a site-wide rename.
+        // The User schema (meshery/schemas userV1beta2.User) serialises with
+        // camelCase JSON tags (avatarUrl, firstName, …) but UI consumers
+        // historically read snake_case.  Add snake_case aliases on top of the
+        // raw response, preferring camelCase when present and falling back to
+        // any pre-existing snake_case keys — this keeps both payload shapes
+        // working through the schema migration without overwriting valid
+        // legacy data with `undefined`.
         transformResponse: (response) => {
           // Defensive: pass through null / non-object bodies unchanged so callers
           // see the raw response rather than a TypeError from `null.avatarUrl`.
@@ -116,10 +119,10 @@ export const userApi = api
           }
           return {
             ...response,
-            avatar_url: response.avatarUrl,
-            first_name: response.firstName,
-            last_name: response.lastName,
-            user_id: response.userId,
+            avatar_url: response.avatarUrl ?? response.avatar_url,
+            first_name: response.firstName ?? response.first_name,
+            last_name: response.lastName ?? response.last_name,
+            user_id: response.userId ?? response.user_id,
           };
         },
       }),
@@ -154,11 +157,14 @@ export const userApi = api
           return {
             id: response.id,
             email: response.email,
-            // Schema serialises in camelCase; alias to snake_case for UI consumers.
-            user_id: response.userId,
-            avatar_url: response.avatarUrl,
-            first_name: response.firstName,
-            last_name: response.lastName,
+            // /api/user/profile/{id} is provider-passthrough, so the wire
+            // shape is determined by whichever provider is wired in.  Prefer
+            // the schema-canonical camelCase but fall back to legacy
+            // snake_case so providers that haven't migrated yet keep working.
+            user_id: response.userId ?? response.user_id,
+            avatar_url: response.avatarUrl ?? response.avatar_url,
+            first_name: response.firstName ?? response.first_name,
+            last_name: response.lastName ?? response.last_name,
           };
         },
       }),
