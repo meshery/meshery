@@ -36,6 +36,27 @@
 
     <div class="flex-container">
       <div class="left-container">
+        <script>
+          (function () {
+            let state = localStorage.getItem('sidebar-state')
+            if (!state) {
+              const isDesktop = window.matchMedia("(min-width: 75em)").matches;
+              state = isDesktop ? 'active' : 'inactive'
+
+              localStorage.setItem('sidebar-state', state)
+            }
+
+            let sidebar = document.querySelector('.left-container');
+            if (sidebar) {
+               if (state === 'active'){
+                sidebar.classList.add('left-container--active')
+              } else {
+                sidebar.classList.remove('left-container--active')
+              }
+            }
+          })();
+        </script>
+
         <div class="sidebar-container-wrapper">
           <div class="sidebar-container">
             {{ partial "sidebar.html" . }}
@@ -79,5 +100,6 @@
     {{ partialCached "footer.html" . }}
     {{ partialCached "scripts.html" . }}
     {{ partialCached "scripts/google-analytics.html" . }}
+
   </body>
 </html>

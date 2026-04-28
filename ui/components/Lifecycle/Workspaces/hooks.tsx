@@ -107,7 +107,7 @@ export const useDeletePattern = () => {
 
 export const usePublishPattern = (meshModelModelsData, refetchPatternData) => {
   const [publishCatalogContent] = usePublishFilterMutation();
-  const { handleSuccess, handleInfo, handleError } = useNotificationHandlers();
+  const { handleSuccess, handleInfo, notifyApiError } = useNotificationHandlers();
 
   const handlePublishModal = (pattern) => {
     return pattern;
@@ -147,7 +147,9 @@ export const usePublishPattern = (meshModelModelsData, refetchPatternData) => {
         }
         refetchPatternData && refetchPatternData();
       })
-      .catch((error) => handleError(error.data));
+      .catch((error) =>
+        notifyApiError(error, `Failed to publish "${publishModal?.pattern?.name}" to the catalog`),
+      );
   };
 
   return {

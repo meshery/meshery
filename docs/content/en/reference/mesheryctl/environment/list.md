@@ -25,7 +25,7 @@ mesheryctl environment list [flags]
 List all registered environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list --orgID [orgID]
+mesheryctl environment list --orgId [orgId]
 
 </div>
 </pre> 
@@ -33,7 +33,7 @@ mesheryctl environment list --orgID [orgID]
 List count of all registered environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list --orgID [orgID] --count
+mesheryctl environment list --orgId [orgId] --count
 
 </div>
 </pre> 
@@ -41,7 +41,7 @@ mesheryctl environment list --orgID [orgID] --count
 List all registered environment at a specific page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list --orgID [orgID] --page [page]
+mesheryctl environment list --orgId [orgId] --page [page]
 
 </div>
 </pre> 
@@ -49,7 +49,7 @@ mesheryctl environment list --orgID [orgID] --page [page]
 List all registered environment with a specific page size
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list --orgID [orgID] --pagesize [pagesize]
+mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 
 </div>
 </pre> 
@@ -60,7 +60,7 @@ mesheryctl environment list --orgID [orgID] --pagesize [pagesize]
 <div class='codeblock'>
   -c, --count          (optional) Display count only
   -h, --help           help for list
-      --orgID string   Organization ID
+      --orgId string   Organization ID
       --page int       (optional) Page number of paginated results (default 1)
       --pagesize int   (optional) Number of results per page (default 10)
 

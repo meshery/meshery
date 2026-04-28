@@ -28,8 +28,8 @@ import (
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	meshkube "github.com/meshery/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1/component"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/component"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/pkg/errors"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -48,8 +48,9 @@ func (h *Handler) PatternFileHandler(
 	userID := user.ID
 	token, ok := r.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
-		h.log.Error(ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token")))
-		http.Error(rw, ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token")).Error(), http.StatusInternalServerError)
+		tokenErr := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
+		h.log.Error(tokenErr)
+		writeMeshkitError(rw, tokenErr, http.StatusInternalServerError)
 		return
 	}
 	var payload models.MesheryPatternFileDeployPayload
@@ -59,23 +60,13 @@ func (h *Handler) PatternFileHandler(
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-
-		rw.WriteHeader(http.StatusBadRequest)
-		if _, writeErr := fmt.Fprintf(rw, "failed to read request body: %s", err); writeErr != nil {
-			h.log.Error(writeErr)
-		}
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
 	if err := json.Unmarshal(body, &payload); err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-
-		rw.WriteHeader(http.StatusBadRequest)
-		if _, writeErr := fmt.Fprintf(rw, "failed to unmarshal request body: %s", err); writeErr != nil {
-			h.log.Error(writeErr)
-		}
+		writeMeshkitError(rw, ErrDecoding(err, "design engine request"), http.StatusBadRequest)
 		return
 	}
 
@@ -101,14 +92,14 @@ func (h *Handler) PatternFileHandler(
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, err, http.StatusInternalServerError)
 		return
 	}
 
 	if isDesignInAlpha2Format {
 		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
 
-		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(&models.MesheryPattern{
+		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(&models.MesheryPattern{
 			ID:          &patternID,
 			PatternFile: payload.PatternFile,
 		}, eventBuilder)
@@ -119,7 +110,7 @@ func (h *Handler) PatternFileHandler(
 
 		if err != nil {
 			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(rw, err, http.StatusInternalServerError)
 			return
 		}
 		patternFileByte = []byte(patternFileStr)
@@ -128,7 +119,7 @@ func (h *Handler) PatternFileHandler(
 	patternFile, err := patterncore.NewPatternFile(patternFileByte)
 	if err != nil {
 		h.log.Error(ErrPatternFile(err))
-		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPatternFile(err), http.StatusBadRequest)
 		return
 	}
 
@@ -185,7 +176,7 @@ func (h *Handler) PatternFileHandler(
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, err, http.StatusInternalServerError)
 		return
 	}
 

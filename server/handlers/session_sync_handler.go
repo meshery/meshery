@@ -78,7 +78,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	if err != nil {
 		obj := "user config data"
 		h.log.Error(models.ErrMarshal(err, obj))
-		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrMarshal(err, obj), http.StatusInternalServerError)
 		return
 	}
 }

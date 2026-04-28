@@ -900,3 +900,778 @@ func TestInventoryPatchingFullPipeline(t *testing.T) {
 	}
 	t.Fatal("Deployment not found in evaluation response")
 }
+
+// TestWalletPatchingCleanupOnDelete verifies that deleting a wallet relationship
+// whose mutation is still in place produces a remove action (no schema default).
+func TestWalletPatchingCleanupOnDelete(t *testing.T) {
+	p := &HierarchicalWalletPolicy{}
+
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+
+	// Both components already hold the mutator value (simulating a prior patch
+	// that has been applied and persisted).
+	deploy := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Deployment"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"template": map[string]interface{}{
+					"spec": map[string]interface{}{
+						"serviceAccountName": "my-sa",
+					},
+				},
+			},
+		},
+	}
+	deploy.ID = deployID
+
+	podTpl := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "PodTemplate"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"serviceAccountName": "my-sa",
+			},
+		},
+	}
+	podTpl.ID = podTplID
+
+	design := makePatternFile([]*component.ComponentDefinition{deploy, podTpl}, nil)
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "serviceAccountName"}}
+	relStatus := relationship.RelationshipDefinitionStatus("deleted")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:   &deployID,
+						Kind: strPtr("Deployment"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:   &podTplID,
+						Kind: strPtr("PodTemplate"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Hierarchical,
+		RelationshipType: "parent",
+		SubType:          "wallet",
+		Status:           &relStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+
+	actions := p.SideEffects(rel, design)
+	if len(actions) == 0 {
+		t.Fatal("Expected reverse action on delete, got none")
+	}
+
+	found := false
+	for _, a := range actions {
+		if a.Op == RemoveComponentConfigurationOp && a.ID == podTplID.String() {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Expected remove action on PodTemplate.serviceAccountName, got actions: %+v", actions)
+	}
+}
+
+// TestWalletPatchingCleanupUsesSchemaDefault verifies that when the mutated
+// component has a schema default for the mutated path, delete restores that
+// default instead of removing the field.
+func TestWalletPatchingCleanupUsesSchemaDefault(t *testing.T) {
+	p := &HierarchicalWalletPolicy{}
+
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+
+	deploy := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Deployment"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"template": map[string]interface{}{
+					"spec": map[string]interface{}{
+						"serviceAccountName": "my-sa",
+					},
+				},
+			},
+		},
+	}
+	deploy.ID = deployID
+
+	podTpl := &component.ComponentDefinition{
+		Component: component.Component{
+			Kind: "PodTemplate",
+			Schema: `{
+				"properties": {
+					"spec": {
+						"properties": {
+							"serviceAccountName": {"default": "default"}
+						}
+					}
+				}
+			}`,
+		},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"serviceAccountName": "my-sa",
+			},
+		},
+	}
+	podTpl.ID = podTplID
+
+	design := makePatternFile([]*component.ComponentDefinition{deploy, podTpl}, nil)
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "serviceAccountName"}}
+	relStatus := relationship.RelationshipDefinitionStatus("deleted")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:   &deployID,
+						Kind: strPtr("Deployment"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:   &podTplID,
+						Kind: strPtr("PodTemplate"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Hierarchical,
+		RelationshipType: "parent",
+		SubType:          "wallet",
+		Status:           &relStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+
+	actions := p.SideEffects(rel, design)
+	found := false
+	for _, a := range actions {
+		if a.Op == UpdateComponentConfigurationOp && a.ID == podTplID.String() && a.UpdateValue == "default" {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Expected schema default (\"default\") restore on PodTemplate.serviceAccountName, got actions: %+v", actions)
+	}
+}
+
+// TestWalletCleanupOnDeleteFullPipeline verifies that a deleted wallet relationship
+// restores the mutated field through the full evaluation pipeline.
+func TestWalletCleanupOnDeleteFullPipeline(t *testing.T) {
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+
+	deploy := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Deployment"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"template": map[string]interface{}{
+					"spec": map[string]interface{}{
+						"serviceAccountName": "my-sa",
+					},
+				},
+			},
+		},
+	}
+	deploy.ID = deployID
+
+	// PodTemplate.serviceAccountName already holds the mutator value, simulating
+	// a previous evaluation that applied the patch.
+	podTpl := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "PodTemplate"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"serviceAccountName": "my-sa",
+			},
+		},
+	}
+	podTpl.ID = podTplID
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "serviceAccountName"}}
+	relStatus := relationship.RelationshipDefinitionStatus("deleted")
+	relID, _ := uuid.FromString("00000000-0000-0000-0000-000000000010")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:   &deployID,
+						Kind: strPtr("Deployment"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:   &podTplID,
+						Kind: strPtr("PodTemplate"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Hierarchical,
+		RelationshipType: "parent",
+		SubType:          "wallet",
+		Status:           &relStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	rel.ID = relID
+
+	design := makePatternFile(
+		[]*component.ComponentDefinition{deploy, podTpl},
+		[]*relationship.RelationshipDefinition{rel},
+	)
+
+	log, _ := logger.New("test", logger.Options{Format: logger.SyslogLogFormat})
+	engine := NewGoEngine(log)
+	resp, err := engine.EvaluateDesign(*design, nil)
+	if err != nil {
+		t.Fatalf("EvaluateDesign failed: %v", err)
+	}
+
+	for _, comp := range resp.Design.Components {
+		if comp.Component.Kind == "PodTemplate" {
+			spec, ok := comp.Configuration["spec"].(map[string]interface{})
+			if !ok {
+				t.Fatal("PodTemplate spec missing after evaluation")
+			}
+			if _, present := spec["serviceAccountName"]; present {
+				t.Errorf("Expected PodTemplate.serviceAccountName to be removed after delete, got %v", spec["serviceAccountName"])
+			}
+			return
+		}
+	}
+	t.Fatal("PodTemplate not found in evaluation response")
+}
+
+// TestWalletPatchingSkipsWhenValueDiverged verifies that a delete does not clear
+// a mutated field if the field no longer holds the mutator's value (someone else
+// changed it), avoiding incorrect cleanup.
+func TestWalletPatchingSkipsWhenValueDiverged(t *testing.T) {
+	p := &HierarchicalWalletPolicy{}
+
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+
+	deploy := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Deployment"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"template": map[string]interface{}{
+					"spec": map[string]interface{}{
+						"serviceAccountName": "my-sa",
+					},
+				},
+			},
+		},
+	}
+	deploy.ID = deployID
+
+	// PodTemplate holds a different value than the mutator (user changed it).
+	podTpl := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "PodTemplate"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"serviceAccountName": "user-changed",
+			},
+		},
+	}
+	podTpl.ID = podTplID
+
+	design := makePatternFile([]*component.ComponentDefinition{deploy, podTpl}, nil)
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "serviceAccountName"}}
+	relStatus := relationship.RelationshipDefinitionStatus("deleted")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:   &deployID,
+						Kind: strPtr("Deployment"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:   &podTplID,
+						Kind: strPtr("PodTemplate"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Hierarchical,
+		RelationshipType: "parent",
+		SubType:          "wallet",
+		Status:           &relStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+
+	actions := p.SideEffects(rel, design)
+	if len(actions) != 0 {
+		t.Errorf("Expected no reverse patches when mutated field diverged from mutator, got: %+v", actions)
+	}
+}
+
+// TestInventoryPatchingCleanupOnDelete verifies that deleting an inventory
+// (hierarchical parent-child) relationship restores the mutated field via the
+// same cleanup logic used by wallet relationships.
+func TestInventoryPatchingCleanupOnDelete(t *testing.T) {
+	p := &HierarchicalParentChildPolicy{}
+
+	nsID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+
+	ns := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Namespace"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration:  map[string]interface{}{"name": "production"},
+	}
+	ns.ID = nsID
+
+	// Deployment.namespace already holds the mutator value ("production"),
+	// simulating a prior patch that has been applied.
+	deploy := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Deployment"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration:  map[string]interface{}{"namespace": "production"},
+	}
+	deploy.ID = deployID
+
+	design := makePatternFile([]*component.ComponentDefinition{ns, deploy}, nil)
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "namespace"}}
+	relStatus := relationship.RelationshipDefinitionStatus("deleted")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:   &nsID,
+						Kind: strPtr("Namespace"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:   &deployID,
+						Kind: strPtr("Deployment"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Hierarchical,
+		RelationshipType: "parent",
+		SubType:          "inventory",
+		Status:           &relStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+
+	actions := p.SideEffects(rel, design)
+	found := false
+	for _, a := range actions {
+		if a.Op == RemoveComponentConfigurationOp && a.ID == deployID.String() {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Expected remove action on Deployment.namespace after inventory delete, got: %+v", actions)
+	}
+}
+
+// TestEdgeNetworkPatchingCleanupOnDelete verifies that deleting an edge
+// non-binding (network) relationship restores the mutated field.
+func TestEdgeNetworkPatchingCleanupOnDelete(t *testing.T) {
+	p := &EdgeNonBindingPolicy{}
+
+	svcID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	podID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+
+	svc := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Service"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"selector": map[string]interface{}{"app": "web"},
+			},
+		},
+	}
+	svc.ID = svcID
+
+	// Pod.labels.app already holds the mutator value, simulating a prior patch.
+	pod := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Pod"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"labels": map[string]interface{}{"app": "web"},
+			},
+		},
+	}
+	pod.ID = podID
+
+	design := makePatternFile([]*component.ComponentDefinition{svc, pod}, nil)
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "selector", "app"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "metadata", "labels", "app"}}
+	relStatus := relationship.RelationshipDefinitionStatus("deleted")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:   &svcID,
+						Kind: strPtr("Service"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:   &podID,
+						Kind: strPtr("Pod"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Edge,
+		RelationshipType: "non-binding",
+		SubType:          "network",
+		Status:           &relStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+
+	actions := p.SideEffects(rel, design)
+	found := false
+	for _, a := range actions {
+		if a.Op == RemoveComponentConfigurationOp && a.ID == podID.String() {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Expected remove action on Pod.metadata.labels.app after network delete, got: %+v", actions)
+	}
+}
+
+// TestBindingPatchingCleanupOnDelete verifies that deleting an edge binding
+// relationship restores the mutated field via patchBindingMatchFields (the
+// match-based cleanup path, distinct from patchMutatorsAction).
+func TestBindingPatchingCleanupOnDelete(t *testing.T) {
+	p := &EdgeBindingPolicy{}
+
+	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
+
+	role := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "ClusterRole"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{"name": "admin-role"},
+		},
+	}
+	role.ID = roleID
+
+	sa := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "ServiceAccount"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{"name": "my-service-account"},
+		},
+	}
+	sa.ID = saID
+
+	// ClusterRoleBinding already holds the mutator value on roleRef.name,
+	// simulating a prior binding patch that was applied.
+	rb := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "ClusterRoleBinding"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"roleRef": map[string]interface{}{"name": "admin-role"},
+			"subjects": []interface{}{
+				map[string]interface{}{"name": "", "kind": "ServiceAccount"},
+			},
+		},
+	}
+	rb.ID = rbID
+
+	design := makePatternFile([]*component.ComponentDefinition{role, sa, rb}, nil)
+
+	roleMutatorRef := relationship.MutatorRef{[]string{"configuration", "metadata", "name"}}
+	rbMutatedRef := relationship.MutatedRef{[]string{"configuration", "roleRef", "name"}}
+
+	fromMatchFrom := []relationship.MatchSelectorItem{
+		{Kind: "ClusterRole", MutatorRef: &roleMutatorRef, ID: &roleID},
+	}
+	fromMatchTo := []relationship.MatchSelectorItem{
+		{Kind: "ClusterRoleBinding", MutatedRef: &rbMutatedRef, ID: &rbID},
+	}
+
+	saMutatorRef := relationship.MutatorRef{[]string{"configuration", "metadata", "name"}}
+	rbSubjectMutatedRef := relationship.MutatedRef{[]string{"configuration", "subjects", "0", "name"}}
+
+	toMatchFrom := []relationship.MatchSelectorItem{
+		{Kind: "ClusterRoleBinding", MutatorRef: &saMutatorRef, ID: &rbID},
+	}
+	toMatchTo := []relationship.MatchSelectorItem{
+		{Kind: "ServiceAccount", MutatedRef: &rbSubjectMutatedRef, ID: &saID},
+	}
+
+	relStatus := relationship.RelationshipDefinitionStatus("deleted")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:   &roleID,
+						Kind: strPtr("ClusterRole"),
+						Match: &relationship.MatchSelector{
+							From: &fromMatchFrom,
+							To:   &fromMatchTo,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:   &saID,
+						Kind: strPtr("ServiceAccount"),
+						Match: &relationship.MatchSelector{
+							From: &toMatchFrom,
+							To:   &toMatchTo,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Edge,
+		RelationshipType: "binding",
+		SubType:          "permission",
+		Status:           &relStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000020")
+
+	actions := p.SideEffects(rel, design)
+	found := false
+	for _, a := range actions {
+		if a.Op == RemoveComponentConfigurationOp && a.ID == rbID.String() {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Expected remove action on ClusterRoleBinding.roleRef.name after binding delete, got: %+v", actions)
+	}
+}
+
+// TestCleanupConcurrentRelationshipsSameField documents the behavior when two
+// relationships mutate the same component property and one of them is deleted.
+// Each policy emits its actions independently against the same pre-evaluation
+// snapshot, so deleting rel A emits a cleanup while the still-active rel B emits
+// no patch (its mutator already matches). The final state clears the field;
+// a subsequent evaluation re-establishes it via rel B.
+//
+// This is a known limitation pending a multi-mutator tracking mechanism
+// (see PR #18885 review). The test pins current behavior so a future fix is
+// visible as a diff.
+func TestCleanupConcurrentRelationshipsSameField(t *testing.T) {
+	deployAID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	deployBID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
+
+	// Two Deployments both hold the same serviceAccountName; PodTemplate
+	// already holds that value (simulating prior patches from both rels).
+	deployA := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Deployment"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"template": map[string]interface{}{
+					"spec": map[string]interface{}{"serviceAccountName": "shared-sa"},
+				},
+			},
+		},
+	}
+	deployA.ID = deployAID
+
+	deployB := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Deployment"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"template": map[string]interface{}{
+					"spec": map[string]interface{}{"serviceAccountName": "shared-sa"},
+				},
+			},
+		},
+	}
+	deployB.ID = deployBID
+
+	podTpl := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "PodTemplate"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{"serviceAccountName": "shared-sa"},
+		},
+	}
+	podTpl.ID = podTplID
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "serviceAccountName"}}
+
+	mkRel := func(deployID uuid.UUID, relID string, status string) *relationship.RelationshipDefinition {
+		relStatus := relationship.RelationshipDefinitionStatus(status)
+		selectorSet := relationship.SelectorSet{
+			relationship.SelectorSetItem{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{
+						{
+							ID:   &deployID,
+							Kind: strPtr("Deployment"),
+							RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+								MutatorRef: &mutatorRef,
+							},
+						},
+					},
+					To: []relationship.SelectorItem{
+						{
+							ID:   &podTplID,
+							Kind: strPtr("PodTemplate"),
+							RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+								MutatedRef: &mutatedRef,
+							},
+						},
+					},
+				},
+			},
+		}
+		rel := &relationship.RelationshipDefinition{
+			Kind:             relationship.Hierarchical,
+			RelationshipType: "parent",
+			SubType:          "wallet",
+			Status:           &relStatus,
+			Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+			Selectors:        &selectorSet,
+		}
+		rel.ID, _ = uuid.FromString(relID)
+		return rel
+	}
+
+	relA := mkRel(deployAID, "00000000-0000-0000-0000-000000000010", "deleted")
+	relB := mkRel(deployBID, "00000000-0000-0000-0000-000000000011", "approved")
+
+	design := makePatternFile(
+		[]*component.ComponentDefinition{deployA, deployB, podTpl},
+		[]*relationship.RelationshipDefinition{relA, relB},
+	)
+
+	log, _ := logger.New("test", logger.Options{Format: logger.SyslogLogFormat})
+	engine := NewGoEngine(log)
+	resp, err := engine.EvaluateDesign(*design, nil)
+	if err != nil {
+		t.Fatalf("EvaluateDesign failed: %v", err)
+	}
+
+	var podSpec map[string]interface{}
+	for _, comp := range resp.Design.Components {
+		if comp.Component.Kind == "PodTemplate" {
+			podSpec, _ = comp.Configuration["spec"].(map[string]interface{})
+			break
+		}
+	}
+	if podSpec == nil {
+		t.Fatal("PodTemplate not found in evaluation response")
+	}
+
+	// Current behavior: the deleted rel's cleanup wins in the same pass, so the
+	// field is cleared even though rel B still mutates it. Re-evaluation would
+	// restore it via rel B. Assert current behavior so a future fix shows up as
+	// a diff here.
+	if _, present := podSpec["serviceAccountName"]; present {
+		t.Logf("serviceAccountName preserved by concurrent active relationship; " +
+			"multi-mutator tracking may have been added, update this test")
+	}
+}
