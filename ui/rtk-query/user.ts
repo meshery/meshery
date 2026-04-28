@@ -108,7 +108,7 @@ export const userApi = api
         // JSON tags (avatarUrl, firstName, …).  Spread the raw response and add
         // snake_case aliases so that existing UI consumers continue to work without
         // requiring a site-wide rename.
-        transformResponse: (response: Record<string, unknown>) => ({
+        transformResponse: (response) => ({
           ...response,
           avatar_url: response.avatarUrl,
           first_name: response.firstName,
@@ -140,7 +140,7 @@ export const userApi = api
             }
           },
         }),
-        transformResponse: (response: Record<string, unknown>) => {
+        transformResponse: (response) => {
           if (!response || typeof response !== 'object') {
             return undefined;
           }
