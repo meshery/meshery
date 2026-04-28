@@ -16,8 +16,8 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 	bd, err := io.ReadAll(req.Body)
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error reading request body: %v", err))
-		http.Error(w, "unable to read result data", http.StatusInternalServerError)
+		h.log.Error(ErrRequestBody(err))
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -28,8 +28,8 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 
 	err = json.Unmarshal(bd, &credential)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error unmarshal request body: %v", err))
-		http.Error(w, "unable to parse credential data", http.StatusInternalServerError)
+		h.log.Error(ErrDecoding(err, "credential"))
+		writeMeshkitError(w, ErrDecoding(err, "credential"), http.StatusBadRequest)
 		return
 	}
 
@@ -40,8 +40,8 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 
 	createdCredential, err := provider.SaveUserCredential(token, &credential)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error saving user credentials: %v", err))
-		http.Error(w, "unable to save user credentials", http.StatusInternalServerError)
+		h.log.Error(ErrSaveUserCredential(err))
+		writeMeshkitError(w, ErrSaveUserCredential(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -54,14 +54,14 @@ func (h *Handler) GetUserCredentialByID(w http.ResponseWriter, req *http.Request
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	credential, statusCode, err := provider.GetCredentialByID(token, credentialID)
 	if err != nil {
-		h.log.Error(err)
-		http.Error(w, "unable to get user credentials", statusCode)
+		h.log.Error(ErrGetUserCredential(err))
+		writeMeshkitError(w, ErrGetUserCredential(err), statusCode)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(credential); err != nil {
-		h.log.Error(models.ErrMarshal(err, "credential"))
-		http.Error(w, "unable to encode user credentials", http.StatusInternalServerError)
+		h.log.Error(ErrEncodeUserCredential(err))
+		writeMeshkitError(w, ErrEncodeUserCredential(err), http.StatusInternalServerError)
 		return
 	}
 }
@@ -91,14 +91,14 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 
 	credentialsPage, err := provider.GetUserCredentials(req, user.ID.String(), page, pageSize, search, order)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error getting user credentials: %v", err))
-		http.Error(w, "unable to get user credentials", http.StatusInternalServerError)
+		h.log.Error(ErrGetUserCredential(err))
+		writeMeshkitError(w, ErrGetUserCredential(err), http.StatusInternalServerError)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(credentialsPage); err != nil {
-		h.log.Error(fmt.Errorf("error encoding user credentials: %v", err))
-		http.Error(w, "unable to encode user credentials", http.StatusInternalServerError)
+		h.log.Error(ErrEncodeUserCredential(err))
+		writeMeshkitError(w, ErrEncodeUserCredential(err), http.StatusInternalServerError)
 		return
 	}
 }
@@ -106,8 +106,8 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error reading request body: %v", err))
-		http.Error(w, "unable to read credential data", http.StatusInternalServerError)
+		h.log.Error(ErrRequestBody(err))
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -117,8 +117,8 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 	}
 	err = json.Unmarshal(bd, credential)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error unmarshal request body: %v", err))
-		http.Error(w, "unable to parse credential data", http.StatusInternalServerError)
+		h.log.Error(ErrDecoding(err, "credential"))
+		writeMeshkitError(w, ErrDecoding(err, "credential"), http.StatusBadRequest)
 		return
 	}
 
@@ -130,8 +130,8 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 
 	_, err = provider.UpdateUserCredential(req, credential)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error getting user credential: %v", err))
-		http.Error(w, "unable to get user credential", http.StatusInternalServerError)
+		h.log.Error(ErrUpdateUserCredential(err))
+		writeMeshkitError(w, ErrUpdateUserCredential(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -145,8 +145,8 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 	credentialID := uuid.FromStringOrNil(q.Get("credential_id"))
 	_, err := provider.DeleteUserCredential(req, credentialID)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error deleting user credential: %v", err))
-		http.Error(w, "unable to delete user credential", http.StatusInternalServerError)
+		h.log.Error(ErrDeleteUserCredential(err))
+		writeMeshkitError(w, ErrDeleteUserCredential(err), http.StatusInternalServerError)
 		return
 	}
 

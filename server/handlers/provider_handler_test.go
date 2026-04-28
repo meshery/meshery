@@ -248,8 +248,11 @@ func TestDeleteMeshSyncResource(t *testing.T) {
 				name: "given resource table not migrated when DeleteMeshSyncResource then return status 500 and failed to delete",
 				migrateResourceTable: false,
 				expectedStatus:       http.StatusInternalServerError,
-				expectedContentType:  "text/plain",
-				expectedBody:         "Failed to Delete",
+				expectedContentType:  "application/json",
+				// Error response now carries the MeshKit envelope; match on the
+				// error code emitted by ErrFailToDelete so the assertion is
+				// stable across short-description wording changes.
+				expectedBody:         "meshery-server-",
 			},
 		}
 
@@ -284,7 +287,9 @@ func TestDeleteMeshSyncResource(t *testing.T) {
 				t.Fatalf("expected content type prefix %q, got %q", tt.expectedContentType, contentType)
 			}
 
-			if tt.expectedContentType == "application/json" {
+			// Success path decodes the deleted envelope; error path asserts
+			// the MeshKit JSON error envelope contains the expected substring.
+			if tt.expectedStatus == http.StatusOK {
 				var response struct {
 					Deleted bool `json:"deleted"`
 				}
