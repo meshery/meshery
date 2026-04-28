@@ -31,7 +31,7 @@ const (
 	ErrGettingRequestContextCode   = "mesheryctl-1015"
 	ErrUnmarshallingAPIDataCode    = "mesheryctl-1016"
 	ErrConnectingToServerCode      = "mesheryctl-1017"
-	ErrInvalidRootCommandCode	   = "mesheryctl-1234"
+	ErrInvalidRootCommandCode	   = "mesheryctl-1430"
 )
 
 var (
