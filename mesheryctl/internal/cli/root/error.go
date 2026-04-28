@@ -14,7 +14,10 @@
 
 package root
 
-import "github.com/meshery/meshkit/errors"
+import (
+	"github.com/meshery/meshkit/errors"
+	"fmt"
+)
 
 // Please reference the following before contributing an error code:
 // https://docs.meshery.io/project/contributing/contributing-error
@@ -28,6 +31,7 @@ const (
 	ErrGettingRequestContextCode   = "mesheryctl-1015"
 	ErrUnmarshallingAPIDataCode    = "mesheryctl-1016"
 	ErrConnectingToServerCode      = "mesheryctl-1017"
+	ErrInvalidCommandCode 		   = "mesheryctl-1430"
 )
 
 var (
@@ -38,6 +42,8 @@ var (
 	ErrAddingContextToConfig = errors.New(ErrAddingContextToConfigCode, errors.Alert, []string{"Unable to add context to config"}, []string{"Unable to add context to config"}, []string{}, []string{})
 
 	ErrUnmarshallingConfigFile = errors.New(ErrUnmarshallingConfigFileCode, errors.Alert, []string{"Error processing json in config file"}, []string{"Error processing json in config file"}, []string{}, []string{})
+
+	
 )
 
 func ErrProcessingConfig(err error) error {
@@ -54,4 +60,15 @@ func ErrGettingRequestContext(err error) error {
 
 func ErrUnmarshallingAPIData(err error) error {
 	return errors.New(ErrUnmarshallingAPIDataCode, errors.Fatal, []string{"Error processing json API data"}, []string{"Error processing json API data", err.Error()}, []string{}, []string{})
+}
+
+func ErrInvalidCommand(cmd string) error {
+	return errors.New(
+		ErrInvalidCommandCode,
+		errors.Alert,
+		[]string{"Invalid command provided"},
+		[]string{fmt.Sprintf("'%s' is an invalid command", cmd)},
+		[]string{"Command not recognized by mesheryctl"},
+		[]string{"Use 'mesheryctl --help' to display usage guide"},
+	)
 }
