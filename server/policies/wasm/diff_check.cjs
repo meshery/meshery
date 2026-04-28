@@ -1,8 +1,9 @@
 // Boots the wasm engine in Node and runs one evaluation.
 //
-// Reads a JSON envelope `{design, rels}` from stdin, calls the wasm
-// `evaluateDesign(designJSON, relsJSON)`, and prints the resulting
-// `EvaluationResponse` JSON to stdout. Errors go to stderr with non-zero exit.
+// Reads a JSON envelope `{design, rels}` from stdin, calls
+// `initEngine(relsJSON)` once, then `evaluateDesign(designJSON)`, and prints
+// the resulting `EvaluationResponse` JSON to stdout. Errors go to stderr with
+// non-zero exit.
 //
 // Used by server/policies/wasm_diff_test.go to diff wasm output against the
 // in-process Go engine. Standalone usage:
@@ -20,7 +21,17 @@ WebAssembly.instantiate(wasmBuf, go.importObject)
   .then(({ instance }) => {
     go.run(instance);
     const env = JSON.parse(fs.readFileSync(0, 'utf8'));
-    const out = globalThis.evaluateDesign(JSON.stringify(env.design), JSON.stringify(env.rels));
+
+    const initRes = globalThis.initEngine(JSON.stringify(env.rels));
+    if (initRes) {
+      const parsed = JSON.parse(initRes);
+      if (parsed && parsed.error) {
+        console.error(parsed.error);
+        process.exit(1);
+      }
+    }
+
+    const out = globalThis.evaluateDesign(JSON.stringify(env.design));
     const parsed = JSON.parse(out);
     if (parsed.error) {
       console.error(parsed.error);

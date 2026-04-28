@@ -19,14 +19,41 @@ type noopLogger struct{}
 func (noopLogger) Info(...any)          {}
 func (noopLogger) Warnf(string, ...any) {}
 
-// evaluateDesign is exposed to JS as globalThis.evaluateDesign(designJSON, relsJSON).
+// Cached after initEngine; evaluateDesign reuses both per call so the
+// registry only crosses the JS/wasm boundary once per session.
+var (
+	cachedEngine *gopolicies.GoEngine
+	cachedRels   []*relationship.RelationshipDefinition
+)
+
+// initEngine is exposed to JS as globalThis.initEngine(relsJSON).
+// Parses + caches the registered relationships and constructs a single
+// GoEngine that subsequent evaluateDesign calls reuse. Returns "" on success
+// or {"error": "..."} on failure.
+func initEngine(_ js.Value, args []js.Value) any {
+	if len(args) != 1 {
+		return errResult("initEngine(relsJSON): expected 1 argument")
+	}
+	var rels []*relationship.RelationshipDefinition
+	if err := json.Unmarshal([]byte(args[0].String()), &rels); err != nil {
+		return errResult("decode relationships: " + err.Error())
+	}
+	cachedRels = rels
+	cachedEngine = gopolicies.NewGoEngine(noopLogger{})
+	return ""
+}
+
+// evaluateDesign is exposed to JS as globalThis.evaluateDesign(designJSON).
 // Returns a JSON string of pattern.EvaluationResponse, or {"error": "..."} on failure.
 //
-// The caller is responsible for hydrating the design and providing the registered
-// relationships; this entry point intentionally does no registry I/O.
+// Caller must invoke initEngine(relsJSON) once first; the registered
+// relationships are reused across calls.
 func evaluateDesign(_ js.Value, args []js.Value) any {
-	if len(args) != 2 {
-		return errResult("evaluateDesign(designJSON, relsJSON): expected 2 arguments")
+	if cachedEngine == nil {
+		return errResult("engine not initialized; call initEngine(relsJSON) first")
+	}
+	if len(args) != 1 {
+		return errResult("evaluateDesign(designJSON): expected 1 argument")
 	}
 
 	var design pattern.PatternFile
@@ -34,14 +61,7 @@ func evaluateDesign(_ js.Value, args []js.Value) any {
 		return errResult("decode design: " + err.Error())
 	}
 
-	var relsRaw []any
-	if err := json.Unmarshal([]byte(args[1].String()), &relsRaw); err != nil {
-		return errResult("decode relationships: " + err.Error())
-	}
-	rels := gopolicies.ConvertRelationships(relsRaw)
-
-	engine := gopolicies.NewGoEngine(noopLogger{})
-	resp, err := engine.EvaluateDesign(design, rels)
+	resp, err := cachedEngine.EvaluateDesign(design, cachedRels)
 	if err != nil {
 		return errResult("evaluate: " + err.Error())
 	}
@@ -58,11 +78,8 @@ func errResult(msg string) string {
 	return string(b)
 }
 
-// Keep the relationship schema package in the import closure so
-// ConvertRelationships's input type is not elided.
-var _ = relationship.RelationshipDefinition{}
-
 func main() {
+	js.Global().Set("initEngine", js.FuncOf(initEngine))
 	js.Global().Set("evaluateDesign", js.FuncOf(evaluateDesign))
 	select {} // block forever; required so JS callbacks can keep firing
 }
