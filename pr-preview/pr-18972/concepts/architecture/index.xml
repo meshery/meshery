@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Architecture on Documentation</title><link>/concepts/architecture/</link><description>Recent content in Architecture on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/concepts/architecture/index.xml" rel="self" type="application/rss+xml"/><item><title>Adapters</title><link>/concepts/architecture/adapters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/architecture/adapters/</guid><description>&lt;h2 id="what-are-meshery-adapters"&gt;
+	What are Meshery Adapters?
+&lt;/h2&gt;
+&lt;p&gt;Part of Meshery&amp;rsquo;s extensibility as a platform, Meshery Adapters are purpopse-built to address an area in need of management that is either considered optional to the platform and/or is considered an area in which additional depth of control is needed. Adapters extend Meshery&amp;rsquo;s management capabilities in any number of ways, including lifecycle, configuration, performance, governance, identity and so on. Meshery Adapters come in different form factors, and depending on their purpose, deliver different sets or capabilities. Each Adapter registers its capabilities with Meshery Server. Meshery Server, in-turn, exposes those capabilities for you to control.&lt;/p&gt;</description></item><item><title>Broker</title><link>/concepts/architecture/broker/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/architecture/broker/</guid><description>&lt;p&gt;Broker is a custom Kubernetes controller that provides data streaming across independent components of Meshery whether those components are running inside or outside of the Kubernetes cluster.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../concepts/architecture/broker/images/meshery-log-viewer.svg"&gt;&lt;img class="content-image" src="./images/meshery-log-viewer.svg" alt="Meshery Log Viewer" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="broker-faqs"&gt;
+	Broker FAQs
+&lt;/h3&gt;
+&lt;h4 id="how-many-brokers-can-run"&gt;
+	How many Brokers can run?
+&lt;/h4&gt;
+&lt;p&gt;It is recommended to run one broker instance for each kubernetes cluster, However the instance itself can be scaled up based on the incoming data volume in each of the cluster. The scaling is independent of the number of instances running.&lt;/p&gt;</description></item><item><title>Catalog</title><link>/concepts/architecture/catalog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/architecture/catalog/</guid><description>&lt;p&gt;&lt;a href="https://meshery.io/catalog"&gt;Meshery Catalog&lt;/a&gt; functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes. A Catolog is based on the Meshery&amp;rsquo;s &lt;a href="https://github.com/meshery/schemas/blob/98560345814e4be036d9f0020759faf3202ec2e4/schemas/constructs/v1alpha1/catalog_data.json"&gt;Catalog Schema&lt;/a&gt; with defined attributes.&lt;/p&gt;
+&lt;h2 id="a-collection-of-design-templates"&gt;
+	A collection of design templates
+&lt;/h2&gt;
+&lt;p&gt;Meshery Catalog functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes.&lt;/p&gt;</description></item><item><title>Database</title><link>/concepts/architecture/database/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/architecture/database/</guid><description>&lt;h2 id="what-are-the-meshery-databases"&gt;
+	What are the Meshery Databases?
+&lt;/h2&gt;
+&lt;p&gt;Meshery Databases function as repositories for &lt;a href="../../concepts/architecture/meshsync/"&gt;MeshSync&lt;/a&gt;, user preferences and system settings. Both databases are considered ephemeral and should be treated as caches. Data retention is tethered to the lifetime of their Meshery Server instance. &lt;a href="../../extensibility/providers"&gt;Remote Providers&lt;/a&gt; may offer long-term data persistence. Meshery&amp;rsquo;s APIs offer mechanisms for clients, like &lt;a href="../../reference/mesheryctl/"&gt;&lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt; and Meshery UI to retrieve data.&lt;/p&gt;
+&lt;p&gt;See the figure below for additional details of the data formats supported and type of data stored.&lt;/p&gt;</description></item><item><title>MeshSync</title><link>/concepts/architecture/meshsync/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/architecture/meshsync/</guid><description>&lt;div style="display:flex;align-items:center;"&gt;
+ &lt;div style="flex: 4;"&gt;
+ &lt;h1&gt;MeshSync&lt;/h1&gt;
+ &lt;p&gt;
+ MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of managed multi-cloud and cloud native infrastructure. It operates in one of two modes: operator or embedded. When it runs in operator mode, it is managed by the &lt;a href="../../concepts/architecture/operator"&gt;Meshery Operator&lt;/a&gt;.
+ &lt;/p&gt;
+ &lt;/div&gt;
+&lt;/div&gt;
+&lt;h3 id="key-features"&gt;
+	Key Features
+&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Greenfield and Brownfield Support&lt;/strong&gt;: MeshSync discovers and identifies infrastructure whether you&amp;rsquo;re starting from scratch (greenfield) with Meshery performing the initial deployment of your infrastructure or bringing in Meshery to manage your existing infrastructure (brownfield).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Real-time / Event-driven Status&lt;/strong&gt;: MeshSync subscribes for updates from your platform and listens for state changes, understanding that changes to managed infrastructure may be done out of band of Meshery.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Scalable and Performant&lt;/strong&gt;: Meshery&amp;rsquo;s event-driven approach ensures speed and scalability. You have control over the depth of object discovery to manage large clusters efficiently. MeshSync&amp;rsquo;s working snapshot of the state of each cluster under management is stored in the Server&amp;rsquo;s local database and continuously refreshed.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="discovery"&gt;
+	Discovery
+&lt;/h2&gt;
+&lt;p&gt;MeshSync supports both greenfield and brownfield discovery of infrastructure. Greenfield discovery manages infrastructure created and managed entirely by Meshery, while brownfield discovery identifies separately created infrastructure.&lt;/p&gt;</description></item><item><title>Operator</title><link>/concepts/architecture/operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/architecture/operator/</guid><description>&lt;h1 id="meshery-operator"&gt;
+	Meshery Operator &lt;img src="./images/B203EFA85E89491B.png" width="30" height="35" style="display:inline"/&gt;
+&lt;/h1&gt;
+&lt;p&gt;Meshery Operator is a Kubernetes Operator that deploys and manages the lifecycle of two Meshery components critical to Meshery&amp;rsquo;s operations of Kubernetes clusters. Deploy one Meshery Operator per Kubernetes cluster under management - whether Meshery Server is deploy inside or outside of the clusters under management.&lt;/p&gt;
+&lt;h2 id="deployments"&gt;
+	Deployments
+&lt;/h2&gt;
+&lt;p&gt;It is recommended to deploy one Meshery Operator per cluster.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../concepts/architecture/operator/images/meshery-operator-and-meshsync.svg"&gt;&lt;img class="content-image" src="./images/meshery-operator-and-meshsync.svg" alt="Meshery Operator and MeshSync" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="initialization-sequence"&gt;
+	Initialization Sequence
+&lt;/h3&gt;
+&lt;p&gt;&lt;a href="../../concepts/architecture/operator/images/meshery-operator-deployment-sequence.svg"&gt;&lt;img class="content-image" src="./images/meshery-operator-deployment-sequence.svg" alt="Meshery Operator and MeshSync" /&gt;&lt;/a&gt;&lt;/p&gt;</description></item></channel></rss>
