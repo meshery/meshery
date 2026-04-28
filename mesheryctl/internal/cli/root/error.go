@@ -31,7 +31,7 @@ const (
 	ErrGettingRequestContextCode   = "mesheryctl-1015"
 	ErrUnmarshallingAPIDataCode    = "mesheryctl-1016"
 	ErrConnectingToServerCode      = "mesheryctl-1017"
-	ErrInvalidCommandCode 		   = "mesheryctl-1430"
+	ErrInvalidRootCommandCode	   = "mesheryctl-1430"
 )
 
 var (
@@ -43,7 +43,7 @@ var (
 
 	ErrUnmarshallingConfigFile = errors.New(ErrUnmarshallingConfigFileCode, errors.Alert, []string{"Error processing json in config file"}, []string{"Error processing json in config file"}, []string{}, []string{})
 
-	
+
 )
 
 func ErrProcessingConfig(err error) error {
@@ -62,12 +62,12 @@ func ErrUnmarshallingAPIData(err error) error {
 	return errors.New(ErrUnmarshallingAPIDataCode, errors.Fatal, []string{"Error processing json API data"}, []string{"Error processing json API data", err.Error()}, []string{}, []string{})
 }
 
-func ErrInvalidCommand(cmd string) error {
+func ErrInvalidRootCommand(cmd string) error {
 	return errors.New(
-		ErrInvalidCommandCode,
+		ErrInvalidRootCommandCode,
 		errors.Alert,
 		[]string{"Invalid command provided"},
-		[]string{fmt.Sprintf("'%s' is an invalid command", cmd)},
+		[]string{fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl --help' to see available commands", cmd)},
 		[]string{"Command not recognized by mesheryctl"},
 		[]string{"Use 'mesheryctl --help' to display usage guide"},
 	)

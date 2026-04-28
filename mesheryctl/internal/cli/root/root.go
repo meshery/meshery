@@ -79,7 +79,7 @@ mesheryctl -v [or] --verbose
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return ErrInvalidCommand(args[0])
+			return ErrInvalidRootCommand(args[0])
 		}
 
 		return nil
