@@ -47,8 +47,7 @@
     <section>
         <h3 id="related-designs-header">Designs containing {{ .Title }}</h3>
         {{ $tech := path.Base (strings.TrimSuffix "/" .Params.docURL) }}
-        {{ $catalogFilter := .Title }}
-        {{ $catalogFilterURL := printf "https://meshery.io/catalog?search=%s" ($catalogFilter | urlquery) }}
+        {{ $catalogFilterURL := printf "https://meshery.io/catalog/designs?search=%s" ($tech | urlquery) }}
         <ul>
         {{ $catalogRoot := "catalog" }}
         {{ range readDir $catalogRoot }}
