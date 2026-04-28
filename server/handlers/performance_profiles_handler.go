@@ -28,12 +28,9 @@ func (h *Handler) SavePerformanceProfileHandler(
 	parsedBody.Metadata = make(sql.Map, 0)
 	err := json.NewDecoder(r.Body).Decode(&parsedBody)
 	if err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
 		//failed to read request body
 		h.log.Error(ErrRequestBody(err))
-		if _, writeErr := fmt.Fprintf(rw, ErrRequestBody(err).Error(), err); writeErr != nil {
-			h.log.Error(writeErr)
-		}
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -44,7 +41,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 	if err != nil {
 		//unable to save user config data
 		h.log.Error(ErrRecordPreferences(err))
-		http.Error(rw, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrRecordPreferences(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -53,7 +50,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 		obj := "performance profile"
 		//fail to save performance profile
 		h.log.Error(ErrFailToSave(err, obj))
-		http.Error(rw, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFailToSave(err, obj), http.StatusInternalServerError)
 		return
 	}
 
@@ -85,7 +82,7 @@ func (h *Handler) GetPerformanceProfilesHandler(
 		obj := "performance profile"
 		//get query performance profile
 		h.log.Error(ErrQueryGet(obj))
-		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrQueryGet(obj), http.StatusInternalServerError)
 		return
 	}
 
@@ -110,7 +107,7 @@ func (h *Handler) DeletePerformanceProfileHandler(
 		obj := "performance profile"
 		//fail to delete performance profile
 		h.log.Error(ErrFailToDelete(err, obj))
-		http.Error(rw, ErrFailToDelete(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFailToDelete(err, obj), http.StatusInternalServerError)
 		return
 	}
 
@@ -134,7 +131,7 @@ func (h *Handler) GetPerformanceProfileHandler(
 		obj := "performanceProfile"
 		//Queury Error performance profile
 		h.log.Error(ErrQueryGet(obj))
-		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrQueryGet(obj), http.StatusInternalServerError)
 		return
 	}
 

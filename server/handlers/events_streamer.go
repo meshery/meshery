@@ -71,7 +71,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 
 	if err != nil || e == nil {
 		h.log.Error(ErrGetEvents(err))
-		http.Error(w, ErrGetEvents(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrGetEvents(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -79,8 +79,11 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	err = json.NewEncoder(w).Encode(e)
 
 	if err != nil {
+		// Response body has already started streaming via json.Encoder —
+		// Content-Type: application/json is committed and a partial JSON
+		// envelope is on the wire. A fresh error response would corrupt
+		// it, so log only.
 		h.log.Error(models.ErrMarshal(err, "events response"))
-		http.Error(w, models.ErrMarshal(err, "events response").Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -111,17 +114,20 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 	eventTypes, err := provider.GetEventTypes(token, userID, *h.SystemID)
 
 	if err != nil {
-		msg := "error retrieving event categories and actions"
-		h.log.Error(fmt.Errorf("%s: %w", msg, err))
-		http.Error(w, msg, http.StatusInternalServerError)
+		retrieveErr := ErrRetrieveEventTypes(err)
+		h.log.Error(retrieveErr)
+		writeMeshkitError(w, retrieveErr, http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(eventTypes)
 	if err != nil {
+		// Response body has already started streaming via json.Encoder —
+		// Content-Type: application/json is committed and a partial JSON
+		// envelope is on the wire. A fresh error response would corrupt
+		// it, so log only.
 		h.log.Error(models.ErrMarshal(err, "event types response"))
-		http.Error(w, models.ErrMarshal(err, "event types response").Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -138,22 +144,24 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
 	_ = json.Unmarshal(body, &reqBody)
 	status, ok := reqBody["status"].(string)
 	if !ok {
-		h.log.Error(ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String()))
-		http.Error(w, ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String()).Error(), http.StatusInternalServerError)
+		// Missing/non-string status field is a client-side payload issue.
+		statusErr := ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String())
+		h.log.Error(statusErr)
+		writeMeshkitError(w, statusErr, http.StatusBadRequest)
 		return
 	}
 	err = provider.UpdateEventStatus(token, eventID, status)
 	if err != nil {
 		_err := ErrUpdateEvent(err, eventID.String())
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
 
@@ -170,7 +178,7 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -179,7 +187,7 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 	if err != nil {
 		_err := ErrBulkUpdateEvent(err)
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
 
@@ -195,7 +203,7 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -204,7 +212,7 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 	if err != nil {
 		_err := ErrBulkDeleteEvent(err)
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
 }
@@ -217,7 +225,7 @@ func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj 
 	if err != nil {
 		_err := ErrDeleteEvent(err, eventID.String())
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
 }
@@ -271,8 +279,12 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	flusher, ok := w.(http.Flusher)
 
 	if !ok {
+		// This precondition fires BEFORE the SSE Content-Type headers are
+		// committed (set 3 lines below). The response is therefore a regular
+		// JSON error envelope, not a text/event-stream chunk — emit it via
+		// writeMeshkitError so RTK Query can parse it like any other error.
 		h.log.Error(ErrEventStreamingNotSupported)
-		http.Error(w, "Event streaming is not supported at the moment.", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrEventStreamingNotSupported, http.StatusInternalServerError)
 		return
 	}
 
@@ -515,7 +527,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
-		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -527,20 +539,21 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
 	err = json.Unmarshal(body, &evt)
 	if err != nil {
+		// Body unmarshal failures are client-side errors (malformed JSON).
 		h.log.Error(models.ErrUnmarshal(err, "event"))
-		http.Error(w, models.ErrUnmarshal(err, "event").Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrUnmarshal(err, "event"), http.StatusBadRequest)
 		return
 	}
 
 	if evt.ActedUpon.IsNil() || evt.Action == "" || evt.Category == "" || evt.Severity == "" {
 		h.log.Error(models.ErrInvalidEventData())
-		http.Error(w, models.ErrInvalidEventData().Error(), http.StatusBadRequest)
+		writeMeshkitError(w, models.ErrInvalidEventData(), http.StatusBadRequest)
 		return
 	}
 
@@ -552,7 +565,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 	err = provider.PersistEvent(*event, token)
 	if err != nil {
 		h.log.Error(models.ErrPersistEvent(err))
-		http.Error(w, models.ErrPersistEvent(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrPersistEvent(err), http.StatusInternalServerError)
 		return
 
 	}
@@ -562,8 +575,10 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(event)
 	if err != nil {
+		// Headers + 201 committed and the response body has started
+		// streaming via json.Encoder, so we cannot send a fresh JSON
+		// error response here. Log only.
 		h.log.Error(models.ErrMarshal(err, "event response"))
-		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
 		return
 	}
 }

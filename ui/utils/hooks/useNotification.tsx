@@ -12,6 +12,7 @@ import React from 'react';
 import BellIcon from '../../assets/icons/BellIcon';
 import { AddClassRecursively } from '../Elements';
 import { useCallback } from 'react';
+import { formatApiError } from '../helpers/meshkitError';
 
 /**
  * A React hook to facilitate emitting events from the client.
@@ -166,5 +167,26 @@ export const useNotificationHandlers = () => {
     [handleNotification],
   );
 
-  return { handleSuccess, handleError, handleInfo, handleWarn };
+  /**
+   * Surface an RTK Query error in a toast, automatically consuming the
+   * structured `meshkit` envelope set by `@meshery/schemas` v1.2.2's
+   * `transformErrorResponse` wrapper. When MeshKit metadata is present the
+   * toast renders:
+   *   - `meshkit.message` as a bold title,
+   *   - `meshkit.suggestedRemediation` as a bullet list (one entry per line),
+   *   - `meshkit.code` as a muted reference for support tickets.
+   * When the error is not a MeshKit envelope (network failure, legacy
+   * endpoint, etc.) the helper falls back to the prior single-line behavior
+   * — `error.data` / `error.message` / the supplied fallback title — so it
+   * is safe to call unconditionally.
+   */
+  const notifyApiError = useCallback(
+    (error: unknown, fallbackTitle?: string) => {
+      const { message } = formatApiError(error, fallbackTitle);
+      handleNotification('error', message);
+    },
+    [handleNotification],
+  );
+
+  return { handleSuccess, handleError, handleInfo, handleWarn, notifyApiError };
 };
