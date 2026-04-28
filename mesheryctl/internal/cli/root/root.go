@@ -15,7 +15,6 @@
 package root
 
 import (
-	"fmt"
 	"log"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
