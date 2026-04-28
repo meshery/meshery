@@ -108,13 +108,20 @@ export const userApi = api
         // JSON tags (avatarUrl, firstName, …).  Spread the raw response and add
         // snake_case aliases so that existing UI consumers continue to work without
         // requiring a site-wide rename.
-        transformResponse: (response) => ({
-          ...response,
-          avatar_url: response.avatarUrl,
-          first_name: response.firstName,
-          last_name: response.lastName,
-          user_id: response.userId,
-        }),
+        transformResponse: (response) => {
+          // Defensive: pass through null / non-object bodies unchanged so callers
+          // see the raw response rather than a TypeError from `null.avatarUrl`.
+          if (!response || typeof response !== 'object') {
+            return response;
+          }
+          return {
+            ...response,
+            avatar_url: response.avatarUrl,
+            first_name: response.firstName,
+            last_name: response.lastName,
+            user_id: response.userId,
+          };
+        },
       }),
       getProviderCapabilities: builder.query({
         query: () => '/api/provider/capabilities',
