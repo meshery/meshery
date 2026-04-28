@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"runtime/debug"
 	"strings"
 	"time"
 
@@ -573,6 +574,19 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	evalErrChan := make(chan error, 1)
 
 	go func() {
+		// Recover panics so a buggy policy evaluation can't crash the
+		// server process. Convert the panic into an error response.
+		defer func() {
+			if rec := recover(); rec != nil {
+				err := fmt.Errorf("panic in relationship evaluation: %v\n%s", rec, debug.Stack())
+				h.log.Error(err)
+				h.evalTracker.publish(designKey, evalResult{err: err})
+				select {
+				case evalErrChan <- err:
+				default:
+				}
+			}
+		}()
 		// Skip evaluation if the request was already cancelled
 		if evalCtx.Err() != nil {
 			h.evalTracker.publish(designKey, evalResult{err: evalCtx.Err()})
