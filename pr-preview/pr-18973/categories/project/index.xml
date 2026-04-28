@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Project on Documentation</title><link>/categories/project/</link><description>Recent content in Project on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sun, 26 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="/categories/project/index.xml" rel="self" type="application/rss+xml"/><item><title>Releases</title><link>/project/releases/</link><pubDate>Sun, 26 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/</guid><description>&lt;p&gt;See also Meshery&amp;rsquo;s &lt;a href="../../installation/"&gt;Compatibility Matrix&lt;/a&gt; and &lt;a href="../../project/contributing/build-and-release/"&gt;Build and Release&lt;/a&gt; process.&lt;/p&gt;</description></item><item><title>Frequently Asked Questions</title><link>/project/faq/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/faq/</guid><description>&lt;h2 id="general-faqs"&gt;
+	General FAQs
+&lt;/h2&gt;
+&lt;details&gt;
+ &lt;summary&gt;
+ &lt;h6&gt;Question: What is Meshery?&lt;/h6&gt;
+&lt;/summary&gt;
+&lt;p&gt;&lt;strong&gt;Answer:&lt;/strong&gt; Meshery is a self-service engineering platform that enables collaborative design and operation of cloud and cloud native infrastructure.&lt;/p&gt;
+&lt;/details&gt;
+&lt;details&gt;
+ &lt;summary&gt;
+ &lt;h6&gt;Question: Why was Meshery created?&lt;/h6&gt;
+&lt;/summary&gt;
+&lt;p&gt;&lt;strong&gt;Answer:&lt;/strong&gt; As an open source, vendor-neutral project, Meshery was created out of the necessity to enable platform engineers, site reliability engineers, and DevSecOps teams to collaborate in the management of their infrastructure and workloads. Meshery was created as an extensible platform to serve a broad set of modern application management needs.&lt;/p&gt;</description></item><item><title>Meshery Overview</title><link>/project/overview/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/overview/</guid><description>&lt;h2 id="meshery-is-for-all-cloud-and-cloud-native-infrastructure"&gt;
+	Meshery is for all cloud and cloud native infrastructure
+&lt;/h2&gt;
+&lt;p&gt;Meshery is an &lt;strong&gt;extensible engineering platform&lt;/strong&gt; for the collaborative design and operation of cloud and cloud native infrastructure and applications.&lt;/p&gt;
+&lt;p&gt;Kubernetes-centric. Kubernetes not required.&lt;/p&gt;
+&lt;p&gt;Infrastructure diversity is a reality for any enterprise. Whether you&amp;rsquo;re running a single Kubernetes cluster or multiple Kubernetes clusters, on one cloud or multiple clouds, you&amp;rsquo;ll find that Meshery supports your infrastructure diversity (or lack thereof).&lt;/p&gt;</description></item><item><title>Meshery Playground</title><link>/installation/playground/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/playground/</guid><description>&lt;p&gt;&lt;em&gt;Try out Meshery Playground at &lt;a href="https://playground.meshery.io/"&gt;https://playground.meshery.io/&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Meshery Playground is a web-based, collaborative environment that lets you explore Meshery as a cloud native manager and all of the infrastructure it manages, including multiple Kubernetes clusters, CNCF projects and applications, services, and operators that run on Kubernetes. Meshery Playground provides a sandboxed environment to experiment with different infrastructure configurations and deployment options. Its multiplayer plugins allow you to collaborate in real time with your teammates on infrastructure design and operation.&lt;/p&gt;</description></item><item><title>Security Vulnerabilities</title><link>/project/security-vulnerabilities/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/security-vulnerabilities/</guid><description>&lt;h2 id="list-of-announced-vulnerabilities"&gt;
+	List of Announced Vulnerabilities
+&lt;/h2&gt;
+&lt;table&gt;
+&lt;tr&gt;
+ &lt;th&gt; DATE ANNOUNCED &lt;/th&gt;
+ &lt;th&gt; CVE ID &lt;/th&gt;
+ &lt;th&gt; DESCRIPTION &lt;/th&gt;
+ &lt;th&gt; AFFECTED COMPONENT &lt;/th&gt;
+ &lt;th&gt; VULNERABLE VERSION &lt;/th&gt;
+ &lt;th&gt; PATCHED VERSION &lt;/th&gt;
+ &lt;th&gt; FIX DETAILS &lt;/th&gt;
+ &lt;th&gt; LINKS &lt;/th&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+ &lt;td&gt; 2021-04-28 &lt;/td&gt;
+ &lt;td&gt; CVE-2021-31856 &lt;/td&gt;
+ &lt;td&gt; A SQL Injection vulnerability in the REST API in Meshery 0.5.2 allows an attacker to execute arbitrary SQL commands via the /experimental/patternfiles endpoint (order parameter in GetMesheryPatterns in models/meshery_pattern_persister.go). &lt;/td&gt;
+ &lt;td&gt; REST API &lt;/td&gt;
+ &lt;td&gt; v0.5.2 &lt;/td&gt;
+ &lt;td&gt; v0.5.3 &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://github.com/meshery/meshery/pull/2745"&gt;fix pull&lt;/a&gt; &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-31856"&gt;mitre&lt;/a&gt;,&lt;br&gt;&lt;a href="https://github.com/ssst0n3/CVE-2021-31856"&gt;details&lt;/a&gt; &lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;/table&gt;
+
+&lt;h2 id="reporting-a-vulnerability"&gt;
+	Reporting a vulnerability
+&lt;/h2&gt;
+&lt;p&gt;We are very grateful to the security researchers and users that report
+back Meshery security vulnerabilities. We investigate every report thoroughly.&lt;/p&gt;</description></item></channel></rss>
