@@ -13,8 +13,8 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
-	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshery/server/models/pattern/utils"
+	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -685,7 +685,11 @@ func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context)
 func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 	var greedy bool
@@ -710,10 +714,10 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
+		Page:       page,
+		PageSize:   int(pgSize),
 		TotalCount: 0,
-		Policies: entities,
+		Policies:   entities,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -728,7 +732,11 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	typ := mux.Vars(r)["model"]
 
 	var greedy bool
@@ -753,10 +761,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
+		Page:       page,
+		PageSize:   int(pgSize),
 		TotalCount: 0,
-		Policies: entities,
+		Policies:   entities,
 	}
 
 	if err := enc.Encode(response); err != nil {

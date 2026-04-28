@@ -32,9 +32,9 @@ import (
 	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
-	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -51,7 +51,11 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	enc := json.NewEncoder(rw)
 	cat := mux.Vars(r)["category"]
 	queryParams := r.URL.Query()
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	filter := &regv1beta1.ModelFilter{
@@ -84,10 +88,10 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -105,7 +109,11 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	cat := mux.Vars(r)["category"]
 	model := mux.Vars(r)["model"]
 	queryParams := r.URL.Query()
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	var greedy bool
 	if search == queryParamTrue {
 		greedy = true
@@ -140,10 +148,10 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -159,7 +167,11 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	queryParams := r.URL.Query()
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
 
@@ -200,10 +212,10 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -220,7 +232,11 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["model"]
 	queryParams := r.URL.Query()
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	var greedy bool
 	if search == queryParamTrue {
 		greedy = true
@@ -257,10 +273,10 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -275,7 +291,11 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	filter := &regv1beta1.CategoryFilter{
 		Limit:   limit,
 		Offset:  offset,
@@ -300,7 +320,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	res := models.MeshmodelCategoriesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Categories: categories,
 	}
 
@@ -316,7 +336,11 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	name := mux.Vars(r)["category"]
 	var greedy bool
 	if search == queryParamTrue {
@@ -342,7 +366,7 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	res := models.MeshmodelCategoriesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Categories: categories,
 	}
 
@@ -358,7 +382,11 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	name := mux.Vars(r)["name"]
 
 	queryParams := r.URL.Query()
@@ -396,7 +424,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -412,7 +440,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	name := mux.Vars(r)["name"]
 	var greedy bool
 	queryParams := r.URL.Query()
@@ -448,7 +480,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -464,7 +496,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	name := mux.Vars(r)["name"]
 	var greedy bool
 	queryParams := r.URL.Query()
@@ -501,7 +537,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -517,7 +553,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	name := mux.Vars(r)["name"]
 	var greedy bool
 	queryParams := r.URL.Query()
@@ -552,7 +592,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -568,7 +608,11 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	typ := mux.Vars(r)["model"]
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
@@ -603,7 +647,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -619,7 +663,11 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	typ := mux.Vars(r)["model"]
 	cat := mux.Vars(r)["category"]
 	queryParams := r.URL.Query()
@@ -654,7 +702,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -670,7 +718,11 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	cat := mux.Vars(r)["category"]
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
@@ -703,7 +755,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -719,7 +771,11 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
@@ -752,7 +808,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	res := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -809,7 +865,11 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 
 	filter := &_models.HostFilter{
 		Limit:   limit,
@@ -838,7 +898,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	res := models.MeshmodelRegistrantsAPIResponse{
 		Page:        page,
 		PageSize:    int(pgSize),
-		TotalCount:       count,
+		TotalCount:  count,
 		Registrants: hosts,
 	}
 

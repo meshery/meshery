@@ -51,7 +51,11 @@ type statusIDs struct {
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := user.ID
 	page, offset, limit,
-		search, order, sortOnCol, status := getPaginationParams(req)
+		search, order, sortOnCol, status, err := getPaginationParams(req)
+	if err != nil {
+		writePaginationError(h.log, w, err)
+		return
+	}
 	// eventCategory :=
 	filter, err := getEventFilter(req)
 	if err != nil {
