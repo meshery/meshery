@@ -64,7 +64,7 @@ For production deployments, consider the following security best practices regar
 
 ### Remote Providers
 
-The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Layer5 Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
+The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
 
 A specific provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`. This applies to both remote and local providers.
 
@@ -162,7 +162,7 @@ This environment variable enforces a specific provider, bypassing the provider s
 
 Accepted values:
 - `None` - Enforces the Local Provider (no authentication)
-- `Meshery` - Enforces the Meshery (Layer5 Cloud) Remote Provider
+- `Meshery` - Enforces the Meshery (Meshery Cloud) Remote Provider
 - Any other registered remote provider name
 
 Example: `PROVIDER=None`

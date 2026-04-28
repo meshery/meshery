@@ -28,6 +28,7 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	servercore "github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
@@ -327,7 +328,7 @@ func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *htt
 
 	if err != nil {
 		l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderCapabilities] failed to load capabilities from remote provider: %v", err))
-		http.Error(w, fmt.Sprintf("failed to load capabilities from remote provider: %v", err), http.StatusInternalServerError)
+		httputil.WriteMeshkitError(w, ErrRemoteProviderCapabilities(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -336,9 +337,17 @@ func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *htt
 		l.Log.Error(ErrDBPut(errors.Join(err, fmt.Errorf("failed to write capabilities for the user %s to the server store", userID))))
 	}
 
-	encoder := json.NewEncoder(w)
-	if err := encoder.Encode(providerProperties); err != nil {
-		http.Error(w, ErrEncoding(err, "Provider Capablity").Error(), http.StatusInternalServerError)
+	// Encode into a buffer first so that headers are not committed before we
+	// know whether encoding succeeded; this prevents a second JSON object from
+	// being appended to an already-started 200 response on encode failure.
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(providerProperties); err != nil {
+		httputil.WriteMeshkitError(w, ErrEncoding(err, "Provider Capability"), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if _, err := buf.WriteTo(w); err != nil {
+		l.Log.Error(ErrEncoding(err, "Provider Capability"))
 	}
 }
 
@@ -902,7 +911,11 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 		l.UnSetJWTCookie(w)
 		l.UnSetProviderSessionCookie(w)
 		ClearAuthRetryCookie(w)
-		http.Error(w, "Authentication failed after multiple attempts. Please clear your browser cookies for this site and try again.", http.StatusUnauthorized)
+		httputil.WriteMeshkitError(
+			w,
+			ErrRemoteProviderAuthExhausted(fmt.Errorf("please clear your browser cookies for this site and try again")),
+			http.StatusUnauthorized,
+		)
 		return
 	}
 	SetAuthRetryCookie(w, retries+1)
@@ -3987,7 +4000,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	// error out if capabilities could not be fetched
 	if err != nil {
 		l.Log.Error(fmt.Errorf("[TokenHandler] error loading capabilities from remote provider: %v", err))
-		http.Error(w, "Error loading capabilities from remote provider", http.StatusInternalServerError)
+		httputil.WriteMeshkitError(w, ErrRemoteProviderCapabilities(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -4088,10 +4101,19 @@ func (l *RemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
 		TokenCookieName:    tokenString,
 	}
 	l.Log.Debug("token sent for meshery-provider ", l.Name())
-	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		err = ErrEncoding(err, "Auth Details")
+	// Encode into a buffer first so that headers are not committed before we
+	// know whether encoding succeeded; this prevents a second JSON object from
+	// being appended to an already-started 200 response on encode failure.
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(resp); err != nil {
+		errObj := ErrEncoding(err, "Auth Details")
+		l.Log.Error(errObj)
+		httputil.WriteMeshkitError(w, errObj, http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if _, err := buf.WriteTo(w); err != nil {
 		l.Log.Error(ErrEncoding(err, "Auth Details"))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 

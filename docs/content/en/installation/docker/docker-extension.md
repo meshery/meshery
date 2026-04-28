@@ -37,7 +37,7 @@ Click **Open** when installation is done or click **Meshery** on the left under 
 
 [![Docker Meshery Extension Open](/installation/docker/images/docker-desktop-meshery-extension-open.png)](/installation/docker/images/docker-desktop-meshery-extension-open.png)
 
-Click **Login** to open the _Layer5 Cloud_ login page. Log in or sign up and you will be redirected back to Docker Desktop.
+Click **Login** to open the _Meshery Cloud_ login page. Log in or sign up and you will be redirected back to Docker Desktop.
 
 [![Docker Meshery Extension Login](/installation/docker/images/docker-desktop-meshery-extension-login.png)](/installation/docker/images/docker-desktop-meshery-extension-login.png)
 
@@ -45,7 +45,7 @@ Finally, click **Launch Meshery** to load Meshery Dashboard in a browser window.
 
 [![Docker Meshery Extension Launch](/installation/docker/images/docker-desktop-meshery-extension-launch.png)](/installation/docker/images/docker-desktop-meshery-extension-launch.png)
 
-You can also open http://localhost:9081/ directly on a browser on the local machine after installing the Docker extension and complete the _Layer5 Cloud_ login process to achieve the same result.
+You can also open http://localhost:9081/ directly on a browser on the local machine after installing the Docker extension and complete the _Meshery Cloud_ login process to achieve the same result.
 
 ### Using Docker Hub
 
