@@ -450,4 +450,12 @@ export const keys = {
     subject: 'Reset database',
     action: '84fc402c-f33e-4a21-a0e3-e14f9e20b125',
   },
+  CREATE_MODEL: {
+    subject: 'Create Model',
+    action: '6aff8104-e39e-4804-bec8-643675ed3ba4',
+  },
+  IMPORT_MODEL: {
+    subject: 'Import Model',
+    action: '7a18239b-5d78-4939-bf2a-c62df626af02',
+  },
 };

@@ -29,6 +29,8 @@ import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
 import ImportModelModal from './ImportModelModal';
 import CreateModelModal from './CreateModelModal';
 import CreateRelationshipModal from '@/components/RelationshipBuilder/CreateRelationshipModal';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 type MeshModelComponentProps = {
   settingsRouter?: (_router: any) => { handleChangeSelectedTab?: (_tab: string) => void };
@@ -486,7 +488,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
               color="primary"
               onClick={openCreateModal}
               style={{ display: 'flex' }}
-              disabled={false} //TODO: Need to make key for this component
+              disabled={!CAN(keys.CREATE_MODEL.action, keys.CREATE_MODEL.subject)}
               startIcon={<AddIcon style={iconSmall} />}
               data-testid="TabBar-Button-CreateModel"
             >
@@ -498,7 +500,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
               color="primary"
               onClick={openImportModal}
               style={{ display: 'flex' }}
-              disabled={false} //TODO: Need to make key for this component
+              disabled={!CAN(keys.IMPORT_MODEL.action, keys.IMPORT_MODEL.subject)}
               startIcon={<UploadIcon />}
               data-testid="TabBar-Button-ImportModel"
             >
