@@ -1,4 +1,78 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Meshery Documentation on Documentation</title><link>/</link><description>Recent content in Meshery Documentation on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sun, 26 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.13</title><link>/project/releases/v1.0.13/</link><pubDate>Sun, 26 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.13/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Meshery Documentation on Documentation</title><link>/</link><description>Recent content in Meshery Documentation on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Wed, 29 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.14</title><link>/project/releases/v1.0.14/</link><pubDate>Wed, 29 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.14/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(server): promote raw-err passthroughs to MeshKit codes (follow-up to #18919) @leecalcote (#18955)&lt;/li&gt;
+&lt;li&gt;test(server): pin buffer-encode pattern in httputil tests @leecalcote (#18954)&lt;/li&gt;
+&lt;li&gt;chore(server): delete dead meshery_application_handler.go @leecalcote (#18953)&lt;/li&gt;
+&lt;li&gt;chore(server): remove dead getLatestKubeVersionFromRegistry block @leecalcote (#18952)&lt;/li&gt;
+&lt;li&gt;docs(server): explain log/wire error divergence in SessionInjectorMiddleware @leecalcote (#18951)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(wire-format): flip meshery server + UI to canonical camelCase (Phase 5) @leecalcote (#18974)&lt;/li&gt;
+&lt;li&gt;fix(server): JSON error responses across handlers + provider layer @jamieplu (#18919)&lt;/li&gt;
+&lt;li&gt;fix: update default remote provider references to Meshery Cloud @miacycle (#18913)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;chore(deps): bump meshkit v1.0.6 -&amp;gt; v1.0.7 + flip Event consumer reads @leecalcote (#18987)&lt;/li&gt;
+&lt;li&gt;fix(wire-format): flip Kubernetes connection metadata literal keys to canonical camelCase (Phase 5b) @leecalcote (#18986)&lt;/li&gt;
+&lt;li&gt;[ui] Fix font-family naming mismatch and redundant preload warning #18515 @Ananya-Kaushal137 (#18637)&lt;/li&gt;
+&lt;li&gt;fix(wire-format): flip meshery server + UI to canonical camelCase (Phase 5) @leecalcote (#18974)&lt;/li&gt;
+&lt;li&gt;fix(server): JSON error responses across handlers + provider layer @jamieplu (#18919)&lt;/li&gt;
+&lt;li&gt;fix: update default remote provider references to Meshery Cloud @miacycle (#18913)&lt;/li&gt;
+&lt;li&gt;feat(ui): consume MeshKit error metadata in notification toasts @leecalcote (#18926)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Agent] Standardize coding agent GitHub tool access @leecalcote (#18990)&lt;/li&gt;
+&lt;li&gt;fix(wire-format): flip Kubernetes connection metadata literal keys to canonical camelCase (Phase 5b) @leecalcote (#18986)&lt;/li&gt;
+&lt;li&gt;[CI] Remove unsupported &lt;code&gt;copilot-requests&lt;/code&gt; permission from docs noob tester workflow @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#18988)&lt;/li&gt;
+&lt;li&gt;[Agent] Enable PR comments for Meshery Code Contributor @leecalcote (#18975)&lt;/li&gt;
+&lt;li&gt;chore(deps): Bump github.com/olekukonko/tablewriter from 1.1.0 to 1.1.4 @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#16824)&lt;/li&gt;
+&lt;li&gt;Bump github.com/open-policy-agent/opa from 1.11.0 to 1.12.1 @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#16825)&lt;/li&gt;
+&lt;li&gt;Bump github.com/envoyproxy/go-control-plane/envoy from 1.35.0 to 1.36.0 @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#16826)&lt;/li&gt;
+&lt;li&gt;fix(wire-format): flip meshery server + UI to canonical camelCase (Phase 5) @leecalcote (#18974)&lt;/li&gt;
+&lt;li&gt;fix(server): JSON error responses across handlers + provider layer @jamieplu (#18919)&lt;/li&gt;
+&lt;li&gt;[CI] Fail PR E2E workflow when Playwright tests fail @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#18960)&lt;/li&gt;
+&lt;li&gt;ci(server): flip forbidigo http.Error guard to blocking @leecalcote (#18927)&lt;/li&gt;
+&lt;li&gt;fix: update default remote provider references to Meshery Cloud @miacycle (#18913)&lt;/li&gt;
+&lt;li&gt;Update email notification workflow for release notes @fitzergerald (#18944)&lt;/li&gt;
+&lt;li&gt;Add workflow for release notes email notifications @fitzergerald (#18946)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] Use Qanelas Soft for REST API reference typography @Oluwatunmise-olat (#18973)&lt;/li&gt;
+&lt;li&gt;[Docs] Remove repetitive REST API reference summary text @Joyboy48 (#18964)&lt;/li&gt;
+&lt;li&gt;Bump postcss from 8.5.6 to 8.5.12 in /docs @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#18947)&lt;/li&gt;
+&lt;li&gt;fix(server): JSON error responses across handlers + provider layer @jamieplu (#18919)&lt;/li&gt;
+&lt;li&gt;docs(server): clarify forbidigo advisory state, sync exception lists @leecalcote (#18958)&lt;/li&gt;
+&lt;li&gt;docs(server): refresh error-contract for Phase 9 + buffer-encode pattern @leecalcote (#18950)&lt;/li&gt;
+&lt;li&gt;fix: update default remote provider references to Meshery Cloud @miacycle (#18913)&lt;/li&gt;
+&lt;li&gt;Fix typo in CLI contributing docs (#18940) @Siraddeen (#18942)&lt;/li&gt;
+&lt;li&gt;Fix light/dark mode toggle icon on v0.9 @Katotodan (#18831)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix outdated references in Dashboard Widgets docs @matrixkavi (#18931)&lt;/li&gt;
+&lt;li&gt;fix(docs): remove random text from intra page navigation @Sbragul26 (#18820)&lt;/li&gt;
+&lt;li&gt;[Server] Implement Proper Error Codes for MeshSync Data Handler @workwithsarang (#18236)&lt;/li&gt;
+&lt;li&gt;First PR @alex-rudenkiy (#18933)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Ananya-Kaushal137, @CodexRaunak, @Copilot, @Joyboy48, @Katotodan, @Oluwatunmise-olat, @PragalvaXFREZ, @Sbragul26, @Siraddeen, @alex-rudenkiy, @alexquincy, @arjunmehta-git, @dependabot[bot], @fitzergerald, @hamza-mohd, @jamieplu, @l5io, @leecalcote, @matrixkavi, @meshery-ci, @miacycle, @pontusringblom, @saurabhraghuvanshii, @workwithsarang, @yi-nuo426, [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.13</title><link>/project/releases/v1.0.13/</link><pubDate>Sun, 26 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.13/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -33126,13 +33200,15 @@ See your deployment before you merge. Connect Kanvas to your GitHub repo and see
 	In-cluster Installation
 &lt;/h1&gt;
 &lt;p&gt;Follow the steps below to install Meshery in your GKE cluster.&lt;/p&gt;</description></item><item><title>Google Cloud Platform</title><link>/extensions/models/gcp/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/gcp/</guid><description/></item><item><title>Google Cloud Platform</title><link>/extensions/models/k8s-config-connector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/k8s-config-connector/</guid><description/></item><item><title>Grafana Agent</title><link>/extensions/models/grafana-agent/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/grafana-agent/</guid><description/></item><item><title>Grafana Agent Operator</title><link>/extensions/models/grafana-agent-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/grafana-agent-operator/</guid><description/></item><item><title>Grafana Operator</title><link>/extensions/models/grafana-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/grafana-operator/</guid><description/></item><item><title>Grafana UI Server</title><link>/extensions/models/grafana-ui-server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/grafana-ui-server/</guid><description/></item><item><title>GraphQL API Reference</title><link>/reference/graphql-apis/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/graphql-apis/</guid><description>&lt;!---
- This documentation is auto generated by a script.
-
- Please do not edit this file directly, check compile_docs task on docs/Rakefile.
+ This page is a static snapshot of the GraphQL schema reference. The previous
+ Jekyll-era Rakefile that auto-generated it (docs/Rakefile, docs/Gemfile) was
+ removed when the docs migrated from Jekyll to Hugo. For the most current API
+ surface, use the GraphQL introspection endpoint and the Playground linked
+ below; this page may be regenerated by a future Hugo-native pipeline. The
+ authoritative source schema definitions live in
+ https://github.com/meshery/schemas.
 ---&gt;
-&lt;p&gt;Self-generated API documentation for Meshery&amp;rsquo;s GraphQL API. The API can be explored interactively using the GraphQL Playground at &lt;code&gt;http://localhost:9081/api/system/graphql/playground&lt;/code&gt;, if you have built and are running Meshery Server from source. Documentation is generated from Meshery&amp;rsquo;s GraphQL schema. Each table below documents a GraphQL type.&lt;/p&gt;
-&lt;p&gt;WARNING:
-Fields that are deprecated are marked with &lt;strong&gt;{warning-solid}&lt;/strong&gt;.&lt;/p&gt;</description></item><item><title>HAProxy Kubernetes Ingress</title><link>/extensions/models/kubernetes-ingress/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubernetes-ingress/</guid><description/></item><item><title>Harbor Operator</title><link>/extensions/models/harbor-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/harbor-operator/</guid><description/></item><item><title>Helm</title><link>/installation/kubernetes/helm/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/helm/</guid><description>&lt;h1 id="install-meshery-on-kubernetes-using-helm"&gt;
+&lt;p&gt;Reference documentation for Meshery&amp;rsquo;s GraphQL API. The API can be explored interactively using the GraphQL Playground at &lt;code&gt;http://localhost:9081/api/system/graphql/playground&lt;/code&gt;, if you have built and are running Meshery Server from source. The authoritative source is the GraphQL schema at &lt;code&gt;server/internal/graphql/schema/schema.graphql&lt;/code&gt;; this page is a static snapshot. Each table below documents a GraphQL type.&lt;/p&gt;</description></item><item><title>HAProxy Kubernetes Ingress</title><link>/extensions/models/kubernetes-ingress/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubernetes-ingress/</guid><description/></item><item><title>Harbor Operator</title><link>/extensions/models/harbor-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/harbor-operator/</guid><description/></item><item><title>Helm</title><link>/installation/kubernetes/helm/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/helm/</guid><description>&lt;h1 id="install-meshery-on-kubernetes-using-helm"&gt;
 	Install Meshery on Kubernetes Using Helm
 &lt;/h1&gt;
 &lt;div class="prereqs"&gt;&lt;h4&gt;Prerequisites&lt;/h4&gt;
@@ -33306,7 +33382,7 @@ A &lt;strong&gt;&lt;a href="./concepts/logical/designs/"&gt;design&lt;/a&gt;&lt;
 &lt;h2 id="hands-on-lab"&gt;
 	Hands-on Lab
 &lt;/h2&gt;
-&lt;p&gt;Perform the following steps in order:&lt;/p&gt;</description></item><item><title>Kubevault</title><link>/extensions/models/kubevault/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault/</guid><description/></item><item><title>Kubevault Catalog</title><link>/extensions/models/kubevault-catalog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-catalog/</guid><description/></item><item><title>Kubevault Crds</title><link>/extensions/models/kubevault-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-crds/</guid><description/></item><item><title>Kubevault Metrics</title><link>/extensions/models/kubevault-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-metrics/</guid><description/></item><item><title>Kubevault Operator</title><link>/extensions/models/kubevault-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-operator/</guid><description/></item><item><title>Kubevela</title><link>/extensions/models/kubevela/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevela/</guid><description/></item><item><title>Kubevirt</title><link>/extensions/models/kubevirt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevirt/</guid><description/></item><item><title>Kuma</title><link>/extensions/models/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kuma/</guid><description/></item><item><title>Kured</title><link>/extensions/models/kured/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kured/</guid><description/></item><item><title>Kusk Gateway</title><link>/extensions/models/kusk-gateway/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kusk-gateway/</guid><description/></item><item><title>Kyverno</title><link>/extensions/models/kyverno/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno/</guid><description/></item><item><title>Kyverno Monitor</title><link>/extensions/models/kyverno-monitor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-monitor/</guid><description/></item><item><title>Kyverno Operator</title><link>/extensions/models/kyverno-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-operator/</guid><description/></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.13&lt;/h2&gt;</description></item><item><title>Linkerd</title><link>/extensions/models/linkerd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linkerd/</guid><description/></item><item><title>Linux</title><link>/extensions/models/linux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linux/</guid><description/></item><item><title>Litmus Chaos</title><link>/extensions/models/litmus-core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/litmus-core/</guid><description/></item><item><title>Loki</title><link>/extensions/models/loki/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki/</guid><description/></item><item><title>Loki Simple Scalable</title><link>/extensions/models/loki-simple-scalable/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki-simple-scalable/</guid><description/></item><item><title>Longhorn</title><link>/extensions/models/longhorn/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/longhorn/</guid><description/></item><item><title>LoxiLB</title><link>/extensions/models/loxilb/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loxilb/</guid><description/></item><item><title>Managing Connections</title><link>/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Perform the following steps in order:&lt;/p&gt;</description></item><item><title>Kubevault</title><link>/extensions/models/kubevault/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault/</guid><description/></item><item><title>Kubevault Catalog</title><link>/extensions/models/kubevault-catalog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-catalog/</guid><description/></item><item><title>Kubevault Crds</title><link>/extensions/models/kubevault-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-crds/</guid><description/></item><item><title>Kubevault Metrics</title><link>/extensions/models/kubevault-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-metrics/</guid><description/></item><item><title>Kubevault Operator</title><link>/extensions/models/kubevault-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-operator/</guid><description/></item><item><title>Kubevela</title><link>/extensions/models/kubevela/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevela/</guid><description/></item><item><title>Kubevirt</title><link>/extensions/models/kubevirt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevirt/</guid><description/></item><item><title>Kuma</title><link>/extensions/models/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kuma/</guid><description/></item><item><title>Kured</title><link>/extensions/models/kured/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kured/</guid><description/></item><item><title>Kusk Gateway</title><link>/extensions/models/kusk-gateway/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kusk-gateway/</guid><description/></item><item><title>Kyverno</title><link>/extensions/models/kyverno/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno/</guid><description/></item><item><title>Kyverno Monitor</title><link>/extensions/models/kyverno-monitor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-monitor/</guid><description/></item><item><title>Kyverno Operator</title><link>/extensions/models/kyverno-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-operator/</guid><description/></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.14&lt;/h2&gt;</description></item><item><title>Linkerd</title><link>/extensions/models/linkerd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linkerd/</guid><description/></item><item><title>Linux</title><link>/extensions/models/linux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linux/</guid><description/></item><item><title>Litmus Chaos</title><link>/extensions/models/litmus-core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/litmus-core/</guid><description/></item><item><title>Loki</title><link>/extensions/models/loki/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki/</guid><description/></item><item><title>Loki Simple Scalable</title><link>/extensions/models/loki-simple-scalable/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki-simple-scalable/</guid><description/></item><item><title>Longhorn</title><link>/extensions/models/longhorn/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/longhorn/</guid><description/></item><item><title>LoxiLB</title><link>/extensions/models/loxilb/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loxilb/</guid><description/></item><item><title>Managing Connections</title><link>/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Meshery manages hundreds of different types of cloud native infrastructure. See the &lt;a href="./extensibility/integrations"&gt;full set of integrations&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="cloud-native-infrastructure-lifecycle-management"&gt;
 	Cloud Native Infrastructure Lifecycle Management
