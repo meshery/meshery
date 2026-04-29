@@ -268,8 +268,9 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	if clusterIds != "" {
 		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
 		if err != nil {
-			h.log.Error(ErrFetchMeshSyncResources(err))
-			http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+			// Client-side payload parse — 400.
+			h.log.Error(ErrRequestBody(err))
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 			return
 		}
 	} else {
@@ -323,7 +324,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	err := query.Find(&resources).Error
 	if err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
-		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -427,7 +428,7 @@ func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Reques
 
 	if err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
-		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -435,7 +436,7 @@ func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Reques
 
 	if err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
-		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -458,7 +459,8 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	h.log.Info("Fetching meshsync resources summary", "clusterIds", clusterIds)
 
 	if len(clusterIds) == 0 {
-		http.Error(rw, "clusterIds is required", http.StatusBadRequest)
+		h.log.Error(ErrQueryGet("clusterIds"))
+		writeMeshkitError(rw, ErrQueryGet("clusterIds"), http.StatusBadRequest)
 		return
 	}
 
@@ -514,7 +516,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	// only return error if both queries failed
 	if err1 != nil && err2 != nil {
 		combinedErr := fmt.Errorf("error fetching meshsync resources summary: %v, %v", err1, err2)
-		http.Error(rw, ErrFetchMeshSyncResources(combinedErr).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(combinedErr), http.StatusInternalServerError)
 		return
 	}
 
@@ -540,7 +542,7 @@ func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request
 	if err != nil {
 		deleteErr := ErrFailToDelete(err, "meshsync resource")
 		h.log.Error(deleteErr)
-		http.Error(rw, deleteErr.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, deleteErr, http.StatusInternalServerError)
 		return
 	}
 

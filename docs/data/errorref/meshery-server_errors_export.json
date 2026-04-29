@@ -845,9 +845,9 @@
         "code": "1094",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error failed to convert design file to Cytoscape object",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "short_description": "Failed to migrate design to current schema version",
+        "probable_cause": "The persisted design is in an older schema version (e.g. v1alpha2) whose ConvertFrom path rejected one of its fields.\nA field present in the older schema has no clean mapping to the current v1beta3 PatternFile shape.",
+        "suggested_remediation": "Inspect server logs for the underlying conversion error. If the design is irrecoverable, re-import its source content via the design import endpoint, which re-runs the full conversion pipeline."
       },
       "1095": {
         "name": "ErrInvalidKubeConfigCode",
@@ -2456,7 +2456,7 @@
         "code": "1273",
         "severity": "Alert",
         "long_description": "You dont have access to the capability",
-        "short_description": "Capablity is not supported by your Provider",
+        "short_description": "Capability is not supported by your Provider",
         "probable_cause": "Not logged in to the vaild remote Provider",
         "suggested_remediation": "Connect to the vaild remote Provider\nAsk the Provider Adim for access"
       },
@@ -3387,6 +3387,15 @@
         "probable_cause": "action value may be malformed",
         "suggested_remediation": "check the policy engine action output"
       },
+      "1378": {
+        "name": "ErrTransientProviderCode",
+        "code": "1378",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Remote provider temporarily unavailable",
+        "probable_cause": "Network connectivity issue, Cloud outage, or firewall blocking egress.",
+        "suggested_remediation": "Retry the request. If this persists, check https://status.meshery.io and verify Meshery Server can reach Meshery Cloud."
+      },
       "1379": {
         "name": "ErrMeshsyncEventCode",
         "code": "1379",
@@ -3404,6 +3413,447 @@
         "short_description": "Error processing MeshSync store update",
         "probable_cause": "MeshSync encountered an error while processing a store update event",
         "suggested_remediation": "Check MeshSync store logs. Verify that the database connection is active and the store is not corrupted."
+      },
+      "1381": {
+        "name": "ErrServeSchemaCode",
+        "code": "1381",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to serve the requested schema",
+        "probable_cause": "Requested resource's schema could not be found or read",
+        "suggested_remediation": "Ensure the resource name is spelled correctly and that the schema is bundled with the server"
+      },
+      "1382": {
+        "name": "ErrInvalidFileRequestCode",
+        "code": "1382",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid file request",
+        "probable_cause": "The provided file query parameter could not be decoded",
+        "suggested_remediation": "Ensure the file parameter is a properly URL-encoded path"
+      },
+      "1383": {
+        "name": "ErrReadFileContentCode",
+        "code": "1383",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to read file content",
+        "probable_cause": "The file could not be opened or streamed to the response",
+        "suggested_remediation": "Verify the file exists and the server has permission to read it"
+      },
+      "1384": {
+        "name": "ErrExtensionEndpointNotRegisteredCode",
+        "code": "1384",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "No extension is registered for endpoint: ",
+        "probable_cause": "Requested extension is not loaded into this Meshery server",
+        "suggested_remediation": "Install the extension or check that its provider registered the route on startup"
+      },
+      "1385": {
+        "name": "ErrUserNotFoundCode",
+        "code": "1385",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "User not found",
+        "probable_cause": "The user may have been deleted or the id is incorrect",
+        "suggested_remediation": "Verify the user id is correct and that the user has not been removed"
+      },
+      "1386": {
+        "name": "ErrFetchTokenCode",
+        "code": "1386",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to obtain authentication token from request context",
+        "probable_cause": "The request may not be authenticated or the token was not propagated into the context",
+        "suggested_remediation": "Ensure the request is authenticated and that upstream middleware injects the token into context"
+      },
+      "1387": {
+        "name": "ErrHandlerShareDesignCode",
+        "code": "1387",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to share design",
+        "probable_cause": "The remote provider rejected the share request\nNetwork connectivity issue\nInvalid payload",
+        "suggested_remediation": "Verify the share request payload and target recipients, then retry"
+      },
+      "1388": {
+        "name": "ErrHandlerShareFilterCode",
+        "code": "1388",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to share filter",
+        "probable_cause": "The remote provider rejected the share request\nNetwork connectivity issue\nInvalid payload",
+        "suggested_remediation": "Verify the share request payload and target recipients, then retry"
+      },
+      "1389": {
+        "name": "ErrGetUserCredentialCode",
+        "code": "1389",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to get user credential",
+        "probable_cause": "Credential may not exist, caller may lack access, or the provider is unreachable",
+        "suggested_remediation": "Verify the credential id and that the current user has access to it"
+      },
+      "1390": {
+        "name": "ErrSaveUserCredentialCode",
+        "code": "1390",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to save user credential",
+        "probable_cause": "Invalid credential payload or the provider rejected the request",
+        "suggested_remediation": "Verify the credential payload matches the expected schema and retry"
+      },
+      "1391": {
+        "name": "ErrUpdateUserCredentialCode",
+        "code": "1391",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to update user credential",
+        "probable_cause": "Credential may not exist, caller may lack access, or the payload is invalid",
+        "suggested_remediation": "Verify the credential id, caller permissions, and payload, then retry"
+      },
+      "1392": {
+        "name": "ErrDeleteUserCredentialCode",
+        "code": "1392",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to delete user credential",
+        "probable_cause": "Credential may not exist or the caller may lack permission",
+        "suggested_remediation": "Verify the credential id and caller permissions, then retry"
+      },
+      "1393": {
+        "name": "ErrEncodeUserCredentialCode",
+        "code": "1393",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to encode user credential response",
+        "probable_cause": "Credential payload could not be serialized to JSON",
+        "suggested_remediation": "Check server logs for serialization details"
+      },
+      "1394": {
+        "name": "ErrUnknownConnectionKindCode",
+        "code": "1394",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to register resource as connection",
+        "probable_cause": "The specified connection kind is not registered with Meshery",
+        "suggested_remediation": "Verify the connection kind is spelled correctly and that its definition is installed"
+      },
+      "1395": {
+        "name": "ErrGetK8sContextsCode",
+        "code": "1395",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to get Kubernetes contexts",
+        "probable_cause": "The remote provider may be unreachable or the stored context data is corrupted",
+        "suggested_remediation": "Verify the remote provider is reachable and retry; if the issue persists, check server logs"
+      },
+      "1396": {
+        "name": "ErrEncodeK8sContextsCode",
+        "code": "1396",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to encode Kubernetes context response",
+        "probable_cause": "Response data could not be serialized to JSON",
+        "suggested_remediation": "Check server logs for serialization details"
+      },
+      "1397": {
+        "name": "ErrCreateDatabaseArchiveDirCode",
+        "code": "1397",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Directory could not be created due to a non-existent path",
+        "probable_cause": "Meshery's configuration directory does not exist or is not writable",
+        "suggested_remediation": "Verify that ~/.meshery/config exists and that the server process has write permission"
+      },
+      "1398": {
+        "name": "ErrOpenDatabaseFileCode",
+        "code": "1398",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "The database does not exist or you don't have enough permission to access it",
+        "probable_cause": "mesherydb.sql is missing or not readable by the server process",
+        "suggested_remediation": "Verify that mesherydb.sql exists under ~/.meshery/config and that the server process can read it"
+      },
+      "1399": {
+        "name": "ErrCreateDatabaseArchiveFileCode",
+        "code": "1399",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Destination file can not be created",
+        "probable_cause": "Archive target path is not writable or disk is full",
+        "suggested_remediation": "Ensure ~/.meshery/config/.archive is writable and has free space"
+      },
+      "1400": {
+        "name": "ErrCopyDatabaseFileCode",
+        "code": "1400",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Can not copy file from source to destination",
+        "probable_cause": "I/O error while archiving the current database, or disk is full",
+        "suggested_remediation": "Check disk space and filesystem permissions for ~/.meshery/config"
+      },
+      "1401": {
+        "name": "ErrObtainDatabaseHandlerCode",
+        "code": "1401",
+        "severity": "Alert",
+        "long_description": "Provider returned a nil generic persister",
+        "short_description": "Failed to obtain database handler",
+        "probable_cause": "The configured provider does not expose a persister, or initialization has not completed",
+        "suggested_remediation": "Verify the active provider supports system database reset and that the server is fully initialized"
+      },
+      "1402": {
+        "name": "ErrAccessDatabaseTablesCode",
+        "code": "1402",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Can not access database tables",
+        "probable_cause": "The database file is locked, corrupt, or inaccessible",
+        "suggested_remediation": "Check that no other process is holding a lock on mesherydb and that the file is not corrupt"
+      },
+      "1403": {
+        "name": "ErrDropDatabaseTableCode",
+        "code": "1403",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Cannot drop table from database",
+        "probable_cause": "Migrator could not drop an existing table — schema or connection issue",
+        "suggested_remediation": "Check server logs for details and verify database integrity"
+      },
+      "1404": {
+        "name": "ErrMigrateDatabaseTablesCode",
+        "code": "1404",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Can not migrate tables to database",
+        "probable_cause": "Auto-migrate or registry manager setup failed during database reset",
+        "suggested_remediation": "Check server logs for migration details and verify the database is accessible"
+      },
+      "1405": {
+        "name": "ErrFetchResultsCode",
+        "code": "1405",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while getting load test results",
+        "probable_cause": "The remote provider is unreachable, the profile id is invalid, or the results store is unavailable",
+        "suggested_remediation": "Verify connectivity to the remote provider and retry; confirm the profile id is correct"
+      },
+      "1406": {
+        "name": "ErrMissingResultIDCode",
+        "code": "1406",
+        "severity": "Alert",
+        "long_description": "No result id was supplied in the URL path",
+        "short_description": "Missing result id in request",
+        "probable_cause": "The client did not include a result identifier",
+        "suggested_remediation": "Provide the result id in the request URL, for example /api/user/performance/results/{id}"
+      },
+      "1407": {
+        "name": "ErrHandlerGenerateUUIDCode",
+        "code": "1407",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to generate a unique identifier",
+        "probable_cause": "Secure random source is unavailable on this host",
+        "suggested_remediation": "Retry the request; if the error persists, verify the host's /dev/urandom or equivalent entropy source is accessible"
+      },
+      "1408": {
+        "name": "ErrMethodNotAllowedCode",
+        "code": "1408",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "HTTP method not allowed for this endpoint",
+        "probable_cause": "The client used an HTTP verb the route does not support",
+        "suggested_remediation": "Use one of the supported HTTP methods for this endpoint"
+      },
+      "1409": {
+        "name": "ErrMissingRouteVariableCode",
+        "code": "1409",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The client called the endpoint without supplying a required path segment.",
+        "suggested_remediation": ""
+      },
+      "1410": {
+        "name": "ErrRetrieveEventTypesCode",
+        "code": "1410",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not retrieve event categories and actions",
+        "probable_cause": "Database is not reachable or corrupt.\nRemote provider event-type endpoint is unavailable.",
+        "suggested_remediation": "Check database connectivity and provider availability, then retry."
+      },
+      "1411": {
+        "name": "ErrDeprecatedAPICode",
+        "code": "1411",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "This API is deprecated",
+        "probable_cause": "Client is using an older Meshery UI or mesheryctl that still targets the retired endpoint.",
+        "suggested_remediation": ""
+      },
+      "1412": {
+        "name": "ErrInvalidConnectionKindCode",
+        "code": "1412",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The connectionID in the URL references a connection created for a different integration.",
+        "suggested_remediation": ""
+      },
+      "1413": {
+        "name": "ErrUpdateConnectionCode",
+        "code": "1413",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not update the connection",
+        "probable_cause": "Remote provider is unreachable.\nConnection has been deleted since it was loaded.\nPersisted metadata is corrupt.",
+        "suggested_remediation": "Verify provider connectivity and that the connection still exists, then retry."
+      },
+      "1414": {
+        "name": "ErrExportModelCode",
+        "code": "1414",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Temp directory is not writable.\nModel definition references a missing dependency.\nOCI/tar tooling produced an invalid artifact.",
+        "suggested_remediation": "Retry the export; if it persists, inspect server logs and disk availability under the temp directory."
+      },
+      "1415": {
+        "name": "ErrInvalidContextsConfigCode",
+        "code": "1415",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid contexts configuration",
+        "probable_cause": "The `contexts` form field is not a valid JSON map from context ID to {meshsync_deployment_mode: string}.",
+        "suggested_remediation": "Send a well-formed JSON object in the `contexts` form field, e.g. {\\\"<contextID>\\\": {\\\"meshsync_deployment_mode\\\": \\\"operator\\\"}}."
+      },
+      "1416": {
+        "name": "ErrEmptyConnectionIDCode",
+        "code": "1416",
+        "severity": "Alert",
+        "long_description": "No connection ID was supplied in the canonical `connectionId` query parameter (the legacy `connection_id` spelling is also accepted during the Phase 2 deprecation window).",
+        "short_description": "Empty connection ID",
+        "probable_cause": "The client did not pass `connectionId` in the query string.\nA URL template did not get its parameter substituted.",
+        "suggested_remediation": "Pass the connection ID of the Kubernetes context to be pinged, e.g. /api/system/kubernetes/ping?connectionId=<id>."
+      },
+      "1417": {
+        "name": "ErrPolicyEvalTimeoutCode",
+        "code": "1417",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Relationship policy evaluation timed out",
+        "probable_cause": "The design is large enough that the policy engine needs more than the configured timeout.\nOne of the Rego/Go policies under evaluation is in a slow path or infinite loop.",
+        "suggested_remediation": "Increase the POLICY_EVAL_TIMEOUT setting (default 3m) if the design genuinely needs more time, or retry with a smaller design."
+      },
+      "1418": {
+        "name": "ErrPolicyEvalCode",
+        "code": "1418",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Relationship policy evaluation failed",
+        "probable_cause": "A registered relationship policy returned an error during evaluation.\nA cycle or invalid declaration in the design triggered an engine panic recovered as an error.",
+        "suggested_remediation": "Inspect server logs for the underlying policy error. If the design has recently been edited, revert the most recent change and retry."
+      },
+      "1419": {
+        "name": "ErrInvalidBase64DataCode",
+        "code": "1419",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid base64 data",
+        "probable_cause": "The supplied payload was not a valid base64-encoded string.\nThe payload may have been corrupted in transit or encoded with the wrong alphabet (URL-safe vs. standard).",
+        "suggested_remediation": "Verify the client is base64-encoding the file with the standard alphabet before sending it.\nIf the payload was hand-edited, re-encode it from the source bytes and retry."
+      },
+      "1420": {
+        "name": "ErrRemoteProviderCapabilitiesCode",
+        "code": "1420",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to load capabilities from remote provider",
+        "probable_cause": "Remote provider is unreachable, the manifest endpoint is down, or the response is malformed.",
+        "suggested_remediation": "Verify the remote provider is reachable, check its manifest endpoint, and retry."
+      },
+      "1421": {
+        "name": "ErrRemoteProviderAuthExhaustedCode",
+        "code": "1421",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Authentication failed after multiple attempts",
+        "probable_cause": "Invalid or expired credentials, or the auth endpoint is rejecting requests.",
+        "suggested_remediation": "Log out and sign in again; if this persists, check that the remote provider's auth endpoint is healthy."
+      },
+      "1422": {
+        "name": "ErrInvalidImportRequestCode",
+        "code": "1422",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid design import request",
+        "probable_cause": "The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `file_name`, the URL variant requires `url`.\nBoth variants were provided, or neither was.",
+        "suggested_remediation": "Send a request body with exactly one variant set: either {\\\"file\\\": <bytes>, \\\"file_name\\\": \\\"design.yml\\\"} or {\\\"url\\\": \\\"https://...\\\"}."
+      },
+      "1423": {
+        "name": "ErrConvertToDesignCode",
+        "code": "1423",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to convert uploaded file to a design",
+        "probable_cause": "The uploaded file extension is not one of the supported import formats (.yml, .yaml, .json, .tar, .tar.gz, .tgz, .zip).\nThe file is corrupt or its content does not parse as the type implied by its extension.\nThe Kubernetes manifest references a kind/apiVersion that does not match any registered component definition.",
+        "suggested_remediation": "Verify the file is one of the supported formats and content-types, and that it parses cleanly outside Meshery.\nIf the source is a Kubernetes manifest, ensure each kind it references has a corresponding model registered in the Meshery registry."
+      },
+      "1424": {
+        "name": "ErrCompressArtifactCode",
+        "code": "1424",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to compress design as OCI artifact",
+        "probable_cause": "The server-side tar writer hit an I/O error while packaging the design YAML and the artifacthub-pkg metadata.\nAvailable memory or disk for the in-memory archive buffer was exhausted.",
+        "suggested_remediation": "Retry the export. If the failure persists, inspect server logs for the underlying writer error and ensure the host has sufficient resources."
+      },
+      "1425": {
+        "name": "ErrWriteRegistryLogsCode",
+        "code": "1425",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to flush registry logs",
+        "probable_cause": "The path configured in REGISTRY_LOG_FILE is not writable by the Meshery process (missing directory, missing permissions, or the disk is full).\nAn in-memory log entry could not be marshaled into the on-disk format.",
+        "suggested_remediation": "Verify REGISTRY_LOG_FILE points to a writable path with sufficient free disk and that the Meshery process owns or has write permission to its parent directory."
+      },
+      "1426": {
+        "name": "ErrUpdateEntityStatusCode",
+        "code": "1426",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to update entity status",
+        "probable_cause": "The entity ID does not exist in the registry.\nThe registry's persistence layer rejected the status update — typically a database connection or transaction failure.",
+        "suggested_remediation": "Verify the entity ID exists by listing the entities of the same type. If it does, retry the request and inspect server logs for the underlying registry error."
+      },
+      "1427": {
+        "name": "ErrExtensionProxyCode",
+        "code": "1427",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Extension proxy request failed",
+        "probable_cause": "The remote provider could not be reached (network failure, DNS resolution, or TLS handshake failure).\nThe remote provider returned a non-2xx response that the proxy could not translate.\nThe active provider is the local provider, which has no extensions backend.",
+        "suggested_remediation": "Verify the remote provider is reachable from this Meshery instance and that the user's session token has not expired. Retry the request after re-authenticating if the failure persists.\nIf running against the local provider, switch to a remote provider (Layer5 Cloud) that exposes the extensions surface."
+      },
+      "1428": {
+        "name": "ErrInitializeMachineCode",
+        "code": "1428",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to initialize connection state machine",
+        "probable_cause": "The connection kind has no registered machine type in the state-machine registry.\nThe state machine's persister could not write the initial state to the database.",
+        "suggested_remediation": "Verify the connection kind is one of the supported types. If it is, retry the request and inspect server logs for the underlying machine-bootstrap error."
+      },
+      "1429": {
+        "name": "ErrSendMachineEventCode",
+        "code": "1429",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to advance connection state machine",
+        "probable_cause": "The requested event is not valid from the connection's current state.\nA side-effect action attached to the transition (e.g. provisioning, discovery) returned an error.",
+        "suggested_remediation": "Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."
       }
     }
   }
