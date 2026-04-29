@@ -944,13 +944,13 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 	k8sServerID := *k8sContext.KubernetesServerID
 
 	_metadata := map[string]string{
-		"id":                   k8sContext.ID,
-		"server":               k8sContext.Server,
-		"meshery_instance_id":  k8sContext.MesheryInstanceID.String(),
-		"deployment_type":      k8sContext.DeploymentType,
-		"version":              k8sContext.Version,
-		"name":                 k8sContext.Name,
-		"kubernetes_server_id": k8sServerID.String(),
+		"id":                 k8sContext.ID,
+		"server":             k8sContext.Server,
+		"mesheryInstanceId":  k8sContext.MesheryInstanceID.String(),
+		"deploymentType":     k8sContext.DeploymentType,
+		"version":            k8sContext.Version,
+		"name":               k8sContext.Name,
+		"kubernetesServerId": k8sServerID.String(),
 	}
 	metadata := make(map[string]interface{}, len(_metadata)+len(additionalMetadata))
 	for k, v := range _metadata {
@@ -1024,8 +1024,8 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	if withStatus != "" {
 		q.Set("status", withStatus)
 	}
-	q.Set("with_credentials", strconv.FormatBool(withCredentials))
-	q.Set("meshery_instance_id", mi)
+	q.Set("withCredentials", strconv.FormatBool(withCredentials))
+	q.Set("mesheryInstanceId", mi)
 	remoteProviderURL.RawQuery = q.Encode()
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 

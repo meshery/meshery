@@ -297,7 +297,7 @@ export const Notification = ({ event_id }) => {
 
   const uiConfig = useSelector((state) => state.events.ui);
 
-  const { data: user } = useGetUserByIdQuery(event.user_id);
+  const { data: user } = useGetUserByIdQuery(event.userID);
 
   const userName = `${user?.firstName || ''} ${user?.lastName || ''}`;
   const userAvatarUrl = user?.avatarUrl || '';
@@ -313,15 +313,15 @@ export const Notification = ({ event_id }) => {
   };
 
   const eventActors = [
-    ...(event.user_id && user
-      ? [{ name: userName, avatar_url: userAvatarUrl, tooltip: userName }]
+    ...(event.userID && user
+      ? [{ name: userName, avatarUrl: userAvatarUrl, tooltip: userName }]
       : []),
-    ...(event.system_id
+    ...(event.systemID
       ? [
           {
             name: 'Meshery',
-            avatar_url: '/static/img/meshery-logo.png',
-            tooltip: `System ID: ${event.system_id}`,
+            avatarUrl: '/static/img/meshery-logo.png',
+            tooltip: `System ID: ${event.systemID}`,
           },
         ]
       : []),
@@ -416,7 +416,7 @@ export const Notification = ({ event_id }) => {
           </GridItem>
           <GridItem item xs="auto" style={{ gap: '0.5rem', marginLeft: 'auto', flexShrink: 0 }}>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <FormattedTime date={event.created_at} />
+              <FormattedTime date={event.createdAt} />
             </Box>
             <BasicMenu event={event} />
           </GridItem>
