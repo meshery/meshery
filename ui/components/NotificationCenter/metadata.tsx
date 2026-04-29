@@ -62,7 +62,7 @@ export const PropertyFormatters = {
   },
   // MeshSync event field formatters - imported from formatters/meshsync_events.js
   ...MeshSyncPropertyFormatters,
-  error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
+  error: (value, event) => <ErrorMetadataFormatter metadata={value} event={event} />,
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
   ModelDetails: (value) => value && <ModelImportedSection modelDetails={value} />,
@@ -161,5 +161,11 @@ export const FormattedMetadata = ({ event }) => {
 
 export const FormattedLinkMetadata = ({ event }) => {
   const filteredMetadata = _.pick(event.metadata, linkOrder);
-  return <FormatStructuredData propertyFormatters={LinkFormatters} data={filteredMetadata} />;
+  return (
+    <FormatStructuredData
+      propertyFormatters={LinkFormatters}
+      data={filteredMetadata}
+      event={event}
+    />
+  );
 };
