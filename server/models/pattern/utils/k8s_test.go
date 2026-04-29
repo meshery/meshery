@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshkit/logger"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	dynamicfake "k8s.io/client-go/dynamic/fake"
 	k8stesting "k8s.io/client-go/testing"
@@ -107,6 +108,61 @@ func TestCreateK8sResource_Namespaced_AttemptsNamespaceApply(t *testing.T) {
 
 	if namespacePatchCount == 0 {
 		t.Fatalf("expected namespace apply attempt for namespaced resource, got none")
+	}
+}
+
+func TestCreateK8sResource_ForceRecreate_ReturnsWithoutPatch(t *testing.T) {
+	existing := &unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"apiVersion": "v1",
+			"kind":       "ConfigMap",
+			"metadata": map[string]interface{}{
+				"name":      "force-test-config",
+				"namespace": "default",
+				"labels": map[string]interface{}{
+					"controller": "not-meshery",
+				},
+			},
+			"data": map[string]interface{}{
+				"old": "value",
+			},
+		},
+	}
+
+	client := dynamicfake.NewSimpleDynamicClient(runtime.NewScheme(), existing)
+	log := &fakePatternLogger{}
+
+	client.PrependReactor("patch", "namespaces", func(action k8stesting.Action) (bool, runtime.Object, error) {
+		return true, nil, nil
+	})
+
+	client.PrependReactor("patch", "configmaps", func(action k8stesting.Action) (bool, runtime.Object, error) {
+		return true, nil, fmt.Errorf("patch should not be called after successful force recreate")
+	})
+
+	configMap := map[string]interface{}{
+		"apiVersion": "v1",
+		"kind":       "ConfigMap",
+		"metadata": map[string]interface{}{
+			"name":      "force-test-config",
+			"namespace": "default",
+		},
+		"data": map[string]interface{}{
+			"new": "value",
+		},
+	}
+
+	err := CreateK8sResource(
+		client,
+		"",
+		"v1",
+		"configmaps",
+		configMap,
+		true,
+		log,
+	)
+	if err != nil {
+		t.Fatalf("CreateK8sResource() returned error for force recreate flow: %v", err)
 	}
 }
 

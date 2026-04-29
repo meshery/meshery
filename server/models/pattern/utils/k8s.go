@@ -119,9 +119,18 @@ func CreateK8sResource(
 					log.Error(err)
 					return err
 				}
+
+				return nil
 			}
 
 			err = models.ErrCreateResourceEntry(fmt.Errorf("failed to create resource: %s - resource already exists and is not maintained by \"meshery\"", obj.GetName()))
+			log.Error(err)
+			return err
+		}
+
+		resourceByt, err = json.Marshal(obj.Object)
+		if err != nil {
+			err = models.ErrUpdateResource(obj.GetName(), obj.GetNamespace())
 			log.Error(err)
 			return err
 		}
