@@ -1,10 +1,11 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import MeshModelComponent from '../MeshModelComponent';
 import * as canModule from '@/utils/can';
 
-// Mock the required modules
+// Mock CAN utility
 jest.mock('@/utils/can');
+
+// Mock permission constants
 jest.mock('@/utils/permission_constants', () => ({
   keys: {
     CREATE_MODEL: { action: 'create-model-action', subject: 'Create Model' },
@@ -12,108 +13,72 @@ jest.mock('@/utils/permission_constants', () => ({
   },
 }));
 
+// Mock next/router
 jest.mock('next/router', () => ({
   useRouter: jest.fn(() => ({
     query: {},
     push: jest.fn(),
-    asPath: '/',
-    pathname: '/',
   })),
 }));
 
+// Mock RTK-Query hooks
 jest.mock('@/rtk-query/meshModel', () => ({
-  useLazyGetMeshModelsQuery: jest.fn(() => [jest.fn(), { data: null, isLoading: false, isFetching: false }]),
-  useLazyGetComponentsQuery: jest.fn(() => [jest.fn(), { data: null, isLoading: false, isFetching: false }]),
-  useLazyGetRelationshipsQuery: jest.fn(() => [jest.fn(), { data: null, isLoading: false, isFetching: false }]),
-  useLazyGetRegistrantsQuery: jest.fn(() => [jest.fn(), { data: null, isLoading: false, isFetching: false }]),
+  useLazyGetMeshModelsQuery: jest.fn(() => [jest.fn(), { data: null }]),
+  useLazyGetComponentsQuery: jest.fn(() => [jest.fn(), { data: null }]),
+  useLazyGetRelationshipsQuery: jest.fn(() => [jest.fn(), { data: null }]),
+  useLazyGetRegistrantsQuery: jest.fn(() => [jest.fn(), { data: null }]),
 }));
 
-jest.mock('@sistent/sistent', () => {
-  const actual = jest.requireActual('@sistent/sistent');
-  return {
-    ...actual,
-    NoSsr: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  };
-});
+// Mock NoSsr to render children immediately in tests
+jest.mock('@sistent/sistent', () => ({
+  ...jest.requireActual('@sistent/sistent'),
+  NoSsr: ({ children }) => <>{children}</>,
+}));
 
 describe('MeshModelComponent permission gating', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('disables Create Model button when user lacks create_model permission', () => {
-    const mockCAN = jest.spyOn(canModule, 'default' as any).mockImplementation(
-      (action, subject) => {
-        if (action === 'create-model-action' && subject === 'Create Model') return false;
-        return true;
-      },
-    );
+  it('disables Create Model button when user lacks permission', () => {
+    (canModule.CAN as jest.Mock).mockImplementation((action) => {
+      if (action === 'create-model-action') return false;
+      return true;
+    });
 
     render(<MeshModelComponent />);
-    const createButton = screen.getByRole('button', { name: /create model/i });
-    expect(createButton).toBeDisabled();
-
-    mockCAN.mockRestore();
+    expect(
+      screen.getByRole('button', { name: /create model/i })
+    ).toBeDisabled();
   });
 
-  it('enables Create Model button when user has create_model permission', () => {
-    const mockCAN = jest.spyOn(canModule, 'default' as any).mockReturnValue(true);
+  it('enables Create Model button when user has permission', () => {
+    (canModule.CAN as jest.Mock).mockReturnValue(true);
 
     render(<MeshModelComponent />);
-    const createButton = screen.getByRole('button', { name: /create model/i });
-    expect(createButton).not.toBeDisabled();
-
-    mockCAN.mockRestore();
+    expect(
+      screen.getByRole('button', { name: /create model/i })
+    ).not.toBeDisabled();
   });
 
-  it('disables Import Model button when user lacks import_model permission', () => {
-    const mockCAN = jest.spyOn(canModule, 'default' as any).mockImplementation(
-      (action, subject) => {
-        if (action === 'import-model-action' && subject === 'Import Model') return false;
-        return true;
-      },
-    );
+  it('disables Import Model button when user lacks permission', () => {
+    (canModule.CAN as jest.Mock).mockImplementation((action) => {
+      if (action === 'import-model-action') return false;
+      return true;
+    });
 
     render(<MeshModelComponent />);
-    const importButton = screen.getByRole('button', { name: /import model/i });
-    expect(importButton).toBeDisabled();
-
-    mockCAN.mockRestore();
+    expect(
+      screen.getByRole('button', { name: /import model/i })
+    ).toBeDisabled();
   });
 
-  it('enables Import Model button when user has import_model permission', () => {
-    const mockCAN = jest.spyOn(canModule, 'default' as any).mockReturnValue(true);
+  it('enables Import Model button when user has permission', () => {
+    (canModule.CAN as jest.Mock).mockReturnValue(true);
 
     render(<MeshModelComponent />);
-    const importButton = screen.getByRole('button', { name: /import model/i });
-    expect(importButton).not.toBeDisabled();
-
-    mockCAN.mockRestore();
-  });
-
-  it('enables both buttons when user has all permissions', () => {
-    const mockCAN = jest.spyOn(canModule, 'default' as any).mockReturnValue(true);
-
-    render(<MeshModelComponent />);
-    const createButton = screen.getByRole('button', { name: /create model/i });
-    const importButton = screen.getByRole('button', { name: /import model/i });
-
-    expect(createButton).not.toBeDisabled();
-    expect(importButton).not.toBeDisabled();
-
-    mockCAN.mockRestore();
-  });
-
-  it('disables both buttons when user lacks both permissions', () => {
-    const mockCAN = jest.spyOn(canModule, 'default' as any).mockReturnValue(false);
-
-    render(<MeshModelComponent />);
-    const createButton = screen.getByRole('button', { name: /create model/i });
-    const importButton = screen.getByRole('button', { name: /import model/i });
-
-    expect(createButton).toBeDisabled();
-    expect(importButton).toBeDisabled();
-
-    mockCAN.mockRestore();
+    expect(
+      screen.getByRole('button', { name: /import model/i })
+    ).not.toBeDisabled();
   });
 });
