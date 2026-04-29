@@ -79,13 +79,13 @@ const MeshAdapterConfigComponent = () => {
 
   const setAdapterURLs =
     adapters?.map((res) => ({
-      value: res.adapter_location,
-      label: res.adapter_location,
+      value: res.adapterLocation,
+      label: res.adapterLocation,
     })) || [];
 
   const availableAdapters =
     availableAdaptersData?.map((res) => ({
-      value: res.adapter_location,
+      value: res.adapterLocation,
       label: res.name,
     })) || [];
 
@@ -378,9 +378,9 @@ const MeshAdapterConfigComponent = () => {
                           .join(' ')} (${adapter.version})`}
               >
                 <AdapterChipStyled
-                  label={adapter.adapter_location}
-                  onDelete={handleDelete(adapter.adapter_location)}
-                  onClick={handleClick(adapter.adapter_location)}
+                  label={adapter.adapterLocation}
+                  onDelete={handleDelete(adapter.adapterLocation)}
+                  onClick={handleClick(adapter.adapterLocation)}
                   icon={
                     // logoIcon
                     <BadgeAvatars color={getStatusColor(adapterStates[adapter.name])}>

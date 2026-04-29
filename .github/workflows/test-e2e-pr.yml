@@ -78,6 +78,7 @@ jobs:
         run: make ui-test-setup
 
       - name: Run Playwright Tests (Local Only)
+        id: playwright-tests
         env:
           MESHERY_SERVER_URL: 'http://localhost:9081'
         run: |
@@ -86,6 +87,11 @@ jobs:
         continue-on-error: true
       
       - name: Upload Test Artifacts
+        if: always()
         uses: ./.github/actions/upload-test-artifacts
         with:
           include-pr-metadata: ${{ github.event_name == 'pull_request' }}
+
+      - name: Fail job when Playwright reports test failures
+        if: ${{ steps.playwright-tests.outcome == 'failure' }}
+        run: exit 1

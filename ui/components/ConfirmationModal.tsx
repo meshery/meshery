@@ -394,7 +394,7 @@ function ConfirmationMsg(props) {
                           />
                           <TooltipWrappedConnectionChip
                             title={ctx.name}
-                            handlePing={() => handleKubernetesClick(ctx.connection_id)}
+                            handlePing={() => handleKubernetesClick(ctx.connectionId)}
                             iconSrc={'/static/img/kubernetes.svg'}
                           />
                         </div>

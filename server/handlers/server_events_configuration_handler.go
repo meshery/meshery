@@ -17,11 +17,11 @@ type LogLevelResponse struct {
 	// Current log level of the server
 	// example: info
 	// required: true
-	LogLevel string `json:"event_log_level"`
+	LogLevel string `json:"eventLogLevel"`
 
 	// List of available logging levels
 	// example: ["panic","fatal","error","warn","info","debug","trace"]
-	Available []string `json:"available_levels,omitempty"`
+	Available []string `json:"availableLevels,omitempty"`
 }
 
 type LogLevelRequest struct {
@@ -74,7 +74,8 @@ func (h *Handler) ServerEventConfigurationHandler(w http.ResponseWriter, req *ht
 	case http.MethodGet:
 		h.ServerEventConfigurationGet(w, req, prefObj, user, provider)
 	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		// TODO(error-code): promote to MeshKit code
+		writeJSONError(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 

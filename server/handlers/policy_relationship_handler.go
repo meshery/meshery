@@ -537,8 +537,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-		rw.WriteHeader((http.StatusBadRequest))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -546,7 +545,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
 
 	if err != nil {
-		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
+		h.log.Error(ErrDecoding(err, "design file"))
+		writeMeshkitError(rw, ErrDecoding(err, "design file"), http.StatusBadRequest)
 		return
 	}
 	// decode the pattern file
@@ -594,7 +594,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	case err := <-evalErrChan:
 		h.log.Debug(err)
 		// log an event
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPolicyEval(err), http.StatusInternalServerError)
 		return
 
 	case evaluationResponse := <-evalRespChan:
@@ -623,20 +623,23 @@ func (h *Handler) EvaluateRelationshipPolicy(
 func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResult) {
 	if result.err != nil {
 		h.log.Debug(result.err)
-		http.Error(rw, result.err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPolicyEval(result.err), http.StatusInternalServerError)
 		return
 	}
 	ec := json.NewEncoder(rw)
 	if err := ec.Encode(result.resp); err != nil {
+		// Response body has already started streaming via json.Encoder —
+		// a partial JSON envelope is on the wire and a fresh error
+		// response would corrupt it, so log only.
 		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
-		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
 	}
 }
 
 func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context) {
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-		h.log.Warnf("relationship policy evaluation exceeded %s", policyEvalTimeout())
-		http.Error(rw, errEvalTimeout.Error(), http.StatusGatewayTimeout)
+		timeout := policyEvalTimeout()
+		h.log.Warnf("relationship policy evaluation exceeded %s", timeout)
+		writeMeshkitError(rw, ErrPolicyEvalTimeout(timeout), http.StatusGatewayTimeout)
 		return
 	}
 	h.log.Info("Evaluation terminated: request context closed")

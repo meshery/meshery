@@ -14,6 +14,14 @@ $method-head: #7d8790;
 }
 
 .rest-api-reference-page {
+  .rest-api-page,
+  .rest-api-page pre,
+  .rest-api-page code,
+  .rest-api-page kbd,
+  .rest-api-page samp {
+    font-family: "Qanelas Soft", "Open Sans", sans-serif;
+  }
+
   .main-container {
     overflow-x: visible;
   }
@@ -428,7 +436,7 @@ $method-head: #7d8790;
   .rest-api-nav-link__path,
   .rest-api-operation__path,
   .rest-api-try-item__url {
-    font-family: SFMono-Regular, Menlo, Monaco, Consolas, liberation mono, courier new, monospace;
+    font-family: "Qanelas Soft", "Open Sans", sans-serif;
     overflow-wrap: anywhere;
     word-break: break-word;
   }
