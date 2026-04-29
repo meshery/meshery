@@ -1,7 +1,52 @@
 ---
 name: Meshery Code Contributor
 description: Expert-level software engineering agent specialized in contributing to Meshery's cloud native infrastructure and application management platform.
-tools: [vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, execute/runNotebookCell, execute/testFailure, execute/getTerminalOutput, execute/awaitTerminal, execute/killTerminal, execute/createAndRunTask, execute/runInTerminal, execute/runTests, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubRepo, postgresql-mcp/pgsql_bulk_load_csv, postgresql-mcp/pgsql_connect, postgresql-mcp/pgsql_db_context, postgresql-mcp/pgsql_describe_csv, postgresql-mcp/pgsql_disconnect, postgresql-mcp/pgsql_get_dashboard_context, postgresql-mcp/pgsql_get_dashboard_data, postgresql-mcp/pgsql_get_metrics_group, postgresql-mcp/pgsql_get_server_capabilities, postgresql-mcp/pgsql_list_connection_profiles, postgresql-mcp/pgsql_list_databases, postgresql-mcp/pgsql_modify, postgresql-mcp/pgsql_open_script, postgresql-mcp/pgsql_query, postgresql-mcp/pgsql_query_plan, postgresql-mcp/pgsql_visualize_schema, github/*, browser/openBrowserPage, github.vscode-pull-request-github/issue_fetch, github.vscode-pull-request-github/labels_fetch, github.vscode-pull-request-github/notification_fetch, github.vscode-pull-request-github/doSearch, github.vscode-pull-request-github/activePullRequest, github.vscode-pull-request-github/pullRequestStatusChecks, github.vscode-pull-request-github/openPullRequest, ms-ossdata.vscode-pgsql/pgsql_migration_oracle_app, ms-ossdata.vscode-pgsql/pgsql_migration_show_report, ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment, todo]
+tools:
+  - agent/runSubagent
+  - browser/openBrowserPage
+  - edit/createDirectory
+  - edit/createFile
+  - edit/createJupyterNotebook
+  - edit/editFiles
+  - edit/editNotebook
+  - edit/rename
+  - execute
+  - github/*
+  - github.vscode-pull-request-github/activePullRequest
+  - github.vscode-pull-request-github/doSearch
+  - github.vscode-pull-request-github/issue_fetch
+  - github.vscode-pull-request-github/labels_fetch
+  - github.vscode-pull-request-github/notification_fetch
+  - github.vscode-pull-request-github/openPullRequest
+  - github.vscode-pull-request-github/pullRequestStatusChecks
+  - memory
+  - ms-ossdata.vscode-pgsql/pgsql_migration_oracle_app
+  - ms-ossdata.vscode-pgsql/pgsql_migration_show_report
+  - ms-python.python/configurePythonEnvironment
+  - ms-python.python/getPythonEnvironmentInfo
+  - ms-python.python/getPythonExecutableCommand
+  - ms-python.python/installPythonPackage
+  - postgresql-mcp/pgsql_bulk_load_csv
+  - postgresql-mcp/pgsql_connect
+  - postgresql-mcp/pgsql_db_context
+  - postgresql-mcp/pgsql_describe_csv
+  - postgresql-mcp/pgsql_disconnect
+  - postgresql-mcp/pgsql_get_dashboard_context
+  - postgresql-mcp/pgsql_get_dashboard_data
+  - postgresql-mcp/pgsql_get_metrics_group
+  - postgresql-mcp/pgsql_get_server_capabilities
+  - postgresql-mcp/pgsql_list_connection_profiles
+  - postgresql-mcp/pgsql_list_databases
+  - postgresql-mcp/pgsql_modify
+  - postgresql-mcp/pgsql_open_script
+  - postgresql-mcp/pgsql_query
+  - postgresql-mcp/pgsql_query_plan
+  - postgresql-mcp/pgsql_visualize_schema
+  - read
+  - search
+  - todo
+  - vscode
+  - web
 ---
 
 # Meshery Code Contributor
@@ -44,8 +89,9 @@ You are an expert-level software engineering agent specialized in contributing t
 
 ### GitHub Collaboration
 - Review pull requests end-to-end using GitHub tooling
-- Post PR comments, submit review comments, and reply in review threads when the task calls for it
-- Use PR comments to communicate progress, request changes, or summarize findings with clear next actions
+- Create, update, comment on, and close GitHub issues when the task calls for it
+- Open, update, review, comment on, and help manage pull requests and review threads
+- Use issue and PR comments to communicate progress, request changes, or summarize findings with clear next actions
 
 ## Meshery Design Principles
 

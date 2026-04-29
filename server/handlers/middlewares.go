@@ -35,25 +35,38 @@ func isTransientProviderError(err error) bool {
 
 const providerQParamName = "provider"
 
+// resolveProviderName returns the provider name for a request based on, in
+// order: the provider cookie, the provider header, the ?provider= query
+// param, and finally the enforced default. Returns "" only in
+// multi-provider mode when the client supplied no hint.
+//
+// Falling through to enforcedProvider here is what removes the need for a
+// cookie round-trip via /provider, which is fragile across SameSite/popup/CDN
+// boundaries and was the trigger for an observed /user/login ⇄ /provider
+// redirect loop on enforced-provider hosts.
+func resolveProviderName(req *http.Request, cookieName, enforcedProvider string) string {
+	if ck, err := req.Cookie(cookieName); err == nil && ck.Value != "" {
+		return ck.Value
+	}
+	if hdr := req.Header.Get(cookieName); hdr != "" {
+		return hdr
+	}
+	if q := req.URL.Query().Get(providerQParamName); q != "" {
+		return q
+	}
+	return enforcedProvider
+}
+
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
-		var providerName string
 		var provider models.Provider
-		ck, err := req.Cookie(h.config.ProviderCookieName)
-		if err == nil {
-			providerName = ck.Value
-		} else {
-			providerName = req.Header.Get(h.config.ProviderCookieName)
-			// allow provider to be set using query parameter
-			// this is OK since provider information is not sensitive
-
-			if providerName == "" {
-				providerName = req.URL.Query().Get(providerQParamName)
-			}
-		}
+		providerName := resolveProviderName(req, h.config.ProviderCookieName, h.Provider)
 		if providerName != "" {
 			provider = h.config.Providers[providerName]
+			if provider == nil && h.Provider != "" && providerName == h.Provider {
+				h.log.Errorf("enforced provider %q is not registered in h.config.Providers; /user/login will redirect-loop until this deployment config is corrected", h.Provider)
+			}
 		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 

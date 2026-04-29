@@ -224,7 +224,7 @@ export const NetWorkTableConfig = (
                         ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                         : ''
                     }
-                    handlePing={() => ping(context.name, context.server, context.connection_id)}
+                    handlePing={() => ping(context.name, context.server, context.connectionId)}
                   />
                 </>
               );
@@ -355,7 +355,7 @@ export const NetWorkTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -452,7 +452,7 @@ export const NetWorkTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -614,7 +614,7 @@ export const NetWorkTableConfig = (
                         ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                         : ''
                     }
-                    handlePing={() => ping(context.name, context.server, context.connection_id)}
+                    handlePing={() => ping(context.name, context.server, context.connectionId)}
                   />
                 </>
               );
@@ -749,7 +749,7 @@ export const NetWorkTableConfig = (
                         ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                         : ''
                     }
-                    handlePing={() => ping(context.name, context.server, context.connection_id)}
+                    handlePing={() => ping(context.name, context.server, context.connectionId)}
                   />
                 </>
               );
@@ -891,7 +891,7 @@ export const NetWorkTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },

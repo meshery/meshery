@@ -199,7 +199,7 @@ export const WorkloadTableConfig = (
                         : ''
                     }
                     width="10.5rem"
-                    handlePing={() => ping(context.name, context.server, context.connection_id)}
+                    handlePing={() => ping(context.name, context.server, context.connectionId)}
                   />
                 </>
               );
@@ -375,7 +375,7 @@ export const WorkloadTableConfig = (
                     }
                     handlePing={(event) => {
                       event.preventDefault();
-                      ping(context.name, context.server, context.connection_id);
+                      ping(context.name, context.server, context.connectionId);
                     }}
                   />
                 </>
@@ -512,7 +512,7 @@ export const WorkloadTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -666,7 +666,7 @@ export const WorkloadTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -832,7 +832,7 @@ export const WorkloadTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -981,7 +981,7 @@ export const WorkloadTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -1098,7 +1098,7 @@ export const WorkloadTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -1247,7 +1247,7 @@ export const WorkloadTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
