@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import MeshModelComponent from '../MeshModelComponent';
 import * as canModule from '@/utils/can';
@@ -10,6 +11,30 @@ jest.mock('@/utils/permission_constants', () => ({
     IMPORT_MODEL: { action: 'import-model-action', subject: 'Import Model' },
   },
 }));
+
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(() => ({
+    query: {},
+    push: jest.fn(),
+    asPath: '/',
+    pathname: '/',
+  })),
+}));
+
+jest.mock('@/rtk-query/meshModel', () => ({
+  useLazyGetMeshModelsQuery: jest.fn(() => [jest.fn(), { data: null, isLoading: false, isFetching: false }]),
+  useLazyGetComponentsQuery: jest.fn(() => [jest.fn(), { data: null, isLoading: false, isFetching: false }]),
+  useLazyGetRelationshipsQuery: jest.fn(() => [jest.fn(), { data: null, isLoading: false, isFetching: false }]),
+  useLazyGetRegistrantsQuery: jest.fn(() => [jest.fn(), { data: null, isLoading: false, isFetching: false }]),
+}));
+
+jest.mock('@sistent/sistent', () => {
+  const actual = jest.requireActual('@sistent/sistent');
+  return {
+    ...actual,
+    NoSsr: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  };
+});
 
 describe('MeshModelComponent permission gating', () => {
   beforeEach(() => {
