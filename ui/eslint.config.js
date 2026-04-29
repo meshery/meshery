@@ -87,6 +87,8 @@ const legacyRestrictedImportOffenders = [
   'components/Dashboard/charts/NodeStatusChart.tsx',
   'components/Dashboard/charts/PodStatusChart.tsx',
   'components/Dashboard/widgets/HoneyComb/HoneyCombComponent.tsx',
+  'components/ExportModal.tsx',
+  'components/General/Popup.tsx',
   'components/Lifecycle/Workspaces/WorkspaceGridView.tsx',
   'components/MesheryAdapterPlayComponent.tsx',
   'components/MesheryChart.tsx',
@@ -104,7 +106,6 @@ const legacyRestrictedImportOffenders = [
   'components/Performance/PerformanceResults.tsx',
   'components/ReactSelectWrapper.tsx',
   'components/Registry/RegistryModal.tsx',
-  'components/Settings/MesherySettingsPerformanceComponent.tsx', // @mui/* (added in audit)
   'components/Settings/Registry/MeshModelComponent.tsx',
   'components/Settings/Registry/MeshModelDetails.tsx',
   'components/Settings/Registry/MesheryTreeView.tsx',
@@ -117,13 +118,10 @@ const legacyRestrictedImportOffenders = [
   'components/UserPreferences/index.tsx',
   'components/ViewSwitch.tsx',
   'components/YamlDialog.tsx',
-  'components/ExportModal.tsx',
-  'components/General/Popup.tsx',
 
   // --- @/themes/* and @/constants/colors ---
   'components/DesignLifeCycle/DeploymentSummary.tsx',
   'components/DesignLifeCycle/styles.tsx',
-  'components/NavigatorExtension.tsx', // @/themes/hooks (added in audit)
 ];
 
 const legacyLiteralColorOffenders = [
