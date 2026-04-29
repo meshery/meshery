@@ -31,7 +31,9 @@ describe('MeshModelComponent permission gating', () => {
   });
 
   it('disables Create Model button when user lacks permission', () => {
-    (canModule.CAN as ReturnType<typeof vi.fn>).mockImplementation((action) => action !== 'create-model-action');
+    (canModule.CAN as ReturnType<typeof vi.fn>).mockImplementation(
+      (action) => action !== 'create-model-action',
+    );
     render(<MeshModelComponent />);
     expect(screen.getByRole('button', { name: /create model/i })).toBeDisabled();
   });
@@ -43,7 +45,9 @@ describe('MeshModelComponent permission gating', () => {
   });
 
   it('disables Import Model button when user lacks permission', () => {
-    (canModule.CAN as ReturnType<typeof vi.fn>).mockImplementation((action) => action !== 'import-model-action');
+    (canModule.CAN as ReturnType<typeof vi.fn>).mockImplementation(
+      (action) => action !== 'import-model-action',
+    );
     render(<MeshModelComponent />);
     expect(screen.getByRole('button', { name: /import model/i })).toBeDisabled();
   });
