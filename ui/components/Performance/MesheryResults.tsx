@@ -315,8 +315,8 @@ const MesheryResults = () => {
   const options = useMemo(
     () => ({
       filter: false,
-      sort: !(user && user.user_id === 'meshery'),
-      search: !(user && user.user_id === 'meshery'),
+      sort: !(user && user.userId === 'meshery'),
+      search: !(user && user.userId === 'meshery'),
       filterType: 'textField',
       responsive: 'standard',
       resizableColumns: true,

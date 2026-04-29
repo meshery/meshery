@@ -33,14 +33,14 @@ type K8sContext struct {
 	Cluster            sql.Map    `json:"cluster,omitempty" yaml:"cluster,omitempty"`
 	Server             string     `json:"server,omitempty" yaml:"server,omitempty"`
 	Owner              *core.Uuid `json:"owner,omitempty" gorm:"-" yaml:"owner,omitempty"`
-	CreatedBy          *core.Uuid `json:"created_by,omitempty" gorm:"-" yaml:"created_by,omitempty"`
-	MesheryInstanceID  *core.Uuid `json:"meshery_instance_id,omitempty" yaml:"meshery_instance_id,omitempty"`
-	KubernetesServerID *core.Uuid `json:"kubernetes_server_id,omitempty" yaml:"kubernetes_server_id,omitempty"`
-	DeploymentType     string     `json:"deployment_type,omitempty" yaml:"deployment_type,omitempty" default:"out_cluster"`
+	CreatedBy          *core.Uuid `json:"createdBy,omitempty" gorm:"-" yaml:"createdBy,omitempty"`
+	MesheryInstanceID  *core.Uuid `json:"mesheryInstanceId,omitempty" yaml:"mesheryInstanceId,omitempty"`
+	KubernetesServerID *core.Uuid `json:"kubernetesServerId,omitempty" yaml:"kubernetesServerId,omitempty"`
+	DeploymentType     string     `json:"deploymentType,omitempty" yaml:"deploymentType,omitempty" default:"out_cluster"`
 	Version            string     `json:"version,omitempty" yaml:"version,omitempty"`
-	UpdatedAt          *time.Time `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
-	CreatedAt          *time.Time `json:"created_at,omitempty" yaml:"created_at,omitempty"`
-	ConnectionID       string     `json:"connection_id,omitempty" yaml:"connection_id,omitempty"`
+	UpdatedAt          *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
+	CreatedAt          *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
+	ConnectionID       string     `json:"connectionId,omitempty" yaml:"connectionId,omitempty"`
 }
 
 // K8sContextFromConnection converts a kubernetes connection into a K8sContext.

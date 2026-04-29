@@ -46,7 +46,7 @@ const MesheryWorkspaceCard = ({
   const isDesignsVisible = CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject);
   const isTeamsVisible = CAN(keys.VIEW_TEAMS.action, keys.VIEW_TEAMS.subject);
   const isEnvironmentsVisible = CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject);
-  const deleted = workspaceDetails.deleted_at.Valid;
+  const deleted = workspaceDetails.deletedAt.Valid;
 
   const { data: teamsOfWorkspace } = useGetTeamsOfWorkspaceQuery(
     {
@@ -105,17 +105,17 @@ const MesheryWorkspaceCard = ({
     }
   }, [workspaceDetails, deleted]);
 
-  const teamsOfWorkspaceCount = teamsOfWorkspace?.total_count ? teamsOfWorkspace.total_count : 0;
+  const teamsOfWorkspaceCount = teamsOfWorkspace?.totalCount ? teamsOfWorkspace.totalCount : 0;
 
-  const environmentsOfWorkspaceCount = environmentsOfWorkspace?.total_count
-    ? environmentsOfWorkspace.total_count
+  const environmentsOfWorkspaceCount = environmentsOfWorkspace?.totalCount
+    ? environmentsOfWorkspace.totalCount
     : 0;
 
-  const designsOfWorkspaceCount = designsOfWorkspace?.total_count
-    ? designsOfWorkspace.total_count
+  const designsOfWorkspaceCount = designsOfWorkspace?.totalCount
+    ? designsOfWorkspace.totalCount
     : 0;
 
-  const viewsOfWorkspaceCount = viewsOfWorkspace?.total_count ? viewsOfWorkspace.total_count : 0;
+  const viewsOfWorkspaceCount = viewsOfWorkspace?.totalCount ? viewsOfWorkspace.totalCount : 0;
 
   const designsAndViewsCount = designsOfWorkspaceCount + viewsOfWorkspaceCount;
   const theme = useTheme();
@@ -304,8 +304,8 @@ const MesheryWorkspaceCard = ({
         }
         handleAssignablePage={designAssignment.handleAssignablePage}
         handleAssignedPage={designAssignment.handleAssignedPage}
-        originalLeftCount={designAssignment.data?.total_count}
-        originalRightCount={designAssignment.workspaceData?.total_count}
+        originalLeftCount={designAssignment.data?.totalCount}
+        originalRightCount={designAssignment.workspaceData?.totalCount}
         onAssign={isDesignActivity || isViewActivity ? handleAssignments : null}
         disableTransfer={
           designAssignment.disableTransferButton && viewAssignment.disableTransferButton
@@ -329,8 +329,8 @@ const MesheryWorkspaceCard = ({
         originalAssignedViewsData={viewAssignment.workspaceData}
         handleAssignableViewsPage={viewAssignment.handleAssignablePage}
         handleAssignedViewsPage={viewAssignment.handleAssignedPage}
-        originalLeftViewsCount={viewAssignment.data?.total_count}
-        originalRightViewsCount={viewAssignment.workspaceData?.total_count}
+        originalLeftViewsCount={viewAssignment.data?.totalCount}
+        originalRightViewsCount={viewAssignment.workspaceData?.totalCount}
         isAssignAllowedViews={CAN(
           keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
           keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,

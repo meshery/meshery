@@ -78,8 +78,8 @@ const MyViewsContent = () => {
   );
 
   const views = viewsData?.views || [];
-  const hasMore = viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1);
-  const total_count = viewsData?.total_count || 0;
+  const hasMore = viewsData?.totalCount > viewsData?.pageSize * (viewsData?.page + 1);
+  const totalCount = viewsData?.totalCount || 0;
   const theme = useTheme();
   const modalRef = useRef(null);
   const { handleDelete } = useContentDelete(modalRef);
@@ -104,7 +104,7 @@ const MyViewsContent = () => {
             value={filters.searchQuery}
             onChange={onSearchChange}
             endAdornment={
-              <p style={{ color: theme.palette.text.default }}>Total Views: {total_count}</p>
+              <p style={{ color: theme.palette.text.default }}>Total Views: {totalCount}</p>
             }
           />
         </Grid2>
@@ -144,7 +144,7 @@ const MyViewsContent = () => {
         isLoading={isLoading}
         setPage={setPage}
         views={views}
-        total_count={total_count}
+        totalCount={totalCount}
         refetch={refetch}
         isMultiSelectMode={true}
       />

@@ -205,8 +205,8 @@ export const notificationCenterApi = api
           method: 'GET',
         }),
         transformResponse: (response) => ({
-          logLevel: response.event_log_level,
-          availableLevels: response.available_levels,
+          logLevel: response.eventLogLevel,
+          availableLevels: response.availableLevels,
         }),
         providesTags: [PROVIDER_TAGS.EVENT],
       }),

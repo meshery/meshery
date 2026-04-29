@@ -12,7 +12,7 @@ import (
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 )
 
 // ContextKey is a custom type for setting context key
@@ -42,12 +42,12 @@ type ProviderType string
 
 // ProviderProperties represents the structure of properties that a provider has
 type ProviderProperties struct {
-	ProviderType        ProviderType      `json:"provider_type,omitempty"`
-	PackageVersion      string            `json:"package_version,omitempty"`
-	PackageURL          string            `json:"package_url,omitempty"`
-	ProviderName        string            `json:"provider_name,omitempty"`
-	ProviderDescription []string          `json:"provider_description,omitempty"`
-	ProviderURL         string            `json:"provider_url,omitempty"`
+	ProviderType        ProviderType      `json:"providerType,omitempty"`
+	PackageVersion      string            `json:"packageVersion,omitempty"`
+	PackageURL          string            `json:"packageUrl,omitempty"`
+	ProviderName        string            `json:"providerName,omitempty"`
+	ProviderDescription []string          `json:"providerDescription,omitempty"`
+	ProviderURL         string            `json:"providerUrl,omitempty"`
 	Extensions          Extensions        `json:"extensions,omitempty"`
 	Capabilities        Capabilities      `json:"capabilities,omitempty"`
 	RestrictedAccess    RestrictedAccess  `json:"restrictedAccess,omitempty"`
@@ -103,7 +103,7 @@ type RestrictedAccess struct {
 // Extensions defines the UI extension points
 type Extensions struct {
 	Navigator    NavigatorExtensions    `json:"navigator,omitempty"`
-	UserPrefs    UserPrefsExtensions    `json:"user_prefs,omitempty"`
+	UserPrefs    UserPrefsExtensions    `json:"userPrefs,omitempty"`
 	GraphQL      GraphQLExtensions      `json:"graphql,omitempty"`
 	Acccount     AccountExtensions      `json:"account,omitempty"`
 	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
@@ -151,7 +151,7 @@ type MeshMapComponentSet struct {
 // NavigatorExtension describes the Navigator extension point in the UI
 type NavigatorExtension struct {
 	Title           string              `json:"title,omitempty"`
-	OnClickCallback int                 `json:"on_click_callback,omitempty"`
+	OnClickCallback int                 `json:"onClickCallback,omitempty"`
 	Href            Href                `json:"href,omitempty"`
 	Component       string              `json:"component,omitempty"`
 	Icon            string              `json:"icon,omitempty"`
@@ -166,7 +166,7 @@ type NavigatorExtension struct {
 // AccountExtension describes the Account extension point in the UI
 type AccountExtension struct {
 	Title           string            `json:"title,omitempty"`
-	OnClickCallback int               `json:"on_click_callback,omitempty"`
+	OnClickCallback int               `json:"onClickCallback,omitempty"`
 	Href            Href              `json:"href,omitempty"`
 	Component       string            `json:"component,omitempty"`
 	Link            *bool             `json:"link,omitempty"`
@@ -204,13 +204,13 @@ type Capability struct {
 
 // K8sContextResponse - struct of response sent by provider when requested to persist k8s config
 type K8sContextPersistResponse struct {
-	K8sContext K8sContext `json:"k8s_context,omitempty"`
+	K8sContext K8sContext `json:"k8sContext,omitempty"`
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
-	StatusCode int    `json:"status_code,omitempty"`
+	StatusCode int    `json:"statusCode,omitempty"`
 }
 
 // Feature is a type to store the features of the provider

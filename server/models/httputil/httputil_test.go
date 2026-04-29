@@ -107,9 +107,9 @@ func TestWriteMeshkitError_SerializesMeshKitStructure(t *testing.T) {
 		Error                string   `json:"error"`
 		Code                 string   `json:"code"`
 		Severity             string   `json:"severity"`
-		ProbableCause        []string `json:"probable_cause"`
-		SuggestedRemediation []string `json:"suggested_remediation"`
-		LongDescription      []string `json:"long_description"`
+		ProbableCause        []string `json:"probableCause"`
+		SuggestedRemediation []string `json:"suggestedRemediation"`
+		LongDescription      []string `json:"longDescription"`
 	}
 	if decodeErr := json.NewDecoder(resp.Body).Decode(&decoded); decodeErr != nil {
 		t.Fatalf("body did not parse as JSON: %v", decodeErr)

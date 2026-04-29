@@ -67,7 +67,7 @@ const User = (props) => {
   const refURL = btoa(window.location.href);
 
   if (userData?.status == 'anonymous') {
-    const url = `${capabilitiesRegistry?.provider_url}?anonymousUserID=${userData?.id}&source=${sourceURL}&ref=${refURL}`;
+    const url = `${capabilitiesRegistry?.providerUrl}?anonymousUserID=${userData?.id}&source=${sourceURL}&ref=${refURL}`;
 
     return (
       <Link href={url}>
@@ -85,7 +85,7 @@ const User = (props) => {
           <IconButtonAvatar color={color} aria-haspopup="true" onClick={goToProfile}>
             <Avatar
               sx={{ height: 36, width: 36 }}
-              src={isGetUserSuccess ? userData?.avatar_url : null}
+              src={isGetUserSuccess ? userData?.avatarUrl : null}
               imgProps={{ referrerPolicy: 'no-referrer' }}
             />
           </IconButtonAvatar>
