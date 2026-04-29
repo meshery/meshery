@@ -197,7 +197,7 @@ export function createPathForRemoteComponent(componentName: string): string {
   return prefix + normalizeURI(componentName);
 }
 
-type ExtensionType = 'navigator' | 'user_prefs' | 'account' | 'collaborator';
+type ExtensionType = 'navigator' | 'userPrefs' | 'account' | 'collaborator';
 
 interface ExtensionComponentProps {
   url: string;
@@ -286,7 +286,7 @@ const ExtensionSandbox = React.memo<ExtensionSandboxProps>(
             <Extension url={createPathForRemoteComponent(navigatorUri)} />
           ) : null;
         }
-        case 'user_prefs': {
+        case 'userPrefs': {
           const userPrefUris = getComponentURIFromPathForUserPrefs(extension as UserPrefSchema[]);
           return userPrefUris.map((uri) => (
             <Extension url={createPathForRemoteComponent(uri)} key={uri} />

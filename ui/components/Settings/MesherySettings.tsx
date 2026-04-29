@@ -172,9 +172,9 @@ const MesherySettings = () => {
         const registrantResponce = await getMeshModelRegistrants();
 
         const modelsCount = removeDuplicateVersions(modelsResponse.models).length;
-        const componentsCount = componentsResponse.total_count;
-        const relationshipsCount = relationshipsResponse.total_count;
-        const registrantCount = registrantResponce.total_count;
+        const componentsCount = componentsResponse.totalCount;
+        const relationshipsCount = relationshipsResponse.totalCount;
+        const registrantCount = registrantResponce.totalCount;
 
         setState((prevState) => ({
           ...prevState,
@@ -349,9 +349,9 @@ const MesherySettings = () => {
                           Current Provider
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {providerCapabilities?.provider_name || 'Not selected'}
-                          {providerCapabilities?.provider_type
-                            ? ` (${providerCapabilities.provider_type})`
+                          {providerCapabilities?.providerName || 'Not selected'}
+                          {providerCapabilities?.providerType
+                            ? ` (${providerCapabilities.providerType})`
                             : ''}
                         </Typography>
                       </div>
