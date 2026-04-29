@@ -14,7 +14,7 @@ import (
 
 // SMPMeshes defines the JSON payload structure for available meshes api
 type SMPMeshes struct {
-	AvailableMeshes []string `json:"available_meshes,omitempty"`
+	AvailableMeshes []string `json:"availableMeshes,omitempty"`
 }
 
 // GetSMPServiceMeshes handles the available meshes request

@@ -12,13 +12,13 @@ type PerformanceProfileParameters struct {
 	// name of performance profile
 	Name string `json:"name,omitempty"`
 	// array of load generators
-	LoadGenerators []string `json:"load_generators,omitempty" gorm:"type:text[]"`
+	LoadGenerators []string `json:"loadGenerators,omitempty" gorm:"type:text[]"`
 	// array of urls of performance results
 	Endpoints []string `json:"endpoints,omitempty" gorm:"type:text[]"`
 	// infrastructure for performance tests
-	ServiceMesh string `json:"service_mesh,omitempty"`
+	ServiceMesh string `json:"serviceMesh,omitempty"`
 	// number of concurrent requests
-	ConcurrentRequest int `json:"concurrent_request,omitempty"`
+	ConcurrentRequest int `json:"concurrentRequest,omitempty"`
 	// qps in integer
 	QPS int `json:"qps,omitempty"`
 	// duration of tests e.g. 30s
@@ -50,30 +50,30 @@ type PerformanceTestParameters struct {
 // PerformanceProfilesAPIResponse response retruned by performance endpoint on meshery server
 type PerformanceProfilesAPIResponse struct {
 	Page       uint                 `json:"page"`
-	PageSize   uint                 `json:"page_size"`
-	TotalCount uint                 `json:"total_count"`
+	PageSize   uint                 `json:"pageSize"`
+	TotalCount uint                 `json:"totalCount"`
 	Profiles   []PerformanceProfile `json:"profiles,omitempty"`
 }
 
 // PerformanceResultsAPIResponse response retruned by performance endpoint on meshery server
 type PerformanceResultsAPIResponse struct {
 	Page       uint                `json:"page"`
-	PageSize   uint                `json:"page_size"`
-	TotalCount uint                `json:"total_count"`
+	PageSize   uint                `json:"pageSize"`
+	TotalCount uint                `json:"totalCount"`
 	Results    []PerformanceResult `json:"results,omitempty"`
 }
 
 // PerformanceResult represents the result of a performance test
 type PerformanceResult struct {
-	MesheryID          *core.Uuid    `json:"meshery_id,omitempty"`
+	MesheryID          *core.Uuid    `json:"mesheryId,omitempty"`
 	Name               string        `json:"name,omitempty"`
 	Mesh               string        `json:"mesh,omitempty"`
-	PerformanceProfile *core.Uuid    `json:"performance_profile,omitempty"`
-	UserID             *core.Uuid    `json:"user_id"`
-	RunnerResults      RunnerResults `json:"runner_results"`
-	ServerMetrics      interface{}   `json:"server_metrics"`
-	ServerBoardConfig  interface{}   `json:"server_board_config,omitempty"`
-	TestStartTime      *time.Time    `json:"test_start_time,omitempty"`
+	PerformanceProfile *core.Uuid    `json:"performanceProfile,omitempty"`
+	UserID             *core.Uuid    `json:"userId"`
+	RunnerResults      RunnerResults `json:"runnerResults"`
+	ServerMetrics      interface{}   `json:"serverMetrics"`
+	ServerBoardConfig  interface{}   `json:"serverBoardConfig,omitempty"`
+	TestStartTime      *time.Time    `json:"testStartTime,omitempty"`
 }
 
 type RunnerResults struct {

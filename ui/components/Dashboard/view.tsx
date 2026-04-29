@@ -77,7 +77,7 @@ const View = (props) => {
 
   if (!resource) return null;
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
-  const connection = connections?.connections.find((conn) => conn.id === context?.connection_id);
+  const connection = connections?.connections.find((conn) => conn.id === context?.connectionId);
   const connectionStatus = connection?.status || CONNECTION_STATES.DISCONNECTED;
   const iconSrc = normalizeStaticImagePath(resource.component_metadata?.styles?.svgColor);
 
@@ -110,7 +110,7 @@ const View = (props) => {
             <TooltipWrappedConnectionChip
               title={context.name}
               width="100%"
-              handlePing={() => ping(context.name, context.server, context.connection_id)}
+              handlePing={() => ping(context.name, context.server, context.connectionId)}
               status={connectionStatus}
               iconSrc={'/static/img/kubernetes.svg'}
             />

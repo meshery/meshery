@@ -336,7 +336,7 @@ export const useFilterK8sContexts = (k8sContexts, predicate) => {
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   return k8sContexts.filter((ctx) => {
-    const operatorsStatus = getControllerStatesByConnectionID(ctx.connection_id);
+    const operatorsStatus = getControllerStatesByConnectionID(ctx.connectionId);
     return predicate({ ...operatorsStatus, context: ctx });
   });
 };
