@@ -168,6 +168,10 @@ Model new schemas on these constructs:
 
 ## Casing rules {#casing-rules}
 
+{{% alert color="info" title="Canonical reference" %}}
+The ecosystem-wide reference for identifier casing across schemas, server, UI, and CLI is the [Identifier Naming Contributor Guide](https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md) in `meshery/schemas`. It contains the table with before/after and do/don't examples. The summary on this page is the schema-authoring view of that contract; consult the canonical guide when working across repos.
+{{% /alert %}}
+
 ### The core principle {#casing-core-principle}
 
 **The OpenAPI property name IS the JSON wire-format name.** Both code generators (`oapi-codegen` for Go, `openapi-typescript` for TypeScript) use the schema property name verbatim as the JSON key. No casing transformation occurs. The casing decision is made once — in the schema — and propagates identically to Go, TypeScript, and all API consumers.

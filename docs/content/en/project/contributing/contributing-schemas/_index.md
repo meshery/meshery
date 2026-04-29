@@ -28,10 +28,10 @@ npm run build       # build TypeScript distribution
 
 ## Prerequisites
 
-- Go v1.24.0+: `go version`
-- Node.js and npm: `node --version && npm --version`
-- oapi-codegen: `go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest`
-- make: `make --version`
+- Go — see [`go.mod`](https://github.com/meshery/schemas/blob/master/go.mod) for the required version
+- Node.js and npm — see [`package.json`](https://github.com/meshery/schemas/blob/master/package.json) `engines` field
+- `oapi-codegen` — install via `go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest`
+- `make`
 
 ## Getting help
 

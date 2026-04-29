@@ -13,11 +13,11 @@ Before authoring, read [Schema Fundamentals](../schema-fundamentals/) for the du
 
 ## Before you start {#before-you-start}
 
-Confirm the tools are available:
+Confirm the tools are available (see the [Prerequisites](../#prerequisites) section in the index for the authoritative versions):
 
 ```bash
-go version              # v1.24.0+
-node --version          # v20 LTS
+go version
+node --version
 npm --version
 make --version
 oapi-codegen --version  # go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
