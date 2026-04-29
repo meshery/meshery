@@ -88,6 +88,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	// Validate that at least one client is present before indexing.
 	if len(perfTest.Config.Clients) == 0 {
+		h.log.Error(errors.New("no clients provided in the SMP configuration"))
 		writeJSONError(w, "no clients provided in the SMP configuration", http.StatusBadRequest)
 		return
 	}
@@ -96,7 +97,8 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	testClient := perfTest.Config.Clients[0]
 
 	// Validate that at least one endpoint URL is present before indexing.
-	if len(testClient.EndpointUrls) == 0 {
+	if testClient == nil || len(testClient.EndpointUrls) == 0 {
+		h.log.Error(errors.New("no endpoint URLs provided in the SMP client configuration"))
 		writeJSONError(w, "no endpoint URLs provided in the SMP client configuration", http.StatusBadRequest)
 		return
 	}
