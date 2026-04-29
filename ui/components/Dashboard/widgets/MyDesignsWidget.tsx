@@ -41,7 +41,7 @@ const MyDesignsWidget = (props) => {
     page: 0,
     pagesize: 7,
     order: sortOrder,
-    user_id: userData?.id,
+    userId: userData?.id,
     metrics: true,
   });
   const theme = useTheme();
@@ -55,7 +55,7 @@ const MyDesignsWidget = (props) => {
           patternsData?.patterns?.map((pattern) => {
             return {
               name: pattern.name,
-              timestamp: pattern.updated_at,
+              timestamp: pattern.updatedAt,
               link: `/extension/meshmap?mode=design&design=${pattern.id}`,
               icon: (
                 <DesignIcon

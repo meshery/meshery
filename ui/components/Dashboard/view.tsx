@@ -1,14 +1,15 @@
 // @ts-nocheck
 import React, { useState } from 'react';
-import { ArrowBack } from '@mui/icons-material';
 import { TooltipIconButton } from '../../utils/TooltipButton';
 import {
+  ArrowBackIcon as ArrowBack,
   Box,
   ErrorBoundary,
   OperatorDataFormatter,
-  useResourceCleanData,
   Paper,
+  styled,
   Typography,
+  useResourceCleanData,
 } from '@sistent/sistent';
 import { ALL_VIEW } from './resources/config';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
@@ -18,7 +19,6 @@ import { getK8sContextFromClusterId } from '@/utils/multi-ctx';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from '../connections/ConnectionChip';
 import ResourceDetailFormatData, { JSONViewFormatter } from './view-component';
-import { styled } from '@mui/system';
 import { useRouter } from 'next/router';
 import GetKubernetesNodeIcon from './utils';
 import { CONNECTION_STATES } from '@/utils/Enum';
@@ -77,7 +77,7 @@ const View = (props) => {
 
   if (!resource) return null;
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
-  const connection = connections?.connections.find((conn) => conn.id === context?.connection_id);
+  const connection = connections?.connections.find((conn) => conn.id === context?.connectionId);
   const connectionStatus = connection?.status || CONNECTION_STATES.DISCONNECTED;
   const iconSrc = normalizeStaticImagePath(resource.component_metadata?.styles?.svgColor);
 
@@ -110,7 +110,7 @@ const View = (props) => {
             <TooltipWrappedConnectionChip
               title={context.name}
               width="100%"
-              handlePing={() => ping(context.name, context.server, context.connection_id)}
+              handlePing={() => ping(context.name, context.server, context.connectionId)}
               status={connectionStatus}
               iconSrc={'/static/img/kubernetes.svg'}
             />

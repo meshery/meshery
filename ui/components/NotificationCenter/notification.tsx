@@ -1,18 +1,19 @@
 // @ts-nocheck
 import * as React from 'react';
 import {
+  alpha,
   Avatar,
   Box,
+  Checkbox,
   Collapse,
-  Slide,
+  CustomTooltip,
+  FormattedTime,
   IconButton,
+  MoreVertIcon,
+  Popover,
+  Slide,
   Typography,
   useTheme,
-  Checkbox,
-  Popover,
-  alpha,
-  FormattedTime,
-  CustomTooltip,
 } from '@sistent/sistent';
 import {
   OptionList,
@@ -31,7 +32,6 @@ import {
 
 import { SEVERITY, SEVERITY_STYLE, STATUS } from './constants';
 import { iconLarge, iconMedium } from '../../css/icons.styles';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FacebookIcon from '../../assets/icons/FacebookIcon';
 import LinkedInIcon from '../../assets/icons/LinkedInIcon';
 import TwitterIcon from '../../assets/icons/TwitterIcon';
@@ -86,7 +86,7 @@ const AvatarStack = ({ avatars, direction }) => {
               ml: '-0.4rem',
             }}
           >
-            <Avatar alt={avatar.name} src={avatar.avatar_url} />
+            <Avatar alt={avatar.name} src={avatar.avatarUrl} />
           </Box>
         </CustomTooltip>
       ))}
@@ -297,10 +297,10 @@ export const Notification = ({ event_id }) => {
 
   const uiConfig = useSelector((state) => state.events.ui);
 
-  const { data: user } = useGetUserByIdQuery(event.user_id || '');
+  const { data: user } = useGetUserByIdQuery(event.userID);
 
-  const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
-  const userAvatarUrl = user?.avatar_url || '';
+  const userName = `${user?.firstName || ''} ${user?.lastName || ''}`;
+  const userAvatarUrl = user?.avatarUrl || '';
 
   const handleSelectEvent = (e, value) => {
     e.stopPropagation();
@@ -313,15 +313,15 @@ export const Notification = ({ event_id }) => {
   };
 
   const eventActors = [
-    ...(event.user_id && user
-      ? [{ name: userName, avatar_url: userAvatarUrl, tooltip: userName }]
+    ...(event.userID && user
+      ? [{ name: userName, avatarUrl: userAvatarUrl, tooltip: userName }]
       : []),
-    ...(event.system_id
+    ...(event.systemID
       ? [
           {
             name: 'Meshery',
-            avatar_url: '/static/img/meshery-logo.png',
-            tooltip: `System ID: ${event.system_id}`,
+            avatarUrl: '/static/img/meshery-logo.png',
+            tooltip: `System ID: ${event.systemID}`,
           },
         ]
       : []),
@@ -407,16 +407,16 @@ export const Notification = ({ event_id }) => {
               style={{ paddingRight: '0.25rem' }}
             />
           </GridItem>
-          <GridItem item xs={8} sm>
-            <Message variant="body1">
+          <GridItem item xs>
+            <Message variant="body1" style={{ paddingRight: '1rem' }}>
               {truncate(title, {
                 length: MAX_NOTIFICATION_DESCRIPTION_LENGTH,
               })}
             </Message>
           </GridItem>
-          <GridItem item xs="auto" style={{ justifyContent: 'end', gap: '0rem' }}>
+          <GridItem item xs="auto" style={{ gap: '0.5rem', marginLeft: 'auto', flexShrink: 0 }}>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <FormattedTime date={event.created_at} />
+              <FormattedTime date={event.createdAt} />
             </Box>
             <BasicMenu event={event} />
           </GridItem>

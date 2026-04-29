@@ -128,7 +128,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
   const [perfResultStats, setPerfResultStats] = useState(props.perfResultStats);
   const [tabVal, setTabVal] = useState(0);
-  const [userPrefs, setUserPrefs] = useState(ExtensionPointSchemaValidator('user_prefs')());
+  const [userPrefs, setUserPrefs] = useState(ExtensionPointSchemaValidator('userPrefs')());
   const [providerType, setProviderType] = useState('');
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
@@ -235,9 +235,9 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
     if (capabilitiesRegistry && !capabilitiesLoaded) {
       setCapabilitiesLoaded(true); // to prevent re-compute
       setUserPrefs(
-        ExtensionPointSchemaValidator('user_prefs')(capabilitiesRegistry?.extensions?.user_prefs),
+        ExtensionPointSchemaValidator('userPrefs')(capabilitiesRegistry?.extensions?.userPrefs),
       );
-      setProviderType(capabilitiesRegistry?.provider_type);
+      setProviderType(capabilitiesRegistry?.providerType);
     }
   }, [capabilitiesRegistry]);
 
@@ -661,7 +661,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
 
                 {value === 1 && (
                   <ExtensionSandbox
-                    type="user_prefs"
+                    type="userPrefs"
                     Extension={(url) => RemoteComponent({ url })}
                   />
                 )}

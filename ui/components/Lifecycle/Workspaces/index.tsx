@@ -180,7 +180,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       pagesize: pageSize,
       search: search,
       order: sortOrder,
-      orgID: organization?.id,
+      orgId: organization?.id,
     },
     {
       skip: !organization?.id ? true : false,
@@ -298,7 +298,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       setInitialData({
         name: workspaceObject.name,
         description: workspaceObject.description,
-        organization: workspaceObject.organization_id,
+        organization: workspaceObject.organizationId,
       });
       setEditWorkspaceId(workspaceObject.id);
     } else {
@@ -490,7 +490,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
               handleWorkspaceModalOpen={handleWorkspaceModalOpen}
               page={page}
               setPage={setPage}
-              totalPages={Math.ceil(workspacesData?.total_count / pageSize)}
+              totalPages={Math.ceil(workspacesData?.totalCount / pageSize)}
               workspacesData={workspaces}
               key={`grid-view-${viewType}`}
             />

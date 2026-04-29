@@ -21,6 +21,33 @@ import { api } from '../rtk-query';
 import { useLazyGetConnectionsQuery } from '../rtk-query/connection';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+// Host-side CSS for packages shared with extensions via remote-component.
+// Next.js (pages router) only permits global CSS imports from _app; remote
+// plugins cannot inject their own global stylesheets through the bundler
+// pipeline. Import the full set of tippy.js themes/animations and xterm CSS
+// here so any extension that references them via remote-component-stubbed
+// subpaths (see remote-component.config.js) has the styles already on-page.
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/dist/svg-arrow.css';
+import 'tippy.js/dist/border.css';
+import 'tippy.js/dist/backdrop.css';
+import 'tippy.js/themes/light.css';
+import 'tippy.js/themes/light-border.css';
+import 'tippy.js/themes/material.css';
+import 'tippy.js/themes/translucent.css';
+import 'tippy.js/animations/shift-away.css';
+import 'tippy.js/animations/shift-away-subtle.css';
+import 'tippy.js/animations/shift-away-extreme.css';
+import 'tippy.js/animations/shift-toward.css';
+import 'tippy.js/animations/shift-toward-subtle.css';
+import 'tippy.js/animations/shift-toward-extreme.css';
+import 'tippy.js/animations/scale.css';
+import 'tippy.js/animations/scale-subtle.css';
+import 'tippy.js/animations/scale-extreme.css';
+import 'tippy.js/animations/perspective.css';
+import 'tippy.js/animations/perspective-subtle.css';
+import 'tippy.js/animations/perspective-extreme.css';
+import '@xterm/xterm/css/xterm.css';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import './styles/AnimatedFilter.css';
@@ -41,7 +68,8 @@ import { useLazyGetCredentialByIdQuery } from '@/rtk-query/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
-import { ErrorBoundary, SistentThemeProvider, CssBaseline, NoSsr } from '@sistent/sistent';
+import { CssBaseline, NoSsr, SistentThemeProvider } from '@/theme';
+import { ErrorBoundary } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
 import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';

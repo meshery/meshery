@@ -4,7 +4,7 @@
 
 DEBUG=true
 PROD_PLAYGROUND_PORT=80
-REMOTE_PROVIDER=https://cloud.layer5.io
+REMOTE_PROVIDER=https://cloud.meshery.io
 
 #-----------------------------------------------------------------------------
 # Meshery Playground Production Deployment

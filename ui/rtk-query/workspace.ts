@@ -321,7 +321,7 @@ const workspacesApi = api
           body: {
             name: queryArg.name,
             description: queryArg.description,
-            organization_id: queryArg.organization_id,
+            organizationId: queryArg.organizationId || queryArg.organization_id,
           },
         }),
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
@@ -334,7 +334,7 @@ const workspacesApi = api
           body: {
             name: queryArg.name,
             description: queryArg.description,
-            organization_id: queryArg.organization_id,
+            organizationId: queryArg.organizationId || queryArg.organization_id,
           },
         }),
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
@@ -375,7 +375,8 @@ export const useCreateWorkspaceMutation = () => {
     trigger({
       name: queryArg.workspacePayload?.name,
       description: queryArg.workspacePayload?.description,
-      organization_id: queryArg.workspacePayload?.organization_id,
+      organizationId:
+        queryArg.workspacePayload?.organizationId || queryArg.workspacePayload?.organization_id,
     });
 
   return [wrappedTrigger, result] as const;
@@ -389,7 +390,8 @@ export const useUpdateWorkspaceMutation = () => {
       id: queryArg.workspaceId,
       name: queryArg.workspacePayload?.name,
       description: queryArg.workspacePayload?.description,
-      organization_id: queryArg.workspacePayload?.organization_id,
+      organizationId:
+        queryArg.workspacePayload?.organizationId || queryArg.workspacePayload?.organization_id,
     });
 
   return [wrappedTrigger, result] as const;

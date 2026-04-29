@@ -1,0 +1,157 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.2.3"
+    },
+    "name": "aws-apigatewayv2-controller",
+    "registrant": {
+      "kind": ""
+    },
+    "version": ""
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Api",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "Stage",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "apiID"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "match_strategy_matrix": [
+              [
+                "to_contains_from"
+              ]
+            ],
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-apigatewayv2-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Stage",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "apiID"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "Api",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "match_strategy_matrix": [
+              [
+                "to_contains_from"
+              ]
+            ],
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-apigatewayv2-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "apiID"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "reference",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}

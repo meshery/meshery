@@ -81,22 +81,22 @@ const EnvironmentCard = ({
     },
     { skip: !environmentDetails.id },
   );
-  const environmentConnectionsCount = environmentConnections?.total_count || 0;
+  const environmentConnectionsCount = environmentConnections?.totalCount || 0;
 
   // this allows to handle both cases when deleted at is:
   // - timestamp or null
   // - object in format {Time: timestamp, Valid: boolean}
   // --
   // TODO:
-  // - switch remote provider to have format of deleted_at as timestamp or null
-  // - or update serialisation for deleted_at field of Environment to return object in format {Time: timestamp, Valid: boolean}
+  // - switch remote provider to have format of deletedAt as timestamp or null
+  // - or update serialisation for deletedAt field of Environment to return object in format {Time: timestamp, Valid: boolean}
   const deleted =
-    environmentDetails.deleted_at === null
+    environmentDetails.deletedAt === null
       ? false
-      : typeof environmentDetails.deleted_at === 'object' &&
-          environmentDetails.deleted_at !== null &&
-          'Valid' in environmentDetails.deleted_at
-        ? !!environmentDetails.deleted_at.Valid
+      : typeof environmentDetails.deletedAt === 'object' &&
+          environmentDetails.deletedAt !== null &&
+          'Valid' in environmentDetails.deletedAt
+        ? !!environmentDetails.deletedAt.Valid
         : true;
 
   return (
@@ -248,12 +248,12 @@ const EnvironmentCard = ({
             <Grid2 sx={{ display: 'flex', flexDirection: 'row', color: 'white' }}>
               <Grid2 size={{ xs: 6 }} sx={{ textAlign: 'left' }}>
                 <DateLabel variant="span" onClick={(e) => e.stopPropagation()}>
-                  Updated At: {formattoLongDate(environmentDetails?.updated_at)}
+                  Updated At: {formattoLongDate(environmentDetails?.updatedAt)}
                 </DateLabel>
               </Grid2>
               <Grid2 size={{ xs: 6 }} sx={{ textAlign: 'left' }}>
                 <DateLabel variant="span" onClick={(e) => e.stopPropagation()}>
-                  Created At: {formattoLongDate(environmentDetails?.created_at)}
+                  Created At: {formattoLongDate(environmentDetails?.createdAt)}
                 </DateLabel>
               </Grid2>
             </Grid2>

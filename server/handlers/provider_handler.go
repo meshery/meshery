@@ -41,7 +41,7 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 	if err != nil {
 		obj := "provider"
 		h.log.Error(models.ErrMarshal(err, obj))
-		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrMarshal(err, obj), http.StatusInternalServerError)
 		return
 	}
 	_, _ = w.Write(bd)
@@ -87,7 +87,7 @@ func (h *Handler) ProviderCapabilityHandler(
 	err = json.NewEncoder(w).Encode(providerCapabilities)
 	if err != nil {
 		h.log.Error(models.ErrMarshal(err, "provider capabilities"))
-		http.Error(w, models.ErrMarshal(err, "provider capabilities").Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrMarshal(err, "provider capabilities"), http.StatusInternalServerError)
 		return
 	}
 }
@@ -112,11 +112,10 @@ func (h *Handler) ProviderComponentsHandler(
 		if err != nil {
 			// failed to load extensions from package
 			h.log.Error(ErrFailToLoadExtensions(err))
-			http.Error(w, ErrFailToLoadExtensions(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrFailToLoadExtensions(err), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("content-type", "application/json")
-		_, _ = w.Write([]byte("{}"))
+		writeJSONEmptyObject(w, http.StatusOK)
 	} else {
 		ServeReactComponentFromPackage(w, r, uiReqBasePath, provider)
 	}

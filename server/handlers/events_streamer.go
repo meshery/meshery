@@ -21,9 +21,23 @@ import (
 	"github.com/meshery/schemas/models/core"
 )
 
-var (
-	flusherMap map[string]http.Flusher
-)
+// subscribeFunc registers ch to receive events published on eb. Pulled out
+// behind a type so tests can inject a hook (e.g. a readiness signal) without
+// rewriting a package-level var, which would race under t.Parallel().
+type subscribeFunc func(eb *_events.EventStreamer, ch chan interface{})
+
+func defaultSubscribeToEventStream(eb *_events.EventStreamer, ch chan interface{}) {
+	eb.Subscribe(ch)
+}
+
+// eventStreamDrainTimeout bounds how long listenForCoreEvents keeps draining
+// its subscriber channel after Unsubscribe. meshkit's EventStreamer.Publish
+// snapshots the subscriber list under a mutex and then fans out sends in
+// fresh goroutines; if any of those goroutines won the scheduler race before
+// Unsubscribe ran, they will still try to send into our now-unused channel
+// and block forever without a reader. Draining on exit absorbs that in-flight
+// traffic; the timeout keeps the handler from waiting on an idle publisher.
+const eventStreamDrainTimeout = 100 * time.Millisecond
 
 type eventStatusPayload struct {
 	Status    string       `json:"status"`
@@ -57,7 +71,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 
 	if err != nil || e == nil {
 		h.log.Error(ErrGetEvents(err))
-		http.Error(w, ErrGetEvents(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrGetEvents(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -65,8 +79,11 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	err = json.NewEncoder(w).Encode(e)
 
 	if err != nil {
+		// Response body has already started streaming via json.Encoder —
+		// Content-Type: application/json is committed and a partial JSON
+		// envelope is on the wire. A fresh error response would corrupt
+		// it, so log only.
 		h.log.Error(models.ErrMarshal(err, "events response"))
-		http.Error(w, models.ErrMarshal(err, "events response").Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -97,17 +114,20 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 	eventTypes, err := provider.GetEventTypes(token, userID, *h.SystemID)
 
 	if err != nil {
-		msg := "error retrieving event categories and actions"
-		h.log.Error(fmt.Errorf("%s: %w", msg, err))
-		http.Error(w, msg, http.StatusInternalServerError)
+		retrieveErr := ErrRetrieveEventTypes(err)
+		h.log.Error(retrieveErr)
+		writeMeshkitError(w, retrieveErr, http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(eventTypes)
 	if err != nil {
+		// Response body has already started streaming via json.Encoder —
+		// Content-Type: application/json is committed and a partial JSON
+		// envelope is on the wire. A fresh error response would corrupt
+		// it, so log only.
 		h.log.Error(models.ErrMarshal(err, "event types response"))
-		http.Error(w, models.ErrMarshal(err, "event types response").Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -124,22 +144,24 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
 	_ = json.Unmarshal(body, &reqBody)
 	status, ok := reqBody["status"].(string)
 	if !ok {
-		h.log.Error(ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String()))
-		http.Error(w, ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String()).Error(), http.StatusInternalServerError)
+		// Missing/non-string status field is a client-side payload issue.
+		statusErr := ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String())
+		h.log.Error(statusErr)
+		writeMeshkitError(w, statusErr, http.StatusBadRequest)
 		return
 	}
 	err = provider.UpdateEventStatus(token, eventID, status)
 	if err != nil {
 		_err := ErrUpdateEvent(err, eventID.String())
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
 
@@ -156,7 +178,7 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -165,7 +187,7 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 	if err != nil {
 		_err := ErrBulkUpdateEvent(err)
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
 
@@ -181,7 +203,7 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -190,7 +212,7 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 	if err != nil {
 		_err := ErrBulkDeleteEvent(err)
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
 }
@@ -203,7 +225,7 @@ func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj 
 	if err != nil {
 		_err := ErrDeleteEvent(err, eventID.String())
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
 }
@@ -213,7 +235,13 @@ func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
 	category := urlValues.Get("category")
 	action := urlValues.Get("action")
 	severity := urlValues.Get("severity")
-	acted_upon := urlValues.Get("acted_upon")
+	// Canonical camelCase URL param matches meshkit EventsFilter JSON tag
+	// (`actedUpon`); fall back to legacy snake_case for back-compat with any
+	// older clients that have not been bumped yet.
+	actedUpon := urlValues.Get("actedUpon")
+	if actedUpon == "" {
+		actedUpon = urlValues.Get("acted_upon")
+	}
 
 	eventFilter := &events.EventsFilter{}
 	if category != "" {
@@ -237,8 +265,8 @@ func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
 		}
 	}
 
-	if acted_upon != "" {
-		err := json.Unmarshal([]byte(acted_upon), &eventFilter.ActedUpon)
+	if actedUpon != "" {
+		err := json.Unmarshal([]byte(actedUpon), &eventFilter.ActedUpon)
 		if err != nil {
 			return eventFilter, models.ErrUnmarshal(err, "event acted upon filter")
 		}
@@ -254,21 +282,15 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	// 	return
 	// }
 
-	client := "ui"
-	if req.URL.Query().Get("client") != "" {
-		client = req.URL.Query().Get("client")
-	}
-
-	if flusherMap == nil {
-		flusherMap = make(map[string]http.Flusher, 0)
-	}
-
 	flusher, ok := w.(http.Flusher)
-	flusherMap[client] = flusher
 
 	if !ok {
+		// This precondition fires BEFORE the SSE Content-Type headers are
+		// committed (set 3 lines below). The response is therefore a regular
+		// JSON error envelope, not a text/event-stream chunk — emit it via
+		// writeMeshkitError so RTK Query can parse it like any other error.
 		h.log.Error(ErrEventStreamingNotSupported)
-		http.Error(w, "Event streaming is not supported at the moment.", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrEventStreamingNotSupported, http.StatusInternalServerError)
 		return
 	}
 
@@ -299,18 +321,13 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 
 		h.log.Debug("new adapters channel closed")
 	}()
-	go listenForCoreEvents(req.Context(), h.EventsBuffer, respChan, h.log, p)
-	go func(flusher http.Flusher) {
-		for data := range respChan {
-			h.log.Debug("received new data on response channel")
-			_, _ = fmt.Fprintf(w, "data: %s\n\n", data)
-			if flusher != nil {
-				flusher.Flush()
-				h.log.Debug("Flushed the messages on the wire...")
-			}
-		}
-		h.log.Debug("response channel closed")
-	}(flusherMap[client])
+	go listenForCoreEvents(req.Context(), h.EventsBuffer, respChan, h.log, p, defaultSubscribeToEventStream)
+	go writeEventStream(req.Context(), w, respChan, h.log, flusher)
+
+	defer func() {
+		closeAdapterConnections(localMeshAdaptersLock, localMeshAdapters)
+		h.log.Debug("events handler closed")
+	}()
 
 STOP:
 	for {
@@ -354,17 +371,81 @@ STOP:
 				localMeshAdaptersLock.Unlock()
 			}
 		}
-		time.Sleep(5 * time.Second)
+
+		// Yield to the scheduler without going unresponsive to client
+		// disconnection: a bare time.Sleep would leave the handler pinned
+		// for up to 5 seconds after the request context is cancelled.
+		select {
+		case <-notify.Done():
+		case <-time.After(5 * time.Second):
+		}
 	}
-	close(respChan)
-	defer h.log.Debug("events handler closed")
 }
-func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp chan []byte, log logger.Handler, _ models.Provider) {
-	datach := make(chan interface{}, 10)
-	go eb.Subscribe(datach)
+
+func writeEventStream(ctx context.Context, w io.Writer, respChan <-chan []byte, log logger.Handler, flusher http.Flusher) {
 	for {
 		select {
-		case datap := <-datach:
+		case data, ok := <-respChan:
+			if !ok {
+				log.Debug("response channel closed")
+				return
+			}
+
+			log.Debug("received new data on response channel")
+			if _, err := fmt.Fprintf(w, "data: %s\n\n", data); err != nil {
+				// A write failure here almost always means the client
+				// disconnected (broken pipe) — stop the loop so we don't
+				// spin publishing into a dead socket.
+				log.Error(fmt.Errorf("failed to write event stream: %w", err))
+				return
+			}
+			if flusher != nil {
+				flusher.Flush()
+				log.Debug("Flushed the messages on the wire...")
+			}
+		case <-ctx.Done():
+			log.Debug("client disconnected, stopping flusher loop")
+			return
+		}
+	}
+}
+
+func sendStreamEvent(ctx context.Context, respChan chan<- []byte, data []byte) bool {
+	select {
+	case respChan <- data:
+		return true
+	case <-ctx.Done():
+		return false
+	}
+}
+
+func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp chan []byte, log logger.Handler, _ models.Provider, subscribe subscribeFunc) {
+	// Subscribe synchronously so the subscription is registered before any
+	// events can be published to datach — running Subscribe in a goroutine
+	// left a window in which early Publish calls could be dropped.
+	datach := make(chan interface{}, 10)
+	subscribe(eb, datach)
+	defer func() {
+		eb.Unsubscribe(datach)
+		// Drain any sender goroutines already past Publish's snapshot of
+		// the subscriber list. Bounded by drainTimeout so we never block
+		// the handler's return if the publisher is idle.
+		drainTimer := time.NewTimer(eventStreamDrainTimeout)
+		defer drainTimer.Stop()
+		for {
+			select {
+			case <-datach:
+			case <-drainTimer.C:
+				return
+			}
+		}
+	}()
+	for {
+		select {
+		case datap, ok := <-datach:
+			if !ok {
+				return
+			}
 			event, ok := datap.(*meshes.EventsResponse)
 			if !ok {
 				continue
@@ -374,7 +455,9 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 				log.Error(models.ErrMarshal(err, "event"))
 				continue
 			}
-			resp <- data
+			if !sendStreamEvent(ctx, resp, data) {
+				return
+			}
 
 		case <-ctx.Done():
 			return
@@ -429,7 +512,9 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 			log.Error(models.ErrMarshal(err, "event"))
 			return
 		}
-		respChan <- data
+		if !sendStreamEvent(ctx, respChan, data) {
+			return
+		}
 	}
 }
 
@@ -448,7 +533,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
-		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -460,20 +545,21 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
 	err = json.Unmarshal(body, &evt)
 	if err != nil {
+		// Body unmarshal failures are client-side errors (malformed JSON).
 		h.log.Error(models.ErrUnmarshal(err, "event"))
-		http.Error(w, models.ErrUnmarshal(err, "event").Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrUnmarshal(err, "event"), http.StatusBadRequest)
 		return
 	}
 
 	if evt.ActedUpon.IsNil() || evt.Action == "" || evt.Category == "" || evt.Severity == "" {
 		h.log.Error(models.ErrInvalidEventData())
-		http.Error(w, models.ErrInvalidEventData().Error(), http.StatusBadRequest)
+		writeMeshkitError(w, models.ErrInvalidEventData(), http.StatusBadRequest)
 		return
 	}
 
@@ -485,7 +571,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 	err = provider.PersistEvent(*event, token)
 	if err != nil {
 		h.log.Error(models.ErrPersistEvent(err))
-		http.Error(w, models.ErrPersistEvent(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrPersistEvent(err), http.StatusInternalServerError)
 		return
 
 	}
@@ -495,8 +581,10 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(event)
 	if err != nil {
+		// Headers + 201 committed and the response body has started
+		// streaming via json.Encoder, so we cannot send a fresh JSON
+		// error response here. Log only.
 		h.log.Error(models.ErrMarshal(err, "event response"))
-		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
 		return
 	}
 }

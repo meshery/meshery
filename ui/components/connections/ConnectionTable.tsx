@@ -1044,7 +1044,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     responsive: 'standard',
     resizableColumns: true,
     serverSide: true,
-    count: connectionData?.total_count,
+    count: connectionData?.totalCount,
     rowsPerPage: pageSize,
     fixedHeader: true,
     page,

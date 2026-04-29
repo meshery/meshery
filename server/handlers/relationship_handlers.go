@@ -45,7 +45,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 	response := models.MeshmodelRelationshipsAPIResponse{
 		Page:          page,
 		PageSize:      int(pgSize),
-		Count:         count,
+		TotalCount:    count,
 		Relationships: entities,
 	}
 
@@ -87,7 +87,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	response := models.MeshmodelRelationshipsAPIResponse{
 		Page:          page,
 		PageSize:      int(pgSize),
-		Count:         count,
+		TotalCount:    count,
 		Relationships: entities,
 	}
 
@@ -105,7 +105,7 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 	var cc registry.MeshModelRegistrantData
 	err := dec.Decode(&cc)
 	if err != nil {
-		http.Error(rw, err.Error(), http.StatusBadRequest)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 	switch cc.EntityType {
@@ -115,7 +115,7 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 		var r relationship.RelationshipDefinition
 		err = json.Unmarshal(cc.Entity, &r)
 		if err != nil {
-			http.Error(rw, err.Error(), http.StatusBadRequest)
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 			return
 		}
 		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &r)
@@ -123,10 +123,13 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 	}
 	err = helpers.WriteLogsToFiles()
 	if err != nil {
-		h.log.Error(err)
-	}
-	if err != nil {
-		http.Error(rw, err.Error(), http.StatusBadRequest)
+		// WriteLogsToFiles is an internal flush of registry-attempt
+		// state — surface a 500 with MeshKit metadata so the JSON
+		// envelope carries a code and remediation, not just the raw
+		// stdlib message.
+		wrappedErr := ErrWriteRegistryLogs(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
 	go h.config.MeshModelSummaryChannel.Publish()

@@ -3,7 +3,7 @@ package models
 import (
 	"encoding/gob"
 
-	userV1beta "github.com/meshery/schemas/models/v1beta1/user"
+	userV1beta2 "github.com/meshery/schemas/models/v1beta2/user"
 )
 
 func init() {
@@ -16,13 +16,13 @@ var (
 )
 
 // User - represents a user in Meshery
-type User = userV1beta.User
+type User = userV1beta2.User
 
 type AllUsers struct {
 	Page       int     `json:"page"`
-	PageSize   int     `json:"page_size"`
+	PageSize   int     `json:"pageSize"`
 	Data       []*User `json:"data"`
-	TotalCount int     `json:"total_count"`
+	TotalCount int     `json:"totalCount"`
 }
 
 type UserKeys struct {
@@ -32,7 +32,7 @@ type UserKeys struct {
 	Category    string `json:"category,omitempty"`
 	Description string `json:"description,omitempty"`
 	Subcategory string `json:"subcategory,omitempty"`
-	Created_at  string `json:"created_at,omitempty"`
-	Updated_at  string `json:"updated_at,omitempty"`
-	Deleted_at  string `json:"deleted_at,omitempty"`
+	Created_at  string `json:"createdAt,omitempty"`
+	Updated_at  string `json:"updatedAt,omitempty"`
+	Deleted_at  string `json:"deletedAt,omitempty"`
 }
