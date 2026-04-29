@@ -19,13 +19,7 @@
 &lt;h2 id="before-you-start"&gt;
 	Before you start
 &lt;/h2&gt;
-&lt;p&gt;Confirm the tools are available:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;go version &lt;span class="c1"&gt;# v1.24.0+&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;node --version &lt;span class="c1"&gt;# v20 LTS&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;npm --version
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;make --version
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;oapi-codegen --version &lt;span class="c1"&gt;# go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Clone and set up the repository:&lt;/p&gt;</description></item><item><title>Schema Rules and Extensions</title><link>/project/contributing/contributing-schemas/schema-rules-and-extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-schemas/schema-rules-and-extensions/</guid><description>&lt;p&gt;The &lt;code&gt;meshery/schemas&lt;/code&gt; repository enforces a set of validation rules via the &lt;code&gt;validation/&lt;/code&gt; Go package. Rules in the 1–36 range are &lt;strong&gt;blocking&lt;/strong&gt; and must pass before a PR can merge. Rules in the 37–42 range are &lt;strong&gt;advisory&lt;/strong&gt; and reported separately.&lt;/p&gt;
+&lt;p&gt;Confirm the tools are available (see the &lt;a href="./project/contributing/#prerequisites"&gt;Prerequisites&lt;/a&gt; section in the index for the authoritative versions):&lt;/p&gt;</description></item><item><title>Schema Rules and Extensions</title><link>/project/contributing/contributing-schemas/schema-rules-and-extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-schemas/schema-rules-and-extensions/</guid><description>&lt;p&gt;The &lt;code&gt;meshery/schemas&lt;/code&gt; repository enforces a set of validation rules via the &lt;code&gt;validation/&lt;/code&gt; Go package. Rules in the 1–36 range are &lt;strong&gt;blocking&lt;/strong&gt; and must pass before a PR can merge. Rules in the 37–42 range are &lt;strong&gt;advisory&lt;/strong&gt; and reported separately.&lt;/p&gt;
 &lt;h2 id="validator-targets"&gt;
 	Validator CLI targets
 &lt;/h2&gt;
