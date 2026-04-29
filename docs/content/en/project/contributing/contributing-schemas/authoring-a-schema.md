@@ -67,7 +67,7 @@ properties:
   name:
     type: string
     maxLength: 100
-    description: Keychain name.
+See the real file at [schemas/constructs/v1beta1/environment/environment.yaml](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta1/environment/environment.yaml) for the full property set (which includes additional fields)
     x-order: 2
     x-oapi-codegen-extra-tags:
       db: name

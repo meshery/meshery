@@ -67,7 +67,7 @@ The entity YAML represents the **full server-side object** as returned by API re
 - Define all server-generated fields in `properties`: `id`, `created_at`, `updated_at`, `deleted_at`
 - List always-present server-generated fields in `required`
 
-See the real file at [`schemas/constructs/v1beta1/environment/environment.yaml`](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta1/environment/environment.yaml) for the full property set (which also includes additional fields also)
+See the real file at [schemas/constructs/v1beta1/environment/environment.yaml](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta1/environment/environment.yaml) for the full property set (which includes additional fields)
 
 ```yaml
 # environment.yaml — simplified illustration
