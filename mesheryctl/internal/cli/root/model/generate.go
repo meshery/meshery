@@ -13,9 +13,9 @@ import (
 )
 
 type cmdModelGenerateFlags struct {
-	File     string `json:"file" validate:"omitempty,dirpath|filepath|url"`
-	Template string `json:"template" validate:"omitempty,filepath"`
-	Register bool   `json:"register" validate:"boolean"`
+	File             string `json:"file" validate:"omitempty,dirpath|filepath|url"`
+	Template         string `json:"template" validate:"omitempty,filepath"`
+	SkipRegistration bool   `json:"skip-registration" validate:"boolean"`
 }
 
 type ModelGenerator interface {
@@ -83,7 +83,7 @@ mesheryctl model generate --file [URL] --template [path-to-template.json] --skip
 			urlModelGenerator := &UrlModelGenerator{
 				TemplateFile: modelGenerateFlags.Template,
 				Url:          path,
-				SkipRegister: modelGenerateFlags.Register,
+				SkipRegister: modelGenerateFlags.SkipRegistration,
 			}
 			return urlModelGenerator.Generate()
 		}
@@ -104,7 +104,7 @@ mesheryctl model generate --file [URL] --template [path-to-template.json] --skip
 			ModelFile:        modelcsvpath,
 			ComponentFile:    componentcsvpath,
 			RelationshipFile: relationshipcsvpath,
-			SkipRegister:     modelGenerateFlags.Register,
+			SkipRegister:     modelGenerateFlags.SkipRegistration,
 		}
 
 		return csvModelGenerator.Generate()
@@ -118,7 +118,7 @@ func init() {
 
 	generateModelCmd.Flags().StringVarP(&modelGenerateFlags.File, "file", "f", "", "Specify path to the file or directory")
 	generateModelCmd.Flags().StringVarP(&modelGenerateFlags.Template, "template", "t", "", "Specify path to the template JSON file")
-	generateModelCmd.Flags().BoolVarP(&modelGenerateFlags.Register, "skip-registration", "", false, "Skip registration of the model (default is false)")
+	generateModelCmd.Flags().BoolVarP(&modelGenerateFlags.SkipRegistration, "skip-registration", "", false, "Skip registration of the model (default is false)")
 
 }
 

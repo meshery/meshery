@@ -1127,7 +1127,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if model.Model == "untitled-model" || model.Model == "" {
 			derivedName := deriveModelNameFromURL(importRequest.ImportBody.Url)
 			if derivedName != "" {
-				model.Model = derivedName
+				model.Model = strings.ToLower(derivedName)
 				// Set display name to a readable format if it was also a placeholder
 				if model.ModelDisplayName == "Untitled Model" || model.ModelDisplayName == "" || model.ModelDisplayName == "untitled-model" {
 					model.ModelDisplayName = manifests.FormatToReadableString(derivedName)
@@ -1137,7 +1137,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 		// Auto-detect registrant type from URL
 		if importRequest.ImportBody.Url != "" {
-			if strings.Contains(importRequest.ImportBody.Url, "github.com") || strings.Contains(importRequest.ImportBody.Url, "githubusercontent.com") {
+			if isGitHubSourceURL(importRequest.ImportBody.Url) {
 				model.Registrant = "github"
 			}
 		}
