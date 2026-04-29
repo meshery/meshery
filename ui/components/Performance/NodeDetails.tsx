@@ -166,15 +166,15 @@ function NodeDetails(props) {
 
   chartData?.kubernetes?.nodes?.map((node) => {
     let arr = [];
-    let m = node?.allocatable_memory;
+    let m = node?.allocatableMemory;
     const mem = (String(m).slice(0, String(m).length - 2) * 0.000001024).toPrecision(5);
     arr.push(node?.hostname);
-    arr.push(node?.allocatable_cpu);
+    arr.push(node?.allocatableCpu);
     arr.push(mem + 'Gi');
     arr.push(node?.architecture);
-    arr.push(node?.operating_system);
-    arr.push(node?.kubelet_version);
-    arr.push(node?.container_runtime_version);
+    arr.push(node?.operatingSystem);
+    arr.push(node?.kubeletVersion);
+    arr.push(node?.containerRuntimeVersion);
 
     data.push(arr);
   });

@@ -24,10 +24,10 @@ function MeshModelContructs() {
     page: 0,
     pagesize: '1',
   };
-  const modelCount = useGetMeshModelsQuery({ params }).data?.total_count || 0;
-  const componentCount = useGetComponentsQuery({ params }).data?.total_count || 0;
-  const relationshipCount = useGetRelationshipsQuery({ params }).data?.total_count || 0;
-  const registrantsConut = useGetRegistrantsQuery({ params }).data?.total_count || 0;
+  const modelCount = useGetMeshModelsQuery({ params }).data?.totalCount || 0;
+  const componentCount = useGetComponentsQuery({ params }).data?.totalCount || 0;
+  const relationshipCount = useGetRelationshipsQuery({ params }).data?.totalCount || 0;
+  const registrantsConut = useGetRegistrantsQuery({ params }).data?.totalCount || 0;
   const theme = useTheme();
 
   // Data Cleanup

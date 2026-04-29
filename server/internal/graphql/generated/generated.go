@@ -1034,25 +1034,25 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.FilterResult.Visibility(childComplexity), true
 
-	case "K8sContext.connection_id":
+	case "K8sContext.connectionId":
 		if e.complexity.K8sContext.ConnectionID == nil {
 			break
 		}
 
 		return e.complexity.K8sContext.ConnectionID(childComplexity), true
-	case "K8sContext.created_at":
+	case "K8sContext.createdAt":
 		if e.complexity.K8sContext.CreatedAt == nil {
 			break
 		}
 
 		return e.complexity.K8sContext.CreatedAt(childComplexity), true
-	case "K8sContext.created_by":
+	case "K8sContext.createdBy":
 		if e.complexity.K8sContext.CreatedBy == nil {
 			break
 		}
 
 		return e.complexity.K8sContext.CreatedBy(childComplexity), true
-	case "K8sContext.deployment_type":
+	case "K8sContext.deploymentType":
 		if e.complexity.K8sContext.DeploymentType == nil {
 			break
 		}
@@ -1064,13 +1064,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.K8sContext.ID(childComplexity), true
-	case "K8sContext.kubernetes_server_id":
+	case "K8sContext.kubernetesServerId":
 		if e.complexity.K8sContext.KubernetesServerID == nil {
 			break
 		}
 
 		return e.complexity.K8sContext.KubernetesServerID(childComplexity), true
-	case "K8sContext.meshery_instance_id":
+	case "K8sContext.mesheryInstanceId":
 		if e.complexity.K8sContext.MesheryInstanceID == nil {
 			break
 		}
@@ -1094,7 +1094,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.K8sContext.Server(childComplexity), true
-	case "K8sContext.updated_at":
+	case "K8sContext.updatedAt":
 		if e.complexity.K8sContext.UpdatedAt == nil {
 			break
 		}
@@ -2399,14 +2399,14 @@ type K8sContext {
   name: String!,
   server: String!,
   owner: ID!,
-  created_by: ID!,
-  meshery_instance_id: ID!,
-  kubernetes_server_id: ID!,
-  deployment_type: String!,
+  createdBy: ID!,
+  mesheryInstanceId: ID!,
+  kubernetesServerId: ID!,
+  deploymentType: String!,
   version: String!,
-  updated_at: String!,
-  created_at: String!,
-  connection_id: String!
+  updatedAt: String!,
+  createdAt: String!,
+  connectionId: String!
 }
 
 type K8sContextsPage {
@@ -3140,6 +3140,28 @@ func (ec *executionContext) field_Subscription_subscribePerfResults_args(ctx con
 		return nil, err
 	}
 	args["profileID"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field___Directive_args_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "includeDeprecated", ec.unmarshalOBoolean2ᚖbool)
+	if err != nil {
+		return nil, err
+	}
+	args["includeDeprecated"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field___Field_args_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "includeDeprecated", ec.unmarshalOBoolean2ᚖbool)
+	if err != nil {
+		return nil, err
+	}
+	args["includeDeprecated"] = arg0
 	return args, nil
 }
 
@@ -6236,12 +6258,12 @@ func (ec *executionContext) fieldContext_K8sContext_owner(_ context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_created_by(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_createdBy(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_created_by,
+		ec.fieldContext_K8sContext_createdBy,
 		func(ctx context.Context) (any, error) {
 			return obj.CreatedBy, nil
 		},
@@ -6252,7 +6274,7 @@ func (ec *executionContext) _K8sContext_created_by(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_created_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6265,12 +6287,12 @@ func (ec *executionContext) fieldContext_K8sContext_created_by(_ context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_meshery_instance_id(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_mesheryInstanceId(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_meshery_instance_id,
+		ec.fieldContext_K8sContext_mesheryInstanceId,
 		func(ctx context.Context) (any, error) {
 			return obj.MesheryInstanceID, nil
 		},
@@ -6281,7 +6303,7 @@ func (ec *executionContext) _K8sContext_meshery_instance_id(ctx context.Context,
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_meshery_instance_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_mesheryInstanceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6294,12 +6316,12 @@ func (ec *executionContext) fieldContext_K8sContext_meshery_instance_id(_ contex
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_kubernetes_server_id(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_kubernetesServerId(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_kubernetes_server_id,
+		ec.fieldContext_K8sContext_kubernetesServerId,
 		func(ctx context.Context) (any, error) {
 			return obj.KubernetesServerID, nil
 		},
@@ -6310,7 +6332,7 @@ func (ec *executionContext) _K8sContext_kubernetes_server_id(ctx context.Context
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_kubernetes_server_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_kubernetesServerId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6323,12 +6345,12 @@ func (ec *executionContext) fieldContext_K8sContext_kubernetes_server_id(_ conte
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_deployment_type(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_deploymentType(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_deployment_type,
+		ec.fieldContext_K8sContext_deploymentType,
 		func(ctx context.Context) (any, error) {
 			return obj.DeploymentType, nil
 		},
@@ -6339,7 +6361,7 @@ func (ec *executionContext) _K8sContext_deployment_type(ctx context.Context, fie
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_deployment_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_deploymentType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6381,12 +6403,12 @@ func (ec *executionContext) fieldContext_K8sContext_version(_ context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_updated_at,
+		ec.fieldContext_K8sContext_updatedAt,
 		func(ctx context.Context) (any, error) {
 			return obj.UpdatedAt, nil
 		},
@@ -6397,7 +6419,7 @@ func (ec *executionContext) _K8sContext_updated_at(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6410,12 +6432,12 @@ func (ec *executionContext) fieldContext_K8sContext_updated_at(_ context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_created_at(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_created_at,
+		ec.fieldContext_K8sContext_createdAt,
 		func(ctx context.Context) (any, error) {
 			return obj.CreatedAt, nil
 		},
@@ -6426,7 +6448,7 @@ func (ec *executionContext) _K8sContext_created_at(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6439,12 +6461,12 @@ func (ec *executionContext) fieldContext_K8sContext_created_at(_ context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_connection_id(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_connectionId(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_connection_id,
+		ec.fieldContext_K8sContext_connectionId,
 		func(ctx context.Context) (any, error) {
 			return obj.ConnectionID, nil
 		},
@@ -6455,7 +6477,7 @@ func (ec *executionContext) _K8sContext_connection_id(ctx context.Context, field
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_connection_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_connectionId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6529,22 +6551,22 @@ func (ec *executionContext) fieldContext_K8sContextsPage_contexts(_ context.Cont
 				return ec.fieldContext_K8sContext_server(ctx, field)
 			case "owner":
 				return ec.fieldContext_K8sContext_owner(ctx, field)
-			case "created_by":
-				return ec.fieldContext_K8sContext_created_by(ctx, field)
-			case "meshery_instance_id":
-				return ec.fieldContext_K8sContext_meshery_instance_id(ctx, field)
-			case "kubernetes_server_id":
-				return ec.fieldContext_K8sContext_kubernetes_server_id(ctx, field)
-			case "deployment_type":
-				return ec.fieldContext_K8sContext_deployment_type(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_K8sContext_createdBy(ctx, field)
+			case "mesheryInstanceId":
+				return ec.fieldContext_K8sContext_mesheryInstanceId(ctx, field)
+			case "kubernetesServerId":
+				return ec.fieldContext_K8sContext_kubernetesServerId(ctx, field)
+			case "deploymentType":
+				return ec.fieldContext_K8sContext_deploymentType(ctx, field)
 			case "version":
 				return ec.fieldContext_K8sContext_version(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_K8sContext_updated_at(ctx, field)
-			case "created_at":
-				return ec.fieldContext_K8sContext_created_at(ctx, field)
-			case "connection_id":
-				return ec.fieldContext_K8sContext_connection_id(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_K8sContext_updatedAt(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_K8sContext_createdAt(ctx, field)
+			case "connectionId":
+				return ec.fieldContext_K8sContext_connectionId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type K8sContext", field.Name)
 		},
@@ -10112,6 +10134,8 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -10124,8 +10148,8 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -10803,6 +10827,35 @@ func (ec *executionContext) fieldContext___Directive_description(_ context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext___Directive_isRepeatable,
+		func(ctx context.Context) (any, error) {
+			return obj.IsRepeatable, nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext___Directive_isRepeatable(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "__Directive",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) ___Directive_locations(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -10848,7 +10901,7 @@ func (ec *executionContext) ___Directive_args(ctx context.Context, field graphql
 	)
 }
 
-func (ec *executionContext) fieldContext___Directive_args(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Directive_args(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Directive",
 		Field:      field,
@@ -10864,38 +10917,24 @@ func (ec *executionContext) fieldContext___Directive_args(_ context.Context, fie
 				return ec.fieldContext___InputValue_type(ctx, field)
 			case "defaultValue":
 				return ec.fieldContext___InputValue_defaultValue(ctx, field)
+			case "isDeprecated":
+				return ec.fieldContext___InputValue_isDeprecated(ctx, field)
+			case "deprecationReason":
+				return ec.fieldContext___InputValue_deprecationReason(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __InputValue", field.Name)
 		},
 	}
-	return fc, nil
-}
-
-func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext___Directive_isRepeatable,
-		func(ctx context.Context) (any, error) {
-			return obj.IsRepeatable, nil
-		},
-		nil,
-		ec.marshalNBoolean2bool,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext___Directive_isRepeatable(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "__Directive",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field___Directive_args_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -11090,7 +11129,7 @@ func (ec *executionContext) ___Field_args(ctx context.Context, field graphql.Col
 	)
 }
 
-func (ec *executionContext) fieldContext___Field_args(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_args(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -11106,9 +11145,24 @@ func (ec *executionContext) fieldContext___Field_args(_ context.Context, field g
 				return ec.fieldContext___InputValue_type(ctx, field)
 			case "defaultValue":
 				return ec.fieldContext___InputValue_defaultValue(ctx, field)
+			case "isDeprecated":
+				return ec.fieldContext___InputValue_isDeprecated(ctx, field)
+			case "deprecationReason":
+				return ec.fieldContext___InputValue_deprecationReason(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __InputValue", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field___Field_args_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -11143,6 +11197,8 @@ func (ec *executionContext) fieldContext___Field_type(_ context.Context, field g
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11155,8 +11211,8 @@ func (ec *executionContext) fieldContext___Field_type(_ context.Context, field g
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11310,6 +11366,8 @@ func (ec *executionContext) fieldContext___InputValue_type(_ context.Context, fi
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11322,8 +11380,8 @@ func (ec *executionContext) fieldContext___InputValue_type(_ context.Context, fi
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11352,6 +11410,64 @@ func (ec *executionContext) fieldContext___InputValue_defaultValue(_ context.Con
 		Object:     "__InputValue",
 		Field:      field,
 		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) ___InputValue_isDeprecated(ctx context.Context, field graphql.CollectedField, obj *introspection.InputValue) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext___InputValue_isDeprecated,
+		func(ctx context.Context) (any, error) {
+			return obj.IsDeprecated(), nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext___InputValue_isDeprecated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "__InputValue",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) ___InputValue_deprecationReason(ctx context.Context, field graphql.CollectedField, obj *introspection.InputValue) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext___InputValue_deprecationReason,
+		func(ctx context.Context) (any, error) {
+			return obj.DeprecationReason(), nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext___InputValue_deprecationReason(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "__InputValue",
+		Field:      field,
+		IsMethod:   true,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
@@ -11419,6 +11535,8 @@ func (ec *executionContext) fieldContext___Schema_types(_ context.Context, field
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11431,8 +11549,8 @@ func (ec *executionContext) fieldContext___Schema_types(_ context.Context, field
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11470,6 +11588,8 @@ func (ec *executionContext) fieldContext___Schema_queryType(_ context.Context, f
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11482,8 +11602,8 @@ func (ec *executionContext) fieldContext___Schema_queryType(_ context.Context, f
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11521,6 +11641,8 @@ func (ec *executionContext) fieldContext___Schema_mutationType(_ context.Context
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11533,8 +11655,8 @@ func (ec *executionContext) fieldContext___Schema_mutationType(_ context.Context
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11572,6 +11694,8 @@ func (ec *executionContext) fieldContext___Schema_subscriptionType(_ context.Con
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11584,8 +11708,8 @@ func (ec *executionContext) fieldContext___Schema_subscriptionType(_ context.Con
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11621,12 +11745,12 @@ func (ec *executionContext) fieldContext___Schema_directives(_ context.Context, 
 				return ec.fieldContext___Directive_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Directive_description(ctx, field)
+			case "isRepeatable":
+				return ec.fieldContext___Directive_isRepeatable(ctx, field)
 			case "locations":
 				return ec.fieldContext___Directive_locations(ctx, field)
 			case "args":
 				return ec.fieldContext___Directive_args(ctx, field)
-			case "isRepeatable":
-				return ec.fieldContext___Directive_isRepeatable(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Directive", field.Name)
 		},
@@ -11709,6 +11833,35 @@ func (ec *executionContext) ___Type_description(ctx context.Context, field graph
 }
 
 func (ec *executionContext) fieldContext___Type_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "__Type",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) ___Type_specifiedByURL(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext___Type_specifiedByURL,
+		func(ctx context.Context) (any, error) {
+			return obj.SpecifiedByURL(), nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -11806,6 +11959,8 @@ func (ec *executionContext) fieldContext___Type_interfaces(_ context.Context, fi
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11818,8 +11973,8 @@ func (ec *executionContext) fieldContext___Type_interfaces(_ context.Context, fi
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11857,6 +12012,8 @@ func (ec *executionContext) fieldContext___Type_possibleTypes(_ context.Context,
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11869,8 +12026,8 @@ func (ec *executionContext) fieldContext___Type_possibleTypes(_ context.Context,
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11961,6 +12118,10 @@ func (ec *executionContext) fieldContext___Type_inputFields(_ context.Context, f
 				return ec.fieldContext___InputValue_type(ctx, field)
 			case "defaultValue":
 				return ec.fieldContext___InputValue_defaultValue(ctx, field)
+			case "isDeprecated":
+				return ec.fieldContext___InputValue_isDeprecated(ctx, field)
+			case "deprecationReason":
+				return ec.fieldContext___InputValue_deprecationReason(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __InputValue", field.Name)
 		},
@@ -11998,6 +12159,8 @@ func (ec *executionContext) fieldContext___Type_ofType(_ context.Context, field 
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -12010,8 +12173,8 @@ func (ec *executionContext) fieldContext___Type_ofType(_ context.Context, field 
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -12019,30 +12182,30 @@ func (ec *executionContext) fieldContext___Type_ofType(_ context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) ___Type_specifiedByURL(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) (ret graphql.Marshaler) {
+func (ec *executionContext) ___Type_isOneOf(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext___Type_specifiedByURL,
+		ec.fieldContext___Type_isOneOf,
 		func(ctx context.Context) (any, error) {
-			return obj.SpecifiedByURL(), nil
+			return obj.IsOneOf(), nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		ec.marshalOBoolean2bool,
 		true,
 		false,
 	)
 }
 
-func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_isOneOf(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -13472,23 +13635,23 @@ func (ec *executionContext) _K8sContext(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "created_by":
-			out.Values[i] = ec._K8sContext_created_by(ctx, field, obj)
+		case "createdBy":
+			out.Values[i] = ec._K8sContext_createdBy(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "meshery_instance_id":
-			out.Values[i] = ec._K8sContext_meshery_instance_id(ctx, field, obj)
+		case "mesheryInstanceId":
+			out.Values[i] = ec._K8sContext_mesheryInstanceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "kubernetes_server_id":
-			out.Values[i] = ec._K8sContext_kubernetes_server_id(ctx, field, obj)
+		case "kubernetesServerId":
+			out.Values[i] = ec._K8sContext_kubernetesServerId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "deployment_type":
-			out.Values[i] = ec._K8sContext_deployment_type(ctx, field, obj)
+		case "deploymentType":
+			out.Values[i] = ec._K8sContext_deploymentType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -13497,18 +13660,18 @@ func (ec *executionContext) _K8sContext(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "updated_at":
-			out.Values[i] = ec._K8sContext_updated_at(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._K8sContext_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "created_at":
-			out.Values[i] = ec._K8sContext_created_at(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._K8sContext_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "connection_id":
-			out.Values[i] = ec._K8sContext_connection_id(ctx, field, obj)
+		case "connectionId":
+			out.Values[i] = ec._K8sContext_connectionId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -15040,6 +15203,11 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 			}
 		case "description":
 			out.Values[i] = ec.___Directive_description(ctx, field, obj)
+		case "isRepeatable":
+			out.Values[i] = ec.___Directive_isRepeatable(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "locations":
 			out.Values[i] = ec.___Directive_locations(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -15047,11 +15215,6 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 			}
 		case "args":
 			out.Values[i] = ec.___Directive_args(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "isRepeatable":
-			out.Values[i] = ec.___Directive_isRepeatable(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -15209,6 +15372,13 @@ func (ec *executionContext) ___InputValue(ctx context.Context, sel ast.Selection
 			}
 		case "defaultValue":
 			out.Values[i] = ec.___InputValue_defaultValue(ctx, field, obj)
+		case "isDeprecated":
+			out.Values[i] = ec.___InputValue_isDeprecated(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deprecationReason":
+			out.Values[i] = ec.___InputValue_deprecationReason(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -15307,6 +15477,8 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec.___Type_name(ctx, field, obj)
 		case "description":
 			out.Values[i] = ec.___Type_description(ctx, field, obj)
+		case "specifiedByURL":
+			out.Values[i] = ec.___Type_specifiedByURL(ctx, field, obj)
 		case "fields":
 			out.Values[i] = ec.___Type_fields(ctx, field, obj)
 		case "interfaces":
@@ -15319,8 +15491,8 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec.___Type_inputFields(ctx, field, obj)
 		case "ofType":
 			out.Values[i] = ec.___Type_ofType(ctx, field, obj)
-		case "specifiedByURL":
-			out.Values[i] = ec.___Type_specifiedByURL(ctx, field, obj)
+		case "isOneOf":
+			out.Values[i] = ec.___Type_isOneOf(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

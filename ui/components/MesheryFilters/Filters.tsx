@@ -135,7 +135,7 @@ type YAMLEditorProps = {
     id: string;
     name: string;
     type: string;
-    catalog_data?: any;
+    catalogData?: any;
   }) => void;
 };
 
@@ -224,7 +224,7 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
                 id: filter.id,
                 name: filter.name,
                 type: FILE_OPS.UPDATE,
-                catalog_data: filter.catalog_data,
+                catalogData: filter.catalogData,
               })
             }
           >
@@ -241,7 +241,7 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
                 id: filter.id,
                 name: filter.name,
                 type: FILE_OPS.DELETE,
-                catalog_data: filter.catalog_data,
+                catalogData: filter.catalogData,
               })
             }
           >
@@ -332,7 +332,7 @@ function MesheryFilters() {
         }
         return false;
       });
-      setCount(filtersData.total_count || 0);
+      setCount(filtersData.totalCount || 0);
       handleSetFilters(filteredWasmFilters);
       setVisibilityFilter(visibilityFilter);
       setFilters(filtersData.filters || []);
@@ -445,7 +445,7 @@ function MesheryFilters() {
   const handleInfoModal = (filter: any) => {
     setInfoModal({
       open: true,
-      ownerID: filter.user_id,
+      ownerID: filter.userId,
       selectedResource: filter,
     });
   };
@@ -523,7 +523,7 @@ function MesheryFilters() {
 
     const payload = {
       id: publishModal.filter?.id,
-      catalog_data: {
+      catalogData: {
         ...formData,
         compatibility: compatibilityStore,
         type: _.toLower(formData?.type),
@@ -534,7 +534,7 @@ function MesheryFilters() {
       .unwrap()
       .then(() => {
         updateProgress({ showProgress: false });
-        if (user.role_names.includes('admin')) {
+        if (user.roleNames.includes('admin')) {
           notify({
             message: `${publishModal.filter?.name} filter published to Meshery Catalog`,
             event_type: EVENT_TYPES.SUCCESS,
@@ -649,14 +649,14 @@ function MesheryFilters() {
     id,
     type,
     metadata,
-    catalog_data,
+    catalogData,
   }: {
     data: string;
     name: string;
     id: string;
     type: string;
     metadata?: any;
-    catalog_data?: any;
+    catalogData?: any;
   }) {
     // TODO: use filter name
     updateProgress({ showProgress: true });
@@ -685,7 +685,7 @@ function MesheryFilters() {
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
           ...body,
-          filter_data: { filter_file: data, name: metadata.name },
+          filterData: { filterFile: data, name: metadata.name },
           config: metadata.config,
         });
       }
@@ -706,7 +706,7 @@ function MesheryFilters() {
     if (type === FILE_OPS.UPDATE) {
       updateFilterFile({
         updateBody: JSON.stringify({
-          filter_data: { id, name: name, catalog_data },
+          filterData: { id, name: name, catalogData },
           config: data,
           save: true,
         }),
@@ -958,7 +958,7 @@ function MesheryFilters() {
   const options = {
     filter: false,
     viewColumns: false,
-    sort: !(user && user.user_id === 'meshery'),
+    sort: !(user && user.userId === 'meshery'),
     search: false,
     filterType: 'textField',
     responsive: 'standard',

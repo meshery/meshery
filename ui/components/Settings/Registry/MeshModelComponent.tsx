@@ -89,13 +89,13 @@ const MeshModelComponent_ = ({
   const componentsData = componentsRes.data;
   const relationshipsData = relationshipsRes.data;
 
-  const hasMoreModels = modelsData?.total_count > modelsData?.page_size * modelsData?.page;
+  const hasMoreModels = modelsData?.totalCount > modelsData?.pageSize * modelsData?.page;
   const hasMoreRegistrants =
-    registrantsData?.total_count > registrantsData?.page_size * registrantsData?.page;
+    registrantsData?.totalCount > registrantsData?.pageSize * registrantsData?.page;
   const hasMoreComponents =
-    componentsData?.total_count > componentsData?.page_size * componentsData?.page;
+    componentsData?.totalCount > componentsData?.pageSize * componentsData?.page;
   const hasMoreRelationships =
-    componentsData?.total_count > relationshipsData?.page_size * relationshipsData?.page;
+    componentsData?.totalCount > relationshipsData?.pageSize * relationshipsData?.page;
 
   const loadNextModelsPage = useCallback(() => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
@@ -385,25 +385,25 @@ const MeshModelComponent_ = ({
           <InnerContainer>
             <TabCard
               label="Models"
-              count={modelsData?.total_count || 0}
+              count={modelsData?.totalCount || 0}
               active={view === MODELS}
               onClick={() => handleTabClick(MODELS)}
             />
             <TabCard
               label="Components"
-              count={componentsData?.total_count || 0}
+              count={componentsData?.totalCount || 0}
               active={view === COMPONENTS}
               onClick={() => handleTabClick(COMPONENTS)}
             />
             <TabCard
               label="Relationships"
-              count={relationshipsData?.total_count || 0}
+              count={relationshipsData?.totalCount || 0}
               active={view === RELATIONSHIPS}
               onClick={() => handleTabClick(RELATIONSHIPS)}
             />
             <TabCard
               label="Registrants"
-              count={registrantsData?.total_count || 0}
+              count={registrantsData?.totalCount || 0}
               active={view === REGISTRANTS}
               onClick={() => handleTabClick(REGISTRANTS)}
             />

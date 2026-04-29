@@ -17,7 +17,7 @@ import (
 func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
-		http.Error(w, "failed to get token", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
 		return
 	}
 
@@ -25,7 +25,8 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	// Don't fetch credentials as UI has no use case.
 	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), "", false)
 	if err != nil {
-		http.Error(w, "failed to get contexts", http.StatusInternalServerError)
+		h.log.Error(ErrGetK8sContexts(err))
+		writeMeshkitError(w, ErrGetK8sContexts(err), http.StatusInternalServerError)
 		return
 	}
 	var mesheryK8sContextPage models.MesheryK8sContextPage
@@ -33,10 +34,12 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	if err != nil {
 		obj := "k8s context"
 		h.log.Error(models.ErrUnmarshal(err, obj))
-		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusInternalServerError)
+		return
 	}
 	if err := json.NewEncoder(w).Encode(mesheryK8sContextPage); err != nil {
-		http.Error(w, "failed to encode contexts", http.StatusInternalServerError)
+		h.log.Error(ErrEncodeK8sContexts(err))
+		writeMeshkitError(w, ErrEncodeK8sContexts(err), http.StatusInternalServerError)
 		return
 	}
 }
@@ -45,19 +48,21 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
-		http.Error(w, "failed to get token", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
 		return
 	}
 
 	h.log.Info("this is being used\n\n\n")
 	val, err := provider.GetK8sContext(token, mux.Vars(req)["id"])
 	if err != nil {
-		http.Error(w, "failed to get context", http.StatusInternalServerError)
+		h.log.Error(ErrGetK8sContexts(err))
+		writeMeshkitError(w, ErrGetK8sContexts(err), http.StatusInternalServerError)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(val); err != nil {
-		http.Error(w, "failed to encode context", http.StatusInternalServerError)
+		h.log.Error(ErrEncodeK8sContexts(err))
+		writeMeshkitError(w, ErrEncodeK8sContexts(err), http.StatusInternalServerError)
 		return
 	}
 }
@@ -70,7 +75,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
-		http.Error(w, "failed to get token", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
 		return
 	}
 
