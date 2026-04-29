@@ -1,0 +1,24 @@
+version: 0.0.144
+name: kubernetes-workload-controllers-overview
+displayName: Kubernetes Workload Controllers Overview
+createdAt: "2025-07-25T21:27:40Z"
+description: This design provides a high-level overview of the primary workload controllers in Kubernetes, illustrating their relationship with Pods. It is based on a diagram from the Exoscale documentation, created to help users migrate and understand these core concepts within Meshery.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/1a9cfdfb-daaf-4c19-be93-6d9bc0f7b94d/0.0.144/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The purpose is for visualization and learning, not for direct production deployment without modification. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4910f4a0-b6e1-4f80-baa7-183a8218484e
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/1a9cfdfb-daaf-4c19-be93-6d9bc0f7b94d-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/1a9cfdfb-daaf-4c19-be93-6d9bc0f7b94d-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

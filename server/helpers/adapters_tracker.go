@@ -14,9 +14,9 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models"
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/spf13/viper"
 )
 
@@ -69,7 +69,7 @@ func (a *AdaptersTracker) GetAdapters(_ context.Context) []models.Adapter {
 }
 
 // AddAdapter is used to add new adapters to the collection
-func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adapter) error {
+func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adapter) (err error) {
 	platform := utils.GetPlatform()
 
 	// Deploy to current platform
@@ -79,7 +79,11 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		if err != nil {
 			return ErrDeployingAdapterInDocker(err)
 		}
-		defer cli.Close()
+		defer func() {
+			if closeErr := cli.Close(); err == nil && closeErr != nil {
+				err = ErrDeployingAdapterInDocker(closeErr)
+			}
+		}()
 
 		containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
 		if err != nil {
@@ -87,7 +91,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 		var mesheryNetworkSettings *container.NetworkSettingsSummary
 		for _, container := range containers {
-			if strings.Contains(container.Image, "layer5/meshery") {
+			if strings.Contains(container.Image, "meshery/meshery") {
 				mesheryNetworkSettings = container.NetworkSettings
 			}
 		}
@@ -99,7 +103,11 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrDeployingAdapterInDocker(err)
 		}
 
-		defer resp.Close()
+		defer func() {
+			if closeErr := resp.Close(); err == nil && closeErr != nil {
+				err = ErrDeployingAdapterInDocker(closeErr)
+			}
+		}()
 		_, err = io.ReadAll(resp)
 		if err != nil {
 			return ErrDeployingAdapterInDocker(err)
@@ -165,12 +173,16 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrDeployingAdapterInK8s(err)
 		}
 		var k8scontext models.K8sContext
-		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 		if !ok || len(allContexts) == 0 {
 			fmt.Println("No context found")
 			return ErrDeployingAdapterInK8s(fmt.Errorf("no context found"))
 		}
-		for _, k8sctx := range allContexts {
+		for _, k8sctxPtr := range allContexts {
+			if k8sctxPtr == nil {
+				continue
+			}
+			k8sctx := *k8sctxPtr
 			if k8sctx.Name == "in-cluster" {
 				k8scontext = k8sctx
 				break
@@ -210,7 +222,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 }
 
 // RemoveAdapter is used to remove existing adapters from the collection
-func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Adapter) error {
+func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Adapter) (err error) {
 	platform := utils.GetPlatform()
 
 	// Undeploy from current platform
@@ -220,7 +232,11 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		if err != nil {
 			return ErrUnDeployingAdapterInDocker(err)
 		}
-		defer cli.Close()
+		defer func() {
+			if closeErr := cli.Close(); err == nil && closeErr != nil {
+				err = ErrUnDeployingAdapterInDocker(closeErr)
+			}
+		}()
 
 		containers, err := cli.ContainerList(ctx, container.ListOptions{})
 		if err != nil {
@@ -255,12 +271,16 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			return ErrUnDeployingAdapterInK8s(err)
 		}
 		var k8scontext models.K8sContext
-		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 		if !ok || len(allContexts) == 0 {
 			fmt.Println("No context found")
 			return ErrUnDeployingAdapterInK8s(fmt.Errorf("no context found"))
 		}
-		for _, k8sctx := range allContexts {
+		for _, k8sctxPtr := range allContexts {
+			if k8sctxPtr == nil {
+				continue
+			}
+			k8sctx := *k8sctxPtr
 			if k8sctx.Name == "in-cluster" {
 				k8scontext = k8sctx
 				break

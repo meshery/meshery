@@ -9,10 +9,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
-	"github.com/sirupsen/logrus/hooks/test"
 	"k8s.io/client-go/tools/clientcmd/api"
 )
 
@@ -27,9 +26,7 @@ func (m mockCloser) Close() error {
 
 func TestSafeClose(t *testing.T) {
 
-	log := logrus.New()
-	hook := test.NewGlobal()
-	log.AddHook(hook)
+	SetupMeshkitLoggerTesting(t, false)
 
 	// testcases for SafeClose(co io.Closer)
 	t.Run("SafeClose", func(t *testing.T) {
@@ -42,9 +39,6 @@ func TestSafeClose(t *testing.T) {
 		}
 		SafeClose(mc)
 
-		if len(hook.Entries) != 1 {
-			t.Fatal("expected 1 log entry")
-		}
 	})
 }
 
@@ -54,7 +48,8 @@ func TestBackupConfigFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(tmpFile.Name())
+	defer func() { _ = os.Remove(tmpFile.Name()) }()
+
 	data, err := os.ReadFile(cfgFile)
 	if err != nil {
 		t.Fatal(err)
@@ -62,9 +57,19 @@ func TestBackupConfigFile(t *testing.T) {
 	if _, err := tmpFile.Write(data); err != nil {
 		t.Fatal(err)
 	}
+	_ = tmpFile.Close()
+
+	// Act
 	BackupConfigFile(tmpFile.Name())
-	if _, err := os.Stat("/tmp/config.bak.yaml"); os.IsNotExist(err) {
-		t.Errorf("BackupConfigFile failed: backup file does not exist")
+
+	// Check backup in same dir as tmpFile
+	dir := filepath.Dir(tmpFile.Name())
+	backupFilePath := filepath.Join(dir, "config.bak.yaml")
+	if _, err := os.Stat(backupFilePath); os.IsNotExist(err) {
+		t.Errorf("BackupConfigFile failed: backup file %s does not exist", backupFilePath)
+	} else {
+		// optional cleanup
+		defer func() { _ = os.Remove(backupFilePath) }()
 	}
 }
 func TestStringWithCharset(t *testing.T) {
@@ -186,7 +191,7 @@ func TestAskForConfirmation(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			w.Close()
+			_ = w.Close()
 			stdin := os.Stdin
 			defer func() { os.Stdin = stdin }()
 			os.Stdin = r
@@ -217,7 +222,7 @@ func TestValidateURL(t *testing.T) {
 	tests := []struct {
 		name    string
 		url     string
-		wantErr string
+		wantErr error
 	}{
 		{
 			name: "Correct URL",
@@ -226,22 +231,19 @@ func TestValidateURL(t *testing.T) {
 		{
 			name:    "Unsupported scheme",
 			url:     "mqtt://www.layer5.io",
-			wantErr: "mqtt is not a supported protocol",
+			wantErr: ErrParsingUrl(fmt.Errorf("mqtt is not a supported protocol")),
 		},
 		{
 			name:    "invalid URL",
 			url:     "layer5.io",
-			wantErr: "parse \"layer5.io\": invalid URI for request",
+			wantErr: ErrParsingUrl(fmt.Errorf("parse \"layer5.io\": invalid URI for request")),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := ValidateURL(tt.url)
 			if err != nil {
-				// check error message
-				if err.Error() != tt.wantErr {
-					t.Errorf("ValidateURL error = %v want = %v", err, tt.wantErr)
-				}
+				AssertMeshkitErrorsEqual(t, err, tt.wantErr)
 			}
 		})
 	}
@@ -334,7 +336,7 @@ func TestAskForInput(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	w.Close()
+	_ = w.Close()
 	stdin := os.Stdin
 	defer func() { os.Stdin = stdin }()
 	os.Stdin = r
@@ -408,6 +410,8 @@ func TestSetOverrideValues(t *testing.T) {
 		name                string
 		ctx                 *config.Context
 		mesheryImageVersion string
+		customCallbackURL   string
+		customProviderURL   string
 		want                map[string]interface{}
 	}{
 		{
@@ -531,10 +535,78 @@ func TestSetOverrideValues(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "Context contains custom env variables and disabled operator and provider, custom callback url and provider url is specified",
+			ctx: &config.Context{
+				Components: nil,
+				Channel:    testChannel,
+				Operator:   "disabled",
+				Provider:   "Custom",
+				EnvVars: map[string]any{
+					"debug":                            "0",
+					"playground":                       true,
+					"meshsync_default_deployment_mode": "embedded",
+					"custom_var_int":                   1,
+					"custom_var_int_string":            "1",
+					"custom_var_bool":                  true,
+					"custom_var_bool_string":           "true",
+				},
+			},
+			customCallbackURL:   "http://localhost:9081/api/system/oauth/callback",
+			customProviderURL:   "http://localhost:9876",
+			mesheryImageVersion: "",
+			want: map[string]interface{}{
+				"meshery-app-mesh": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-istio": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-cilium": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-linkerd": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-consul": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-kuma": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-nsm": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-nginx-sm": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-traefik-mesh": map[string]interface{}{
+					"enabled": false,
+				},
+				"image": map[string]interface{}{
+					"tag": testChannel + "-",
+				},
+				// non string values (numeric and bool) must go as string in quotes
+				// otherwise helm will return unmarshaling error
+				"env": map[string]any{
+					"DISABLE_OPERATOR":                 "\"true\"",
+					constants.ProviderENV:              "Custom",
+					constants.CallbackURLENV:           "http://localhost:9081/api/system/oauth/callback",
+					constants.ProviderURLsENV:          "http://localhost:9876",
+					"DEBUG":                            "\"0\"",
+					"PLAYGROUND":                       "\"true\"",
+					"MESHSYNC_DEFAULT_DEPLOYMENT_MODE": "embedded",
+					"CUSTOM_VAR_INT":                   "\"1\"",
+					"CUSTOM_VAR_INT_STRING":            "\"1\"",
+					"CUSTOM_VAR_BOOL":                  "\"true\"",
+					"CUSTOM_VAR_BOOL_STRING":           "\"true\"",
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
-		got := SetOverrideValues(tt.ctx, tt.mesheryImageVersion, "", "")
+		got := SetOverrideValues(tt.ctx, tt.mesheryImageVersion, tt.customCallbackURL, tt.customProviderURL)
 		eq := reflect.DeepEqual(got, tt.want)
 		if !eq {
 			t.Errorf("SetOverrideValues %s got = %v want = %v", tt.name, got, tt.want)

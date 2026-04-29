@@ -17,7 +17,7 @@ setup() {
   assert_failure
   
   assert_output --partial "Please provide a model name."
-  assert_output --partial "Usage: mesheryctl model export [model-name ]"
+  assert_output --partial "Usage: mesheryctl model export [model-name]"
 }
 
 @test "mesheryctl model export succeeds with default options" {

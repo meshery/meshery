@@ -1,0 +1,7 @@
+- I am Charchit Gangwar.
+- Final year B.Tech CSE student at VIT with 9.2 cgpa.
+- ex-SDE Intern at Workik.
+- Hands-on experience with MERN, Python, Flask, Git, MySql, Postgresql, AWS, Docker.
+- 1000+ Dsa question, Pupil(1293) on codeforces and Knight(1855) on Leetcode.
+- Actively participating in open source, coding competitions and hackathons.
+- Love to make fun projects and develop useful solutions.

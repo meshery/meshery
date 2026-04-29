@@ -2,15 +2,17 @@
 package handlers
 
 import (
-	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils/events"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	gopolicies "github.com/meshery/meshery/server/policies"
+	"github.com/meshery/meshkit/broker"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/meshmodel/core/policies"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/utils/events"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
 	"github.com/vmihailenco/taskq/v3"
 )
@@ -26,12 +28,15 @@ type Handler struct {
 	K8sCompRegHelper                        *models.ComponentsRegistrationHelper
 	MesheryCtrlsHelper                      *models.MesheryControllersHelper
 	Provider                                string // When set, all endpoints consider tokens / identities / capabilities valid from the single, designated provider.
-	SystemID                                *uuid.UUID
+	SystemID                                *core.Uuid
 	dbHandler                               *database.Handler
 	registryManager                         *meshmodel.RegistryManager
 	EventsBuffer                            *events.EventStreamer
 	Rego                                    *policies.Rego
+	GoEngine                                *gopolicies.GoEngine
 	ConnectionToStateMachineInstanceTracker *machines.ConnectionToStateMachineInstanceTracker
+	MeshsyncDefaultDeploymentMode           connections.MeshsyncDeploymentMode
+	evalTracker                             *evaluationTracker
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -48,6 +53,7 @@ func NewHandlerInstance(
 	provider string,
 	rego *policies.Rego,
 	connToInstanceTracker *machines.ConnectionToStateMachineInstanceTracker,
+	meshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode,
 ) models.HandlerInterface {
 
 	h := &Handler{
@@ -62,8 +68,11 @@ func NewHandlerInstance(
 		registryManager:                         regManager,
 		Provider:                                provider,
 		Rego:                                    rego,
-		SystemID:                                viper.Get("INSTANCE_ID").(*uuid.UUID),
+		GoEngine:                                gopolicies.NewGoEngine(logger),
+		SystemID:                                viper.Get("INSTANCE_ID").(*core.Uuid),
 		ConnectionToStateMachineInstanceTracker: connToInstanceTracker,
+		MeshsyncDefaultDeploymentMode:           meshsyncDefaultDeploymentMode,
+		evalTracker:                             newEvaluationTracker(),
 	}
 
 	h.task = taskq.RegisterTask(&taskq.TaskOptions{

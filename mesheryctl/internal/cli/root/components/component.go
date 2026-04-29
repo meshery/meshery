@@ -17,33 +17,32 @@ package components
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/server/models"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/meshery/server/models"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/manifoldco/promptui"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
+
+type componentFlags struct {
+	Count bool `json:"count" validate:"boolean"`
+}
 
 var (
 	availableSubcommands = []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
 
-	saveFlag bool
-
-	componentApiPath = "api/meshmodels/components"
+	componentApiPath       = "api/meshmodels/components"
+	componentFlagsProvided = &componentFlags{}
 )
 
 // ComponentCmd represents the mesheryctl component command
 var ComponentCmd = &cobra.Command{
 	Use:   "component",
-	Short: "Manage components",
+	Short: "Manage Meshery components",
 	Long: `List, search and view component(s) and detailed informations
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/component`,
 	Example: `
 // Display number of available components in Meshery
 mesheryctl component --count
@@ -55,32 +54,38 @@ mesheryctl component list
 mesheryctl component search [component-name]
 
 // View a specific component
-mesheryctl component view [component-name]
+mesheryctl component view [component-name | component-id]
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, componentFlagsProvided)
+	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		count, _ := cmd.Flags().GetBool("count")
-		if len(args) == 0 && !count {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
+		argsIsEmpty := len(args) == 0 || (len(args) == 1 && args[0] == "")
+		if argsIsEmpty && !componentFlagsProvided.Count {
 			return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
 		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		count, _ := cmd.Flags().GetBool("count")
-		if count {
-			return listComponents(cmd, componentApiPath)
+		if componentFlagsProvided.Count {
+			componentData := display.DisplayDataAsync{
+				UrlPath:          componentApiPath,
+				DataType:         "component",
+				Header:           []string{},
+				Page:             cmdComponentListFlag.Page,
+				PageSize:         10,
+				IsPage:           false,
+				DisplayCountOnly: componentFlagsProvided.Count,
+			}
+			return display.ListAsyncPagination(componentData, generateComponentDataToDisplay)
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide", args[0]))
 		}
-		_, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Fatalln(err, "error processing config")
-		}
-		err = cmd.Usage()
+
+		err := cmd.Usage()
 		if err != nil {
 			return err
 		}
@@ -88,41 +93,19 @@ mesheryctl component view [component-name]
 	},
 }
 
-// selectComponentPrompt lets user to select a model if models are more than one
-func selectComponentPrompt(components []component.ComponentDefinition) component.ComponentDefinition {
-	componentNames := []string{}
-	componentArray := []component.ComponentDefinition{}
-
-	componentArray = append(componentArray, components...)
-
-	for _, component := range componentArray {
-		componentName := fmt.Sprintf("%s, version: %s", component.DisplayName, component.Component.Version)
-		componentNames = append(componentNames, componentName)
-	}
-
-	prompt := promptui.Select{
-		Label: "Select component",
-		Items: componentNames,
-	}
-
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return componentArray[i]
-	}
-}
-
 func init() {
 	ComponentCmd.AddCommand(availableSubcommands...)
-	ComponentCmd.Flags().BoolP("count", "", false, "(optional) Get the number of components in total")
+	ComponentCmd.Flags().BoolVarP(&componentFlagsProvided.Count, "count", "", false, "(optional) Get the number of components in total")
 }
 
 func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponentsAPIResponse) ([][]string, int64) {
 	rows := [][]string{}
 	for _, component := range componentsResponse.Components {
+		componentID := component.ID.String()
+		componentName := component.DisplayName
+		if componentName == "" {
+			componentName = "N/A"
+		}
 		modelName := component.Model.Name
 		if modelName == "" {
 			modelName = "N/A"
@@ -131,27 +114,9 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 		if componentVersion == "" {
 			componentVersion = "N/A"
 		}
-		componenttKind := component.Component.Kind
-		if componenttKind == "" {
-			componenttKind = "N/A"
-		}
-		rows = append(rows, []string{modelName, componenttKind, componentVersion})
+		rows = append(rows, []string{componentID, componentName, modelName, componentVersion})
+
 	}
 
-	return rows, int64(componentsResponse.Count)
-}
-
-func listComponents(cmd *cobra.Command, apiPath string) error {
-	page, _ := cmd.Flags().GetInt("page")
-
-	modelData := display.DisplayDataAsync{
-		UrlPath:          componentApiPath,
-		DataType:         "component",
-		Header:           []string{"Model", "Category", "Version"},
-		Page:             page,
-		IsPage:           cmd.Flags().Changed("page"),
-		DisplayCountOnly: cmd.Flags().Changed("count"),
-	}
-
-	return display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
+	return rows, componentsResponse.TotalCount
 }

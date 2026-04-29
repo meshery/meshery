@@ -1,0 +1,40 @@
+kind: "Component"
+name: "ms-catalogs-worker"
+version: "0.0.4"
+description: "ms-catalogs-worker microservice worker for catalogs from CodeDesignPlus Helm chart"
+author: "CodeDesignPlus"
+author_address: "https://github.com/codedesignplus"
+
+components:
+  - kind: Deployment
+    apiVersion: apps/v1  # Added: Kubernetes version for Deployment
+    name: "ms-catalogs-worker"
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: ms-catalogs-worker
+      template:
+        metadata:
+          labels:
+            app: ms-catalogs-worker
+        spec:
+          containers:
+          - name: worker
+            image: "codedesignplus/ms-catalogs-worker:0.0.4"
+            ports:
+            - containerPort: 8080
+            env: []
+
+  - kind: Service
+    apiVersion: v1  # Added: Kubernetes version for Service
+    name: "ms-catalogs-worker-service"
+    spec:
+      type: ClusterIP
+      ports:
+      - port: 8080
+        targetPort: 8080
+      selector:
+        app: ms-catalogs-worker
+
+relationships: []

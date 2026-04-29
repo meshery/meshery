@@ -6,7 +6,7 @@ import (
 
 	"encoding/json"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 )
 
 type SessionSyncData struct {
@@ -19,17 +19,10 @@ type SessionSyncDataK8sConfig struct {
 	ContextName       string     `json:"name,omitempty"`
 	ClusterConfigured bool       `json:"clusterConfigured,omitempty"`
 	ConfiguredServer  string     `json:"server,omitempty"`
-	ClusterID         string     `json:"clusterID,omitempty"`
-	CreatedAt         *time.Time `json:"created_at,omitempty"`
-	UpdatedAt         *time.Time `json:"updated_at,omitempty"`
+	ClusterID         string     `json:"clusterId,omitempty"`
+	CreatedAt         *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt         *time.Time `json:"updatedAt,omitempty"`
 }
-
-// swagger:route GET /api/system/sync SystemAPI idSystemSync
-// Handle GET request for config sync
-//
-// Used to send session data to the UI for initial sync
-// responses:
-// 	200: userLoadTestPrefsRespWrapper
 
 // SessionSyncHandler is used to send session data to the UI for initial sync
 func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -50,14 +43,17 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	}
 	h.log.Debug("final list of active adapters: ", meshAdapters)
 	prefObj.MeshAdapters = meshAdapters
-	err := provider.RecordPreferences(req, user.UserID, prefObj)
+	err := provider.RecordPreferences(req, user.UserId, prefObj)
 	if err != nil { // ignoring errors in this context
 		h.log.Error(ErrSaveSession(err))
 	}
 	s := []SessionSyncDataK8sConfig{}
-	k8scontexts, ok := req.Context().Value(models.AllKubeClusterKey).([]models.K8sContext)
+	k8scontexts, ok := req.Context().Value(models.AllKubeClusterKey).([]*models.K8sContext)
 	if ok {
 		for _, k8scontext := range k8scontexts {
+			if k8scontext == nil {
+				continue
+			}
 			var cid string
 			if k8scontext.KubernetesServerID != nil {
 				cid = k8scontext.KubernetesServerID.String()
@@ -82,7 +78,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	if err != nil {
 		obj := "user config data"
 		h.log.Error(models.ErrMarshal(err, obj))
-		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrMarshal(err, obj), http.StatusInternalServerError)
 		return
 	}
 }

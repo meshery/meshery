@@ -6,8 +6,6 @@ source ./setup_suite.bash
 # echo "DEBUG: MESHERYCTL_BIN=$MESHERYCTL_BIN"
 # echo "DEBUG: TEMP_DATA_DIR=$TEMP_DATA_DIR"
 
-./setup_suite.bash
-
 # Run the tests
 # Uncomment the following line to enable junit format output
 FORMATTER="--formatter tap"

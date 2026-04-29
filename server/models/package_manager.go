@@ -3,8 +3,8 @@ package models
 import (
 	"fmt"
 
-	"github.com/layer5io/meshkit/generators/artifacthub"
-	"github.com/layer5io/meshkit/generators/models"
+	"github.com/meshery/meshkit/generators/artifacthub"
+	"github.com/meshery/meshkit/generators/models"
 )
 
 type ArtifactHubPackageManager struct {

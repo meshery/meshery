@@ -1,17 +1,3 @@
-// Copyright Meshery Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package config
 
 import (
@@ -21,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 
 	"net/http"
 )
@@ -51,14 +37,15 @@ type Token struct {
 
 // Context defines a meshery environment
 type Context struct {
-	Endpoint   string   `yaml:"endpoint,omitempty" mapstructure:"endpoint,omitempty"`
-	Token      string   `yaml:"token,omitempty" mapstructure:"token,omitempty"`
-	Platform   string   `yaml:"platform" mapstructure:"platform"`
-	Components []string `yaml:"components,omitempty" mapstructure:"components,omitempty"`
-	Channel    string   `yaml:"channel,omitempty" mapstructure:"channel,omitempty"`
-	Version    string   `yaml:"version,omitempty" mapstructure:"version,omitempty"`
-	Provider   string   `yaml:"provider,omitempty" mapstructure:"provider,omitempty"`
-	Operator   string   `yaml:"operator,omitempty" mapstructure:"operator,omitempty"`
+	Endpoint   string         `yaml:"endpoint,omitempty" mapstructure:"endpoint,omitempty"`
+	Token      string         `yaml:"token,omitempty" mapstructure:"token,omitempty"`
+	Platform   string         `yaml:"platform" mapstructure:"platform"`
+	Components []string       `yaml:"components,omitempty" mapstructure:"components,omitempty"`
+	Channel    string         `yaml:"channel,omitempty" mapstructure:"channel,omitempty"`
+	Version    string         `yaml:"version,omitempty" mapstructure:"version,omitempty"`
+	Provider   string         `yaml:"provider,omitempty" mapstructure:"provider,omitempty"`
+	Operator   string         `yaml:"operator,omitempty" mapstructure:"operator,omitempty"`
+	EnvVars    map[string]any `yaml:"env,omitempty" mapstructure:"env,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
@@ -109,7 +96,7 @@ func (mc *MesheryCtlConfig) CheckIfGivenContextIsValid(name string) (*Context, e
 func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Fatal(err)
+		mesheryctllogger.Log.Fatal(err)
 	}
 
 	return currentContext.Endpoint
@@ -123,7 +110,7 @@ func (mc *MesheryCtlConfig) GetCurrentContextName() string {
 func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Fatal(err)
+		mesheryctllogger.Log.Fatal(err)
 	}
 
 	return currentContext, err
@@ -133,7 +120,7 @@ func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 func (mc *MesheryCtlConfig) GetContext(name string) (*Context, error) {
 	context, err := mc.CheckIfGivenContextIsValid(name)
 	if err != nil {
-		log.Fatal(err)
+		mesheryctllogger.Log.Fatal(err)
 	}
 
 	return context, err
@@ -146,7 +133,7 @@ func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) error {
 	}
 	_, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Errorf("Error: %v", err.Error())
+		mesheryctllogger.Log.Errorf("Error: %v", err.Error())
 
 	}
 
@@ -249,25 +236,21 @@ func (ctx *Context) ValidateVersion() error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
 
 	defer func() {
 		if cerr := resp.Body.Close(); cerr != nil {
-			log.Error(cerr)
+			mesheryctllogger.Log.Error(cerr)
 		}
 	}()
 
 	if resp.StatusCode == 404 {
-		log.Fatal("version '" + ctx.Version + "' is not a valid Meshery release.")
+		mesheryctllogger.Log.Fatal(fmt.Errorf("version '%s' is not a valid Meshery release", ctx.Version))
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatal("failed to validate Meshery release version " + ctx.Version)
-	}
-
-	if err != nil {
-		return errors.Wrapf(err, "failed to make GET request to %s", url)
+		mesheryctllogger.Log.Fatal(fmt.Errorf("failed to validate Meshery release version %s", ctx.Version))
 	}
 
 	return nil
@@ -293,6 +276,16 @@ func (ctx *Context) SetOperatorStatus(status string) {
 	ctx.Operator = status
 }
 
+// GetEnvs returns the environment variables from the context
+func (ctx *Context) GetEnvs() map[string]any {
+	return ctx.EnvVars
+}
+
+// SetEnvs sets the environment variables for the context
+func (ctx *Context) SetEnvs(value map[string]any) {
+	ctx.EnvVars = value
+}
+
 // GetName returns the token name
 func (t *Token) GetName() string {
 	return t.Name
@@ -308,7 +301,7 @@ func (t *Token) GetLocation() string {
 	if strings.HasPrefix(t.Location, "~/") {
 		usr, err := os.UserHomeDir()
 		if err != nil {
-			log.Warn("failed to get user home directory")
+			mesheryctllogger.Log.Warn(fmt.Errorf("failed to get user home directory: %w", err))
 		}
 		return filepath.Join(usr, t.Location[2:])
 	}
@@ -317,7 +310,7 @@ func (t *Token) GetLocation() string {
 	// is in the .meshery directory
 	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Warn("failed to get user home directory")
+		mesheryctllogger.Log.Warn(fmt.Errorf("failed to get user home directory: %w", err))
 	}
 
 	return filepath.Join(home, ".meshery", t.Location)
@@ -459,12 +452,12 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 	viper.SetConfigFile(configPath)
 	err := viper.ReadInConfig()
 	if err != nil {
-		return err
+		return ErrReadMesheryConfig(err)
 	}
 
 	mctlCfg, err := GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return errors.Wrap(err, "error processing config")
+		return err
 	}
 
 	if mctlCfg.Contexts == nil {
@@ -473,7 +466,7 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 
 	_, exists := mctlCfg.Contexts[contextName]
 	if exists && !overwrite {
-		return errors.New("error adding context: a context with same name already exists")
+		return ErrDuplicateContext(errors.New("error adding context: a context with same name already exists"))
 	}
 
 	mctlCfg.Contexts[contextName] = context
@@ -487,7 +480,7 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 
 	err = viper.WriteConfig()
 	if err != nil {
-		return err
+		return ErrWriteMeshConfig(err)
 	}
 
 	return nil

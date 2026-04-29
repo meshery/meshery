@@ -1,0 +1,25 @@
+version: 0.0.3
+name: chaos-mesh-architecture-copy
+displayName: chaos-mesh-architecture-copy
+createdAt: "2025-10-03T17:40:48Z"
+description: |
+    A visual design representing the core architecture of the Chaos Mesh platform and its components within a Kubernetes environment.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/48db8990-978a-4845-9e82-de1eae091498/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a non-deployable visual design intended for informational and illustrative purposes only. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 8f8636e1-2702-4cad-935e-c3874a1dc55b
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/48db8990-978a-4845-9e82-de1eae091498-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/48db8990-978a-4845-9e82-de1eae091498-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,0 +1,24 @@
+version: 0.0.157
+name: '[tutorial]-exploring-kubernetes-deployments-with-meshery'
+displayName: '[Tutorial] Exploring Kubernetes Deployments with Meshery'
+createdAt: "2025-02-27T11:32:28Z"
+description: "This design is the end result of the Exploring Kubernetes Deployments with Meshery tutorial. It can also be use as a starting point to quick demonstrate a Kubernetes Deployment. \n\nIt uses the meshery-milestone image."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e92dba43-813f-4490-9b1b-541009d61ff8/0.0.157/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The deployment is not exposed using a Service. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7dde79fb-2778-4a66-9ce5-6772bafe8df8
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e92dba43-813f-4490-9b1b-541009d61ff8-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e92dba43-813f-4490-9b1b-541009d61ff8-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

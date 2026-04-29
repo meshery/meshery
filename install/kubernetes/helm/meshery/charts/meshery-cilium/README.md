@@ -9,8 +9,8 @@ Meshery Adapter for Cilium chart.
 | Name | Email | Url |
 | ---- | ------ | --- |
 | aisuko | <urakiny@gmail.com> |  |
-| leecalcote | <leecalcote@gmail.com> |  |
-| Meshery Authors | <community@layer5.io> |  |
+
+| Meshery Authors | <community@meshery.io> |  |
 
 ## Values
 
@@ -22,7 +22,7 @@ Meshery Adapter for Cilium chart.
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
-| image.repository | string | `"layer5/meshery-cilium:stable-latest"` |  |
+| image.repository | string | `"meshery/meshery-cilium:stable-latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | string | `nil` |  |
 | ingress.enabled | bool | `false` |  |

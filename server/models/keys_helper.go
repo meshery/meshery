@@ -3,9 +3,9 @@ package models
 import (
 	"strings"
 
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/utils/csv"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/utils/csv"
 )
 
 var (

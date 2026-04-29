@@ -17,44 +17,48 @@ package workspaces
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
 	"github.com/spf13/cobra"
 )
 
 var (
-	availableSubcommands = []*cobra.Command{listWorkspaceCmd, createWorkspaceCmd}
+	availableSubcommands = []*cobra.Command{listWorkspaceCmd, createWorkspaceCmd, viewWorkspaceCmd}
 	workspacesApiPath    = "api/workspaces"
 )
 
 var WorkSpaceCmd = &cobra.Command{
 	Use:   "workspace",
-	Short: "Managge workspaces under an organization",
+	Short: "Manage workspaces under an organization",
 	Long: `Create, list of workspaces under an organization
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace`,
 	Example: `
 
 // To view a list workspaces
-mesheryctl exp workspace list --orgId [orgId]
+mesheryctl workspace list --orgId [orgId]
 
 // To create a workspace
-mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
+mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 || len(args) > 1 {
-			errMsg := "Usage: mesheryctl exp workspace [subcommand]\nRun 'mesheryctl exp workspace --help' to see detailed help message"
-			return utils.ErrInvalidArgument(fmt.Errorf("no command specified. %s", errMsg))
+			return returnInvalidArgumentProvidedError()
 		}
 		return nil
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(cmd.Usage())
+			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list]. Use 'mesheryctl workspace --help' to display usage guide", args[0]))
 		}
 
 		return nil
 	},
+}
+
+func returnInvalidArgumentProvidedError() error {
+	errMsg := "Usage: mesheryctl workspace [subcommand]\nRun 'mesheryctl workspace --help' to see detailed help message"
+	return utils.ErrInvalidArgument(fmt.Errorf("no subcommand specified. %s", errMsg))
 }
 
 func init() {

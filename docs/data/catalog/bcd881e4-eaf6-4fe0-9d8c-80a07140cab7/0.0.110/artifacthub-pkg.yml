@@ -1,0 +1,24 @@
+version: 0.0.110
+name: kubernetes-cluster-access-model
+displayName: Kubernetes Cluster Access Model
+createdAt: "2025-07-25T17:19:23Z"
+description: This design pattern illustrates the different interaction models for administrators and end-users with a Kubernetes cluster. It is adapted from a diagram in the Exoscale documentation.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/bcd881e4-eaf6-4fe0-9d8c-80a07140cab7/0.0.110/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The purpose is for visualization and learning, not for direct production deployment without modification. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1ef99df6-9bcb-4639-9d92-8b634cdc429d
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/bcd881e4-eaf6-4fe0-9d8c-80a07140cab7-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/bcd881e4-eaf6-4fe0-9d8c-80a07140cab7-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/logger"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -63,9 +63,11 @@ func FetchKubernetesNodes(kubeconfig []byte, contextName string, log logger.Hand
 		addresses := n.Status.Addresses
 		for _, address := range addresses {
 			log.Debug(fmt.Sprintf("Type: %s, Address: %s", address.Type, address.Address))
-			if address.Type == "InternalIP" {
+			switch address.Type {
+			case "InternalIP":
 				node.InternalIP = address.Address
-			} else if address.Type == "Hostname" {
+
+			case "Hostname":
 				node.HostName = address.Address
 			}
 		}

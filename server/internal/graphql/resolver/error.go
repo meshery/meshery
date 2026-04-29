@@ -1,7 +1,7 @@
 package resolver
 
 import (
-	"github.com/layer5io/meshkit/errors"
+	"github.com/meshery/meshkit/errors"
 )
 
 // Please reference the following before contributing an error code:
@@ -38,6 +38,7 @@ const (
 	ErrPerformanceProfilesSubscriptionCode  = "meshery-server-1211"
 	ErrPerformanceResultSubscriptionCode    = "meshery-server-1212"
 	ErrGormDatabaseCode                     = "meshery-server-1213"
+	ErrResyncClusterCode                    = "meshery-server-1369"
 )
 
 var (
@@ -187,4 +188,8 @@ func ErrGettingTelemetryComponents(err error) error {
 
 func ErrAdapterInsufficientInformation(err error) error {
 	return errors.New(ErrAdapterInsufficientInformationCode, errors.Critical, []string{"Unable to process adapter request, incomplete request"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrResyncCluster(err error) error {
+	return errors.New(ErrResyncClusterCode, errors.Alert, []string{"Unable to process resync cluster request"}, []string{err.Error()}, []string{}, []string{})
 }

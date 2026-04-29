@@ -1,11 +1,10 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 )
 
 // ServeReactComponentFromPackage serves static assets from the package
@@ -17,7 +16,6 @@ func ServeReactComponentFromPackage(
 	provider models.Provider,
 ) {
 	escPath := r.URL.EscapedPath()
-	fmt.Println("[package location] ", provider.PackageLocation())
 	assetPath := strings.Replace(escPath, reqBasePath, provider.PackageLocation(), 1)
 
 	http.ServeFile(w, r, assetPath)

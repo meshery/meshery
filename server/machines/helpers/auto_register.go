@@ -8,19 +8,21 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofrs/uuid"
-	helpers "github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-	"github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/core"
 
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/gofrs/uuid"
+	helpers "github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/meshkit/utils"
+	"github.com/meshery/schemas/models/v1beta3/component"
+
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
 )
 
@@ -56,7 +58,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 	if arh == nil {
 		return
 	}
-	sysID := viper.Get("INSTANCE_ID").(*uuid.UUID)
+	sysID := viper.Get("INSTANCE_ID").(*core.Uuid)
 	regChan := models.GetMeshSyncRegistrationQueue().RegChan
 
 	for regData := range regChan {
@@ -88,7 +90,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						return
 					}
 
-					ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: userID.String()})
+					ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: userID})
 					ctx = context.WithValue(ctx, models.SystemIDKey, sysID)
 					ctx = context.WithValue(ctx, models.TokenCtxKey, data.MeshsyncDataHandler.Token)
 
@@ -117,7 +119,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						if err != nil {
 							event.Description = fmt.Sprintf("Failed to auto register \"%s\" connection at %s", connectionName, url)
 							// Do not publish the event if auto registration fails.
-							_ = data.MeshsyncDataHandler.Provider.PersistEvent(event)
+							_ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
 							continue
 						}
 
@@ -127,7 +129,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						event = events.NewEvent().WithCategory("connection").WithAction("register").FromUser(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
 
 						go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.UserID, event)
-						_ = data.MeshsyncDataHandler.Provider.PersistEvent(event)
+						_ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
 					}
 				}
 
@@ -136,7 +138,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 	}
 }
 
-func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID uuid.UUID, connectionDef *component.ComponentDefinition, connMetadata map[string]interface{}) (connections.ConnectionPayload, uuid.UUID) {
+func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID core.Uuid, connectionDef *component.ComponentDefinition, connMetadata map[string]interface{}) (connections.ConnectionPayload, core.Uuid) {
 
 	id, _ := generateUUID(map[string]interface{}{
 		"name":       objName,
@@ -184,7 +186,7 @@ func getTypeOfConnection(obj *meshsyncmodel.KubernetesResource) string {
 	return ""
 }
 
-func generateUUID(data map[string]interface{}) (uuid.UUID, error) {
+func generateUUID(data map[string]interface{}) (core.Uuid, error) {
 	marshalledData, _ := utils.Marshal(data)
 	hash := md5.Sum([]byte(marshalledData))
 	return uuid.FromString(hex.EncodeToString(hash[:]))

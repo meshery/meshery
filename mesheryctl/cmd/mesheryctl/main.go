@@ -17,7 +17,7 @@ package main
 import (
 	"os"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root"
 )
 
 // main is the entrypoint of the mesheryctl command-line tool

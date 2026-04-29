@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 type DiscoverAction struct{}
@@ -20,8 +20,8 @@ func (da *DiscoverAction) ExecuteOnEntry(ctx context.Context, machineCtx interfa
 
 func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
-	userUUID := uuid.FromStringOrNil(user.ID)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	userUUID := user.ID
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
@@ -48,7 +48,7 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 	}
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	_, err = provider.SaveK8sContext(token, machinectx.K8sContext)
+	_, err = provider.SaveK8sContext(token, machinectx.K8sContext, nil)
 	if errors.Is(err, models.ErrContextAlreadyPersisted) {
 		machinectx.log.Info(fmt.Sprintf("context already persisted (\"%s\" at %s)", k8sContext.Name, k8sContext.Server))
 	} else if err != nil {

@@ -1,0 +1,1 @@
+Hello everyone, My name is Saujal Karki, curretly pursuing my Bachelors degree in Information Technology (last year student). I am passionate about exploring new things and building solutions through tech. Currently, I am experience of about less than a year in MERN stack and want to explore the world of open source.

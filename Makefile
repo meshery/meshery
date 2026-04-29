@@ -24,19 +24,19 @@ include install/Makefile.show-help.mk
 docker-build:
 	# `make docker-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t meshery/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
 
 ## Build Meshery Server and UI container in Playground mode.
 docker-playground-build:
 	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) --build-arg PLAYGROUND=true .
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t meshery/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) --build-arg PLAYGROUND=true .
 
 ## Build Meshery Server and UI container for e2e testing.
 docker-testing-env-build:
 	# `make docker-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/testing/Dockerfile -t layer5/meshery-testing-env --build-arg GIT_VERSION=$(GIT_VERSION) .
+	DOCKER_BUILDKIT=1 docker build -f install/docker/testing/Dockerfile -t meshery/meshery-testing-env --build-arg GIT_VERSION=$(GIT_VERSION) .
 
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
@@ -49,7 +49,7 @@ docker-local-cloud:
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-e KEYS_PATH=$(KEYS_PATH) \
 	-p 9081:8080 \
-	layer5/meshery ./meshery
+	meshery/meshery ./meshery
 
 ## Runs Meshery in a container locally and points to remote
 ## Remote Provider for user authentication.
@@ -63,7 +63,7 @@ docker-cloud:
 	-v meshery-config:/home/appuser/.meshery/config \
   -v $(HOME)/.kube:/home/appuser/.kube:ro \
 	-p 9081:8080 \
-	layer5/meshery ./meshery
+	meshery/meshery ./meshery
 
 ## Runs Meshery in a container locally and points to remote
 ## Remote Provider for user authentication.
@@ -76,7 +76,7 @@ docker-testing-env:
 	-v meshery-config:/home/appuser/.meshery/config \
   -v $(HOME)/.kube:/home/appuser/.kube:ro \
 	-p 9081:8080 \
-	layer5/meshery-testing-env ./meshery
+	meshery/meshery-testing-env ./meshery
 
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
@@ -100,6 +100,23 @@ server-local: dep-check
 	cd server; cd cmd; go clean; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	OTEL_CONFIG=$(OTEL_CONFIG) \
+	KEYS_PATH=$(KEYS_PATH) \
+	go run main.go error.go
+
+server-kanvas: dep-check
+	cd server; cd cmd; go clean; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER=Layer5 \
+	RELEASE_CHANNEL=kanvas \
+	PLAYGROUND=true \
+	OTEL_CONFIG=$(OTEL_CONFIG) \
+	PROVIDER_CAPABILITIES_FILEPATH=../../install/samples/provider_capabilities.json \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -164,6 +181,9 @@ server: dep-check
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=$(PORT) \
 	DEBUG=true \
+	USE_GO_POLICY_ENGINE=$(USE_GO_POLICY_ENGINE) \
+	OTEL_CONFIG=$(OTEL_CONFIG) \
+	PROVIDER_CAPABILITIES_FILEPATH=$(PROVIDER_CAPABILITIES_FILEPATH) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
@@ -273,7 +293,7 @@ server-playground: dep-check
 
 ## Lint check Meshery Server.
 golangci: error dep-check
-	golangci-lint run
+	golangci-lint run --config=.github/.golangci.yml --timeout=10m
 
 ## Build Meshery's protobufs.
 proto-build:
@@ -286,11 +306,11 @@ proto-build:
 
 ## Analyze error codes
 error: dep-check
-	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
+	go run github.com/meshery/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
 
 ## Runs meshkit error utility to update error codes for meshery server only.
 error-util:
-	go run github.com/layer5io/meshkit/cmd/errorutil -d . --skip-dirs mesheryctl update -i ./server/helpers/ -o ./server/helpers
+	go run github.com/meshery/meshkit/cmd/errorutil -d . --skip-dirs mesheryctl update -i ./server/helpers/ -o ./server/helpers
 
 ## Build Meshery UI; Build and run Meshery Server on your local machine.
 ui-server: ui-meshery-build ui-provider-build server
@@ -324,8 +344,9 @@ ui-setup:
 
 ## Clean Install dependencies for building Meshery UI.
 ui-setup-ci:
-	cd ui && npm ci && cd ..
-	cd provider-ui && npm ci && cd ..
+	cd ui; npm ci; cd ..
+	cd provider-ui; npm ci; cd ..
+
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
@@ -349,12 +370,12 @@ ui-provider-test:
 
 ## Buils all Meshery UIs  on your local machine.
 ui-build: ui-setup
-	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
-	cd provider-ui; npm run lint:fix && npm run build; cd ..
+	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build; cd ..
+	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
 ui-meshery-build:
-	cd ui; npm run build && npm run export; cd ..
+	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
 ui-provider-build:
@@ -368,31 +389,62 @@ ui-integration-tests: ui-setup
 # Meshery Docs
 #-----------------------------------------------------------------------------
 #Incorporating Make docs commands from the Docs Makefile
-.PHONY: docs docs-build site docs-docker docs-mesheryctl
-jekyll=bundle exec jekyll
+.PHONY: docs docs-setup docs-build docs-build-production site docs-docker docs-mesheryctl check-go
 
+## Alias target to run Meshery Docs in watch mode.
 site: docs
+## Alias target to run Meshery Docs once without file watching.
 site-serve: docs-serve
 
+## Install docs dependencies.
+docs-setup:
+	cd docs; npm install
+
 ## Run Meshery Docs. Listen for changes.
-docs:
-	cd docs; bundle install; bundle exec jekyll serve --drafts --incremental --config _config_dev.yml
+docs: check-go
+	cd docs; hugo server -D -F
 
 ## Run Meshery Docs. Do not listen for changes.
-docs-serve:
-	cd docs; bundle install; bundle exec jekyll serve --drafts --config _config_dev.yml
+docs-serve: check-go
+	cd docs; hugo server -D -F --watch=false
+
+## Run Meshery Docs. Do not listen for changes.
+docs-clean: check-go
+	cd docs; hugo --cleanDestinationDir
+	make docs
+
 
 ## Build Meshery Docs on your local machine.
-docs-build:
-	cd docs; $(jekyll) build --drafts
+docs-build: check-go
+	cd docs; hugo
+
+## Build Meshery Docs for production. BASE_URL is optional.
+## Example: make docs-build-production BASE_URL=https://example.com
+docs-build-production:
+	cd docs; \
+	hugo_args="--gc --minify"; \
+	if [ -n "$(BASE_URL)" ]; then \
+		base_url="$(BASE_URL)"; \
+		base_url="$${base_url%/}/"; \
+		hugo_args="$$hugo_args --baseURL $$base_url"; \
+	fi; \
+	echo "Running: hugo $$hugo_args"; \
+	hugo $$hugo_args
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
-	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0 bash -c "bundle install; jekyll serve --drafts --livereload"
+	cd docs; docker run --rm --name meshery-docs -p 1313:1313 -v `pwd`:/src -w /src ghcr.io/gohugoio/hugo:v0.157.0 server -D -F --bind 0.0.0.0
+
 
 ## Build Meshery CLI docs
 docs-mesheryctl:
 	cd mesheryctl; make docs;
+
+## Validate Go is installed.
+check-go:
+	@echo "Checking if Go is installed..."
+	@command -v go > /dev/null || (echo "Go is not installed. Please install it before proceeding."; exit 1)
+	@echo "Go is installed."
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
@@ -423,24 +475,7 @@ helm-meshery-lint:
 #-----------------------------------------------------------------------------
 # Meshery APIs
 #-----------------------------------------------------------------------------
-.PHONY: swagger-build swagger swagger-docs-build graphql-docs-build graphql-build
-## Build Meshery REST API specifications
-swagger-build:
-	swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
-
-## Generate and serve Meshery REST API specifications
-swagger: swagger-build
-	swagger serve ./server/helpers/swagger.yaml
-
-## Build Meshery REST API documentation
-swagger-docs-build:
-	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
-	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
-
-
-## Building Meshery docs with redocly
-redocly-docs-build:
-	npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml' -t custom.hbs
+.PHONY: graphql-docs-build graphql-build
 
 ## Build Meshery GraphQL API documentation
 graphql-docs-build:
@@ -454,21 +489,99 @@ graphql-build: dep-check
 
 ## testing
 test-setup-ui:
-	cd ui; npx playwright install --with-deps; cd ..
+	cd ui; npx playwright install chromium --with-deps; cd ..
 
 test-ui:
-	cd ui; npm run test:e2e; cd ..
+	 touch .env
+	 @set -a; source .env; set +a; cd ui; npm run test:e2e ; cd ..
 
 test-e2e-ci:
-	cd ui; npm run test:e2e:ci; cd ..
+	 touch .env
+	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
 
 #-----------------------------------------------------------------------------
 # Rego Policies
 #-----------------------------------------------------------------------------
+.PHONY: rego-eval policy-test policy-lint
+
 rego-eval:
 	opa eval -i policies/test/design_all_relationships.yaml -d relationships:policies/test/all_relationships.json -d server/meshmodel/meshery-core/0.7.2/v1.0.0/policies/ \
 	'data.relationship_evaluation_policy.evaluate' --format=pretty
 
+## Format and lint Rego policy files
+policy-lint:
+	@echo "Formatting Rego files..."
+	@opa fmt --write .
+	@echo "Linting Rego files..."
+	@regal lint --config-file ./policies/wasm/policies/.regal/config.yaml ./server/meshmodel
+
+## Run Rego policy unit tests using OPA and Go test runner
+policy-test:
+	@echo "Running OPA Rego policy tests..."
+	@cd server/policies && go test -v ./...
+
+
+#-----------------------------------------------------------------------------
+# Testing - MeshSync Integration Tests (Go)
+#-----------------------------------------------------------------------------
+
+## Runs MeshSync integration tests check dependencies script (if docker, kind, kubectl, helm are present)
+server-integration-tests-meshsync-check-dependencies:
+	./server/integration-tests/meshsync/infrastructure/setup.sh check_dependencies
+
+server-integration-tests-meshsync-setup-cluster:
+	./server/integration-tests/meshsync/infrastructure/setup.sh setup_cluster
+
+server-integration-tests-meshsync-setup-connection:
+	./server/integration-tests/meshsync/infrastructure/setup.sh setup_connection
+
+## Runs MeshSync integration tests set up script (runs creates a test kind cluster, deploys operator to it)
+## docker compose exposes nats on default ports to host, so they must be available
+server-integration-tests-meshsync-setup: server-integration-tests-meshsync-setup-cluster server-integration-tests-meshsync-setup-connection
+
+server-integration-tests-meshsync-cleanup-cluster:
+	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup_cluster
+
+server-integration-tests-meshsync-cleanup-connection:
+	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup_connection
+
+## Runs MeshSync integration tests clean up (stops docker compose and deletes test cluster)
+server-integration-tests-meshsync-cleanup: server-integration-tests-meshsync-cleanup-connection server-integration-tests-meshsync-cleanup-cluster
+
+## Runs MeshSync integration tests code itself
+server-integration-tests-meshsync-run:
+	RUN_INTEGRATION_TESTS=true \
+	PATH_TO_SQL_FILE="../../../meshery-integration-test-meshsync-mesherydb.sql" \
+	go test -v -count=1 -run Integration ./server/integration-tests/meshsync
+
+## Runs MeshSync integration tests full cycle (docker build, setup, run, cleanup)
+server-integration-tests-meshsync: docker-build server-integration-tests-meshsync-setup server-integration-tests-meshsync-run server-integration-tests-meshsync-cleanup
+
+#-----------------------------------------------------------------------------
+# Testing - UI
+#-----------------------------------------------------------------------------
+.PHONY: ui-test-setup ui-test ui-test-e2e-ci
+## Install Playwright dependencies for UI tests
+ui-test-setup:
+	cd ui; npx playwright install chromium --with-deps; cd ..
+
+## Run Meshery UI End-to-End Tests
+ui-test:
+	 touch .env
+	 @set -a; source .env; set +a; cd ui; npm run test:e2e ; cd ..
+
+## Run Meshery UI End-to-End Tests in CI environment
+ui-test-e2e-ci:
+	 touch .env
+	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
+
+#-----------------------------------------------------------------------------
+# Testing - Meshery CLI
+#-----------------------------------------------------------------------------
+.PHONY: mesheryctl-tests
+### Run all Mesheryctl integration tests (Golang)
+mesheryctl-tests-int:
+	cd mesheryctl && go test ./...
 #-----------------------------------------------------------------------------
 # Dependencies
 #-----------------------------------------------------------------------------

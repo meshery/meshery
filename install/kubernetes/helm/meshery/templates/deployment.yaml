@@ -35,17 +35,35 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          {{- if .Values.probe.startupProbe.enabled }}
+          startupProbe:
+            httpGet:
+              path: /healthz/live
+              port: http
+            initialDelaySeconds: {{ .Values.probe.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.probe.startupProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.probe.startupProbe.timeoutSeconds }}
+          {{- end }}
           {{- if .Values.probe.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
-              path: /
+              path: /healthz/live
               port: http
+            initialDelaySeconds: {{ .Values.probe.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.probe.livenessProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.probe.livenessProbe.timeoutSeconds }}
           {{- end }}
           {{- if .Values.probe.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
-              path: /
+              path: /healthz/ready
               port: http
+            initialDelaySeconds: {{ .Values.probe.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.probe.readinessProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.probe.readinessProbe.timeoutSeconds }}
           {{- end }}
           env:
           {{- if .Values.env }}
@@ -68,3 +86,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+

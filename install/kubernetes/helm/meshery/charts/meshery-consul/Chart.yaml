@@ -3,7 +3,7 @@ name: meshery-consul
 description: Meshery Adapter for Consul chart.
 icon: https://meshery.io/images/logos/meshery-logo.png
 source: 
-  - https://github.com/layer5io/meshery-consul
+  - https://github.com/meshery/meshery-consul
 
 deprecated: false
 
@@ -27,8 +27,8 @@ appVersion: stable-latest
 
 maintainers:
   - name: Meshery Authors
-    email: community@layer5.io
+    email: community@meshery.io
   - name: aisuko
     email: urakiny@gmail.com
-  - name: leecalcote
-    email: lee.calcote@layer5.io
+  - name: maintainers
+    email: maintainers@meshery.io

@@ -6,7 +6,8 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestListModel(t *testing.T) {
@@ -18,7 +19,7 @@ func TestListModel(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	testUrl := fmt.Sprintf("/%s?page=0&pagesize=10", modelsApiPath)
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "List model",
 			Args:             []string{"list", "--page", "1"},
@@ -53,5 +54,6 @@ func TestListModel(t *testing.T) {
 		},
 	}
 
+	mesheryctlflags.InitValidators(ModelCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, ModelCmd, tests, currDir, "model")
 }

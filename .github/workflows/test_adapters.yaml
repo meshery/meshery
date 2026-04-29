@@ -44,6 +44,10 @@ on:
       provider: #default to local
         required: false
         type: string
+      job_type:
+        required: false
+        type: string
+        default: ""
     secrets:
       token:
         required: true
@@ -143,7 +147,7 @@ jobs:
           config='{"contexts":{"local":{"endpoint":'$svcip',"token":"default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"default"}]}'
           echo $config  > ~/.meshery/config.yaml
       - name: Download patternfile
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: patternfile
       - name: Wait for Meshery pods to come up
@@ -236,9 +240,9 @@ jobs:
           echo $(jq '.metadata."meshery-server-version" |="'$MESHERY_VERSION'"' data.json ) > data.json
           echo "exitstatus=$exitstatus" >> $GITHUB_ENV
       - name: UploadResults
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
-          name: ${{ inputs.output_filename }}
+          name: ${{ inputs.job_type != '' && format('{0}-', inputs.job_type) || '' }}${{ inputs.output_filename }}
           path: ./${{ inputs.output_filename }}
       - name: exit
         run: |

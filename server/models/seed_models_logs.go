@@ -2,16 +2,17 @@ package models
 
 import (
 	"fmt"
+	"strings"
 
 	gofrs "github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	mutils "github.com/meshery/meshkit/utils"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 var TAB = "    "
@@ -98,7 +99,7 @@ func failedMsgCompute(failedMsg string, hostName string, regLog *RegistrationFai
 	return failedMsg, nil
 }
 
-func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider *Provider, userID string, ec *Broadcast, regErrorStore *RegistrationFailureLog) (string, error) {
+func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *Provider, userID string, ec *Broadcast, regErrorStore *RegistrationFailureLog) (string, error) {
 	failedMsg, err := failedMsgCompute("", hostname, regErrorStore)
 	if err != nil {
 		return "", err
@@ -113,7 +114,7 @@ func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider 
 			"ViewLink":     filePath,
 			"error":        ErrImportFailure(hostname, failedMsg),
 		})
-		_ = (*provider).PersistEvent(errorEvent)
+		_ = (*provider).PersistSystemEvent(*errorEvent)
 		if userID != "" {
 			userUUID := gofrs.FromStringOrNil(userID)
 			ec.Publish(userUUID, errorEvent)
@@ -189,12 +190,12 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 
 		log.Info(successMessage)
 		eventBuilder.WithMetadata(map[string]interface{}{
-			"kind": host.Kind,
+			"kind":    host.Kind,
 			"doclink": "https://docs.meshery.io/concepts/logical#logical-concepts",
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()
-		_ = provider.PersistEvent(successEvent)
+		_ = provider.PersistSystemEvent(*successEvent)
 
 		failLog, err := FailedEventCompute(host.Kind, sysID, &provider, "", handlerConfig.EventBroadcaster, regErrorStore)
 		if err != nil {

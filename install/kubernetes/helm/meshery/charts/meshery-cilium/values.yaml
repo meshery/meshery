@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: layer5/meshery-cilium:stable-latest
+  repository: meshery/meshery-cilium:stable-latest
   pullPolicy: Always
 
 env: {}

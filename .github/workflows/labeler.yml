@@ -10,7 +10,7 @@ jobs:
   triage:
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/labeler@v5
+    - uses: actions/labeler@v6
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         

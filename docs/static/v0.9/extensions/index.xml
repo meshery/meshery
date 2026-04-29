@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Extensions on Documentation</title>
+    <link>/v0.9/extensions/</link>
+    <description>Recent content in Extensions on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/extensions/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Helm Kanvas Snapshot</title>
+      <link>/v0.9/extensions/helm-kanvas-snapshot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/helm-kanvas-snapshot/</guid>
+      <description>&lt;h1 id=&#34;helm-kanvas-snapshot&#34;&gt;&#xA;&#x9;&lt;img style=&#34;height: 4rem; width: 4rem;&#34; src=&#34;/v0.9/extensions/images/helm-chart-color.svg&#34; /&gt; Helm Kanvas Snapshot&#xA;&lt;/h1&gt;&#xA;&lt;h2 id=&#34;extension-overview&#34;&gt;&#xA;&#x9;Extension Overview&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;The &lt;strong&gt;Kanvas Snapshot Helm Plugin&lt;/strong&gt; allows users to generate a visual snapshot of their Helm charts directly from the command line. It simplifies the process of creating Meshery Snapshots, providing a visual representation of packaged Helm charts. This plugin integrates with Meshery Cloud and GitHub Actions to automate the workflow of snapshot creation, which is especially useful for Helm users who need to quickly visualize their chart configurations.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Import and Export Designs</title>
+      <link>/v0.9/extensions/import-export-designs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/import-export-designs/</guid>
+      <description>&lt;h1 id=&#34;import-and-export-designs&#34;&gt;&#xA;&#x9;Import and Export Designs&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;Meshery supports two primary operations for working with designs: &lt;strong&gt;Import&lt;/strong&gt; and &lt;strong&gt;Export&lt;/strong&gt;.&#xA;A &lt;strong&gt;&lt;a href=&#34;/v0.9/concepts/logical/designs/&#34;&gt;design&lt;/a&gt;&lt;/strong&gt; in Meshery is a structured model describing how various components (e.g., Kubernetes manifests, Helm charts, or Docker Compose objects) should be managed and deployed. This document details the core concepts, the import/export processes, and the available methods to perform them.&lt;/p&gt;&#xA;&lt;h2 id=&#34;core-operations&#34;&gt;&#xA;&#x9;Core Operations&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Meshery treats each design as a combination of:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Kanvas</title>
+      <link>/v0.9/extensions/kanvas/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/kanvas/</guid>
+      <description>&lt;h1 id=&#34;kanvas-beta&#34;&gt;&#xA;&#x9;&lt;img style=&#34;height: 4rem; width: 4rem;&#34; src=&#34;/v0.9/extensions/images/kanvas-icon-color.svg&#34; /&gt; Kanvas &lt;sup style=&#34;font-size: 1.8rem; vertical-align: top;&#34;&gt;BETA&lt;/sup&gt;&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;Kanvas is a GitOps-infused cloud native &lt;b&gt;visual designer&lt;/b&gt; for Kubernetes and cloud native applications. Kanvas works with your Kubernetes clusters so that you design and manage your infrastructure and applications between members of your team. Kanvas has two modes: Designer and Visualizer. Create and share your own Kubernetes deployments and patterns in Kanvas Designer. Deploy your designs and manage your infrastructure using Kanvas Visualizer. It includes multi-user collaboration features that allow teams to work together seamlessly towards achieving their goals in a more timely manner. Kanvas aims at removing all the challenging aspects of collaboration from the equation so that everyone on your team can be on the same page when it comes to managing cloud-native infrastructure projects.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Kanvas Snapshot</title>
+      <link>/v0.9/extensions/kanvas-snapshot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/kanvas-snapshot/</guid>
+      <description>&lt;h1 id=&#34;kanvas-snapshot&#34;&gt;&#xA;&#x9;&lt;img style=&#34;height: 4rem; width: 4rem;&#34; src=&#34;/v0.9/extensions/images/kanvas-icon-color.svg&#34; /&gt; Kanvas Snapshot&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;Kanvas Snapshot is a screenshot service provided via Kanvas for your designs. Visualize changes to your code-base with each pull request made. The SnapShot GitHub Action is configurable from within your Cloud account.&lt;/p&gt;&#xA;&lt;details&gt;&#xA;&lt;summary&gt;How the SnapShot service works&lt;/summary&gt;&#xA;&lt;h3&gt;Functional Sequence Diagram&lt;/h3&gt;&#xA;&lt;img src=&#34;/v0.9/extensions/images/kanvas-snapshot.png&#34; /&gt;&#xA;&lt;/details&gt;&#xA;&lt;h3&gt;Installing Kanvas Snapshot: Github Pull Request&lt;/h3&gt;&#xA;&lt;p&gt;Connect MeshMap to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>kubectl MeshSync Snapshot</title>
+      <link>/v0.9/extensions/kubectl-meshsync-snapshot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensions/kubectl-meshsync-snapshot/</guid>
+      <description>&lt;h1 id=&#34;kubectl-meshsync-snapshot&#34;&gt;&#xA;&#x9;&lt;img style=&#34;height: 4rem; width: 4rem;&#34; src=&#34;/v0.9/extensions/images/meshsync.svg&#34; /&gt; kubectl MeshSync Snapshot&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;A &lt;code&gt;kubectl&lt;/code&gt; plugin for performing an ad hoc collection of resource information from a Kubernetes cluster and sending the cluster resources details to a Meshery Server. &lt;code&gt;kubectl meshsync snapshot&lt;/code&gt; is a native kubectl plugin for conveniently synchronizing the state of your cluster with Meshery Server.&lt;/p&gt;&#xA;&lt;hr /&gt;&#xA;&lt;h2 id=&#34;about-meshery-extensions&#34;&gt;&#xA;&#x9;About Meshery Extensions&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://meshery.io/extensions&#34;&gt;Meshery Extensions&lt;/a&gt; are plugins or add-ons that enhance the functionality of the Meshery platform beyond its core capabilities. Meshery supports different types of extensions (&lt;a href=&#34;/v0.9/extensions/&#34;&gt;docs&lt;/a&gt;):&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

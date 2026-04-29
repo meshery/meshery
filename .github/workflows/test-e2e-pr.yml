@@ -1,0 +1,97 @@
+name: PR E2E Tests 
+
+on:
+  workflow_call:
+    inputs:
+      backend-artifact:
+        description: 'Name of the backend artifact to download'
+        required: true
+        type: string
+      ui-artifact:
+        description: 'Name of the UI artifact to download'
+        required: true
+        type: string
+      provider-ui-artifact:
+        description: 'Name of the Provider UI artifact to download'
+        required: true
+        type: string
+    
+    outputs:
+      test-report-artifact:
+        value: ${{ jobs.test-e2e.outputs.test-report-artifact }}
+      allure-results-artifact:
+        value: ${{ jobs.test-e2e.outputs.allure-results-artifact }}
+      playwright-traces-artifact:
+        value: ${{ jobs.test-e2e.outputs.playwright-traces-artifact }}
+      playwright-report-artifact:
+        value: ${{ jobs.test-e2e.outputs.playwright-report-artifact }}
+    
+    secrets: {}
+
+permissions:
+  contents: read
+
+jobs:
+  test-e2e:
+    name: E2E Tests
+    runs-on: ubuntu-24.04
+
+    outputs:
+      test-report-artifact: e2e-test-report
+      allure-results-artifact: allure-results
+      playwright-traces-artifact: playwright-traces
+      playwright-report-artifact: playwright-report
+    
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+        
+      - name: Setup Kubernetes (Kind)
+        uses: helm/kind-action@v1.13.0
+        with:
+          cluster_name: "kind-cluster"
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+    
+      - name: Download Build Artifacts
+        uses: ./.github/actions/download-artifacts
+        with:
+          backend-artifact: ${{ inputs.backend-artifact }}
+          ui-artifact: ${{ inputs.ui-artifact }}
+          provider-ui-artifact: ${{ inputs.provider-ui-artifact }}
+  
+      - name: Run Meshery UI and Server
+        run: |
+          chmod +x ./main
+          ./main &
+          sleep 90
+          
+      - name: Install Playwright
+        run: make ui-setup-ci
+
+      - name: Install Playwright Browsers
+        run: make ui-test-setup
+
+      - name: Run Playwright Tests (Local Only)
+        id: playwright-tests
+        env:
+          MESHERY_SERVER_URL: 'http://localhost:9081'
+        run: |
+          cd ui
+          npx playwright test --project=chromium-local-provider
+        continue-on-error: true
+      
+      - name: Upload Test Artifacts
+        if: always()
+        uses: ./.github/actions/upload-test-artifacts
+        with:
+          include-pr-metadata: ${{ github.event_name == 'pull_request' }}
+
+      - name: Fail job when Playwright reports test failures
+        if: ${{ steps.playwright-tests.outcome == 'failure' }}
+        run: exit 1

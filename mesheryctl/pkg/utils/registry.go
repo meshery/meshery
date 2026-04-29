@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	"github.com/layer5io/meshkit/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	"github.com/meshery/meshkit/utils"
 )
 
 type SystemType int
@@ -173,7 +173,7 @@ func GenerateJSStyleDocs(model meshkitRegistryUtils.ModelCSV, docsJSON string, c
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	_, err = io.WriteString(file, md)
 	if err != nil {
@@ -190,7 +190,7 @@ func GenerateMDStyleDocs(model meshkitRegistryUtils.ModelCSV, components []meshk
 	relationshipsCount := len(relationships)
 	// dir for markdown
 	modelsOutputPath, _ := filepath.Abs(filepath.Join("../", modelPath))
-	mdDir := filepath.Join(modelsOutputPath) // path, "pages", "integrations"
+	mdDir := filepath.Join(modelsOutputPath) // path, "extensions", "models"
 	err := os.MkdirAll(mdDir, 0777)
 	if err != nil {
 		return err
@@ -229,7 +229,7 @@ func GenerateMDStyleDocs(model meshkitRegistryUtils.ModelCSV, components []meshk
 	}
 
 	// generate components metadata and create svg files
-	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName, "components") // "assets", "img", "integrations"
+	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName, "components") // "extensions", "models"
 	_imgOutputPath := filepath.Join(imgsOutputPath, "components")
 	componentMetadata, err := meshkitRegistryUtils.CreateComponentsMetadataAndCreateSVGsForMDStyle(model, components, _imgOutputPath, _iconsSubDir)
 	if err != nil {
@@ -242,11 +242,11 @@ func GenerateMDStyleDocs(model meshkitRegistryUtils.ModelCSV, components []meshk
 
 	// generate markdown file
 	md := model.CreateMarkDownForMDStyle(componentMetadata, relationshipMetadata, componentsCount, relationshipsCount, "mesherydocs")
-	file, err := os.Create(filepath.Join(mdDir, modelName+".md"))
+	file, err := os.Create(filepath.Join(mdDir, modelName, "index.md"))
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	_, err = io.WriteString(file, md)
 	if err != nil {

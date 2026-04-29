@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 func OutputJson(component interface{}) error {
@@ -32,4 +34,15 @@ func prettifyJson(component interface{}) error {
 
 	// Any errors during the encoding process will be returned as an error.
 	return enc.Encode(component)
+}
+
+func OutputYaml(component interface{}) error {
+	// Marshal the component struct into YAML format.
+	output, err := yaml.Marshal(component)
+	if err != nil {
+		return ErrOutputToYaml()
+	}
+	// Print the YAML output to standard output.
+	fmt.Print(string(output))
+	return nil
 }

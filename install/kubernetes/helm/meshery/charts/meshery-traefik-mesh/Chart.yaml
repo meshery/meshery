@@ -3,7 +3,7 @@ name: meshery-traefik-mesh
 description: Meshery Adapter for Traefik Mesh chart.
 icon: https://meshery.io/images/logos/meshery-logo.png
 source: 
-  - https://github.com/layer5io/meshery-traefik-mesh
+  - https://github.com/meshery/meshery-traefik-mesh
 
 deprecated: false
 

@@ -1,7 +1,7 @@
 package selector
 
 import (
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 )
 
 const (

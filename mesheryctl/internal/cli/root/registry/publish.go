@@ -21,12 +21,11 @@ import (
 
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	meshkitUtils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	meshkitUtils "github.com/meshery/meshkit/utils"
 )
 
 var (
@@ -48,14 +47,15 @@ var (
 // Example publishing to mesheryio docs
 // mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
-// Example publishing to layer5 docs
-// mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
+// Example publishing to remove provider docs
+// mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw /src/collections/integrations /src/collections/integrations -o mdx
 
 // publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var publishCmd = &cobra.Command{
 	Use:   "publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]",
 	Short: "Publish Meshery Models to Websites, Remote Provider, Meshery Server",
-	Long:  `Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.`,
+	Long: `Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/publish`,
 	Example: `
 // Publish To System
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
@@ -71,16 +71,13 @@ mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integr
 
 // Publishing to meshery docs
 cd docs;
-mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
+mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
 
 // Publishing to mesheryio site
-mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
-
-// Publishing to layer5 site
-mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
+mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
 // Publishing to any website
-mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw path/to/models path/to/icons -o mdx
+mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw path/to/models path/to/icons -o mdx
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
@@ -166,24 +163,21 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 			}
 			err = websiteSystem()
 		default:
-			err = fmt.Errorf("invalid system: %s", system) // update to meshkit
+			return ErrPublish(fmt.Errorf("invalid system: %s", system), system)
 		}
 
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrPublish(err, system)
 		}
 
 		err = modelCSVHelper.Cleanup()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrPublish(err, system)
 		}
 
 		err = componentCSVHelper.Cleanup()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrPublish(err, system)
 		}
 
 		return nil
@@ -212,7 +206,7 @@ func remoteProviderSystem() error {
 		err := utils.GenerateIcons(model, comps, imgsOutputPath)
 		if err != nil {
 			utils.Log.Debug(utils.ErrGeneratingIcons(err, imgsOutputPath))
-			log.Fatalln(fmt.Printf("Error generating icons for model %s: %v\n", model.Model, err.Error()))
+			utils.Log.Fatalf("Error generating icons for model %s: %v", model.Model, err.Error())
 		}
 
 		_, _, err = WriteModelDefToFileSystem(&model, "", modelDir)
@@ -249,17 +243,17 @@ func websiteSystem() error {
 		case "mdx":
 			err := utils.GenerateMDXStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates mdx file
 			if err != nil {
-				log.Fatalln(fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error()))
+				utils.Log.Fatalf("Error generating remote provider docs for model %s: %v", model.Model, err.Error())
 			}
 		case "md":
 			err := utils.GenerateMDStyleDocs(model, comps, relnships, modelsOutputPath, imgsOutputPath) // creates md file
 			if err != nil {
-				log.Fatalln(fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error()))
+				utils.Log.Fatalf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
 			}
 		case "js":
 			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, comps, relnships, modelsOutputPath, imgsOutputPath) // json file
 			if err != nil {
-				log.Fatalln(fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error()))
+				utils.Log.Fatalf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
 			}
 		}
 

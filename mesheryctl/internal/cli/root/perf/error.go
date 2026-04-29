@@ -3,7 +3,7 @@ package perf
 import (
 	"fmt"
 
-	"github.com/layer5io/meshkit/errors"
+	"github.com/meshery/meshkit/errors"
 )
 
 // Please reference the following before contributing an error code:
@@ -25,6 +25,9 @@ const (
 	ErrInvalidJSONFileCode          = "mesheryctl-1052"
 	ErrHealthCheckerCode            = "mesheryctl-1053"
 	ErrPerformanceProfileResultCode = "mesheryctl-1054"
+	ErrUserPromptCode               = "mesheryctl-1160"
+	ErrConvertConcurrentRequestCode = "mesheryctl-1161"
+	ErrConvertQPSCode               = "mesheryctl-1162"
 )
 
 func ErrReadFilepath(err error) error {
@@ -153,4 +156,28 @@ func ErrPerformanceProfileResult(err error) error {
 		[]string{"Unable to display performance Profile" + err.Error()},
 		[]string{"Failed to fetch results for a specific profile"},
 		[]string{"Check your network connection and ensure Meshery is running .", formatErrorWithReference()})
+}
+
+func ErrUserPrompt(err error) error {
+	return errors.New(ErrUserPromptCode, errors.Alert,
+		[]string{"Prompt failed"},
+		[]string{err.Error()},
+		[]string{"User prompt was interrupted or failed to get input"},
+		[]string{"Try running the command again and complete the selection", formatErrorWithReference()})
+}
+
+func ErrConvertConcurrentRequest() error {
+	return errors.New(ErrConvertConcurrentRequestCode, errors.Alert,
+		[]string{"Failed to convert concurrent-request"},
+		[]string{"Invalid concurrent-request value provided"},
+		[]string{"The concurrent-request flag value is not a valid integer"},
+		[]string{"Provide a valid integer value for concurrent-request", formatErrorWithReference()})
+}
+
+func ErrConvertQPS() error {
+	return errors.New(ErrConvertQPSCode, errors.Alert,
+		[]string{"Failed to convert qps"},
+		[]string{"Invalid qps value provided"},
+		[]string{"The qps flag value is not a valid integer"},
+		[]string{"Provide a valid integer value for qps", formatErrorWithReference()})
 }

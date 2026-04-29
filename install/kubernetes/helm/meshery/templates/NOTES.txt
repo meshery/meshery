@@ -1,4 +1,17 @@
-1. Get the application URL by running these commands:
+Meshery has been successfully deployed.
+
+1. Open Meshery UI using `mesheryctl` or `kubectl`:
+
+- - - mesheryctl - - -
+
+// Open Meshery UI in browser
+mesheryctl system dashboard
+
+// Open Meshery UI in browser and use port-forwarding (if default port is taken already)
+mesheryctl system dashboard --port-forward
+
+- - - OR kubectl - - - 
+
 {{- if .Values.ingress.enabled }}
 {{- range $host := .Values.ingress.hosts }}
   {{- range .paths }}
@@ -19,4 +32,20 @@
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 9081:9081
   echo "Visit http://127.0.0.1:9081/provider to use Meshery UI"
 {{- end }}
+
+2. Monitor deployment status.
+
+- - - mesheryctl - - -
+
+ mesheryctl system check
+
+- - - OR kubectl - - - 
+
+  kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "meshery.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -w
+
+3. Check health status (with detailed information):
+  kubectl exec --namespace {{ .Release.Namespace }} deployment/{{ include "meshery.name" . }} -- curl -s "http://localhost:8080/healthz/ready?verbose=1"
+
+For more information about health checks and probe configuration, see:
+  https://github.com/meshery/meshery/blob/master/install/kubernetes/helm/meshery/HEALTHCHECKS.md
 

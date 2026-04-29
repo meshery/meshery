@@ -16,9 +16,10 @@ package system
 
 import (
 	"fmt"
-	config "github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	config "github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -31,10 +32,31 @@ var (
 	// token path
 )
 
+const (
+	platformDocker     = "docker"
+	platformKubernetes = "kubernetes"
+)
+
+func unsupportedPlatformError(platform string) error {
+	return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\n%s\n%s\nPlease check %s/config.yaml file", platform, platformDocker, platformKubernetes, utils.MesheryFolder)
+}
+
+func focusedSystemContext(cmd *cobra.Command, defaultContext string) string {
+	if flag := cmd.Flags().Lookup("context"); flag != nil && flag.Changed && tempContext != "" {
+		return tempContext
+	}
+
+	if flag := cmd.InheritedFlags().Lookup("context"); flag != nil && flag.Changed && tempContext != "" {
+		return tempContext
+	}
+
+	return defaultContext
+}
+
 // SystemCmd represents Meshery Lifecycle Management cli commands
 var SystemCmd = &cobra.Command{
 	Use:   "system",
-	Short: "Meshery Lifecycle Management",
+	Short: "Configure, deploy, and operate Meshery deployments",
 	Long:  `Manage the state and configuration of Meshery server, components, and client.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
@@ -71,6 +93,7 @@ func init() {
 		logoutCmd,
 		tokenCmd,
 		dashboardCmd,
+		deleteCmd,
 	}
 	// --context flag to temporarily change context. This is global to all system commands
 	SystemCmd.PersistentFlags().StringVarP(&tempContext, "context", "c", "", "(optional) temporarily change the current context.")

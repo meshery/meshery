@@ -1,6 +1,4 @@
-import fetch from "isomorphic-unfetch";
-
-export const PROVIDER_URL = "https://cloud.layer5.io";
+export const PROVIDER_URL = "https://cloud.meshery.io";
 
 // This can be migrated as a custom hook in React
 const dataFetch = (url, options = {}, successFn, errorFn) => {
@@ -27,7 +25,7 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
         // console.log(`res type: ${res.type}`);
         try {
           result = res.json();
-        } catch (e) {
+        } catch {
           result = res.text();
         }
         return result;

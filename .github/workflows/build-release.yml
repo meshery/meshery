@@ -15,4 +15,4 @@ jobs:
       with:
         name: "Build and Rollout Kanvas"
         repo: layer5labs/meshery-extensions-packages
-        token: ${{ secrets.GH_ACCESS_TOKEN }}
+        token: ${{ secrets.MESHERY_CI }}

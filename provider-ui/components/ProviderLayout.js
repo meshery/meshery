@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { NoSsr } from '@layer5/sistent'
-import { accentGrey, styled } from "@layer5/sistent";
+import { NoSsr } from '@sistent/sistent'
+import { accentGrey, styled } from "@sistent/sistent";
 
 const RootContainer = styled("div")(() => ({
   padding: "4vh 12vw",

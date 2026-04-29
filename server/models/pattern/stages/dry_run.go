@@ -1,6 +1,6 @@
 package stages
 
-// import "github.com/layer5io/meshery/server/models/pattern/patterns"
+// import "github.com/meshery/meshery/server/models/pattern/patterns"
 
 const DryRunResponseKey = "dryRunResponse"
 

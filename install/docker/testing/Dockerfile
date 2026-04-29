@@ -1,4 +1,4 @@
-FROM golang:1.23 AS meshery-server
+FROM golang:1.25.5 AS meshery-server
 ARG GIT_VERSION
 
 RUN adduser --disabled-login appuser
@@ -30,7 +30,7 @@ COPY ui .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN npm run build && npm run export
+RUN npm run build
 
 FROM base-node AS ui-provider-deps
 RUN apk add --no-cache libc6-compat
@@ -52,12 +52,12 @@ COPY provider-ui .
 RUN npm run build
 
 # This image will be reuse for wrk2, seed content and the last built
-FROM alpine:3.15.3 AS base-alpine
+FROM alpine:3.23.2 AS base-alpine
 
 FROM base-alpine AS wrk2
 RUN apk update \
     && apk --no-cache --update add alpine-sdk zlib-dev openssl-dev wget git
-RUN git config --global user.email "meshery@layer5.io"
+RUN git config --global user.email "meshery@meshery.io"
 RUN git config --global user.name "meshery"
 RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
@@ -93,14 +93,14 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #FROM ubuntu as nighthawk
 #RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
 #RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
-#RUN git config --global user.email "meshery@layer5.io"
+#RUN git config --global user.email "meshery@meshery.io"
 #RUN git config --global user.name "meshery"
 #RUN git clone https://github.com/layer5io/nighthawk-go
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 FROM base-alpine
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
-ENV GLIBC_VERSION=2.34-r0
+ENV GLIBC_VERSION=2.35-r1
 # To solve: ./meshery: /usr/glibc-compat/lib/libc.so.6: version `GLIBC_2.34' not found (required by ./meshery)
 RUN set -ex && \
     apk --update add libstdc++ curl ca-certificates && \
@@ -122,7 +122,6 @@ COPY ./server/meshmodel /app/server/meshmodel
 COPY ./server/permissions /app/server/permissions/
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
-COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
 COPY --from=ui-builder /app/out /app/ui/out
 COPY --from=ui-builder /app/public /app/ui/public
 COPY --from=ui-provider-builder /app/out /app/provider-ui/out

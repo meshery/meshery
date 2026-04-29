@@ -6,20 +6,21 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/core"
+
 	gofrs "github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models"
-	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshery/server/models"
+	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 
 	"github.com/spf13/viper"
 
-	"github.com/layer5io/meshkit/models/events"
-	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	entity "github.com/layer5io/meshkit/models/meshmodel/entity"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/models/events"
+	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
+	entity "github.com/meshery/meshkit/models/meshmodel/entity"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 )
 
 type EntityErrorCount struct {
@@ -30,8 +31,8 @@ type EntityErrorCount struct {
 type EntityTypeCountWithErrors struct {
 	Model        map[string]EntityErrorCount
 	Component    map[string]EntityErrorCount
-	Relationship map[uuid.UUID]EntityErrorCount
-	Policy       map[uuid.UUID]EntityErrorCount
+	Relationship map[core.Uuid]EntityErrorCount
+	Policy       map[core.Uuid]EntityErrorCount
 	Registry     map[string]EntityErrorCount
 	mu           sync.Mutex
 }
@@ -59,8 +60,8 @@ func HandleError(c connection.Connection, en entity.Entity, err error, isModelEr
 		LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)] = &EntityTypeCountWithErrors{
 			Model:        make(map[string]EntityErrorCount),
 			Component:    make(map[string]EntityErrorCount),
-			Relationship: make(map[uuid.UUID]EntityErrorCount),
-			Policy:       make(map[uuid.UUID]EntityErrorCount),
+			Relationship: make(map[core.Uuid]EntityErrorCount),
+			Policy:       make(map[core.Uuid]EntityErrorCount),
 			Registry:     make(map[string]EntityErrorCount),
 		}
 	}
@@ -98,13 +99,13 @@ func HandleError(c connection.Connection, en entity.Entity, err error, isModelEr
 			LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].mu.Lock()
 			if entityCount, ok := LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.GetID()]; ok {
 				entityCount.Attempt++
-				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.Id] = entityCount
+				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.GetID()] = entityCount
 			} else {
-				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.Id] = EntityErrorCount{Attempt: 1, Error: err}
+				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.GetID()] = EntityErrorCount{Attempt: 1, Error: err}
 			}
 			LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].mu.Unlock()
 
-			if LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.Id].Attempt == 1 {
+			if LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.GetID()].Attempt == 1 {
 				currentValue := LogHandler.NonImportModel[meshmodel.HostnameToPascalCase(c.Kind)]
 				currentValue.Relationships++
 				LogHandler.NonImportModel[meshmodel.HostnameToPascalCase(c.Kind)] = currentValue
@@ -173,7 +174,7 @@ func FailedMsgCompute(failedMsg string, hostName string) (string, error) {
 	return failedMsg, nil
 }
 
-func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider *models.Provider, userID string, ec *models.Broadcast) (string, error) {
+func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *models.Provider, userID string, ec *models.Broadcast) (string, error) {
 
 	failedMsg, err := FailedMsgCompute("", hostname)
 	if err != nil {
@@ -185,11 +186,11 @@ func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider 
 		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
 		errorEvent := errorEventBuilder.Build()
 		errorEventBuilder.WithMetadata(map[string]interface{}{
-			"Long_Description":      fmt.Sprintf("One or more entities failed to register. The import process for registrant, %s, encountered the following issue: %s.", hostname, failedMsg),
-			"DownloadLink":         filePath,
-			"ViewLink":             filePath,
+			"Long_Description": fmt.Sprintf("One or more entities failed to register. The import process for registrant, %s, encountered the following issue: %s.", hostname, failedMsg),
+			"DownloadLink":     filePath,
+			"ViewLink":         filePath,
 		})
-		_ = (*provider).PersistEvent(errorEvent)
+		_ = (*provider).PersistSystemEvent(*errorEvent)
 		if userID != "" {
 			userUUID := gofrs.FromStringOrNil(userID)
 			ec.Publish(userUUID, errorEvent)
@@ -249,8 +250,8 @@ func filterEmpty(m map[string]EntityErrorCount) map[string]EntityErrorCount {
 }
 
 // filterUUIDEmpty removes empty entries from a map with UUID keys
-func filterUUIDEmpty(m map[uuid.UUID]EntityErrorCount) map[uuid.UUID]EntityErrorCount {
-	result := make(map[uuid.UUID]EntityErrorCount)
+func filterUUIDEmpty(m map[core.Uuid]EntityErrorCount) map[core.Uuid]EntityErrorCount {
+	result := make(map[core.Uuid]EntityErrorCount)
 	for k, v := range m {
 		if v.Attempt > 0 || v.Error != nil {
 			result[k] = v

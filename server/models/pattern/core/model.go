@@ -3,10 +3,10 @@ package core
 import (
 	"context"
 
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 )
 
 type ProcessPatternOptions struct {

@@ -3,13 +3,15 @@ package kubernetes
 import (
 	"context"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/utils/kubernetes"
 )
 
 // One FSM per connection
@@ -118,7 +120,7 @@ const (
 	machineName = "kubernetes"
 )
 
-func New(ID string, userID uuid.UUID, log logger.Handler) (*machines.StateMachine, error) {
+func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
 	log.Info("initialising K8s machine for connetion Id", connectionID)
 	if err != nil {
@@ -148,19 +150,25 @@ func New(ID string, userID uuid.UUID, log logger.Handler) (*machines.StateMachin
 
 func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
-	userUUID := uuid.FromStringOrNil(user.ID)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		return nil, eventBuilder.Build(), err
 	}
+	// Attach the logger before any action that may log on an error path.
+	// AssignClientSetToContext threads machinectx.log into GenerateK8sClientSet,
+	// which log.Warn()s when the kube handler cannot be constructed (e.g. the
+	// persisted context's API server is unreachable from this machine). A nil
+	// logger.Handler there causes an interface-method-on-nil panic.
+	machinectx.log = log
 	err = AssignClientSetToContext(machinectx, eventBuilder)
 	if err != nil {
 		return nil, eventBuilder.Build(), err
 	}
-	machinectx.log = log
-	AssignControllerHandlers(machinectx)
+	AssignControllerHandlers(machinectx, sysID, provider)
 	return machinectx, nil, nil
 }

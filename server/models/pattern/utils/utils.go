@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/encoding"
+	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/schemas/models/v1beta1"
 )
 

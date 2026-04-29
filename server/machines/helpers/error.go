@@ -1,12 +1,13 @@
 package helpers
 
 import (
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/errors"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 )
 
 var (
-	ErrAutoRegisterCode = "meshery-server-1219"
+	ErrAutoRegisterCode    = "meshery-server-1219"
+	ErrResyncResourcesCode = "meshery-server-1371"
 )
 
 func ErrAutoRegister(err error, connType string) error {
@@ -15,4 +16,8 @@ func ErrAutoRegister(err error, connType string) error {
 
 func IsConnectionUpdateErr(err error) bool {
 	return errors.GetCode(err) == models.ErrUpdateConnectionStatusCode
+}
+
+func ErrResyncResources(err error) error {
+	return errors.New(ErrResyncResourcesCode, errors.Critical, []string{"Error resync resources"}, []string{err.Error()}, []string{"Fail to resync resources for the machine"}, []string{"Check if machine supports resource resync"})
 }

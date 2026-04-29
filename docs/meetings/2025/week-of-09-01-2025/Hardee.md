@@ -1,0 +1,1 @@
+Hi, I’m Hardee Parekh, a pre-final year Computer Science student at the Indian Institute of Information Technology, Lucknow. I’m experienced in JavaScript, React.js, and MERN-based applications. I enjoy problem-solving and am new to open source, excited to learn and contribute.

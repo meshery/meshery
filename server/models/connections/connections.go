@@ -2,39 +2,38 @@ package connections
 
 import (
 	"context"
-	"database/sql"
-	"time"
 
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/spf13/viper"
 
-	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models/environments"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
+	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
 )
 
-// swagger:response ConnectionStatus
-type ConnectionStatus string
+type ConnectionStatus = schemasConnection.ConnectionStatus
 
 type InitFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
 
+// TODO
+// Caps lock values are left for compatibility for now,
+// update later on to Pascal case everywhere
 const (
-	DISCOVERED   ConnectionStatus = "discovered"
-	REGISTERED   ConnectionStatus = "registered"
-	CONNECTED    ConnectionStatus = "connected"
-	IGNORED      ConnectionStatus = "ignored"
-	MAINTENANCE  ConnectionStatus = "maintenance"
-	DISCONNECTED ConnectionStatus = "disconnected"
-	DELETED      ConnectionStatus = "deleted"
-	NOTFOUND     ConnectionStatus = "not found"
+	DISCOVERED   ConnectionStatus = schemasConnection.ConnectionStatusDiscovered
+	REGISTERED   ConnectionStatus = schemasConnection.ConnectionStatusRegistered
+	CONNECTED    ConnectionStatus = schemasConnection.ConnectionStatusConnected
+	IGNORED      ConnectionStatus = schemasConnection.ConnectionStatusIgnored
+	MAINTENANCE  ConnectionStatus = schemasConnection.ConnectionStatusMaintenance
+	DISCONNECTED ConnectionStatus = schemasConnection.ConnectionStatusDisconnected
+	DELETED      ConnectionStatus = schemasConnection.ConnectionStatusDeleted
+	NOTFOUND     ConnectionStatus = schemasConnection.ConnectionStatusNotFound
 )
 
 type ConnectionRegisterPayload struct {
 	EventType string
 	// It is different from connection id, this is used to track the registration process for the connection.
 	// Connection ID is generated after the registration process is completed.
-	ID    uuid.UUID
+	ID    core.Uuid
 	Model string
 	// The concrete type depends on the type of connection and the corresponding connection definition.
 	Connection struct {
@@ -65,22 +64,7 @@ type GrafanaCred struct {
 	APIKeyOrBasicAuth string `json:"secret,omitempty"`
 }
 
-// swagger:response Connection
-type Connection struct {
-	ID           uuid.UUID                      `json:"id,omitempty" db:"id"`
-	Name         string                         `json:"name,omitempty" db:"name"`
-	CredentialID uuid.UUID                      `json:"credential_id,omitempty" db:"credential_id"`
-	Type         string                         `json:"type,omitempty" db:"type"`
-	SubType      string                         `json:"sub_type,omitempty" db:"sub_type"`
-	Kind         string                         `json:"kind,omitempty" db:"kind"`
-	Metadata     utils.JSONMap                  `json:"metadata,omitempty" db:"metadata" gorm:"type:JSONB"`
-	Status       ConnectionStatus               `json:"status,omitempty" db:"status"`
-	UserID       *uuid.UUID                     `json:"user_id,omitempty" db:"user_id"`
-	CreatedAt    time.Time                      `json:"created_at,omitempty" db:"created_at"`
-	UpdatedAt    time.Time                      `json:"updated_at,omitempty" db:"updated_at"`
-	DeletedAt    sql.NullTime                   `json:"deleted_at,omitempty" db:"deleted_at"`
-	Environments []environments.EnvironmentData `json:"environments,omitempty" db:"environments" gorm:"-"`
-}
+type Connection = schemasConnection.Connection
 
 var validConnectionStatusToManage = []ConnectionStatus{
 	DISCOVERED, REGISTERED, CONNECTED,
@@ -91,7 +75,7 @@ var validConnectionStatusToManage = []ConnectionStatus{
 // Check whether the Connection should be managed.
 // Connections with status as Discovered, Registered, Connected should only be managed.
 // Eg: If the status is set as Maintenance or Ignore do not try to mange it, not even during greedy import of K8sConnection from KubeConfig.
-func (c *Connection) ShouldConnectionBeManaged() bool {
+func ShouldConnectionBeManaged(c Connection) bool {
 	for _, validStatus := range validConnectionStatusToManage {
 		if validStatus == c.Status {
 			return true
@@ -100,36 +84,34 @@ func (c *Connection) ShouldConnectionBeManaged() bool {
 	return false
 }
 
-// swagger:response ConnectionPage
-type ConnectionPage struct {
-	Connections []*Connection `json:"connections"`
-	TotalCount  int           `json:"total_count"`
-	Page        int           `json:"page"`
-	PageSize    int           `json:"page_size"`
-}
+type ConnectionPage = schemasConnection.ConnectionPage
 
 type ConnectionStatusInfo struct {
 	Status string `json:"status" db:"status"`
 	Count  int    `json:"count" db:"count"`
 }
 
-// swagger:response ConnectionsStatusPage
+// ConnectionsStatusPage is a Meshery-local swagger stub for the status-per-kind
+// response wrapper surfaced on a few integrations endpoints. The canonical
+// v1beta3 schema publishes camelCase on the wire, so the JSON tag here matches
+// `connectionsStatus`. No runtime handler emits this struct today — it is a
+// doc-only placeholder referenced from server/handlers/doc.go.
 type ConnectionsStatusPage struct {
-	ConnectionsStatus []*ConnectionStatusInfo `json:"connections_status"`
+	ConnectionsStatus []*ConnectionStatusInfo `json:"connectionsStatus"`
 }
 
 type ConnectionPayload struct {
-	ID                         uuid.UUID              `json:"id,omitempty"`
+	ID                         core.Uuid              `json:"id,omitempty"`
 	Kind                       string                 `json:"kind,omitempty"`
-	SubType                    string                 `json:"sub_type,omitempty"`
+	SubType                    string                 `json:"subType,omitempty"`
 	Type                       string                 `json:"type,omitempty"`
 	MetaData                   map[string]interface{} `json:"metadata,omitempty"`
 	Status                     ConnectionStatus       `json:"status,omitempty"`
-	CredentialSecret           map[string]interface{} `json:"credential_secret,omitempty"`
+	CredentialSecret           map[string]interface{} `json:"credentialSecret,omitempty"`
 	Name                       string                 `json:"name,omitempty"`
-	CredentialID               *uuid.UUID             `json:"credential_id,omitempty"`
+	CredentialID               *core.Uuid             `json:"credentialId,omitempty"`
 	Model                      string                 `json:"model,omitempty"`
-	SkipCredentialVerification bool                   `json:"skip_credential_verification"`
+	SkipCredentialVerification bool                   `json:"skipCredentialVerification"`
 }
 
 func BuildMesheryConnectionPayload(serverURL string, credential map[string]interface{}) *ConnectionPayload {

@@ -10,13 +10,13 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/websocket"
-	"github.com/layer5io/meshery/server/handlers"
-	"github.com/layer5io/meshery/server/internal/graphql/generated"
-	"github.com/layer5io/meshery/server/internal/graphql/resolver"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/utils/broadcast"
+	"github.com/meshery/meshery/server/handlers"
+	"github.com/meshery/meshery/server/internal/graphql/generated"
+	"github.com/meshery/meshery/server/internal/graphql/resolver"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/broker"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/utils/broadcast"
 )
 
 type Options struct {

@@ -4,7 +4,7 @@
   "version": "v1.0.0",
   "name": "azure-red-hat-openshift",
   "displayName": "Azure Red Hat OpenShift",
-  "status": "ignored",
+  "status": "enabled",
   "registrant": {
     "id": "00000000-0000-0000-0000-000000000000",
     "name": "Github",
@@ -23,7 +23,7 @@
     "id": "00000000-0000-0000-0000-000000000000",
     "name": "Provisioning"
   },
-  "subCategory": "Uncategorized",
+  "subCategory": "Certified Kubernetes - Distribution",
   "metadata": {
     "capabilities": null,
     "isAnnotation": false,

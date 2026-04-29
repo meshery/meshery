@@ -1,0 +1,24 @@
+{
+  "meshAdapters": [
+    {
+      "adapter_location": "localhost:10000",
+      "name": "ISTIO"
+    },
+    {
+      "adapter_location": "localhost:10001",
+      "name": "LINKERD"
+    },
+    {
+      "adapter_location": "localhost:10005",
+      "name": "APP_MESH"
+    },
+    {
+      "adapter_location": "localhost:10010",
+      "name": "NGINX_SERVICE_MESH"
+    },
+    {
+      "adapter_location": "localhost:10012",
+      "name": "CILIUM_SERVICE_MESH"
+    }
+  ]
+}

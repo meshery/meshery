@@ -7,10 +7,10 @@ package handlers
 // 	"testing"
 
 // 	"github.com/gofrs/uuid"
-// 	"github.com/layer5io/meshery/server/models"
-// 	"github.com/layer5io/meshkit/logger"
-// 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-// 	"github.com/layer5io/meshkit/validator"
+// 	"github.com/meshery/meshery/server/models"
+// 	"github.com/meshery/meshkit/logger"
+// 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+// 	"github.com/meshery/meshkit/validator"
 // 	"github.com/meshery/schemas/models/v1beta1/pattern"
 // 	"github.com/spf13/viper"
 // )
@@ -202,7 +202,7 @@ package handlers
 // 	t.Run("TestPatternFileConversionFromV1Alpha1ToV1Beta1", func(t *testing.T) {
 // 		// var beta1PatternFileStr string
 // 		var err error
-// 		v1beta1PatternFile, _, err = handler.convertV1alpha2ToV1beta1(testPatternFile, uuid.Nil)
+// 		v1beta1PatternFile, _, err = handler.convertV1alpha2ToV1beta3(testPatternFile, uuid.Nil)
 // 		if err != nil {
 // 			fmt.Println(err)
 // 			t.Fatal(err)

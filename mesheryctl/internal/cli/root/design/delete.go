@@ -23,10 +23,10 @@ import (
 	"os"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/pkg/errors"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -45,8 +45,7 @@ mesheryctl design delete [file | URL]
 		var req *http.Request
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		pattern := ""
@@ -54,8 +53,10 @@ mesheryctl design delete [file | URL]
 		if len(args) > 0 {
 			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
-				utils.Log.Error(ErrPatternInvalidNameOrID(err))
-				return nil
+				if errors.GetCode(err) == utils.ErrNotFoundCode {
+					return ErrDesignNotFound(args[0])
+				}
+				return utils.ErrInvalidNameOrID(err)
 			}
 		}
 
@@ -63,7 +64,10 @@ mesheryctl design delete [file | URL]
 		if isID {
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
-				return errors.Wrap(err, utils.DesignError(fmt.Sprintf("failed to delete design %s", args[0])))
+				if errors.GetCode(err) == utils.ErrNotFoundCode {
+					return ErrDesignNotFound(args[0])
+				}
+				return ErrDeleteDesign(err, args[0])
 			}
 			utils.Log.Info("Design ", args[0], " deleted")
 			return nil
@@ -76,7 +80,7 @@ mesheryctl design delete [file | URL]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				return utils.ErrFileRead(errors.New(utils.DesignError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file))))
+				return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, file))
 			}
 
 			patternFileByt = content
@@ -109,33 +113,29 @@ mesheryctl design delete [file | URL]
 
 			req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			utils.Log.Debug("remote hosted pattern request success")
 			var response []*models.MesheryPattern
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "failed to read response body")))
-				return nil
+				return utils.ErrReadFromBody(err)
 			}
 
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				utils.Log.Error(utils.ErrUnmarshal(err))
-				return nil
+				return utils.ErrUnmarshal(err)
 			}
 
 			if len(response) == 0 {
-				return ErrDesignNotFound()
+				return ErrDesignNotFound("design at " + file)
 			}
 
 			patternFileByt, err = yaml.Marshal(response[0].PatternFile)
@@ -154,11 +154,10 @@ mesheryctl design delete [file | URL]
 			return utils.ErrRequestResponse(err)
 		}
 
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return nil
+			return utils.ErrReadFromBody(err)
 		}
 
 		utils.Log.Info(string(body))

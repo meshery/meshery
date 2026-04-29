@@ -7,33 +7,36 @@
     "dev": "node ui_dev_server.js",
     "build": "npm run clean && next build",
     "start": "NODE_ENV=production node server.js",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
+    "lint": "eslint . --cache",
+    "lint:fix": "eslint . --cache --fix",
     "clean": "rm -rf .next,out"
   },
   "keywords": [],
-  "author": "Layer5",
+  "author": "Meshery Authors",
   "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
-    "@babel/eslint-parser": "^7.27.0",
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/server": "^11.11.0",
-    "@emotion/styled": "^11.14.0",
-    "@layer5/sistent": "^0.14.183",
-    "babel-plugin-istanbul": "^7.0.0",
+    "@emotion/styled": "^11.14.1",
+    "@meshery/schemas": "^1.2.2",
+    "@mui/icons-material": "^7.3.9",
+    "@sistent/sistent": "^0.18.2",
     "http-proxy": "^1.18.1",
-    "isomorphic-unfetch": "^4.0.2",
-    "next": "^15.3.1",
+    "next": "^16.2.3",
     "prop-types": "^15.8.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "xstate": "^5.28.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.1",
-    "eslint-config-next": "^15.3.1",
-    "start-server-and-test": "^2.0.11"
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.1.0",
+    "eslint-config-next": "^16.2.1",
+    "start-server-and-test": "^2.1.5",
+    "typescript": "^6.0.2"
   },
   "engines": {
     "node": "^18 || ^20"

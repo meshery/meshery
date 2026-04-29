@@ -1,0 +1,260 @@
+{
+  "errors_export": {
+    "component_name": "meshery-kuma",
+    "component_type": "adapter",
+    "errors": {
+      "1000": {
+        "name": "ErrGetLatestReleasesCode",
+        "code": "1000",
+        "severity": "Alert",
+        "long_description": "Unable to get the latest release info from the GithubAPI",
+        "short_description": "unable to fetch release info",
+        "probable_cause": "Checkout https://docs.github.com/en/rest/reference/repos#releases for more info",
+        "suggested_remediation": ""
+      },
+      "1001": {
+        "name": "ErrGetLatestReleaseNamesCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to extract release names",
+        "probable_cause": "Invalid release format",
+        "suggested_remediation": ""
+      },
+      "1002": {
+        "name": "ErrOpInvalidCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "Kuma adapter received an invalid operation from the meshey server",
+        "short_description": "Invalid operation",
+        "probable_cause": "The operation is not supported by the adapter\nInvalid operation name",
+        "suggested_remediation": "Check if the operation name is valid and supported by the adapter"
+      },
+      "1003": {
+        "name": "ErrInstallKumaCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "Error occurred while installing kuma mesh through kumactl",
+        "short_description": "Error with kuma operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1004": {
+        "name": "ErrMeshConfigCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "Error getting MeshSpecKey config from in-memory configuration",
+        "short_description": "Error configuration mesh",
+        "probable_cause": "",
+        "suggested_remediation": "Reconnect the adapter to the Meshery Server"
+      },
+      "1005": {
+        "name": "ErrFetchManifestCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while fetching the manifest",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1006": {
+        "name": "ErrClientConfigCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while setting client config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1007": {
+        "name": "ErrClientSetCode",
+        "code": "1007",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while setting clientset",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1008": {
+        "name": "ErrStreamEventCode",
+        "code": "1008",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while streaming events",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1009": {
+        "name": "ErrSampleAppCode",
+        "code": "1009",
+        "severity": "Alert",
+        "long_description": "Error occurred while trying to install a sample application using manifests",
+        "short_description": "Error with sample app operation",
+        "probable_cause": "Invalid kubeclient config\nInvalid manifest",
+        "suggested_remediation": "Reconnect your adapter to Meshery Server to refresh the kubeclient"
+      },
+      "1010": {
+        "name": "ErrGetKumactlCode",
+        "code": "1010",
+        "severity": "Alert",
+        "long_description": "Error occurred while downloading`kumactl` and moving it to .meshery/bin]",
+        "short_description": "Error getting kumactl comamndline",
+        "probable_cause": "https://download.konghq.com/mesh-alpine/kuma-<release>-<platform>-<arch>.tar.gz might be deprecated",
+        "suggested_remediation": ""
+      },
+      "1011": {
+        "name": "ErrDownloadBinaryCode",
+        "code": "1011",
+        "severity": "Alert",
+        "long_description": "Error occurred while download kuma binary from its release url",
+        "short_description": "Error downloading kuma binary",
+        "probable_cause": "Checkout https://download.konghq.com/mesh-alpine/kuma-<release>-<platform>-<arch>.tar.gz for more details",
+        "suggested_remediation": ""
+      },
+      "1012": {
+        "name": "ErrInstallBinaryCode",
+        "code": "1012",
+        "severity": "Alert",
+        "long_description": "Error occurred while installing kuma mesh through kumactl",
+        "short_description": "Error installing kumactl",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1013": {
+        "name": "ErrUntarCode",
+        "code": "1013",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while extracting file",
+        "probable_cause": "The gzip might be corrupt",
+        "suggested_remediation": "Retry the operation"
+      },
+      "1014": {
+        "name": "ErrUntarDefaultCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "Error occurred in the process of untaring a compressed file",
+        "short_description": "Error untaring opeartion default",
+        "probable_cause": "The compressed file might be corrupted",
+        "suggested_remediation": "Clear the cache and retry the operation"
+      },
+      "1015": {
+        "name": "ErrMoveBinaryCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while moving the kumactl binary",
+        "probable_cause": "Meshery adapter might not have write access",
+        "suggested_remediation": ""
+      },
+      "1016": {
+        "name": "ErrCustomOperationCode",
+        "code": "1016",
+        "severity": "Alert",
+        "long_description": "Error occurred while applying custom manifest to the cluster",
+        "short_description": "Error with custom operation",
+        "probable_cause": "Invalid kubeclient config\nInvalid manifest",
+        "suggested_remediation": "Reupload the kubconfig in the Meshery Server and reconnect the adapter"
+      },
+      "1017": {
+        "name": "ErrNilClientCode",
+        "code": "1017",
+        "severity": "Alert",
+        "long_description": "Kubernetes client is nil",
+        "short_description": "Kubernetes client not initialized",
+        "probable_cause": "Kubernetes client not initialized",
+        "suggested_remediation": "Reconnect the adapter to Meshery Server"
+      },
+      "1018": {
+        "name": "ErrApplyHelmChartCode",
+        "code": "1018",
+        "severity": "Alert",
+        "long_description": "Error occurred while applying Helm Chart",
+        "short_description": "Error with helm chart operation",
+        "probable_cause": "",
+        "suggested_remediation": "Invalid helm chart configuration"
+      },
+      "1019": {
+        "name": "ErrGetLatestReleaseCode",
+        "code": "1019",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get latest version",
+        "probable_cause": "Latest version could not be found at the specified url",
+        "suggested_remediation": ""
+      },
+      "1021": {
+        "name": "ErrInvalidOAMComponentTypeCode",
+        "code": "1021",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid OAM component name: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1022": {
+        "name": "ErrKumaCoreComponentFailCode",
+        "code": "1022",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error in kuma core component",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1023": {
+        "name": "ErrProcessOAMCode",
+        "code": "1023",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error performing OAM operations",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1024": {
+        "name": "ErrParseKumaCoreComponentCode",
+        "code": "1024",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "kuma core component manifest parsing failing",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1025": {
+        "name": "ErrParseOAMComponentCode",
+        "code": "1025",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing application component in the OAM request made by Meshery server",
+        "short_description": "error parsing the component",
+        "probable_cause": "Could not unmarshall configuration component received via ProcessOAM gRPC call into a valid Component struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid component for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also check if Meshery Server and adapters are referring to same component struct provided in MeshKit."
+      },
+      "1026": {
+        "name": "ErrParseOAMConfigCode",
+        "code": "1026",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing configuration in the request made by Meshery Server",
+        "short_description": "error parsing the configuration",
+        "probable_cause": "Could not unmarshall OAM config received via ProcessOAM gRPC call into a valid Config struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
+      },
+      "1027": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1027",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1028": {
+        "name": "ErrLoadNamespaceCode",
+        "code": "1028",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while applying namespace ",
+        "probable_cause": "Trying to access a namespace which is not available",
+        "suggested_remediation": "Verify presence of namespace. Confirm Meshery ServiceAccount permissions"
+      }
+    }
+  }
+}

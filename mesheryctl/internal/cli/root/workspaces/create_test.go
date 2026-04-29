@@ -1,11 +1,13 @@
 package workspaces
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestCreateWorkspace(t *testing.T) {
@@ -16,20 +18,77 @@ func TestCreateWorkspace(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 
-	// Test scenarios for workspace creation
-	tests := []utils.MesheryCommamdTest{
+	tests := []utils.MesheryCommandTest{
 		{
-			Name:             "Create workspace without arguments",
+			Name:             "given no flags provided when workspace create throw error",
 			Args:             []string{"create"},
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			Fixture:          "",
-			ExpectedResponse: "create.workspace.missing.flag.output.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId '', Invalid value for --name ''")),
 		},
 		{
-			Name:             "Create workspace successfully",
-			Args:             []string{"create", "-n", "workspace-test", "-d", "integration test", "--orgId", testOrgId},
+			Name:             "given missing flag orgId when workspace create throw error",
+			Args:             []string{"create", "-n", validWorkspaceName, "-d", workspaceDescription},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId ''")),
+		},
+		{
+			Name:             "given missing flag name when workspace create throw error",
+			Args:             []string{"create", "--orgId", testOrgId, "-d", workspaceDescription},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --name ''")),
+		},
+		{
+			Name:             "given missing flag description when workspace create then workspace is created with empty description",
+			Args:             []string{"create", "--orgId", testOrgId, "-n", validWorkspaceName},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			HttpStatusCode:   201,
+			Fixture:          "create.workspace.api.response.golden",
+			ExpectedResponse: "create.workspace.success.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "given missing name and orgId flags when workspace create then throw error",
+			Args:             []string{"create", "-d", workspaceDescription},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			HttpStatusCode:   404,
+			Fixture:          "create.workspace.api.nil.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --orgId '', Invalid value for --name ''")),
+		},
+		{
+			Name:             "given an invalid organization Id when workspace create throw error",
+			Args:             []string{"create", "-n", validWorkspaceName, "-d", workspaceDescription, "--orgId", testOrgId},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			HttpStatusCode:   404,
+			Fixture:          "create.workspace.api.nil.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    returnFailedCreateWorkspaceError(validWorkspaceName, testOrgId),
+		},
+		{
+			Name:             "given all flags provided when workspace create then workspace is created",
+			Args:             []string{"create", "-n", validWorkspaceName, "-d", workspaceDescription, "--orgId", testOrgId},
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			HttpStatusCode:   201,
@@ -39,6 +98,6 @@ func TestCreateWorkspace(t *testing.T) {
 		},
 	}
 
-	// Run tests
+	mesheryctlflags.InitValidators(WorkSpaceCmd)
 	utils.InvokeMesheryctlTestCommand(t, update, WorkSpaceCmd, tests, currDir, "workspaces")
 }

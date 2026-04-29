@@ -29,7 +29,7 @@ version: 0.7.0
 maintainers:
   - name: aisuko
     email: urakiny@gmail.com
-  - name: leecalcote
-    email: leecalcote@gmail.com
+  - name: maintainers
+    email: maintainers@meshery.io
   - name: Meshery Authors
-    email: community@layer5.io
+    email: community@meshery.io

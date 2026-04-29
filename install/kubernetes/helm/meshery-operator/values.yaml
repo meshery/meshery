@@ -7,7 +7,7 @@ replicaCount: 1
 mesheryOperator:
   name: manager
   image:
-    repository: layer5/meshery-operator:stable-latest
+    repository: meshery/meshery-operator:stable-latest
     pullPolicy: Always
   args:
     - --metrics-addr=127.0.0.1:8080
@@ -18,7 +18,7 @@ mesheryOperator:
 kubeRbac:
   name: kube-rbac-proxy
   image:
-    repository: gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0
+    repository: registry.k8s.io/kubebuilder/kube-rbac-proxy:v0.16.0
     pullPolicy: Always
   args:
     - --secure-listen-address=0.0.0.0:8443

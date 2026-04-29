@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
@@ -19,15 +19,15 @@ var (
 var OrgCmd = &cobra.Command{
 
 	Use:   "organization",
-	Short: "Interact with registered orgnizations",
-	Long: `Interact with registered organizations to display detailled informations
-Documentation for organizations can be found at https://docs.meshery.io/reference/mesheryctl/exp/organizations`,
+	Short: "Interact with registered organizations",
+	Long: `Interact with registered organizations to display detailed information
+Find more information at: https://docs.meshery.io/reference/mesheryctl/organizations`,
 	Example: `
 // Number of  registered orgs
-mesheryctl organizations --count 
+mesheryctl organization --count
 
 // List registerd orgs
-mesheryctl organizations list	
+mesheryctl organization list
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ = cmd.Flags().GetBool("count")
@@ -41,7 +41,7 @@ mesheryctl organizations list
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if count {
-			orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?all=true", organizationsApiPath))
+			orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?pagesize=all", organizationsApiPath))
 			if err != nil {
 				return err
 			}

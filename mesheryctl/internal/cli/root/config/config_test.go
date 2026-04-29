@@ -93,7 +93,7 @@ func TestGetChannel(t *testing.T) {
 
 func TestGetComponents(t *testing.T) {
 	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
-	meshConfigCtx := Context{"", "", "", dummy, "", "", "", ""}
+	meshConfigCtx := Context{"", "", "", dummy, "", "", "", "", nil}
 	got := meshConfigCtx.GetComponents()
 	want := dummy
 	for i, j := range got {
@@ -233,7 +233,7 @@ func TestSetVersion(t *testing.T) {
 
 func TestSetComponents(t *testing.T) {
 	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
-	meshConfigCtx := Context{"", "", "", dummy, "", "", "", ""}
+	meshConfigCtx := Context{"", "", "", dummy, "", "", "", "", nil}
 	got := meshConfigCtx.GetComponents()
 	want := dummy
 	for i, j := range got {
@@ -245,7 +245,7 @@ func TestSetComponents(t *testing.T) {
 
 func TestGetProvider(t *testing.T) {
 	for _, test := range tests {
-		meshConfigCtx := Context{"", "", "", nil, "", "", test, ""}
+		meshConfigCtx := Context{"", "", "", nil, "", "", test, "", nil}
 		got := meshConfigCtx.GetProvider()
 		want := test
 
@@ -270,7 +270,7 @@ func TestSetProvider(t *testing.T) {
 
 func TestGetOperatorStatus(t *testing.T) {
 	for _, test := range tests {
-		meshConfigCtx := Context{"", "", "", nil, "", "", "", test}
+		meshConfigCtx := Context{"", "", "", nil, "", "", "", test, nil}
 		got := meshConfigCtx.GetOperatorStatus()
 		want := test
 

@@ -1,0 +1,1 @@
+Raunak attended today

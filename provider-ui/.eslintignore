@@ -1,8 +1,0 @@
-node_modules
-out
-.next
-static
-package.json
-package-lock.json
-nodemon.json
-lib/

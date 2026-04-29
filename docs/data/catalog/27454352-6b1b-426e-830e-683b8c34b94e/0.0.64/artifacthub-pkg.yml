@@ -1,0 +1,24 @@
+version: 0.0.64
+name: edge-binding-permissions-relationship
+displayName: Edge-Binding-Permissions-Relationship
+createdAt: "2024-10-11T11:26:48Z"
+description: "The Edge-Binding-Permissions Relationship defines how components connect to establish access control and permissions in a system. \n\nIn the Edge-Binding-Permissions relationship, the binding components, such as role bindings and cluster role bindings, act as essential links that establish and enforce permissions. They connect service accounts to roles or cluster roles, determining what actions the service accounts are allowed to perform."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/27454352-6b1b-426e-830e-683b8c34b94e/0.0.64/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Clearly define the roles and their associated permissions before creating bindings. Understand what actions the service accounts will need to perform and ensure that roles are designed to grant only the necessary permissions to follow the principle of least privilege.\n\n2. Plan for how role bindings and cluster role bindings will be managed over time. Consider the implications of adding or removing bindings, especially in dynamic environments where service accounts may change frequently. Ensure that you have processes in place for reviewing and updating permissions as needed. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/27454352-6b1b-426e-830e-683b8c34b94e-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/27454352-6b1b-426e-830e-683b8c34b94e-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

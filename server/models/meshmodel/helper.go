@@ -3,7 +3,7 @@ package meshmodel
 import (
 	"sync"
 
-	"github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/helpers/utils"
 )
 
 type SummaryChannel struct {

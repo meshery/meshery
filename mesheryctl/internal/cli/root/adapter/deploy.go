@@ -18,15 +18,14 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var linkDocMeshDeploy = map[string]string{
-	"link":    "![mesh-deploy-usage](/assets/img/mesheryctl/deploy-mesh.png)",
+	"link":    "![mesh-deploy-usage](/reference/images/deploy-mesh.png)",
 	"caption": "Usage of mesheryctl adapter deploy",
 }
 
@@ -51,41 +50,36 @@ mesheryctl adapter deploy linkerd --watch
 		`,
 		Annotations: linkDocMeshDeploy,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			log.Infof("Verifying prerequisites...")
+			utils.Log.Info("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return utils.ErrLoadConfig(err)
 			}
 
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				// ErrValidatingAdapter
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Deploying %s", meshName), fmt.Sprintf("\n%s infrastructure deployed", meshName))
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false, "null")
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				s.Stop()
+				return err
 			}
 			s.Stop()
 
 			if watch {
-				log.Infof("Verifying Operation")
+				utils.Log.Info("Verifying Operation")
 				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 			}
 

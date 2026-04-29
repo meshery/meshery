@@ -1,0 +1,24 @@
+version: 0.0.91
+name: loxilb-k8s-external-load-balancer
+displayName: LoxiLB K8S External Load Balancer
+createdAt: "2025-10-17T15:20:59Z"
+description: Reference design of the LoxiLB Kubernetes External Load Balancer. It shows how user traffic reaches the Kubernetes cluster through the LoxiLB External Load Balancer and BGP Peering. The Service distributes traffic to backend Pods within the cluster.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2197b9bf-c48d-4394-873e-680a2ae35ed2/0.0.91/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a conceptual model demonstrating traffic flow and connectivity for external load balancing in Kubernetes using LoxiLB. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 985074f5-27a0-406c-b83a-7f247ba77746
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2197b9bf-c48d-4394-873e-680a2ae35ed2-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2197b9bf-c48d-4394-873e-680a2ae35ed2-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

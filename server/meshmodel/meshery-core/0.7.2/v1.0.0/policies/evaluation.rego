@@ -88,7 +88,7 @@ evaluate := eval_results if {
 		resultant_patch := perform_eval(input, rel)
 
 		# Change status for pending relationships to "approved".
-		r = json.patch(rel, [{
+		r := json.patch(rel, [{
 			"op": "replace",
 			"path": "/status",
 			"value": "approved",
@@ -191,7 +191,7 @@ evaluate := eval_results if {
 	]
 
 	# Update the design file with the final set of relationships.
-	final_design_file_old = json.patch(updated_design_file_with_new_comps, [{
+	final_design_file_old := json.patch(updated_design_file_with_new_comps, [{
 		"op": "add",
 		"path": "/relationships",
 		"value": final_rels_with_deletions,

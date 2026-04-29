@@ -18,23 +18,21 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	apiextension "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes"
 
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
-	log "github.com/sirupsen/logrus"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	controllerConfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 
-	"github.com/layer5io/meshery-operator/api/v1alpha1"
+	"github.com/meshery/meshery-operator/api/v1alpha1"
 )
 
 var (
@@ -110,12 +108,12 @@ func stop() error {
 	}
 	// if --force passed possibly no deployments running but other stale resource present
 	if !ok && !forceDelete {
-		log.Info("Meshery resources are not running. Nothing to stop.")
+		utils.Log.Info("Meshery resources are not running. Nothing to stop.")
 		return nil
 	}
 
 	switch currCtx.GetPlatform() {
-	case "docker":
+	case platformDocker:
 		// if the platform is docker, then stop all the running containers
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
@@ -123,26 +121,25 @@ func stop() error {
 			}
 		}
 
-		log.Info("Stopping Meshery resources...")
+		utils.Log.Info("Stopping Meshery resources...")
+
+		// Use compose library instead of exec.Command
+		composeClient, err := utils.NewComposeClient()
+		if err != nil {
+			return utils.ErrDockerComposeClient(err)
+		}
 
 		// Stop all Docker containers
-		stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
-		stop.Stdout = os.Stdout
-		stop.Stderr = os.Stderr
-
-		if err := stop.Run(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to stop meshery - could not stop some containers."))
+		if err := composeClient.Stop(context.Background(), utils.DockerComposeFile); err != nil {
+			return utils.ErrDockerComposeStop(err)
 		}
 
 		// Remove all Docker containers
-		stop = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "rm", "-f")
-		stop.Stderr = os.Stderr
-
-		if err := stop.Run(); err != nil {
+		if err := composeClient.Remove(context.Background(), utils.DockerComposeFile); err != nil {
 			return ErrStopMeshery(err)
 		}
-		log.Info("Meshery resources is stopped.")
-	case "kubernetes":
+		utils.Log.Info("Meshery resources is stopped.")
+	case platformKubernetes:
 		client, err := meshkitkube.New([]byte(""))
 		if err != nil {
 			return err
@@ -157,11 +154,11 @@ func stop() error {
 		}
 
 		if !userResponse {
-			log.Info("Stop aborted.")
+			utils.Log.Info("Stop aborted.")
 			return nil
 		}
 
-		log.Info("Stopping Meshery resources...")
+		utils.Log.Info("Stopping Meshery resources...")
 
 		// Delete the CR instances for brokers and meshsyncs
 		// this needs to be executed before deleting the helm release, or the CR instances cannot be found for some reason
@@ -203,19 +200,19 @@ func stop() error {
 		}
 
 		if !utils.KeepNamespace {
-			log.Info("Deleting Meshery Namespace...")
+			utils.Log.Info("Deleting Meshery Namespace...")
 			if err = deleteNs(utils.MesheryNamespace, client.KubeClient); err != nil {
 				return err
 			}
 			// Wait for the namespace to be deleted
 			deleted, err := utils.CheckMesheryNsDelete()
 			if err != nil || !deleted {
-				log.Info("Meshery is taking too long to stop.\nPlease check the status of the pods by executing “mesheryctl system status”.")
+				utils.Log.Info("Meshery is taking too long to stop.\nPlease check the status of the pods by executing “mesheryctl system status”.")
 			} else {
-				log.Info("Meshery resources are stopped.")
+				utils.Log.Info("Meshery resources are stopped.")
 			}
 		} else {
-			log.Info("Meshery resources are stopped.")
+			utils.Log.Info("Meshery resources are stopped.")
 		}
 	}
 
@@ -244,7 +241,7 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 			return err
 		}
 
-		log.Debug(err)
+		utils.Log.Debug(err)
 	}
 
 	if err := deleteCR(meshsyncResourceName, meshsyncInstanceName, client); err != nil {
@@ -253,7 +250,7 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 			return err
 		}
 
-		log.Debug(err)
+		utils.Log.Debug(err)
 	}
 
 	return nil
@@ -283,7 +280,7 @@ func invokeDeleteCRDs() error {
 			return err
 		}
 
-		log.Debug(err)
+		utils.Log.Debug(err)
 	}
 
 	if err = deleteCRD(brokerCRDName, client); err != nil {
@@ -292,7 +289,7 @@ func invokeDeleteCRDs() error {
 			return err
 		}
 
-		log.Debug(err)
+		utils.Log.Debug(err)
 	}
 
 	if err = deleteCRD(meshsyncCRDName, client); err != nil {
@@ -301,7 +298,7 @@ func invokeDeleteCRDs() error {
 			return err
 		}
 
-		log.Debug(err)
+		utils.Log.Debug(err)
 	}
 
 	return nil

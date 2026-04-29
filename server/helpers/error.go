@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"github.com/layer5io/meshkit/errors"
+	"github.com/meshery/meshkit/errors"
 )
 
 // Please reference the following before contributing an error code:

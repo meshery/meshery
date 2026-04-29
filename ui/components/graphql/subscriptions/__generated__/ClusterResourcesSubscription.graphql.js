@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7e25c5992afac17ee968aebd9882822f>>
+ * @generated SignedSource<<9d4a79f0f6e1fe374bc81c00fa83df16>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -100,4 +100,4 @@ return {
 
 node.hash = "2722cb19adcd7e786a91856efcff3e1c";
 
-module.exports = node;
+export default node;

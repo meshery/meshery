@@ -23,18 +23,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	smp "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/manifoldco/promptui"
-	log "github.com/sirupsen/logrus"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var (
-	availableSubcommands []*cobra.Command
-)
+var availableSubcommands []*cobra.Command
 
 // AdapterCmd represents the Performance Management CLI command
 var (
@@ -45,11 +42,10 @@ var (
 	watch      bool
 	AdapterCmd = &cobra.Command{
 		Use:   "adapter",
-		Short: "Cloud Native Lifecycle Management",
+		Short: "Connect and use Meshery adapters",
 		Long: `Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-
 			// if `mesh` command is ran without any subcommands, show Help and exit
 			if cmd.HasSubCommands() {
 				return cmd.Help()
@@ -58,8 +54,7 @@ var (
 			// get the meshery config
 			mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 
 			if len(args) > 0 {
@@ -81,12 +76,12 @@ var (
 			// if no mesh was specified, the user will be prompted to select one
 			meshName, err = validateMesh(mctlCfg, meshName)
 			if err != nil {
-				utils.Log.Error(err)
+				return err
 			}
 
 			// ensure the mesh's adapter is available and update adapterURL if so
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				utils.Log.Error(err)
+				return err
 			}
 			return nil
 		},
@@ -219,7 +214,7 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 	if err != nil {
 		return "", ErrCreatingDeployRequest(err)
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
@@ -241,7 +236,7 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	if err != nil {
 		return "", ErrCreatingDeployResponseRequest(err)
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {
@@ -251,15 +246,15 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
 	eventChan := make(chan string)
 
-	//Run a goroutine to wait for the response
+	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
 			if strings.Contains(i.Data.Details, query) {
 				eventChan <- "successful"
-				log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
+				utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
 			} else if strings.Contains(i.Data.Details, "Error") {
 				eventChan <- "error"
-				log.Infof("%s\n", i.Data.Summary)
+				utils.Log.Infof("%s\n", i.Data.Summary)
 			}
 		}
 	}()
@@ -299,15 +294,15 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
 	eventChan := make(chan string)
 
-	//Run a goroutine to wait for the response
+	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
 			if strings.Contains(i.Data.Summary, query) {
 				eventChan <- "successful"
-				log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
+				utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
 			} else if strings.Contains(i.Data.Details, "error") {
 				eventChan <- "error"
-				log.Infof("%s", i.Data.Summary)
+				utils.Log.Infof("%s", i.Data.Summary)
 			}
 		}
 	}()

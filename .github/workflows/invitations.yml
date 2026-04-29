@@ -24,7 +24,7 @@ jobs:
           INVITE_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
 
       - name: View context attributes
-        uses: actions/github-script@v4
+        uses: actions/github-script@v8
         id: set-url
         with:
           script: |

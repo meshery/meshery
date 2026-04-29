@@ -7,11 +7,11 @@ import (
 	"sort"
 	"time"
 
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshkit/logger"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/models/registration"
-	meshkitUtils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshkit/logger"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/models/registration"
+	meshkitUtils "github.com/meshery/meshkit/utils"
 )
 
 var ModelsPath = "../meshmodel"
@@ -57,10 +57,11 @@ func GetModelDirectoryPaths(modelPath string) ([]string, error) {
 		if len(sortedVersionDirs) == 0 {
 			continue
 		}
-		// Temporarily remove this once the connection and credentials of k8s is written to repective version is implemented in the generator, and the namespace bug (where the component namespace is incorrectly marked as true) is resolved.
-		if modelName == "kubernetes" {
-			sortedVersionDirs[0] = "../meshmodel/kubernetes/v1.32.0-alpha.3"
-		}
+		// NOTE
+		// Temporarily:  remove this once the connection and credentials of k8s is written to repective version is implemented in the generator, and the namespace bug (where the component isNamespace is incorrectly marked as true) is resolved.
+		// if modelName == "kubernetes" {
+		// 	sortedVersionDirs[0] = "../meshmodel/kubernetes/v1.32.0-alpha.3"
+		// }
 		modelDefDirPath, err := getLatestModelDefDir(sortedVersionDirs[0])
 		if err != nil {
 			continue

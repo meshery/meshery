@@ -1,11 +1,11 @@
 contexts:
     gke:
-        channel: stable
+        endpoint: http://localhost:9081
+        token: default
+        platform: gke
         components:
             - meshery-istio
-        endpoint: http://localhost:9081
-        platform: gke
-        token: default
+        channel: stable
         version: latest
     local:
         endpoint: http://localhost:9081

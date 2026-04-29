@@ -56,7 +56,7 @@ mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish`
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
 	Use:     "completion [bash|zsh|fish]",
-	Short:   "Output shell completion code",
+	Short:   "Generate shell completion scripts",
 	Long:    "Output shell completion code",
 	Example: example,
 	Args: func(_ *cobra.Command, args []string) error {

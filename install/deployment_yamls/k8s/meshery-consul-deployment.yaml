@@ -22,7 +22,7 @@ spec:
     spec:
       serviceAccount: meshery-server
       containers:
-      - image: layer5/meshery-consul:stable-latest
+      - image: meshery/meshery-consul:stable-latest
         imagePullPolicy: Always
         name: meshery-consul
         ports:

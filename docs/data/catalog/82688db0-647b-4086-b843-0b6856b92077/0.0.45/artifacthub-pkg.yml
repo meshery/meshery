@@ -1,0 +1,33 @@
+version: 0.0.45
+name: fullstack-app-design
+displayName: fullstack-app-design
+createdAt: "2025-07-04T19:25:10Z"
+description: |-
+    This design represents a minimal full-stack web application architecture.
+
+    Client Browser → sends requests to the application.
+
+    Nginx (port 80) → acts as a reverse proxy, serving the frontend and forwarding API requests.
+
+    Node.js Backend (port 3000) → handles application logic and API endpoints.
+
+    Redis (port 6379) → used as an in-memory database/cache for fast data access, session storage, or queue management.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/82688db0-647b-4086-b843-0b6856b92077/0.0.45/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "No persistent database is included (Redis is in-memory, so data is lost if the service restarts).\n\nSecurity (HTTPS/TLS, authentication, and authorization) is not configured yet.\n\nScaling is single-instance; no load balancing or replication is set up.\n\nMonitoring/Logging tools (like Prometheus, Grafana, ELK) are not included.\n\nFrontend is assumed to be static files served by Nginx — if a modern React/Angular app is needed, a separate build process may be required. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 6e46b1c4-3727-4a78-b7d8-af63d9e6f5c8
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/82688db0-647b-4086-b843-0b6856b92077-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/82688db0-647b-4086-b843-0b6856b92077-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

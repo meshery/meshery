@@ -3,7 +3,7 @@ name: meshery-istio
 description: Meshery Adapter for Istio chart.
 icon: https://meshery.io/images/logos/meshery-logo.png
 source: 
-  - https://github.com/layer5io/meshery-istio
+  - https://github.com/meshery/meshery-istio
 
 deprecated: false
 
@@ -29,5 +29,5 @@ appVersion: stable-latest
 maintainers:
   - name: aisuko
     email: urakiny@gmail.com
-  - name: leecalcote
-    email: leecalcote@gmail.com
+  - name: maintainers
+    email: maintainers@meshery.io

@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/grafana-tools/sdk"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/logger"
 	promAPI "github.com/prometheus/client_golang/api"
 	promQAPI "github.com/prometheus/client_golang/api/prometheus/v1"
 	promModel "github.com/prometheus/common/model"

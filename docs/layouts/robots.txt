@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /pr-preview/
+Disallow: /v0.4/
+Disallow: /v0.5/
+Disallow: /v0.6/
+Disallow: /v0.7/
+Disallow: /v0.8/
+Disallow: /v0.9/

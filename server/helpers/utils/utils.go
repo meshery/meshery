@@ -14,10 +14,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/encoding"
-	"github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"gorm.io/gorm"
@@ -243,7 +243,9 @@ func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
 
 func DeleteSVGsFromFileSystem() {
 	for _, path := range UISVGPaths {
-		os.RemoveAll(path)
+		if err := os.RemoveAll(path); err != nil && !errors.Is(err, os.ErrNotExist) {
+			fmt.Println(err)
+		}
 	}
 }
 func getRelativePathForAPI(path string) string {
@@ -512,18 +514,26 @@ func CopyDirectory(src string, dst string) error {
 	return nil
 }
 
-func copyFile(src, dst string) error {
+func copyFile(src, dst string) (err error) {
 	srcFile, err := os.Open(src)
 	if err != nil {
 		return err
 	}
-	defer srcFile.Close()
+	defer func() {
+		if closeErr := srcFile.Close(); err == nil && closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	dstFile, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer dstFile.Close()
+	defer func() {
+		if closeErr := dstFile.Close(); err == nil && closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	if _, err := io.Copy(dstFile, srcFile); err != nil {
 		return err

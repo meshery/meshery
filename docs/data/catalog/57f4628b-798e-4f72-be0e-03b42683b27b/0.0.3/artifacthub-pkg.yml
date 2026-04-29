@@ -1,0 +1,24 @@
+version: 0.0.3
+name: understanding-the-difference-between-edge-relationships
+displayName: Understanding the difference between Edge Relationships
+createdAt: "2024-10-11T19:38:57Z"
+description: This particular design is for training purposes of understanding how relationships work in Meshery.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/57f4628b-798e-4f72-be0e-03b42683b27b/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Learn the difference between semantically-meaningful relationships and those that are not. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 090e7114-509a-4046-81f1-9c5fb8daf724
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/57f4628b-798e-4f72-be0e-03b42683b27b-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/57f4628b-798e-4f72-be0e-03b42683b27b-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

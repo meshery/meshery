@@ -2,7 +2,8 @@ package machines
 
 import (
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
 )
 
 func Discovered() State {
@@ -42,7 +43,7 @@ func Initial() State {
 		RegisterEvent(Connect, CONNECTED)
 }
 
-func New(initialState StateType, ID string, userID uuid.UUID, log logger.Handler, mtype string) (*StateMachine, error) {
+func New(initialState StateType, ID string, userID core.Uuid, log logger.Handler, mtype string) (*StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
 	if err != nil {
 		return nil, ErrInititalizeK8sMachine(err)

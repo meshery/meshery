@@ -15,15 +15,15 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
+    "registrant": {
+      "kind": ""
+    },
+    "version": ""
   },
   "styles": {
     "primaryColor": "#566366",
@@ -60,78 +74,6 @@
   },
   "capabilities": [
     {
-      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-      "displayName": "Performance Test",
-      "entityState": [
-        "instance"
-      ],
-      "key": "",
-      "kind": "action",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
-      "status": "enabled",
-      "subType": "perf-test",
-      "type": "operator",
-      "version": "0.7.0"
-    },
-    {
-      "description": "Configure the workload specific setting of a component",
-      "displayName": "Workload Configuration",
-      "entityState": [
-        "declaration"
-      ],
-      "key": "",
-      "kind": "mutate",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
-      "status": "enabled",
-      "subType": "config",
-      "type": "configuration",
-      "version": "0.7.0"
-    },
-    {
-      "description": "Configure Labels And Annotations for  the component ",
-      "displayName": "Labels and Annotations Configuration",
-      "entityState": [
-        "declaration"
-      ],
-      "key": "",
-      "kind": "mutate",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
-      "status": "enabled",
-      "subType": "labels-and-annotations",
-      "type": "configuration",
-      "version": "0.7.0"
-    },
-    {
-      "description": "View relationships for the component",
-      "displayName": "Relationships",
-      "entityState": [
-        "declaration",
-        "instance"
-      ],
-      "key": "",
-      "kind": "view",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
-      "status": "enabled",
-      "subType": "relationship",
-      "type": "configuration",
-      "version": "0.7.0"
-    },
-    {
-      "description": "View Component Definition ",
-      "displayName": "Json Schema",
-      "entityState": [
-        "declaration",
-        "instance"
-      ],
-      "key": "",
-      "kind": "view",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
-      "status": "enabled",
-      "subType": "definition",
-      "type": "configuration",
-      "version": "0.7.0"
-    },
-    {
       "description": "Configure the visual styles for the component",
       "displayName": "Styling",
       "entityState": [
@@ -139,7 +81,7 @@
       ],
       "key": "",
       "kind": "mutate",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "schemaVersion": "capability.meshery.io/v1beta1",
       "status": "enabled",
       "subType": "",
       "type": "style",
@@ -153,7 +95,7 @@
       ],
       "key": "",
       "kind": "mutate",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "schemaVersion": "capability.meshery.io/v1beta1",
       "status": "enabled",
       "subType": "shape",
       "type": "style",
@@ -167,7 +109,7 @@
       ],
       "key": "",
       "kind": "interaction",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "schemaVersion": "capability.meshery.io/v1beta1",
       "status": "enabled",
       "subType": "compoundDnd",
       "type": "graph",
@@ -189,5 +131,8 @@
     "version": "status.gatekeeper.sh/v1beta1",
     "kind": "ConfigPodStatus",
     "schema": "{\n \"properties\": {},\n \"title\": \"Config Pod Status\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

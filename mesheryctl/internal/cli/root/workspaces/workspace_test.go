@@ -2,17 +2,21 @@ package workspaces
 
 import (
 	"flag"
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 var update = flag.Bool("update", false, "update golden files")
 var testOrgId = "2d2c0b60-076a-4f0a-8a63-de538570a553"
+var validWorkspaceName = "workspace-test"
+var workspaceDescription = "integration test"
 
 func TestWorkspaces(t *testing.T) {
+	utils.SetupContextEnv(t)
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -21,16 +25,28 @@ func TestWorkspaces(t *testing.T) {
 	currentDirectory := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
-			Name:             "Display error when no args and flag provided",
+			Name:             "Given no argument provided trigger an error",
 			Args:             []string{},
 			URL:              "",
 			Fixture:          "list.workspace.empty.api.response.golden",
-			ExpectedResponse: "workspace.no.args.no.flags.output.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    returnInvalidArgumentProvidedError(),
+		},
+		{
+			Name:             "Given invalid subcommand name provided trigger an error",
+			Args:             []string{"invalidCommand"},
+			URL:              "",
+			Fixture:          "list.workspace.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list]. Use 'mesheryctl workspace --help' to display usage guide", "invalidCommand")),
 		},
 	}
 
-	utils.InvokeMesheryctlTestListCommand(t, update, WorkSpaceCmd, tests, currentDirectory, "organization")
+	utils.InvokeMesheryctlTestListCommand(t, update, WorkSpaceCmd, tests, currentDirectory, "workspace")
 }

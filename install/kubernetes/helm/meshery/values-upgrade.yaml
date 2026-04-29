@@ -1,0 +1,50 @@
+# Recommended values for upgrading existing Meshery deployments
+# Use this file when upgrading: helm upgrade meshery meshery/meshery -f values-upgrade.yaml
+
+# These probe settings are optimized for upgrade scenarios where:
+# - Provider capabilities need to reload
+# - Extension packages may need re-downloading
+# - Initial startup time is shorter than fresh installation
+
+probe:
+  # Startup probe recommended for upgrades to handle initial capability loading
+  # This prevents liveness probe from killing the pod during upgrade initialization
+  startupProbe:
+    enabled: true            # Enable to protect during upgrade initialization
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    failureThreshold: 18     # Allow up to 3 minutes for upgrade startup (18 * 10s)
+    timeoutSeconds: 5
+
+  # Liveness probe with moderate settings for upgrades
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 60  # Shorter than initial install since base system exists
+    periodSeconds: 12
+    failureThreshold: 4
+    timeoutSeconds: 5
+
+  # Readiness probe with higher failure threshold during upgrades
+  # Accounts for potential temporary unavailability during capability reload
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 15
+    periodSeconds: 5
+    failureThreshold: 6      # Higher threshold to tolerate upgrade-related delays
+    timeoutSeconds: 3
+
+# Other recommended upgrade settings
+
+# Use rolling update strategy for zero-downtime upgrades
+# (This is typically the default, included here for completeness)
+# strategy:
+#   type: RollingUpdate
+#   rollingUpdate:
+#     maxSurge: 1
+#     maxUnavailable: 0
+
+# Example: To perform upgrade with these values
+# helm upgrade meshery meshery/meshery \
+#   --namespace meshery \
+#   -f values-upgrade.yaml \
+#   --wait --timeout 10m

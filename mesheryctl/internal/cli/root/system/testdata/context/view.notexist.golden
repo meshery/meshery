@@ -1,3 +1,0 @@
-context "local3" doesn't exists, run the following to create:
-
-mesheryctl system context create local3

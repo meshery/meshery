@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/logger"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )

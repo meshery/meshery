@@ -1,14 +1,14 @@
 package models
 
 import (
-	"github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
 type MeshSyncResourcesAPIResponse struct {
 	Page       int                        `json:"page"`
-	PageSize   int                        `json:"page_size"`
-	TotalCount int64                      `json:"total_count"`
+	PageSize   int                        `json:"pageSize"`
+	TotalCount int64                      `json:"totalCount"`
 	Resources  []model.KubernetesResource `json:"resources"`
 	Design     pattern.PatternFile        `json:"design"`
 }

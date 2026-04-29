@@ -104,7 +104,7 @@ type Metrics struct {
 	IndividualWorkload *Workload         `yaml:"individual_workload_1,omitempty"`
 }
 
-// PerformanceSpec - represents SMP, see here https://github.com/layer5io/service-mesh-performance-specification
+// PerformanceSpec - represents SMP, see here https://github.com/service-mesh-performance-specification/service-mesh-performance-specification
 type PerformanceSpec struct {
 	SMPVersion   string            `yaml:"smp_version,omitempty"`
 	id           string            `yaml:"id,omitempty"`

@@ -5,13 +5,14 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/layer5io/meshery/server/models"
-	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/meshery/server/models"
+	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 
-	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
-	"github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/meshery/server/models/pattern/patterns/k8s"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
+	"github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta2/component"
 )
 
 type DeploymentMessagePerComp struct {
@@ -42,8 +43,6 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 		return nil, err
 	}
 
-	fmt.Println("\n\n\nTEST DEPHANDLER : ", depHandler)
-
 	msgs := make([]DeploymentMessagePerContext, 0)
 	var msgsMx sync.Mutex
 
@@ -66,9 +65,7 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 
 			msgsPerComp := make([]DeploymentMessagePerComp, 0)
 			for _, comp := range componets {
-				fmt.Println("TEST INSIDE line 70 : ", comp.Component.Kind)
 				if !skipCrdAndOperator && depHandler != nil && comp.Model.Name != (_models.Kubernetes{}).String() {
-					fmt.Println("TEST INSIDE line 72 : ")
 					deploymentMsg := DeploymentMessagePerComp{
 						Kind:       comp.Component.Kind,
 						Model:      comp.Model.Name,
@@ -78,7 +75,13 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					}
 
 					// Deploys resources that are required inside cluster for successful deployment of the design.
-					result, err := depHandler.HandleDependents(comp, kcli, !isDel, upgradeExistingRelease)
+					// meshkit's DependencyHandler.HandleDependents takes
+					// *v1beta3/component.ComponentDefinition (the registry-
+					// canonical casing); PatternFile.Components pins
+					// v1beta2/component, so we bridge just at the meshkit
+					// boundary rather than holding v1beta3 everywhere.
+					v1beta3Comp := patternutils.ComponentV1beta2ToV1beta3(&comp)
+					result, err := depHandler.HandleDependents(*v1beta3Comp, kcli, !isDel, upgradeExistingRelease)
 					// If dependencies were not resolved fail forward, there can be case that dependency already exist in the cluster.
 					deploymentMsg.Message = result
 					if err != nil {
@@ -105,7 +108,6 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					_msg.Error = err
 					_msg.Success = false
 				}
-				fmt.Println("TEST INSIDE line 108 after deploying : ", err)
 				msgsPerComp = append(msgsPerComp, _msg)
 			}
 

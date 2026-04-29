@@ -1,0 +1,28 @@
+---
+title: v0.8.109
+date: 2025-06-24
+tag: v0.8.109
+---
+
+**What's new?**
+- 🔤 **General**
+  - Add support for getting mutator data outside of configuration (e.g., `displayName`) – @CodeAhmedJamil (#15166)
+
+- ⌨️ **Meshery CLI**
+  - Fix: [mesheryctl] Component Update command is not picking up genealogy field from CSV – @weilirs (#15167)
+  - Feature: [mesheryctl] model build command – @n2h9 (#14390)
+
+- 🖥 **Meshery UI**
+  - Chore: add padding to select-all box in `components/ui/NotificationCenter` – @saurabhraghuvanshii (#15079)
+
+- 🧰 **Maintenance**
+  - Chore: add padding to select-all box in `components/ui/NotificationCenter` – @saurabhraghuvanshii (#15079)
+  - [CI] Feature: Meshery server with MeshSync integration test – @n2h9 (#14626)
+
+- 📖 **Documentation**
+  - Chore: add padding to select-all box in `components/ui/NotificationCenter` – @saurabhraghuvanshii (#15079)
+  - Feature: [mesheryctl] model build command – @n2h9 (#14390)
+
+- 👨🏽‍💻 **Contributors**
+  - Thank you to our contributors for making this release possible:  
+    @CodeAhmedJamil, @aabidsofi19, @fitzergerald, @l5io, @leecalcote, @meshery-ci, @n2h9, @saurabhraghuvanshii, @weilirs

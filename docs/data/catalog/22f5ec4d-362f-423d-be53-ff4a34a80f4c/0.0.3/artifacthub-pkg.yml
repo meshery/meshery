@@ -1,0 +1,24 @@
+version: 0.0.3
+name: ms-microsoftgraph-rest-0.0.11.tgz
+displayName: ms-microsoftgraph-rest-0.0.11.tgz
+createdAt: "2025-10-10T23:51:23Z"
+description: Microsoft Graph REST API microservice deployment with HashiCorp Vault integration for secure secrets management.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/22f5ec4d-362f-423d-be53-ff4a34a80f4c/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires HashiCorp Vault operator in vault-operator namespace. Configure Vault token in the secret before deployment. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 18eb2276-b7ed-4c53-af7b-4f50cb2b2f92
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/22f5ec4d-362f-423d-be53-ff4a34a80f4c-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/22f5ec4d-362f-423d-be53-ff4a34a80f4c-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

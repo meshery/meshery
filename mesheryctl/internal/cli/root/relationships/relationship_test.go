@@ -6,12 +6,15 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 var update = flag.Bool("update", false, "update golden files")
 
 func TestRelationship(t *testing.T) {
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -20,7 +23,7 @@ func TestRelationship(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Display error without any flags or args",
 			Args:             []string{},
@@ -28,6 +31,7 @@ func TestRelationship(t *testing.T) {
 			Fixture:          "list.relationship.api.empty.response.golden",
 			ExpectedResponse: "relationship.no.args.no.flag.output.golden",
 			ExpectError:      true,
+			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Display error given invalid command",
@@ -36,6 +40,7 @@ func TestRelationship(t *testing.T) {
 			Fixture:          "list.relationship.api.empty.response.golden",
 			ExpectedResponse: "relationship.invalid.command.output.golden",
 			ExpectError:      true,
+			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Display count of registered relationships empty",
@@ -44,6 +49,7 @@ func TestRelationship(t *testing.T) {
 			Fixture:          "list.relationship.api.empty.response.golden",
 			ExpectedResponse: "list.count.relationship.empty.output.golden",
 			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Display count of registered relationships",
@@ -52,6 +58,7 @@ func TestRelationship(t *testing.T) {
 			Fixture:          "list.relationship.api.response.golden",
 			ExpectedResponse: "list.count.relationship.output.golden",
 			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 	}
 

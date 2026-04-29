@@ -1,0 +1,20 @@
+version: 0.0.1
+name: kubernetes-cronjob
+displayName: Kubernetes cronjob
+createdAt: "2023-11-01T02:21:32Z"
+description: This design contains a single Kubernetes Cronjob.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/287dc0fe-6497-4483-b54e-178eb8d65da8/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design is for learning purposes and may be freely copied and distributed.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 090e7114-509a-4046-81f1-9c5fb8daf724
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

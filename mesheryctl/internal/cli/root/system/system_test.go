@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestSystemCmdIntegration(t *testing.T) {
