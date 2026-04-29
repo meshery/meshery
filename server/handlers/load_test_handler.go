@@ -86,8 +86,20 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		loadTestOptions.Duration = time.Second
 	}
 
+	// Validate that at least one client is present before indexing.
+	if len(perfTest.Config.Clients) == 0 {
+		writeJSONError(w, "no clients provided in the SMP configuration", http.StatusBadRequest)
+		return
+	}
+
 	// TODO: check multiple clients in case of distributed perf test
 	testClient := perfTest.Config.Clients[0]
+
+	// Validate that at least one endpoint URL is present before indexing.
+	if len(testClient.EndpointUrls) == 0 {
+		writeJSONError(w, "no endpoint URLs provided in the SMP client configuration", http.StatusBadRequest)
+		return
+	}
 
 	// TODO: consider the multiple endpoints
 	loadTestOptions.URL = testClient.EndpointUrls[0]
