@@ -181,23 +181,25 @@ const GrafanaComponent = (props) => {
       updateState({ [name]: value });
       updateState({ urlError: false });
 
-      // Get the connection object from the event value and update configuration
-      const grafanaConnectionObj = value;
-      try {
-        const res = await fetchCredentialById(grafanaConnectionObj.credential_id).unwrap();
-        const grafanaCfg = {
-          grafanaURL: grafanaConnectionObj?.value || '',
-          grafanaAPIKey: res?.secret?.secret || '',
-          grafanaBoardSearch:
-            grafanaConnectionObj?.metadata?.grafanaBoardSearch || state.grafanaBoardSearch,
-          grafanaBoards: grafanaConnectionObj?.metadata?.grafana_boards || [],
-          selectedBoardsConfigs: grafanaConnectionObj?.metadata?.selectedBoardsConfigs,
-          connectionID: grafanaConnectionObj?.id,
-          connectionName: grafanaConnectionObj?.name,
-        };
-        dispatch(updateGrafanaConfig(grafanaCfg));
-      } catch (error) {
-        console.error('Error fetching credential by ID:', error);
+      // Only update global configuration if a connection object with a credential is provided
+      if (value?.credential_id) {
+        const grafanaConnectionObj = value;
+        try {
+          const res = await fetchCredentialById(grafanaConnectionObj.credential_id).unwrap();
+          const grafanaCfg = {
+            grafanaURL: grafanaConnectionObj?.value || '',
+            grafanaAPIKey: res?.secret?.secret || '',
+            grafanaBoardSearch:
+              grafanaConnectionObj?.metadata?.grafanaBoardSearch || state.grafanaBoardSearch,
+            grafanaBoards: grafanaConnectionObj?.metadata?.grafana_boards || [],
+            selectedBoardsConfigs: grafanaConnectionObj?.metadata?.selectedBoardsConfigs,
+            connectionID: grafanaConnectionObj?.id,
+            connectionName: grafanaConnectionObj?.name,
+          };
+          dispatch(updateGrafanaConfig(grafanaCfg));
+        } catch (error) {
+          console.error('Error fetching credential by ID:', error);
+        }
       }
     }
 
