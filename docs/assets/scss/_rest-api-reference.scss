@@ -13,21 +13,19 @@ $method-head: #7d8790;
   color: var(--color-white);
 }
 
-.rest-api-reference-page {
+.rest-api-reference-main {
+  overflow-x: visible;
+}
+
+.rest-api-reference-content {
+  max-width: none;
+
   .rest-api-page,
   .rest-api-page pre,
   .rest-api-page code,
   .rest-api-page kbd,
   .rest-api-page samp {
     font-family: "Qanelas Soft", "Open Sans", sans-serif;
-  }
-
-  .main-container {
-    overflow-x: visible;
-  }
-
-  .td-content {
-    max-width: none;
   }
 
   .rest-api-page {
