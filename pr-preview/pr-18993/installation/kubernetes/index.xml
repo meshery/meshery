@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kubernetes on Documentation</title><link>/installation/kubernetes/</link><description>Recent content in Kubernetes on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/installation/kubernetes/index.xml" rel="self" type="application/rss+xml"/><item><title>AKS</title><link>/installation/kubernetes/aks/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/aks/</guid><description>&lt;h1&gt;Quick Start with AKS &lt;img src="../../installation/kubernetes/images/aks.svg" style="width:35px;height:35px;" /&gt;&lt;/h1&gt;
+&lt;p&gt;Manage your AKS clusters with Meshery. Deploy Meshery in AKS &lt;a href="../../installation/kubernetes/aks/#in-cluster-installation"&gt;in-cluster&lt;/a&gt; or outside of AKS &lt;a href="../../installation/kubernetes/aks/#out-of-cluster-installation"&gt;out-of-cluster&lt;/a&gt;. &lt;strong&gt;&lt;em&gt;Note: It is advisable to install Meshery in your AKS clusters&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="prereqs"&gt;&lt;h4&gt;Prerequisites&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;Install the Meshery command line client, &lt;a href="../../installation/mesheryctl" class="meshery-light"&gt;mesheryctl&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Install &lt;a href="https://kubernetes.io/docs/tasks/tools/"&gt;kubectl&lt;/a&gt; on your local machine.&lt;/li&gt;
+&lt;li&gt;Install &lt;a href="https://learn.microsoft.com/en-us/cli/azure/install-azure-cli"&gt;Azure CLI&lt;/a&gt;, configured for your environment.&lt;/li&gt;
+&lt;li&gt;Access to an active AKS cluster in one of your resource groups.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;p&gt;Also see: &lt;a href="../../installation/kubernetes/"&gt;Install Meshery on Kubernetes&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="available-deployment-methods"&gt;
+	Available Deployment Methods
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/aks/#in-cluster-installation"&gt;In-cluster Installation&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/aks/#preflight-checks"&gt;Preflight Checks&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/aks/#preflight-cluster-connectivity"&gt;Preflight: Cluster Connectivity&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/aks/#installation-using-mesheryctl"&gt;Installation: Using &lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/aks/#installation-using-helm"&gt;Installation: Using Helm&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/aks/#post-installation-steps"&gt;Post-Installation Steps&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="in-cluster-installation"&gt;
+	In-cluster Installation
+&lt;/h1&gt;
+&lt;p&gt;Follow the steps below to install Meshery in your AKS cluster.&lt;/p&gt;</description></item><item><title>EKS</title><link>/installation/kubernetes/eks/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/eks/</guid><description>&lt;h1&gt;Quick Start with EKS &lt;img src="../../installation/kubernetes/images/eks.png" style="width:35px;height:35px;" /&gt;&lt;/h1&gt;
+&lt;p&gt;Manage your EKS clusters with Meshery. Deploy Meshery in EKS &lt;a href="../../installation/kubernetes/eks/#in-cluster-installation"&gt;in-cluster&lt;/a&gt; or outside of EKS &lt;a href="../../installation/kubernetes/eks/#out-of-cluster-installation"&gt;out-of-cluster&lt;/a&gt;. &lt;strong&gt;&lt;em&gt;Note: It is advisable to install Meshery in your EKS clusters&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="prereqs"&gt;&lt;h4&gt;Prerequisites&lt;/h4&gt;
+ &lt;ol&gt;
+ &lt;li&gt;Install the Meshery command line client, &lt;a href="../../installation/mesheryctl" class="meshery-light"&gt;mesheryctl&lt;/a&gt;.&lt;/li&gt;
+ &lt;li&gt;Install &lt;a href="https://kubernetes.io/docs/tasks/tools/"&gt;kubectl&lt;/a&gt; on your local machine.&lt;/li&gt;
+ &lt;li&gt;Install &lt;a href="https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html"&gt;AWS CLI&lt;/a&gt;, configured for your environment.&lt;/li&gt;
+ &lt;li&gt;Access to an active EKS cluster in an AWS account.&lt;/li&gt;
+ &lt;/ol&gt;
+&lt;/div&gt;
+&lt;p&gt;Also see: &lt;a href="../../installation/kubernetes/"&gt;Install Meshery on Kubernetes&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="available-deployment-methods"&gt;
+	Available Deployment Methods
+&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/eks/#in-cluster-installation"&gt;In-cluster Installation&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/eks/#installation-using-mesheryctl"&gt;Installation: Using &lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/eks/#installation-using-helm"&gt;Installation: Using Helm&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/eks/#post-installation-steps"&gt;Post-Installation Steps&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/eks/#out-of-cluster-installation"&gt;Out-of-cluster Installation&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/eks/#install-meshery-on-docker"&gt;Install Meshery on Docker&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="in-cluster-installation"&gt;
+	In-cluster Installation
+&lt;/h1&gt;
+&lt;p&gt;Follow the steps below to install Meshery in your EKS cluster.&lt;/p&gt;</description></item><item><title>GKE</title><link>/installation/kubernetes/gke/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/gke/</guid><description>&lt;h1&gt;Quick Start with GKE &lt;img src="../../installation/kubernetes/images/gke.png" style="width:35px;height:35px;" /&gt;&lt;/h1&gt;
+&lt;p&gt;Manage your GKE clusters with Meshery. Deploy Meshery in GKE &lt;a href="../../installation/kubernetes/gke/#in-cluster-installation"&gt;in-cluster&lt;/a&gt; or outside of GKE &lt;a href="../../installation/kubernetes/gke/#out-of-cluster-installation"&gt;out-of-cluster&lt;/a&gt;. &lt;strong&gt;&lt;em&gt;Note: It is advisable to install Meshery in your GKE clusters&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisites&lt;/strong&gt; &lt;/p&gt; 
+ &lt;ol&gt;
+ &lt;li&gt;Install the Meshery command line client, &lt;a href="../../installation/mesheryctl" class="meshery-light"&gt;mesheryctl&lt;/a&gt;.&lt;/li&gt;
+ &lt;li&gt;Install &lt;a href="https://kubernetes.io/docs/tasks/tools/"&gt;kubectl&lt;/a&gt; on your local machine.&lt;/li&gt;
+ &lt;li&gt;Install &lt;a href="https://cloud.google.com/sdk/docs/install"&gt;gcloud CLI&lt;/a&gt;, configured for your environment.&lt;/li&gt;
+ &lt;li&gt;Access to an active GKE cluster in your Google Cloud project.&lt;/li&gt;
+ &lt;/ol&gt;
+&lt;/div&gt;
+&lt;p&gt;Also see: &lt;a href="../../installation/kubernetes/"&gt;Install Meshery on Kubernetes&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="available-deployment-methods"&gt;
+	Available Deployment Methods
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/gke/#in-cluster-installation"&gt;In-cluster Installation&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/gke/#preflight-checks"&gt;Preflight Checks&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/gke/#preflight-cluster-connectivity"&gt;Preflight: Cluster Connectivity&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/gke/#preflight-plan-your-access-to-meshery-ui"&gt;Preflight: Plan your access to Meshery UI&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/gke/#installation-using-mesheryctl"&gt;Installation: Using &lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/gke/#installation-using-helm"&gt;Installation: Using Helm&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/gke/#post-installation-steps"&gt;Post-Installation Steps&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="in-cluster-installation"&gt;
+	In-cluster Installation
+&lt;/h1&gt;
+&lt;p&gt;Follow the steps below to install Meshery in your GKE cluster.&lt;/p&gt;</description></item><item><title>Helm</title><link>/installation/kubernetes/helm/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/helm/</guid><description>&lt;h1 id="install-meshery-on-kubernetes-using-helm"&gt;
+	Install Meshery on Kubernetes Using Helm
+&lt;/h1&gt;
+&lt;div class="prereqs"&gt;&lt;h4&gt;Prerequisites&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="https://helm.sh/docs/intro/install/" class="meshery-light"&gt;Helm&lt;/a&gt; should be installed on your local machine.&lt;/li&gt;
+&lt;li&gt;You should have access to the cluster/platform where you want to deploy Meshery.&lt;/li&gt;
+&lt;li&gt;Ensure that the kubeconfig file has the correct current context/cluster configuration.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;h2 id="install-meshery-on-your-kubernetes-cluster-using-helm"&gt;
+	Install Meshery on Your Kubernetes Cluster Using Helm
+&lt;/h2&gt;
+
+
+&lt;pre class="codeblock-pre"&gt;
+	&lt;div class="codeblock"&gt;
+		&lt;code class="clipboardjs"&gt;helm repo add meshery https://meshery.io/charts/
+helm install meshery meshery/meshery --namespace meshery --create-namespace&lt;/code&gt;
+	&lt;/div&gt;
+&lt;/pre&gt;
+
+&lt;p&gt;Optionally, Meshery Server supports customizing the callback URL for your remote provider, like so:&lt;/p&gt;</description></item><item><title>KinD</title><link>/installation/kubernetes/kind/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/kind/</guid><description>&lt;h1&gt;Quick Start with KinD &lt;img src="../../installation/kubernetes/images/kind.png" style="width:35px;height:35px;" /&gt;&lt;/h1&gt;
+&lt;p&gt;Manage your KinD clusters with Meshery. Deploy Meshery in your &lt;a href="../../installation/kubernetes/kind/#in-cluster-installation"&gt;KinD cluster&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="prereqs"&gt;&lt;h4&gt;Prerequisites&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;Install the Meshery command line client, &lt;a href="../../installation/mesheryctl" class="meshery-light"&gt;mesheryctl&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Install &lt;a href="https://kubernetes.io/docs/tasks/tools/"&gt;kubectl&lt;/a&gt; on your local machine.&lt;/li&gt;
+&lt;li&gt;Install &lt;a href="https://kind.sigs.k8s.io/docs/user/quick-start/#installation"&gt;KinD&lt;/a&gt; on your local machine.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;p&gt;Also see: &lt;a href="../../installation/kubernetes/"&gt;Install Meshery on Kubernetes&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="available-deployment-methods"&gt;
+	Available Deployment Methods
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/kind/#available-deployment-methods"&gt;Available Deployment Methods&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/kind/#in-cluster-installation"&gt;In-cluster Installation&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/kind/#preflight-checks"&gt;Preflight Checks&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/kind/#preflight-cluster-connectivity"&gt;Preflight: Cluster Connectivity&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/kind/#installation-using-mesheryctl"&gt;Installation: Using &lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/kind/#alternative-installation-using-helm"&gt;Alternative Installation: Using Helm&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../installation/kubernetes/kind/#post-installation-steps"&gt;Post-Installation Steps&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="in-cluster-installation"&gt;
+	In-cluster Installation
+&lt;/h2&gt;
+&lt;p&gt;Follow the steps below to install Meshery in your KinD cluster.&lt;/p&gt;</description></item><item><title>KubeSphere</title><link>/installation/kubernetes/kubesphere/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/kubesphere/</guid><description>&lt;h1&gt;Quick Start with KubeSphere &lt;img src="../../installation/kubernetes/images/kubesphere.png" style="width:35px;height:35px;" /&gt;&lt;/h1&gt;
+
+&lt;div class="prereqs"&gt;&lt;h4&gt;Prerequisites&lt;/h4&gt;
+
+1. Install the Meshery command line client, 
+&lt;a href="../../installation/mesheryctl" class="meshery-light"&gt;
+ mesheryctl
+&lt;/a&gt;.
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://meshery.io/"&gt;Meshery&lt;/a&gt; is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, all kinds of cloud native infrastructure, and their workloads.&lt;/p&gt;
+&lt;p&gt;This tutorial walks you through an example of deploying Meshery from the App Store of KubeSphere.&lt;/p&gt;
+&lt;h2 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Please make sure you enable the OpenPitrix system.&lt;/li&gt;
+&lt;li&gt;You need to create a workspace, a project, and a user account (&lt;code&gt;project-regular&lt;/code&gt;) for this tutorial. The account needs to be a platform regular user and to be invited as the project operator with the &lt;code&gt;operator&lt;/code&gt; role. In this tutorial, you log in as &lt;code&gt;project-regular&lt;/code&gt; and work in the project &lt;code&gt;demo-project&lt;/code&gt; in the workspace &lt;code&gt;demo-workspace&lt;/code&gt;. For more information, see Create Workspaces, Projects, Users and Roles.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="hands-on-lab"&gt;
+	Hands-on Lab
+&lt;/h2&gt;
+&lt;p&gt;Perform the following steps in order:&lt;/p&gt;</description></item><item><title>Minikube</title><link>/installation/kubernetes/minikube/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/kubernetes/minikube/</guid><description>&lt;h1&gt;Quick Start with Minikube &lt;img src="../../installation/kubernetes/images/minikube.png" style="width:35px;height:35px;" /&gt;&lt;/h1&gt;
+&lt;p&gt;Meshery can manage your minikube clusters and is particularly useful for multi-cluster management and deployments.&lt;/p&gt;
+&lt;p&gt;For Meshery to manage your Minikube cluster, it has to be discovered and added as a Kubernetes connection in the Meshery server.&lt;/p&gt;
+&lt;p&gt;After your cluster has been added as a connection, you can use Meshery to make infrastructure deployments of your &lt;a href="https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=creating-designs"&gt;Meshery Designs&lt;/a&gt; to your cluster. To learn more about this, See &lt;a href="https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs"&gt;Deploying Meshery Designs&lt;/a&gt;. You can also Visualize the resources in your cluster in Operator Mode, See &lt;a href="https://docs.layer5.io/kanvas/operator/operator-views/"&gt;Views in Visualizer&lt;/a&gt;.&lt;/p&gt;</description></item></channel></rss>
