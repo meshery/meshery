@@ -13,8 +13,12 @@ import (
 )
 
 // PerformanceProfilesAPIResponse is a local struct for testing unmarshal errors.
+//
+// The JSON tag mirrors the real models.PerformanceProfilesAPIResponse.PageSize
+// tag (`pageSize`) so the error message produced by json.Unmarshal references
+// the same field name the production code would surface.
 type PerformanceProfilesAPIResponse struct {
-	PageSize uint `json:"page_size"`
+	PageSize uint `json:"pageSize"`
 }
 
 var update = flag.Bool("update", false, "update golden files")
@@ -112,9 +116,12 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedError: func() error {
 				cmdUsed = "profile"
 
-				// Replicate the exact JSON unmarshal error using local struct
+				// Replicate the exact JSON unmarshal error using local struct.
+				// Body matches the canonical camelCase wire form in the
+				// `profile.invalidJSON.response.golden` fixture so the inner
+				// json.Unmarshal error references `pageSize`, not `page_size`.
 				var response PerformanceProfilesAPIResponse
-				innerErr := json.Unmarshal([]byte(`{"page_size": "25"}`), &response)
+				innerErr := json.Unmarshal([]byte(`{"pageSize": "25"}`), &response)
 
 				return utils.ErrLoadConfig(ErrFailUnmarshal(innerErr))
 			}(),

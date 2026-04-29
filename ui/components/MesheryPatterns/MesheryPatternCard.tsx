@@ -46,9 +46,9 @@ const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 function MesheryPatternCard_({
   id,
   name,
-  updated_at,
-  created_at,
-  pattern_file,
+  updatedAt,
+  createdAt,
+  patternFile,
   handleVerify,
   handleDryRun,
   handleUnpublishModal,
@@ -82,7 +82,7 @@ function MesheryPatternCard_({
     setFullScreen(!fullScreen);
   };
 
-  const { data: owner } = useGetUserByIdQuery(pattern.user_id);
+  const { data: owner } = useGetUserByIdQuery(pattern.userId);
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
   const theme = useTheme();
@@ -90,7 +90,7 @@ function MesheryPatternCard_({
   const editInConfigurator = () => {
     router.push('/configuration/designs/configurator?design_id=' + id);
   };
-  const isOwner = user?.user_id == pattern?.user_id;
+  const isOwner = user?.userId == pattern?.userId;
   const userCanEdit = CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) || isOwner;
 
   const formatPatternFile = (file) => {
@@ -102,7 +102,7 @@ function MesheryPatternCard_({
     }
   };
 
-  const formatted_pattern_file = formatPatternFile(pattern_file);
+  const formattedPatternFile = formatPatternFile(patternFile);
   return (
     <div data-testid="meshery-pattern-card-item">
       {fullScreen && (
@@ -110,7 +110,7 @@ function MesheryPatternCard_({
           fullScreen={fullScreen}
           name={name}
           toggleFullScreen={toggleFullScreen}
-          config_file={formatted_pattern_file}
+          config_file={formattedPatternFile}
           setYaml={setYaml}
           updateHandler={updateHandler}
           deleteHandler={deleteHandler}
@@ -167,7 +167,7 @@ function MesheryPatternCard_({
             </div>
             <div style={{ marginRight: '0.5rem' }}>
               <div>
-                {updated_at ? (
+                {updatedAt ? (
                   <Typography
                     variant="caption"
                     style={{
@@ -176,7 +176,7 @@ function MesheryPatternCard_({
                     }}
                     data-testid="pattern-card-modified-on"
                   >
-                    Modified On: <Moment format="LLL">{updated_at}</Moment>
+                    Modified On: <Moment format="LLL">{updatedAt}</Moment>
                   </Typography>
                 ) : null}
               </div>
@@ -338,8 +338,8 @@ function MesheryPatternCard_({
                 {name}
               </Typography>
               <CardHeaderRight>
-                <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.user_id}`} target="_blank">
-                  <Avatar alt="profile-avatar" src={owner?.avatar_url} />
+                <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.userId}`} target="_blank">
+                  <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
                 </Link>
                 <CustomTooltip title="Enter Fullscreen" arrow interactive placement="top">
                   <IconButton
@@ -361,7 +361,7 @@ function MesheryPatternCard_({
               {catalogContentKeys.length === 0 ? (
                 <StyledCodeMirrorWrapper fullScreen={fullScreen}>
                   <CodeMirror
-                    value={showCode && formatted_pattern_file}
+                    value={showCode && formattedPatternFile}
                     options={{
                       theme: 'material',
                       lineNumbers: true,
@@ -388,7 +388,7 @@ function MesheryPatternCard_({
             <Grid2 size={{ xs: 8 }}>
               <div style={{ marginRight: '0.5rem' }}>
                 <div>
-                  {created_at ? (
+                  {createdAt ? (
                     <Typography
                       variant="caption"
                       style={{
@@ -399,7 +399,7 @@ function MesheryPatternCard_({
                       }}
                       data-testid="pattern-card-created-at"
                     >
-                      Created at: <Moment format="LLL">{created_at}</Moment>
+                      Created at: <Moment format="LLL">{createdAt}</Moment>
                     </Typography>
                   ) : null}
                 </div>

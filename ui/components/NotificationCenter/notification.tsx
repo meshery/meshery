@@ -86,7 +86,7 @@ const AvatarStack = ({ avatars, direction }) => {
               ml: '-0.4rem',
             }}
           >
-            <Avatar alt={avatar.name} src={avatar.avatar_url} />
+            <Avatar alt={avatar.name} src={avatar.avatarUrl} />
           </Box>
         </CustomTooltip>
       ))}
@@ -299,8 +299,8 @@ export const Notification = ({ event_id }) => {
 
   const { data: user } = useGetUserByIdQuery(event.user_id);
 
-  const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
-  const userAvatarUrl = user?.avatar_url || '';
+  const userName = `${user?.firstName || ''} ${user?.lastName || ''}`;
+  const userAvatarUrl = user?.avatarUrl || '';
 
   const handleSelectEvent = (e, value) => {
     e.stopPropagation();

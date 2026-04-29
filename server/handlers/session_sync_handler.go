@@ -19,9 +19,9 @@ type SessionSyncDataK8sConfig struct {
 	ContextName       string     `json:"name,omitempty"`
 	ClusterConfigured bool       `json:"clusterConfigured,omitempty"`
 	ConfiguredServer  string     `json:"server,omitempty"`
-	ClusterID         string     `json:"clusterID,omitempty"`
-	CreatedAt         *time.Time `json:"created_at,omitempty"`
-	UpdatedAt         *time.Time `json:"updated_at,omitempty"`
+	ClusterID         string     `json:"clusterId,omitempty"`
+	CreatedAt         *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt         *time.Time `json:"updatedAt,omitempty"`
 }
 
 // SessionSyncHandler is used to send session data to the UI for initial sync

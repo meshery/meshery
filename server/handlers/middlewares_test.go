@@ -61,8 +61,8 @@ func TestWriteMeshkitError_ErrTransientProvider(t *testing.T) {
 		Error                string   `json:"error"`
 		Code                 string   `json:"code"`
 		Severity             string   `json:"severity"`
-		ProbableCause        []string `json:"probable_cause"`
-		SuggestedRemediation []string `json:"suggested_remediation"`
+		ProbableCause        []string `json:"probableCause"`
+		SuggestedRemediation []string `json:"suggestedRemediation"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&decoded); err != nil {
 		t.Fatalf("body did not parse as JSON: %v", err)
@@ -74,7 +74,7 @@ func TestWriteMeshkitError_ErrTransientProvider(t *testing.T) {
 		t.Errorf("expected non-empty error message")
 	}
 	if len(decoded.SuggestedRemediation) == 0 {
-		t.Errorf("expected suggested_remediation to be populated for transient-provider errors")
+		t.Errorf("expected suggestedRemediation to be populated for transient-provider errors")
 	}
 }
 

@@ -35,7 +35,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
 )
@@ -79,8 +79,8 @@ type RemoteProvider struct {
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 }
 type AnonymousFlowResponse struct {
-	AccessToken string    `json:"access_token"`
-	UserID      core.Uuid `json:"user_id,omitempty"`
+	AccessToken string    `json:"accessToken"`
+	UserID      core.Uuid `json:"userId,omitempty"`
 }
 
 type userSession struct {
@@ -1668,10 +1668,10 @@ func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilt
 	type ProviderResp struct {
 		Data                 []*events.Event         `json:"data"`
 		Page                 int                     `json:"page"`
-		TotalCount           int64                   `json:"total_count"`
-		PageSize             int                     `json:"page_size"`
-		ReadCount            int64                   `json:"read_count"`
-		CountBySeverityLevel []*CountBySeverityLevel `json:"count_by_severity_level"`
+		TotalCount           int64                   `json:"totalCount"`
+		PageSize             int                     `json:"pageSize"`
+		ReadCount            int64                   `json:"readCount"`
+		CountBySeverityLevel []*CountBySeverityLevel `json:"countBySeverityLevel"`
 	}
 
 	response := &ProviderResp{}
