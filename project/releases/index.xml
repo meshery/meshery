@@ -72,7 +72,42 @@
 	👨🏽‍💻 Contributors
 &lt;/h2&gt;
 &lt;p&gt;Thank you to our contributors for making this release possible:
-@Ananya-Kaushal137, @CodexRaunak, @Copilot, @Joyboy48, @Katotodan, @Oluwatunmise-olat, @PragalvaXFREZ, @Sbragul26, @Siraddeen, @alex-rudenkiy, @alexquincy, @arjunmehta-git, @dependabot[bot], @fitzergerald, @hamza-mohd, @jamieplu, @l5io, @leecalcote, @matrixkavi, @meshery-ci, @miacycle, @pontusringblom, @saurabhraghuvanshii, @workwithsarang, @yi-nuo426, [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.13</title><link>/project/releases/v1.0.13/</link><pubDate>Sun, 26 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.13/</guid><description>&lt;h2 id="whats-new"&gt;
+@Ananya-Kaushal137, @CodexRaunak, @Copilot, @Joyboy48, @Katotodan, @Oluwatunmise-olat, @PragalvaXFREZ, @Sbragul26, @Siraddeen, @alex-rudenkiy, @alexquincy, @arjunmehta-git, @dependabot[bot], @fitzergerald, @hamza-mohd, @jamieplu, @l5io, @leecalcote, @matrixkavi, @meshery-ci, @miacycle, @pontusringblom, @saurabhraghuvanshii, @workwithsarang, @yi-nuo426, [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.15</title><link>/project/releases/v1.0.15/</link><pubDate>Wed, 29 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.15/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Server] Break /user/login ⇄ /provider redirect loop in enforced-provider mode @leecalcote (#19006)&lt;/li&gt;
+&lt;li&gt;chore(deps): bump github.com/meshery/schemas to v1.2.6 @leecalcote (#18994)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[mesheryctl] Add e2e BATS tests for system config gke/aks/eks/minikube @Omkar-Ugal (#18930)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;chore(ci): remove dead graphql-docs step (docs/Rakefile deleted in Jekyll-&amp;gt;Hugo migration) @leecalcote (#18992)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Add e2e BATS tests for system config gke/aks/eks/minikube @Omkar-Ugal (#18930)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;docs: refresh examples and references after canonical-naming overhaul @leecalcote (#18993)&lt;/li&gt;
+&lt;li&gt;chore(ci): remove dead graphql-docs step (docs/Rakefile deleted in Jekyll-&amp;gt;Hugo migration) @leecalcote (#18992)&lt;/li&gt;
+&lt;li&gt;[Docs] Replace body_class with layout for REST API reference @Oluwatunmise-olat (#18972)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Oluwatunmise-olat, @Omkar-Ugal, @leecalcote, @lekaf974, @miacycle and @saurabhraghuvanshii&lt;/p&gt;</description></item><item><title>v1.0.13</title><link>/project/releases/v1.0.13/</link><pubDate>Sun, 26 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.13/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -32389,7 +32424,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.14&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.15&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
