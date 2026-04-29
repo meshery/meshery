@@ -202,7 +202,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
           <CustomTooltip title="Configure Environments">
             <div>
               <IconButton
-                onClick={() => setIsEnvrionmentModalOpen(null)}
+                onClick={() => setIsEnvrionmentModalOpen(true)}
                 aria-label="edit-environments"
               >
                 <Edit fill={theme.palette.icon.default} />
@@ -214,7 +214,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
       {environments.length === 0 && (
         <EnvironmentsEmptyState
           message="No environments found. Add a new environment."
-          onButtonClick={() => setIsEnvrionmentModalOpen(null)}
+          onButtonClick={() => setIsEnvrionmentModalOpen(true)}
         />
       )}
 
@@ -223,7 +223,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
           <EnvironmentCard
             key={env.id}
             environment={env}
-            onAddConnection={() => setIsEnvrionmentModalOpen(env)}
+            onAddConnection={() => setIsEnvrionmentModalOpen(true)}
           />
         ))}
       </Stack>
