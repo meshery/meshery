@@ -543,6 +543,60 @@ func isGitHubSourceURL(sourceURL string) bool {
 	return strings.HasSuffix(host, ".githubusercontent.com")
 }
 
+func isArtifactHubSourceURL(sourceURL string) bool {
+	parsedURL, err := url.Parse(sourceURL)
+	if err != nil {
+		return false
+	}
+
+	host := strings.ToLower(parsedURL.Hostname())
+	return host == "artifacthub.io" || host == "www.artifacthub.io"
+}
+
+func isArtifactHubSearchURL(sourceURL string) bool {
+	if !isArtifactHubSourceURL(sourceURL) {
+		return false
+	}
+
+	parsedURL, err := url.Parse(sourceURL)
+	if err != nil {
+		return false
+	}
+
+	pathParts := strings.Split(strings.Trim(parsedURL.Path, "/"), "/")
+	if len(pathParts) >= 2 && pathParts[0] == "packages" && pathParts[1] == "search" {
+		return true
+	}
+	if len(pathParts) >= 4 && pathParts[0] == "api" && pathParts[1] == "v1" && pathParts[2] == "packages" && pathParts[3] == "search" {
+		return true
+	}
+	return false
+}
+
+func deriveArtifactHubPackageNameFromURL(sourceURL string) string {
+	if !isArtifactHubSourceURL(sourceURL) {
+		return ""
+	}
+
+	parsedURL, err := url.Parse(sourceURL)
+	if err != nil {
+		return ""
+	}
+
+	pathParts := strings.Split(strings.Trim(parsedURL.Path, "/"), "/")
+
+	// UI URL: /packages/helm/{repo}/{package}
+	if len(pathParts) >= 4 && pathParts[0] == "packages" && pathParts[1] == "helm" {
+		return strings.ToLower(strings.TrimSpace(pathParts[3]))
+	}
+	// API URL: /api/v1/packages/helm/{repo}/{package}
+	if len(pathParts) >= 6 && pathParts[0] == "api" && pathParts[1] == "v1" && pathParts[2] == "packages" && pathParts[3] == "helm" {
+		return strings.ToLower(strings.TrimSpace(pathParts[5]))
+	}
+
+	return ""
+}
+
 func normalizeSemVerToken(version string) (string, bool) {
 	cleanedVersion := strings.TrimSpace(strings.Split(strings.Split(version, "?")[0], "#")[0])
 	if !semverLikeVersionPattern.MatchString(cleanedVersion) {
@@ -559,7 +613,7 @@ func normalizeSemVerToken(version string) (string, bool) {
 	return "v" + cleanedVersion, true
 }
 
-// deriveModelNameFromURL attempts to extract a meaningful model name from a GitHub URL
+// deriveModelNameFromURL attempts to extract a meaningful model name from a supported source URL.
 func deriveModelNameFromURL(sourceURL string) string {
 	if sourceURL == "" {
 		return ""
@@ -569,20 +623,23 @@ func deriveModelNameFromURL(sourceURL string) string {
 		return ""
 	}
 
+	if isArtifactHubSourceURL(sourceURL) {
+		return deriveArtifactHubPackageNameFromURL(sourceURL)
+	}
+
 	host := strings.ToLower(u.Hostname())
 	switch host {
 	case "github.com", "www.github.com", "raw.githubusercontent.com", "raw.github.com":
+		parts := strings.Split(strings.Trim(u.Path, "/"), "/")
+		if len(parts) < 2 {
+			return ""
+		}
+
+		repo := strings.TrimSuffix(strings.TrimSpace(parts[1]), ".git")
+		return strings.ToLower(repo)
 	default:
 		return ""
 	}
-
-	parts := strings.Split(strings.Trim(u.Path, "/"), "/")
-	if len(parts) < 2 {
-		return ""
-	}
-
-	repo := strings.TrimSuffix(strings.TrimSpace(parts[1]), ".git")
-	return strings.ToLower(repo)
 }
 
 // normalizeVersionFromURL returns a proper semantic version string.

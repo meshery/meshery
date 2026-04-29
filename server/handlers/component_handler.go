@@ -1132,6 +1132,11 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 				if model.ModelDisplayName == "Untitled Model" || model.ModelDisplayName == "" || model.ModelDisplayName == "untitled-model" {
 					model.ModelDisplayName = manifests.FormatToReadableString(derivedName)
 				}
+			} else if isArtifactHubSearchURL(importRequest.ImportBody.Url) {
+				err := fmt.Errorf("artifacthub search URLs are ambiguous; use a direct package URL (/packages/helm/{repo}/{package}) or set the model name in template")
+				h.handleError(rw, err, err.Error())
+				h.sendErrorEvent(userID, provider, err.Error(), err, token)
+				return
 			}
 		}
 
@@ -1139,6 +1144,8 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if importRequest.ImportBody.Url != "" {
 			if isGitHubSourceURL(importRequest.ImportBody.Url) {
 				model.Registrant = "github"
+			} else if isArtifactHubSourceURL(importRequest.ImportBody.Url) {
+				model.Registrant = "artifacthub"
 			}
 		}
 
