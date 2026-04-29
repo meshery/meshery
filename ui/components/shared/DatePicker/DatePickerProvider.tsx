@@ -1,6 +1,6 @@
 import React from 'react';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 interface MesheryDatePickerProviderProps {
   children: React.ReactNode;

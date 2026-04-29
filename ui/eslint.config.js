@@ -98,6 +98,8 @@ const legacyRestrictedImportOffenders = [
   'components/icons/index.ts',
   'components/telemetry/grafana/GrafanaCustomChart.tsx',
   'components/telemetry/grafana/GrafanaDateRangePicker.tsx',
+  'components/shared/DatePicker/DatePickerProvider.tsx',
+  'components/shared/DatePicker/MesheryDateTimePicker.tsx',
   'components/telemetry/prometheus/PrometheusSelectionComponent.tsx',
   'pages/_app.tsx',
 ];
