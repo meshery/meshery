@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mesheryctl-connection on Documentation</title><link>/reference/mesheryctl/connection/</link><description>Recent content in mesheryctl-connection on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/reference/mesheryctl/connection/index.xml" rel="self" type="application/rss+xml"/><item><title>mesheryctl-connection-create</title><link>/reference/mesheryctl/connection/create/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/connection/create/</guid><description>&lt;h1 id="mesheryctl-connection-create"&gt;
+	mesheryctl connection create
+&lt;/h1&gt;
+&lt;p&gt;Create a new connection&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Create a new connection to a Kubernetes cluster or other supported platform&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection create [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Create a new Kubernetes connection using a specific type&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection create --type aks
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection create --type eks
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection create --type gke
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection create --type minikube
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Create a connection with a token&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection create --type gke --token auth.json
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for create
+ --token string Path to token for authenticating to Meshery API
+ -t, --type string Type of connection to create (aks|eks|gke|minikube)
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-connection-delete</title><link>/reference/mesheryctl/connection/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/connection/delete/</guid><description>&lt;h1 id="mesheryctl-connection-delete"&gt;
+	mesheryctl connection delete
+&lt;/h1&gt;
+&lt;p&gt;Delete a connection&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Delete a connection&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection delete [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Delete a connection&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection delete [connection_id]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for delete
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-connection-list</title><link>/reference/mesheryctl/connection/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/connection/list/</guid><description>&lt;h1 id="mesheryctl-connection-list"&gt;
+	mesheryctl connection list
+&lt;/h1&gt;
+&lt;p&gt;List all the connections&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;List all available connections.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection list [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;List all the connections&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection list
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;List all the connections with page number&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection list --page [page-number]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;List all the connections matching a specific kind and status&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection list --kind [kind] --status [status]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;List all the connections matching a set of kinds and statuses&lt;/p&gt;</description></item><item><title>mesheryctl-connection-view</title><link>/reference/mesheryctl/connection/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/connection/view/</guid><description>&lt;h1 id="mesheryctl-connection-view"&gt;
+	mesheryctl connection view
+&lt;/h1&gt;
+&lt;p&gt;View a connection&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;View a connection by its ID or name.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection view [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;View details of a specific connection in default format (yaml)&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection view [connection-name|connection-id]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View details of a specific connection in JSON format&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl connection view [connection-name|connection-id] --output-format json
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View details of a specific connection in json format and save it to a file&lt;/p&gt;</description></item></channel></rss>
