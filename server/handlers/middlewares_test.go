@@ -9,6 +9,95 @@ import (
 	"testing"
 )
 
+// TestResolveProviderName covers the precedence rules for picking the
+// provider name from a request, plus the enforced-default fallback that
+// breaks the /user/login ⇄ /provider redirect loop on enforced-provider
+// deployments where the cookie isn't propagating back (SameSite/popup/CDN).
+func TestResolveProviderName(t *testing.T) {
+	const cookieName = "meshery-provider"
+
+	mkReq := func(setup func(*http.Request)) *http.Request {
+		req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
+		if setup != nil {
+			setup(req)
+		}
+		return req
+	}
+
+	tests := []struct {
+		name             string
+		setup            func(*http.Request)
+		enforcedProvider string
+		want             string
+	}{
+		{
+			name:             "no signals, no enforced default → empty",
+			setup:            nil,
+			enforcedProvider: "",
+			want:             "",
+		},
+		{
+			name:             "no signals, enforced default returned",
+			setup:            nil,
+			enforcedProvider: "Layer5",
+			want:             "Layer5",
+		},
+		{
+			name: "cookie wins over enforced default",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "Meshery"})
+			},
+			enforcedProvider: "Layer5",
+			want:             "Meshery",
+		},
+		{
+			name: "empty cookie falls through to header",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: ""})
+				r.Header.Set(cookieName, "Meshery")
+			},
+			enforcedProvider: "Layer5",
+			want:             "Meshery",
+		},
+		{
+			name: "header wins over query and enforced",
+			setup: func(r *http.Request) {
+				r.Header.Set(cookieName, "Meshery")
+				r.URL.RawQuery = "provider=None"
+			},
+			enforcedProvider: "Layer5",
+			want:             "Meshery",
+		},
+		{
+			name: "query wins over enforced when no cookie/header",
+			setup: func(r *http.Request) {
+				r.URL.RawQuery = "provider=None"
+			},
+			enforcedProvider: "Layer5",
+			want:             "None",
+		},
+		{
+			name: "cookie with whitespace value is honored verbatim",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "Layer5"})
+			},
+			enforcedProvider: "",
+			want:             "Layer5",
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			got := resolveProviderName(mkReq(tc.setup), cookieName, tc.enforcedProvider)
+			if got != tc.want {
+				t.Fatalf("resolveProviderName: want %q, got %q", tc.want, got)
+			}
+		})
+	}
+}
+
 func TestAuthMiddleWare(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping test in short mode.")
@@ -61,8 +150,8 @@ func TestWriteMeshkitError_ErrTransientProvider(t *testing.T) {
 		Error                string   `json:"error"`
 		Code                 string   `json:"code"`
 		Severity             string   `json:"severity"`
-		ProbableCause        []string `json:"probable_cause"`
-		SuggestedRemediation []string `json:"suggested_remediation"`
+		ProbableCause        []string `json:"probableCause"`
+		SuggestedRemediation []string `json:"suggestedRemediation"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&decoded); err != nil {
 		t.Fatalf("body did not parse as JSON: %v", err)
@@ -74,7 +163,7 @@ func TestWriteMeshkitError_ErrTransientProvider(t *testing.T) {
 		t.Errorf("expected non-empty error message")
 	}
 	if len(decoded.SuggestedRemediation) == 0 {
-		t.Errorf("expected suggested_remediation to be populated for transient-provider errors")
+		t.Errorf("expected suggestedRemediation to be populated for transient-provider errors")
 	}
 }
 

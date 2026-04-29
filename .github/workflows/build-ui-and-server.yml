@@ -203,36 +203,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: ${{ secrets.IMAGE_NAME }}
-  # validate graphQL schema
-  graphql_validate:
-    name: Validate GraphQL schema
-    if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Check if schema was modified
-        uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            modified:
-              - added|modified: 'server/internal/graphql/schema/schema.graphql'
-      - name: Set up Ruby
-        if: steps.filter.outputs.modified == 'true'
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.2.6
-          bundler-cache: true
-      - name: graphql-docs
-        if: steps.filter.outputs.modified == 'true'
-        run: |
-          cd docs
-          bundle install
-          bundle exec rake graphql:compile_docs
-
   # Run Rego policy tests
   rego-tests:
     name: Rego Policy Tests

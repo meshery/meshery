@@ -34,10 +34,10 @@ const defaultEventProperties = {
 
 const eventsEntityAdapter = createEntityAdapter({
   selectId: (event) => event.id,
-  //sort based on update_at timestamp(utc)
+  //sort based on createdAt timestamp(utc)
   sortComparer: (a, b) => {
-    if (b?.created_at?.localeCompare && a?.created_at?.localeCompare) {
-      return b.created_at?.localeCompare(a.created_at);
+    if (b?.createdAt?.localeCompare && a?.createdAt?.localeCompare) {
+      return b.createdAt?.localeCompare(a.createdAt);
     }
     return 0;
   },

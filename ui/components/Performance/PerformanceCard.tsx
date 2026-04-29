@@ -40,12 +40,12 @@ function PerformanceCard({
     data: userData,
     isSuccess: isUserDataFetched,
     isError: userError,
-  } = useGetUserByIdQuery(profile.user_id);
+  } = useGetUserByIdQuery(profile.userId);
   const dataTestIDs = useTestIDsGenerator('performanceProfileCard');
 
   useEffect(() => {
-    if (isUserDataFetched && userData && userData.avatar_url) {
-      setUserAvatar(userData.avatar_url);
+    if (isUserDataFetched && userData && userData.avatarUrl) {
+      setUserAvatar(userData.avatarUrl);
     } else if (userError) {
       console.error('Failed to fetch user profile with ID');
     }
@@ -128,11 +128,11 @@ function PerformanceCard({
     },
     {
       name: 'Created At',
-      value: profile.created_at ? moment(profile.created_at).format('LLL') : 'unknown',
+      value: profile.createdAt ? moment(profile.createdAt).format('LLL') : 'unknown',
     },
     {
       name: 'Last Updated',
-      value: profile.updated_at ? moment(profile.updated_at).format('LLL') : 'unknown',
+      value: profile.updatedAt ? moment(profile.updatedAt).format('LLL') : 'unknown',
     },
     {
       name: 'Last Run',
@@ -190,7 +190,7 @@ function PerformanceCard({
         </ResultContainer>
         <div style={{}}>
           <BottomPart>
-            <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.user_id}`} target="_blank">
+            <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.userId}`} target="_blank">
               <Avatar alt="profile-avatar" src={userAvatar} />
             </Link>
             <div

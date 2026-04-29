@@ -17,7 +17,7 @@ type Version struct {
 	Latest         string `json:"latest,omitempty"`
 	Outdated       *bool  `json:"outdated,omitempty"`
 	CommitSHA      string `json:"commitsha,omitempty"`
-	ReleaseChannel string `json:"release_channel,omitempty"`
+	ReleaseChannel string `json:"releaseChannel,omitempty"`
 }
 
 // ServerVersionHandler handles the version api request for the server
