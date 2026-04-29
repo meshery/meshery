@@ -39,7 +39,7 @@ mesheryctl model init [model-name] --version [version] (default is v0.1.0)
 mesheryctl model init [model-name] --path [path-to-location] (default is current folder)
 
 // generate a folder structure in json format
-mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
+mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &modelInitFlags)
@@ -195,9 +195,6 @@ const (
 // This constant is not currently in use.
 // const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection/connection_template"
 
-// TODO
-// if csv output is not directory based
-// should it have different text for csv output format?
 const initModelNextStepsText = `Next steps:
 1. cd {modelVersionFolder}
 2. Edit model.{outputFormat} to customize your model configuration
@@ -215,9 +212,6 @@ $ mesheryctl model build {modelName}/{modelVersion} --path {path}
 
 Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryctl`
 
-// TODO
-// initModelData fits well for json and yaml format
-// if csv output is different (non folder based), will initModelData fit it?
 var initModelData = []struct {
 	folderPath string
 	files      map[string]string
@@ -284,11 +278,6 @@ func getTemplateInOutputFormat(templatePath string, outputFormat string) ([]byte
 				".",
 			),
 		)
-	}
-
-	if outputFormat == "csv" {
-		// impossible to reach here, as outputFormat is validated in prerun
-		return nil, ErrModelUnsupportedOutputFormat("TODO implement csv")
 	}
 
 	// impossible to reach here, as outputFormat is validated in prerun
