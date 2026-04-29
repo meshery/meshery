@@ -33,7 +33,7 @@ func (h *Handler) GetMesheryFilterFileHandler(
 	resp, err := provider.GetMesheryFilterFile(r, filterID)
 	if err != nil {
 		h.log.Error(ErrGetFilter(err))
-		http.Error(rw, ErrGetFilter(err).Error(), http.StatusNotFound)
+		writeMeshkitError(rw, ErrGetFilter(err), http.StatusNotFound)
 		return
 	}
 
@@ -41,8 +41,10 @@ func (h *Handler) GetMesheryFilterFileHandler(
 	rw.Header().Set("Content-Type", "application/wasm")
 	_, err = io.Copy(rw, reader)
 	if err != nil {
+		// Headers were already committed above (Content-Type:
+		// application/wasm) and the WASM byte stream has started,
+		// so we cannot send a fresh JSON error response here. Log only.
 		h.log.Error(ErrDownloadWASMFile(err, "download"))
-		http.Error(rw, ErrDownloadWASMFile(err, "download").Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -84,7 +86,7 @@ func (h *Handler) handleFilterPOST(
 		}).WithDescription("No auth token provided in the request.").Build()
 		_ = provider.PersistSystemEvent(*event)
 		go h.config.EventBroadcaster.Publish(userID, event)
-		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -101,22 +103,27 @@ func (h *Handler) handleFilterPOST(
 
 	actedUpon := &userID
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		invalidReqBody := ErrRequestBody(err)
-		h.log.Error(invalidReqBody)
+		// Wrap the decode error in the operation-level ErrSaveFilter so log,
+		// event metadata, wire response, and EventsBuffer publish all carry the
+		// same code. Per-reviewer feedback (PR #18919): clients of a save
+		// endpoint expect a save-side error code; the underlying decode failure
+		// is preserved on the wrapper's LongDescription via err.Error().
+		errSaveFilter := ErrSaveFilter(err)
+		h.log.Error(errSaveFilter)
 
 		description := "Filter request body is corrupted."
 		if parsedBody != nil && parsedBody.FilterData != nil {
 			description = fmt.Sprintf("Filter %s is corrupted.", parsedBody.FilterData.Name)
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": invalidReqBody,
+			"error": errSaveFilter,
 		}).WithDescription(description).Build()
 
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
-		http.Error(rw, ErrSaveFilter(err).Error(), http.StatusBadRequest)
-		addMeshkitErr(&res, ErrGetFilter(err))
+		writeMeshkitError(rw, errSaveFilter, http.StatusBadRequest)
+		addMeshkitErr(&res, errSaveFilter)
 		go h.EventsBuffer.Publish(&res)
 		return
 	}
@@ -132,7 +139,7 @@ func (h *Handler) handleFilterPOST(
 	filterResource, err := h.generateFilterComponent(parsedBody.Config)
 	if err != nil {
 		h.log.Error(ErrEncodeFilter(err))
-		http.Error(rw, ErrEncodeFilter(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrEncodeFilter(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -168,7 +175,7 @@ func (h *Handler) handleFilterPOST(
 			if err != nil {
 				errFilterSave := ErrSaveFilter(err)
 				h.log.Error(errFilterSave)
-				http.Error(rw, errFilterSave.Error(), http.StatusInternalServerError)
+				writeMeshkitError(rw, errFilterSave, http.StatusInternalServerError)
 
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 					"error": errFilterSave,
@@ -191,7 +198,7 @@ func (h *Handler) handleFilterPOST(
 		byt, err := json.Marshal([]models.MesheryFilter{mesheryFilter})
 		if err != nil {
 			h.log.Error(ErrEncodeFilter(err))
-			http.Error(rw, ErrEncodeFilter(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(rw, ErrEncodeFilter(err), http.StatusInternalServerError)
 			return
 		}
 
@@ -205,7 +212,7 @@ func (h *Handler) handleFilterPOST(
 
 		if err != nil {
 			h.log.Error(ErrImportFilter(err))
-			http.Error(rw, ErrImportFilter(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(rw, ErrImportFilter(err), http.StatusInternalServerError)
 			return
 		}
 
@@ -233,8 +240,10 @@ func (h *Handler) GetMesheryFiltersHandler(
 	if visibility != "" {
 		err := json.Unmarshal([]byte(visibility), &filter.Visibility)
 		if err != nil {
+			// Visibility is a URL query string — unmarshal failure is a
+			// client-side bad request, not a 500.
 			h.log.Error(ErrFetchFilter(err))
-			http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(rw, ErrFetchFilter(err), http.StatusBadRequest)
 			return
 		}
 	}
@@ -242,7 +251,7 @@ func (h *Handler) GetMesheryFiltersHandler(
 	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), filter.Visibility)
 	if err != nil {
 		h.log.Error(ErrFetchFilter(err))
-		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFetchFilter(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -265,7 +274,7 @@ func (h *Handler) GetCatalogMesheryFiltersHandler(
 	resp, err := provider.GetCatalogMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchFilter(err))
-		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFetchFilter(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -287,7 +296,7 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	resp, err := provider.DeleteMesheryFilter(r, filterID)
 	if err != nil {
 		h.log.Error(ErrDeleteFilter(err))
-		http.Error(rw, ErrDeleteFilter(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrDeleteFilter(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -309,14 +318,14 @@ func (h *Handler) CloneMesheryFilterHandler(
 	var parsedBody *models.MesheryCloneFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || filterID == "" {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
 	resp, err := provider.CloneMesheryFilter(r, filterID, parsedBody)
 	if err != nil {
 		h.log.Error(ErrCloneFilter(err))
-		http.Error(rw, ErrCloneFilter(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrCloneFilter(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -348,7 +357,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
-		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -362,7 +371,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 			WithDescription("Error parsing filter payload.").Build()
 		_ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -376,7 +385,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 			WithDescription("Error publishing filter.").Build()
 		_ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
-		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPublishCatalogFilter(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -389,7 +398,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 		}).WithDescription("Error parsing response.").Build()
 		_ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
-		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPublishCatalogFilter(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -426,7 +435,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
-		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -440,7 +449,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 			WithDescription("Error parsing filter payload.").Build()
 		_ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.UnPublishCatalogFilter(r, parsedBody)
@@ -453,7 +462,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 			WithDescription("Error publishing filter.").Build()
 		_ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
-		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPublishCatalogFilter(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -466,7 +475,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 		}).WithDescription("Error parsing response.").Build()
 		_ = provider.PersistEvent(*e, token)
 		go h.config.EventBroadcaster.Publish(userID, e)
-		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPublishCatalogFilter(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -494,7 +503,7 @@ func (h *Handler) GetMesheryFilterHandler(
 	resp, err := provider.GetMesheryFilter(r, filterID)
 	if err != nil {
 		h.log.Error(ErrGetFilter(err))
-		http.Error(rw, ErrGetFilter(err).Error(), http.StatusNotFound)
+		writeMeshkitError(rw, ErrGetFilter(err), http.StatusNotFound)
 		return
 	}
 
@@ -508,7 +517,7 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 	contentMesheryFilterSlice := make([]models.MesheryFilter, 0)
 	names := []string{}
 	if err := json.Unmarshal(content, &contentMesheryFilterSlice); err != nil {
-		http.Error(rw, ErrDecodeFilter(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrDecodeFilter(err), http.StatusInternalServerError)
 
 		return
 	}
@@ -518,7 +527,7 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 	data, err := json.Marshal(&result)
 	if err != nil {
 		obj := "filter file"
-		http.Error(rw, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, models.ErrMarshal(err, obj), http.StatusInternalServerError)
 
 		return
 	}

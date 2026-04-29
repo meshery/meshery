@@ -13,13 +13,19 @@ $method-head: #7d8790;
   color: var(--color-white);
 }
 
-.rest-api-reference-page {
-  .main-container {
-    overflow-x: visible;
-  }
+.rest-api-reference-main {
+  overflow-x: visible;
+}
 
-  .td-content {
-    max-width: none;
+.rest-api-reference-content {
+  max-width: none;
+
+  .rest-api-page,
+  .rest-api-page pre,
+  .rest-api-page code,
+  .rest-api-page kbd,
+  .rest-api-page samp {
+    font-family: "Qanelas Soft", "Open Sans", sans-serif;
   }
 
   .rest-api-page {
@@ -428,7 +434,7 @@ $method-head: #7d8790;
   .rest-api-nav-link__path,
   .rest-api-operation__path,
   .rest-api-try-item__url {
-    font-family: SFMono-Regular, Menlo, Monaco, Consolas, liberation mono, courier new, monospace;
+    font-family: "Qanelas Soft", "Open Sans", sans-serif;
     overflow-wrap: anywhere;
     word-break: break-word;
   }

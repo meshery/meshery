@@ -243,7 +243,7 @@ const Environments = () => {
       setInitialData({
         name: envObject.name,
         description: envObject.description,
-        organization: envObject.organization_id,
+        organization: envObject.organizationId,
       });
       setEditEnvId(envObject.id);
     } else {
@@ -426,7 +426,7 @@ const Environments = () => {
   };
 
   const handleAssignablePage = () => {
-    const pagesCount = Math.ceil(Number(connections?.total_count ?? 0) / connectionPageSize);
+    const pagesCount = Math.ceil(Number(connections?.totalCount ?? 0) / connectionPageSize);
     if (connectionsPage < pagesCount - 1) {
       setConnectionsPage((prevConnectionsPage) => prevConnectionsPage + 1);
     }
@@ -434,7 +434,7 @@ const Environments = () => {
 
   const handleAssignedPage = () => {
     const pagesCount = Math.ceil(
-      Number(environmentConnections?.total_count ?? 0) / connectionPageSize,
+      Number(environmentConnections?.totalCount ?? 0) / connectionPageSize,
     );
     if (connectionsOfEnvironmentPage < pagesCount - 1) {
       setConnectionsOfEnvironmentPage(
@@ -529,7 +529,7 @@ const Environments = () => {
                 size="grow"
               >
                 <Pagination
-                  count={Math.ceil(environmentsData?.total_count / pageSize)}
+                  count={Math.ceil(environmentsData?.totalCount / pageSize)}
                   page={page + 1}
                   onChange={debounce((_, page) => setPage(page - 1), 150)}
                   boundaryCount={3}
@@ -605,8 +605,8 @@ const Environments = () => {
                 transferComponentType={TRANSFER_COMPONENT.CHIP}
                 assignablePage={handleAssignablePage}
                 assignedPage={handleAssignedPage}
-                originalLeftCount={connections?.total_count}
-                originalRightCount={environmentConnections?.total_count}
+                originalLeftCount={connections?.totalCount}
+                originalRightCount={environmentConnections?.totalCount}
                 leftPermission={CAN(
                   keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
                   keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,

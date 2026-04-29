@@ -46,7 +46,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.14.1",
-    "@meshery/schemas": "^1.1.0",
+    "@meshery/schemas": "^1.2.2",
     "@microlink/react-json-view": "^1.31.14",
     "@mui/icons-material": "^7.3.9",
     "@mui/material": "^7.3.9",

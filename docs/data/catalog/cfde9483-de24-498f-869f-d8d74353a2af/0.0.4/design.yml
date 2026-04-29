@@ -8551,7 +8551,7 @@
               "env": [
                 {
                   "name": "URLS_SELF_ISSUER",
-                  "value": "https://cloud.layer5.io/hydra"
+                  "value": "https://cloud.meshery.io/hydra"
                 },
                 {
                   "name": "DSN",
@@ -11566,7 +11566,7 @@
               "env": [
                 {
                   "name": "PROVIDER_BASE_URLS",
-                  "value": "https://cloud.layer5.io"
+                  "value": "https://cloud.meshery.io"
                 },
                 {
                   "name": "PROVIDER",

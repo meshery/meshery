@@ -23,6 +23,7 @@ import (
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
@@ -32,7 +33,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta2/organization"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -134,13 +135,16 @@ func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
 }
 
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request, _ string) {
-	w.Header().Set("Content-Type", "application/json")
-	encoder := json.NewEncoder(w)
-	if err := encoder.Encode(l.ProviderProperties); err != nil {
-		obj := "provider capabilities"
-		errObj := ErrEncoding(err, obj)
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(l.ProviderProperties); err != nil {
+		errObj := ErrEncoding(err, "provider capabilities")
 		l.Log.Error(errObj)
-		http.Error(w, errObj.Error(), http.StatusInternalServerError)
+		httputil.WriteMeshkitError(w, errObj, http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if _, err := buf.WriteTo(w); err != nil {
+		l.Log.Error(ErrEncoding(err, "provider capabilities"))
 	}
 }
 
@@ -272,13 +276,13 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	}
 
 	_metadata := map[string]string{
-		"id":                   k8sContext.ID,
-		"server":               k8sContext.Server,
-		"meshery_instance_id":  k8sContext.MesheryInstanceID.String(),
-		"deployment_type":      k8sContext.DeploymentType,
-		"version":              k8sContext.Version,
-		"name":                 k8sContext.Name,
-		"kubernetes_server_id": k8sServerID.String(),
+		"id":                 k8sContext.ID,
+		"server":             k8sContext.Server,
+		"mesheryInstanceId":  k8sContext.MesheryInstanceID.String(),
+		"deploymentType":     k8sContext.DeploymentType,
+		"version":            k8sContext.Version,
+		"name":               k8sContext.Name,
+		"kubernetesServerId": k8sServerID.String(),
 	}
 	metadata := make(map[string]interface{}, len(_metadata)+len(additionalMetadata))
 	for k, v := range _metadata {
@@ -614,9 +618,16 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Reque
 		TokenCookieName:    "",
 	}
 	l.Log.Debug(fmt.Sprintf("token sent for meshery-provider %v", l.Name()))
-	if err := json.NewEncoder(w).Encode(resp); err != nil {
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(resp); err != nil {
+		errObj := ErrEncoding(err, "token")
+		l.Log.Error(errObj)
+		httputil.WriteMeshkitError(w, errObj, http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if _, err := buf.WriteTo(w); err != nil {
 		l.Log.Error(ErrEncoding(err, "token"))
-		http.Error(w, ErrEncoding(err, "token").Error(), http.StatusInternalServerError)
 	}
 }
 
