@@ -239,7 +239,7 @@ func flattenModelScaffold(data []byte) ([]byte, error) {
 		flatModel["modelDisplayName"] = modelDisplayName
 	}
 
-	for _, key := range []string{"primaryColor", "secondaryColor", "shape", "svgColor", "svgWhite", "svgComplete"} {
+	for _, key := range []string{"primaryColor", "secondaryColor", "shape", "svgColor", "svgWhite", "svgComplete", "logo"} {
 		if value := getString(rawMap, key); value != "" {
 			flatModel[key] = value
 		}

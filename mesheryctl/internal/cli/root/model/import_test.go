@@ -105,3 +105,33 @@ func TestFlattenModelScaffold_PreservesExistingURLTemplateKeys(t *testing.T) {
 	assert.Equal(t, false, got["isAnnotation"])
 	assert.Equal(t, false, got["publishToRegistry"])
 }
+
+// TestFlattenModelScaffold_PreservesLogoFromFixtureTemplate verifies that the logo
+// field present in the real fixture template is not silently dropped — addresses
+// miacycle's review comment on PR #18906.
+func TestFlattenModelScaffold_PreservesLogoFromFixtureTemplate(t *testing.T) {
+	// Mirrors the exact shape of mesheryctl/internal/cli/root/model/fixtures/templates/template.json
+	input := []byte(`{
+		"registrant": "github",
+		"model": "cert-manager",
+		"displayName": "Cert Manager",
+		"category": "Security",
+		"subCategory": "Certificates",
+		"primaryColor": "#0B5FFF",
+		"secondaryColor": "#121212",
+		"logo": "https://raw.githubusercontent.com/cert-manager/cert-manager/master/logo/logo.png",
+		"isAnnotation": false,
+		"publishToRegistry": false
+	}`)
+
+	out, err := flattenModelScaffold(input)
+	require.NoError(t, err)
+
+	var got map[string]interface{}
+	require.NoError(t, json.Unmarshal(out, &got))
+
+	assert.Equal(t, "cert-manager", got["model"])
+	assert.Equal(t, "github", got["registrant"])
+	assert.Equal(t, "https://raw.githubusercontent.com/cert-manager/cert-manager/master/logo/logo.png", got["logo"],
+		"logo field must be preserved and not silently dropped (miacycle review #18906)")
+}
