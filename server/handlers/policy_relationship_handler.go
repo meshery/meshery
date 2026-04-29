@@ -281,9 +281,23 @@ func (h *Handler) EvaluateDesign(
 	evalIterations int,
 ) (pattern.EvaluationResponse, error) {
 
-	// hydrate the design file components from the registry if needed
-	if err := patternHelpers.HydratePattern(&relationshipPolicyEvalPayload.Design, h.registryManager); err != nil {
-		h.log.Warnf("failed to hydrate pattern for evaluation: %v", err)
+	// hydrate the design file components from the registry if needed.
+	// meshkit's patternHelpers.HydratePattern is typed against
+	// v1beta3/design.PatternFile but this evaluation-engine carve-out
+	// still holds the design as v1beta1/pattern.PatternFile, so bridge
+	// via JSON round-trip and fold the hydrated fields back onto the
+	// v1beta1 design before the policy passes run.
+	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&relationshipPolicyEvalPayload.Design); bridgeErr == nil && bridged != nil {
+		if hydrateErrs := patternHelpers.HydratePattern(bridged, h.registryManager); len(hydrateErrs) > 0 {
+			h.log.Warnf("failed to hydrate pattern for evaluation: %v", hydrateErrs)
+		}
+		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
+			relationshipPolicyEvalPayload.Design = *roundtripped
+		} else if rtErr != nil {
+			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Hydrate; evaluation will proceed against the pre-hydration design: %v", rtErr)
+		}
+	} else if bridgeErr != nil {
+		h.log.Warnf("failed to bridge pattern for evaluation: %v", bridgeErr)
 	}
 
 	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
@@ -364,8 +378,19 @@ func (h *Handler) EvaluateDesign(
 	// Deduplicate actions by (op, id) to avoid duplicates from re-evaluation iterations.
 	lastEvaluationResponse.Actions = deduplicateActions(lastEvaluationResponse.Actions)
 
-	// dehydrate the design file components to remove unnecessary details
-	patternHelpers.DehydratePattern(&lastEvaluationResponse.Design)
+	// dehydrate the design file components to remove unnecessary details.
+	// Same v1beta1 ↔ v1beta3 bridge rationale as the HydratePattern call
+	// above: meshkit is v1beta3-only, this carve-out is v1beta1.
+	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&lastEvaluationResponse.Design); bridgeErr == nil && bridged != nil {
+		patternHelpers.DehydratePattern(bridged)
+		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
+			lastEvaluationResponse.Design = *roundtripped
+		} else if rtErr != nil {
+			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Dehydrate; response will ship un-dehydrated: %v", rtErr)
+		}
+	} else if bridgeErr != nil {
+		h.log.Warnf("failed to bridge pattern for dehydration: %v", bridgeErr)
+	}
 
 	return lastEvaluationResponse, nil
 }
@@ -512,8 +537,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-		rw.WriteHeader((http.StatusBadRequest))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -521,7 +545,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
 
 	if err != nil {
-		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
+		h.log.Error(ErrDecoding(err, "design file"))
+		writeMeshkitError(rw, ErrDecoding(err, "design file"), http.StatusBadRequest)
 		return
 	}
 	// decode the pattern file
@@ -569,7 +594,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	case err := <-evalErrChan:
 		h.log.Debug(err)
 		// log an event
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPolicyEval(err), http.StatusInternalServerError)
 		return
 
 	case evaluationResponse := <-evalRespChan:
@@ -598,20 +623,23 @@ func (h *Handler) EvaluateRelationshipPolicy(
 func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResult) {
 	if result.err != nil {
 		h.log.Debug(result.err)
-		http.Error(rw, result.err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPolicyEval(result.err), http.StatusInternalServerError)
 		return
 	}
 	ec := json.NewEncoder(rw)
 	if err := ec.Encode(result.resp); err != nil {
+		// Response body has already started streaming via json.Encoder —
+		// a partial JSON envelope is on the wire and a fresh error
+		// response would corrupt it, so log only.
 		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
-		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
 	}
 }
 
 func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context) {
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-		h.log.Warnf("relationship policy evaluation exceeded %s", policyEvalTimeout())
-		http.Error(rw, errEvalTimeout.Error(), http.StatusGatewayTimeout)
+		timeout := policyEvalTimeout()
+		h.log.Warnf("relationship policy evaluation exceeded %s", timeout)
+		writeMeshkitError(rw, ErrPolicyEvalTimeout(timeout), http.StatusGatewayTimeout)
 		return
 	}
 	h.log.Info("Evaluation terminated: request context closed")
@@ -684,7 +712,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	response := models.MeshmodelPoliciesAPIResponse{
 		Page:     page,
 		PageSize: int(pgSize),
-		Count:    0,
+		TotalCount: 0,
 		Policies: entities,
 	}
 
@@ -727,7 +755,7 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	response := models.MeshmodelPoliciesAPIResponse{
 		Page:     page,
 		PageSize: int(pgSize),
-		Count:    0,
+		TotalCount: 0,
 		Policies: entities,
 	}
 

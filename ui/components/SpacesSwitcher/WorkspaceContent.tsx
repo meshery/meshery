@@ -195,11 +195,11 @@ const WorkspaceContent = ({ workspace }) => {
               endAdornment={
                 filters.type === RESOURCE_TYPE.DESIGN ? (
                   <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
-                    Total: {designsData?.total_count ?? 0}
+                    Total: {designsData?.totalCount ?? 0}
                   </p>
                 ) : (
                   <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
-                    Total: {viewsData?.total_count ?? 0}
+                    Total: {viewsData?.totalCount ?? 0}
                   </p>
                 )
               }
@@ -310,8 +310,8 @@ const WorkspaceContent = ({ workspace }) => {
               isLoading={isLoading}
               isFetching={isFetching}
               designs={designsData?.designs}
-              hasMore={designsData?.total_count > designsData?.page_size * (designsData?.page + 1)}
-              total_count={designsData?.total_count}
+              hasMore={designsData?.totalCount > designsData?.pageSize * (designsData?.page + 1)}
+              totalCount={designsData?.totalCount}
               workspace={workspace}
               refetch={refetch}
               isMultiSelectMode={true}
@@ -326,8 +326,8 @@ const WorkspaceContent = ({ workspace }) => {
               isLoading={isViewLoading}
               isFetching={isViewFetching}
               views={viewsData?.views}
-              hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
-              total_count={viewsData?.total_count}
+              hasMore={viewsData?.totalCount > viewsData?.pageSize * (viewsData?.page + 1)}
+              totalCount={viewsData?.totalCount}
               workspace={workspace}
               refetch={refetch}
               isMultiSelectMode={true}

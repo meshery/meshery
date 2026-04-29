@@ -19,8 +19,8 @@ type MesheryApplicationPersister struct {
 // MesheryApplicationPage represents a page of applications
 type MesheryApplicationPage struct {
 	Page         uint64                `json:"page"`
-	PageSize     uint64                `json:"page_size"`
-	TotalCount   int                   `json:"total_count"`
+	PageSize     uint64                `json:"pageSize"`
+	TotalCount   int                   `json:"totalCount"`
 	Applications []*MesheryApplication `json:"applications"`
 }
 
@@ -62,19 +62,6 @@ func (maap *MesheryApplicationPersister) DeleteMesheryApplication(id core.Uuid) 
 	err := maap.DB.Delete(&application).Error
 
 	return marshalMesheryApplication(&application), err
-}
-
-func (maap *MesheryApplicationPersister) SaveMesheryApplication(application *MesheryApplication) ([]byte, error) {
-	if application.ID == nil {
-		id, err := uuid.NewV4()
-		if err != nil {
-			return nil, ErrGenerateUUID(err)
-		}
-
-		application.ID = &id
-	}
-
-	return marshalMesheryApplications([]MesheryApplication{*application}), maap.DB.Save(application).Error
 }
 
 // SaveMesheryApplications batch inserts the given applications

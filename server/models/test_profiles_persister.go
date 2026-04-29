@@ -23,9 +23,9 @@ type PerformanceTestConfig struct {
 // UserTestProfiles - represents a page of user test configs
 type UserTestProfiles struct {
 	Page        uint64                       `json:"page"`
-	PageSize    uint64                       `json:"page_size"`
-	TotalCount  int                          `json:"total_count"`
-	TestConfigs []*SMP.PerformanceTestConfig `json:"test_configs"`
+	PageSize    uint64                       `json:"pageSize"`
+	TotalCount  int                          `json:"totalCount"`
+	TestConfigs []*SMP.PerformanceTestConfig `json:"testConfigs"`
 }
 
 // GetTestConfigs - gets result for the page and pageSize

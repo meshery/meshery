@@ -160,7 +160,7 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 		ctx := req.Context()
 		ctx, err := KubernetesMiddleware(ctx, h, provider, user, req.URL.Query()["contexts"])
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, err, http.StatusInternalServerError)
 			return
 		}
 
@@ -195,12 +195,21 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		user, err := provider.GetUserDetails(req)
 		if err != nil {
 			h.log.Error(ErrGetUserDetails(err))
-			// Distinguish auth failures from transient provider errors.
-			// If the token cookie is missing/invalid, the user genuinely needs to re-authenticate.
-			// But if Cloud is temporarily unreachable, we must NOT destroy the user's session
-			// by logging them out — that would cause a redirect loop when Cloud recovers.
+			// INTENTIONAL log/wire divergence. We log ErrGetUserDetails so the
+			// operational trail captures *what* failed (the get-user call), but
+			// we surface ErrTransientProvider on the wire so the client can
+			// distinguish between a transient failure (e.g., Cloud unreachable)
+			// and a genuine auth failure. Conflating the two would either flood
+			// logs with misleading transient classifications or hide the
+			// auth-vs-network distinction from clients. Don't "fix" this to
+			// match without reading PR #18919.
+			//
+			// Behavioral consequence: on a transient provider error we must NOT
+			// destroy the user's session by logging them out — that would cause
+			// a redirect loop when Cloud recovers. A missing/invalid token
+			// cookie still falls through to the genuine auth-failure path below.
 			if isTransientProviderError(err) {
-				http.Error(w, "Remote provider temporarily unavailable. Please try again.", http.StatusServiceUnavailable)
+				writeMeshkitError(w, ErrTransientProvider(err), http.StatusServiceUnavailable)
 				return
 			}
 			// Genuine auth failure — logout and redirect to login
@@ -210,7 +219,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 				provider.HandleUnAuthenticated(w, req)
 				return
 			}
-			http.Error(w, ErrGetUserDetails(err).Error(), http.StatusUnauthorized)
+			writeMeshkitError(w, ErrGetUserDetails(err), http.StatusUnauthorized)
 			return
 		}
 		prefObj, err := provider.ReadFromPersister(user.UserId)

@@ -24,7 +24,7 @@ To run the tests successfully, three environment variables must be configured:
 • `PROVIDER_TOKEN` (Optional): Your provider token, can be generated from an account registered within your provider  
 
 {{% alert color="info" title="Accessing Remote Providers" %}}
-In the case you are using Layer5 Cloud as a remote provider, you can <a href="https://cloud.layer5.io/security/tokens">generate a token from your user account</a> to use while writing and executing tests.
+In the case you are using Meshery Cloud as a remote provider, you can <a href="https://cloud.meshery.io/security/tokens">generate a token from your user account</a> to use while writing and executing tests.
 {{% /alert %}}
 
 During the setup phase, Playwright utilizes these environment variables to log in and store credentials securely in the `playwright/.auth` directory. To protect sensitive data, the `.gitignore` file is configured to exclude the `.env` file and any JSON files within the `/playwright/.auth` directory from the GitHub repository.
