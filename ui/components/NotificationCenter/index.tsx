@@ -2,6 +2,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { CustomTooltip, NoSsr } from '@sistent/sistent';
 import {
+  alpha,
   Divider,
   ClickAwayListener,
   Typography,
@@ -65,7 +66,6 @@ import { operationsCenterActor } from 'machines/operationsCenter';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
-import { alpha } from '@mui/system';
 
 export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,

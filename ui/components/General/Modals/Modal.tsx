@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
+  ArrowDropDownIcon as ArrowDropDown,
   IconButton,
   Menu,
   MenuItem,
@@ -12,7 +13,6 @@ import {
   Modal as SistentModal,
 } from '@sistent/sistent';
 import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-import { ArrowDropDown } from '@mui/icons-material';
 import { getSchema } from '../../MesheryMeshInterface/PatternService/helper';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';

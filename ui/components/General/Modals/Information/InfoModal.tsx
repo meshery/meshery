@@ -9,11 +9,13 @@ import {
   Box,
   Button,
   CircularProgress,
+  CloseIcon,
   CustomTooltip,
   getFormatDate,
   Grid,
   IconButton,
   Link,
+  LockIcon as Lock,
   Modal,
   ModalBody,
   ModalButtonPrimary,
@@ -21,11 +23,11 @@ import {
   ModalFooter,
   publishCatalogItemSchema,
   publishCatalogItemUiSchema,
+  PublicIcon as Public,
   Skeleton,
   Typography,
   VisibilityChipMenu,
 } from '@sistent/sistent';
-import CloseIcon from '@mui/icons-material/Close';
 import yaml from 'js-yaml';
 import _ from 'lodash';
 import { useSnackbar } from 'notistack';
@@ -46,7 +48,6 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { getMeshModels } from '@/api/meshmodel';
 import { useSelector } from 'react-redux';
-import { Lock, Public } from '@mui/icons-material';
 import RJSFWrapper from '@/components/MesheryMeshInterface/PatternService/RJSF_wrapper';
 
 export const VIEW_VISIBILITY = {

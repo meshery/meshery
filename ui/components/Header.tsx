@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
-import { Search } from '@mui/icons-material';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
 import { useLazyGetSystemSyncQuery } from '../rtk-query/system';
@@ -15,7 +14,6 @@ import RemoteComponent from './RemoteComponent';
 import { useNotification } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
-import SettingsIcon from '@mui/icons-material/Settings';
 import RegistryModal from './Registry/RegistryModal';
 
 import {
@@ -32,6 +30,8 @@ import {
   Grid2,
   Hidden,
   NoSsr,
+  OutlinedSettingsIcon as SettingsIcon,
+  SearchIcon as Search,
   useTheme,
   useMediaQuery,
 } from '@sistent/sistent';

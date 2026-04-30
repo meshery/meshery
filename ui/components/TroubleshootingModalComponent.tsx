@@ -4,6 +4,8 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  CloseIcon,
+  ExpandMoreIcon,
   styled,
   Paper,
   IconButton,
@@ -12,8 +14,6 @@ import {
   Modal,
   keyframes,
 } from '@sistent/sistent';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import CloseIcon from '@mui/icons-material/Close';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   top: '50%',
