@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"runtime/debug"
 	"strings"
 	"time"
 
@@ -21,6 +22,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 
+	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -513,6 +515,68 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 	return unknownComponents
 }
 
+// runRelationshipEvaluation runs eval behind a panic-recovery boundary and
+// fans the result out to both the per-request channels and the coalescing
+// tracker so coalesced followers unblock on every termination path
+// (success, error, cancellation, panic).
+//
+// A panic inside EvaluateDesign (engine bug, malformed design, nil deref
+// deep in the registry) used to crash the whole Meshery process: an
+// unrecovered panic in a non-handler goroutine is fatal in Go, and
+// gorilla/mux's per-request recovery does not extend to goroutines a
+// handler spawns. In CI this manifested as the e2e suite cascading from
+// one failed /relationships/evaluate call to ECONNREFUSED on every
+// subsequent request. Centralising the recovery here keeps the server
+// alive and lets the requesting client see a 500.
+//
+// Defined at package scope (rather than inlined as an anonymous goroutine)
+// so the panic path is unit-testable without standing up the full HTTP
+// handler dependency tree.
+func runRelationshipEvaluation(
+	ctx context.Context,
+	log logger.Handler,
+	tracker *evaluationTracker,
+	designKey string,
+	eval func() (pattern.EvaluationResponse, error),
+	respCh chan<- pattern.EvaluationResponse,
+	errCh chan<- error,
+) {
+	defer func() {
+		r := recover()
+		if r == nil {
+			return
+		}
+		// Stack stays server-side: ErrPolicyEval flows the inner error
+		// string into the JSON longDescription returned to API clients,
+		// so the full stack is logged here and only the panic value
+		// propagates to errCh / coalesced followers / the response body.
+		panicErr := fmt.Errorf("panic during relationship evaluation: %v", r)
+		log.Error(fmt.Errorf("%s\n%s", panicErr.Error(), debug.Stack()))
+		tracker.publish(designKey, evalResult{err: panicErr})
+		// Non-blocking send: if the leader's select already returned
+		// via ctx.Done() the receiver is gone and a blocking send
+		// would leak this goroutine forever.
+		select {
+		case errCh <- panicErr:
+		default:
+		}
+	}()
+
+	if ctx.Err() != nil {
+		tracker.publish(designKey, evalResult{err: ctx.Err()})
+		return
+	}
+
+	resp, err := eval()
+	if err != nil {
+		tracker.publish(designKey, evalResult{err: err})
+		errCh <- err
+		return
+	}
+	tracker.publish(designKey, evalResult{resp: resp})
+	respCh <- resp
+}
+
 func (h *Handler) EvaluateRelationshipPolicy(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -537,8 +601,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-		rw.WriteHeader((http.StatusBadRequest))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -546,7 +609,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
 
 	if err != nil {
-		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
+		h.log.Error(ErrDecoding(err, "design file"))
+		writeMeshkitError(rw, ErrDecoding(err, "design file"), http.StatusBadRequest)
 		return
 	}
 	// decode the pattern file
@@ -572,29 +636,24 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	evalRespChan := make(chan pattern.EvaluationResponse, 1)
 	evalErrChan := make(chan error, 1)
 
-	go func() {
-		// Skip evaluation if the request was already cancelled
-		if evalCtx.Err() != nil {
-			h.evalTracker.publish(designKey, evalResult{err: evalCtx.Err()})
-			return
-		}
-		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
-
-		if err != nil {
-			h.evalTracker.publish(designKey, evalResult{err: err})
-			evalErrChan <- err
-		} else {
-			h.evalTracker.publish(designKey, evalResult{resp: evaluationResponse})
-			evalRespChan <- evaluationResponse
-		}
-	}()
+	go runRelationshipEvaluation(
+		evalCtx,
+		h.log,
+		h.evalTracker,
+		designKey,
+		func() (pattern.EvaluationResponse, error) {
+			return h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
+		},
+		evalRespChan,
+		evalErrChan,
+	)
 
 	select {
 
 	case err := <-evalErrChan:
 		h.log.Debug(err)
 		// log an event
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPolicyEval(err), http.StatusInternalServerError)
 		return
 
 	case evaluationResponse := <-evalRespChan:
@@ -623,20 +682,23 @@ func (h *Handler) EvaluateRelationshipPolicy(
 func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResult) {
 	if result.err != nil {
 		h.log.Debug(result.err)
-		http.Error(rw, result.err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPolicyEval(result.err), http.StatusInternalServerError)
 		return
 	}
 	ec := json.NewEncoder(rw)
 	if err := ec.Encode(result.resp); err != nil {
+		// Response body has already started streaming via json.Encoder —
+		// a partial JSON envelope is on the wire and a fresh error
+		// response would corrupt it, so log only.
 		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
-		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
 	}
 }
 
 func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context) {
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-		h.log.Warnf("relationship policy evaluation exceeded %s", policyEvalTimeout())
-		http.Error(rw, errEvalTimeout.Error(), http.StatusGatewayTimeout)
+		timeout := policyEvalTimeout()
+		h.log.Warnf("relationship policy evaluation exceeded %s", timeout)
+		writeMeshkitError(rw, ErrPolicyEvalTimeout(timeout), http.StatusGatewayTimeout)
 		return
 	}
 	h.log.Info("Evaluation terminated: request context closed")

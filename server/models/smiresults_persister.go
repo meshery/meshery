@@ -20,8 +20,8 @@ type SmiResultWithID struct {
 // SmiResultPage - represents a page of meshery results
 type SmiResultPage struct {
 	Page       uint64             `json:"page"`
-	PageSize   uint64             `json:"page_size"`
-	TotalCount int                `json:"total_count"`
+	PageSize   uint64             `json:"pageSize"`
+	TotalCount int                `json:"totalCount"`
 	Results    []*SmiResultWithID `json:"results"`
 }
 
