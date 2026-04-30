@@ -62,15 +62,13 @@ func ComponentV1beta2ToV1beta3(src *componentv1beta2.ComponentDefinition) *compo
 		ModelReference: src.ModelReference,
 		Styles:         src.Styles,
 		Capabilities:   src.Capabilities,
-		Metadata: componentv1beta3.ComponentDefinition_Metadata{
-			Genealogy:             src.Metadata.Genealogy,
-			IsAnnotation:          src.Metadata.IsAnnotation,
-			IsNamespaced:          src.Metadata.IsNamespaced,
-			Published:             src.Metadata.Published,
-			InstanceDetails:       src.Metadata.InstanceDetails,
-			ConfigurationUISchema: src.Metadata.ConfigurationUISchema,
-			AdditionalProperties:  src.Metadata.AdditionalProperties,
-		},
+		// Metadata is structurally identical across v1beta1, v1beta2,
+		// and v1beta3 (the generated schemas only differ in docstring
+		// content), so direct conversion copies every field — including
+		// future additions — instead of risking drift via a
+		// hand-rolled per-field copy. ApplyV1beta3MetadataChanges below
+		// uses the same pattern.
+		Metadata:      componentv1beta3.ComponentDefinition_Metadata(src.Metadata),
 		Configuration: src.Configuration,
 		Component: componentv1beta3.Component{
 			Kind:    src.Component.Kind,
@@ -110,15 +108,9 @@ func ComponentV1beta3ToV1beta2(src *componentv1beta3.ComponentDefinition) *compo
 		ModelReference: src.ModelReference,
 		Styles:         src.Styles,
 		Capabilities:   src.Capabilities,
-		Metadata: componentv1beta2.ComponentDefinition_Metadata{
-			Genealogy:             src.Metadata.Genealogy,
-			IsAnnotation:          src.Metadata.IsAnnotation,
-			IsNamespaced:          src.Metadata.IsNamespaced,
-			Published:             src.Metadata.Published,
-			InstanceDetails:       src.Metadata.InstanceDetails,
-			ConfigurationUISchema: src.Metadata.ConfigurationUISchema,
-			AdditionalProperties:  src.Metadata.AdditionalProperties,
-		},
+		// See ComponentV1beta2ToV1beta3 above for the rationale; same
+		// applies in the reverse direction.
+		Metadata:      componentv1beta2.ComponentDefinition_Metadata(src.Metadata),
 		Configuration: src.Configuration,
 		Component: componentv1beta2.Component{
 			Kind:    src.Component.Kind,
@@ -187,15 +179,13 @@ func ComponentV1beta3ToV1beta1(src *componentv1beta3.ComponentDefinition) *compo
 		ModelReference: src.ModelReference,
 		Styles:         src.Styles,
 		Capabilities:   src.Capabilities,
-		Metadata: componentv1beta1.ComponentDefinition_Metadata{
-			Genealogy:             src.Metadata.Genealogy,
-			IsAnnotation:          src.Metadata.IsAnnotation,
-			IsNamespaced:          src.Metadata.IsNamespaced,
-			Published:             src.Metadata.Published,
-			InstanceDetails:       src.Metadata.InstanceDetails,
-			ConfigurationUISchema: src.Metadata.ConfigurationUISchema,
-			AdditionalProperties:  src.Metadata.AdditionalProperties,
-		},
+		// v1beta1 and v1beta3 ComponentDefinition_Metadata are
+		// structurally identical (verified against the generated
+		// schemas), so direct conversion copies every field — including
+		// any future additions — and avoids the maintenance hazard of a
+		// hand-rolled field-by-field copy. Mirrors the pattern used by
+		// ApplyV1beta3MetadataChanges below.
+		Metadata:      componentv1beta1.ComponentDefinition_Metadata(src.Metadata),
 		Configuration: src.Configuration,
 		Component: componentv1beta1.Component{
 			Kind:    src.Component.Kind,

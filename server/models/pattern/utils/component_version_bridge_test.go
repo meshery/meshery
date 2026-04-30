@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/google/uuid"
@@ -90,5 +91,31 @@ func TestComponentV1beta3ToV1beta1_AliasingPreserved(t *testing.T) {
 	dst.Configuration["k"] = "mutated"
 	if cfg["k"] != "mutated" {
 		t.Errorf("Configuration aliasing broken: source.k = %v, expected mutated", cfg["k"])
+	}
+}
+
+// TestComponentV1beta3ToV1beta1_AllMetadataFieldsCopied locks in the
+// direct-type-conversion behavior the bridge now uses for Metadata.
+// A hand-rolled per-field copy would silently drop any new field that
+// schemas adds in the future; the direct conversion picks them up
+// automatically and the schemas are structurally identical across
+// v1beta1/v1beta2/v1beta3 by contract. Asserts every currently-defined
+// metadata field at once.
+func TestComponentV1beta3ToV1beta1_AllMetadataFieldsCopied(t *testing.T) {
+	src := &componentv1beta3.ComponentDefinition{
+		Metadata: componentv1beta3.ComponentDefinition_Metadata{
+			Genealogy:             "deployment",
+			IsAnnotation:          true,
+			IsNamespaced:          true,
+			Published:             true,
+			InstanceDetails:       map[string]interface{}{"foo": "bar"},
+			ConfigurationUISchema: `{"ui:order":["replicas"]}`,
+			AdditionalProperties:  map[string]interface{}{"shape": "circle"},
+		},
+	}
+	dst := ComponentV1beta3ToV1beta1(src)
+	want := componentv1beta1.ComponentDefinition_Metadata(src.Metadata)
+	if !reflect.DeepEqual(dst.Metadata, want) {
+		t.Errorf("Metadata not fully copied:\n  got:  %#v\n  want: %#v", dst.Metadata, want)
 	}
 }
