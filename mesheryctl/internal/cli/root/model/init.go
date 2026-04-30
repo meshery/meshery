@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -121,6 +122,13 @@ mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 					if err != nil {
 						return ErrModelInit(err)
 					}
+					// Inject model name into the model definition file
+					if name == "model" {
+						content, err = initModelInjectModelName(content, modelInitFlags.OutputFormat, modelName)
+						if err != nil {
+							return ErrModelInit(err)
+						}
+					}
 					filePath := filepath.Join(
 
 						itemFolderPath,
@@ -172,7 +180,6 @@ mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 			return err
 		}
 
-		// TODO put a model name into generated model file
 		return nil
 	},
 }
@@ -282,6 +289,50 @@ func getTemplateInOutputFormat(templatePath string, outputFormat string) ([]byte
 
 	// impossible to reach here, as outputFormat is validated in prerun
 	return nil, ErrModelUnsupportedOutputFormat("unsupported output format")
+}
+
+// initModelInjectModelName injects the model name and display name into the
+// generated model definition file content.
+// It replaces the placeholder name ("untitled-model") and displayName
+// ("Untitled Model") with values derived from the provided modelName.
+func initModelInjectModelName(content []byte, outputFormat string, modelName string) ([]byte, error) {
+	// derive a human-readable display name from the kebab-case model name
+	// e.g. "my-awesome-model" -> "My Awesome Model"
+	words := strings.Split(modelName, "-")
+	for i, w := range words {
+		if len(w) > 0 {
+			words[i] = strings.ToUpper(w[:1]) + w[1:]
+		}
+	}
+	displayName := strings.Join(words, " ")
+
+	switch outputFormat {
+	case "json":
+		var data map[string]interface{}
+		if err := json.Unmarshal(content, &data); err != nil {
+			return nil, fmt.Errorf("failed to parse model template JSON: %w", err)
+		}
+		data["name"] = modelName
+		data["displayName"] = displayName
+		result, err := json.MarshalIndent(data, "", "  ")
+		if err != nil {
+			return nil, fmt.Errorf("failed to serialize model JSON: %w", err)
+		}
+		return result, nil
+	case "yaml":
+		var data map[string]interface{}
+		if err := yaml.Unmarshal(content, &data); err != nil {
+			return nil, fmt.Errorf("failed to parse model template YAML: %w", err)
+		}
+		data["name"] = modelName
+		data["displayName"] = displayName
+		result, err := yaml.Marshal(data)
+		if err != nil {
+			return nil, fmt.Errorf("failed to serialize model YAML: %w", err)
+		}
+		return result, nil
+	}
+	return content, nil
 }
 
 func initModelReplacePlaceholders(input string, replacements map[string]string) string {

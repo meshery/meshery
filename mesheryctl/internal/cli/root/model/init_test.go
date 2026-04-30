@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -332,6 +333,75 @@ func TestModelInit(t *testing.T) {
 						assert.False(t, info.IsDir())
 					}
 				}
+			}
+		})
+	}
+}
+
+// TestInitModelInjectModelName tests that model name and displayName are
+// correctly injected into generated model definition files.
+func TestInitModelInjectModelName(t *testing.T) {
+	tests := []struct {
+		name            string
+		inputJSON       string
+		outputFormat    string
+		modelName       string
+		expectedName    string
+		expectedDisplay string
+		expectError     bool
+	}{
+		{
+			name:            "inject name into JSON template",
+			inputJSON:       `{"name":"untitled-model","displayName":"Untitled Model","version":"v0.0.1"}`,
+			outputFormat:    "json",
+			modelName:       "my-awesome-model",
+			expectedName:    "my-awesome-model",
+			expectedDisplay: "My Awesome Model",
+		},
+		{
+			name:            "single word model name in JSON",
+			inputJSON:       `{"name":"untitled-model","displayName":"Untitled Model","version":"v0.0.1"}`,
+			outputFormat:    "json",
+			modelName:       "nginx",
+			expectedName:    "nginx",
+			expectedDisplay: "Nginx",
+		},
+		{
+			name:            "inject name into YAML template",
+			inputJSON:       "name: untitled-model\ndisplayName: Untitled Model\nversion: v0.0.1\n",
+			outputFormat:    "yaml",
+			modelName:       "aws-ec2-controller",
+			expectedName:    "aws-ec2-controller",
+			expectedDisplay: "Aws Ec2 Controller",
+		},
+		{
+			name:         "invalid JSON returns error",
+			inputJSON:    `{invalid json`,
+			outputFormat: "json",
+			modelName:    "my-model",
+			expectError:  true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := initModelInjectModelName([]byte(tc.inputJSON), tc.outputFormat, tc.modelName)
+			if tc.expectError {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+
+			switch tc.outputFormat {
+			case "json":
+				var data map[string]interface{}
+				assert.NoError(t, json.Unmarshal(result, &data))
+				assert.Equal(t, tc.expectedName, data["name"])
+				assert.Equal(t, tc.expectedDisplay, data["displayName"])
+			case "yaml":
+				// verify substrings since YAML marshal order may vary
+				assert.Contains(t, string(result), "name: "+tc.expectedName)
+				assert.Contains(t, string(result), "displayName: "+tc.expectedDisplay)
 			}
 		})
 	}
