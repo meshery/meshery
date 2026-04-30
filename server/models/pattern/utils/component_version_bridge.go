@@ -1,7 +1,13 @@
-// Package utils contains helpers that bridge the v1beta2/component and
-// v1beta3/component representations of a component definition.
+// Package utils contains helpers that bridge the v1beta1/component,
+// v1beta2/component, and v1beta3/component representations of a
+// component definition. The pairings currently provided are
+// v1beta2 <-> v1beta3 (used by the pattern pipeline, which holds
+// PatternFile.Components as v1beta2) and v1beta3 -> v1beta1 (used by
+// the relationship-policy evaluator carve-out in
+// server/handlers/policy_relationship_handler.go, which is pinned to
+// v1beta1/pattern.EvaluationRequest/EvaluationResponse).
 //
-// Why this bridge exists
+// Why these bridges exist
 //
 // meshery/schemas pins v1beta3/design.PatternFile.Components to
 // *v1beta2/component.ComponentDefinition (see schemas' v1beta3/const.go
@@ -12,14 +18,19 @@
 // the only version whose Entity interface is implemented and which
 // AutoMigrate binds to the component_definition_dbs table.
 //
-// The two struct types are nominally distinct in Go, so a pattern
-// iteration (v1beta2) that wants to call a meshkit helper (v1beta3) must
-// convert. The shared inner types (*v1beta1/model.ModelDefinition,
-// *core.ComponentStyles, capabilities slice, configuration map, Metadata
-// AdditionalProperties map) are pointer-identical across both
-// representations, so the conversion is a shallow field copy rather than
-// a deep clone. Mutations through the aliased pointer targets on the
-// returned value therefore remain visible on the source.
+// The relationship-policy evaluator stays on v1beta1/pattern by design
+// (the EvaluationRequest / EvaluationResponse types and the in-tree
+// policy engine all consume v1beta1), so registry lookups inside that
+// handler also need to bridge the v1beta3 result back to v1beta1.
+//
+// The struct types are nominally distinct in Go, so any consumer that
+// wants to cross a meshkit boundary must convert. The shared inner
+// types (*v1beta1/model.ModelDefinition, *core.ComponentStyles,
+// capabilities slice, configuration map, Metadata AdditionalProperties
+// map) are pointer-identical across all three representations, so each
+// conversion is a shallow field copy rather than a deep clone.
+// Mutations through the aliased pointer targets on the returned value
+// therefore remain visible on the source.
 package utils
 
 import (
