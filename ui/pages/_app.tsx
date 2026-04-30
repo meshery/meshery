@@ -1,7 +1,11 @@
-import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+import {
+  CheckCircleIcon as CheckCircle,
+  ErrorIcon as Error,
+  InfoIcon as Info,
+  WarningIcon as Warning,
+} from '@sistent/sistent';
 import { Footer, KubernetesSubscription, NavigationBar } from '../components/AppComponents';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { AdapterMoment, LocalizationProvider } from '@/components/shared/DatePicker';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
 import 'billboard.js/dist/theme/dark.min.css';
