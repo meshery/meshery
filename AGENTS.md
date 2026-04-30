@@ -30,6 +30,8 @@ performance management, and multi-tenancy capabilities across any cloud or on-pr
 
 Full canonical directory: <https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md> — the reader-friendly 26-row naming table with before/after and do/don't examples. The inline per-layer forms below remain the repo-scoped authority; the guide is the ecosystem-wide reference.
 
+> **Identifier-naming overhaul status (2026-04-28):** Complete in this repo at `v1.0.14`. Cross-repo cluster: `meshery/schemas` (`v1.2.6`), `meshery/meshkit` (`v1.0.7`), `layer5io/sistent` (`v0.20.1`), and `layer5io/meshery-cloud` (master HEAD, rolling). **`layer5labs/meshery-extensions` is deferred** pending lift of the layer5labs billing block — see `meshery/schemas/docs/identifier-naming-migration.md §21` for the post-completion landed-PR + tagged-release inventory.
+
 This repository adheres to the canonical camelCase-wire identifier-naming contract
 defined authoritatively in `meshery/schemas/AGENTS.md § Casing rules at a
 glance`. The contract is **not optional**; deviations should be treated as
@@ -282,8 +284,9 @@ make docs-docker
 # Build GraphQL schema
 make graphql-build
 
-# Generate GraphQL documentation
-make graphql-docs-build
+# GraphQL is self-documenting via the introspection endpoint and the GraphQL
+# Playground at http://localhost:9081/api/system/graphql/playground.
+# A static reference snapshot lives at docs/content/en/reference/graphql-apis.md.
 ```
 
 ### Helm Charts
