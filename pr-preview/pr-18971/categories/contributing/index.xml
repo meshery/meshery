@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Contributing on Documentation</title><link>/categories/contributing/</link><description>Recent content in Contributing on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sun, 26 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="/categories/contributing/index.xml" rel="self" type="application/rss+xml"/><item><title>Contributing and Community</title><link>/project/</link><pubDate>Sun, 26 Apr 2026 00:00:00 +0000</pubDate><guid>/project/</guid><description/></item><item><title>Schema Fundamentals</title><link>/project/contributing/contributing-schemas/schema-fundamentals/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-schemas/schema-fundamentals/</guid><description>&lt;p&gt;Meshery uses &lt;strong&gt;Schema-Driven Development (SDD)&lt;/strong&gt;: every API resource is defined once as an OpenAPI schema in &lt;a href="https://github.com/meshery/schemas"&gt;&lt;code&gt;meshery/schemas&lt;/code&gt;&lt;/a&gt;. That single definition propagates automatically into Go structs, TypeScript types, RTK Query clients, and runtime validation. Changes to a schema file update all downstream consumers on the next &lt;code&gt;make build&lt;/code&gt;.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Contributing on Documentation</title><link>/categories/contributing/</link><description>Recent content in Contributing on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Wed, 29 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="/categories/contributing/index.xml" rel="self" type="application/rss+xml"/><item><title>Contributing and Community</title><link>/project/</link><pubDate>Wed, 29 Apr 2026 00:00:00 +0000</pubDate><guid>/project/</guid><description/></item><item><title>Schema Fundamentals</title><link>/project/contributing/contributing-schemas/schema-fundamentals/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-schemas/schema-fundamentals/</guid><description>&lt;p&gt;Meshery uses &lt;strong&gt;Schema-Driven Development (SDD)&lt;/strong&gt;: every API resource is defined once as an OpenAPI schema in &lt;a href="https://github.com/meshery/schemas"&gt;&lt;code&gt;meshery/schemas&lt;/code&gt;&lt;/a&gt;. That single definition propagates automatically into Go structs, TypeScript types, RTK Query clients, and runtime validation. Changes to a schema file update all downstream consumers on the next &lt;code&gt;make build&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 id="schema-propagation"&gt;
 	Schema propagation
 &lt;/h2&gt;
@@ -338,7 +338,7 @@
 &lt;h2 id="1-widget-architecture"&gt;
 	1. Widget Architecture
 &lt;/h2&gt;
-&lt;p&gt;Widgets are React components located &lt;a href="https://github.com/meshery/meshery/tree/master/ui/components/DashboardComponent/widgets"&gt;here&lt;/a&gt;:&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI - Notification Center</title><link>/project/contributing/contributing-ui-notification-center/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-notification-center/</guid><description>&lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisite Reading&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Widgets are React components located &lt;a href="https://github.com/meshery/meshery/tree/master/ui/components/Dashboard/widgets"&gt;here&lt;/a&gt;:&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI - Notification Center</title><link>/project/contributing/contributing-ui-notification-center/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-notification-center/</guid><description>&lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisite Reading&lt;/strong&gt;&lt;/p&gt;
  &lt;ol&gt;&lt;li&gt;&lt;a href="contributing-ui"&gt;Contributing to Meshery UI&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;
 &lt;/div&gt;
 &lt;h2 id="table-of-contents"&gt;
@@ -444,7 +444,29 @@ th, td {
 	Latest E2E Test Report
 &lt;/h2&gt;
 &lt;p&gt;&lt;a href="https://github.com/meshery/meshery/actions/workflows/build-ui-and-server.yml?query=branch%3Amaster"&gt;🔗 View Build UI and Server Workflow&lt;/a&gt;&lt;/p&gt;</description></item><item><title>How to write MeshKit compatible errors</title><link>/project/contributing/contributing-error/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-error/</guid><description>&lt;p&gt;Meshery pervasively uses MeshKit as a golang and infrastructure management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes.&lt;/p&gt;
-&lt;p&gt;To help with creating error codes, MeshKit contains a tool that analyzes, verifies and updates error codes in Meshery source code trees. It extracts error details into a file that can be used for publishing all error code references on the Meshery &lt;a href="../../reference/error-codes/"&gt;error codes reference page&lt;/a&gt;. The objective to create this was to avoid centralized handling of error codes and automating everything&lt;/p&gt;</description></item><item><title>Meshery CLI Style Guide</title><link>/project/contributing/contributing-cli-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-cli-guide/</guid><description>&lt;p&gt;These guidelines are a collection of principles and conventions that need to be followed while designing mesheryctl commands.&lt;/p&gt;
+&lt;p&gt;To help with creating error codes, MeshKit contains a tool that analyzes, verifies and updates error codes in Meshery source code trees. It extracts error details into a file that can be used for publishing all error code references on the Meshery &lt;a href="../../reference/error-codes/"&gt;error codes reference page&lt;/a&gt;. The objective to create this was to avoid centralized handling of error codes and automating everything&lt;/p&gt;</description></item><item><title>HTTP Error Response Contract</title><link>/project/contributing/error-contract/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/error-contract/</guid><description>&lt;h1 id="http-error-response-contract"&gt;
+	HTTP Error Response Contract
+&lt;/h1&gt;
+&lt;p&gt;Every non-2xx HTTP response from Meshery Server carries a JSON body with
+&lt;code&gt;Content-Type: application/json; charset=utf-8&lt;/code&gt;. Clients should parse the body
+as JSON before surfacing errors to users.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Migration status:&lt;/strong&gt; the JSON contract is enforced across the &lt;code&gt;./server&lt;/code&gt;
+Go module by a &lt;code&gt;forbidigo&lt;/code&gt; lint rule that blocks any new &lt;code&gt;http.Error&lt;/code&gt; call
+at CI time, configured in
+&lt;a href="https://github.com/meshery/meshery/blob/master/.github/.golangci.yml"&gt;&lt;code&gt;.github/.golangci.yml&lt;/code&gt;&lt;/a&gt;.
+The migration landed in PR
+&lt;a href="https://github.com/meshery/meshery/pull/18919"&gt;#18919&lt;/a&gt; and the lint guard
+was flipped from advisory to fully blocking in PR
+&lt;a href="https://github.com/meshery/meshery/pull/18927"&gt;#18927&lt;/a&gt;. Legitimate
+non-JSON responders are handled in one of three ways: a file-level allowlist
+in &lt;code&gt;.github/.golangci.yml&lt;/code&gt; for the Kubernetes healthz probe handler
+(&lt;code&gt;k8s_healthz_handler.go&lt;/code&gt;) and the static-asset UI handler
+(&lt;code&gt;ui_handler.go&lt;/code&gt;); SSE stream handlers (&lt;code&gt;events_streamer.go&lt;/code&gt;,
+&lt;code&gt;load_test_handler.go&lt;/code&gt;) that don&amp;rsquo;t call &lt;code&gt;http.Error&lt;/code&gt; at all (they emit
+error events through the active SSE writer instead); and binary/tar/YAML
+downloads and HTTP redirects, which use &lt;code&gt;w.Write&lt;/code&gt; or &lt;code&gt;http.Redirect&lt;/code&gt;
+rather than &lt;code&gt;http.Error&lt;/code&gt; and so are not governed by the lint rule.&lt;/p&gt;</description></item><item><title>Meshery CLI Style Guide</title><link>/project/contributing/contributing-cli-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-cli-guide/</guid><description>&lt;p&gt;These guidelines are a collection of principles and conventions that need to be followed while designing mesheryctl commands.&lt;/p&gt;
 &lt;h2 id="design-principles"&gt;
 	Design Principles
 &lt;/h2&gt;

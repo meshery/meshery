@@ -1,4 +1,126 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sun, 26 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.13</title><link>/project/releases/v1.0.13/</link><pubDate>Sun, 26 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.13/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Wed, 29 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.14</title><link>/project/releases/v1.0.14/</link><pubDate>Wed, 29 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.14/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(server): promote raw-err passthroughs to MeshKit codes (follow-up to #18919) @leecalcote (#18955)&lt;/li&gt;
+&lt;li&gt;test(server): pin buffer-encode pattern in httputil tests @leecalcote (#18954)&lt;/li&gt;
+&lt;li&gt;chore(server): delete dead meshery_application_handler.go @leecalcote (#18953)&lt;/li&gt;
+&lt;li&gt;chore(server): remove dead getLatestKubeVersionFromRegistry block @leecalcote (#18952)&lt;/li&gt;
+&lt;li&gt;docs(server): explain log/wire error divergence in SessionInjectorMiddleware @leecalcote (#18951)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(wire-format): flip meshery server + UI to canonical camelCase (Phase 5) @leecalcote (#18974)&lt;/li&gt;
+&lt;li&gt;fix(server): JSON error responses across handlers + provider layer @jamieplu (#18919)&lt;/li&gt;
+&lt;li&gt;fix: update default remote provider references to Meshery Cloud @miacycle (#18913)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;chore(deps): bump meshkit v1.0.6 -&amp;gt; v1.0.7 + flip Event consumer reads @leecalcote (#18987)&lt;/li&gt;
+&lt;li&gt;fix(wire-format): flip Kubernetes connection metadata literal keys to canonical camelCase (Phase 5b) @leecalcote (#18986)&lt;/li&gt;
+&lt;li&gt;[ui] Fix font-family naming mismatch and redundant preload warning #18515 @Ananya-Kaushal137 (#18637)&lt;/li&gt;
+&lt;li&gt;fix(wire-format): flip meshery server + UI to canonical camelCase (Phase 5) @leecalcote (#18974)&lt;/li&gt;
+&lt;li&gt;fix(server): JSON error responses across handlers + provider layer @jamieplu (#18919)&lt;/li&gt;
+&lt;li&gt;fix: update default remote provider references to Meshery Cloud @miacycle (#18913)&lt;/li&gt;
+&lt;li&gt;feat(ui): consume MeshKit error metadata in notification toasts @leecalcote (#18926)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Agent] Standardize coding agent GitHub tool access @leecalcote (#18990)&lt;/li&gt;
+&lt;li&gt;fix(wire-format): flip Kubernetes connection metadata literal keys to canonical camelCase (Phase 5b) @leecalcote (#18986)&lt;/li&gt;
+&lt;li&gt;[CI] Remove unsupported &lt;code&gt;copilot-requests&lt;/code&gt; permission from docs noob tester workflow @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#18988)&lt;/li&gt;
+&lt;li&gt;[Agent] Enable PR comments for Meshery Code Contributor @leecalcote (#18975)&lt;/li&gt;
+&lt;li&gt;chore(deps): Bump github.com/olekukonko/tablewriter from 1.1.0 to 1.1.4 @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#16824)&lt;/li&gt;
+&lt;li&gt;Bump github.com/open-policy-agent/opa from 1.11.0 to 1.12.1 @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#16825)&lt;/li&gt;
+&lt;li&gt;Bump github.com/envoyproxy/go-control-plane/envoy from 1.35.0 to 1.36.0 @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#16826)&lt;/li&gt;
+&lt;li&gt;fix(wire-format): flip meshery server + UI to canonical camelCase (Phase 5) @leecalcote (#18974)&lt;/li&gt;
+&lt;li&gt;fix(server): JSON error responses across handlers + provider layer @jamieplu (#18919)&lt;/li&gt;
+&lt;li&gt;[CI] Fail PR E2E workflow when Playwright tests fail @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#18960)&lt;/li&gt;
+&lt;li&gt;ci(server): flip forbidigo http.Error guard to blocking @leecalcote (#18927)&lt;/li&gt;
+&lt;li&gt;fix: update default remote provider references to Meshery Cloud @miacycle (#18913)&lt;/li&gt;
+&lt;li&gt;Update email notification workflow for release notes @fitzergerald (#18944)&lt;/li&gt;
+&lt;li&gt;Add workflow for release notes email notifications @fitzergerald (#18946)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] Use Qanelas Soft for REST API reference typography @Oluwatunmise-olat (#18973)&lt;/li&gt;
+&lt;li&gt;[Docs] Remove repetitive REST API reference summary text @Joyboy48 (#18964)&lt;/li&gt;
+&lt;li&gt;Bump postcss from 8.5.6 to 8.5.12 in /docs @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#18947)&lt;/li&gt;
+&lt;li&gt;fix(server): JSON error responses across handlers + provider layer @jamieplu (#18919)&lt;/li&gt;
+&lt;li&gt;docs(server): clarify forbidigo advisory state, sync exception lists @leecalcote (#18958)&lt;/li&gt;
+&lt;li&gt;docs(server): refresh error-contract for Phase 9 + buffer-encode pattern @leecalcote (#18950)&lt;/li&gt;
+&lt;li&gt;fix: update default remote provider references to Meshery Cloud @miacycle (#18913)&lt;/li&gt;
+&lt;li&gt;Fix typo in CLI contributing docs (#18940) @Siraddeen (#18942)&lt;/li&gt;
+&lt;li&gt;Fix light/dark mode toggle icon on v0.9 @Katotodan (#18831)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix outdated references in Dashboard Widgets docs @matrixkavi (#18931)&lt;/li&gt;
+&lt;li&gt;fix(docs): remove random text from intra page navigation @Sbragul26 (#18820)&lt;/li&gt;
+&lt;li&gt;[Server] Implement Proper Error Codes for MeshSync Data Handler @workwithsarang (#18236)&lt;/li&gt;
+&lt;li&gt;First PR @alex-rudenkiy (#18933)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Ananya-Kaushal137, @CodexRaunak, @Copilot, @Joyboy48, @Katotodan, @Oluwatunmise-olat, @PragalvaXFREZ, @Sbragul26, @Siraddeen, @alex-rudenkiy, @alexquincy, @arjunmehta-git, @dependabot[bot], @fitzergerald, @hamza-mohd, @jamieplu, @l5io, @leecalcote, @matrixkavi, @meshery-ci, @miacycle, @pontusringblom, @saurabhraghuvanshii, @workwithsarang, @yi-nuo426, [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.15</title><link>/project/releases/v1.0.15/</link><pubDate>Wed, 29 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.15/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Server] Break /user/login ⇄ /provider redirect loop in enforced-provider mode @leecalcote (#19006)&lt;/li&gt;
+&lt;li&gt;chore(deps): bump github.com/meshery/schemas to v1.2.6 @leecalcote (#18994)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[mesheryctl] Add e2e BATS tests for system config gke/aks/eks/minikube @Omkar-Ugal (#18930)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;chore(ci): remove dead graphql-docs step (docs/Rakefile deleted in Jekyll-&amp;gt;Hugo migration) @leecalcote (#18992)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Add e2e BATS tests for system config gke/aks/eks/minikube @Omkar-Ugal (#18930)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;docs: refresh examples and references after canonical-naming overhaul @leecalcote (#18993)&lt;/li&gt;
+&lt;li&gt;chore(ci): remove dead graphql-docs step (docs/Rakefile deleted in Jekyll-&amp;gt;Hugo migration) @leecalcote (#18992)&lt;/li&gt;
+&lt;li&gt;[Docs] Replace body_class with layout for REST API reference @Oluwatunmise-olat (#18972)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Oluwatunmise-olat, @Omkar-Ugal, @leecalcote, @lekaf974, @miacycle and @saurabhraghuvanshii&lt;/p&gt;</description></item><item><title>v1.0.16</title><link>/project/releases/v1.0.16/</link><pubDate>Wed, 29 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.16/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Server] Stop ProviderUIHandler from emitting an empty meshery-provider cookie @hamza-mohd (#19007)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@hamza-mohd, @leecalcote and @miacycle&lt;/p&gt;</description></item><item><title>v1.0.13</title><link>/project/releases/v1.0.13/</link><pubDate>Sun, 26 Apr 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.13/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -32315,7 +32437,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.13&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.16&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
