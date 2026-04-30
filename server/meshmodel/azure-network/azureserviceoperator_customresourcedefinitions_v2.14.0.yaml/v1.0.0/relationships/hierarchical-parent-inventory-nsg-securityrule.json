@@ -34,16 +34,16 @@
                         "match": {},
                         "match_strategy_matrix": null,
                         "model": {
-                            "displayName": "",
+                            "displayName": "Azure Network",
                             "id": "00000000-0000-0000-0000-000000000000",
                             "model": {
-                                "version": ""
+                                "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
                             },
                             "name": "azure-network",
                             "registrant": {
                                 "kind": "github"
                             },
-                            "version": ""
+                            "version": "v1.0.0"
                         },
                         "patch": {
                             "patchStrategy": "replace",
@@ -64,16 +64,16 @@
                         "match": {},
                         "match_strategy_matrix": null,
                         "model": {
-                            "displayName": "",
+                            "displayName": "Azure Network",
                             "id": "00000000-0000-0000-0000-000000000000",
                             "model": {
-                                "version": ""
+                                "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
                             },
                             "name": "azure-network",
                             "registrant": {
                                 "kind": "github"
                             },
-                            "version": ""
+                            "version": "v1.0.0"
                         },
                         "patch": {
                             "patchStrategy": "replace",
