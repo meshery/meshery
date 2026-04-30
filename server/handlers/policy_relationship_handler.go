@@ -20,6 +20,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
+	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 
 	"github.com/meshery/meshkit/models/events"
 
@@ -442,7 +443,16 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 			unknownComponents = append(unknownComponents, &_c)
 			continue
 		}
-		_component, _ := entities[0].(*component.ComponentDefinition)
+		// meshkit's registry stores entities as v1beta3/component.ComponentDefinition
+		// (the entity-implementing canonical-casing version), so the lookup
+		// returns v1beta3 even though this carve-out keeps the rest of the
+		// evaluator on v1beta1/component. Bridge once at the meshkit boundary.
+		registryComp, ok := entities[0].(*componentv1beta3.ComponentDefinition)
+		if !ok || registryComp == nil {
+			unknownComponents = append(unknownComponents, &_c)
+			continue
+		}
+		_component := utils.ComponentV1beta3ToV1beta1(registryComp)
 
 		_component.ID = _c.ID
 		if _c.DisplayName != "" {

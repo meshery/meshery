@@ -23,6 +23,7 @@
 package utils
 
 import (
+	componentv1beta1 "github.com/meshery/schemas/models/v1beta1/component"
 	componentv1beta2 "github.com/meshery/schemas/models/v1beta2/component"
 	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 )
@@ -148,4 +149,55 @@ func ApplyV1beta3MetadataChanges(
 	// out of sync between the registry-hydrated v1beta3 and the pattern-
 	// level v1beta2 components.
 	dst.Metadata = componentv1beta2.ComponentDefinition_Metadata(src.Metadata)
+}
+
+// ComponentV1beta3ToV1beta1 is a shallow field copy from
+// v1beta3/component.ComponentDefinition to v1beta1/component.ComponentDefinition,
+// keeping the same aliasing semantics as ComponentV1beta3ToV1beta2: inner
+// reference-typed fields (Model pointer, Styles, Capabilities slice,
+// Configuration map, Metadata.AdditionalProperties map, ModelID pointer)
+// alias the source so mutations remain visible across the bridge.
+//
+// Used by the relationship-policy evaluator carve-out (server/handlers/
+// policy_relationship_handler.go), which stays on v1beta1/pattern even
+// though the meshkit registry now returns v1beta3-typed components.
+func ComponentV1beta3ToV1beta1(src *componentv1beta3.ComponentDefinition) *componentv1beta1.ComponentDefinition {
+	if src == nil {
+		return nil
+	}
+	dst := &componentv1beta1.ComponentDefinition{
+		ID:             src.ID,
+		SchemaVersion:  src.SchemaVersion,
+		Version:        src.Version,
+		DisplayName:    src.DisplayName,
+		Description:    src.Description,
+		Format:         componentv1beta1.ComponentDefinitionFormat(src.Format),
+		Model:          src.Model,
+		ModelReference: src.ModelReference,
+		Styles:         src.Styles,
+		Capabilities:   src.Capabilities,
+		Metadata: componentv1beta1.ComponentDefinition_Metadata{
+			Genealogy:             src.Metadata.Genealogy,
+			IsAnnotation:          src.Metadata.IsAnnotation,
+			IsNamespaced:          src.Metadata.IsNamespaced,
+			Published:             src.Metadata.Published,
+			InstanceDetails:       src.Metadata.InstanceDetails,
+			ConfigurationUISchema: src.Metadata.ConfigurationUISchema,
+			AdditionalProperties:  src.Metadata.AdditionalProperties,
+		},
+		Configuration: src.Configuration,
+		Component: componentv1beta1.Component{
+			Kind:    src.Component.Kind,
+			Version: src.Component.Version,
+			Schema:  src.Component.Schema,
+		},
+		CreatedAt: src.CreatedAt,
+		UpdatedAt: src.UpdatedAt,
+		ModelId:   src.ModelID,
+	}
+	if src.Status != nil {
+		st := componentv1beta1.ComponentDefinitionStatus(*src.Status)
+		dst.Status = &st
+	}
+	return dst
 }
