@@ -288,11 +288,11 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
 <details>
 <summary>Capabilities Endpoint Example</summary>
 {{< code code=`{
-  "provider_type": "remote",
-  "package_version": "v0.1.0",
-  "package_url": "https://layer5labs.github.io/meshery-extensions-packages/provider.tar.gz",
-  "provider_name": "Meshery",
-  "provider_description": [
+  "providerType": "remote",
+  "packageVersion": "v0.1.0",
+  "packageURL": "https://layer5labs.github.io/meshery-extensions-packages/provider.tar.gz",
+  "providerName": "Meshery",
+  "providerDescription": [
     "Persistent sessions",
     "Save environment setup",
     "Retrieve performance test results",
@@ -328,7 +328,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
     "account": [
       {
           "title": "Overview",
-          "on_click_callback": 1,
+          "onClickCallback": 1,
           "href": {
               "uri": "/account/overview",
               "external": false
@@ -340,7 +340,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
       },
       {
           "title": "Profile",
-          "on_click_callback": 1,
+          "onClickCallback": 1,
           "href": {
               "uri": "/account/profile",
               "external": false
@@ -352,7 +352,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
       },
       {
           "title": "API Tokens",
-          "on_click_callback": 1,
+          "onClickCallback": 1,
           "href": {
               "uri": "/account/tokens",
               "external": false
@@ -363,7 +363,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
           "type": "full_page"
       }
     ],
-    "user_prefs": [
+    "userPrefs": [
       {
         "component": "/provider/userprefs/meshmap-preferences.js"
       }
