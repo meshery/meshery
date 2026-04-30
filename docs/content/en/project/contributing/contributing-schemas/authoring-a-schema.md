@@ -67,7 +67,7 @@ properties:
   name:
     type: string
     maxLength: 100
-See the real file at [schemas/constructs/v1beta1/environment/environment.yaml](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta1/environment/environment.yaml) for the full property set (which includes additional fields)
+    description: Keychain name.
     x-order: 2
     x-oapi-codegen-extra-tags:
       db: name
@@ -97,6 +97,8 @@ Key requirements:
 - All server-generated fields in `properties` (`id`, `created_at`, `updated_at`, `deleted_at`)
 - Always-present fields in `required` (`id`, `created_at`, `updated_at`)
 - DB-backed fields use snake_case property names matching the column name
+
+For a complete real-world example with additional fields, see [`schemas/constructs/v1beta1/environment/environment.yaml`](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta1/environment/environment.yaml).
 
 ### Step 3 — Create `api.yml` with endpoints and Payload schema {#step-3}
 
