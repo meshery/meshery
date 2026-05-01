@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Compatibility Matrix on Documentation</title><link>/installation/compatibility-matrix/</link><description>Recent content in Compatibility Matrix on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/installation/compatibility-matrix/index.xml" rel="self" type="application/rss+xml"/><item><title>Meshery-Cilium Past Results</title><link>/installation/compatibility-matrix/meshery-cilium-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-cilium-past-results/</guid><description/></item><item><title>Meshery-Consul Past Results</title><link>/installation/compatibility-matrix/meshery-consul-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-consul-past-results/</guid><description/></item><item><title>Meshery-Istio Past Results</title><link>/installation/compatibility-matrix/meshery-istio-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-istio-past-results/</guid><description/></item><item><title>Meshery-Kuma Past Results</title><link>/installation/compatibility-matrix/meshery-kuma-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-kuma-past-results/</guid><description/></item><item><title>Meshery-Linkerd Past Results</title><link>/installation/compatibility-matrix/meshery-linkerd-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-linkerd-past-results/</guid><description/></item><item><title>Meshery-Nginx-SM Past Results</title><link>/installation/compatibility-matrix/meshery-nginx-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-nginx-past-results/</guid><description/></item><item><title>Meshery-OSM Past Results</title><link>/installation/compatibility-matrix/meshery-osm-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-osm-past-results/</guid><description/></item><item><title>Meshery-Traefik-Mesh Past Results</title><link>/installation/compatibility-matrix/meshery-traefik-mesh-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-traefik-mesh-past-results/</guid><description/></item><item><title>Old Compatibility Matrix</title><link>/installation/compatibility-matrix/old-compatibility-matrix/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/old-compatibility-matrix/</guid><description>&lt;p&gt;Meshery Server and Meshery Adapters are tested daily for their compatibility with the infrastructure they manage and the platforms Meshery deploys on (Kubernetes and Docker). End-to-end test results are automatically posted to the following compatibility matrix.&lt;/p&gt;
+&lt;p&gt;See also &lt;a href="../../project/contributing/test-status/"&gt;test status&lt;/a&gt;, which needs to be combined with the Compatibility Matrix test results to come together under a unified page (set of drillable pages).&lt;/p&gt;
+&lt;style&gt;
+ td:hover,tr:hover {
+ background-color: var(--color-primary-dark);
+ cursor:pointer;
+ }
+ td.details {
+ background-color: #fafafa;
+ cursor:text;
+ }
+ .yellowCheckbox{
+ width:2.5rem
+ }
+ .tooltipss{
+ position:relative;
+ width:fit-content;
+ cursor:pointer;
+ margin-right: auto;
+ margin-left: auto;
+ }
+ .tooltipss .tooltiptext {
+ visibility: hidden;
+ width: 120px;
+ background-color: #555;
+ color: #fff;
+ text-align: center;
+ border-radius: 6px;
+ padding: 5px 0;
+ position: absolute;
+ z-index: 1;
+ bottom: 125%;
+ left: 50%;
+ margin-left: -60px;
+ opacity: 0;
+ transition: opacity 0.3s;
+ }
+
+ .tooltipss .tooltiptext::after {
+ content: "";
+ position: absolute;
+ top: 100%;
+ left: 50%;
+ margin-left: -5px;
+ border-width: 5px;
+ border-style: solid;
+ border-color: #555 transparent transparent transparent;
+ }
+ .tooltipss:hover .tooltiptext {
+ visibility: visible;
+ opacity: 1;
+}
+&lt;/style&gt;
+
+&lt;table class="table table-striped" &gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: left; padding: 10px; border-bottom: 2px solid #ccc;"&gt;Kubernetes Version&lt;/th&gt;
+ &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
+ &lt;a href="https://github.com/meshery/meshery-istio" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/istio.svg" /&gt;
+ meshery-istio
+ &lt;/a&gt;
+ &lt;/th&gt;
+ &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
+ &lt;a href="https://github.com/meshery/meshery-linkerd" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/linkerd.svg" /&gt;
+ meshery-linkerd
+ &lt;/a&gt;
+ &lt;/th&gt;
+ &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
+ &lt;a href="https://github.com/meshery/meshery-kuma" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/kuma.svg" /&gt;
+ meshery-kuma
+ &lt;/a&gt;
+ &lt;/th&gt;
+ &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
+ &lt;a href="https://github.com/meshery/meshery-nighthawk" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/nighthawk.svg" /&gt;
+ meshery-nighthawk
+ &lt;/a&gt;
+ &lt;/th&gt;
+ &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
+ &lt;a href="https://github.com/meshery/meshery-nginx-sm" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/nginx-sm.svg" /&gt;
+ meshery-nginx-sm
+ &lt;/a&gt;
+ &lt;/th&gt;
+ &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
+ &lt;a href="https://github.com/meshery/meshery-traefik-mesh" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/traefik-mesh.svg" /&gt;
+ meshery-traefik-mesh
+ &lt;/a&gt;
+ &lt;/th&gt;
+ &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
+ &lt;a href="https://github.com/meshery/meshery-cilium" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/cilium.svg" /&gt;
+ meshery-cilium
+ &lt;/a&gt;
+ &lt;/th&gt;
+ &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
+ &lt;a href="https://github.com/meshery/meshery-consul" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/consul.svg" /&gt;
+ meshery-consul
+ &lt;/a&gt;
+ &lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.32.0&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;N/A&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.31.4&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;N/A&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.29.0&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;N/A&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.28.4&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;N/A&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.27.8&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;N/A&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.26.11&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;N/A&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.25.3&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;✗&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.25.2&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;✗&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.24.7&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;✗&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.23.9&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;✗&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.23.13&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;✓&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.22.2&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;✗&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.21.5&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;✗&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.21.0&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;N/A&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.20.11&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;✗&lt;/td&gt;
+ &lt;/tr&gt;&lt;tr style="border-bottom: 1px solid #eee;"&gt;
+ &lt;td style="padding: 10px;"&gt;v1.20.1&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')"&gt;N/A&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')"&gt;✓&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')"&gt;✗&lt;/td&gt;&lt;td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')"&gt;N/A&lt;/td&gt;
+ &lt;/tr&gt;&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;script&gt;
+ function redirectToPastResults(adapter) {
+ 
+ const adapterMap = {
+ 'meshery-istio': 'meshery-istio-past-results',
+ 'meshery-linkerd': 'meshery-linkerd-past-results',
+ 'meshery-kuma': 'meshery-kuma-past-results',
+ 'meshery-nighthawk': 'meshery-nighthawk-past-results',
+ 'meshery-nginx-sm': 'meshery-nginx-sm-past-results',
+ 'meshery-traefik-mesh': 'meshery-traefik-mesh-past-results',
+ 'meshery-cilium': 'meshery-cilium-past-results',
+ 'meshery-consul': 'meshery-consul-past-results'
+ };
+ 
+ const page = adapterMap[adapter];
+ if (page) {
+ window.location.href = `/installation/compatibility-matrix/${page}`;
+ }
+ }
+ 
+ function showCompatability() {
+ let statusCells = document.querySelectorAll(".compatibility-status");
+ for(let i = 0; i &lt; statusCells.length; i++) {
+ let status = statusCells[i].innerHTML.trim();
+ if (status === "✓") {
+ statusCells[i].innerHTML = `
+ &lt;div class="tooltipss" style="text-align:center; cursor: pointer;"&gt;
+ &lt;img src="../../installation/compatibility-matrix/images/service-meshes/passing.svg" class="yellowCheckbox" alt="Passing" /&gt;
+ &lt;span class="tooltiptext"&gt;Passing&lt;/span&gt;
+ &lt;/div&gt;`;
+ } else if (status === "✗") {
+ statusCells[i].innerHTML = `
+ &lt;div class="tooltipss" style="text-align:center; cursor: pointer;"&gt;
+ &lt;img src="../../installation/compatibility-matrix/images/service-meshes/failing.svg" class="yellowCheckbox" alt="Failing" /&gt;
+ &lt;span class="tooltiptext"&gt;Failing&lt;/span&gt;
+ &lt;/div&gt;`;
+ } else if (status === "—") {
+ statusCells[i].innerHTML = `
+ &lt;div class="tooltipss" style="text-align:center; cursor: pointer;"&gt;
+ &lt;img src="../../installation/compatibility-matrix/images/service-meshes/passing.svg" class="yellowCheckbox" alt="Partial" /&gt;
+ &lt;span class="tooltiptext"&gt;Partial&lt;/span&gt;
+ &lt;/div&gt;`;
+ } else if (status === "N/A") {
+ statusCells[i].innerHTML = `
+ &lt;div class="tooltipss" style="text-align:center; cursor: pointer;"&gt;
+ &lt;img src="../../installation/compatibility-matrix/images/service-meshes/na-icon.svg" class="yellowCheckbox" alt="Not Applicable" /&gt;
+ &lt;span class="tooltiptext"&gt;Not Applicable&lt;/span&gt;
+ &lt;/div&gt;`;
+ }
+ }
+ }
+ 
+ 
+ if (document.readyState === 'loading') {
+ document.addEventListener('DOMContentLoaded', showCompatability);
+ } else {
+ showCompatability();
+ }
+&lt;/script&gt;
+
+&lt;h2 id="integration-tests"&gt;
+	Integration Tests
+&lt;/h2&gt;
+&lt;p&gt;As a key aspect of Meshery, its integrations with other systems are routinely tested. Unit and integration tests before and after every pull request (before code is to be merged into the project and after code is merged into the project). End-to-end tests are run nightly and automatically posted to the following test matrix.&lt;/p&gt;</description></item></channel></rss>
