@@ -7,8 +7,8 @@ import {
   Drawer,
   Grid,
   IconButton,
-  Typography,
   styled,
+  Typography,
 } from '@sistent/sistent';
 import { STATUS } from './constants';
 
