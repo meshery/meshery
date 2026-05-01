@@ -201,7 +201,10 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 
 	displayEntities(response)
 
-	if register && len(response.EntityTypeSummary.SuccessfulModels) == 0 {
+	// Only treat an empty result as an error when the caller explicitly requested
+	// registration. Generation-only runs (register == false) do not populate
+	// RegisteredModels and that is expected — no models are registered by design.
+	if register && len(response.EntityTypeSummary.RegisteredModels) == 0 {
 		return utils.ErrInvalidModel()
 	}
 

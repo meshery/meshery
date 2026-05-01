@@ -1121,13 +1121,13 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		setDefaultValues(model)
 		//Model generation strats from here
-		model.Model = strings.ToLower(model.Model)
+		model.Model = meshkitutils.FormatName(strings.ReplaceAll(model.Model, "_", "-"))
 
 		// Infer model name from URL if it's the scaffold placeholder
 		if model.Model == "untitled-model" || model.Model == "" {
 			derivedName := deriveModelNameFromURL(importRequest.ImportBody.Url)
 			if derivedName != "" {
-				model.Model = strings.ToLower(derivedName)
+				model.Model = meshkitutils.FormatName(strings.ReplaceAll(derivedName, "_", "-"))
 				// Set display name to a readable format if it was also a placeholder
 				if model.ModelDisplayName == "Untitled Model" || model.ModelDisplayName == "" || model.ModelDisplayName == "untitled-model" {
 					model.ModelDisplayName = manifests.FormatToReadableString(derivedName)
@@ -1189,7 +1189,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			response.EntityCount.CompCount = lengthofComps
 			response.EntityCount.ModelCount = 1
 			response.ModelName = append(response.ModelName, model.Model)
-			response.EntityTypeSummary.SuccessfulModels = append(response.EntityTypeSummary.SuccessfulModels, map[string]interface{}{
+			response.EntityTypeSummary.RegisteredModels = append(response.EntityTypeSummary.RegisteredModels, map[string]interface{}{
 				"Model":       model.Model,
 				"DisplayName": model.ModelDisplayName,
 				"Version":     modelDef.Model.Version,

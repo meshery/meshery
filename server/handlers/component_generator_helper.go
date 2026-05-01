@@ -7,10 +7,10 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"sync"
 
+	semver "github.com/Masterminds/semver/v3"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/core"
 
@@ -115,7 +115,7 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 				"DisplayName": m.DisplayName,
 				"Version":     m.Model.Version,
 			}
-			response.EntityTypeSummary.SuccessfulModels = append(response.EntityTypeSummary.SuccessfulModels, entry)
+			response.EntityTypeSummary.RegisteredModels = append(response.EntityTypeSummary.RegisteredModels, entry)
 			if !isDisplayNamePresent(m.Name) {
 				response.ModelName = append(response.ModelName, m.Name)
 			}
@@ -526,8 +526,6 @@ func setIfEmpty(field *string, defaultValue string) {
 	}
 }
 
-var semverLikeVersionPattern = regexp.MustCompile(`^v?\d+\.\d+(\.\d+)?(?:[-+][0-9A-Za-z][0-9A-Za-z.-]*)?$`)
-
 func isGitHubSourceURL(sourceURL string) bool {
 	parsedURL, err := url.Parse(sourceURL)
 	if err != nil {
@@ -535,12 +533,7 @@ func isGitHubSourceURL(sourceURL string) bool {
 	}
 
 	host := strings.ToLower(parsedURL.Hostname())
-	switch host {
-	case "github.com", "www.github.com", "raw.githubusercontent.com", "raw.github.com", "codeload.github.com", "githubusercontent.com":
-		return true
-	}
-
-	return strings.HasSuffix(host, ".githubusercontent.com")
+	return host == "github.com" || host == "raw.githubusercontent.com"
 }
 
 func isArtifactHubSourceURL(sourceURL string) bool {
@@ -599,18 +592,17 @@ func deriveArtifactHubPackageNameFromURL(sourceURL string) string {
 
 func normalizeSemVerToken(version string) (string, bool) {
 	cleanedVersion := strings.TrimSpace(strings.Split(strings.Split(version, "?")[0], "#")[0])
-	if !semverLikeVersionPattern.MatchString(cleanedVersion) {
+	// Use the server's existing semver library instead of a custom regex.
+	v, err := semver.NewVersion(cleanedVersion)
+	if err != nil {
 		return "", false
 	}
-
-	if strings.HasPrefix(cleanedVersion, "V") {
-		cleanedVersion = "v" + cleanedVersion[1:]
+	// Always return with a lowercase "v" prefix, normalised.
+	normalized := v.Original()
+	if !strings.HasPrefix(strings.ToLower(normalized), "v") {
+		normalized = "v" + normalized
 	}
-	if strings.HasPrefix(cleanedVersion, "v") {
-		return cleanedVersion, true
-	}
-
-	return "v" + cleanedVersion, true
+	return "v" + normalized[1:], true
 }
 
 // deriveModelNameFromURL attempts to extract a meaningful model name from a supported source URL.
@@ -627,19 +619,17 @@ func deriveModelNameFromURL(sourceURL string) string {
 		return deriveArtifactHubPackageNameFromURL(sourceURL)
 	}
 
-	host := strings.ToLower(u.Hostname())
-	switch host {
-	case "github.com", "www.github.com", "raw.githubusercontent.com", "raw.github.com":
+	if isGitHubSourceURL(sourceURL) {
 		parts := strings.Split(strings.Trim(u.Path, "/"), "/")
 		if len(parts) < 2 {
 			return ""
 		}
 
 		repo := strings.TrimSuffix(strings.TrimSpace(parts[1]), ".git")
-		return strings.ToLower(repo)
-	default:
-		return ""
+		return meshkitutils.FormatName(strings.ReplaceAll(repo, "_", "-"))
 	}
+
+	return ""
 }
 
 // normalizeVersionFromURL returns a proper semantic version string.
