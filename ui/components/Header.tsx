@@ -25,6 +25,7 @@ import {
   PROMPT_VARIANTS,
   TextField,
   ClickAwayListener,
+  ErrorBoundary,
   IconButton,
   Slide,
   Grid2,
@@ -63,7 +64,6 @@ import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
-import { ErrorBoundary } from '@sistent/sistent';
 import { WorkspaceModalContext } from '../utils/context/WorkspaceModalContextProvider';
 
 const K8sContextConnectionChip_ = ({

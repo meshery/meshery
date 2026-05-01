@@ -1,18 +1,20 @@
 // @ts-nocheck
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { CustomTooltip, NoSsr } from '@sistent/sistent';
 import {
   alpha,
-  Divider,
-  ClickAwayListener,
-  Typography,
-  Button,
-  CircularProgress,
   Box,
-  useTheme,
+  Button,
   Checkbox,
+  CircularProgress,
+  ClickAwayListener,
   Collapse,
+  CustomTooltip,
+  Divider,
+  ErrorBoundary,
   IconButton,
+  NoSsr,
+  Typography,
+  useTheme,
 } from '@sistent/sistent';
 import Filter from './filter';
 import BellIcon from '../../assets/icons/BellIcon';
@@ -64,7 +66,6 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
 import { useDispatch, useSelector } from 'react-redux';
-import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
 
 export const NotificationCenterContext = React.createContext({
