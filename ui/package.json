@@ -50,7 +50,7 @@
     "@microlink/react-json-view": "^1.31.14",
     "@mui/icons-material": "^7.3.9",
     "@mui/material": "^7.3.9",
-    "@mui/x-date-pickers": "^8.27.2",
+    "@mui/x-date-pickers": "^9.0.4",
     "@mui/x-tree-view": "^8.27.2",
     "@open-policy-agent/opa-wasm": "^1.10.0",
     "@paciolan/remote-component": "^2.13.1",
