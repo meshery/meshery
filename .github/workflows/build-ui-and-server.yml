@@ -93,7 +93,14 @@ jobs:
           path: /home/runner/work/meshery/meshery/provider-ui/out
       - name: Run Meshery UI and Server
         run: |
-          make server &
+          mkdir -p ./logs
+          # Redirect server output so a crash mid-suite stays on disk and
+          # can be inspected via the upload step below. Without this, an
+          # unrecovered panic during e2e is invisible — the step that
+          # backgrounded the server has already exited and GitHub stops
+          # capturing its stdout.
+          make server >./logs/meshery-server.log 2>&1 &
+          echo $! > ./logs/meshery-server.pid
           sleep 90
       - name: Install Playwright
         run: make ui-setup-ci
@@ -166,6 +173,13 @@ jobs:
         with:
           name: playwright-report
           path: ui/playwright-report/
+          retention-days: 14
+      - name: Upload Meshery Server Log
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: meshery-server-log
+          path: logs/
           retention-days: 14
 
   docker-build-test:
