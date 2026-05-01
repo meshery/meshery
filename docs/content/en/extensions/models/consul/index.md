@@ -133,7 +133,11 @@ components:
   colorIcon: content/en/extensions/models/consul/components/tcp-route/icons/color/tcp-route-color.svg
   whiteIcon: content/en/extensions/models/consul/components/tcp-route/icons/white/tcp-route-white.svg
   description: 
-components-count: 31
+- name: rate-limit
+  colorIcon: content/en/extensions/models/consul/components/rate-limit/icons/color/rate-limit-color.svg
+  whiteIcon: content/en/extensions/models/consul/components/rate-limit/icons/white/rate-limit-white.svg
+  description: 
+components-count: 32
 relationships: 
 relationship-count: 0
 featureList: [

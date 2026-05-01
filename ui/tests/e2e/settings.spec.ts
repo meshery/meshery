@@ -11,20 +11,20 @@ interface AdapterOp {
 
 // Define the shape of the Adapter API response
 interface AdapterResponse {
-  adapter_location: string;
+  adapterLocation: string;
   name: string;
   version: string;
-  git_commit_sha: string;
+  gitCommitSha: string;
   ops: AdapterOp[] | null;
 }
 
 const verifyAdapterResBody = (body: AdapterResponse[]) => {
   expect(body).toBeInstanceOf(Array);
-  body.forEach(({ adapter_location, name, version, git_commit_sha, ops }) => {
-    expect(adapter_location).toMatch(/localhost:\d+/);
+  body.forEach(({ adapterLocation, name, version, gitCommitSha, ops }) => {
+    expect(adapterLocation).toMatch(/localhost:\d+/);
     expect(name).toEqual(expect.any(String));
     expect(version).toEqual(expect.any(String));
-    expect(git_commit_sha).toEqual(expect.any(String));
+    expect(gitCommitSha).toEqual(expect.any(String));
     // ops can be null or array
     if (ops) {
       expect(ops).toBeInstanceOf(Array);

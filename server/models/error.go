@@ -149,6 +149,8 @@ const (
 	ErrWorkspaceMissingInputCode          = "meshery-server-1375"
 	ErrMeshsyncEventCode                  = "meshery-server-1379"
 	ErrMeshsyncStoreUpdatesCode           = "meshery-server-1380"
+	ErrRemoteProviderCapabilitiesCode     = "meshery-server-1420"
+	ErrRemoteProviderAuthExhaustedCode    = "meshery-server-1421"
 )
 
 var (
@@ -291,6 +293,38 @@ func ErrStatusCode(statusCode int) error {
 			"Check if the server is online and operational.",
 			"Verify network connectivity and ensure there are no firewalls or DNS issues blocking the request.",
 			"Confirm the API endpoint is correct and functional."},
+	)
+}
+
+// ErrRemoteProviderCapabilities wraps a failure to load the capability
+// manifest from the remote provider. This runs on session bootstrap and on
+// post-login token exchange; when it fails the UI falls back to a minimal
+// feature set, so surfacing a structured code lets the client distinguish it
+// from handlers.ErrTransientProvider (which is a full provider outage).
+func ErrRemoteProviderCapabilities(err error) error {
+	return errors.New(
+		ErrRemoteProviderCapabilitiesCode,
+		errors.Alert,
+		[]string{"Failed to load capabilities from remote provider"},
+		[]string{fmt.Sprintf("Meshery Server could not retrieve the feature manifest from the remote provider: %v", err)},
+		[]string{"Remote provider is unreachable, the manifest endpoint is down, or the response is malformed."},
+		[]string{"Verify the remote provider is reachable, check its manifest endpoint, and retry."},
+	)
+}
+
+// ErrRemoteProviderAuthExhausted wraps the terminal "redirect loop detected"
+// state in the remote-provider auth flow. After MaxAuthRetries redirects
+// without a valid session, the provider gives up rather than cookie-thrash;
+// clients receiving this code should show a remediation prompt rather than
+// silently retrying.
+func ErrRemoteProviderAuthExhausted(err error) error {
+	return errors.New(
+		ErrRemoteProviderAuthExhaustedCode,
+		errors.Alert,
+		[]string{"Authentication failed after multiple attempts"},
+		[]string{fmt.Sprintf("Remote provider auth retries exhausted: %v", err)},
+		[]string{"Invalid or expired credentials, or the auth endpoint is rejecting requests."},
+		[]string{"Log out and sign in again; if this persists, check that the remote provider's auth endpoint is healthy."},
 	)
 }
 
@@ -459,7 +493,7 @@ func ErrJWKsKeys(err error) error {
 }
 
 func ErrInvalidCapability(capability string, provider string) error {
-	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capablity is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
+	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capability is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
 }
 
 func ErrFetchData(err error) error {

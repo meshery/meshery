@@ -46,7 +46,7 @@ func TestGetUserByIDHandler_InvalidUUIDReturnsJSON(t *testing.T) {
 }
 
 // TestGetUserByIDHandler_ProviderErrorReturnsJSON covers the upstream-fetch
-// failure path. The handler must still emit a JSON {"error": "..."} body on
+// failure path. The handler must still emit a structured JSON error body on
 // 404 so the client does not choke on the meshkit "Unable to fetch data..."
 // string that starts with the letter 'U'.
 func TestGetUserByIDHandler_ProviderErrorReturnsJSON(t *testing.T) {
@@ -113,10 +113,11 @@ func TestGetUserByIDHandler_SystemInstanceReturns204(t *testing.T) {
 	}
 }
 
-// assertJSONErrorEnvelope confirms that the writeJSONError contract held:
+// assertJSONErrorEnvelope confirms that the handler error contract held:
 // Content-Type is application/json (so RTK Query routes to its JSON handler)
-// and the body parses to {"error": "<non-empty>"} (so the client's default
-// transformErrorResponse produces a typed error instead of a SyntaxError).
+// and the body parses to a JSON object with a non-empty "error" field. Some
+// paths now use writeMeshkitError, which may additionally serialize MeshKit
+// metadata fields like probable_cause as arrays.
 func assertJSONErrorEnvelope(t *testing.T, resp *http.Response) {
 	t.Helper()
 	defer func() { _ = resp.Body.Close() }()
@@ -124,12 +125,16 @@ func assertJSONErrorEnvelope(t *testing.T, resp *http.Response) {
 	if ct := resp.Header.Get("Content-Type"); ct != "application/json; charset=utf-8" {
 		t.Errorf("expected Content-Type application/json; charset=utf-8, got %q", ct)
 	}
+	if nosniff := resp.Header.Get("X-Content-Type-Options"); nosniff != "nosniff" {
+		t.Errorf("expected X-Content-Type-Options: nosniff, got %q", nosniff)
+	}
 
-	var decoded map[string]string
+	var decoded map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&decoded); err != nil {
 		t.Fatalf("expected body to parse as JSON, got %v", err)
 	}
-	if decoded["error"] == "" {
+	msg, ok := decoded["error"].(string)
+	if !ok || msg == "" {
 		t.Errorf("expected non-empty error field, got %+v", decoded)
 	}
 }

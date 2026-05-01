@@ -75,8 +75,8 @@ export const designsApi = api
       }),
       deployPattern: builder.mutation({
         query: ({
-          pattern_file,
-          pattern_id,
+          patternFile,
+          patternId,
           selectedK8sContexts,
           verify = false,
           dryRun = false,
@@ -89,16 +89,16 @@ export const designsApi = api
           ),
           method: 'POST',
           body: {
-            pattern_file,
-            pattern_id,
+            patternFile,
+            patternId,
           },
         }),
         invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       undeployPattern: builder.mutation({
         query: ({
-          pattern_file,
-          pattern_id,
+          patternFile,
+          patternId,
           selectedK8sContexts,
           verify = false,
           dryRun = false,
@@ -110,8 +110,8 @@ export const designsApi = api
           ),
           method: 'DELETE',
           body: {
-            pattern_file,
-            pattern_id,
+            patternFile,
+            patternId,
           },
         }),
         invalidatesTags: [{ type: TAGS.DESIGNS }],

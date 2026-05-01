@@ -77,9 +77,9 @@ func resolveImportVariant(body pattern.MesheryPatternImportRequestBody) (importV
 				Name: stringFromPtr(filePayload.Name),
 				File: FileToImport{FileName: filePayload.FileName},
 			},
-			errors.New("request body must contain exactly one of File Import (file + file_name) or URL Import (url), not both")
+			ErrInvalidImportRequest(errors.New("request body must contain exactly one of File Import (file + file_name) or URL Import (url), not both"))
 	case !hasFile && !hasURL:
-		return importVariant{}, errors.New("request body must contain either a File Import (file + file_name) or a URL Import (url)")
+		return importVariant{}, ErrInvalidImportRequest(errors.New("request body must contain either a File Import (file + file_name) or a URL Import (url)"))
 	case hasFile:
 		return importVariant{
 			Name: stringFromPtr(filePayload.Name),
@@ -115,11 +115,13 @@ func fetchFileFromURL(fileURL string) (FileToImport, error) {
 		}
 	}()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return FileToImport{}, fmt.Errorf("fetching %s returned HTTP %d %s", fileURL, resp.StatusCode, resp.Status)
+		// Wrap so every URL-fetch failure path surfaces with MeshKit
+		// metadata, matching the http.Client.Get error path above.
+		return FileToImport{}, models.ErrDoRequest(fmt.Errorf("returned HTTP %d %s", resp.StatusCode, resp.Status), "GET", fileURL)
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return FileToImport{}, err
+		return FileToImport{}, models.ErrDoRequest(err, "GET", fileURL)
 	}
 	return FileToImport{Data: body, FileName: getFileNameFromResponse(resp, fileURL)}, nil
 }
@@ -238,7 +240,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID core.Uuid, eventBuilder *events.EventBuilder) {
 
 	h.log.Error(ErrRetrieveUserToken(err))
-	http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+	writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 
 	if eventBuilder != nil {
 		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
@@ -254,7 +256,7 @@ func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider mode
 func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider models.Provider, err error, userID core.Uuid, eventBuilder *events.EventBuilder) {
 
 	h.log.Error(ErrRequestBody(err))
-	http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+	writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 
 	if eventBuilder != nil {
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
@@ -311,11 +313,13 @@ func (h *Handler) DesignFileImportHandler(
 	variant, err := resolveImportVariant(importBody)
 	if err != nil {
 		// resolveImportVariant failures are 400-class — either the body
-		// violated the oneOf contract (both/neither set) or the URL
-		// variant couldn't be fetched. Either way the caller needs to
-		// correct the request, not the server to recover.
+		// violated the oneOf contract (already wrapped as
+		// ErrInvalidImportRequest) or the URL variant couldn't be
+		// fetched (already wrapped as models.ErrDoRequest). Either way
+		// the caller needs to correct the request, not the server to
+		// recover.
 		h.log.Error(fmt.Errorf("resolve import variant: %w", err))
-		http.Error(rw, err.Error(), http.StatusBadRequest)
+		writeMeshkitError(rw, err, http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, variant, err)
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
@@ -327,9 +331,15 @@ func (h *Handler) DesignFileImportHandler(
 	design, sourceFileType, err := ConvertFileToDesign(fileToImport, h.registryManager, h.log)
 
 	if err != nil {
+		// ConvertFileToDesign returns a mix of bare and MeshKit-wrapped
+		// errors depending on which import-pipeline stage failed
+		// (sanitize / identify / convert manifest / build pattern).
+		// Wrap so the JSON envelope returned to the client always
+		// carries MeshKit metadata.
+		wrappedErr := ErrConvertToDesign(err)
 		h.log.Error(fmt.Errorf("conversion: failed to convert to design %w", err))
-		http.Error(rw, err.Error(), http.StatusBadRequest)
-		event := ImportErrorEvent(*eventBuilder, variant, err)
+		writeMeshkitError(rw, wrappedErr, http.StatusBadRequest)
+		event := ImportErrorEvent(*eventBuilder, variant, wrappedErr)
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
@@ -352,7 +362,7 @@ func (h *Handler) DesignFileImportHandler(
 
 	if err != nil {
 		h.log.Error(ErrSavePattern(err))
-		http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrSavePattern(err), http.StatusInternalServerError)
 
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrSavePattern(err),
