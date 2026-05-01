@@ -55,7 +55,7 @@ export const InnerContainer = styled(Box)(({ theme }) => ({
 
 export const CardStyle = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isSelected',
-})(({ theme, isSelected }) => ({
+})<{ isSelected?: boolean }>(({ theme, isSelected }) => ({
   background: isSelected
     ? accentGrey[30] // color when tab is selected
     : theme.palette.mode === 'dark'
@@ -94,7 +94,7 @@ export const CardStyle = styled(Box, {
 
 export const DetailsContainer = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isEmpty',
-})(({ theme, isEmpty }) => ({
+})<{ isEmpty?: boolean }>(({ theme, isEmpty }) => ({
   width: '50%',
   backgroundColor:
     theme.palette.mode === 'dark'

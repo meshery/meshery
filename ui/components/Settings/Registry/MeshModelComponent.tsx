@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 import UploadIcon from '@mui/icons-material/Upload';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import LinkIcon from '@mui/icons-material/Link';
@@ -59,10 +61,14 @@ const MeshModelComponent_ = ({
   });
 
   // Use external search text if provided, otherwise use query from router
-  const [searchText, setSearchText] = useState<string | null>(externalSearchText || searchQuery);
+  const [searchText, setSearchText] = useState<string | null>(
+    externalSearchText || (Array.isArray(searchQuery) ? searchQuery[0] : searchQuery),
+  );
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
   // Use external view if provided, otherwise use selectedTab or default to 'Models'
-  const [view, setView] = useState<string>(externalView || selectedTab || 'Models');
+  const [view, setView] = useState<string>(
+    externalView || (Array.isArray(selectedTab) ? selectedTab[0] : selectedTab) || 'Models',
+  );
   const [showDetailsData, setShowDetailsData] = useState<{ type: string; data: any }>({
     type: '', // Type of selected data eg. (models, components)
     data: {},
@@ -456,18 +462,14 @@ const MeshModelComponent_ = ({
               }}
             />
           </DetailsContainer>
-          <MeshModelDetails
-            view={view}
-            setShowDetailsData={setShowDetailsData}
-            showDetailsData={showDetailsData}
-          />
+          <MeshModelDetails view={view} showDetailsData={showDetailsData} />
         </TreeWrapper>
       </MainContainer>
     </div>
   );
 };
 
-const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal }) => {
+export const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal }) => {
   return (
     <MeshModelToolbar>
       <div
@@ -486,7 +488,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
               color="primary"
               onClick={openCreateModal}
               style={{ display: 'flex' }}
-              disabled={false} //TODO: Need to make key for this component
+              disabled={!CAN(keys.CREATE_MODEL.action, keys.CREATE_MODEL.subject)}
               startIcon={<AddIcon style={iconSmall} />}
               data-testid="TabBar-Button-CreateModel"
             >
@@ -498,7 +500,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
               color="primary"
               onClick={openImportModal}
               style={{ display: 'flex' }}
-              disabled={false} //TODO: Need to make key for this component
+              disabled={!CAN(keys.IMPORT_MODEL.action, keys.IMPORT_MODEL.subject)}
               startIcon={<UploadIcon />}
               data-testid="TabBar-Button-ImportModel"
             >
@@ -533,7 +535,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
 
 const TabCard = ({ label, count, active, onClick }) => {
   return (
-    <CardStyle isSelected={active} elevation={3} onClick={onClick}>
+    <CardStyle isSelected={active} onClick={onClick}>
       <span
         style={{
           fontSize: '1rem',

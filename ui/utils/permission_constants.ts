@@ -450,4 +450,15 @@ export const keys = {
     subject: 'Reset database',
     action: '84fc402c-f33e-4a21-a0e3-e14f9e20b125',
   },
+  // TODO: Replace with backend-seeded RBAC keys when available
+  // These UUIDs are currently placeholders. The actions will be disabled for standard users
+  // until backend support is added and proper keys are generated.
+  CREATE_MODEL: {
+    subject: 'Create Model', // not seeded
+    action: '8f79f29a-245f-4428-a400-9ef9f7a79e07',
+  },
+  IMPORT_MODEL: {
+    subject: 'Import Model', // not seeded
+    action: '1db2cd04-da20-4e56-b9b5-c4fb5a38f4d8',
+  },
 };
