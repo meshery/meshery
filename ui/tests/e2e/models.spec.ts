@@ -39,14 +39,6 @@ const model_import: {
 
 test.describe.serial('Model Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('**/meshmodels/register', async (route) => {
-      const redirectedURL = route
-        .request()
-        .url()
-        .replace('/meshmodels/register', '/api/meshmodels/register');
-      await route.continue({ url: redirectedURL });
-    });
-
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToSettings();
