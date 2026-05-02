@@ -149,8 +149,8 @@ const ResourcesTableInner = (props) => {
 
       setMeshSyncResources(res?.resources || []);
       setPage(res?.page || 0);
-      setCount(res?.total_count || 0);
-      setPageSize(res?.page_size || 0);
+      setCount(res?.totalCount || 0);
+      setPageSize(res?.pageSize || 0);
       setLoading(false);
       if (query.resourceCategory && query.resourceName && res?.resources.length === 1) {
         switchView(SINGLE_VIEW, res?.resources[0]);

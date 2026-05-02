@@ -626,8 +626,8 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   const options = {
     elevation: elevation,
     filter: false,
-    sort: !(user?.user_id === 'meshery'),
-    search: !(user?.user_id === 'meshery'),
+    sort: !(user?.userId === 'meshery'),
+    search: !(user?.userId === 'meshery'),
     filterType: 'textField',
     responsive: 'standard',
     resizableColumns: true,

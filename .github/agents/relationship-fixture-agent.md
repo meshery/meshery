@@ -1,7 +1,52 @@
 ---
 name: Model Relationships Test Agent
 description: How to create new relationship test fixture designs for Meshery
-tools: ['search/changes', 'search/codebase', 'edit/editFiles', 'vscode/extensions', 'web/fetch', 'web/githubRepo', 'vscode/getProjectSetupInfo', 'vscode/installExtension', 'vscode/newWorkspace', 'vscode/runCommand', 'vscode/openSimpleBrowser', 'read/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/createAndRunTask', 'execute', 'execute/runTask', 'execute/runTests', 'search', 'search/searchResults', 'execute/testFailure', 'search/usages', 'vscode/vscodeAPI', 'github/*', 'memory']
+tools:
+  - agent/runSubagent
+  - browser/openBrowserPage
+  - edit/createDirectory
+  - edit/createFile
+  - edit/createJupyterNotebook
+  - edit/editFiles
+  - edit/editNotebook
+  - edit/rename
+  - execute
+  - github/*
+  - github.vscode-pull-request-github/activePullRequest
+  - github.vscode-pull-request-github/doSearch
+  - github.vscode-pull-request-github/issue_fetch
+  - github.vscode-pull-request-github/labels_fetch
+  - github.vscode-pull-request-github/notification_fetch
+  - github.vscode-pull-request-github/openPullRequest
+  - github.vscode-pull-request-github/pullRequestStatusChecks
+  - memory
+  - ms-ossdata.vscode-pgsql/pgsql_migration_oracle_app
+  - ms-ossdata.vscode-pgsql/pgsql_migration_show_report
+  - ms-python.python/configurePythonEnvironment
+  - ms-python.python/getPythonEnvironmentInfo
+  - ms-python.python/getPythonExecutableCommand
+  - ms-python.python/installPythonPackage
+  - postgresql-mcp/pgsql_bulk_load_csv
+  - postgresql-mcp/pgsql_connect
+  - postgresql-mcp/pgsql_db_context
+  - postgresql-mcp/pgsql_describe_csv
+  - postgresql-mcp/pgsql_disconnect
+  - postgresql-mcp/pgsql_get_dashboard_context
+  - postgresql-mcp/pgsql_get_dashboard_data
+  - postgresql-mcp/pgsql_get_metrics_group
+  - postgresql-mcp/pgsql_get_server_capabilities
+  - postgresql-mcp/pgsql_list_connection_profiles
+  - postgresql-mcp/pgsql_list_databases
+  - postgresql-mcp/pgsql_modify
+  - postgresql-mcp/pgsql_open_script
+  - postgresql-mcp/pgsql_query
+  - postgresql-mcp/pgsql_query_plan
+  - postgresql-mcp/pgsql_visualize_schema
+  - read
+  - search
+  - todo
+  - vscode
+  - web
 ---
 
 # Relationship Test Fixture Design Guide
@@ -15,6 +60,12 @@ Relationship test fixtures are JSON files that define a **Meshery Design** conta
 2. **Relationships** - The expected relationships that should be identified between components
 
 These fixtures are used by `ui/tests/e2e/relationship_evaluation.spec.js` to verify that the relationship evaluation API correctly identifies relationships between components.
+
+## GitHub Collaboration
+
+- Create, update, comment on, and close GitHub issues when fixture work needs follow-up tracking or bug documentation
+- Open, update, review, comment on, and help manage pull requests that add or refine relationship fixtures
+- Use issue and PR comments to document fixture intent, uncovered edge cases, and expected validation outcomes
 
 ---
 

@@ -164,9 +164,9 @@ type DesignPostPayload struct {
 	DesignFile design.PatternFile `json:"designFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID      *string              `json:"user_id"`
+	UserID      *string              `json:"userId"`
 	Visibility  string               `json:"visibility"`
-	CatalogData v1alpha1.CatalogData `json:"catalog_data,omitempty"`
+	CatalogData v1alpha1.CatalogData `json:"catalogData,omitempty"`
 }
 
 // MarshalJSON emits both the canonical (`designFile`) and legacy

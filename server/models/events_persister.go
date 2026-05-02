@@ -16,10 +16,10 @@ type EventsPersister struct {
 type EventsResponse struct {
 	Events               []*events.Event         `json:"events"`
 	Page                 int                     `json:"page"`
-	PageSize             int                     `json:"page_size"`
-	CountBySeverityLevel []*CountBySeverityLevel `json:"count_by_severity_level"`
-	TotalCount           int64                   `json:"total_count"`
-	ReadCount            int64                   `json:"read_count"`
+	PageSize             int                     `json:"pageSize"`
+	CountBySeverityLevel []*CountBySeverityLevel `json:"countBySeverityLevel"`
+	TotalCount           int64                   `json:"totalCount"`
+	ReadCount            int64                   `json:"readCount"`
 }
 
 type CountBySeverityLevel struct {

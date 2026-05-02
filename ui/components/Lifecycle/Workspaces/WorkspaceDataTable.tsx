@@ -57,8 +57,8 @@ const WorkspaceDataTable = ({
     ['owner', 'xs'],
     ['actions', 'xs'],
     ['environments', 'm'],
-    ['updated_at', 'l'],
-    ['created_at', 'na'],
+    ['updatedAt', 'l'],
+    ['createdAt', 'na'],
   ];
 
   const [page, setPage] = useState(0);
@@ -92,12 +92,12 @@ const WorkspaceDataTable = ({
       filter: false,
     },
     {
-      name: 'owner_email',
+      name: 'ownerEmail',
       label: 'Owner Email',
       filter: false,
     },
     {
-      name: 'owner_id',
+      name: 'ownerId',
       label: 'Owner Id',
       filter: false,
       options: {
@@ -249,7 +249,7 @@ const WorkspaceDataTable = ({
       },
     },
     {
-      name: 'created_at',
+      name: 'createdAt',
       label: 'Created At',
       options: {
         filter: false,
@@ -258,7 +258,7 @@ const WorkspaceDataTable = ({
       },
     },
     {
-      name: 'updated_at',
+      name: 'updatedAt',
       label: 'Updated At',
       options: {
         filter: false,
@@ -310,7 +310,7 @@ const WorkspaceDataTable = ({
     selectableRows: 'none',
     responsive: 'standard',
     onRowClick: handleRowClick,
-    count: workspaces?.total_count,
+    count: workspaces?.totalCount,
     rowsPerPage: pageSize,
     page,
     print: false,

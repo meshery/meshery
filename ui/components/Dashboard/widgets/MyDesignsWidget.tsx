@@ -55,7 +55,7 @@ const MyDesignsWidget = (props) => {
           patternsData?.patterns?.map((pattern) => {
             return {
               name: pattern.name,
-              timestamp: pattern.updated_at,
+              timestamp: pattern.updatedAt,
               link: `/extension/meshmap?mode=design&design=${pattern.id}`,
               icon: (
                 <DesignIcon

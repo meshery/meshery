@@ -7,8 +7,8 @@ import (
 
 type MeshSyncResourcesAPIResponse struct {
 	Page       int                        `json:"page"`
-	PageSize   int                        `json:"page_size"`
-	TotalCount int64                      `json:"total_count"`
+	PageSize   int                        `json:"pageSize"`
+	TotalCount int64                      `json:"totalCount"`
 	Resources  []model.KubernetesResource `json:"resources"`
 	Design     pattern.PatternFile        `json:"design"`
 }

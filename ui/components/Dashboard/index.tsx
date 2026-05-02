@@ -32,7 +32,6 @@ import { Responsive } from 'react-grid-layout/legacy';
 import debounceWidthProvider from './debounceWidthProvider';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
 import { applyMinSizeConstraints } from './layoutConstraints';
-import Popup from '../General/Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
@@ -469,7 +468,6 @@ const Dashboard = () => {
           );
         })}
       </>
-      <Popup />
       <UnsavedChangesModal
         open={showUnsavedModal}
         onClose={cancelNavigation}

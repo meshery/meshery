@@ -33,7 +33,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta2/organization"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -276,13 +276,13 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	}
 
 	_metadata := map[string]string{
-		"id":                   k8sContext.ID,
-		"server":               k8sContext.Server,
-		"meshery_instance_id":  k8sContext.MesheryInstanceID.String(),
-		"deployment_type":      k8sContext.DeploymentType,
-		"version":              k8sContext.Version,
-		"name":                 k8sContext.Name,
-		"kubernetes_server_id": k8sServerID.String(),
+		"id":                 k8sContext.ID,
+		"server":             k8sContext.Server,
+		"mesheryInstanceId":  k8sContext.MesheryInstanceID.String(),
+		"deploymentType":     k8sContext.DeploymentType,
+		"version":            k8sContext.Version,
+		"name":               k8sContext.Name,
+		"kubernetesServerId": k8sServerID.String(),
 	}
 	metadata := make(map[string]interface{}, len(_metadata)+len(additionalMetadata))
 	for k, v := range _metadata {

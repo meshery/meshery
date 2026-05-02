@@ -33,13 +33,13 @@ export default function MesheryConfigurationChart() {
 
   useEffect(() => {
     if (!patternsError && patternsData?.patterns) {
-      setChartData((prevData) => [...prevData, ['Designs', patternsData.total_count]]);
+      setChartData((prevData) => [...prevData, ['Designs', patternsData.totalCount]]);
     }
   }, [patternsData, patternsError]);
 
   useEffect(() => {
     if (!filtersError && filtersData?.filters) {
-      setChartData((prevData) => [...prevData, ['Filters', filtersData.total_count]]);
+      setChartData((prevData) => [...prevData, ['Filters', filtersData.totalCount]]);
     }
   }, [filtersData, filtersError]);
 

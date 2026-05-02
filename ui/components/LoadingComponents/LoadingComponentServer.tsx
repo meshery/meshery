@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import React from 'react';
 import PropTypes from 'prop-types';
 import uiConfig from '../../ui.config';
@@ -29,7 +29,7 @@ export const PureHtmlLoadingScreen = (props) => {
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
-        fontFamily: 'QanelasSoftRegular, sans-serif',
+        fontFamily: '"Qanelas Soft", sans-serif',
         fontWeight: 'normal',
         fontSize: '1.15rem',
         backgroundColor: '#263238', // color of navigation menu
@@ -50,7 +50,7 @@ export const PureHtmlLoadingScreen = (props) => {
         <h1
           id={id + '-text-message'}
           style={{
-            fontFamily: 'QanelasSoftRegular, sans-serif', // this is important to have consistent font between prereact render
+            fontFamily: '"Qanelas Soft", sans-serif', // this is important to have consistent font between prereact render
             fontSize: '1.15rem',
             fontWeight: 'normal',
             marginTop: '0rem',

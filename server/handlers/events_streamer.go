@@ -235,7 +235,13 @@ func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
 	category := urlValues.Get("category")
 	action := urlValues.Get("action")
 	severity := urlValues.Get("severity")
-	acted_upon := urlValues.Get("acted_upon")
+	// Canonical camelCase URL param matches meshkit EventsFilter JSON tag
+	// (`actedUpon`); fall back to legacy snake_case for back-compat with any
+	// older clients that have not been bumped yet.
+	actedUpon := urlValues.Get("actedUpon")
+	if actedUpon == "" {
+		actedUpon = urlValues.Get("acted_upon")
+	}
 
 	eventFilter := &events.EventsFilter{}
 	if category != "" {
@@ -259,8 +265,8 @@ func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
 		}
 	}
 
-	if acted_upon != "" {
-		err := json.Unmarshal([]byte(acted_upon), &eventFilter.ActedUpon)
+	if actedUpon != "" {
+		err := json.Unmarshal([]byte(actedUpon), &eventFilter.ActedUpon)
 		if err != nil {
 			return eventFilter, models.ErrUnmarshal(err, "event acted upon filter")
 		}

@@ -10,14 +10,14 @@ const k8sContextSubscription = graphql`
         name
         server
         owner
-        created_by
-        meshery_instance_id
-        kubernetes_server_id
-        deployment_type
-        updated_at
-        created_at
+        createdBy
+        mesheryInstanceId
+        kubernetesServerId
+        deploymentType
+        updatedAt
+        createdAt
         version
-        connection_id
+        connectionId
       }
     }
   }

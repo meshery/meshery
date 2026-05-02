@@ -115,17 +115,17 @@ export const usePublishPattern = (meshModelModelsData, refetchPatternData) => {
 
   const handlePublish = (publishModal, data) => {
     const compatibilityStore = _.uniqBy(meshModelModelsData?.models, (model) =>
-      _.toLower(model.display_name),
+      _.toLower(model.displayName),
     )
       ?.filter((model) =>
-        data?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.display_name)),
+        data?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
       )
       ?.map((model) => model.name);
 
     const payload = {
       id: publishModal.pattern.id,
-      catalog_type: 'pattern',
-      catalog_data: {
+      catalogType: 'pattern',
+      catalogData: {
         ...data,
         type: _.toLower(data?.type),
         compatibility: compatibilityStore,

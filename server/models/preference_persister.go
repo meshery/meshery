@@ -14,7 +14,7 @@ type SessionPreferencePersister struct {
 	DB *database.Handler
 }
 type UserPreference struct {
-	ID              string `json:"user_id"`
+	ID              string `json:"userId"`
 	PreferenceBytes []byte `json:"preference"`
 }
 

@@ -115,7 +115,7 @@ export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata,
         closeModal();
       });
   };
-  const canEdit = view?.user_id === user?.id;
+  const canEdit = view?.userId === user?.id;
   const uiSchema = _.merge({}, UIFormSchema, {
     'ui:readonly': !canEdit,
   });
@@ -141,7 +141,7 @@ export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata,
             <Row style={{ paddingInline: '0rem' }}>
               <Row justifyContent="start">
                 <Title>Owner: </Title>
-                <UserChip user_id={view?.user_id} />
+                <UserChip userId={view?.userId} />
               </Row>
               <Row justifyContent="start">
                 <Title>Visibility: </Title>
@@ -165,11 +165,11 @@ export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata,
 
             <Row justifyContent="start">
               <Title>Created: </Title>
-              <Typography>{getFullFormattedTime(view?.created_at)}</Typography>
+              <Typography>{getFullFormattedTime(view?.createdAt)}</Typography>
             </Row>
             <Row justifyContent="start">
               <Title>Updated: </Title>
-              <Typography>{getFullFormattedTime(view?.updated_at)}</Typography>
+              <Typography>{getFullFormattedTime(view?.updatedAt)}</Typography>
             </Row>
           </div>
         )}
@@ -195,27 +195,27 @@ const StyledChip = styled(Chip)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
 
-export const UserChip = ({ user_id }) => {
+export const UserChip = ({ userId }) => {
   const userProfileRes = useGetUserProfileSummaryByIdQuery(
-    { id: user_id },
+    { id: userId },
     {
-      skip: !user_id,
+      skip: !userId,
     },
   );
 
   if (userProfileRes.isError || userProfileRes.isLoading) {
     return null;
   }
-  const { avatar_url } = userProfileRes?.data || {};
+  const { avatarUrl } = userProfileRes?.data || {};
   const userName = formatUsername(userProfileRes?.data || {});
 
   return (
-    <StyledChip avatar={<Avatar src={avatar_url} />} label={userName || ''} variant="outlined" />
+    <StyledChip avatar={<Avatar src={avatarUrl} />} label={userName || ''} variant="outlined" />
   );
 };
 
-const formatUsername = ({ first_name, last_name }) => {
-  return `${first_name || ''} ${last_name || ''}`.trim();
+const formatUsername = ({ firstName, lastName }) => {
+  return `${firstName || ''} ${lastName || ''}`.trim();
 };
 
 const ViewVisibilityMenu = ({ view }) => {
@@ -227,7 +227,7 @@ const ViewVisibilityMenu = ({ view }) => {
       onChange={(value) =>
         handleUpdateViewVisibility({ value: value, updateView: updateView, selectedResource: view })
       }
-      enabled={view?.user_id === userData?.id}
+      enabled={view?.userId === userData?.id}
       options={[
         [VIEW_VISIBILITY.PUBLIC, Public],
         [VIEW_VISIBILITY.PRIVATE, Lock],

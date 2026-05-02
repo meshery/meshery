@@ -14,12 +14,12 @@ const UserAvatarComponent = ({ userData }) => {
       }}
     >
       <CustomTooltip
-        title={`${userData?.first_name} ${userData?.last_name || ''}`}
+        title={`${userData?.firstName} ${userData?.lastName || ''}`}
         sx={{ display: { xs: 'block', sm: 'block' } }}
       >
         <div>
           <Link href={`${MESHERY_CLOUD_PROD}/user/${userData?.id}`}>
-            <Avatar alt={userData?.first_name} src={userData?.avatar_url} />
+            <Avatar alt={userData?.firstName} src={userData?.avatarUrl} />
           </Link>
         </div>
       </CustomTooltip>
@@ -49,8 +49,8 @@ const UserAvatarComponent = ({ userData }) => {
             },
           }}
         >
-          {userData?.first_name}
-          <span>{userData?.last_name ? ` ${userData?.last_name}` : ''}</span>
+          {userData?.firstName}
+          <span>{userData?.lastName ? ` ${userData?.lastName}` : ''}</span>
         </Typography>
         <StyledUpdatedText
           variant="subtitle1"
