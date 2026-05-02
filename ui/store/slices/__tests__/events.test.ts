@@ -11,7 +11,7 @@ const makeEvent = (overrides = {}) => ({
   severity: 'info',
   status: 'unread',
   description: 'Test event',
-  created_at: '2025-01-01T00:00:00Z',
+  createdAt: '2025-01-01T00:00:00Z',
   ...overrides,
 });
 

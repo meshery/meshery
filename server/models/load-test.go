@@ -104,22 +104,22 @@ type LoadTestResponse struct {
 
 // MesheryResult - represents the results from Meshery test run to be shipped
 type MesheryResult struct {
-	ID                 core.Uuid              `json:"meshery_id,omitempty"`
+	ID                 core.Uuid              `json:"mesheryId,omitempty"`
 	Name               string                 `json:"name,omitempty"`
 	Mesh               string                 `json:"mesh,omitempty"`
-	PerformanceProfile *core.Uuid             `json:"performance_profile,omitempty"`
-	TestID             string                 `json:"test_id"`
-	Result             map[string]interface{} `json:"runner_results,omitempty" gorm:"type:JSONB"`
+	PerformanceProfile *core.Uuid             `json:"performanceProfile,omitempty"`
+	TestID             string                 `json:"testId"`
+	Result             map[string]interface{} `json:"runnerResults,omitempty" gorm:"type:JSONB"`
 
-	ServerMetrics     interface{} `json:"server_metrics,omitempty" gorm:"type:JSONB"`
-	ServerBoardConfig interface{} `json:"server_board_config,omitempty" gorm:"type:JSONB"`
+	ServerMetrics     interface{} `json:"serverMetrics,omitempty" gorm:"type:JSONB"`
+	ServerBoardConfig interface{} `json:"serverBoardConfig,omitempty" gorm:"type:JSONB"`
 
-	TestStartTime          *time.Time         `json:"test_start_time,omitempty"`
+	TestStartTime          *time.Time         `json:"testStartTime,omitempty"`
 	PerformanceProfileInfo PerformanceProfile `json:"-,omitempty" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
 
-	UpdatedAt string `json:"updated_at,omitempty"`
-	CreatedAt string `json:"created_at,omitempty"`
-	UserID    string `json:"user_id,omitempty"`
+	UpdatedAt string `json:"updatedAt,omitempty"`
+	CreatedAt string `json:"createdAt,omitempty"`
+	UserID    string `json:"userId,omitempty"`
 }
 
 // ConvertToSpec - converts meshery result to SMP
