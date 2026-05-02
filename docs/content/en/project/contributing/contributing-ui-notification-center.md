@@ -123,19 +123,34 @@ This section outlines the essential files and folders that you'll interact with 
 
 #### `NotificationCenter/` _(Root Directory)_
 
-- **index.js**: Contains the main context provider (`NotificationCenterProvider`), the drawer component (`NotificationCenterDrawer`), and orchestrates the overall structure.
-- **metadata.js**: Defines `PropertyFormatters`, `LinkFormatters`, `PropertyLinkFormatters`, and `EventTypeFormatters`. Contains the `FormattedMetadata` component which decides _how_ to format the metadata based on event type or specific properties.
-- **notification.js**: Defines how an individual notification is rendered.
+- **[index.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/index.tsx)**:  
+  Contains the main context provider (`NotificationCenterProvider`), the drawer component (`NotificationCenterDrawer`), and orchestrates the overall structure.
+
+- **[metadata.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/metadata.tsx)**:  
+  Defines `PropertyFormatters`, `LinkFormatters`, `PropertyLinkFormatters`, and `EventTypeFormatters`. Contains the `FormattedMetadata` component.
+
+- **[notification.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/notification.tsx)**:  
+  Defines how an individual notification is rendered.
+
 
 #### `formatters/` _(NotificationCenter/formatters)_
 
 This directory houses reusable formatter components dedicated to specific types of metadata or event types.
 
-- **common.js**: Contains shared components like `TitleLink`, `DataToFileLink`, `EmptyState`.
-- **error.js**: Defines `ErrorMetadataFormatter` for displaying structured error details.
-- **model_registration.js**: Contains formatters for model import/registration events (`ModelImportMessages`, `ModelImportedSection`).
-- **pattern_dryrun.js**: Defines `DryRunResponseFormatter` which utilizes components from `DesignLifeCycle`.
-- **relationship_evaluation.js**: Defines `RelationshipEvaluationEventFormatter` responsible for rendering notifications related to the evaluation of relationships between components in a design.
+- **[common.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/formatters/common.tsx)**:  
+  Contains shared components like `TitleLink`, `DataToFileLink`, `EmptyState`.
+
+- **[error.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/formatters/error.tsx)**:  
+  Defines `ErrorMetadataFormatter` for displaying structured error details.
+
+- **[model_registration.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/formatters/model_registration.tsx)**:  
+  Contains formatters for model import/registration events (`ModelImportMessages`, `ModelImportedSection`).
+
+- **[pattern_dryrun.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/formatters/pattern_dryrun.tsx)**:  
+  Defines `DryRunResponseFormatter` which utilizes components from `DesignLifeCycle`.
+
+- **[relationship_evaluation.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/formatters/relationship_evaluation.tsx)**:  
+  Defines `RelationshipEvaluationEventFormatter` responsible for rendering notifications related to the evaluation of relationships between components in a design.
 
 ## Types of Event Specific Notification Formatters
 
