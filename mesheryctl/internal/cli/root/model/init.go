@@ -258,7 +258,7 @@ var initModelData = []struct {
 		// map file name to template key
 		files: nil,
 		beforeHook: func() {
-			utils.Log.Info("Adding sample connections...")
+			utils.Log.Info("Creating connections directory...")
 		},
 	},
 	{
@@ -266,7 +266,7 @@ var initModelData = []struct {
 		// map file name to template key
 		files: nil,
 		beforeHook: func() {
-			utils.Log.Info("Creating sample credentials...")
+			utils.Log.Info("Creating credentials directory...")
 		},
 	},
 }
