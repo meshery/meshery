@@ -610,26 +610,31 @@ func deriveModelNameFromURL(sourceURL string) string {
 	if sourceURL == "" {
 		return ""
 	}
-	u, err := url.Parse(sourceURL)
-	if err != nil {
-		return ""
-	}
 
 	if isArtifactHubSourceURL(sourceURL) {
 		return deriveArtifactHubPackageNameFromURL(sourceURL)
 	}
 
 	if isGitHubSourceURL(sourceURL) {
-		parts := strings.Split(strings.Trim(u.Path, "/"), "/")
-		if len(parts) < 2 {
-			return ""
-		}
-
-		repo := strings.TrimSuffix(strings.TrimSpace(parts[1]), ".git")
-		return meshkitutils.FormatName(strings.ReplaceAll(repo, "_", "-"))
+		return deriveGitHubPackageNameFromURL(sourceURL)
 	}
 
 	return ""
+}
+
+func deriveGitHubPackageNameFromURL(sourceURL string) string {
+	u, err := url.Parse(sourceURL)
+	if err != nil {
+		return ""
+	}
+
+	parts := strings.Split(strings.Trim(u.Path, "/"), "/")
+	if len(parts) < 2 {
+		return ""
+	}
+
+	repo := strings.TrimSuffix(strings.TrimSpace(parts[1]), ".git")
+	return meshkitutils.FormatName(strings.ReplaceAll(repo, "_", "-"))
 }
 
 // normalizeVersionFromURL returns a proper semantic version string.
