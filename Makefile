@@ -498,6 +498,17 @@ wasm-engine:
 	@cd server/policies/wasm && \
 		GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w" -o policy_engine.wasm .
 	@cp -f "$$(go env GOROOT)/lib/wasm/wasm_exec.js" server/policies/wasm/wasm_exec.js
+	@if command -v wasm-opt >/dev/null 2>&1; then \
+		raw=$$(wc -c < server/policies/wasm/policy_engine.wasm); \
+		wasm-opt -Oz --enable-bulk-memory \
+			server/policies/wasm/policy_engine.wasm \
+			-o server/policies/wasm/policy_engine.wasm; \
+		opt=$$(wc -c < server/policies/wasm/policy_engine.wasm); \
+		gz=$$(gzip -9 -c server/policies/wasm/policy_engine.wasm | wc -c); \
+		printf "wasm-opt: %d -> %d bytes (gzip -9: %d)\n" $$raw $$opt $$gz; \
+	else \
+		echo "wasm-opt not found (brew install binaryen) — skipping size optimization"; \
+	fi
 	@echo "Wrote server/policies/wasm/{policy_engine.wasm,wasm_exec.js}"
 
 
