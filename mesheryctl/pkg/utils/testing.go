@@ -746,6 +746,7 @@ func ResetCommandFlags(c *cobra.Command, t *testing.T) {
 		if err := f.Value.Set(f.DefValue); err != nil {
 			t.Fatalf("failed to reset flag %q: %v", f.Name, err)
 		}
+		f.Changed = false
 	})
 	for _, sub := range c.Commands() {
 		ResetCommandFlags(sub, t)
