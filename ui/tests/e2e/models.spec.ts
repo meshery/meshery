@@ -112,9 +112,7 @@ test.describe.serial('Model Workflow Tests', () => {
     await page.getByTestId('TabBar-Button-ImportModel').click();
     await page.getByRole('heading', { name: 'File Import' }).click();
 
-    const modelFileInput = page.locator('#root_file');
-    await expect(modelFileInput).toBeAttached();
-    await modelFileInput.setInputFiles(model_import.MODEL_FILE_IMPORT);
+    await page.setInputFiles('input[type="file"]', model_import.MODEL_FILE_IMPORT);
 
     await page.getByRole('button', { name: 'Next' }).click();
 
