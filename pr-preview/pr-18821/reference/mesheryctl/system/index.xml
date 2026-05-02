@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mesheryctl-system on Documentation</title><link>/reference/mesheryctl/system/</link><description>Recent content in mesheryctl-system on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/reference/mesheryctl/system/index.xml" rel="self" type="application/rss+xml"/><item><title>mesheryctl-system-check</title><link>/reference/mesheryctl/system/check/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/check/</guid><description>&lt;h1 id="mesheryctl-system-check"&gt;
+	mesheryctl system check
+&lt;/h1&gt;
+&lt;p&gt;Pre-deployment and post-deployment healthchecks for Meshery&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Verify environment pre/post-deployment of Meshery.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system check [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Run all system checks for both pre and post-deployment scenarios&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system check
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Run pre-deployment checks (Docker and Kubernetes)&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system check --preflight
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Run pre-deployment checks (Docker and Kubernetes)&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system check --pre
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Run checks for all Meshery adapters&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system check --adapters
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Run checks on a specific Meshery adapter&lt;/p&gt;</description></item><item><title>mesheryctl-system-dashboard</title><link>/reference/mesheryctl/system/dashboard/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/dashboard/</guid><description>&lt;h1 id="mesheryctl-system-dashboard"&gt;
+	mesheryctl system dashboard
+&lt;/h1&gt;
+&lt;p&gt;Open Meshery UI in browser.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system dashboard [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Open Meshery UI in browser&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system dashboard
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Open Meshery UI in browser and use port-forwarding (if default port is taken already)&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system dashboard --port-forward
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Open Meshery UI in browser and use port-forwarding, listen on port 9081 locally, forwarding traffic to meshery server in the pod&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system dashboard --port-forward -p 9081
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;(optional) skip opening of MesheryUI in browser.&lt;/p&gt;</description></item><item><title>mesheryctl-system-delete</title><link>/reference/mesheryctl/system/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/delete/</guid><description>&lt;h1 id="mesheryctl-system-delete"&gt;
+	mesheryctl system delete
+&lt;/h1&gt;
+&lt;p&gt;Delete Meshery containers&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Delete Meshery containers. This command removes all Meshery containers created by docker-compose.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system delete [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Delete Meshery containers&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system delete
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Delete Meshery containers without confirmation&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system delete -y
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for delete
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -c, --context string (optional) temporarily change the current context.
+ -v, --verbose verbose output
+ -y, --yes (optional) assume yes for user interactive prompts.
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-login</title><link>/reference/mesheryctl/system/login/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/login/</guid><description>&lt;h1 id="mesheryctl-system-login"&gt;
+	mesheryctl system login
+&lt;/h1&gt;
+&lt;p&gt;Authenticate to a Meshery Server&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Authenticate to the Local or a Remote Provider of a Meshery Server&lt;/p&gt;
+&lt;p&gt;The authentication mode is web-based browser flow&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system login [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Login with the Meshery Provider of your choice: the Local Provider or a Remote Provider.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system login
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Login with the Meshery Provider by specifying it via -p or &amp;ndash;provider flag.&lt;/p&gt;</description></item><item><title>mesheryctl-system-logout</title><link>/reference/mesheryctl/system/logout/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/logout/</guid><description>&lt;h1 id="mesheryctl-system-logout"&gt;
+	mesheryctl system logout
+&lt;/h1&gt;
+&lt;p&gt;Remove authentication for Meshery Server&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Remove authentication for Meshery Server&lt;/p&gt;
+&lt;p&gt;This command removes the authentication token from the user&amp;rsquo;s filesystem&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system logout [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Logout current session with your Meshery Provider.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system logout
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for logout
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -c, --context string (optional) temporarily change the current context.
+ -v, --verbose verbose output
+ -y, --yes (optional) assume yes for user interactive prompts.
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-logs</title><link>/reference/mesheryctl/system/logs/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/logs/</guid><description>&lt;h1 id="mesheryctl-system-logs"&gt;
+	mesheryctl system logs
+&lt;/h1&gt;
+&lt;p&gt;Print logs&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Print history of Meshery&amp;rsquo;s logs and begin tailing them.&lt;/p&gt;
+&lt;p&gt;It also shows the logs of a specific component.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system logs [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Show logs (without tailing)&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system logs
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Starts tailing Meshery server debug logs (works with components also)&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system logs --follow
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system logs meshery-istio
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -f, --follow (Optional) Follow the stream of the Meshery's logs. Defaults to false.
+ -h, --help help for logs
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -c, --context string (optional) temporarily change the current context.
+ -v, --verbose verbose output
+ -y, --yes (optional) assume yes for user interactive prompts.
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-reset</title><link>/reference/mesheryctl/system/reset/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/reset/</guid><description>&lt;h1 id="mesheryctl-system-reset"&gt;
+	mesheryctl system reset
+&lt;/h1&gt;
+&lt;p&gt;Reset Meshery&amp;rsquo;s configuration&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Reset Meshery to it&amp;rsquo;s default configuration.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system reset [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Resets meshery.yaml file with a copy from Meshery repo&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system reset
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for reset
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -c, --context string (optional) temporarily change the current context.
+ -v, --verbose verbose output
+ -y, --yes (optional) assume yes for user interactive prompts.
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="screenshots"&gt;
+	Screenshots
+&lt;/h2&gt;
+&lt;p&gt;Usage of mesheryctl system reset
+&lt;img class="content-image" src="../../../reference/images/reset.png" alt="reset-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-restart</title><link>/reference/mesheryctl/system/restart/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/restart/</guid><description>&lt;h1 id="mesheryctl-system-restart"&gt;
+	mesheryctl system restart
+&lt;/h1&gt;
+&lt;p&gt;Stop, then start Meshery&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Restart all Meshery containers / pods.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system restart [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Restart all Meshery containers, their instances and their connected volumes&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system restart
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;(optional) skip checking for new updates available in Meshery.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system restart --skip-update
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for restart
+ --provider string Provider to use with the Meshery server
+ --skip-update (optional) skip checking for new Meshery's container images.
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -c, --context string (optional) temporarily change the current context.
+ -v, --verbose verbose output
+ -y, --yes (optional) assume yes for user interactive prompts.
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-start</title><link>/reference/mesheryctl/system/start/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/start/</guid><description>&lt;h1 id="mesheryctl-system-start"&gt;
+	mesheryctl system start
+&lt;/h1&gt;
+&lt;p&gt;Start Meshery&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Start Meshery and each of its cloud native components.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system start [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Start meshery&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system start
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;(optional) skip opening of MesheryUI in browser.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system start --skip-browser
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;(optional) skip checking for new updates available in Meshery.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system start --skip-update
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Reset Meshery&amp;rsquo;s configuration file to default settings.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system start --reset
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Specify Platform to deploy Meshery to.&lt;/p&gt;</description></item><item><title>mesheryctl-system-status</title><link>/reference/mesheryctl/system/status/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/status/</guid><description>&lt;h1 id="mesheryctl-system-status"&gt;
+	mesheryctl system status
+&lt;/h1&gt;
+&lt;p&gt;Check Meshery status&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Check status of Meshery and Meshery components.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system status [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system status
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;(optional) Extra data in status table&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system status --verbose
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for status
+ -v, --verbose (optional) Extra data in status table
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -c, --context string (optional) temporarily change the current context.
+ -y, --yes (optional) assume yes for user interactive prompts.
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="screenshots"&gt;
+	Screenshots
+&lt;/h2&gt;
+&lt;p&gt;Usage of mesheryctl system status
+&lt;img class="content-image" src="../../../reference/images/status.png" alt="status-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-stop</title><link>/reference/mesheryctl/system/stop/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/stop/</guid><description>&lt;h1 id="mesheryctl-system-stop"&gt;
+	mesheryctl system stop
+&lt;/h1&gt;
+&lt;p&gt;Stop Meshery&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Stop all Meshery containers / remove all Meshery resources.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system stop [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Stop Meshery&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system stop
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Reset Meshery&amp;rsquo;s configuration file to default settings.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system stop --reset
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;(optional) keep the Meshery namespace during uninstallation&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system stop --keep-namespace
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Stop Meshery forcefully (use it when system stop doesn&amp;rsquo;t work)&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system stop --force
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --force (optional) uninstall Meshery resources forcefully
+ -h, --help help for stop
+ --keep-namespace (optional) keep the Meshery namespace during uninstallation
+ --reset (optional) reset Meshery's configuration file to default settings.
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -c, --context string (optional) temporarily change the current context.
+ -v, --verbose verbose output
+ -y, --yes (optional) assume yes for user interactive prompts.
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-update</title><link>/reference/mesheryctl/system/update/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/update/</guid><description>&lt;h1 id="mesheryctl-system-update"&gt;
+	mesheryctl system update
+&lt;/h1&gt;
+&lt;p&gt;Pull new Meshery images/manifest files.&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Pull new Meshery container images and manifests from artifact repository.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system update [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Pull new Meshery images from Docker Hub. This does not update mesheryctl. This command may be executed while Meshery is running.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system update
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Pull the latest manifest files alone&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl system update --skip-reset
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for update
+ --skip-reset (optional) skip checking for new Meshery manifest files.
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -c, --context string (optional) temporarily change the current context.
+ -v, --verbose verbose output
+ -y, --yes (optional) assume yes for user interactive prompts.
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="screenshots"&gt;
+	Screenshots
+&lt;/h2&gt;
+&lt;p&gt;Usage of mesheryctl system update
+&lt;img class="content-image" src="../../../reference/images/update.png" alt="update-usage" /&gt;&lt;/p&gt;</description></item></channel></rss>
