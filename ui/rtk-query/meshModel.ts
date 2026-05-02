@@ -20,6 +20,7 @@ const meshModelApi = api
     addTagTypes: [TAGS.MESH_MODELS],
   })
   .injectEndpoints({
+    overrideExisting: true,
     endpoints: (builder) => ({
       getMeshModels: builder.query({
         query: (queryArgs) => ({

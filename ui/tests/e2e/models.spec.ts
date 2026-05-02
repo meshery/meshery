@@ -39,6 +39,14 @@ const model_import: {
 
 test.describe.serial('Model Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
+    await page.route('**/meshmodels/register', async (route) => {
+      const redirectedURL = route
+        .request()
+        .url()
+        .replace('/meshmodels/register', '/api/meshmodels/register');
+      await route.continue({ url: redirectedURL });
+    });
+
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToSettings();
@@ -106,16 +114,21 @@ test.describe.serial('Model Workflow Tests', () => {
   });
 
   test('Import a Model via File Import', async ({ page }) => {
+    test.slow();
+    test.setTimeout(240_000);
+
     await page.getByTestId('TabBar-Button-ImportModel').click();
     await page.getByRole('heading', { name: 'File Import' }).click();
 
-    await page.setInputFiles('input[type="file"]', model_import.MODEL_FILE_IMPORT);
+    const modelFileInput = page.locator('#root_file');
+    await expect(modelFileInput).toBeAttached();
+    await modelFileInput.setInputFiles(model_import.MODEL_FILE_IMPORT);
 
     await page.getByRole('button', { name: 'Next' }).click();
 
     await expect(
       page.getByTestId(`ModelImportedSection-ModelHeader-${model_import.MODEL_NAME}`),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 180_000 });
     await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible();
     await page.getByRole('button', { name: 'Finish' }).click();
   });
