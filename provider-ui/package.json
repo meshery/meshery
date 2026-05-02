@@ -33,7 +33,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
-    "eslint": "^10.1.0",
+    "eslint": "^10.3.0",
     "eslint-config-next": "^16.2.4",
     "start-server-and-test": "^2.1.5",
     "typescript": "^6.0.2"
