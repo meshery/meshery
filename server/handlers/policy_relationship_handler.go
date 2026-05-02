@@ -14,8 +14,8 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
-	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshery/server/models/pattern/utils"
+	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -398,7 +398,7 @@ func (h *Handler) EvaluateDesign(
 	return lastEvaluationResponse, nil
 }
 
-func processEvaluationResponse(registryManager *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
+func processEvaluationResponse(reg *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
 
 	registryCache := &registry.RegistryEntityCache{}
 
@@ -440,7 +440,7 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 			compFilter.ModelName = _c.ModelReference.Name
 		}
 
-		entities, _, _, _ := registryManager.GetEntitiesMemoized(compFilter, registryCache)
+		entities, _, _, _ := reg.GetEntitiesMemoized(compFilter, registryCache)
 		if len(entities) == 0 {
 			unknownComponents = append(unknownComponents, &_c)
 			continue
@@ -449,12 +449,18 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 		// (the entity-implementing canonical-casing version), so the lookup
 		// returns v1beta3 even though this carve-out keeps the rest of the
 		// evaluator on v1beta1/component. Bridge once at the meshkit boundary.
-		registryComp, ok := entities[0].(*componentv1beta3.ComponentDefinition)
-		if !ok || registryComp == nil {
+		// A v1beta1 fallback is retained so any future code path that hands
+		// back v1beta1 entities still hydrates correctly instead of being
+		// silently routed to unknownComponents.
+		var _component *component.ComponentDefinition
+		if registryComp, ok := entities[0].(*componentv1beta3.ComponentDefinition); ok && registryComp != nil {
+			_component = utils.ComponentV1beta3ToV1beta1(registryComp)
+		} else if legacy, ok := entities[0].(*component.ComponentDefinition); ok && legacy != nil {
+			_component = legacy
+		} else {
 			unknownComponents = append(unknownComponents, &_c)
 			continue
 		}
-		_component := utils.ComponentV1beta3ToV1beta1(registryComp)
 
 		_component.ID = _c.ID
 		if _c.DisplayName != "" {
@@ -779,10 +785,10 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
+		Page:       page,
+		PageSize:   int(pgSize),
 		TotalCount: 0,
-		Policies: entities,
+		Policies:   entities,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -822,10 +828,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
+		Page:       page,
+		PageSize:   int(pgSize),
 		TotalCount: 0,
-		Policies: entities,
+		Policies:   entities,
 	}
 
 	if err := enc.Encode(response); err != nil {
