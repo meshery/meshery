@@ -135,9 +135,9 @@ jobs:
         with:
           node-version: 20
       - name: Run mesheryctl coverage
-        run: go test -json --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic > mesheryctl-test-output.json
+        run: go test -json --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic | tee mesheryctl-test-output.json
       - name: Convert Go test results to Allure
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && github.event_name == 'push' }}
         run: |
           ALLURE_OUTPUT_PATH=mesheryctl-allure-results \
           ALLURE_LABELS="project=mesheryctl,type=unit,env=ci" \

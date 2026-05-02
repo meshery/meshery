@@ -51,27 +51,27 @@ const DesignViewListItem = ({
   // per-row lookup when they are missing. This also avoids N extra requests
   // when rendering a page of results.
   //
-  // user_id is required too — without it the downstream profile-link href
+  // userId is required too — without it the downstream profile-link href
   // would resolve to /user/undefined. If it's missing we let the query run
   // (or be skipped by the guard below) rather than render a broken link.
   const hasEmbeddedUser = Boolean(
-    selectedItem?.user_id &&
-    (selectedItem?.first_name ||
-      selectedItem?.last_name ||
-      selectedItem?.avatar_url ||
+    selectedItem?.userId &&
+    (selectedItem?.firstName ||
+      selectedItem?.lastName ||
+      selectedItem?.avatarUrl ||
       selectedItem?.email),
   );
   const { data: fetchedUserData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery(
-    { id: selectedItem?.user_id },
-    { skip: hasEmbeddedUser || !selectedItem?.user_id },
+    { id: selectedItem?.userId },
+    { skip: hasEmbeddedUser || !selectedItem?.userId },
   );
   const userData = hasEmbeddedUser
     ? {
-        id: selectedItem.user_id,
-        user_id: selectedItem.user_id,
-        first_name: selectedItem.first_name,
-        last_name: selectedItem.last_name,
-        avatar_url: selectedItem.avatar_url,
+        id: selectedItem.userId,
+        userId: selectedItem.userId,
+        firstName: selectedItem.firstName,
+        lastName: selectedItem.lastName,
+        avatarUrl: selectedItem.avatarUrl,
         email: selectedItem.email,
       }
     : fetchedUserData;
@@ -139,12 +139,10 @@ const DesignViewListItem = ({
                 secondary={
                   <CustomTooltip
                     variant="small"
-                    title={getFullFormattedTime(selectedItem.updated_at)}
+                    title={getFullFormattedTime(selectedItem.updatedAt)}
                     placement="bottom"
                   >
-                    <StyledUpdatedText>
-                      {getRelativeTime(selectedItem.updated_at)}
-                    </StyledUpdatedText>
+                    <StyledUpdatedText>{getRelativeTime(selectedItem.updatedAt)}</StyledUpdatedText>
                   </CustomTooltip>
                 }
               />
@@ -161,12 +159,12 @@ const DesignViewListItem = ({
           </Grid2>
           {showOrganizationName && (
             <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
-              <StyledTypography variant="body2">{selectedItem.organization_name}</StyledTypography>
+              <StyledTypography variant="body2">{selectedItem.organizationName}</StyledTypography>
             </Grid2>
           )}
           {showWorkspaceName && (
             <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
-              <Typography variant="body2">{selectedItem.workspace_name}</Typography>
+              <Typography variant="body2">{selectedItem.workspaceName}</Typography>
             </Grid2>
           )}
 

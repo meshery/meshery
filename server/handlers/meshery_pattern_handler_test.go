@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 )
 
 // buildDesignPostBody returns a JSON body that wraps a minimal PatternFile
@@ -545,3 +546,51 @@ func TestMesheryPatternUPDATERequestBody_UnmarshalResetsOnReuse(t *testing.T) {
 // MesheryPattern field type resolves without introducing import churn
 // if the test file grows additional model-backed cases later.
 var _ = models.MesheryPattern{}
+
+// TestConvertFileToDesign_UnsupportedExtensionWrappedAsErrConvertToDesign
+// guards the contract that VerifyAndConvertToDesign promotes raw
+// ConvertFileToDesign failures into MeshKit-wrapped errors. Without a
+// wrap, regressions back to `return err` would silently strip MeshKit
+// metadata from the JSON envelope returned to the client. This test
+// asserts that:
+//  1. ConvertFileToDesign produces an error for an unsupported file
+//     extension (the cheapest deterministic failure path that does not
+//     require a registry, temp-FS, or fixture data).
+//  2. Wrapping that error with ErrConvertToDesign rewrites the MeshKit
+//     code to ErrConvertToDesignCode, which is what
+//     VerifyAndConvertToDesign at line 450 of meshery_pattern_handler.go
+//     returns to the handler.
+func TestConvertFileToDesign_UnsupportedExtensionWrappedAsErrConvertToDesign(t *testing.T) {
+	log := newTestLogger(t)
+
+	// A bogus extension is rejected by SanitizeFile before any registry
+	// or pattern-engine work, so passing a nil registry is safe.
+	_, _, err := ConvertFileToDesign(FileToImport{
+		Data:     []byte("not a real design"),
+		FileName: "fixture.unsupported",
+	}, nil, log)
+	if err == nil {
+		t.Fatal("ConvertFileToDesign accepted an unsupported extension; expected a sanitization failure")
+	}
+
+	wrapped := ErrConvertToDesign(err)
+	if got, want := errors.GetCode(wrapped), ErrConvertToDesignCode; got != want {
+		t.Fatalf("ErrConvertToDesign produced code %q, want %q", got, want)
+	}
+}
+
+// TestErrEncodePattern_PreservesMeshKitCode mirrors the guard above for
+// the encoding.Marshal failure path inside VerifyAndConvertToDesign at
+// line 455 of meshery_pattern_handler.go: a regression back to
+// `return err` would surface a raw stdlib error with no MeshKit code,
+// and the JSON envelope sent to clients would lose its
+// code/severity/remediation metadata. The Marshal failure is hard to
+// reach deterministically without depending on internal pattern shape,
+// so this test asserts the simpler invariant: ErrEncodePattern
+// rewrites whatever it wraps to ErrEncodePatternCode.
+func TestErrEncodePattern_PreservesMeshKitCode(t *testing.T) {
+	wrapped := ErrEncodePattern(json.Unmarshal([]byte("not-json"), &struct{}{}))
+	if got, want := errors.GetCode(wrapped), ErrEncodePatternCode; got != want {
+		t.Fatalf("ErrEncodePattern produced code %q, want %q", got, want)
+	}
+}

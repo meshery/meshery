@@ -20,9 +20,9 @@ type User = userV1beta2.User
 
 type AllUsers struct {
 	Page       int     `json:"page"`
-	PageSize   int     `json:"page_size"`
+	PageSize   int     `json:"pageSize"`
 	Data       []*User `json:"data"`
-	TotalCount int     `json:"total_count"`
+	TotalCount int     `json:"totalCount"`
 }
 
 type UserKeys struct {
@@ -32,7 +32,7 @@ type UserKeys struct {
 	Category    string `json:"category,omitempty"`
 	Description string `json:"description,omitempty"`
 	Subcategory string `json:"subcategory,omitempty"`
-	Created_at  string `json:"created_at,omitempty"`
-	Updated_at  string `json:"updated_at,omitempty"`
-	Deleted_at  string `json:"deleted_at,omitempty"`
+	Created_at  string `json:"createdAt,omitempty"`
+	Updated_at  string `json:"updatedAt,omitempty"`
+	Deleted_at  string `json:"deletedAt,omitempty"`
 }

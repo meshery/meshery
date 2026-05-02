@@ -14,41 +14,41 @@ type MesheryFilter struct {
 	ID *core.Uuid `json:"id,omitempty"`
 
 	Name       string `json:"name,omitempty"`
-	FilterFile []byte `json:"filter_file"`
+	FilterFile []byte `json:"filterFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"user_id"`
+	UserID *string `json:"userId"`
 
 	Location       sql.Map    `json:"location"`
 	Visibility     string     `json:"visibility"`
-	CatalogData    sql.Map    `json:"catalog_data"`
-	FilterResource string     `json:"filter_resource"`
-	UpdatedAt      *time.Time `json:"updated_at,omitempty"`
-	CreatedAt      *time.Time `json:"created_at,omitempty"`
+	CatalogData    sql.Map    `json:"catalogData"`
+	FilterResource string     `json:"filterResource"`
+	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
+	CreatedAt      *time.Time `json:"createdAt,omitempty"`
 }
 
 type MesheryFilterPayload struct {
 	ID *core.Uuid `json:"id,omitempty"`
 
 	Name       string `json:"name,omitempty"`
-	FilterFile []byte `json:"filter_file"`
+	FilterFile []byte `json:"filterFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"user_id"`
+	UserID *string `json:"userId"`
 
 	Location       sql.Map    `json:"location"`
 	Visibility     string     `json:"visibility"`
-	CatalogData    sql.Map    `json:"catalog_data"`
-	FilterResource string     `json:"filter_resource"`
+	CatalogData    sql.Map    `json:"catalogData"`
+	FilterResource string     `json:"filterResource"`
 	Config         string     `json:"config"`
-	UpdatedAt      *time.Time `json:"updated_at,omitempty"`
-	CreatedAt      *time.Time `json:"created_at,omitempty"`
+	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
+	CreatedAt      *time.Time `json:"createdAt,omitempty"`
 }
 
 // MesheryCatalogFilterRequestBody refers to the type of request body that PublishCatalogFilter would receive
 type MesheryCatalogFilterRequestBody struct {
 	ID          core.Uuid `json:"id,omitempty"`
-	CatalogData sql.Map   `json:"catalog_data,omitempty"`
+	CatalogData sql.Map   `json:"catalogData,omitempty"`
 }
 
 // MesheryCatalogFilterRequestBody refers to the type of request body

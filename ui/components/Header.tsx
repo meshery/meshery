@@ -80,14 +80,14 @@ const K8sContextConnectionChip_ = ({
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   const { operatorState, meshSyncState, natsState } = getControllerStatesByConnectionID(
-    ctx.connection_id,
+    ctx.connectionId,
   );
 
   const connectionStatus = useMemo(() => {
-    if (!connections || !ctx.connection_id) return null;
-    const connection = connections.find((conn) => conn.id === ctx.connection_id);
+    if (!connections || !ctx.connectionId) return null;
+    const connection = connections.find((conn) => conn.id === ctx.connectionId);
     return connection?.status || null;
-  }, [connections, ctx.connection_id]);
+  }, [connections, ctx.connectionId]);
 
   return (
     <Box id={ctx.id} sx={{ margin: '0.25rem 0' }}>
@@ -115,8 +115,8 @@ const K8sContextConnectionChip_ = ({
           )}
           <ConnectionChip
             title={ctx?.name}
-            onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
-            handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
+            onDelete={onDelete ? () => onDelete(ctx.name, ctx.connectionId) : null}
+            handlePing={() => ping(ctx.name, ctx.server, ctx.connectionId)}
             iconSrc={
               connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
@@ -246,9 +246,7 @@ function K8sContextMenu({
   }
 
   useEffect(() => {
-    setTransformProperty(
-      (prev) => prev + (contexts.total_count ? contexts.total_count * 3.125 : 0),
-    );
+    setTransformProperty((prev) => prev + (contexts.totalCount ? contexts.totalCount * 3.125 : 0));
   }, []);
   const [isConnectionOpenModal, setIsConnectionOpenModal] = useState(false);
 
@@ -307,7 +305,7 @@ function K8sContextMenu({
                   setAnchorEl(false);
                 }}
               >
-                {contexts?.total_count || 0}
+                {contexts?.totalCount || 0}
               </CBadge>
             </CBadgeContainer>
           </IconButton>
@@ -355,7 +353,7 @@ function K8sContextMenu({
                     />
                   </div>
                   <div>
-                    {contexts?.total_count > 0 && (
+                    {contexts?.totalCount > 0 && (
                       <div
                         style={{
                           display: 'flex',
@@ -449,7 +447,7 @@ const Header = ({
     });
   }
 
-  const remoteProviderUrl = providerCapabilities?.provider_url;
+  const remoteProviderUrl = providerCapabilities?.providerUrl;
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
 
   const loaderType = 'circular';

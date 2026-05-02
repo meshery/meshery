@@ -155,7 +155,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
 	if req.Method == http.MethodDelete {
-		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
+		writeMeshkitError(w, ErrDeprecatedAPI("the connections API"), http.StatusGone)
 		return
 	}
 
@@ -183,7 +183,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 		if err := h.config.PrometheusClient.Validate(req.Context(), promURL, promKey); err != nil {
 			h.log.Error(models.ErrPrometheusScan(err))
-			http.Error(w, models.ErrPrometheusScan(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, models.ErrPrometheusScan(err), http.StatusInternalServerError)
 			return
 		}
 
@@ -200,7 +200,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 				WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": _err}).Build()
 			_ = provider.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
-			http.Error(w, _err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, _err, http.StatusInternalServerError)
 			return
 		}
 		connection, err := provider.SaveConnection(&connections.ConnectionPayload{
@@ -219,7 +219,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", connName)).WithMetadata(map[string]interface{}{"error": _err}).Build()
 			_ = provider.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
-			http.Error(w, _err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, _err, http.StatusInternalServerError)
 			return
 		}
 		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with Prometheus created at %s", connName, promURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
@@ -232,11 +232,11 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 	err := provider.RecordPreferences(req, user.UserId, prefObj)
 	if err != nil {
 		h.log.Error(ErrRecordPreferences(err))
-		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRecordPreferences(err), http.StatusInternalServerError)
 		return
 	}
 
-	_, _ = w.Write([]byte("{}"))
+	writeJSONEmptyObject(w, http.StatusOK)
 }
 
 // PrometheusPingHandler - fetches server version to simulate ping
@@ -246,29 +246,29 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	if connection.Kind != "prometheus" {
-		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidConnectionKind(connection.Kind, "prometheus"), http.StatusBadRequest)
 		return
 	}
 
 	url, _ := connection.Metadata["url"].(string)
 	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	apiKeyOrBasicAuth, _ := cred.Secret["secret"].(string)
 
 	if err := h.config.PrometheusClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
 		h.log.Error(models.ErrPrometheusScan(err))
-		http.Error(w, models.ErrPrometheusScan(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrPrometheusScan(err), http.StatusInternalServerError)
 		return
 	}
 
-	_, _ = w.Write([]byte("{}"))
+	writeJSONEmptyObject(w, http.StatusOK)
 }
 
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
@@ -280,20 +280,20 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 	boardData, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 	board, err := h.config.PrometheusClient.ImportGrafanaBoard(req.Context(), boardData)
 	if err != nil {
 		h.log.Error(ErrPrometheusBoards(err))
-		http.Error(w, ErrPrometheusBoards(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrPrometheusBoards(err), http.StatusInternalServerError)
 		return
 	}
 	err = json.NewEncoder(w).Encode(board)
 	if err != nil {
-		obj := "board instance"
-		h.log.Error(models.ErrMarshal(err, obj))
-		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		// Response body has already started streaming via json.Encoder —
+		// a fresh error response would corrupt the in-flight JSON, so log only.
+		h.log.Error(models.ErrMarshal(err, "board instance"))
 		return
 	}
 }
@@ -305,11 +305,11 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	if connection.Kind != "prometheus" {
-		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidConnectionKind(connection.Kind, "prometheus"), http.StatusBadRequest)
 		return
 	}
 
@@ -320,7 +320,7 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 	data, err := h.config.PrometheusClientForQuery.Query(req.Context(), url, &reqQuery)
 	if err != nil {
 		h.log.Error(ErrPrometheusQuery(err))
-		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrPrometheusQuery(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -337,11 +337,11 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 
 	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	if connection.Kind != "prometheus" {
-		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidConnectionKind(connection.Kind, "prometheus"), http.StatusBadRequest)
 		return
 	}
 
@@ -357,7 +357,7 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 	data, err := h.config.PrometheusClientForQuery.QueryRange(req.Context(), url, &reqQuery)
 	if err != nil {
 		h.log.Error(ErrPrometheusQuery(err))
-		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrPrometheusQuery(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -373,11 +373,11 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 
 	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	if connection.Kind != "prometheus" {
-		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidConnectionKind(connection.Kind, "prometheus"), http.StatusBadRequest)
 		return
 	}
 	url, _ := connection.Metadata["url"].(string)
@@ -410,15 +410,15 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 
 	if len(result) != len(boardFunc) {
 		h.log.Error(ErrStaticBoards)
-		http.Error(w, ErrStaticBoards.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrStaticBoards, http.StatusInternalServerError)
 		return
 	}
 
 	err = json.NewEncoder(w).Encode(result)
 	if err != nil {
-		obj := "board instance"
-		h.log.Error(models.ErrMarshal(err, obj))
-		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		// Response body has already started streaming via json.Encoder —
+		// a fresh error response would corrupt the in-flight JSON, so log only.
+		h.log.Error(models.ErrMarshal(err, "board instance"))
 		return
 	}
 }
@@ -433,7 +433,7 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 	boards := []*models.SelectedGrafanaConfig{}
@@ -441,7 +441,7 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	if err != nil {
 		obj := "request body"
 		h.log.Error(models.ErrUnmarshal(err, obj))
-		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
 
@@ -449,11 +449,11 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	if connection.Kind != "prometheus" {
-		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidConnectionKind(connection.Kind, "prometheus"), http.StatusBadRequest)
 		return
 	}
 
@@ -464,9 +464,10 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	}
 	updatedConnection, err := provider.UpdateConnection(req, connection)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.log.Error(ErrUpdateConnection(err))
+		writeMeshkitError(w, ErrUpdateConnection(err), http.StatusInternalServerError)
 		return
 	}
 	h.log.Debug("Board selection updated", updatedConnection.Metadata)
-	_, _ = w.Write([]byte("{}"))
+	writeJSONEmptyObject(w, http.StatusOK)
 }

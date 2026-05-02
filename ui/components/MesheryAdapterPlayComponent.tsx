@@ -67,7 +67,7 @@ interface AdapterOperation {
 
 interface Adapter {
   name: string;
-  adapter_location: string;
+  adapterLocation: string;
   ops?: AdapterOperation[];
 }
 
@@ -91,21 +91,21 @@ interface _SMIResult {
   results?: Array<{
     id: string;
     date: string;
-    mesh_name: string;
-    mesh_version: string;
-    passing_percentage: string;
+    meshName: string;
+    meshVersion: string;
+    passingPercentage: string;
     status: string;
-    more_details: Array<{
-      smi_specification: string;
+    moreDetails: Array<{
+      smiSpecification: string;
       assertions: string;
       time: string;
-      smi_version: string;
+      smiVersion: string;
       capability: string;
       status: string;
       reason: string;
     }>;
   }>;
-  total_count?: number;
+  totalCount?: number;
 }
 
 export const AdapterChip = styled(Chip)(({ theme }) => ({
@@ -473,7 +473,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
 
   const submitOp = (cat, op, deleteOp = false) => {
     const data = {
-      adapter: adapter.adapter_location,
+      adapter: adapter.adapterLocation,
       query: op,
       namespace: namespace.value,
       customBody: deleteOp ? cmEditorValDel : cmEditorValAdd,
@@ -543,9 +543,9 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
 
       if (typeof result !== 'undefined' && result.results) {
         const results = result.results.filter(
-          (val) => val.mesh_name.toLowerCase() == adapterName.toLowerCase(),
+          (val) => val.meshName.toLowerCase() == adapterName.toLowerCase(),
         );
-        setSmiResult({ ...result, results: results, total_count: results.length });
+        setSmiResult({ ...result, results: results, totalCount: results.length });
       }
     } catch (error) {
       console.log('Could not fetch SMI results.', error);
@@ -808,8 +808,8 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
     ];
 
     const smi_options = {
-      sort: !(props.user && props.user.user_id === 'meshery'),
-      search: !(props.user && props.user.user_id === 'meshery'),
+      sort: !(props.user && props.user.userId === 'meshery'),
+      search: !(props.user && props.user.userId === 'meshery'),
       filterType: 'textField',
       expandableRows: true,
       selectableRows: 'none',
@@ -1115,9 +1115,9 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
   let imageSrc = '/static/img/' + adapterName + '.svg';
   let adapterChip = (
     <AdapterChip
-      label={adapter.adapter_location}
+      label={adapter.adapterLocation}
       data-cy="adapter-chip-ping"
-      onClick={handleAdapterClick(adapter.adapter_location)}
+      onClick={handleAdapterClick(adapter.adapterLocation)}
       icon={<img src={imageSrc} width={'1.25rem'} />}
       variant="outlined"
     />

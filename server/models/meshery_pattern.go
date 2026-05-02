@@ -18,7 +18,7 @@ type DesignType string
 
 type DesignTypeResponse struct {
 	Type                DesignType `json:"designType"`
-	SupportedExtensions []string   `json:"supported_extensions"`
+	SupportedExtensions []string   `json:"supportedExtensions"`
 }
 
 func GetDesignsTypes() (r []DesignTypeResponse) {
@@ -90,23 +90,23 @@ type MesheryPattern struct {
 	PatternFile string `json:"patternFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"user_id"`
+	UserID *string `json:"userId"`
 
 	Location      isql.Map             `json:"location"`
 	Visibility    string               `json:"visibility"`
 	CatalogData   v1alpha1.CatalogData `json:"catalogData,omitempty" gorm:"type:bytes;serializer:json"`
 	Type          sql.NullString       `json:"type"`
-	SourceContent []byte               `json:"source_content"`
+	SourceContent []byte               `json:"sourceContent"`
 
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
 
 	ViewCount       int       `json:"viewCount" db:"view_count"`
 	ShareCount      int       `json:"shareCount" db:"share_count"`
 	DownloadCount   int       `json:"downloadCount" db:"download_count"`
 	CloneCount      int       `json:"cloneCount" db:"clone_count"`
 	DeploymentCount int       `json:"deploymentCount" db:"deployment_count"`
-	WorkspaceID     core.Uuid `json:"workspace_id,omitempty" db:"-"`
+	WorkspaceID     core.Uuid `json:"workspaceId,omitempty" db:"-"`
 	OrgID           core.Uuid `json:"orgId,omitempty" db:"-"`
 }
 
@@ -188,7 +188,7 @@ func (m *MesheryPattern) UnmarshalJSON(data []byte) error {
 // that PublishCatalogPattern would receive
 type MesheryCatalogPatternRequestBody struct {
 	ID          core.Uuid `json:"id,omitempty"`
-	CatalogData isql.Map  `json:"catalog_data,omitempty"`
+	CatalogData isql.Map  `json:"catalogData,omitempty"`
 }
 
 // MesheryCatalogPatternRequestBody refers to the type of request body
@@ -218,6 +218,6 @@ func GetPatternName(stringifiedFile string) (string, error) {
 }
 
 type MesheryPatternFileDeployPayload struct {
-	PatternFile string    `json:"pattern_file"`
-	PatternID   core.Uuid `json:"pattern_id"`
+	PatternFile string    `json:"patternFile"`
+	PatternID   core.Uuid `json:"patternId"`
 }

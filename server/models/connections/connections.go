@@ -103,15 +103,15 @@ type ConnectionsStatusPage struct {
 type ConnectionPayload struct {
 	ID                         core.Uuid              `json:"id,omitempty"`
 	Kind                       string                 `json:"kind,omitempty"`
-	SubType                    string                 `json:"sub_type,omitempty"`
+	SubType                    string                 `json:"subType,omitempty"`
 	Type                       string                 `json:"type,omitempty"`
 	MetaData                   map[string]interface{} `json:"metadata,omitempty"`
 	Status                     ConnectionStatus       `json:"status,omitempty"`
-	CredentialSecret           map[string]interface{} `json:"credential_secret,omitempty"`
+	CredentialSecret           map[string]interface{} `json:"credentialSecret,omitempty"`
 	Name                       string                 `json:"name,omitempty"`
-	CredentialID               *core.Uuid             `json:"credential_id,omitempty"`
+	CredentialID               *core.Uuid             `json:"credentialId,omitempty"`
 	Model                      string                 `json:"model,omitempty"`
-	SkipCredentialVerification bool                   `json:"skip_credential_verification"`
+	SkipCredentialVerification bool                   `json:"skipCredentialVerification"`
 }
 
 func BuildMesheryConnectionPayload(serverURL string, credential map[string]interface{}) *ConnectionPayload {

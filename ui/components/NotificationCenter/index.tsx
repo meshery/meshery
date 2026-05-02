@@ -98,8 +98,8 @@ export const NotificationCenterProvider = ({ children }) => {
   );
 };
 
-const getSeverityCount = (count_by_severity_level, severity) => {
-  return count_by_severity_level.find((item) => item.severity === severity)?.count || 0;
+const getSeverityCount = (countBySeverityLevel, severity) => {
+  return countBySeverityLevel.find((item) => item.severity === severity)?.count || 0;
 };
 
 const EmptyState = () => {
@@ -135,16 +135,16 @@ const NavbarNotificationIcon = () => {
     );
   }
 
-  const count_by_severity_level = data?.count_by_severity_level || [];
+  const countBySeverityLevel = data?.countBySeverityLevel || [];
 
   const currentTopSeverity =
-    getSeverityCount(count_by_severity_level, SEVERITY.ERROR) > 0
+    getSeverityCount(countBySeverityLevel, SEVERITY.ERROR) > 0
       ? SEVERITY.ERROR
-      : getSeverityCount(count_by_severity_level, SEVERITY.WARNING) > 0
+      : getSeverityCount(countBySeverityLevel, SEVERITY.WARNING) > 0
         ? SEVERITY.WARNING
         : null;
   const currentSeverityStyle = currentTopSeverity ? SEVERITY_STYLE[currentTopSeverity] : null;
-  const topSeverityCount = getSeverityCount(count_by_severity_level, currentTopSeverity);
+  const topSeverityCount = getSeverityCount(countBySeverityLevel, currentTopSeverity);
   if (currentTopSeverity) {
     return (
       <StyledBadge
@@ -197,10 +197,10 @@ const Header = ({ handleFilter, handleClose }) => {
   const { data } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
   });
-  const { count_by_severity_level, read_count } = data || {
-    count_by_severity_level: [],
-    total_count: 0,
-    read_count: 0,
+  const { countBySeverityLevel, readCount } = data || {
+    countBySeverityLevel: [],
+    totalCount: 0,
+    readCount: 0,
   };
 
   const onClickSeverity = (severity) => {
@@ -233,7 +233,7 @@ const Header = ({ handleFilter, handleClose }) => {
             handleClick={() => onClickSeverity(severity)}
             notificationStyle={SEVERITY_STYLE[severity]}
             type={`Unread ${severity}(s)`}
-            count={getSeverityCount(count_by_severity_level, severity)}
+            count={getSeverityCount(countBySeverityLevel, severity)}
           />
         ))}
         <NotificationCountChip
@@ -241,7 +241,7 @@ const Header = ({ handleFilter, handleClose }) => {
           handleClick={() => onClickStatus(STATUS.READ)}
           type={STATUS.READ}
           severity={STATUS.READ}
-          count={read_count}
+          count={readCount}
         />
       </SeverityChips>
     </NotificationContainer>

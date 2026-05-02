@@ -40,8 +40,8 @@ import (
 	"github.com/meshery/meshkit/utils/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	schemasOrganization "github.com/meshery/schemas/models/v1beta2/organization"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
+	schemasOrganization "github.com/meshery/schemas/models/v1beta2/organization"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -55,7 +55,7 @@ var (
 
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL = "https://cloud.layer5.io"
+	DefaultProviderURL = "https://cloud.meshery.io"
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
 

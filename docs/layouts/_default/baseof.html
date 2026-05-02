@@ -10,7 +10,7 @@
     
   </head>
 
-  <body class="td-{{ .Kind }} {{ with .Params.body_class }}{{ . }}{{ end }}">
+  <body class="td-{{ .Kind }}{{ with .Params.body_class }} {{ . }}{{ end }}{{ block "body_class" . }}{{ end }}">
     <script>
       (function() {
         const savedMode = localStorage.getItem("mode");
@@ -68,7 +68,7 @@
         </div>
       </div>
 
-      <main class="main-container" role="main">
+      <main class="main-container{{ block "main_class" . }}{{ end }}" role="main">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb spb-1">
             <li class="breadcrumb-item active" aria-current="page">
@@ -76,7 +76,7 @@
             </li>
           </ol>
         </nav>
-        <div class="td-content">
+        <div class="td-content{{ block "td_content_class" . }}{{ end }}">
           {{ if ne (.Params.display_title | default true) false }}
             <h1>{{ .Title }}</h1>
           {{ end }}

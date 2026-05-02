@@ -29,7 +29,15 @@ import (
 
 func (h *Handler) handleError(rw http.ResponseWriter, err error, logMsg string) {
 	h.log.Error(err)
-	http.Error(rw, logMsg, http.StatusInternalServerError)
+	// The caller supplies a human-readable logMsg describing what the server
+	// was trying to do when err fired. Wrap err with logMsg so the client-facing
+	// error field carries both the MeshKit metadata from err and the operation
+	// context from logMsg.
+	if err == nil {
+		writeJSONError(rw, logMsg, http.StatusInternalServerError)
+		return
+	}
+	writeMeshkitError(rw, fmt.Errorf("%s: %w", logMsg, err), http.StatusInternalServerError)
 }
 
 func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID core.Uuid, provider models.Provider, message string, errMsg string, response *models.RegistryAPIResponse, token string) {
@@ -48,8 +56,10 @@ func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID core.Uuid, 
 	h.sendFileEvent(userID, provider, response, token)
 	rw.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(rw).Encode(response); err != nil {
+		// Response body has already been committed with StatusOK —
+		// a fresh http.Error would try to re-write headers and corrupt
+		// the in-flight JSON envelope. Log only.
 		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
 	}
 }
 

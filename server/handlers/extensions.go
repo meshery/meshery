@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"net/http"
 	"path"
@@ -32,7 +33,7 @@ func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Req
 		return
 	}
 
-	http.Error(w, "Invalid endpoint", http.StatusInternalServerError)
+	writeMeshkitError(w, ErrExtensionEndpointNotRegistered(req.URL.Path), http.StatusNotFound)
 }
 
 func (h *Handler) LoadExtensionFromPackage(_ http.ResponseWriter, _ *http.Request, provider models.Provider) error {
@@ -79,7 +80,7 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Reques
 		err := json.NewEncoder(w).Encode("extension not available for current provider")
 		if err != nil {
 			h.log.Error(models.ErrEncoding(err, "extension version"))
-			http.Error(w, models.ErrEncoding(err, "extension version").Error(), http.StatusNotFound)
+			writeMeshkitError(w, models.ErrEncoding(err, "extension version"), http.StatusNotFound)
 		}
 		return
 	}
@@ -95,7 +96,7 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Reques
 	err := json.NewEncoder(w).Encode(extensionVersion)
 	if err != nil {
 		h.log.Error(models.ErrEncoding(err, "extension version"))
-		http.Error(w, models.ErrEncoding(err, "extension version").Error(), http.StatusNotFound)
+		writeMeshkitError(w, models.ErrEncoding(err, "extension version"), http.StatusNotFound)
 	}
 }
 
@@ -106,10 +107,26 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Reques
 func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	resp, err := provider.ExtensionProxy(req)
 	if err != nil {
-		h.log.Error(err)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		// ExtensionProxy can fail for two distinct classes of reasons:
+		//   1. The active provider doesn't support the call at all — the
+		//      local provider always returns ErrLocalProviderSupport,
+		//      which is a configuration mismatch (extensions only work
+		//      against a remote provider) rather than an upstream
+		//      failure. Surface as 501 Not Implemented.
+		//   2. Anything else surfaced by the remote provider —
+		//      unreachable upstream, request-construction failure,
+		//      token retrieval failure, body-read failure. These all
+		//      represent failure to obtain a response from the
+		//      configured upstream, so 502 Bad Gateway is appropriate.
+		// Wrap with ErrExtensionProxy in both cases so the JSON
+		// envelope carries MeshKit metadata.
+		status := http.StatusBadGateway
+		if stderrors.Is(err, models.ErrLocalProviderSupport) {
+			status = http.StatusNotImplemented
+		}
+		wrappedErr := ErrExtensionProxy(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(w, wrappedErr, status)
 		return
 	}
 

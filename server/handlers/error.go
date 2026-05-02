@@ -162,6 +162,54 @@ const (
 	ErrFileTypeCode                        = "meshery-server-1366"
 	ErrCreatingOPAInstanceCode             = "meshery-server-1367"
 	ErrEncodeResponseCode                  = "meshery-server-1374"
+	ErrTransientProviderCode               = "meshery-server-1378"
+	ErrServeSchemaCode                     = "meshery-server-1381"
+	ErrInvalidFileRequestCode              = "meshery-server-1382"
+	ErrReadFileContentCode                 = "meshery-server-1383"
+	ErrExtensionEndpointNotRegisteredCode  = "meshery-server-1384"
+	ErrUserNotFoundCode                    = "meshery-server-1385"
+	ErrFetchTokenCode                      = "meshery-server-1386"
+	ErrHandlerShareDesignCode              = "meshery-server-1387"
+	ErrHandlerShareFilterCode              = "meshery-server-1388"
+	ErrGetUserCredentialCode               = "meshery-server-1389"
+	ErrSaveUserCredentialCode              = "meshery-server-1390"
+	ErrUpdateUserCredentialCode            = "meshery-server-1391"
+	ErrDeleteUserCredentialCode            = "meshery-server-1392"
+	ErrEncodeUserCredentialCode            = "meshery-server-1393"
+	ErrUnknownConnectionKindCode           = "meshery-server-1394"
+	ErrGetK8sContextsCode                  = "meshery-server-1395"
+	ErrEncodeK8sContextsCode               = "meshery-server-1396"
+	ErrCreateDatabaseArchiveDirCode        = "meshery-server-1397"
+	ErrOpenDatabaseFileCode                = "meshery-server-1398"
+	ErrCreateDatabaseArchiveFileCode       = "meshery-server-1399"
+	ErrCopyDatabaseFileCode                = "meshery-server-1400"
+	ErrObtainDatabaseHandlerCode           = "meshery-server-1401"
+	ErrAccessDatabaseTablesCode            = "meshery-server-1402"
+	ErrDropDatabaseTableCode               = "meshery-server-1403"
+	ErrMigrateDatabaseTablesCode           = "meshery-server-1404"
+	ErrFetchResultsCode                    = "meshery-server-1405"
+	ErrMissingResultIDCode                 = "meshery-server-1406"
+	ErrHandlerGenerateUUIDCode             = "meshery-server-1407"
+	ErrMethodNotAllowedCode                = "meshery-server-1408"
+	ErrMissingRouteVariableCode            = "meshery-server-1409"
+	ErrRetrieveEventTypesCode              = "meshery-server-1410"
+	ErrDeprecatedAPICode                   = "meshery-server-1411"
+	ErrInvalidConnectionKindCode           = "meshery-server-1412"
+	ErrUpdateConnectionCode                = "meshery-server-1413"
+	ErrExportModelCode                     = "meshery-server-1414"
+	ErrInvalidContextsConfigCode           = "meshery-server-1415"
+	ErrEmptyConnectionIDCode               = "meshery-server-1416"
+	ErrPolicyEvalTimeoutCode               = "meshery-server-1417"
+	ErrPolicyEvalCode                      = "meshery-server-1418"
+	ErrInvalidBase64DataCode               = "meshery-server-1419"
+	ErrInvalidImportRequestCode            = "meshery-server-1422"
+	ErrConvertToDesignCode                 = "meshery-server-1423"
+	ErrCompressArtifactCode                = "meshery-server-1424"
+	ErrWriteRegistryLogsCode               = "meshery-server-1425"
+	ErrUpdateEntityStatusCode              = "meshery-server-1426"
+	ErrExtensionProxyCode                  = "meshery-server-1427"
+	ErrInitializeMachineCode               = "meshery-server-1428"
+	ErrSendMachineEventCode                = "meshery-server-1429"
 )
 
 var (
@@ -203,6 +251,20 @@ func ErrValidate(err error) error {
 }
 func ErrParsingCallBackUrl(err error) error {
 	return errors.New(ErrParsingCallBackUrlCode, errors.Alert, []string{"Failed to parse the callback URL"}, []string{err.Error()}, []string{"callback URL might be empty"}, []string{"Make sure the callback URL is not empty"})
+}
+
+// ErrTransientProvider wraps a transient failure talking to the remote provider
+// (e.g. Meshery Cloud). Callers should map this to HTTP 503 so clients can
+// distinguish it from an auth failure and retry rather than logging the user out.
+func ErrTransientProvider(err error) error {
+	return errors.New(
+		ErrTransientProviderCode,
+		errors.Alert,
+		[]string{"Remote provider temporarily unavailable"},
+		[]string{fmt.Sprintf("Meshery Cloud (the remote provider) did not respond: %v", err)},
+		[]string{"Network connectivity issue, Cloud outage, or firewall blocking egress."},
+		[]string{"Retry the request. If this persists, check https://status.meshery.io and verify Meshery Server can reach Meshery Cloud."},
+	)
 }
 func ErrFailToLoadK8sContext(err error) error {
 	return errors.New(ErrFailToLoadK8sContextCode, errors.Alert, []string{"Failed to load Kubernetes context"}, []string{err.Error()}, []string{}, []string{})
@@ -518,8 +580,13 @@ func ErrParsePattern(err error) error {
 	return errors.New(ErrParsePatternCode, errors.Alert, []string{"Error failed to parse pattern file"}, []string{err.Error()}, []string{}, []string{})
 }
 
+// ErrConvertPattern wraps failures in the in-place schema migration that
+// converts a stored design from an older schema version (e.g. v1alpha2)
+// to the current v1beta3 PatternFile shape. Emitted with HTTP 500
+// because the failure originates server-side during a download/view of
+// an already-persisted design, not from caller input.
 func ErrConvertPattern(err error) error {
-	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Error failed to convert design file to Cytoscape object"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Failed to migrate design to current schema version"}, []string{err.Error()}, []string{"The persisted design is in an older schema version (e.g. v1alpha2) whose ConvertFrom path rejected one of its fields.", "A field present in the older schema has no clean mapping to the current v1beta3 PatternFile shape."}, []string{"Inspect server logs for the underlying conversion error. If the design is irrecoverable, re-import its source content via the design import endpoint, which re-runs the full conversion pipeline."})
 }
 
 func ErrRemoteApplication(err error) error {
@@ -572,6 +639,13 @@ func ErrCleanupCertificate(err error, obj string) error {
 
 func ErrGetEvents(err error) error {
 	return errors.New(ErrGetEventsCode, errors.Alert, []string{"Could not retrieve events"}, []string{err.Error()}, []string{"Request contains unknown query variables.", "Database is not reachable or corrupt."}, []string{"Check the request URL and try again."})
+}
+
+// ErrRetrieveEventTypes wraps failures from provider.GetEventTypes — the
+// endpoint that returns the catalogue of event categories + actions the
+// UI uses to populate the notification filter drop-downs.
+func ErrRetrieveEventTypes(err error) error {
+	return errors.New(ErrRetrieveEventTypesCode, errors.Alert, []string{"Could not retrieve event categories and actions"}, []string{err.Error()}, []string{"Database is not reachable or corrupt.", "Remote provider event-type endpoint is unavailable."}, []string{"Check database connectivity and provider availability, then retry."})
 }
 
 func ErrUpdateEvent(err error, id string) error {
@@ -667,4 +741,264 @@ func ErrEncodeResponse(err error) error {
 }
 func ErrCreatingOPAInstance(err error) error {
 	return errors.New(ErrCreatingOPAInstanceCode, errors.Alert, []string{"Error creating OPA Instance."}, []string{err.Error()}, []string{"Unable to create OPA instance, policies will not be evaluated."}, []string{"Ensure relationships are registered"})
+}
+func ErrServeSchema(err error) error {
+	return errors.New(ErrServeSchemaCode, errors.Alert, []string{"Failed to serve the requested schema"}, []string{err.Error()}, []string{"Requested resource's schema could not be found or read"}, []string{"Ensure the resource name is spelled correctly and that the schema is bundled with the server"})
+}
+func ErrInvalidFileRequest(err error) error {
+	return errors.New(ErrInvalidFileRequestCode, errors.Alert, []string{"Invalid file request"}, []string{err.Error()}, []string{"The provided file query parameter could not be decoded"}, []string{"Ensure the file parameter is a properly URL-encoded path"})
+}
+func ErrReadFileContent(err error, file string) error {
+	return errors.New(ErrReadFileContentCode, errors.Alert, []string{"Failed to read file content", file}, []string{err.Error()}, []string{"The file could not be opened or streamed to the response"}, []string{"Verify the file exists and the server has permission to read it"})
+}
+func ErrExtensionEndpointNotRegistered(endpoint string) error {
+	return errors.New(ErrExtensionEndpointNotRegisteredCode, errors.Alert, []string{"No extension is registered for endpoint: ", endpoint}, []string{}, []string{"Requested extension is not loaded into this Meshery server"}, []string{"Install the extension or check that its provider registered the route on startup"})
+}
+
+func ErrUserNotFound(userID string) error {
+	return errors.New(ErrUserNotFoundCode, errors.Alert, []string{"User not found"}, []string{fmt.Sprintf("No user exists with id: %s", userID)}, []string{"The user may have been deleted or the id is incorrect"}, []string{"Verify the user id is correct and that the user has not been removed"})
+}
+
+func ErrFetchToken(err error) error {
+	return errors.New(ErrFetchTokenCode, errors.Alert, []string{"Failed to obtain authentication token from request context"}, []string{err.Error()}, []string{"The request may not be authenticated or the token was not propagated into the context"}, []string{"Ensure the request is authenticated and that upstream middleware injects the token into context"})
+}
+
+func ErrShareDesign(err error) error {
+	return errors.New(ErrHandlerShareDesignCode, errors.Alert, []string{"Failed to share design"}, []string{err.Error()}, []string{"The remote provider rejected the share request", "Network connectivity issue", "Invalid payload"}, []string{"Verify the share request payload and target recipients, then retry"})
+}
+
+func ErrShareFilter(err error) error {
+	return errors.New(ErrHandlerShareFilterCode, errors.Alert, []string{"Failed to share filter"}, []string{err.Error()}, []string{"The remote provider rejected the share request", "Network connectivity issue", "Invalid payload"}, []string{"Verify the share request payload and target recipients, then retry"})
+}
+
+func ErrGetUserCredential(err error) error {
+	return errors.New(ErrGetUserCredentialCode, errors.Alert, []string{"Failed to get user credential"}, []string{err.Error()}, []string{"Credential may not exist, caller may lack access, or the provider is unreachable"}, []string{"Verify the credential id and that the current user has access to it"})
+}
+
+func ErrSaveUserCredential(err error) error {
+	return errors.New(ErrSaveUserCredentialCode, errors.Alert, []string{"Failed to save user credential"}, []string{err.Error()}, []string{"Invalid credential payload or the provider rejected the request"}, []string{"Verify the credential payload matches the expected schema and retry"})
+}
+
+func ErrUpdateUserCredential(err error) error {
+	return errors.New(ErrUpdateUserCredentialCode, errors.Alert, []string{"Failed to update user credential"}, []string{err.Error()}, []string{"Credential may not exist, caller may lack access, or the payload is invalid"}, []string{"Verify the credential id, caller permissions, and payload, then retry"})
+}
+
+func ErrDeleteUserCredential(err error) error {
+	return errors.New(ErrDeleteUserCredentialCode, errors.Alert, []string{"Failed to delete user credential"}, []string{err.Error()}, []string{"Credential may not exist or the caller may lack permission"}, []string{"Verify the credential id and caller permissions, then retry"})
+}
+
+func ErrEncodeUserCredential(err error) error {
+	return errors.New(ErrEncodeUserCredentialCode, errors.Alert, []string{"Failed to encode user credential response"}, []string{err.Error()}, []string{"Credential payload could not be serialized to JSON"}, []string{"Check server logs for serialization details"})
+}
+
+func ErrUnknownConnectionKind(kind string) error {
+	return errors.New(ErrUnknownConnectionKindCode, errors.Alert, []string{"Unable to register resource as connection"}, []string{fmt.Sprintf("No matching connection definition found in the registry for kind: %s", kind)}, []string{"The specified connection kind is not registered with Meshery"}, []string{"Verify the connection kind is spelled correctly and that its definition is installed"})
+}
+
+func ErrGetK8sContexts(err error) error {
+	return errors.New(ErrGetK8sContextsCode, errors.Alert, []string{"Failed to get Kubernetes contexts"}, []string{err.Error()}, []string{"The remote provider may be unreachable or the stored context data is corrupted"}, []string{"Verify the remote provider is reachable and retry; if the issue persists, check server logs"})
+}
+
+func ErrEncodeK8sContexts(err error) error {
+	return errors.New(ErrEncodeK8sContextsCode, errors.Alert, []string{"Failed to encode Kubernetes context response"}, []string{err.Error()}, []string{"Response data could not be serialized to JSON"}, []string{"Check server logs for serialization details"})
+}
+
+func ErrCreateDatabaseArchiveDir(err error) error {
+	return errors.New(ErrCreateDatabaseArchiveDirCode, errors.Alert, []string{"Directory could not be created due to a non-existent path"}, []string{err.Error()}, []string{"Meshery's configuration directory does not exist or is not writable"}, []string{"Verify that ~/.meshery/config exists and that the server process has write permission"})
+}
+
+func ErrOpenDatabaseFile(err error) error {
+	return errors.New(ErrOpenDatabaseFileCode, errors.Alert, []string{"The database does not exist or you don't have enough permission to access it"}, []string{err.Error()}, []string{"mesherydb.sql is missing or not readable by the server process"}, []string{"Verify that mesherydb.sql exists under ~/.meshery/config and that the server process can read it"})
+}
+
+func ErrCreateDatabaseArchiveFile(err error) error {
+	return errors.New(ErrCreateDatabaseArchiveFileCode, errors.Alert, []string{"Destination file can not be created"}, []string{err.Error()}, []string{"Archive target path is not writable or disk is full"}, []string{"Ensure ~/.meshery/config/.archive is writable and has free space"})
+}
+
+func ErrCopyDatabaseFile(err error) error {
+	return errors.New(ErrCopyDatabaseFileCode, errors.Alert, []string{"Can not copy file from source to destination"}, []string{err.Error()}, []string{"I/O error while archiving the current database, or disk is full"}, []string{"Check disk space and filesystem permissions for ~/.meshery/config"})
+}
+
+func ErrObtainDatabaseHandler() error {
+	return errors.New(ErrObtainDatabaseHandlerCode, errors.Alert, []string{"Failed to obtain database handler"}, []string{"Provider returned a nil generic persister"}, []string{"The configured provider does not expose a persister, or initialization has not completed"}, []string{"Verify the active provider supports system database reset and that the server is fully initialized"})
+}
+
+func ErrAccessDatabaseTables(err error) error {
+	return errors.New(ErrAccessDatabaseTablesCode, errors.Alert, []string{"Can not access database tables"}, []string{err.Error()}, []string{"The database file is locked, corrupt, or inaccessible"}, []string{"Check that no other process is holding a lock on mesherydb and that the file is not corrupt"})
+}
+
+func ErrDropDatabaseTable(err error) error {
+	return errors.New(ErrDropDatabaseTableCode, errors.Alert, []string{"Cannot drop table from database"}, []string{err.Error()}, []string{"Migrator could not drop an existing table — schema or connection issue"}, []string{"Check server logs for details and verify database integrity"})
+}
+
+func ErrMigrateDatabaseTables(err error) error {
+	return errors.New(ErrMigrateDatabaseTablesCode, errors.Alert, []string{"Can not migrate tables to database"}, []string{err.Error()}, []string{"Auto-migrate or registry manager setup failed during database reset"}, []string{"Check server logs for migration details and verify the database is accessible"})
+}
+
+func ErrFetchResults(err error) error {
+	return errors.New(ErrFetchResultsCode, errors.Alert, []string{"Error while getting load test results"}, []string{err.Error()}, []string{"The remote provider is unreachable, the profile id is invalid, or the results store is unavailable"}, []string{"Verify connectivity to the remote provider and retry; confirm the profile id is correct"})
+}
+
+func ErrMissingResultID() error {
+	return errors.New(ErrMissingResultIDCode, errors.Alert, []string{"Missing result id in request"}, []string{"No result id was supplied in the URL path"}, []string{"The client did not include a result identifier"}, []string{"Provide the result id in the request URL, for example /api/user/performance/results/{id}"})
+}
+
+func ErrGenerateUUID(err error) error {
+	return errors.New(ErrHandlerGenerateUUIDCode, errors.Alert, []string{"Failed to generate a unique identifier"}, []string{err.Error()}, []string{"Secure random source is unavailable on this host"}, []string{"Retry the request; if the error persists, verify the host's /dev/urandom or equivalent entropy source is accessible"})
+}
+
+func ErrMethodNotAllowed(method string) error {
+	return errors.New(ErrMethodNotAllowedCode, errors.Alert, []string{"HTTP method not allowed for this endpoint"}, []string{fmt.Sprintf("Received %s, but the endpoint only accepts the methods registered on its route", method)}, []string{"The client used an HTTP verb the route does not support"}, []string{"Use one of the supported HTTP methods for this endpoint"})
+}
+
+// ErrMissingRouteVariable wraps requests where a required path/route variable
+// was not supplied by the caller. Used by handlers that rely on mux.Vars(r)
+// entries the router is expected to provide.
+func ErrMissingRouteVariable(name string, allowed ...string) error {
+	cause := fmt.Sprintf("Required route variable %q was missing from the request", name)
+	remedy := fmt.Sprintf("Include %q in the request path", name)
+	if len(allowed) > 0 {
+		remedy = fmt.Sprintf("Include %q (one of %s) in the request path", name, strings.Join(allowed, ", "))
+	}
+	return errors.New(ErrMissingRouteVariableCode, errors.Alert, []string{fmt.Sprintf("Missing required route variable %q", name)}, []string{cause}, []string{"The client called the endpoint without supplying a required path segment."}, []string{remedy})
+}
+
+// ErrDeprecatedAPI is returned when a client invokes an endpoint that has
+// been retired. Emitted with HTTP 410 Gone. The `replacement` argument
+// should name the new endpoint so the UI can surface a clear upgrade path.
+func ErrDeprecatedAPI(replacement string) error {
+	return errors.New(ErrDeprecatedAPICode, errors.Alert, []string{"This API is deprecated"}, []string{fmt.Sprintf("The requested endpoint has been removed in favor of %s.", replacement)}, []string{"Client is using an older Meshery UI or mesheryctl that still targets the retired endpoint."}, []string{fmt.Sprintf("Use %s instead, and update the client to the latest Meshery release.", replacement)})
+}
+
+// ErrInvalidConnectionKind is returned when an endpoint scoped to a specific
+// connection kind (e.g. prometheus, grafana) is called with a connection
+// whose Kind does not match. Emitted with HTTP 400.
+func ErrInvalidConnectionKind(actual, expected string) error {
+	return errors.New(ErrInvalidConnectionKindCode, errors.Alert, []string{fmt.Sprintf("Connection is not of kind %q", expected)}, []string{fmt.Sprintf("The referenced connection is of kind %q but the endpoint expects %q.", actual, expected)}, []string{"The connectionID in the URL references a connection created for a different integration."}, []string{fmt.Sprintf("Pass the ID of a %s connection, or use the endpoint that matches the %s connection kind.", expected, actual)})
+}
+
+// ErrUpdateConnection wraps failures persisting connection metadata changes
+// (e.g. board selections on prometheus/grafana connections). Emitted with
+// HTTP 500.
+func ErrUpdateConnection(err error) error {
+	return errors.New(ErrUpdateConnectionCode, errors.Alert, []string{"Could not update the connection"}, []string{err.Error()}, []string{"Remote provider is unreachable.", "Connection has been deleted since it was loaded.", "Persisted metadata is corrupt."}, []string{"Verify provider connectivity and that the connection still exists, then retry."})
+}
+
+// ErrExportModel wraps failures in the ExportModel pipeline — building the
+// OCI image, writing the model definition, saving the tar/gzip archive, or
+// creating the scratch directories. The origin string identifies which
+// sub-step failed so the UI can surface a specific remediation.
+func ErrExportModel(err error, stage string) error {
+	return errors.New(ErrExportModelCode, errors.Alert, []string{fmt.Sprintf("Failed to export model during %s", stage)}, []string{err.Error()}, []string{"Temp directory is not writable.", "Model definition references a missing dependency.", "OCI/tar tooling produced an invalid artifact."}, []string{"Retry the export; if it persists, inspect server logs and disk availability under the temp directory."})
+}
+
+// ErrInvalidContextsConfig wraps failures to parse the `contexts` form field
+// of the kubeconfig upload endpoint. Emitted with HTTP 400.
+func ErrInvalidContextsConfig(err error) error {
+	return errors.New(ErrInvalidContextsConfigCode, errors.Alert, []string{"Invalid contexts configuration"}, []string{err.Error()}, []string{"The `contexts` form field is not a valid JSON map from context ID to {meshsync_deployment_mode: string}."}, []string{"Send a well-formed JSON object in the `contexts` form field, e.g. {\"<contextID>\": {\"meshsync_deployment_mode\": \"operator\"}}."})
+}
+
+// ErrEmptyConnectionID is returned from endpoints that require a connection
+// ID query parameter when none is supplied. Emitted with HTTP 400.
+func ErrEmptyConnectionID() error {
+	return errors.New(ErrEmptyConnectionIDCode, errors.Alert, []string{"Empty connection ID"}, []string{"No connection ID was supplied in the canonical `connectionId` query parameter (the legacy `connection_id` spelling is also accepted during the Phase 2 deprecation window)."}, []string{"The client did not pass `connectionId` in the query string.", "A URL template did not get its parameter substituted."}, []string{"Pass the connection ID of the Kubernetes context to be pinged, e.g. /api/system/kubernetes/ping?connectionId=<id>."})
+}
+
+// ErrPolicyEvalTimeout wraps the `errEvalTimeout` sentinel from
+// policy_relationship_handler.go with structured MeshKit metadata when the
+// handler surfaces it over the wire. Emitted with HTTP 504 Gateway Timeout.
+func ErrPolicyEvalTimeout(timeout fmt.Stringer) error {
+	return errors.New(ErrPolicyEvalTimeoutCode, errors.Alert, []string{"Relationship policy evaluation timed out"}, []string{fmt.Sprintf("The relationship policy evaluator did not return a response within %s.", timeout)}, []string{"The design is large enough that the policy engine needs more than the configured timeout.", "One of the Rego/Go policies under evaluation is in a slow path or infinite loop."}, []string{"Increase the POLICY_EVAL_TIMEOUT setting (default 3m) if the design genuinely needs more time, or retry with a smaller design."})
+}
+
+// ErrPolicyEval wraps a generic policy-evaluation failure returned by the
+// relationship evaluator (OPA/Rego or the Go engine). Emitted with HTTP 500.
+func ErrPolicyEval(err error) error {
+	return errors.New(ErrPolicyEvalCode, errors.Alert, []string{"Relationship policy evaluation failed"}, []string{err.Error()}, []string{"A registered relationship policy returned an error during evaluation.", "A cycle or invalid declaration in the design triggered an engine panic recovered as an error."}, []string{"Inspect server logs for the underlying policy error. If the design has recently been edited, revert the most recent change and retry."})
+}
+
+// ErrInvalidBase64Data wraps a base64 decoding failure on a request payload
+// (e.g. a model file uploaded as a base64-encoded blob in the import body).
+// Emitted with HTTP 400 because the client supplied malformed input.
+func ErrInvalidBase64Data(err error) error {
+	return errors.New(ErrInvalidBase64DataCode, errors.Alert, []string{"Invalid base64 data"}, []string{err.Error()}, []string{"The supplied payload was not a valid base64-encoded string.", "The payload may have been corrupted in transit or encoded with the wrong alphabet (URL-safe vs. standard)."}, []string{"Verify the client is base64-encoding the file with the standard alphabet before sending it.", "If the payload was hand-edited, re-encode it from the source bytes and retry."})
+}
+
+// ErrInvalidImportRequest wraps oneOf-invariant violations on the design
+// import endpoint — e.g. the request body had both a File and URL variant
+// set, or neither. Emitted with HTTP 400 because the caller needs to
+// correct the request shape, not the server to recover.
+func ErrInvalidImportRequest(err error) error {
+	return errors.New(ErrInvalidImportRequestCode, errors.Alert, []string{"Invalid design import request"}, []string{err.Error()}, []string{"The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `file_name`, the URL variant requires `url`.", "Both variants were provided, or neither was."}, []string{"Send a request body with exactly one variant set: either {\"file\": <bytes>, \"file_name\": \"design.yml\"} or {\"url\": \"https://...\"}."})
+}
+
+// ErrConvertToDesign wraps failures in the conversion pipeline that
+// turns a source file (Helm chart, Kubernetes manifest, Docker Compose,
+// Kustomize, or a Meshery design) into a v1beta3 design. These failures
+// are often rooted in malformed or unsupported input — a corrupt
+// archive, an unrecognized file extension, or a manifest the registry
+// could not map onto known component definitions — but the same
+// pipeline is also re-run server-side during download/view of a
+// non-design pattern, where the same wrap surfaces. The HTTP status
+// returned for this error is therefore determined by the calling
+// handler and request flow: 400 for the import endpoint where the
+// input is the request body, 500 for download/view where the input is
+// already-persisted SourceContent.
+func ErrConvertToDesign(err error) error {
+	return errors.New(ErrConvertToDesignCode, errors.Alert, []string{"Failed to convert uploaded file to a design"}, []string{err.Error()}, []string{"The uploaded file extension is not one of the supported import formats (.yml, .yaml, .json, .tar, .tar.gz, .tgz, .zip).", "The file is corrupt or its content does not parse as the type implied by its extension.", "The Kubernetes manifest references a kind/apiVersion that does not match any registered component definition."}, []string{"Verify the file is one of the supported formats and content-types, and that it parses cleanly outside Meshery.", "If the source is a Kubernetes manifest, ensure each kind it references has a corresponding model registered in the Meshery registry."})
+}
+
+// ErrCompressArtifact wraps tar-writer failures encountered while
+// packaging a Meshery design and its companion artifacthub-pkg.yml into
+// an OCI artifact for download. Emitted with HTTP 500 because the
+// failure originates server-side (in-memory buffer / archive writer)
+// rather than from caller input.
+func ErrCompressArtifact(err error) error {
+	return errors.New(ErrCompressArtifactCode, errors.Alert, []string{"Failed to compress design as OCI artifact"}, []string{err.Error()}, []string{"The server-side tar writer hit an I/O error while packaging the design YAML and the artifacthub-pkg metadata.", "Available memory or disk for the in-memory archive buffer was exhausted."}, []string{"Retry the export. If the failure persists, inspect server logs for the underlying writer error and ensure the host has sufficient resources."})
+}
+
+// ErrWriteRegistryLogs wraps failures of the helpers.WriteLogsToFiles
+// post-registration step that flushes per-host registration attempts
+// (component / model / relationship / policy / registry) to the file
+// pointed to by the REGISTRY_LOG_FILE setting. Emitted with HTTP 500
+// because the error is internal to the registry-log subsystem (file
+// permissions, disk full, marshal failure) rather than caller input.
+func ErrWriteRegistryLogs(err error) error {
+	return errors.New(ErrWriteRegistryLogsCode, errors.Alert, []string{"Failed to flush registry logs"}, []string{err.Error()}, []string{"The path configured in REGISTRY_LOG_FILE is not writable by the Meshery process (missing directory, missing permissions, or the disk is full).", "An in-memory log entry could not be marshaled into the on-disk format."}, []string{"Verify REGISTRY_LOG_FILE points to a writable path with sufficient free disk and that the Meshery process owns or has write permission to its parent directory."})
+}
+
+// ErrUpdateEntityStatus wraps registry failures when toggling the
+// `status` (enabled/disabled/etc.) of a model or component definition
+// through the entity-status endpoint. Emitted with HTTP 500 because
+// the failure originates in the registry persistence layer, not in
+// caller input — input validation runs upstream of this site.
+func ErrUpdateEntityStatus(err error) error {
+	return errors.New(ErrUpdateEntityStatusCode, errors.Alert, []string{"Failed to update entity status"}, []string{err.Error()}, []string{"The entity ID does not exist in the registry.", "The registry's persistence layer rejected the status update — typically a database connection or transaction failure."}, []string{"Verify the entity ID exists by listing the entities of the same type. If it does, retry the request and inspect server logs for the underlying registry error."})
+}
+
+// ErrExtensionProxy wraps failures of provider.ExtensionProxy when a
+// `/api/extensions/...` passthrough request cannot be served. Caller
+// chooses the HTTP status: 502 Bad Gateway for upstream/remote-provider
+// failures (the common case), 501 Not Implemented when the active
+// provider is the local provider, which has no extensions backend.
+func ErrExtensionProxy(err error) error {
+	return errors.New(ErrExtensionProxyCode, errors.Alert, []string{"Extension proxy request failed"}, []string{err.Error()}, []string{"The remote provider could not be reached (network failure, DNS resolution, or TLS handshake failure).", "The remote provider returned a non-2xx response that the proxy could not translate.", "The active provider is the local provider, which has no extensions backend."}, []string{"Verify the remote provider is reachable from this Meshery instance and that the user's session token has not expired. Retry the request after re-authenticating if the failure persists.", "If running against the local provider, switch to a remote provider (Layer5 Cloud) that exposes the extensions surface."})
+}
+
+// ErrInitializeMachine wraps failures of the connection state-machine
+// initializer (machines/helpers.InitializeMachineWithContext). Emitted
+// with HTTP 500 because the failure is internal to the state-machine
+// bootstrap (unknown machine type, persistence failure, or initial
+// state assignment failure) rather than caller input.
+func ErrInitializeMachine(err error) error {
+	return errors.New(ErrInitializeMachineCode, errors.Alert, []string{"Failed to initialize connection state machine"}, []string{err.Error()}, []string{"The connection kind has no registered machine type in the state-machine registry.", "The state machine's persister could not write the initial state to the database."}, []string{"Verify the connection kind is one of the supported types. If it is, retry the request and inspect server logs for the underlying machine-bootstrap error."})
+}
+
+// ErrSendMachineEvent wraps failures of *StateMachine.SendEvent, which
+// drives a connection through its registered transitions (e.g.
+// REGISTERED → DISCOVERED → CONNECTED). Emitted with HTTP 500 because
+// the event-driven transition failed inside the state machine, not in
+// caller input.
+func ErrSendMachineEvent(err error) error {
+	return errors.New(ErrSendMachineEventCode, errors.Alert, []string{"Failed to advance connection state machine"}, []string{err.Error()}, []string{"The requested event is not valid from the connection's current state.", "A side-effect action attached to the transition (e.g. provisioning, discovery) returned an error."}, []string{"Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."})
 }

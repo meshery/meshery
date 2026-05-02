@@ -11,7 +11,7 @@
     "Learning Academy and Challenges",
     "Free, Team, and Enterprise subscription plans"
   ],
-  "provider_url": "https://cloud.layer5.io",
+  "provider_url": "https://cloud.meshery.io",
   "extensions": {
     "navigator": [
       {
@@ -57,7 +57,7 @@
         "title": "Cloud Account",
         "on_click_callback": 1,
         "href": {
-          "uri": "https://cloud.layer5.io/account/profile",
+          "uri": "https://cloud.meshery.io/account/profile",
           "external": true
         },
         "link": true,
@@ -68,7 +68,7 @@
         "title": "Cloud Catalog",
         "on_click_callback": 1,
         "href": {
-          "uri": "https://cloud.layer5.io/catalog",
+          "uri": "https://cloud.meshery.io/catalog",
           "external": true
         },
         "link": true,
@@ -79,7 +79,7 @@
         "title": "Cloud Dashboard",
         "on_click_callback": 1,
         "href": {
-          "uri": "https://cloud.layer5.io",
+          "uri": "https://cloud.meshery.io",
           "external": true
         },
         "link": true,

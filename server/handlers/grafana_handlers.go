@@ -38,7 +38,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		return
 
 	case http.MethodDelete:
-		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
+		writeMeshkitError(w, ErrDeprecatedAPI("the connections API"), http.StatusGone)
 		return
 
 	case http.MethodPost:
@@ -63,7 +63,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 
 		if err := h.config.GrafanaClient.Validate(req.Context(), grafanaURL, grafanaAPIKey); err != nil {
 			h.log.Error(models.ErrGrafanaScan(err))
-			http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, models.ErrGrafanaScan(err), http.StatusInternalServerError)
 			return
 		}
 
@@ -80,7 +80,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 				WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": _err}).Build()
 			_ = p.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
-			http.Error(w, _err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, _err, http.StatusInternalServerError)
 			return
 		}
 		connection, err := p.SaveConnection(&connections.ConnectionPayload{
@@ -99,7 +99,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", connName)).WithMetadata(map[string]interface{}{"error": _err}).Build()
 			_ = p.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
-			http.Error(w, _err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, _err, http.StatusInternalServerError)
 			return
 		}
 		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with grafana created at %s", connName, grafanaURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
@@ -120,28 +120,28 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	if connection.Kind != "grafana" {
-		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidConnectionKind(connection.Kind, "grafana"), http.StatusBadRequest)
 		return
 	}
 
 	url, _ := connection.Metadata["url"].(string)
 	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	apiKeyOrBasicAuth, _ := cred.Secret["secret"].(string)
 	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
 		h.log.Error(models.ErrGrafanaScan(err))
-		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrGrafanaScan(err), http.StatusInternalServerError)
 		return
 	}
 
-	_, _ = w.Write([]byte("{}"))
+	writeJSONEmptyObject(w, http.StatusOK)
 }
 
 // GrafanaBoardsHandler is used for fetching Grafana boards and panels
@@ -156,11 +156,11 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	h.log.Debug("connection id : ", connectionID)
 	if err != nil {
 		h.log.Error(err)
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	if connection.Kind != "grafana" {
-		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidConnectionKind(connection.Kind, "grafana"), http.StatusBadRequest)
 		return
 	}
 
@@ -168,13 +168,13 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
 		h.log.Error(err)
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	apiKeyOrBasicAuth, _ := cred.Secret["secret"].(string)
 	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
 		h.log.Error(models.ErrGrafanaScan(err))
-		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrGrafanaScan(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -182,14 +182,14 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	boards, err := h.config.GrafanaClient.GetGrafanaBoards(req.Context(), url, apiKeyOrBasicAuth, dashboardSearch)
 	if err != nil {
 		h.log.Error(models.ErrGrafanaBoards(err))
-		http.Error(w, models.ErrGrafanaBoards(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrGrafanaBoards(err), http.StatusInternalServerError)
 		return
 	}
 	err = json.NewEncoder(w).Encode(boards)
 	if err != nil {
-		obj := "boards payload"
-		h.log.Error(models.ErrMarshal(err, obj))
-		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		// Response body has already started streaming via json.Encoder —
+		// a fresh error response would corrupt the in-flight JSON, so log only.
+		h.log.Error(models.ErrMarshal(err, "boards payload"))
 		return
 	}
 }
@@ -202,31 +202,31 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	if connection.Kind != "grafana" {
-		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidConnectionKind(connection.Kind, "grafana"), http.StatusBadRequest)
 		return
 	}
 
 	url, _ := connection.Metadata["url"].(string)
 	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	apiKeyOrBasicAuth, _ := cred.Secret["secret"].(string)
 	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
 		h.log.Error(models.ErrGrafanaScan(err))
-		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrGrafanaScan(err), http.StatusInternalServerError)
 		return
 	}
 
 	data, err := h.config.GrafanaClientForQuery.GrafanaQuery(req.Context(), url, apiKeyOrBasicAuth, &reqQuery)
 	if err != nil {
 		h.log.Error(ErrGrafanaQuery(err))
-		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrGrafanaQuery(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -243,31 +243,31 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	if connection.Kind != "grafana" {
-		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidConnectionKind(connection.Kind, "grafana"), http.StatusBadRequest)
 		return
 	}
 
 	url, _ := connection.Metadata["url"].(string)
 	cred, statusCode, err := provider.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	apiKeyOrBasicAuth, _ := cred.Secret["secret"].(string)
 	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
 		h.log.Error(models.ErrGrafanaScan(err))
-		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrGrafanaScan(err), http.StatusInternalServerError)
 		return
 	}
 
 	data, err := h.config.GrafanaClientForQuery.GrafanaQueryRange(req.Context(), url, apiKeyOrBasicAuth, &reqQuery)
 	if err != nil {
 		h.log.Error(ErrGrafanaQuery(err))
-		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrGrafanaQuery(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -289,7 +289,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 	boards := []*models.SelectedGrafanaConfig{}
@@ -297,7 +297,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	if err != nil {
 		obj := "request body"
 		h.log.Error(models.ErrUnmarshal(err, obj))
-		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
 
@@ -305,11 +305,11 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
-		http.Error(w, err.Error(), statusCode)
+		writeMeshkitError(w, err, statusCode)
 		return
 	}
 	if connection.Kind != "grafana" {
-		http.Error(w, "connection is not of kind grafana", http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidConnectionKind(connection.Kind, "grafana"), http.StatusBadRequest)
 		return
 	}
 
@@ -321,10 +321,11 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 
 	updatedConnection, err := p.UpdateConnection(req, connection)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.log.Error(ErrUpdateConnection(err))
+		writeMeshkitError(w, ErrUpdateConnection(err), http.StatusInternalServerError)
 		return
 	}
 
 	h.log.Debug("Board selection updated", updatedConnection.Metadata)
-	_, _ = w.Write([]byte("{}"))
+	writeJSONEmptyObject(w, http.StatusOK)
 }
