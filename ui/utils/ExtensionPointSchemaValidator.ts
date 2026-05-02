@@ -52,7 +52,7 @@ export default function ExtensionPointSchemaValidator(type) {
   switch (type) {
     case 'navigator':
       return NavigatorExtensionSchemaDecoder;
-    case 'user_prefs':
+    case 'userPrefs':
       return UserPrefsExtensionSchemaDecoder;
     case 'collaborator':
       return CollaboratorExtensionSchemaDecoder;
@@ -75,7 +75,7 @@ function NavigatorExtensionSchemaDecoder(content) {
         title: item.title || '',
         href: prepareHref(item.href),
         component: item.component || '',
-        onClickCallback: item?.on_click_callback || 0,
+        onClickCallback: item?.onClickCallback || 0,
         // Mirror createPathForRemoteComponent's prefix-then-normalizeURI shape
         // so the icon URL never picks up a double slash. Without this, an
         // item.icon starting with "/" concatenated onto a prefix ending in "/"
@@ -136,7 +136,7 @@ function AccountExtensionSchemaDecoder(content) {
         title: item.title || '',
         href: prepareHref(item.href),
         component: item.component || '',
-        onClickCallback: item?.on_click_callback || 0,
+        onClickCallback: item?.onClickCallback || 0,
         show: !!item.show,
         children: AccountExtensionSchemaDecoder(item.children),
         full_page: item.full_page,

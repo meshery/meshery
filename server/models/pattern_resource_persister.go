@@ -14,8 +14,8 @@ type PatternResourcePersister struct {
 
 type PatternResourcePage struct {
 	Page       uint64             `json:"page,omitempty"`
-	PageSize   uint64             `json:"page_size,omitempty"`
-	TotalCount int                `json:"total_count,omitempty"`
+	PageSize   uint64             `json:"pageSize,omitempty"`
+	TotalCount int                `json:"totalCount,omitempty"`
 	Resources  []*PatternResource `json:"resources,omitempty"`
 }
 

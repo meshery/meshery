@@ -286,8 +286,8 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
           container
           size="grow"
           spacing={1}
-          id={context.connection_id}
-          key={context.connection_id}
+          id={context.connectionId}
+          key={context.connectionId}
           className={classes.chip}
         >
           <Box minWidth="25%" maxWidth="50%">
@@ -304,7 +304,7 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
                 <TooltipWrappedConnectionChip
                   title={context.name}
                   handlePing={() => {
-                    ping(context.name, context.server, context.connection_id);
+                    ping(context.name, context.server, context.connectionId);
                   }}
                   iconSrc={'/static/img/kubernetes.svg'}
                 />

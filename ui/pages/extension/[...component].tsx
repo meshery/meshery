@@ -3,11 +3,10 @@ import ExtensionSandbox, {
   getComponentTitleFromPath,
   getComponentIsBetaFromPath,
 } from '../../components/ExtensionSandbox';
-import { Box, CircularProgress, NoSsr } from '@sistent/sistent';
+import { CircularProgress, NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
 import React, { useEffect, useCallback, useState } from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
-import { MesheryExtensionEarlyAccessCardPopup } from '../../components/General/Popup';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { useRouter } from 'next/router';
 import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
@@ -121,14 +120,7 @@ function RemoteExtension() {
               />
             )}
           </NoSsr>
-        ) : !isLoading ? (
-          <Box display="flex" justifyContent="center">
-            <MesheryExtensionEarlyAccessCardPopup
-              rootStyle={{ position: 'relative' }}
-              capabilitiesRegistry={capabilitiesRegistry}
-            />
-          </Box>
-        ) : (
+        ) : !isLoading ? null : (
           <CircularProgress />
         )}
       </DynamicFullScreenLoader>

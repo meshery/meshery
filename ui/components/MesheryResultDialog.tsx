@@ -63,18 +63,18 @@ function MesheryResultDialog(props) {
                     </strong>
                   </StyledTableCell>
                 </StyledTableRow>
-                {createTableRow('Internal IP Address', node.internal_ip)}
+                {createTableRow('Internal IP Address', node.internalIp)}
                 {createTableRow('Hostname', node.hostname)}
-                {createTableRow('Allocatable CPU', node.allocatable_cpu)}
-                {createTableRow('Allocatable Memory', node.allocatable_memory)}
-                {createTableRow('Capacity CPU', node.capacity_cpu)}
-                {createTableRow('Capacity Memory', node.capacity_memory)}
+                {createTableRow('Allocatable CPU', node.allocatableCpu)}
+                {createTableRow('Allocatable Memory', node.allocatableMemory)}
+                {createTableRow('Capacity CPU', node.capacityCpu)}
+                {createTableRow('Capacity Memory', node.capacityMemory)}
                 {createTableRow('Architecture', node.architecture)}
-                {createTableRow('Operating system', node.operating_system)}
-                {createTableRow('OS Image', node.os_image)}
-                {createTableRow('Container runtime version', node.container_runtime_version)}
-                {createTableRow('Kubelet version', node.kubelet_version)}
-                {createTableRow('Kubeproxy version', node.kubeproxy_version)}
+                {createTableRow('Operating system', node.operatingSystem)}
+                {createTableRow('OS Image', node.osImage)}
+                {createTableRow('Container runtime version', node.containerRuntimeVersion)}
+                {createTableRow('Kubelet version', node.kubeletVersion)}
+                {createTableRow('Kubeproxy version', node.kubeproxyVersion)}
               </NoSsr>
             ))}
           </TableBody>

@@ -46,9 +46,9 @@ function PatternCardGridItem({
         id={pattern.id}
         user={user}
         name={pattern.name}
-        updated_at={pattern.updated_at}
-        created_at={pattern.created_at}
-        pattern_file={pattern.patternFile}
+        updatedAt={pattern.updatedAt}
+        createdAt={pattern.createdAt}
+        patternFile={pattern.patternFile}
         requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
@@ -66,7 +66,7 @@ function PatternCardGridItem({
             id: pattern.id,
             type: FILE_OPS.DELETE,
             name: pattern.name,
-            catalog_data: pattern.catalog_data,
+            catalogData: pattern.catalogData,
           })
         }
         updateHandler={() =>
@@ -75,7 +75,7 @@ function PatternCardGridItem({
             id: pattern.id,
             type: FILE_OPS.UPDATE,
             name: pattern.name,
-            catalog_data: pattern.catalog_data,
+            catalogData: pattern.catalogData,
           })
         }
         setSelectedPatterns={() => setSelectedPatterns({ pattern: pattern, show: true })}
@@ -95,15 +95,15 @@ function PatternCardGridItem({
  * @param {{
  *  patterns:Array<{
  *  id:string,
- *  created_at: string,
- *  updated_at: string,
- *  pattern_file: string,
+ *  createdAt: string,
+ *  updatedAt: string,
+ *  patternFile: string,
  * }>,
- *  handleVerify: (e: Event, pattern_file: any, pattern_id: string) => void,
- *  handlePublish: (catalog_data : any) => void,
+ *  handleVerify: (e: Event, patternFile: any, patternId: string) => void,
+ *  handlePublish: (catalogData : any) => void,
  *  handleUnpublishModal: (ev: Event, pattern: any) => (() => Promise<void>),
- *  handleDeploy: (pattern_file: any) => void,
- *  handleUnDeploy: (pattern_file: any) => void,
+ *  handleDeploy: (patternFile: any) => void,
+ *  handleUnDeploy: (patternFile: any) => void,
  *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
  *  setSelectedPattern : ({show: boolean, pattern:any}) => void,
  *  selectedPattern: {show : boolean, pattern : any},
