@@ -216,7 +216,6 @@ func startNighthawkServer(timeout int64) error {
 	if !nighthawkRunning {
 		err := cmd.Start()
 		if err != nil {
-			nighthawkStatus.Unlock()
 			return ErrStartingNighthawkServer(err)
 		}
 		nighthawkRunning = true
@@ -231,7 +230,6 @@ func startNighthawkServer(timeout int64) error {
 
 	_, err = os.Stat(transformCommand)
 	if err != nil {
-		nighthawkStatus.Unlock()
 		return ErrStartingNighthawkServer(err)
 	}
 
