@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Installation on Documentation</title><link>/categories/installation/</link><description>Recent content in Installation on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/categories/installation/index.xml" rel="self" type="application/rss+xml"/><item><title>Upgrading Meshery and all of its components</title><link>/installation/upgrades/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/upgrades/</guid><description>&lt;h1 id="upgrade-guide"&gt;
+	Upgrade Guide
+&lt;/h1&gt;
+&lt;h2 id="upgrading-meshery-server-adapters-and-ui"&gt;
+	Upgrading Meshery Server, Adapters, and UI
+&lt;/h2&gt;
+&lt;p&gt;Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of different functional components.&lt;/p&gt;
+&lt;p style="text-align:center"&gt;
+&lt;a href="./images/upgrading-meshery.svg"&gt;
+ &lt;img src="./images/upgrading-meshery.svg" style="margin: 1rem;" /&gt;
+&lt;/a&gt;&lt;br /&gt;&lt;i&gt;&lt;small&gt;Figure: Meshery components&lt;/small&gt;&lt;/i&gt;
+&lt;/p&gt;
+&lt;p&gt;Some of the components must be upgraded simultaneously, while others may be upgraded independently. The following table depicts components, their versions, and deployment units (deployment groups).&lt;/p&gt;</description></item><item><title>Using Multiple Adapters</title><link>/installation/multiple-adapters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/multiple-adapters/</guid><description>&lt;h2 id="advanced-configuration"&gt;
+	Advanced Configuration
+&lt;/h2&gt;
+&lt;p&gt;Meshery is capable of running zero or more adapters. Meshery offers many features without the need for adapters. Adapters are optional components that enhance and extend Meshery&amp;rsquo;s core functionality.&lt;/p&gt;
+&lt;h3 id="modifying-the-default-adapter-deployment-configuration"&gt;
+	Modifying the default adapter deployment configuration
+&lt;/h3&gt;
+&lt;p&gt;The number of adapters, type of adapters, where they are deployed, how they are named and what port they are exposed on are all configurable deployment options. To modify the default configuration, find &lt;code&gt;~/.meshery/meshery.yaml&lt;/code&gt; on your system. &lt;code&gt;~/.meshery/meshery.yaml&lt;/code&gt; is a Docker Compose file.&lt;/p&gt;</description></item></channel></rss>

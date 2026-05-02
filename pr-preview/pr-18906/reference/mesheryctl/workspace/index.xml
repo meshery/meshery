@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mesheryctl-workspace on Documentation</title><link>/reference/mesheryctl/workspace/</link><description>Recent content in mesheryctl-workspace on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/reference/mesheryctl/workspace/index.xml" rel="self" type="application/rss+xml"/><item><title>mesheryctl-workspace-create</title><link>/reference/mesheryctl/workspace/create/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/workspace/create/</guid><description>&lt;h1 id="mesheryctl-workspace-create"&gt;
+	mesheryctl workspace create
+&lt;/h1&gt;
+&lt;p&gt;Create a new workspace under an organization&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Create a new workspace by providing the name, description, and organization ID&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl workspace create [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Create a new workspace in an organization&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -d, --description string (Optional) Description of the workspace
+ -h, --help help for create
+ -n, --name string Name of the workspace
+ -o, --orgId string Organization ID
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-workspace-list</title><link>/reference/mesheryctl/workspace/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/workspace/list/</guid><description>&lt;h1 id="mesheryctl-workspace-list"&gt;
+	mesheryctl workspace list
+&lt;/h1&gt;
+&lt;p&gt;List registered workspaces&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;List name of all registered workspaces&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl workspace list [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;List of workspace under a specific organization&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl workspace list --orgId [orgId]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;List of workspace under a specific organization for a specified page&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl workspace list --orgId [orgId] --page [page-number]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Display number of available workspace under a specific organization&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl workspace list --orgId [orgId] --count
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --count total number of registered workspaces
+ -h, --help help for list
+ -o, --orgId string Organization ID
+ --page int page number for paginated results. (default: 1) (default 1)
+ --pagesize int number of items to be displayed per page for paginated results. (default: 10, max limit: 100) (default 10)
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-workspace-view</title><link>/reference/mesheryctl/workspace/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/workspace/view/</guid><description>&lt;h1 id="mesheryctl-workspace-view"&gt;
+	mesheryctl workspace view
+&lt;/h1&gt;
+&lt;p&gt;View a workspace&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;View a workspace by its ID or name.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl workspace view [workspace-name|workspace-id] [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;View details of a specific workspace by ID&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl workspace view [workspace-id] --orgId [orgId]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View details of a specific workspace by name&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl workspace view [workspace-name] --orgId [orgId]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View details of a specific workspace in JSON format&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View details of a specific workspace and save it to a file&lt;/p&gt;</description></item></channel></rss>
