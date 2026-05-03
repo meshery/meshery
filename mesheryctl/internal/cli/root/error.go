@@ -49,7 +49,7 @@ func ErrConnectingToServer(err error) error {
 }
 
 func ErrGettingRequestContext(err error) error {
-	return errors.New(ErrGettingRequestContextCode, errors.Fatal, []string{"Unable to add token to config"}, []string{"Unable to add token to config", err.Error()}, []string{}, []string{})
+	return errors.New(ErrGettingRequestContextCode, errors.Fatal, []string{"Unable to get request context"}, []string{"Unable to get request context", err.Error()}, []string{}, []string{})
 }
 
 func ErrUnmarshallingAPIData(err error) error {

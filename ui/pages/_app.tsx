@@ -102,10 +102,10 @@ import RegistryModalContextProvider from '@/utils/context/RegistryModalContextPr
 import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 
 export const mesheryExtensionRoute = '/extension/meshmap';
-function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
+function isMesheryUIRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
   return (
     !window.location.pathname.startsWith(mesheryExtensionRoute) &&
-    capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
+    capabilitiesRegistry?.restrictedAccess?.isMesheryUIRestricted
   );
 }
 
@@ -471,7 +471,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
     if (
       typeof window !== 'undefined' &&
-      isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)
+      isMesheryUIRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)
     ) {
       Router.push(mesheryExtensionRoute);
     }
