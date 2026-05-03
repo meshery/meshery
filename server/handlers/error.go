@@ -140,7 +140,7 @@ const (
 	ErrSaveOCIArtifactCode                 = "meshery-server-1129"
 	ErrIOReaderCode                        = "meshery-server-1130"
 	ErrUnCompressOCIArtifactCode           = "meshery-server-1131"
-	ErrWaklingLocalDirectoryCode           = "meshery-server-1132"
+	ErrWalkingLocalDirectoryCode           = "meshery-server-1132"
 	ErrConvertingK8sManifestToDesignCode   = "meshery-server-1133"
 	ErrConvertingDockerComposeToDesignCode = "meshery-server-1134"
 	ErrConvertingHelmChartToDesignCode     = "meshery-server-1136"
@@ -699,8 +699,8 @@ func ErrUnCompressOCIArtifact(err error) error {
 	return errors.New(ErrUnCompressOCIArtifactCode, errors.Alert, []string{"Failed to uncompress OCI artifact"}, []string{err.Error()}, []string{"unable to uncompress OCI artifact", "OCI artifact may be corrupted"}, []string{"check if the OCI artifact is valid and not corrupted"})
 }
 
-func ErrWaklingLocalDirectory(err error) error {
-	return errors.New(ErrWaklingLocalDirectoryCode, errors.Alert, []string{"Failed to walk local directory"}, []string{err.Error()}, []string{"unable to walk local directory", "local directory may be corrupted"}, []string{"check if the local directory is valid and not corrupted"})
+func ErrWalkingLocalDirectory(err error) error {
+	return errors.New(ErrWalkingLocalDirectoryCode, errors.Alert, []string{"Failed to walk local directory"}, []string{err.Error()}, []string{"unable to walk local directory", "local directory may be corrupted"}, []string{"check if the local directory is valid and not corrupted"})
 }
 
 func ErrConvertingK8sManifestToDesign(err error) error {
