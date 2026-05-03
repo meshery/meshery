@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mesheryctl-component on Documentation</title><link>/reference/mesheryctl/component/</link><description>Recent content in mesheryctl-component on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/reference/mesheryctl/component/index.xml" rel="self" type="application/rss+xml"/><item><title>mesheryctl-component-list</title><link>/reference/mesheryctl/component/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/component/list/</guid><description>&lt;h1 id="mesheryctl-component-list"&gt;
+	mesheryctl component list
+&lt;/h1&gt;
+&lt;p&gt;List registered components&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;List all components registered in Meshery Server&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl component list [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;View list of components&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl component list
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View list of components with specified page number (10 components per page)&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl component list --page [page-number]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View list of components with specified page number with specified number of components per page&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl component list --page [page-number] --pagesize [page-size]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Display the number of components present in Meshery&lt;/p&gt;</description></item><item><title>mesheryctl-component-search</title><link>/reference/mesheryctl/component/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/component/search/</guid><description>&lt;h1 id="mesheryctl-component-search"&gt;
+	mesheryctl component search
+&lt;/h1&gt;
+&lt;p&gt;Search registered components&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Search components registered in Meshery Server based on kind&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl component search [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Search for components using a query&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl component search [query-text]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Search for multi-word component names (must be quoted)&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl component search "Component name"
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Search list of components of specified page [int]&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl component search [query-text] [--page 1]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for search
+ -p, --page int (optional) List next set of components with --page (default = 1) (default 1)
+ -s, --pagesize int (optional) List next set of components with --pagesize (default = 10) (default 10)
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-component-view</title><link>/reference/mesheryctl/component/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/component/view/</guid><description>&lt;h1 id="mesheryctl-component-view"&gt;
+	mesheryctl component view
+&lt;/h1&gt;
+&lt;p&gt;View registered components&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;View a component registered in Meshery Server&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl component view [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;View details of a specific component&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl component view [component-name | component-id]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View details of a specific component in specified format&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl component view [component-name | component-id] -o [json|yaml]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View details of a specific component in specified format and save it as a file&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl component view [component-name | component-id] -o [json|yaml] --save
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for view
+ -o, --output-format string (optional) format to display in [json|yaml] (default "yaml")
+ -s, --save (optional) save output as a JSON/YAML file
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item></channel></rss>
