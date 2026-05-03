@@ -437,7 +437,11 @@ func ErrFailToDelete(err error, obj string) error {
 }
 
 func ErrBlankName(err error) error {
-	return errors.New(ErrBlankNameCode, errors.Alert, []string{"Error: name field is blank."}, []string{err.Error()}, []string{"Load test name empty or not valid."}, []string{"Provide a name for the test."})
+	errMsg := []string{}
+	if err != nil {
+		errMsg = []string{err.Error()}
+	}
+	return errors.New(ErrBlankNameCode, errors.Alert, []string{"Error: name field is blank."}, errMsg, []string{"Load test name empty or not valid."}, []string{"Provide a name for the test."})
 }
 
 func ErrConversion(err error) error {
