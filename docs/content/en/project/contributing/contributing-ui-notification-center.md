@@ -105,13 +105,13 @@ While this system was initially developed for our events and notification center
 
 When a notification event is received from the server, it includes a `metadata` field containing structured, event-specific information. The purpose of formatters is to present this data in a clean, readable, and user-friendly format inside the expanded view of each notification.
 
-The core logic for rendering metadata is handled by the `FormattedMetadata` component in `metadata.js`, which follows this decision tree:
+The core logic for rendering metadata is handled by the `FormattedMetadata` component in `metadata.tsx`, which follows this decision tree:
 
 1. **Event-Specific Formatter Check**  
    If a formatter exists for the event's type (registered under `EventTypeFormatters`), that dedicated formatter is used to fully control how the metadata is displayed.
 
 2. **Fallback to Property-Based Formatting**  
-   If no event-specific formatter is found, the `FormattedMetadata` component falls back to the `FormatStructuredData` function (also in `metadata.js`).
+   If no event-specific formatter is found, the `FormattedMetadata` component falls back to the `FormatStructuredData` function (also in `metadata.tsx`).
 
    - This function renders each key-value pair from the `metadata` using the mappings defined in:
      - `PropertyFormatters` – for structured or specialized visual formats.
@@ -190,7 +190,7 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
   - `SuggestedRemediation`: Suggests solutions to fix the error.
 - `event` (object, optional): Contains the notification event data.
 
-**Path:** `ui/components/NotificationCenter/formatters/error.js`
+**Path:** `ui/components/NotificationCenter/formatters/error.tsx`
 
 **Example:**
 
@@ -215,7 +215,7 @@ The `ErrorMetadataFormatter` is used when dealing with structured error events t
 
 The `Model Registration Formatter` formats and displays model registration details, including components and relationships, in Meshery UI's Notification Center. It ensures structured representation of imported models and error handling during the import process.
 
-**Path:** `ui/components/NotificationCenter/formatters/model_registration.js`
+**Path:** `ui/components/NotificationCenter/formatters/model_registration.tsx`
 
 **Components:**
 
@@ -238,7 +238,7 @@ The `Model Registration Formatter` formats and displays model registration detai
 
 The **Relationship Evaluation Formatter** is responsible for rendering notifications related to the evaluation of relationships between components in a design. It provides a detailed breakdown of changes in components and relationships, such as additions, updates, and removals, during the evaluation process.
 
-**Path:** `ui/components/NotificationCenter/formatters/relationship_evaluation.js`
+**Path:** `ui/components/NotificationCenter/formatters/relationship_evaluation.tsx`
 
 #### Key Components
 
@@ -304,7 +304,7 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
 
 The **Dry Run Formatter** is responsible for rendering notifications related to the dry run validation of a design. A dry run simulates the deployment or undeployment of a design to identify potential errors without actually applying the changes.
 
-**Path:** `ui/components/DesignLifeCycle/DryRun.js`
+**Path:** `ui/components/DesignLifeCycle/DryRun.tsx`
 
 #### Key Components
 
@@ -336,7 +336,7 @@ The **Dry Run Formatter** is used in the following scenarios:
 
 The **Deployment Summary Formatter** is responsible for rendering notifications related to the deployment or undeployment of components in a design.
 
-**Path:** `ui/components/DesignLifeCycle/DeploymentSummary.js`
+**Path:** `ui/components/DesignLifeCycle/DeploymentSummary.tsx`
 
 #### Key Components
 
