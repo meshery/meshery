@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -298,41 +297,21 @@ func getTemplateInOutputFormat(templatePath string, outputFormat string) ([]byte
 func initModelInjectModelName(content []byte, outputFormat string, modelName string) ([]byte, error) {
 	// derive a human-readable display name from the kebab-case model name
 	// e.g. "my-awesome-model" -> "My Awesome Model"
-	words := strings.Split(modelName, "-")
-	for i, w := range words {
+	var words []string
+	for _, w := range strings.Split(modelName, "-") {
 		if len(w) > 0 {
-			words[i] = strings.ToUpper(w[:1]) + w[1:]
+			words = append(words, strings.ToUpper(w[:1])+w[1:])
 		}
 	}
 	displayName := strings.Join(words, " ")
 
-	switch outputFormat {
-	case "json":
-		var data map[string]interface{}
-		if err := json.Unmarshal(content, &data); err != nil {
-			return nil, fmt.Errorf("failed to parse model template JSON: %w", err)
-		}
-		data["name"] = modelName
-		data["displayName"] = displayName
-		result, err := json.MarshalIndent(data, "", "  ")
-		if err != nil {
-			return nil, fmt.Errorf("failed to serialize model JSON: %w", err)
-		}
-		return result, nil
-	case "yaml":
-		var data map[string]interface{}
-		if err := yaml.Unmarshal(content, &data); err != nil {
-			return nil, fmt.Errorf("failed to parse model template YAML: %w", err)
-		}
-		data["name"] = modelName
-		data["displayName"] = displayName
-		result, err := yaml.Marshal(data)
-		if err != nil {
-			return nil, fmt.Errorf("failed to serialize model YAML: %w", err)
-		}
-		return result, nil
+	replacements := map[string]string{
+		"untitled-model": modelName,
+		"Untitled Model": displayName,
 	}
-	return content, nil
+
+	result := initModelReplacePlaceholders(string(content), replacements)
+	return []byte(result), nil
 }
 
 func initModelReplacePlaceholders(input string, replacements map[string]string) string {

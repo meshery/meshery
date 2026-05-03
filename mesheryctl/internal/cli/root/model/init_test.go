@@ -374,13 +374,7 @@ func TestInitModelInjectModelName(t *testing.T) {
 			expectedName:    "aws-ec2-controller",
 			expectedDisplay: "Aws Ec2 Controller",
 		},
-		{
-			name:         "invalid JSON returns error",
-			inputJSON:    `{invalid json`,
-			outputFormat: "json",
-			modelName:    "my-model",
-			expectError:  true,
-		},
+
 	}
 
 	for _, tc := range tests {
