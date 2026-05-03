@@ -33,3 +33,4 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 test-report.md
+test-report.json

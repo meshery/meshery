@@ -1,64 +1,273 @@
 name: E2E Report on Pull Request Comment
+
 on:
+  workflow_dispatch:
+    inputs:
+      workflow_run_id:
+        description: "Workflow run ID to render E2E comments for"
+        required: true
+        type: string
+      debug_mode:
+        description: "Enable debug logging"
+        required: false
+        default: false
+        type: boolean
   workflow_run:
-    workflows: ['Meshery UI and Server']
+    workflows: ["Meshery UI and Server"]
     types: [completed]
-  
+
 permissions:
-  issues: write
+  actions: read
   contents: read
+  issues: write
   pull-requests: write
 
 jobs:
   e2e-test-reporter:
-    if: github.repository == 'meshery/meshery'
+    if: >
+      github.repository == 'meshery/meshery' &&
+      (github.event_name == 'workflow_dispatch' || github.event.workflow_run.event == 'pull_request_target')
     runs-on: ubuntu-24.04
+    env:
+      WORKFLOW_RUN_ID: ${{ inputs.workflow_run_id || github.event.workflow_run.id }}
     steps:
-    - name: Download e2e test report artifact
-      uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
-      with:
-        name: e2e-test-reporter
-        github-token: ${{ secrets.MESHERY_CI }}
-        run-id: ${{ github.event.workflow_run.id }}
-    - name: Retrieve PR Number
-      run: |
-        echo "PULL_REQUEST=$(cat ./pr/number)" >> $GITHUB_OUTPUT
-      id: pr
-    - name: Find Comment
-      uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3.1.0
-      id: fc
-      with:
-        issue-number: ${{ steps.pr.outputs.PULL_REQUEST }}
-        comment-author: 'github-actions[bot]'
-        body-includes: END-TO-END TESTS
-    - name: Delete Previous Comment
-      if: steps.fc.outputs.comment-id != ''
-      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-      with:
-        script: |
-          github.rest.issues.deleteComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            comment_id: ${{ steps.fc.outputs.comment-id }}
-          })
-    - name: Comment on PR with E2E results
-      if: ${{ !cancelled() }}
-      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-      with:
-        script: |
-          const fs = require('fs')
-          const PRNumber = Number(fs.readFileSync('./pr/number'))
-          const PRSha = fs.readFileSync('./pr/sha', 'utf8').trim()
-          const E2ETestReporter = fs.readFileSync('./ui/test-report.md', 'utf8')
-                
-          const body = `        
-            **Commit SHA:** \`${PRSha}\`  
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Workflow Run ID: ${WORKFLOW_RUN_ID}"
+          echo "::endgroup::"
 
-            ${E2ETestReporter}
-            `
-          await github.rest.issues.createComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: PRNumber,
-            body: body
-          })
+      - name: Download e2e test report artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: e2e-test-reporter
+          github-token: ${{ secrets.MESHERY_CI }}
+          run-id: ${{ env.WORKFLOW_RUN_ID }}
+
+      - name: Retrieve PR metadata
+        id: pr
+        shell: bash
+        run: |
+          echo "pull_request=$(cat ./pr/number)" >> "$GITHUB_OUTPUT"
+          echo "pull_sha=$(cat ./pr/sha)" >> "$GITHUB_OUTPUT"
+
+      - name: Create or update pending PR comment
+        id: pending
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const issueNumber = Number('${{ steps.pr.outputs.pull_request }}');
+            const marker = '<!-- meshery-e2e-report -->';
+            const pendingBody = `${marker}
+            ### END-TO-END TESTS
+
+            Preparing artifact links and failure summaries for \`${{ steps.pr.outputs.pull_sha }}\`.
+
+            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ env.WORKFLOW_RUN_ID }}`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              per_page: 100,
+            });
+
+            const existing = comments.find(
+              (comment) =>
+                comment.user?.login === 'github-actions[bot]' && comment.body?.includes(marker),
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: pendingBody,
+              });
+              core.setOutput('comment_id', String(existing.id));
+              return;
+            }
+
+            const { data: created } = await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: pendingBody,
+            });
+
+            core.setOutput('comment_id', String(created.id));
+
+      - name: Render final PR comment
+        id: render
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const marker = '<!-- meshery-e2e-report -->';
+            const issueNumber = Number('${{ steps.pr.outputs.pull_request }}');
+            const commentId = Number('${{ steps.pending.outputs.comment_id }}');
+            const runId = Number(process.env.WORKFLOW_RUN_ID);
+            const runUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${runId}`;
+            const reportPath = path.join(process.cwd(), 'ui', 'test-report.json');
+            const contextPath = path.join(process.cwd(), 'ui', 'e2e-pr-comment-context.json');
+            const markdownPath = path.join(process.cwd(), 'ui', 'test-report.md');
+
+            const report = fs.existsSync(reportPath)
+              ? JSON.parse(fs.readFileSync(reportPath, 'utf8'))
+              : { summary: {}, failedTests: [], tests: [], relationshipTests: [] };
+            const reportContext = fs.existsSync(contextPath)
+              ? JSON.parse(fs.readFileSync(contextPath, 'utf8'))
+              : null;
+            const markdownReport = fs.existsSync(markdownPath)
+              ? fs.readFileSync(markdownPath, 'utf8').replace(/^### END-TO-END TESTS\s*/u, '').trim()
+              : '';
+
+            const artifactsResponse = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: runId,
+              per_page: 100,
+            });
+
+            const artifactMap = artifactsResponse.data.artifacts.reduce((acc, artifact) => {
+              acc[artifact.name] = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${runId}/artifacts/${artifact.id}`;
+              return acc;
+            }, {});
+
+            const escapeTable = (value) =>
+              String(value ?? '')
+                .replace(/\|/g, '\\|')
+                .replace(/\n/g, '<br />');
+
+            const artifactLinks = [
+              artifactMap['playwright-report']
+                ? `[Playwright HTML report](${artifactMap['playwright-report']})`
+                : null,
+              artifactMap['playwright-traces']
+                ? `[Trace bundle](${artifactMap['playwright-traces']})`
+                : null,
+              artifactMap['meshery-server-log']
+                ? `[Server log](${artifactMap['meshery-server-log']})`
+                : null,
+              artifactMap['allure-results']
+                ? `[Allure results](${artifactMap['allure-results']})`
+                : null,
+              `[Workflow run](${runUrl})`,
+            ].filter(Boolean);
+
+            const failedTests = reportContext?.failedTests ?? report.failedTests ?? [];
+            const visibleFailures = failedTests.slice(0, 20);
+            const failedRows =
+              visibleFailures.length === 0
+                ? 'No failed tests were reported.'
+                : `| Failed test | Provider | Browser | File | Failure summary | Artifact links |
+            | :--- | :---: | :---: | :--- | :--- | :--- |
+            ${visibleFailures
+              .map((test) => {
+                const links = [
+                  test.qa?.shaUrl ? `[QA summary](${test.qa.shaUrl})` : null,
+                  artifactMap['playwright-report']
+                    ? `[Playwright report](${artifactMap['playwright-report']})`
+                    : null,
+                  artifactMap['playwright-traces']
+                    ? `[Trace bundle](${artifactMap['playwright-traces']})`
+                    : null,
+                  artifactMap['meshery-server-log']
+                    ? `[Server log](${artifactMap['meshery-server-log']})`
+                    : null,
+                  artifactMap['allure-results']
+                    ? `[Allure results](${artifactMap['allure-results']})`
+                    : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ');
+
+                return `| ${escapeTable(test.title)} | ${escapeTable(test.provider)} | ${escapeTable(
+                  test.project,
+                )} | \`${escapeTable(test.fileLocation)}\` | ${escapeTable(
+                  test.errorSummary,
+                )} | ${links || 'Pending'} |`;
+              })
+              .join('\n')}`;
+
+            const qaLine = reportContext?.qa
+              ? `**QA summary URLs:** [Latest PR view](${reportContext.qa.latestUrl}) · [Commit-specific view](${reportContext.qa.shaUrl}) _(propagation may lag; GitHub artifact links remain the fallback)_`
+              : '';
+
+            const statusEmoji = Number(report.summary?.failed ?? 0) > 0 ? '❌' : '✅';
+            const overallLine =
+              Number(report.summary?.failed ?? 0) > 0
+                ? 'Some tests failed. Review the failed-test links below for direct access to diagnostics.'
+                : 'All reported tests passed for this run.';
+
+            let body = `${marker}
+            ### END-TO-END TESTS
+
+            **Status:** ${statusEmoji} ${escapeTable(overallLine)}
+            **Commit SHA:** \`${{ steps.pr.outputs.pull_sha }}\`
+            **Summary:** ✅ ${report.summary?.passed ?? 0} passed · ❌ ${report.summary?.failed ?? 0} failed · ⚠️ ${
+              report.summary?.flaky ?? 0
+            } flaky · ⏩ ${report.summary?.skipped ?? 0} skipped · ⌛ ${
+              report.summary?.durationHuman ?? 'n/a'
+            }
+            ${qaLine}
+            **Artifacts:** ${artifactLinks.join(' · ')}
+            `;
+
+            if (failedTests.length > 0) {
+              body += `\n\n**❌ Failed Tests**\n\n${failedRows}`;
+              if (failedTests.length > visibleFailures.length) {
+                body += `\n\n_Showing the first ${visibleFailures.length} failed tests out of ${failedTests.length}. Use the artifact links for the full run output._`;
+              }
+            }
+
+            if (markdownReport && markdownReport.length < 18000) {
+              body += `\n\n<details>\n<summary>Detailed reporter output</summary>\n\n${markdownReport}\n\n</details>`;
+            } else {
+              body += `\n\n<details>\n<summary>Detailed reporter output</summary>\n\nThe reporter output is available in the workflow artifacts linked above.\n\n</details>`;
+            }
+
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: commentId,
+              body,
+            });
+
+      - name: Update PR comment on rendering failure
+        if: ${{ failure() && steps.pending.outputs.comment_id != '' }}
+        uses: actions/github-script@v8
+        with:
+          script: |
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: Number('${{ steps.pending.outputs.comment_id }}'),
+              body: `<!-- meshery-e2e-report -->
+              ### END-TO-END TESTS
+
+              Unable to finish rendering the E2E report for \`${{ steps.pr.outputs.pull_sha }}\`.
+
+              Use the workflow run for diagnostics: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ env.WORKFLOW_RUN_ID }}`,
+            });
+
+      - name: Send Email on Workflow Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v7
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: GitHub Actions - E2E PR comment workflow failure
+          from: |
+            "Meshery CI" <no-reply@meshery.io>
+          to: developers@meshery.io
+          body: |
+            The E2E PR comment workflow failed for ${{ github.repository }}.
+            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

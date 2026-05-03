@@ -1,7 +1,15 @@
+import { createHash } from 'crypto';
 import { readFileSync, writeFileSync } from 'fs';
 import { template } from 'lodash';
 import moment from 'moment';
 import path from 'path';
+
+const ANSI_PATTERN =
+  /[\u001B\u009B][[\]()#;?]*(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]|(?:[^\u001B\u009B])*?[A-PR-TZcf-ntqry=><~])/g;
+const MAX_ERROR_LINES = 4;
+const MAX_ERROR_LENGTH = 320;
+const MAX_SNIPPET_LINES = 8;
+const MAX_SNIPPET_LENGTH = 600;
 
 class MyReporter {
   introMessage = '';
@@ -46,6 +54,7 @@ class MyReporter {
       status,
       result.retry,
       test.retries,
+      test,
       result,
     );
 
@@ -125,33 +134,24 @@ class MyReporter {
       return '';
     }
 
-    let details = '';
+    let details = `| Test | Provider | Browser | File | Failure Summary |\n| :--- | :---: | :---: | :--- | :--- |\n`;
     for (const failedTest of this.failedTestDetails) {
-      const escapedTitle = failedTest.title.replace(/[|]/g, '\\|');
-      details += `
-<details>
-<summary>❌ ${escapedTitle} (${failedTest.provider} - ${failedTest.project})</summary>
-
-**File Location:** \`${failedTest.fileLocation}\`
-
-**Error Message:**
-\`\`\`
-${failedTest.errorMessage}
-\`\`\`
-
-${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`` : ''}
-
-</details>
-`;
+      details += `\n| ${this.escapeTableValue(failedTest.title)} | ${this.escapeTableValue(
+        failedTest.provider,
+      )} | ${this.escapeTableValue(failedTest.project)} | \`${failedTest.fileLocation}\` | ${
+        failedTest.errorSummary
+      } |`;
     }
     return details;
   }
 
   async onEnd(result) {
     const message = await this.buildMessage(result);
+    const jsonReport = this.buildStructuredReport(result);
 
     try {
       writeFileSync('test-report.md', message);
+      writeFileSync('test-report.json', JSON.stringify(jsonReport, null, 2));
     } catch (e) {
       console.log('Cannot write test reporter ', e);
     }
@@ -181,7 +181,7 @@ ${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`
     this.countLog++;
   }
 
-  addTestTable(project, provider, title, tags, status, retry, retries, result) {
+  addTestTable(project, provider, title, tags, status, retry, retries, test, result) {
     this.countTestStatus(tags, status, retry, retries);
 
     const lastRetriesRun = retry === retries;
@@ -213,14 +213,20 @@ ${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`
 
     // Collect failed test details for collapsible section
     if (isFail && lastRetriesRun && !isUnstableTest && result.error) {
+      const fileLocation = this.getRelativePath(
+        result.error.location?.file ?? test?.location?.file ?? 'Not Found',
+      );
       this.failedTestDetails.push({
+        id: this.buildTestId(project, provider, title, fileLocation),
         provider: provider,
         project: project,
         title: title,
         tags: allTags,
-        fileLocation: result.error.location?.file ?? 'Not Found',
-        errorMessage: result.error.message ?? 'No error message available',
-        snippet: result.error.snippet ?? null,
+        fileLocation,
+        errorSummary: this.summarizeError(result.error.message),
+        errorMessage: this.cleanText(result.error.message ?? 'No error message available'),
+        snippet: this.cleanSnippet(result.error.snippet),
+        attachments: this.collectAttachments(result.attachments),
       });
     }
   }
@@ -289,6 +295,117 @@ ${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`
       relationshipTestTable: this.buildRelationshipTestTable(),
       relationshipTestCount: this.relationshipTestData.length,
     });
+  }
+
+  buildStructuredReport(result) {
+    const duration = moment.duration(result.duration, 'milliseconds');
+
+    return {
+      version: 1,
+      generatedAt: new Date().toISOString(),
+      summary: {
+        startedAt: this.introMessage.replace('- Testing started at: ', ''),
+        durationMs: result.duration,
+        durationHuman: `${Math.floor(duration.asMinutes())} minutes and ${duration.seconds()} seconds`,
+        total: this.passed + this.failed + this.flaky + this.skipped,
+        passed: this.passed,
+        failed: this.failed,
+        flaky: this.flaky,
+        skipped: this.skipped,
+        overallStatus: this.failed > 0 ? 'failed' : 'passed',
+      },
+      tests: this.testTableData.map((test) => ({
+        provider: test.provider,
+        project: test.project,
+        title: test.title,
+        tags: test.tags,
+        statusEmoji: test.statusEmoji,
+      })),
+      failedTests: this.failedTestDetails,
+      relationshipTests: this.relationshipTestData,
+    };
+  }
+
+  buildTestId(project, provider, title, fileLocation) {
+    return createHash('sha1')
+      .update([project, provider, title, fileLocation].join('::'))
+      .digest('hex')
+      .slice(0, 12);
+  }
+
+  collectAttachments(attachments = []) {
+    return attachments
+      .filter((attachment) => attachment.path)
+      .map((attachment) => ({
+        name: attachment.name,
+        contentType: attachment.contentType ?? null,
+        path: this.getRelativePath(attachment.path),
+      }));
+  }
+
+  getRelativePath(filePath) {
+    if (!filePath || filePath === 'Not Found') {
+      return 'Not Found';
+    }
+
+    return path.relative(process.cwd(), filePath) || filePath;
+  }
+
+  cleanSnippet(snippet) {
+    const cleanValue = this.cleanText(snippet);
+    if (!cleanValue) {
+      return null;
+    }
+
+    const lines = cleanValue.split('\n').slice(0, MAX_SNIPPET_LINES);
+    const normalized = lines.join('\n');
+    if (normalized.length <= MAX_SNIPPET_LENGTH) {
+      return normalized;
+    }
+
+    return `${normalized.slice(0, MAX_SNIPPET_LENGTH - 1)}…`;
+  }
+
+  summarizeError(message) {
+    const cleanValue = this.cleanText(message);
+    if (!cleanValue) {
+      return 'No failure summary available.';
+    }
+
+    const summary = cleanValue
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(0, MAX_ERROR_LINES)
+      .join(' ');
+
+    const normalized = summary.replace(/\s+/g, ' ');
+    if (normalized.length <= MAX_ERROR_LENGTH) {
+      return this.escapeTableValue(normalized);
+    }
+
+    return `${this.escapeTableValue(normalized.slice(0, MAX_ERROR_LENGTH - 1))}…`;
+  }
+
+  cleanText(text) {
+    if (!text) {
+      return '';
+    }
+
+    return text
+      .replace(ANSI_PATTERN, '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
+      .split('\n')
+      .map((line) => line.trimEnd())
+      .join('\n')
+      .trim();
+  }
+
+  escapeTableValue(value) {
+    return String(value ?? '')
+      .replace(/\|/g, '\\|')
+      .replace(/\n/g, '<br />');
   }
 }
 

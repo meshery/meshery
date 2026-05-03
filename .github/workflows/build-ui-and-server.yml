@@ -1,5 +1,12 @@
 name: Meshery UI and Server
 on:
+  workflow_dispatch:
+    inputs:
+      debug_mode:
+        description: "Enable debug logging"
+        required: false
+        default: false
+        type: boolean
   pull_request_target:
     types: [opened, synchronize, reopened]
     branches:
@@ -18,7 +25,8 @@ on:
       - "*.md"
       - "*.github/**"
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   ui-build:
@@ -26,6 +34,14 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "::endgroup::"
       - name: Check out code
         uses: actions/checkout@v6
         with:
@@ -59,6 +75,15 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "::endgroup::"
       - name: Check out code
         uses: actions/checkout@v6
         with:
@@ -118,48 +143,6 @@ jobs:
           mkdir -p ./pr
           echo "${{ github.event.number }}" > ./pr/number
           echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha
-
-      - name: Checkout QA
-        uses: actions/checkout@v6
-        # run only for pushes to master
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
-        with:
-          repository: meshery/qa
-          path: ./qa
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
-
-      - name: Sync results with qa
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
-        working-directory: qa
-        run: |
-          make meshery-results-sync MESHERY_RESULTS_PATH=../ui/allure-results
-
-      - name: Pull latest qa changes
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
-        working-directory: qa
-        run: git pull --rebase --autostash origin master
-
-      - name: Commit & push academy to qa
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: "[Meshery] Sync Meshery E2E Test Results - ${GITHUB_SHA}"
-          commit_options: "--signoff"
-          repository: qa
-          commit_user_name: meshery-ci
-          commit_user_email: ci@meshery.io
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-
-      - name: Upload Test Report
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
-        with:
-          name: e2e-test-reporter
-          path: |
-            ui/test-report.md
-            pr/
-          retention-days: 14
       - name: Upload Playwright Trace
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v6
@@ -174,6 +157,13 @@ jobs:
           name: playwright-report
           path: ui/playwright-report/
           retention-days: 14
+      - name: Upload Allure Results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: allure-results
+          path: ui/allure-results/
+          retention-days: 14
       - name: Upload Meshery Server Log
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v6
@@ -181,12 +171,111 @@ jobs:
           name: meshery-server-log
           path: logs/
           retention-days: 14
+      - name: Generate PR E2E assets
+        if: ${{ !cancelled() && github.event_name == 'pull_request_target' }}
+        uses: actions/github-script@v8
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+        with:
+          script: |
+            await require('./.github/scripts/generate-e2e-pr-assets.js')({ github, context, core })
+      - name: Checkout QA
+        uses: actions/checkout@v6
+        if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'pull_request_target') }}
+        with:
+          repository: meshery/qa
+          path: ./qa
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Pull latest qa changes
+        if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'pull_request_target') }}
+        working-directory: qa
+        run: git pull --rebase --autostash origin master
+
+      - name: Sync results with qa
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        working-directory: qa
+        run: |
+          make meshery-results-sync MESHERY_RESULTS_PATH=../ui/allure-results
+
+      - name: Sync PR E2E summary with qa
+        if: ${{ !cancelled() && github.event_name == 'pull_request_target' }}
+        run: |
+          PR_DIR="qa/meshery-results/pr-reports/pr-${{ github.event.number }}"
+          SHA_DIR="${PR_DIR}/${{ github.event.pull_request.head.sha }}"
+          LATEST_DIR="${PR_DIR}/latest"
+          rm -rf "${SHA_DIR}" "${LATEST_DIR}"
+          mkdir -p "${SHA_DIR}" "${LATEST_DIR}"
+          cp -R ui/qa-pr-report/. "${SHA_DIR}/"
+          cp -R ui/qa-pr-report/. "${LATEST_DIR}/"
+
+      - name: Commit & push qa results
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "[Meshery] Sync Meshery E2E Test Results - ${GITHUB_SHA}"
+          commit_options: "--signoff"
+          repository: qa
+          commit_user_name: meshery-ci
+          commit_user_email: ci@meshery.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Commit & push qa PR summary
+        if: ${{ !cancelled() && github.event_name == 'pull_request_target' }}
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "[Meshery] Sync PR E2E Summary - PR #${{ github.event.number }} - ${{ github.event.pull_request.head.sha }}"
+          commit_options: "--signoff"
+          repository: qa
+          commit_user_name: meshery-ci
+          commit_user_email: ci@meshery.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Upload Test Report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
+        with:
+          name: e2e-test-reporter
+          path: |
+            ui/test-report.md
+            ui/test-report.json
+            ui/e2e-pr-comment-context.json
+            pr/
+          retention-days: 14
+          if-no-files-found: ignore
+      - name: Send Email on Workflow Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v7
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: GitHub Actions - Meshery UI and Server workflow failure
+          from: |
+            "Meshery CI" <no-reply@meshery.io>
+          to: developers@meshery.io
+          body: |
+            The Meshery UI and Server workflow failed for ${{ github.repository }}.
+            Workflow: ${{ github.workflow }}
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "::endgroup::"
       - name: Check out code
         uses: actions/checkout@v6
         with:

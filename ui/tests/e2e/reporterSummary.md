@@ -2,7 +2,7 @@
 
 <%- introMessage %>
 
-**📦 Test Result Summary**
+**📦 Summary**
 
 - ✅ <%- passed %> passed
 - ❌ <%- failed %> failed
@@ -13,26 +13,26 @@
 
 <%- failed > 0 ? "**Overall Result**: 👎 Some tests failed." : "**Overall Result**: 👍 All tests passed." %>
 
+<% if (failedTestCount > 0) { %>
+
+**❌ Failed Test Summary**
+
+Review the compact failure summary below. Full diagnostics are kept in workflow artifacts.
+
+<%= failedTestDetails %>
+
+<% } %>
+
 <% if (testTable) { %>
 
 <details>
-    <summary>[Show/Hide] Test Result Details</summary>
+    <summary>[Show/Hide] Full Test Matrix</summary>
     <div markdown="1">
 
 <%- testTable %>
 
 </div>
 </details>
-<% } %>
-
-<% if (failedTestCount > 0) { %>
-
-**❌ Failed Test Details**
-
-The following tests failed. Click on each to see the failure reason:
-
-<%= failedTestDetails %>
-
 <% } %>
 
 <% if (relationshipTestCount > 0) { %>
