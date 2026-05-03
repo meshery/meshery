@@ -31,7 +31,7 @@ export const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }) =>
         }}
       >
         <StyledFooterText onClick={handleMesheryCommunityClick}>
-          {capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted || isPlaygroundBuild ? (
+          {capabilitiesRegistry?.restrictedAccess?.isMesheryUIRestricted || isPlaygroundBuild ? (
             'ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.'
           ) : (
             <>

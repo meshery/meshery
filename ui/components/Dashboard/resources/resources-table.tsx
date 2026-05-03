@@ -112,7 +112,7 @@ const ResourcesTableInner = (props) => {
         selectedK8sContexts,
       );
 
-  const encodedClusterIds = encodeURIComponent(JSON.stringify(clusterIds));
+  const encodedClusterIds = JSON.stringify(clusterIds);
 
   const { notify } = useNotification();
   const [fetchMeshSyncResources] = useLazyGetMeshSyncResourcesQuery();
@@ -124,7 +124,7 @@ const ResourcesTableInner = (props) => {
       query.resourceName ||
       (['Node', 'Namespace'].includes(query.resource) ? query.resource : search);
     const resourceCategory = query.resource || tableConfig.name;
-    const decodedClusterIds = JSON.parse(decodeURIComponent(encodedClusterIds));
+    const decodedClusterIds = JSON.parse(encodedClusterIds);
     if (decodedClusterIds.length === 0) {
       setLoading(false);
       return;
