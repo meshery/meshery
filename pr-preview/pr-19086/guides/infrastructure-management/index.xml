@@ -44,11 +44,19 @@ See your deployment before you merge. Connect Kanvas to your GitHub repo and see
 &lt;h3 id="what-is-the-notification-center"&gt;
 	What is the Notification Center?
 &lt;/h3&gt;
-&lt;p&gt;The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.&lt;/p&gt;</description></item><item><title>Multi-cluster Management</title><link>/guides/infrastructure-management/multi-cluster-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/multi-cluster-management/</guid><description>&lt;h1 id="multi-cluster-management-with-meshery"&gt;
-	Multi-cluster Management with Meshery
+&lt;p&gt;The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.&lt;/p&gt;</description></item><item><title>Tutorial: Multi-cluster Management</title><link>/guides/infrastructure-management/multi-cluster-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/multi-cluster-management/</guid><description>&lt;h1 id="tutorial-multi-cluster-management-with-meshery"&gt;
+	Tutorial: Multi-cluster Management with Meshery
 &lt;/h1&gt;
-&lt;p&gt;Meshery is designed as a multi-cluster management plane, allowing you to connect, manage, and operate multiple Kubernetes clusters from a single deployment. This guide walks you through the process of adding multiple clusters and managing them effectively.&lt;/p&gt;
-&lt;h2 id="overview"&gt;
-	Overview
+&lt;p&gt;This tutorial walks you through the process of connecting and managing multiple Kubernetes clusters. Meshery acts as a multi-cluster management plane, allowing you to operate disparate infrastructure from a single deployment.&lt;/p&gt;
+&lt;h2 id="prerequisites"&gt;
+	Prerequisites
 &lt;/h2&gt;
-&lt;p&gt;In a typical cloud-native environment, applications are often distributed across multiple clusters for high availability, geographic distribution, or environment separation (e.g., Development, Staging, Production). Meshery simplifies the management of these clusters by providing a unified interface to:&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;To complete this tutorial, you will need:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Meshery installed and running (see &lt;a href="../../installation/"&gt;Installation&lt;/a&gt;).&lt;/li&gt;
+&lt;li&gt;A &lt;code&gt;kubeconfig&lt;/code&gt; file containing one or more cluster contexts.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="connecting-multiple-clusters"&gt;
+	Connecting Multiple Clusters
+&lt;/h2&gt;
+&lt;p&gt;Meshery can discover clusters automatically via your environment or you can add them manually. A single &lt;code&gt;kubeconfig&lt;/code&gt; file can contain multiple contexts, all of which can be imported into Meshery at once.&lt;/p&gt;</description></item></channel></rss>
