@@ -1,10 +1,9 @@
-// @ts-nocheck
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
 import { useTheme, PlainCard, DocumentIcon, DesignIcon } from '@sistent/sistent';
 import React from 'react';
 import { iconMedium } from 'css/icons.styles';
 
-const HelpCenterWidget = (props) => {
+const HelpCenterWidget = (props: { iconsProps?: object }) => {
   const theme = useTheme();
   const resources = [
     {

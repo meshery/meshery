@@ -7,20 +7,22 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"runtime/debug"
 	"strings"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
-	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshery/server/models/pattern/utils"
+	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 
+	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -395,7 +397,7 @@ func (h *Handler) EvaluateDesign(
 	return lastEvaluationResponse, nil
 }
 
-func processEvaluationResponse(registryManager *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
+func processEvaluationResponse(reg *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
 
 	registryCache := &registry.RegistryEntityCache{}
 
@@ -437,12 +439,16 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 			compFilter.ModelName = _c.ModelReference.Name
 		}
 
-		entities, _, _, _ := registryManager.GetEntitiesMemoized(compFilter, registryCache)
+		entities, _, _, _ := reg.GetEntitiesMemoized(compFilter, registryCache)
 		if len(entities) == 0 {
 			unknownComponents = append(unknownComponents, &_c)
 			continue
 		}
-		_component, _ := entities[0].(*component.ComponentDefinition)
+		_component, ok := entities[0].(*component.ComponentDefinition)
+		if !ok || _component == nil {
+			unknownComponents = append(unknownComponents, &_c)
+			continue
+		}
 
 		_component.ID = _c.ID
 		if _c.DisplayName != "" {
@@ -513,6 +519,68 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 	return unknownComponents
 }
 
+// runRelationshipEvaluation runs eval behind a panic-recovery boundary and
+// fans the result out to both the per-request channels and the coalescing
+// tracker so coalesced followers unblock on every termination path
+// (success, error, cancellation, panic).
+//
+// A panic inside EvaluateDesign (engine bug, malformed design, nil deref
+// deep in the registry) used to crash the whole Meshery process: an
+// unrecovered panic in a non-handler goroutine is fatal in Go, and
+// gorilla/mux's per-request recovery does not extend to goroutines a
+// handler spawns. In CI this manifested as the e2e suite cascading from
+// one failed /relationships/evaluate call to ECONNREFUSED on every
+// subsequent request. Centralising the recovery here keeps the server
+// alive and lets the requesting client see a 500.
+//
+// Defined at package scope (rather than inlined as an anonymous goroutine)
+// so the panic path is unit-testable without standing up the full HTTP
+// handler dependency tree.
+func runRelationshipEvaluation(
+	ctx context.Context,
+	log logger.Handler,
+	tracker *evaluationTracker,
+	designKey string,
+	eval func() (pattern.EvaluationResponse, error),
+	respCh chan<- pattern.EvaluationResponse,
+	errCh chan<- error,
+) {
+	defer func() {
+		r := recover()
+		if r == nil {
+			return
+		}
+		// Stack stays server-side: ErrPolicyEval flows the inner error
+		// string into the JSON longDescription returned to API clients,
+		// so the full stack is logged here and only the panic value
+		// propagates to errCh / coalesced followers / the response body.
+		panicErr := fmt.Errorf("panic during relationship evaluation: %v", r)
+		log.Error(fmt.Errorf("%s\n%s", panicErr.Error(), debug.Stack()))
+		tracker.publish(designKey, evalResult{err: panicErr})
+		// Non-blocking send: if the leader's select already returned
+		// via ctx.Done() the receiver is gone and a blocking send
+		// would leak this goroutine forever.
+		select {
+		case errCh <- panicErr:
+		default:
+		}
+	}()
+
+	if ctx.Err() != nil {
+		tracker.publish(designKey, evalResult{err: ctx.Err()})
+		return
+	}
+
+	resp, err := eval()
+	if err != nil {
+		tracker.publish(designKey, evalResult{err: err})
+		errCh <- err
+		return
+	}
+	tracker.publish(designKey, evalResult{resp: resp})
+	respCh <- resp
+}
+
 func (h *Handler) EvaluateRelationshipPolicy(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -572,22 +640,17 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	evalRespChan := make(chan pattern.EvaluationResponse, 1)
 	evalErrChan := make(chan error, 1)
 
-	go func() {
-		// Skip evaluation if the request was already cancelled
-		if evalCtx.Err() != nil {
-			h.evalTracker.publish(designKey, evalResult{err: evalCtx.Err()})
-			return
-		}
-		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
-
-		if err != nil {
-			h.evalTracker.publish(designKey, evalResult{err: err})
-			evalErrChan <- err
-		} else {
-			h.evalTracker.publish(designKey, evalResult{resp: evaluationResponse})
-			evalRespChan <- evaluationResponse
-		}
-	}()
+	go runRelationshipEvaluation(
+		evalCtx,
+		h.log,
+		h.evalTracker,
+		designKey,
+		func() (pattern.EvaluationResponse, error) {
+			return h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
+		},
+		evalRespChan,
+		evalErrChan,
+	)
 
 	select {
 
@@ -710,10 +773,10 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
+		Page:       page,
+		PageSize:   int(pgSize),
 		TotalCount: 0,
-		Policies: entities,
+		Policies:   entities,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -753,10 +816,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
+		Page:       page,
+		PageSize:   int(pgSize),
 		TotalCount: 0,
-		Policies: entities,
+		Policies:   entities,
 	}
 
 	if err := enc.Encode(response); err != nil {

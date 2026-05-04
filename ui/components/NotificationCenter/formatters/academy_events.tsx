@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import {
   Box,
@@ -14,7 +13,25 @@ import {
   Typography,
 } from '@sistent/sistent';
 
-export const AcademyEventsFormatter = ({ event }) => {
+type AcademyEvent = {
+  metadata: {
+    result: {
+      quiz: {
+        parent: { title: string };
+        description?: string;
+        time_limit?: string | number;
+        permalink?: string;
+      };
+      attempted_at: string | number | Date;
+      percentage_scored: number | string;
+      pass_percentage: number;
+      passed: boolean;
+      correct_submissions: Record<string, boolean>;
+    };
+  };
+};
+
+export const AcademyEventsFormatter = ({ event }: { event: AcademyEvent }) => {
   const result = event.metadata.result;
   const quiz = result.quiz;
   if (!result || !quiz || !quiz.parent) {

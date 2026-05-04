@@ -1,0 +1,355 @@
+{
+  "id": "8738285d-de4d-421a-aab7-e8760ba57537",
+  "name": "NGINX Pod with Meshery Milestone app",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.11",
+  "metadata": {
+    "resolvedAliases": {
+      "2aa5d193-bb34-4b93-a29a-0bf98b17c99c": {
+        "alias_component_id": "2aa5d193-bb34-4b93-a29a-0bf98b17c99c",
+        "immediate_parent_id": "5b4b4573-d81a-4f26-b838-e6c9bce1b961",
+        "immediate_ref_field_path": [
+          "configuration",
+          "spec",
+          "containers",
+          "0"
+        ],
+        "relationship_id": "da8ecd2c-aa9f-4a24-af77-a43f1d2330b5",
+        "resolved_parent_id": "5b4b4573-d81a-4f26-b838-e6c9bce1b961",
+        "resolved_ref_field_path": [
+          "configuration",
+          "spec",
+          "containers",
+          "0"
+        ]
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "1c463748-0c91-44c0-8aec-c5dd63e032d3",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "This is a simple example design, containing a single Kubernetes Pod with sample application \"meshery-milestone\" running on NGINX.",
+        "body-text-color": "rgb(177,182,184)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-color": "rgb(0,179,159)",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 60,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 510.7690355329949,
+          "y": 618.9208121827411
+        },
+        "primaryColor": "rgb(0,179,159)",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 180,
+        "z-index": 1
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "5b4b4573-d81a-4f26-b838-e6c9bce1b961",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "pod-wy",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        }
+      },
+      "styles": {
+        "background-opacity": 0.5,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-width": 2,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 348.2637414852646,
+          "y": 607.4504079914683
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/pod-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/pod-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/pod-white.svg",
+        "width": 24,
+        "z-index": 2
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "containers": [
+            {
+              "args": [],
+              "command": [],
+              "env": [],
+              "envFrom": [],
+              "image": "meshery/meshery-milestone",
+              "name": "meshery-milestone",
+              "ports": [],
+              "resizePolicy": [],
+              "volumeDevices": [],
+              "volumeMounts": []
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Pod",
+        "schema": ""
+      }
+    },
+    {
+      "id": "2aa5d193-bb34-4b93-a29a-0bf98b17c99c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "containers.0",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "position": {
+          "x": 350,
+          "y": 612
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Container",
+        "schema": ""
+      }
+    }
+  ],
+  "preferences": {
+    "layers": {
+      "expandedComponents": {
+        "5b4b4573-d81a-4f26-b838-e6c9bce1b961": true
+      },
+      "relationships": {
+        "hierarchical-parent-inventory": false,
+        "hierarchical-sibling-matchlabels": false
+      }
+    }
+  },
+  "relationships": [
+    {
+      "id": "da8ecd2c-aa9f-4a24-af77-a43f1d2330b5",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "e633cca6-b6e1-65bf-a440-0d58915e75dd",
+        "registrant": {
+          "kind": ""
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "2aa5d193-bb34-4b93-a29a-0bf98b17c99c",
+                "kind": "Container",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "meshery-core",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ],
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "5b4b4573-d81a-4f26-b838-e6c9bce1b961",
+                "kind": "Pod",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ],
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "alias",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    }
+  ]
+}
