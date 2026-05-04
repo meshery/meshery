@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState } from 'react';
 import { Box, Typography, styled, CustomTooltip, Collapse, ErrorBoundary } from '@sistent/sistent';
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';

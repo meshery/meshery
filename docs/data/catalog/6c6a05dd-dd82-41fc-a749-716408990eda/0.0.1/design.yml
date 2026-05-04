@@ -1,0 +1,1553 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "ditto-operator-0.3.0.tgz",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.2",
+  "components": [
+    {
+      "id": "e43f388f-5aa5-4efc-b067-598441da0965",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "dittos.iot.eclipse.org",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "dittos.iot.eclipse.org"
+        },
+        "spec": {
+          "group": "iot.eclipse.org",
+          "names": {
+            "categories": [],
+            "kind": "Ditto",
+            "plural": "dittos",
+            "shortNames": [],
+            "singular": "ditto"
+          },
+          "scope": "Namespaced",
+          "versions": [
+            {
+              "additionalPrinterColumns": [
+                {
+                  "jsonPath": ".status.phase",
+                  "name": "Phase",
+                  "type": "string"
+                },
+                {
+                  "jsonPath": ".status.message",
+                  "name": "Message",
+                  "type": "string"
+                }
+              ],
+              "name": "v1alpha1",
+              "schema": {
+                "openAPIV3Schema": {
+                  "description": "Auto-generated derived type for DittoSpec via `CustomResource`",
+                  "properties": {
+                    "spec": {
+                      "properties": {
+                        "createDefaultUser": {
+                          "description": "Create the default \"ditto\" user when initially deploying.\n\nThis has no effect when using OAuth2.",
+                          "nullable": true,
+                          "type": "boolean"
+                        },
+                        "devops": {
+                          "description": "Devops endpoint",
+                          "nullable": true,
+                          "properties": {
+                            "expose": {
+                              "type": "boolean"
+                            },
+                            "insecure": {
+                              "type": "boolean"
+                            },
+                            "password": {
+                              "nullable": true,
+                              "oneOf": [
+                                {
+                                  "required": [
+                                    "value"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "secret"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "configMap"
+                                  ]
+                                }
+                              ],
+                              "properties": {
+                                "configMap": {
+                                  "description": "Selects a key from a ConfigMap.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key to select.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the ConfigMap or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "secret": {
+                                  "description": "SecretKeySelector selects a key of a Secret.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key of the secret to select from.  Must be a valid secret key.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the Secret or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "statusPassword": {
+                              "nullable": true,
+                              "oneOf": [
+                                {
+                                  "required": [
+                                    "value"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "secret"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "configMap"
+                                  ]
+                                }
+                              ],
+                              "properties": {
+                                "configMap": {
+                                  "description": "Selects a key from a ConfigMap.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key to select.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the ConfigMap or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "secret": {
+                                  "description": "SecretKeySelector selects a key of a Secret.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key of the secret to select from.  Must be a valid secret key.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the Secret or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "disableInfraProxy": {
+                          "description": "Don't expose infra endpoints",
+                          "type": "boolean"
+                        },
+                        "disableWelcomePage": {
+                          "description": "Allow disabling the welcome page",
+                          "type": "boolean"
+                        },
+                        "ingress": {
+                          "description": "Configure ingress options\n\nIf the field is missing, no ingress resource is being created.",
+                          "nullable": true,
+                          "properties": {
+                            "annotations": {
+                              "additionalProperties": {
+                                "type": "string"
+                              },
+                              "description": "Annotations which should be applied to the ingress resources.\n\nThe annotations will be set to the resource, not merged. All changes done on the ingress resource itself will be overridden.\n\nIf no annotations are configured, reasonable defaults will be used instead. You can prevent this by setting a single dummy annotation.",
+                              "type": "object"
+                            },
+                            "className": {
+                              "description": "The optional ingress class name.",
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "host": {
+                              "description": "The host of the ingress resource.\n\nThis is required if the ingress resource should be created by the operator",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "host"
+                          ],
+                          "type": "object"
+                        },
+                        "keycloak": {
+                          "description": "Enable and configure keycloak integration.",
+                          "nullable": true,
+                          "properties": {
+                            "clientId": {
+                              "oneOf": [
+                                {
+                                  "required": [
+                                    "value"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "secret"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "configMap"
+                                  ]
+                                }
+                              ],
+                              "properties": {
+                                "configMap": {
+                                  "description": "Selects a key from a ConfigMap.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key to select.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the ConfigMap or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "secret": {
+                                  "description": "SecretKeySelector selects a key of a Secret.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key of the secret to select from.  Must be a valid secret key.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the Secret or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "clientSecret": {
+                              "oneOf": [
+                                {
+                                  "required": [
+                                    "value"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "secret"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "configMap"
+                                  ]
+                                }
+                              ],
+                              "properties": {
+                                "configMap": {
+                                  "description": "Selects a key from a ConfigMap.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key to select.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the ConfigMap or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "secret": {
+                                  "description": "SecretKeySelector selects a key of a Secret.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key of the secret to select from.  Must be a valid secret key.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the Secret or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "description": {
+                              "description": "Description of this login option.",
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "disableProxy": {
+                              "type": "boolean"
+                            },
+                            "groups": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            },
+                            "label": {
+                              "description": "Label when referencing this login option.",
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "realm": {
+                              "type": "string"
+                            },
+                            "redirectUrl": {
+                              "description": "Allow overriding the redirect URL.",
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "url": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "clientId",
+                            "clientSecret",
+                            "realm",
+                            "url"
+                          ],
+                          "type": "object"
+                        },
+                        "mongoDb": {
+                          "default": {
+                            "host": "mongodb",
+                            "port": 27017
+                          },
+                          "properties": {
+                            "database": {
+                              "description": "The optional database name used to connect, defaults to \"ditto\".",
+                              "nullable": true,
+                              "oneOf": [
+                                {
+                                  "required": [
+                                    "value"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "secret"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "configMap"
+                                  ]
+                                }
+                              ],
+                              "properties": {
+                                "configMap": {
+                                  "description": "Selects a key from a ConfigMap.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key to select.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the ConfigMap or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "secret": {
+                                  "description": "SecretKeySelector selects a key of a Secret.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key of the secret to select from.  Must be a valid secret key.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the Secret or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "host": {
+                              "default": "mongodb",
+                              "description": "The hostname of the MongoDB instance.",
+                              "type": "string"
+                            },
+                            "password": {
+                              "description": "The password used to connect to the MongoDB instance.",
+                              "nullable": true,
+                              "oneOf": [
+                                {
+                                  "required": [
+                                    "value"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "secret"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "configMap"
+                                  ]
+                                }
+                              ],
+                              "properties": {
+                                "configMap": {
+                                  "description": "Selects a key from a ConfigMap.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key to select.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the ConfigMap or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "secret": {
+                                  "description": "SecretKeySelector selects a key of a Secret.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key of the secret to select from.  Must be a valid secret key.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the Secret or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "port": {
+                              "default": 27017,
+                              "description": "The port name of the MongoDB instance.",
+                              "format": "uint16",
+                              "minimum": 0,
+                              "type": "integer"
+                            },
+                            "username": {
+                              "description": "The username used to connect to the MongoDB instance.",
+                              "nullable": true,
+                              "oneOf": [
+                                {
+                                  "required": [
+                                    "value"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "secret"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "configMap"
+                                  ]
+                                }
+                              ],
+                              "properties": {
+                                "configMap": {
+                                  "description": "Selects a key from a ConfigMap.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key to select.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the ConfigMap or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "secret": {
+                                  "description": "SecretKeySelector selects a key of a Secret.",
+                                  "properties": {
+                                    "key": {
+                                      "description": "The key of the secret to select from.  Must be a valid secret key.",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "description": "Specify whether the Secret or its key must be defined",
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "key"
+                                  ],
+                                  "type": "object"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "oauth": {
+                          "description": "Provide additional OAuth configuration",
+                          "nullable": true,
+                          "properties": {
+                            "issuers": {
+                              "additionalProperties": {
+                                "properties": {
+                                  "subjects": {
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "type": "array"
+                                  },
+                                  "url": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "url"
+                                ],
+                                "type": "object"
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "openApi": {
+                          "description": "Influence some options of the hosted OpenAPI spec.",
+                          "nullable": true,
+                          "properties": {
+                            "serverLabel": {
+                              "nullable": true,
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "pullPolicy": {
+                          "description": "Override the imagePullPolicy\n\nBy default this will use Always if the image version is \":latest\" and IfNotPresent otherwise",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "registry": {
+                          "description": "Allow to override the Ditto container registry",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "services": {
+                          "default": {
+                            "concierge": {},
+                            "connectivity": {},
+                            "gateway": {},
+                            "policies": {},
+                            "things": {},
+                            "thingsSearch": {}
+                          },
+                          "description": "Services configuration",
+                          "properties": {
+                            "concierge": {
+                              "default": {},
+                              "description": "The concierge service",
+                              "properties": {
+                                "additionalProperties": {
+                                  "additionalProperties": {
+                                    "type": "string"
+                                  },
+                                  "description": "Additional system properties, which will be appended to the list of system properties.\n\nNote: Setting arbitrary system properties may break the deployment and may also not be compatible with future versions.",
+                                  "type": "object"
+                                },
+                                "logLevel": {
+                                  "description": "Allow configuring the application log level.",
+                                  "enum": [
+                                    "Trace",
+                                    "Debug",
+                                    "Info",
+                                    "Warning",
+                                    "Error"
+                                  ],
+                                  "nullable": true,
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "connectivity": {
+                              "default": {},
+                              "description": "The connectivity service",
+                              "properties": {
+                                "additionalProperties": {
+                                  "additionalProperties": {
+                                    "type": "string"
+                                  },
+                                  "description": "Additional system properties, which will be appended to the list of system properties.\n\nNote: Setting arbitrary system properties may break the deployment and may also not be compatible with future versions.",
+                                  "type": "object"
+                                },
+                                "logLevel": {
+                                  "description": "Allow configuring the application log level.",
+                                  "enum": [
+                                    "Trace",
+                                    "Debug",
+                                    "Info",
+                                    "Warning",
+                                    "Error"
+                                  ],
+                                  "nullable": true,
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "gateway": {
+                              "default": {},
+                              "description": "The gateway service",
+                              "properties": {
+                                "additionalProperties": {
+                                  "additionalProperties": {
+                                    "type": "string"
+                                  },
+                                  "description": "Additional system properties, which will be appended to the list of system properties.\n\nNote: Setting arbitrary system properties may break the deployment and may also not be compatible with future versions.",
+                                  "type": "object"
+                                },
+                                "logLevel": {
+                                  "description": "Allow configuring the application log level.",
+                                  "enum": [
+                                    "Trace",
+                                    "Debug",
+                                    "Info",
+                                    "Warning",
+                                    "Error"
+                                  ],
+                                  "nullable": true,
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "policies": {
+                              "default": {},
+                              "description": "The policies service",
+                              "properties": {
+                                "additionalProperties": {
+                                  "additionalProperties": {
+                                    "type": "string"
+                                  },
+                                  "description": "Additional system properties, which will be appended to the list of system properties.\n\nNote: Setting arbitrary system properties may break the deployment and may also not be compatible with future versions.",
+                                  "type": "object"
+                                },
+                                "logLevel": {
+                                  "description": "Allow configuring the application log level.",
+                                  "enum": [
+                                    "Trace",
+                                    "Debug",
+                                    "Info",
+                                    "Warning",
+                                    "Error"
+                                  ],
+                                  "nullable": true,
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "things": {
+                              "default": {},
+                              "description": "The things service",
+                              "properties": {
+                                "additionalProperties": {
+                                  "additionalProperties": {
+                                    "type": "string"
+                                  },
+                                  "description": "Additional system properties, which will be appended to the list of system properties.\n\nNote: Setting arbitrary system properties may break the deployment and may also not be compatible with future versions.",
+                                  "type": "object"
+                                },
+                                "logLevel": {
+                                  "description": "Allow configuring the application log level.",
+                                  "enum": [
+                                    "Trace",
+                                    "Debug",
+                                    "Info",
+                                    "Warning",
+                                    "Error"
+                                  ],
+                                  "nullable": true,
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "thingsSearch": {
+                              "default": {},
+                              "description": "The things search service",
+                              "properties": {
+                                "additionalProperties": {
+                                  "additionalProperties": {
+                                    "type": "string"
+                                  },
+                                  "description": "Additional system properties, which will be appended to the list of system properties.\n\nNote: Setting arbitrary system properties may break the deployment and may also not be compatible with future versions.",
+                                  "type": "object"
+                                },
+                                "logLevel": {
+                                  "description": "Allow configuring the application log level.",
+                                  "enum": [
+                                    "Trace",
+                                    "Debug",
+                                    "Info",
+                                    "Warning",
+                                    "Error"
+                                  ],
+                                  "nullable": true,
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "swaggerUi": {
+                          "description": "Influence some options of the hosted SwaggerUI.",
+                          "nullable": true,
+                          "properties": {
+                            "disable": {
+                              "type": "boolean"
+                            },
+                            "image": {
+                              "nullable": true,
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "version": {
+                          "description": "Allow to override the Ditto image version.",
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "status": {
+                      "nullable": true,
+                      "properties": {
+                        "conditions": {
+                          "description": "Status conditions",
+                          "items": {
+                            "description": "Condition contains details for one aspect of the current state of this API Resource.",
+                            "properties": {
+                              "lastTransitionTime": {
+                                "description": "lastTransitionTime is the last time the condition transitioned from one status to another. This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.",
+                                "format": "date-time",
+                                "type": "string"
+                              },
+                              "message": {
+                                "description": "message is a human readable message indicating details about the transition. This may be an empty string.",
+                                "type": "string"
+                              },
+                              "observedGeneration": {
+                                "description": "observedGeneration represents the .metadata.generation that the condition was set based upon. For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date with respect to the current state of the instance.",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "reason": {
+                                "description": "reason contains a programmatic identifier indicating the reason for the condition's last transition. Producers of specific condition types may define expected values and meanings for this field, and whether the values are considered a guaranteed API. The value should be a CamelCase string. This field may not be empty.",
+                                "type": "string"
+                              },
+                              "status": {
+                                "description": "status of the condition, one of True, False, Unknown.",
+                                "type": "string"
+                              },
+                              "type": {
+                                "description": "type of condition in CamelCase or in foo.example.com/CamelCase.",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "lastTransitionTime",
+                              "message",
+                              "reason",
+                              "status",
+                              "type"
+                            ],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "description": "An optional message",
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "phase": {
+                          "default": "",
+                          "description": "The phase the deployment is in.",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "spec"
+                  ],
+                  "title": "Ditto",
+                  "type": "object"
+                }
+              },
+              "served": true,
+              "storage": true,
+              "subresources": {
+                "status": {}
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "apiextensions.k8s.io/v1",
+        "kind": "CustomResourceDefinition",
+        "schema": ""
+      }
+    },
+    {
+      "id": "03e80a61-b354-486b-8cca-8aec8383fc77",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ditto-operator",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "ditto-operator",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "ditto-operator",
+            "app.kubernetes.io/version": "0.4.0",
+            "helm.sh/chart": "ditto-operator-0.3.0"
+          },
+          "name": "ditto-operator"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "9c1e1c32-4316-4c4e-8b40-fa967a3b2cc3",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ditto-operator",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 22,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/role-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/role-white.svg",
+        "width": 22,
+        "x": 8.5,
+        "y": 7.5,
+        "z-index": 4
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "ditto-operator",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "ditto-operator",
+            "app.kubernetes.io/version": "0.4.0",
+            "helm.sh/chart": "ditto-operator-0.3.0"
+          },
+          "name": "ditto-operator"
+        },
+        "rules": [
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resources": [
+              "pods",
+              "services",
+              "services",
+              "configmaps",
+              "secrets",
+              "serviceaccounts"
+            ],
+            "verbs": [
+              "create",
+              "update",
+              "delete",
+              "get",
+              "watch",
+              "list"
+            ]
+          },
+          {
+            "apiGroups": [
+              "apps"
+            ],
+            "resources": [
+              "deployments",
+              "deployments"
+            ],
+            "verbs": [
+              "create",
+              "update",
+              "delete",
+              "get",
+              "watch",
+              "list"
+            ]
+          },
+          {
+            "apiGroups": [
+              "rbac.authorization.k8s.io"
+            ],
+            "resources": [
+              "roles",
+              "rolebindings"
+            ],
+            "verbs": [
+              "create",
+              "update",
+              "delete",
+              "get",
+              "watch",
+              "list"
+            ]
+          },
+          {
+            "apiGroups": [
+              "networking.k8s.io"
+            ],
+            "resources": [
+              "ingresses"
+            ],
+            "verbs": [
+              "create",
+              "update",
+              "delete",
+              "get",
+              "watch",
+              "list"
+            ]
+          },
+          {
+            "apiGroups": [
+              "iot.eclipse.org"
+            ],
+            "resources": [
+              "dittos",
+              "dittos/status",
+              "dittos/finalizers"
+            ],
+            "verbs": [
+              "create",
+              "update",
+              "delete",
+              "get",
+              "watch",
+              "list"
+            ]
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "Role",
+        "schema": ""
+      }
+    },
+    {
+      "id": "0de30c6e-25ab-43b3-bf83-4a5bc6a30f33",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ditto-operator",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 25,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/rolebinding-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/rolebinding-white.svg",
+        "width": 25,
+        "x": 7,
+        "y": 7,
+        "z-index": 4
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "ditto-operator",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "ditto-operator",
+            "app.kubernetes.io/version": "0.4.0",
+            "helm.sh/chart": "ditto-operator-0.3.0"
+          },
+          "name": "ditto-operator"
+        },
+        "roleRef": {
+          "apiGroup": "rbac.authorization.k8s.io",
+          "kind": "Role",
+          "name": "ditto-operator"
+        },
+        "subjects": [
+          {
+            "kind": "ServiceAccount",
+            "name": "ditto-operator"
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "RoleBinding",
+        "schema": ""
+      }
+    },
+    {
+      "id": "8f05d8b8-2354-47e5-9478-afa25694df50",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ditto-operator",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "ditto-operator",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "ditto-operator",
+            "app.kubernetes.io/version": "0.4.0",
+            "helm.sh/chart": "ditto-operator-0.3.0"
+          },
+          "name": "ditto-operator"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "ditto-operator",
+              "app.kubernetes.io/name": "ditto-operator"
+            }
+          },
+          "strategy": {
+            "type": "Recreate"
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app.kubernetes.io/instance": "ditto-operator",
+                "app.kubernetes.io/name": "ditto-operator"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "NAMESPACE",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        }
+                      }
+                    },
+                    {
+                      "name": "HAS_OPENSHIFT",
+                      "value": "false"
+                    },
+                    {
+                      "name": "RUST_LOG",
+                      "value": "info"
+                    }
+                  ],
+                  "image": "ghcr.io/ctron/ditto-operator:0.4.0",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "operator",
+                  "resources": {},
+                  "securityContext": {}
+                }
+              ],
+              "securityContext": {},
+              "serviceAccountName": "ditto-operator"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      }
+    }
+  ],
+  "relationships": null
+}

@@ -1,6 +1,7 @@
-// @ts-nocheck
 import { useMemo } from 'react';
 import { getAllCustomResourceDefinitionsKinds, ResourceMenuConfig } from '../../resources/config';
+
+type Kind = { Kind: string; Count?: number };
 
 export const useResourceOptions = () => {
   const groupOptions = useMemo(
@@ -25,7 +26,11 @@ const SORT_DIRECTIONS = {
   DESC: 'desc',
 };
 
-export const useResourceFiltering = (kinds, groupBy, sortDirection) => {
+export const useResourceFiltering = (
+  kinds: Kind[] | undefined,
+  groupBy: string,
+  sortDirection: string | null,
+) => {
   const filteredAndSortedKinds = useMemo(() => {
     if (!kinds) return [];
     const filteredKinds = filterKindsByGroup(kinds, groupBy);
@@ -38,11 +43,11 @@ export const useResourceFiltering = (kinds, groupBy, sortDirection) => {
   return filteredAndSortedKinds;
 };
 
-const filterKindsByGroup = (kinds, groupBy) => {
+const filterKindsByGroup = (kinds: Kind[], groupBy: string): Kind[] => {
   if (groupBy === 'all') return [...kinds];
 
   if (groupBy === 'crds') {
-    const crdKinds = getAllCustomResourceDefinitionsKinds(kinds).map((crd) => crd.Kind);
+    const crdKinds = getAllCustomResourceDefinitionsKinds(kinds).map((crd: Kind) => crd.Kind);
     return kinds.filter((item) => crdKinds.includes(item.Kind));
   }
 
@@ -51,9 +56,11 @@ const filterKindsByGroup = (kinds, groupBy) => {
   return kinds.filter((item) => categoryKinds.includes(item.Kind));
 };
 
-const sortKindsByCount = (kinds, direction) => {
+const sortKindsByCount = (kinds: Kind[], direction: string): Kind[] => {
   return [...kinds].sort((a, b) => {
-    return direction === SORT_DIRECTIONS.ASC ? a.Count - b.Count : b.Count - a.Count;
+    return direction === SORT_DIRECTIONS.ASC
+      ? (a.Count ?? 0) - (b.Count ?? 0)
+      : (b.Count ?? 0) - (a.Count ?? 0);
   });
 };
 

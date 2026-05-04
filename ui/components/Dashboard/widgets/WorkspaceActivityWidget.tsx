@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { WorkspaceActivityCard } from '@sistent/sistent';
 import { useGetEventsOfWorkspaceQuery, useGetWorkspacesQuery } from '@/rtk-query/workspace';
@@ -30,7 +29,7 @@ const WorkspaceActivityWidget = () => {
     setSelectedWorkspace(workspaces?.workspaces?.[0]?.id);
   }, [workspaces]);
 
-  const handleWorkspaceChange = (event) => {
+  const handleWorkspaceChange = (event: { target: { value: string } }) => {
     const newWorkspaceId = event.target.value;
     setSelectedWorkspace(newWorkspaceId);
   };

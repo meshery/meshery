@@ -1,11 +1,16 @@
-// @ts-nocheck
 import BaseInput from './CustomBaseInput';
 import { localToUTC, utcToLocal } from '@rjsf/utils';
 
-const CustomDateTimeWidget = (props) => {
+type DateTimeWidgetProps = {
+  value?: string;
+  options?: object;
+  onChange: (value: string) => void;
+} & Record<string, unknown>;
+
+const CustomDateTimeWidget = (props: DateTimeWidgetProps) => {
   const inputType = 'datetime-local';
   const value = utcToLocal(props.value);
-  const onChange = (value) => {
+  const onChange = (value: string) => {
     props.onChange(localToUTC(value));
   };
   return (
