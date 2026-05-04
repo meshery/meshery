@@ -299,8 +299,8 @@ func displayEntitisIfModel(response *models.RegistryAPIResponse) {
 			boldModel := utils.BoldString("MODEL")
 			utils.Log.Infof("\n%s: %s", boldModel, model)
 		}
-		displaySuccessfulComponents(response, model)
-		displaySuccessfulRelationships(response, model)
+		displayRegisteredComponents(response, model)
+		displayRegisteredRelationships(response, model)
 		displayUnsuccessfulEntities(response, model)
 	}
 
@@ -312,12 +312,12 @@ func displayEntitisIfModel(response *models.RegistryAPIResponse) {
 	}
 }
 
-func displaySuccessfulComponents(response *models.RegistryAPIResponse, modelName string) {
-	if len(response.EntityTypeSummary.SuccessfulComponents) > 0 {
+func displayRegisteredComponents(response *models.RegistryAPIResponse, modelName string) {
+	if len(response.EntityTypeSummary.RegisteredComponents) > 0 {
 		header := []string{"Component", "Version"}
 		rows := [][]string{}
 
-		for _, comp := range response.EntityTypeSummary.SuccessfulComponents {
+		for _, comp := range response.EntityTypeSummary.RegisteredComponents {
 			displayName, _ := comp["DisplayName"].(string)
 			modelDisplayName, _ := comp["Model"].(string)
 			modelVersion, _ := comp["Version"].(string)
@@ -332,13 +332,13 @@ func displaySuccessfulComponents(response *models.RegistryAPIResponse, modelName
 		}
 	}
 }
-func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model string) {
-	if len(response.EntityTypeSummary.SuccessfulRelationships) > 0 {
+func displayRegisteredRelationships(response *models.RegistryAPIResponse, model string) {
+	if len(response.EntityTypeSummary.RegisteredRelationships) > 0 {
 		header := []string{"From", "To"}
 		seen := make(map[string]bool)
 		relationshipMap := make(map[string][][]string)
 
-		for _, rel := range response.EntityTypeSummary.SuccessfulRelationships {
+		for _, rel := range response.EntityTypeSummary.RegisteredRelationships {
 			kind := rel["Kind"].(string)
 			subtype := rel["Subtype"].(string)
 			relationshipType := rel["RelationshipType"].(string)

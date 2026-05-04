@@ -301,8 +301,8 @@ type EntityCount struct {
 }
 
 type EntityTypeSummary struct {
-	SuccessfulComponents            []map[string]interface{} `json:"successfulComponents"`
-	SuccessfulRelationships         []map[string]interface{} `json:"successfulRelationships"`
+	RegisteredComponents            []map[string]interface{} `json:"registeredComponents"`
+	RegisteredRelationships         []map[string]interface{} `json:"registeredRelationships"`
 	RegisteredModels                []map[string]interface{} `json:"registeredModels"`
 	UnsuccessfulEntityNameWithError []interface{}            `json:"unsuccessfulComponentNames"`
 }

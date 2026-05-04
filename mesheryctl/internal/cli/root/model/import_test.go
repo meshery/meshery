@@ -119,8 +119,8 @@ func TestScaffoldToModel_ResolvesDisplayNameAlias(t *testing.T) {
 		"displayName from flat template must not be silently dropped (json tag alias)")
 }
 
-// TestScaffoldToModel_PreservesLogoFromFixtureTemplate tests Path 2: flat fixture template parses correctly.
-func TestScaffoldToModel_PreservesLogoFromFixtureTemplate(t *testing.T) {
+// TestScaffoldToModel_ParsesFlatFixtureTemplate tests Path 2: flat fixture template parses correctly.
+func TestScaffoldToModel_ParsesFlatFixtureTemplate(t *testing.T) {
 	input := []byte(`{
 		"registrant": "github",
 		"model": "cert-manager",

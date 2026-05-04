@@ -1158,8 +1158,8 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		version = normalizeVersionFromURL(version, importRequest.ImportBody.Url)
 		modelDirPath, compDirPath, err := utils.CreateVersionedDirectoryForModelAndComp(version, model.Model)
 		if err != nil {
-			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
-			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err, token)
+			h.handleError(rw, err, "Error creating versioned directory for model")
+			h.sendErrorEvent(userID, provider, "Error creating versioned directory for model", err, token)
 			return
 		}
 		filePath := filepath.Join(modelDirPath, "model.json")
@@ -1167,8 +1167,8 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		modelDef.Status = _model.Enabled
 		err = modelDef.WriteModelDefinition(filePath, "json")
 		if err != nil {
-			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
-			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err, token)
+			h.handleError(rw, err, "Error writing model definition")
+			h.sendErrorEvent(userID, provider, "Error writing model definition", err, token)
 			return
 		}
 

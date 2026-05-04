@@ -87,7 +87,7 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 				"DisplayName": c.DisplayName,
 				"Version":     c.Model.Version,
 			}
-			response.EntityTypeSummary.SuccessfulComponents = append(response.EntityTypeSummary.SuccessfulComponents, entry)
+			response.EntityTypeSummary.RegisteredComponents = append(response.EntityTypeSummary.RegisteredComponents, entry)
 			if !isDisplayNamePresent(c.Model.Name) {
 				response.ModelName = append(response.ModelName, c.Model.Name)
 			}
@@ -102,7 +102,7 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 				"Selectors":        r.Selectors,
 				"RelationshipType": r.RelationshipType,
 			}
-			response.EntityTypeSummary.SuccessfulRelationships = append(response.EntityTypeSummary.SuccessfulRelationships, entry)
+			response.EntityTypeSummary.RegisteredRelationships = append(response.EntityTypeSummary.RegisteredRelationships, entry)
 			if !isDisplayNamePresent(r.Model.Name) {
 				response.ModelName = append(response.ModelName, r.Model.Name)
 			}
@@ -319,13 +319,13 @@ func (h *Handler) sendFileEvent(userID core.Uuid, provider models.Provider, resp
 			"Errors":        []interface{}{},
 		}
 
-		for _, component := range response.EntityTypeSummary.SuccessfulComponents {
+		for _, component := range response.EntityTypeSummary.RegisteredComponents {
 			if component["Model"] == modelName {
 				modelData["Components"] = append(modelData["Components"].([]interface{}), component)
 			}
 		}
 
-		for _, relationship := range response.EntityTypeSummary.SuccessfulRelationships {
+		for _, relationship := range response.EntityTypeSummary.RegisteredRelationships {
 			if relationship["Model"] == modelName {
 				modelData["Relationships"] = append(modelData["Relationships"].([]interface{}), relationship)
 			}
