@@ -21,6 +21,7 @@ export default defineConfig({
       '@/api': path.resolve(__dirname, './api'),
       '@/assets': path.resolve(__dirname, './assets'),
       '@/themes': path.resolve(__dirname, './themes'),
+      '@/theme': path.resolve(__dirname, './theme'),
       '@/store': path.resolve(__dirname, './store'),
       // Non-@ aliases used by the codebase
       lib: path.resolve(__dirname, './lib'),

@@ -25,7 +25,7 @@ import (
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshkit/utils/store"
-	comp "github.com/meshery/schemas/models/v1beta1/component"
+	comp "github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"

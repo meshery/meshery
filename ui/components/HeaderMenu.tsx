@@ -1,6 +1,4 @@
-// @ts-nocheck
 import React, { useState, useRef, useEffect } from 'react';
-import MenuIcon from '@mui/icons-material/Menu';
 import { useRouter } from 'next/router';
 import { useGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
@@ -8,7 +6,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { NavigationNavbar, Popover } from '@sistent/sistent';
+import { MenuIcon, NavigationNavbar, Popover } from '@sistent/sistent';
 import { IconButtonMenu } from './Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateExtensionType, updateUser } from '@/store/slices/mesheryUi';
@@ -49,7 +47,7 @@ const HeaderMenu = () => {
   const [triggerGetToken, { isError: isTokenError, error: tokenError }] = useLazyGetTokenQuery();
 
   const handleLogout = () => {
-    window.location = '/user/logout';
+    window.location.href = '/user/logout';
     handleClose();
   };
 
@@ -93,13 +91,17 @@ const HeaderMenu = () => {
     }
   }, [userData, isGetUserSuccess, isGetUserError]);
 
-  if (isTokenError) {
-    notify({
-      message: 'Error fetching token',
-      event_type: EVENT_TYPES.ERROR,
-      details: tokenError?.data,
-    });
-  }
+  // Side-effect notifications belong in useEffect — calling notify during render
+  // fires on every render and triggers infinite update loops.
+  useEffect(() => {
+    if (isTokenError) {
+      notify({
+        message: 'Error fetching token',
+        event_type: EVENT_TYPES.ERROR,
+        details: tokenError?.data,
+      });
+    }
+  }, [isTokenError, tokenError, notify]);
 
   useEffect(() => {
     if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
@@ -228,6 +230,4 @@ const HeaderMenu = () => {
   );
 };
 
-const MenuProvider = (props) => <HeaderMenu {...props} />;
-
-export default MenuProvider;
+export default HeaderMenu;

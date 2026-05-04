@@ -1,8 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { iconMedium } from '../../css/icons.styles';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
-import { Button, useTheme } from '@sistent/sistent';
+import { AddCircleIcon as AddIcon, Button, useTheme } from '@sistent/sistent';
 
 function ConnectClustersBtn() {
   const theme = useTheme();

@@ -65,7 +65,15 @@ components:
   colorIcon: content/en/extensions/models/datadog-operator/components/datadog-agent-internal/icons/color/datadog-agent-internal-color.svg
   whiteIcon: content/en/extensions/models/datadog-operator/components/datadog-agent-internal/icons/white/datadog-agent-internal-white.svg
   description: 
-components-count: 14
+- name: datadog-csi-driver
+  colorIcon: content/en/extensions/models/datadog-operator/components/datadog-csi-driver/icons/color/datadog-csi-driver-color.svg
+  whiteIcon: content/en/extensions/models/datadog-operator/components/datadog-csi-driver/icons/white/datadog-csi-driver-white.svg
+  description: 
+- name: datadog-pod-autoscaler-cluster-profile
+  colorIcon: content/en/extensions/models/datadog-operator/components/datadog-pod-autoscaler-cluster-profile/icons/color/datadog-pod-autoscaler-cluster-profile-color.svg
+  whiteIcon: content/en/extensions/models/datadog-operator/components/datadog-pod-autoscaler-cluster-profile/icons/white/datadog-pod-autoscaler-cluster-profile-white.svg
+  description: 
+components-count: 16
 relationships: 
 relationship-count: 0
 featureList: [

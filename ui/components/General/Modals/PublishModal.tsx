@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
-import PublicIcon from '@mui/icons-material/Public';
 import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';
 import { modifyRJSFSchema } from '../../utils/utils';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
+import { PublicIcon } from '@sistent/sistent';
 
 // This modal is used in Meshery Extensions also
 export default function PublishModal(props) {

@@ -41,7 +41,8 @@ export const useCreateEnvironmentMutation = () => {
       body: {
         name: queryArg.environmentPayload?.name,
         description: queryArg.environmentPayload?.description,
-        organization_id:
+        organizationId:
+          queryArg.environmentPayload?.organizationId ||
           queryArg.environmentPayload?.organization_id ||
           queryArg.environmentPayload?.OrganizationID,
       },
@@ -70,7 +71,8 @@ export const useUpdateEnvironmentMutation = () => {
       body: {
         name: queryArg.environmentPayload?.name,
         description: queryArg.environmentPayload?.description,
-        organization_id:
+        organizationId:
+          queryArg.environmentPayload?.organizationId ||
           queryArg.environmentPayload?.organization_id ||
           queryArg.environmentPayload?.OrganizationID,
       },

@@ -41,12 +41,12 @@ export const designsApi = api
             page: queryArg.page,
             pagesize: queryArg.pagesize,
             order: queryArg.order,
-            user_id: queryArg.user_id,
+            userId: queryArg.userId,
             expandUser: queryArg.expandUser,
             metrics: queryArg.metrics,
             search: queryArg.search,
             visibility: queryArg.visibility,
-            orgID: queryArg.orgID,
+            orgId: queryArg.orgId,
             shared: queryArg.shared || false,
           });
           return mesheryApiPath(`extensions/api/content/patterns?${params}`);
@@ -75,8 +75,8 @@ export const designsApi = api
       }),
       deployPattern: builder.mutation({
         query: ({
-          pattern_file,
-          pattern_id,
+          patternFile,
+          patternId,
           selectedK8sContexts,
           verify = false,
           dryRun = false,
@@ -89,16 +89,16 @@ export const designsApi = api
           ),
           method: 'POST',
           body: {
-            pattern_file,
-            pattern_id,
+            patternFile,
+            patternId,
           },
         }),
         invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       undeployPattern: builder.mutation({
         query: ({
-          pattern_file,
-          pattern_id,
+          patternFile,
+          patternId,
           selectedK8sContexts,
           verify = false,
           dryRun = false,
@@ -110,8 +110,8 @@ export const designsApi = api
           ),
           method: 'DELETE',
           body: {
-            pattern_file,
-            pattern_id,
+            patternFile,
+            patternId,
           },
         }),
         invalidatesTags: [{ type: TAGS.DESIGNS }],

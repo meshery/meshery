@@ -118,5 +118,5 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 
 	}
 
-	return rows, int64(componentsResponse.Count)
+	return rows, componentsResponse.TotalCount
 }

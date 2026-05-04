@@ -3,10 +3,10 @@ import {
   AccordionDetails,
   AccordionSummary,
   CircularProgress,
-  Typography,
+  ExpandMoreIcon,
   styled,
+  Typography,
 } from '@sistent/sistent';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { isEmpty } from 'lodash';
 import React from 'react';
 import { getMeshModelComponent } from '../../../api/meshmodel';

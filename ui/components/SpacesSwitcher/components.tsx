@@ -82,7 +82,7 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
       onClose={handleClose}
       onInputChange={handleInputChange}
       onChange={(_, value) => {
-        handleAuthorChange(value?.user_id || null);
+        handleAuthorChange(value?.userId || null);
       }}
       inputValue={inputValue}
       options={options}
@@ -94,20 +94,20 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
           <Grid2 container alignItems="center" size="grow">
             <Grid2>
               <Box sx={{ color: 'text.secondary', mr: 2 }}>
-                <Avatar alt={option.first_name} src={option.avatar_url}>
-                  {option.avatar_url ? '' : <PersonIcon />}
+                <Avatar alt={option.firstName} src={option.avatarUrl}>
+                  {option.avatarUrl ? '' : <PersonIcon />}
                 </Avatar>
               </Box>
             </Grid2>
             <Grid2 size={{ sx: 12 }}>
-              {option.deleted_at?.Valid ? (
+              {option.deletedAt?.Valid ? (
                 <Typography variant="body2" color="text.secondary">
                   {option.email} (deleted)
                 </Typography>
               ) : (
                 <>
                   <Typography variant="body2">
-                    {option.first_name} {option.last_name}
+                    {option.firstName} {option.lastName}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     {option.email}

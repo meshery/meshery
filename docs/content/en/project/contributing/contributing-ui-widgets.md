@@ -14,10 +14,10 @@ This guide walks through the process of creating and integrating a custom widget
 
 ## 1. Widget Architecture
 
-Widgets are React components located [here](https://github.com/meshery/meshery/tree/master/ui/components/DashboardComponent/widgets):
+Widgets are React components located [here](https://github.com/meshery/meshery/tree/master/ui/components/Dashboard/widgets):
 
 ```bash
-/ui/components/DashboardComponent/widgets/
+/ui/components/Dashboard/widgets/
 ```
 
 Each widget is rendered inside a card component (`<PlainCard />`, `<DesignCard />`, etc.), which is sourced from the [Sistent design system](https://github.com/layer5io/sistent).
@@ -35,7 +35,7 @@ Widgets can:
 Create a new file inside `widgets/`, e.g.:
 
 ```jsx
-/ui/components/DashboardComponent/widgets/LatestBlogs.js
+/ui/components/Dashboard/widgets/LatestBlogs.tsx
 ```
 
 Use design system components from `@sistent/sistent`:
@@ -68,7 +68,7 @@ Use `useTheme()` for consistent color tokens across themes.
 Thumbnails are image previews of widgets. Place them here:
 
 ```bash
-/ui/components/DashboardComponent/widgets/Thumbnails/
+/ui/components/Dashboard/widgets/Thumbnails/
 ```
 
 Recommended format: `.png` or `.svg`
@@ -85,7 +85,7 @@ To verify your thumbnail appears correctly, click on the "Edit" button on the Da
 
 ## 4. Registering the Widget
 
-Register your widget inside `getWidgets.js`:
+Register your widget inside `getWidgets.tsx`:
 
 ```jsx
 export const getWidgets = () => ({
@@ -112,7 +112,7 @@ export const getWidgets = () => ({
 To include your widget in the default dashboard layout:
 
 ```bash
-/ui/components/DashboardComponent/defaultLayout.js
+/ui/components/Dashboard/defaultLayout.ts
 ```
 
 Layouts are defined per **screen size breakpoint** (e.g., `sm`, `xs`, `xxs`) to ensure responsiveness. Each layout item is an object with grid-based properties defined by the `react-grid-layout` library.
@@ -149,7 +149,7 @@ Layouts are defined per **screen size breakpoint** (e.g., `sm`, `xs`, `xxs`) to 
 
 ---
 
-Define the widget’s position (x, y) and size (w, h) in each breakpoint for responsive behavior. The code for it can be found [here](https://github.com/meshery/meshery/blob/master/ui/components/DashboardComponent/defaultLayout.js).
+Define the widget’s position (x, y) and size (w, h) in each breakpoint for responsive behavior. The code for it can be found [here](https://github.com/meshery/meshery/blob/master/ui/components/Dashboard/defaultLayout.ts).
 
 Note: Layouts for **Remote Providers** are dynamically generated based on user configuration and stored remotely. Local providers use a predefined layout (`LOCAL_PROVIDER_LAYOUT`). Widgets must be added to both if you want consistent behavior across environments.
 
@@ -179,13 +179,13 @@ This is how your default widget would appear in the dashboard:
 
 | Widget       | File                                                                                                                               | Data Source  | UI Component |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------ |
-| Latest Blogs | [LatestBlogs.js](https://github.com/meshery/meshery/blob/master/ui/components/DashboardComponent/widgets/LatestBlogs.js)           | RSS Feed     | PlainCard    |
-| Help Center  | [HelpCenterWidget.js](https://github.com/meshery/meshery/blob/master/ui/components/DashboardComponent/widgets/HelpCenterWidget.js) | Static Links | PlainCard    |
-| My Designs   | [MyDesignsWidget.js](https://github.com/meshery/meshery/blob/master/ui/components/DashboardComponent/widgets/MyDesignsWidget.js)   | REST Api     | DesignCard   |
+| Latest Blogs | [LatestBlogs.tsx](https://github.com/meshery/meshery/blob/master/ui/components/Dashboard/widgets/LatestBlogs.tsx)           | RSS Feed     | PlainCard    |
+| Help Center  | [HelpCenterWidget.tsx](https://github.com/meshery/meshery/blob/master/ui/components/Dashboard/widgets/HelpCenterWidget.tsx) | Static Links | PlainCard    |
+| My Designs   | [MyDesignsWidget.tsx](https://github.com/meshery/meshery/blob/master/ui/components/Dashboard/widgets/MyDesignsWidget.tsx)   | REST Api     | DesignCard   |
 
 Note: `MyDesignsWidget` demonstrates integration with RTK Query hooks like `useGetLoggedInUserQuery()` and `useGetUserDesignsQuery()`.
 
-Have a look at existing Widgets [here](https://github.com/meshery/meshery/tree/master/ui/components/DashboardComponent/widgets).
+Have a look at existing Widgets [here](https://github.com/meshery/meshery/tree/master/ui/components/Dashboard/widgets).
 
 ---
 

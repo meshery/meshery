@@ -21,7 +21,6 @@ import (
 	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 )
 
 func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -35,12 +34,12 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
-		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
 	err = json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
 	if err != nil {
-		http.Error(w, models.ErrUnmarshal(err, "connection registration payload").Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrUnmarshal(err, "connection registration payload"), http.StatusBadRequest)
 		return
 	}
 
@@ -65,22 +64,24 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			nil,
 		)
 		if err != nil {
+			wrappedErr := ErrInitializeMachine(err)
 			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{
-				"error": err,
+				"error": wrappedErr,
 			}).Build()
 			if event != nil {
 				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
-			h.log.Error(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.log.Error(wrappedErr)
+			writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
 			return
 		}
 
 		event, err := inst.SendEvent(req.Context(), machines.EventType(connectionRegisterPayload.Status), connectionRegisterPayload)
 		if err != nil {
-			h.log.Error(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			wrappedErr := ErrSendMachineEvent(err)
+			h.log.Error(wrappedErr)
+			writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
 			if event != nil {
 				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
@@ -96,7 +97,7 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 	if err != nil {
 		_err := models.ErrUnmarshal(err, "request body")
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
 		return
 	}
 	smInstancetracker := h.ConnectionToStateMachineInstanceTracker
@@ -115,7 +116,7 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 	schema := make(map[string]interface{}, 1)
 	connectionComponent, _, _, _ := h.registryManager.GetEntities(compFilter)
 	if len(connectionComponent) == 0 {
-		http.Error(w, "Unable to register resource as connection. No matching connection definition found in the registry", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrUnknownConnectionKind(payload.Kind), http.StatusBadRequest)
 		return
 	}
 
@@ -144,7 +145,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	userID := user.ID
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -154,7 +155,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 
 	if err != nil {
 		h.log.Error(models.ErrUnmarshal(err, obj))
-		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
 
@@ -178,7 +179,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
 
@@ -224,7 +225,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	err := req.ParseForm()
 	if err != nil {
 		h.log.Error(ErrGetConnections(err))
-		http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrGetConnections(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -241,7 +242,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		err := json.Unmarshal([]byte(status), &queryParam.Status)
 		if err != nil {
 			h.log.Error(ErrGetConnections(err))
-			http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrGetConnections(err), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -250,7 +251,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		err := json.Unmarshal([]byte(kind), &queryParam.Kind)
 		if err != nil {
 			h.log.Error(ErrGetConnections(err))
-			http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrGetConnections(err), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -259,7 +260,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		err := json.Unmarshal([]byte(connType), &queryParam.Type)
 		if err != nil {
 			h.log.Error(ErrGetConnections(err))
-			http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrGetConnections(err), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -269,13 +270,13 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 
 	if err != nil {
 		h.log.Error(ErrQueryGet(obj))
-		http.Error(w, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrQueryGet(obj), http.StatusInternalServerError)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(connectionsPage); err != nil {
 		h.log.Error(models.ErrEncoding(err, obj))
-		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		return
 	}
 }
@@ -311,14 +312,20 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 	obj := "connections"
 
 	if err != nil {
-		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		// Provider implementations return a mix of bare errors and
+		// MeshKit-wrapped ones depending on whether the failure was
+		// inside DoRequest, in unmarshal, or in the local DAO. Wrap
+		// uniformly so the JSON envelope always carries MeshKit
+		// metadata.
+		wrappedErr := ErrGetConnections(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(connectionsPage); err != nil {
 		h.log.Error(models.ErrEncoding(err, obj))
-		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		return
 	}
 }
@@ -326,8 +333,9 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	if connectionID == uuid.Nil {
-		h.log.Error(ErrGetConnections(fmt.Errorf("invalid connection ID")))
-		http.Error(w, "Invalid connection ID", http.StatusBadRequest)
+		invalidIDErr := ErrInvalidUUID(fmt.Errorf("invalid connection ID"))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
 
@@ -337,13 +345,13 @@ func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ 
 
 	if err != nil {
 		h.log.Error(ErrQueryGet(obj))
-		http.Error(w, ErrQueryGet(obj).Error(), statusCode)
+		writeMeshkitError(w, ErrQueryGet(obj), statusCode)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(connection); err != nil {
 		h.log.Error(models.ErrEncoding(err, obj))
-		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		return
 	}
 }
@@ -355,7 +363,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -366,7 +374,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	obj := "connection"
 	if err != nil {
 		h.log.Error(models.ErrUnmarshal(err, obj))
-		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
 
@@ -375,7 +383,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	// In fact this method is used (for now) only for perform meshsync deployment mode change.
 	// If mode change fails return error.
 	// TODO: also check that kind = "kubernetes" (when client starts to send full connection object)
-	if schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.MetaData) != schemasConnection.MeshsyncDeploymentModeUndefined {
+	if connections.MeshsyncDeploymentModeFromMetadata(connection.MetaData) != connections.MeshsyncDeploymentModeUndefined {
 		// Handle meshsync deployment mode changes before connection update
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
 		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(
@@ -397,7 +405,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 			go h.config.EventBroadcaster.Publish(userID, event)
 
 			h.log.Error(meshSyncErr)
-			http.Error(w, meshSyncErr.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, meshSyncErr, http.StatusInternalServerError)
 			return
 		}
 
@@ -425,7 +433,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
-		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
 	updatedConnection, err := provider.UpdateConnectionById(token, connection, mux.Vars(req)["connectionId"])
@@ -439,7 +447,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
 
@@ -540,7 +548,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
-		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
@@ -558,11 +566,11 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 
 		if errors.GetCode(err) == models.ErrResultNotFoundCode {
 			h.log.Warnf("No connection with ID %q found to delete", connectionID)
-			http.Error(w, _err.Error(), http.StatusNotFound)
+			writeMeshkitError(w, _err, http.StatusNotFound)
 			return
 		}
 		h.log.Error(_err)
-		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
 
@@ -586,13 +594,13 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 	token string,
 	userID core.Uuid,
 	provider models.Provider,
-) (schemasConnection.MeshsyncDeploymentMode, schemasConnection.MeshsyncDeploymentMode, bool, error) {
+) (connections.MeshsyncDeploymentMode, connections.MeshsyncDeploymentMode, bool, error) {
 	if newConnection == nil {
-		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("new connection is nil, cannot compare meshsync deployment modes")
+		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("new connection is nil, cannot compare meshsync deployment modes")
 	}
 
 	if h.SystemID == nil {
-		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("system ID is not configured in handler")
+		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("system ID is not configured in handler")
 	}
 	// TODO is h.SystemID a correct instance id here?
 	mesheryInstanceID := *h.SystemID
@@ -600,22 +608,22 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 	// Retrieve existing connection for mode comparison
 	existingConnection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
-		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("failed to retrieve existing connection (status %d): %w", statusCode, err)
+		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("failed to retrieve existing connection (status %d): %w", statusCode, err)
 	}
 
 	if existingConnection == nil {
-		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
+		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
 	}
 
 	if existingConnection.Kind != "kubernetes" {
-		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("connection is not of kind kubernetes")
+		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("connection is not of kind kubernetes")
 	}
 
-	existingMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)
-	newMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(newConnection.MetaData)
+	existingMeshSyncMode := connections.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)
+	newMeshSyncMode := connections.MeshsyncDeploymentModeFromMetadata(newConnection.MetaData)
 
 	// draw back to default mode
-	if newMeshSyncMode == schemasConnection.MeshsyncDeploymentModeUndefined {
+	if newMeshSyncMode == connections.MeshsyncDeploymentModeUndefined {
 		newMeshSyncMode = h.MeshsyncDefaultDeploymentMode
 	}
 

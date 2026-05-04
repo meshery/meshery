@@ -124,8 +124,8 @@ export const handleUpdatePatternVisibility = async ({
     updateBody: {
       id: selectedResource?.id,
       name: selectedResource.name,
-      catalog_data: selectedResource.catalog_data,
-      design_file: JsonParse(selectedResource.pattern_file),
+      catalogData: selectedResource.catalogData,
+      designFile: JsonParse(selectedResource.patternFile),
       visibility: value,
     },
   });

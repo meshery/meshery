@@ -1,20 +1,20 @@
 import React from 'react';
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
-  TextField,
-  ModalButtonSecondary,
-  ModalButtonPrimary,
-  Typography,
+  ExpandMoreIcon,
   FormControl,
   Grid2,
-  Tabs,
-  Tab,
   MenuItem,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
+  ModalButtonPrimary,
+  ModalButtonSecondary,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
 } from '@sistent/sistent';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RJSFWrapper from '../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import cloneDeep from 'lodash/cloneDeep';
 import { useMeshModelComponents } from '@/utils/hooks/useMeshModelComponents';

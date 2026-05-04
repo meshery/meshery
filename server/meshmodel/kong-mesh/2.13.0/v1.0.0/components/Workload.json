@@ -129,6 +129,7 @@
     "kind": "Workload",
     "schema": "{\n \"description\": \"Workload represents a logical grouping of data plane proxies in the mesh, providing visibility into their operational status. It tracks statistics about the data plane proxies that belong to a workload, including the number of connected, healthy, and total proxies, enabling monitoring and health assessment of your workload deployments. Workloads is also the primary way data-planes are grouped together in metrics and traces.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma Workload resource.\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workload\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

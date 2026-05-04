@@ -6,8 +6,8 @@ userId: c8be787b-0881-4eda-a43e-fe6872261dc4
 userName: Kithinji Murugu
 userAvatarURL: 
 type: deployment
-compatibility: 
-
+compatibility:
+    - kubernetes
 patternId: 877ec148-d9dd-4536-bfab-4dcab83ffec1
 image: /assets/images/logos/service-mesh-pattern.svg
 patternInfo: |

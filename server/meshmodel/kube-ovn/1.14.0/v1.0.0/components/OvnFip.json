@@ -204,6 +204,7 @@
     "kind": "OvnFip",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"ipName\": {\n     \"type\": \"string\"\n    },\n    \"ipType\": {\n     \"type\": \"string\"\n    },\n    \"ovnEip\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"type\": \"string\"\n    },\n    \"v4Ip\": {\n     \"type\": \"string\"\n    },\n    \"v6Ip\": {\n     \"type\": \"string\"\n    },\n    \"vpc\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Ovn Fip\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { WorkspaceActivityCard } from '@sistent/sistent';
 import { useGetEventsOfWorkspaceQuery, useGetWorkspacesQuery } from '@/rtk-query/workspace';
@@ -7,12 +6,16 @@ import { useSelector } from 'react-redux';
 const WorkspaceActivityWidget = () => {
   const { organization: currentOrg } = useSelector((state) => state.ui);
   const { data: workspaces } = useGetWorkspacesQuery(
-    { orgID: currentOrg?.id },
+    { orgId: currentOrg?.id },
     { skip: !currentOrg?.id },
   );
 
   const [selectedWorkspace, setSelectedWorkspace] = useState('');
-  const { data: events, isLoading: isEventsLoading } = useGetEventsOfWorkspaceQuery(
+  const {
+    data: events,
+    isLoading: isEventsLoading,
+    isError: isEventsError,
+  } = useGetEventsOfWorkspaceQuery(
     {
       workspaceId: selectedWorkspace,
       pagesize: 5,
@@ -26,7 +29,7 @@ const WorkspaceActivityWidget = () => {
     setSelectedWorkspace(workspaces?.workspaces?.[0]?.id);
   }, [workspaces]);
 
-  const handleWorkspaceChange = (event) => {
+  const handleWorkspaceChange = (event: { target: { value: string } }) => {
     const newWorkspaceId = event.target.value;
     setSelectedWorkspace(newWorkspaceId);
   };
@@ -34,7 +37,7 @@ const WorkspaceActivityWidget = () => {
     <WorkspaceActivityCard
       selectedWorkspace={selectedWorkspace}
       handleWorkspaceChange={handleWorkspaceChange}
-      activities={events?.data}
+      activities={isEventsError ? [] : events?.data}
       workspaces={workspaces?.workspaces}
       isEventsLoading={isEventsLoading}
       workspacePagePath="/management/workspaces"

@@ -1,18 +1,19 @@
 import { useGetUserProfileSummaryByIdQuery } from '@/rtk-query/user';
 import {
-  Divider,
-  CustomTooltip,
-  Skeleton,
-  VisibilityChipMenu,
-  getRelativeTime,
-  getFullFormattedTime,
   AvatarGroup,
-  FormControlLabel,
   Checkbox,
+  CustomTooltip,
+  Divider,
+  FormControlLabel,
   FormGroup,
+  getFullFormattedTime,
+  getRelativeTime,
+  LockIcon as Lock,
+  PublicIcon as Public,
+  Skeleton,
   Typography,
+  VisibilityChipMenu,
 } from '@sistent/sistent';
-import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
 import {
   StyledAvatarContainer,
@@ -45,9 +46,35 @@ const DesignViewListItem = ({
   showWorkspaceName = true,
   showOrganizationName = true,
 }) => {
-  const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
-    id: selectedItem.user_id,
-  });
+  // Parent queries (expandUser: true) already merge the owner's profile onto
+  // the design/view, so prefer the embedded fields and only fall back to the
+  // per-row lookup when they are missing. This also avoids N extra requests
+  // when rendering a page of results.
+  //
+  // userId is required too — without it the downstream profile-link href
+  // would resolve to /user/undefined. If it's missing we let the query run
+  // (or be skipped by the guard below) rather than render a broken link.
+  const hasEmbeddedUser = Boolean(
+    selectedItem?.userId &&
+    (selectedItem?.firstName ||
+      selectedItem?.lastName ||
+      selectedItem?.avatarUrl ||
+      selectedItem?.email),
+  );
+  const { data: fetchedUserData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery(
+    { id: selectedItem?.userId },
+    { skip: hasEmbeddedUser || !selectedItem?.userId },
+  );
+  const userData = hasEmbeddedUser
+    ? {
+        id: selectedItem.userId,
+        userId: selectedItem.userId,
+        firstName: selectedItem.firstName,
+        lastName: selectedItem.lastName,
+        avatarUrl: selectedItem.avatarUrl,
+        email: selectedItem.email,
+      }
+    : fetchedUserData;
   const { multiSelectedContent, setMultiSelectedContent } = useContext(WorkspaceModalContext);
   return (
     <>
@@ -112,12 +139,10 @@ const DesignViewListItem = ({
                 secondary={
                   <CustomTooltip
                     variant="small"
-                    title={getFullFormattedTime(selectedItem.updated_at)}
+                    title={getFullFormattedTime(selectedItem.updatedAt)}
                     placement="bottom"
                   >
-                    <StyledUpdatedText>
-                      {getRelativeTime(selectedItem.updated_at)}
-                    </StyledUpdatedText>
+                    <StyledUpdatedText>{getRelativeTime(selectedItem.updatedAt)}</StyledUpdatedText>
                   </CustomTooltip>
                 }
               />
@@ -134,12 +159,12 @@ const DesignViewListItem = ({
           </Grid2>
           {showOrganizationName && (
             <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
-              <StyledTypography variant="body2">{selectedItem.organization_name}</StyledTypography>
+              <StyledTypography variant="body2">{selectedItem.organizationName}</StyledTypography>
             </Grid2>
           )}
           {showWorkspaceName && (
             <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
-              <Typography variant="body2">{selectedItem.workspace_name}</Typography>
+              <Typography variant="body2">{selectedItem.workspaceName}</Typography>
             </Grid2>
           )}
 

@@ -131,6 +131,7 @@
     "kind": "VpnKeyRotation",
     "schema": "{\n \"description\": \"VpnKeyRotation is the Schema for the vpnkeyrotations API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VpnKeyRotationSpec defines the desired state of VpnKeyRotation\",\n   \"properties\": {\n    \"certificateCreationTime\": {\n     \"description\": \"CertificateCreationTime is a time when certificate for all the gateway pairs is created/updated\",\n     \"format\": \"date-time\",\n     \"type\": \"string\"\n    },\n    \"certificateExpiryTime\": {\n     \"description\": \"CertificateExpiryTime is a time when certificate for all the gateway pairs will expire\",\n     \"format\": \"date-time\",\n     \"type\": \"string\"\n    },\n    \"clusterGatewayMapping\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"description\": \"ClusterGatewayMapping represents a map where key is cluster name and value is array of gateways present on that cluster.\\nThis is used to avoid unnecessary reconciliation in worker-operator.\",\n     \"type\": \"object\"\n    },\n    \"clusters\": {\n     \"description\": \"clusters contains the list of clusters attached to this slice\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"rotationCount\": {\n     \"description\": \"RotationCount represent the number of times rotation has been already performed.\",\n     \"type\": \"integer\"\n    },\n    \"rotationInterval\": {\n     \"type\": \"integer\"\n    },\n    \"sliceName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vpn Key Rotation\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

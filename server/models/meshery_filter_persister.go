@@ -21,8 +21,8 @@ type MesheryFilterPersister struct {
 // MesheryFilterPage represents a page of filters
 type MesheryFilterPage struct {
 	Page       uint64           `json:"page"`
-	PageSize   uint64           `json:"page_size"`
-	TotalCount int              `json:"total_count"`
+	PageSize   uint64           `json:"pageSize"`
+	TotalCount int              `json:"totalCount"`
 	Filters    []*MesheryFilter `json:"filters"`
 }
 

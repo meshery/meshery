@@ -8,8 +8,9 @@ import 'billboard.js/dist/theme/dark.min.css';
 import _ from 'lodash';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
-import React, { useEffect, useMemo, useCallback, useState } from 'react';
+import React, { useEffect, useMemo, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { startSessionTimer } from '../lib/sessionTimer';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
@@ -21,6 +22,33 @@ import { api } from '../rtk-query';
 import { useLazyGetConnectionsQuery } from '../rtk-query/connection';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+// Host-side CSS for packages shared with extensions via remote-component.
+// Next.js (pages router) only permits global CSS imports from _app; remote
+// plugins cannot inject their own global stylesheets through the bundler
+// pipeline. Import the full set of tippy.js themes/animations and xterm CSS
+// here so any extension that references them via remote-component-stubbed
+// subpaths (see remote-component.config.js) has the styles already on-page.
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/dist/svg-arrow.css';
+import 'tippy.js/dist/border.css';
+import 'tippy.js/dist/backdrop.css';
+import 'tippy.js/themes/light.css';
+import 'tippy.js/themes/light-border.css';
+import 'tippy.js/themes/material.css';
+import 'tippy.js/themes/translucent.css';
+import 'tippy.js/animations/shift-away.css';
+import 'tippy.js/animations/shift-away-subtle.css';
+import 'tippy.js/animations/shift-away-extreme.css';
+import 'tippy.js/animations/shift-toward.css';
+import 'tippy.js/animations/shift-toward-subtle.css';
+import 'tippy.js/animations/shift-toward-extreme.css';
+import 'tippy.js/animations/scale.css';
+import 'tippy.js/animations/scale-subtle.css';
+import 'tippy.js/animations/scale-extreme.css';
+import 'tippy.js/animations/perspective.css';
+import 'tippy.js/animations/perspective-subtle.css';
+import 'tippy.js/animations/perspective-extreme.css';
+import '@xterm/xterm/css/xterm.css';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import './styles/AnimatedFilter.css';
@@ -41,7 +69,8 @@ import { useLazyGetCredentialByIdQuery } from '@/rtk-query/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
-import { ErrorBoundary, SistentThemeProvider, CssBaseline, NoSsr } from '@sistent/sistent';
+import { CssBaseline, NoSsr, SistentThemeProvider } from '@/theme';
+import { ErrorBoundary } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
 import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
@@ -70,10 +99,10 @@ import RegistryModalContextProvider from '@/utils/context/RegistryModalContextPr
 import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 
 export const mesheryExtensionRoute = '/extension/meshmap';
-function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
+function isMesheryUIRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
   return (
     !window.location.pathname.startsWith(mesheryExtensionRoute) &&
-    capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
+    capabilitiesRegistry?.restrictedAccess?.isMesheryUIRestricted
   );
 }
 
@@ -111,6 +140,14 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     abilities: [],
     abilityUpdated: false,
   });
+
+  // Mirror the dispose callback into a ref so the bootstrap effect's cleanup
+  // can call the latest value rather than the (always-null) initial-mount
+  // closure of `state.disposeK8sContextSubscription`.
+  const disposeK8sContextSubscriptionRef = useRef<null | (() => void)>(null);
+  useEffect(() => {
+    disposeK8sContextSubscriptionRef.current = state.disposeK8sContextSubscription;
+  }, [state.disposeK8sContextSubscription]);
 
   const setAppState = useCallback((partialState, callback) => {
     setState((prevState) => {
@@ -396,7 +433,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   }, [dispatch, fetchSystemSync]);
 
   useEffect(() => {
-    const { startSessionTimer } = require('../lib/sessionTimer');
     startSessionTimer();
 
     const loadAll = async () => {
@@ -428,9 +464,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
 
     return () => {
       document.removeEventListener('fullscreenchange', fullScreenChanged);
-      if (state.disposeK8sContextSubscription) {
-        state.disposeK8sContextSubscription();
-      }
+      disposeK8sContextSubscriptionRef.current?.();
     };
   }, []);
 
@@ -439,7 +473,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
     if (
       typeof window !== 'undefined' &&
-      isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)
+      isMesheryUIRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)
     ) {
       Router.push(mesheryExtensionRoute);
     }

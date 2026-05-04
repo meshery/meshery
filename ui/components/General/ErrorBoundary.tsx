@@ -56,8 +56,8 @@ const CustomErrorFallback = (props) => {
       body: {
         memberFormOne: {
           ...data,
-          firstname: userData?.first_name,
-          lastname: userData?.last_name,
+          firstname: userData?.firstName,
+          lastname: userData?.lastName,
           email: userData?.email,
         },
       },

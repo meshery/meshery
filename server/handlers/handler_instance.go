@@ -4,6 +4,8 @@ package handlers
 import (
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
@@ -11,7 +13,6 @@ import (
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils/events"
 	"github.com/meshery/schemas/models/core"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/spf13/viper"
 	"github.com/vmihailenco/taskq/v3"
 )
@@ -32,8 +33,10 @@ type Handler struct {
 	registryManager                         *meshmodel.RegistryManager
 	EventsBuffer                            *events.EventStreamer
 	Rego                                    *policies.Rego
+	GoEngine                                *gopolicies.GoEngine
 	ConnectionToStateMachineInstanceTracker *machines.ConnectionToStateMachineInstanceTracker
-	MeshsyncDefaultDeploymentMode           schemasConnection.MeshsyncDeploymentMode
+	MeshsyncDefaultDeploymentMode           connections.MeshsyncDeploymentMode
+	evalTracker                             *evaluationTracker
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -50,7 +53,7 @@ func NewHandlerInstance(
 	provider string,
 	rego *policies.Rego,
 	connToInstanceTracker *machines.ConnectionToStateMachineInstanceTracker,
-	meshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode,
+	meshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode,
 ) models.HandlerInterface {
 
 	h := &Handler{
@@ -65,9 +68,11 @@ func NewHandlerInstance(
 		registryManager:                         regManager,
 		Provider:                                provider,
 		Rego:                                    rego,
+		GoEngine:                                gopolicies.NewGoEngine(logger),
 		SystemID:                                viper.Get("INSTANCE_ID").(*core.Uuid),
 		ConnectionToStateMachineInstanceTracker: connToInstanceTracker,
 		MeshsyncDefaultDeploymentMode:           meshsyncDefaultDeploymentMode,
+		evalTracker:                             newEvaluationTracker(),
 	}
 
 	h.task = taskq.RegisterTask(&taskq.TaskOptions{

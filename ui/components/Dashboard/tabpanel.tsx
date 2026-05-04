@@ -1,8 +1,13 @@
-// @ts-nocheck
+import React from 'react';
 import { Typography } from '@sistent/sistent';
 
-export function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+type TabPanelProps = {
+  children?: React.ReactNode;
+  value: number | string;
+  index: number | string;
+};
+
+export function TabPanel({ children, value, index, ...other }: TabPanelProps) {
   return (
     <div
       role="tabpanel"

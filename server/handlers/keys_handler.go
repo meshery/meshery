@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/models"
 )
@@ -11,7 +13,7 @@ import (
 func (h *Handler) GetUsersKeys(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
-		http.Error(w, "failed to get token", http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrGetToken(errors.New("token missing from request context")), http.StatusInternalServerError)
 		return
 	}
 
@@ -20,7 +22,7 @@ func (h *Handler) GetUsersKeys(w http.ResponseWriter, req *http.Request, _ *mode
 	resp, err := provider.GetUsersKeys(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
 		return
 	}
 

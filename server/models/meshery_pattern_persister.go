@@ -24,8 +24,8 @@ type MesheryPatternPersister struct {
 // MesheryPatternPage represents a page of performance profiles
 type MesheryPatternPage struct {
 	Page       uint64            `json:"page"`
-	PageSize   uint64            `json:"page_size"`
-	TotalCount int               `json:"total_count"`
+	PageSize   uint64            `json:"pageSize"`
+	TotalCount int               `json:"totalCount"`
 	Patterns   []*MesheryPattern `json:"patterns"`
 }
 

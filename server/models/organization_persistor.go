@@ -8,7 +8,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
-	"github.com/meshery/schemas/models/v1beta1/organization"
+	"github.com/meshery/schemas/models/v1beta2/organization"
 )
 
 // MesheryApplicationPersister is the persister for persisting

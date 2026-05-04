@@ -5,14 +5,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
@@ -21,7 +19,6 @@ import (
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 )
 
 type cmdModelImportFlags struct {
@@ -157,13 +154,7 @@ func hasCSVs(path string) bool {
 }
 
 func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return err
-	}
-
-	baseURL := mctlCfg.GetBaseMesheryURL()
-	url := baseURL + "/api/meshmodels/register"
+	urlPath := "api/meshmodels/register"
 	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
 	switch dataType {
@@ -175,9 +166,9 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 		importRequest.ImportBody.ModelFile = data
 	default:
 		if data != nil {
-			err = encoding.Unmarshal(data, &importRequest.ImportBody.Model)
+			err := encoding.Unmarshal(data, &importRequest.ImportBody.Model)
 			if err != nil {
-				return err
+				return utils.ErrUnmarshal(err)
 			}
 		}
 	}
@@ -186,34 +177,24 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 	importRequest.Register = register
 	requestBody, err := json.Marshal(importRequest)
 	if err != nil {
-		return err
+		return utils.ErrMarshal(err)
 	}
 
-	req, err := utils.NewRequest(http.MethodPost, url, bytes.NewReader(requestBody))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := api.Add(urlPath, bytes.NewReader(requestBody), headers)
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := utils.MakeRequest(req)
+	response, err := api.GenerateDataFromBodyResponse[models.RegistryAPIResponse](req)
 	if err != nil {
 		return err
 	}
 
-	defer func() { _ = resp.Body.Close() }()
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		err = models.ErrDataRead(err, "response body")
-		return err
-	}
-	var response models.RegistryAPIResponse
-
-	if err := encoding.Unmarshal((bodyBytes), &response); err != nil {
-		err = models.ErrUnmarshal(err, "response body")
-		return err
-	}
-
-	displayEntities(&response)
+	displayEntities(response)
 
 	if len(response.EntityTypeSummary.SuccessfulModels) == 0 {
 		return utils.ErrInvalidModel()

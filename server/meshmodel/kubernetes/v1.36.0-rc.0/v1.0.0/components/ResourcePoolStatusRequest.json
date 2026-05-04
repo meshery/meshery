@@ -131,6 +131,7 @@
     "kind": "ResourcePoolStatusRequest",
     "schema": "{\"description\":\"ResourcePoolStatusRequest triggers a one-time calculation of resource pool status based on the provided filters. Once status is set, the request is considered complete and will not be reprocessed. Users should delete and recreate requests to get updated information.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"ResourcePoolStatusRequestSpec defines the filters for the pool status request.\",\"properties\":{\"driver\":{\"default\":\"\",\"description\":\"Driver specifies the DRA driver name to filter pools. Only pools from ResourceSlices with this driver will be included. Must be a DNS subdomain (e.g., \\\"gpu.example.com\\\").\",\"type\":\"string\"},\"limit\":{\"default\":100,\"description\":\"Limit optionally specifies the maximum number of pools to return in the status. If more pools match the filter criteria, the response will be truncated (i.e., len(status.pools) \\u003c status.poolCount).\\n\\nDefault: 100 Minimum: 1 Maximum: 1000\",\"format\":\"int32\",\"type\":\"integer\"},\"poolName\":{\"description\":\"PoolName optionally filters to a specific pool name. If not specified, all pools from the specified driver are included. When specified, must be a non-empty valid resource pool name (DNS subdomains separated by \\\"/\\\").\",\"type\":\"string\"}},\"required\":[\"driver\"],\"type\":\"object\"}],\"default\":{},\"description\":\"Spec defines the filters for which pools to include in the status. The spec is immutable once created.\"}},\"required\":[\"metadata\",\"spec\"],\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"resource.k8s.io\",\"kind\":\"ResourcePoolStatusRequest\",\"version\":\"v1alpha3\"}]}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

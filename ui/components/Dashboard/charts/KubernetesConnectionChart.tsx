@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
@@ -7,13 +6,12 @@ import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
-import { InfoOutlined } from '@mui/icons-material';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, KubernetesIcon, Typography, useTheme } from '@sistent/sistent';
+import { Box, InfoOutlined, KubernetesIcon, Typography, useTheme } from '@sistent/sistent';
 
 export default function KubernetesConnectionStatsChart() {
   const { data: connectionData } = useGetConnectionsQuery({
@@ -26,12 +24,15 @@ export default function KubernetesConnectionStatsChart() {
 
   const chartData = connectionData?.connections
     ? Object.entries(
-        connectionData.connections.reduce((acc, connection) => {
-          if (isValidColumnName(connection.status)) {
-            acc[connection.status] = (acc[connection.status] || 0) + 1;
-          }
-          return acc;
-        }, {}),
+        connectionData.connections.reduce(
+          (acc: Record<string, number>, connection: { status: string }) => {
+            if (isValidColumnName(connection.status)) {
+              acc[connection.status] = (acc[connection.status] || 0) + 1;
+            }
+            return acc;
+          },
+          {} as Record<string, number>,
+        ),
       )
     : [];
 
@@ -70,42 +71,37 @@ export default function KubernetesConnectionStatsChart() {
     },
   };
 
-  return (
-    <Link
-      href="/management/connections"
-      style={{
-        textDecoration: 'none',
-        pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
-          ? 'none'
-          : 'auto',
-      }}
-    >
-      <DashboardSection>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <KubernetesIcon
-              fill={
-                theme.palette.mode == 'light'
-                  ? theme.palette.icon.default
-                  : theme.palette.icon.disabled
-              }
-            />
+  const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);
+  const header = (
+    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <KubernetesIcon
+          fill={
+            theme.palette.mode == 'light' ? theme.palette.icon.default : theme.palette.icon.disabled
+          }
+        />
 
-            <Typography variant="h6" fontWeight="700">
-              KUBERNETES CLUSTER STATUS
-            </Typography>
+        <Typography variant="h6" fontWeight="700">
+          KUBERNETES CLUSTER STATUS
+        </Typography>
+      </div>
+      <div onClick={(e) => e.stopPropagation()}>
+        <CustomTextTooltip title="This chart shows the status of connections to your Kubernetes clusters.">
+          <div>
+            <InfoOutlined
+              color={theme.palette.icon.default}
+              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+            />
           </div>
-          <div onClick={(e) => e.stopPropagation()}>
-            <CustomTextTooltip title="This chart shows the status of connections to your Kubernetes clusters.">
-              <div>
-                <InfoOutlined
-                  color={theme.palette.icon.default}
-                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                />
-              </div>
-            </CustomTextTooltip>
-          </div>
-        </div>
+        </CustomTextTooltip>
+      </div>
+    </div>
+  );
+
+  if (chartData.length === 0) {
+    return (
+      <DashboardSection>
+        {header}
         <Box
           sx={{
             display: 'flex',
@@ -115,11 +111,32 @@ export default function KubernetesConnectionStatsChart() {
             height: '100%',
           }}
         >
-          {chartData.length > 0 ? (
-            <BBChart options={chartOptions} />
-          ) : (
-            <ConnectCluster message={'No connections found in your clusters'} />
-          )}
+          <ConnectCluster message={'No connections found in your clusters'} />
+        </Box>
+      </DashboardSection>
+    );
+  }
+
+  return (
+    <Link
+      href="/management/connections"
+      style={{
+        textDecoration: 'none',
+        pointerEvents: !canViewConnections ? 'none' : 'auto',
+      }}
+    >
+      <DashboardSection>
+        {header}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center',
+            height: '100%',
+          }}
+        >
+          <BBChart options={chartOptions} />
         </Box>
       </DashboardSection>
     </Link>

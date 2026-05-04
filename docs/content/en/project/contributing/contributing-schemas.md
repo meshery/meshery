@@ -373,8 +373,8 @@ Create `schemas/constructs/v1beta1/mypackage/templates/mypackage_template.json`:
   "id": "00000000-0000-0000-0000-000000000000",
   "name": "Example Package",
   "description": "An example package instance",
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z"
 }
 ```
 
@@ -548,7 +548,11 @@ paths:
       operationId: getPlans
 ```
 
-Operations without `x-internal` are included in **all** bundles.
+Use explicit annotations for all operations:
+
+- `x-internal: ["meshery"]` for Meshery OSS only
+- `x-internal: ["cloud"]` for Meshery Cloud only
+- `x-internal: ["meshery", "cloud"]` for operations shared by both bundles
 
 ### `x-generate-db-helpers`
 
@@ -626,6 +630,12 @@ metadata:
   x-oapi-codegen-extra-tags:
     db: "metadata"
 ```
+
+### `x-annotations` for Remote Providers
+
+The extensions above are all consumed by Meshery's internal build pipeline. `x-annotations` is different — it is the designated extension point for **remote providers** to attach provider-specific metadata to Meshery schemas at runtime. Meshery core does not read, validate, or act on `x-annotations`; only your provider-side code does.
+
+For full documentation including usage boundaries and a concrete example, see [Extensibility: Schemas](/reference/extensibility/schemas/).
 
 ---
 
@@ -840,8 +850,11 @@ package mypackage
 import "github.com/meshery/schemas/models/core"
 
 // For nullable timestamps (e.g., deleted_at)
+// Per the canonical naming contract, the JSON tag is camelCase
+// (`deletedAt`) while the GORM column tag retains the snake_case
+// DB column name (`deleted_at`). The ORM layer is the only translation boundary.
 type MyStruct struct {
-    DeletedAt core.NullTime `json:"deleted_at" gorm:"column:deleted_at"`
+    DeletedAt core.NullTime `json:"deletedAt" gorm:"column:deleted_at"`
 }
 
 // For JSON metadata stored as blob
@@ -985,8 +998,9 @@ paths:
       # ...
 ```
 
-- **With `x-internal`**: Included only in the specified clients
-- **Without `x-internal`**: Included in **all** clients
+- `x-internal: ["meshery"]`: Included only in `meshery_openapi.yml`
+- `x-internal: ["cloud"]`: Included only in `cloud_openapi.yml`
+- `x-internal: ["meshery", "cloud"]`: Included in both bundles
 
 ---
 
@@ -1014,8 +1028,8 @@ constructs/v1beta1/model/templates/
   "name": "example-model",
   "displayName": "Example Model",
   "description": "An example model template",
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z"
 }
 ```
 

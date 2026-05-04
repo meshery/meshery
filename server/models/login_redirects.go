@@ -23,9 +23,23 @@ func resolvePostLoginRedirect(rawRef, fallback string) string {
 	return fallback
 }
 
+// authInitiationPaths are server routes whose job is to *start* authentication.
+// Post-login redirects must never land on one of these, otherwise the browser
+// immediately re-enters the OAuth dance and the original target is lost. The
+// intermittent Kanvas-never-loads behavior was reproduced as exactly this:
+// TokenHandler succeeded and then redirected to /user/login?provider=Layer5,
+// which restarted InitiateLogin mid-mount.
+var authInitiationPaths = []string{
+	"/user/login",
+	"/auth/login",
+	"/api/user/token",
+	"/provider",
+}
+
 // isSafeRedirect validates that a decoded ref URL is a relative in-app path
-// to prevent open redirects. It rejects absolute URLs (with scheme/host) and
-// protocol-relative URLs (starting with //).
+// to prevent open redirects. It rejects absolute URLs (with scheme/host),
+// protocol-relative URLs (starting with //), and auth-initiation paths that
+// would cause a post-login redirect loop.
 func isSafeRedirect(rawURL string) bool {
 	if rawURL == "" || strings.HasPrefix(rawURL, "//") {
 		return false
@@ -40,5 +54,15 @@ func isSafeRedirect(rawURL string) bool {
 		return false
 	}
 
-	return strings.HasPrefix(rawURL, "/")
+	if !strings.HasPrefix(rawURL, "/") {
+		return false
+	}
+
+	for _, p := range authInitiationPaths {
+		if parsed.Path == p || strings.HasPrefix(parsed.Path, p+"/") {
+			return false
+		}
+	}
+
+	return true
 }

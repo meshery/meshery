@@ -46,12 +46,12 @@ func TestImportModelReturnsErrorForURLImportFailure(t *testing.T) {
 	defer utils.ResetCommandFlags(ModelCmd, t)
 	testContext := utils.InitTestEnvironment(t)
 	defer utils.StopMockery(t)
-
+	errMessage := "internal server error"
 	utils.TokenFlag = utils.GetToken(t)
 	mesheryctlflags.InitValidators(ModelCmd)
 
 	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/meshmodels/register",
-		httpmock.NewStringResponder(500, "internal server error"))
+		httpmock.NewStringResponder(500, errMessage))
 
 	buf := utils.SetupMeshkitLoggerTesting(t, false)
 	ModelCmd.SetArgs([]string{"import", "https://example.com/model"})
@@ -62,5 +62,5 @@ func TestImportModelReturnsErrorForURLImportFailure(t *testing.T) {
 		t.Fatal("expected an error but command succeeded")
 	}
 
-	utils.AssertMeshkitErrorsEqual(t, err, utils.ErrMesheryServerInternalError(errors.New("internal server error")))
+	utils.AssertMeshkitErrorsEqual(t, err, utils.ErrMesheryServerInternalError(errors.New(errMessage)))
 }

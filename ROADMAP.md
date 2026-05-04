@@ -153,6 +153,9 @@ Code coverage goal: 25%
 
 ### [v1.1.0](../../milestone/8)
 
+**UI**
+- [UI] [Restructure](https://groups.google.com/a/meshery.io/g/developers/c/-xRKOsrNdg0)
+
 **Configuration Management**
 
 - [Server] Expand Policy Engine and support Policy (crud)

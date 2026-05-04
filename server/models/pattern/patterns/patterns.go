@@ -9,9 +9,10 @@ import (
 	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 
 	"github.com/meshery/meshery/server/models/pattern/patterns/k8s"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta2/component"
 )
 
 type DeploymentMessagePerComp struct {
@@ -74,7 +75,13 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					}
 
 					// Deploys resources that are required inside cluster for successful deployment of the design.
-					result, err := depHandler.HandleDependents(comp, kcli, !isDel, upgradeExistingRelease)
+					// meshkit's DependencyHandler.HandleDependents takes
+					// *v1beta3/component.ComponentDefinition (the registry-
+					// canonical casing); PatternFile.Components pins
+					// v1beta2/component, so we bridge just at the meshkit
+					// boundary rather than holding v1beta3 everywhere.
+					v1beta3Comp := patternutils.ComponentV1beta2ToV1beta3(&comp)
+					result, err := depHandler.HandleDependents(*v1beta3Comp, kcli, !isDel, upgradeExistingRelease)
 					// If dependencies were not resolved fail forward, there can be case that dependency already exist in the cluster.
 					deploymentMsg.Message = result
 					if err != nil {

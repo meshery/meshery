@@ -1,8 +1,7 @@
-// @ts-nocheck
 import { ErrorBoundary } from '@sistent/sistent';
 import WorkspaceContent from '@/components/SpacesSwitcher/WorkspaceContent';
 
-const WorkSpaceContentDataTable = ({ workspace }) => {
+const WorkSpaceContentDataTable = ({ workspace }: { workspace: unknown }) => {
   return (
     <ErrorBoundary>
       <WorkspaceContent workspace={workspace} />

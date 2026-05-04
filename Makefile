@@ -181,6 +181,7 @@ server: dep-check
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=$(PORT) \
 	DEBUG=true \
+	USE_GO_POLICY_ENGINE=$(USE_GO_POLICY_ENGINE) \
 	OTEL_CONFIG=$(OTEL_CONFIG) \
 	PROVIDER_CAPABILITIES_FILEPATH=$(PROVIDER_CAPABILITIES_FILEPATH) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
@@ -401,7 +402,7 @@ docs-setup:
 
 ## Run Meshery Docs. Listen for changes.
 docs: check-go
-	cd docs; hugo server -D -F 
+	cd docs; hugo server -D -F
 
 ## Run Meshery Docs. Do not listen for changes.
 docs-serve: check-go
@@ -415,7 +416,7 @@ docs-clean: check-go
 
 ## Build Meshery Docs on your local machine.
 docs-build: check-go
-	cd docs; hugo 
+	cd docs; hugo
 
 ## Build Meshery Docs for production. BASE_URL is optional.
 ## Example: make docs-build-production BASE_URL=https://example.com
@@ -474,11 +475,7 @@ helm-meshery-lint:
 #-----------------------------------------------------------------------------
 # Meshery APIs
 #-----------------------------------------------------------------------------
-.PHONY: graphql-docs-build graphql-build
-
-## Build Meshery GraphQL API documentation
-graphql-docs-build:
-	cd docs; bundle exec rake graphql:compile_docs
+.PHONY: graphql-build
 
 ## Build Meshery GraphQl API specifications
 graphql-build: dep-check
@@ -575,7 +572,7 @@ ui-test-e2e-ci:
 	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
 
 #-----------------------------------------------------------------------------
-# Testing - Meshery CLI 
+# Testing - Meshery CLI
 #-----------------------------------------------------------------------------
 .PHONY: mesheryctl-tests
 ### Run all Mesheryctl integration tests (Golang)

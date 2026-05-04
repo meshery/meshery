@@ -12,7 +12,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 
 	"github.com/spf13/viper"

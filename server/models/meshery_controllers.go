@@ -22,7 +22,7 @@ import (
 	"github.com/meshery/meshkit/utils"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	libmeshsync "github.com/meshery/meshsync/pkg/lib/meshsync"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/spf13/viper"
 )
 
@@ -61,7 +61,7 @@ type MesheryControllersHelper struct {
 	oprDepConfig controllers.OperatorDeploymentConfig
 	dbHandler    *database.Handler
 
-	meshsyncDeploymentMode schemasConnection.MeshsyncDeploymentMode
+	meshsyncDeploymentMode connections.MeshsyncDeploymentMode
 
 	// event broadcasting dependencies
 	eventBroadcaster *Broadcast
@@ -99,14 +99,14 @@ func NewMesheryControllersHelper(
 		// Resetting this value results in again subscribing to the Broker.
 		ctxMeshsyncDataHandler: nil,
 		dbHandler:              dbHandler,
-		meshsyncDeploymentMode: schemasConnection.MeshsyncDeploymentModeOperator,
+		meshsyncDeploymentMode: connections.MeshsyncDeploymentModeOperator,
 		eventBroadcaster:       eventBroadcaster,
 		provider:               provider,
 		systemID:               systemID,
 	}
 }
 
-func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value schemasConnection.MeshsyncDeploymentMode) *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value connections.MeshsyncDeploymentMode) *MesheryControllersHelper {
 	mch.meshsyncDeploymentMode = value
 	return mch
 }
@@ -125,9 +125,9 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 		var stopFunc func()
 
 		switch mch.meshsyncDeploymentMode {
-		case schemasConnection.MeshsyncDeploymentModeOperator:
+		case connections.MeshsyncDeploymentModeOperator:
 			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext, userID)
-		case schemasConnection.MeshsyncDeploymentModeEmbedded:
+		case connections.MeshsyncDeploymentModeEmbedded:
 			brokerHandler = channelBroker.NewChannelBrokerHandler()
 			// use a standalone context here context.Background(), as
 			// meshsync run must be stopped only when meshsync data handler is deregistered
@@ -365,7 +365,7 @@ func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Cont
 // should be called after AddCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
 	// go func(mch *MesheryControllersHelper) {
-	if mch.meshsyncDeploymentMode != schemasConnection.MeshsyncDeploymentModeOperator {
+	if mch.meshsyncDeploymentMode != connections.MeshsyncDeploymentModeOperator {
 		return mch
 	}
 
@@ -426,7 +426,7 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return mch
 	}
-	if mch.meshsyncDeploymentMode != schemasConnection.MeshsyncDeploymentModeOperator {
+	if mch.meshsyncDeploymentMode != connections.MeshsyncDeploymentModeOperator {
 		return mch
 	}
 	// go func(mch *MesheryControllersHelper) {

@@ -14,8 +14,12 @@ import (
 var tempProfileID = "a2a555cf-ae16-479c-b5d2-a35656ba741e"
 
 // PerformanceResultsAPIResponse is a local struct for testing unmarshal errors.
+//
+// The JSON tag mirrors the real models.PerformanceResultsAPIResponse.PageSize
+// tag (`pageSize`) so the error message produced by json.Unmarshal references
+// the same field name the production code would surface.
 type PerformanceResultsAPIResponse struct {
-	PageSize uint `json:"page_size"`
+	PageSize uint `json:"pageSize"`
 }
 
 func TestResultCmd(t *testing.T) {
@@ -88,9 +92,12 @@ func TestResultCmd(t *testing.T) {
 			ExpectedError: func() error {
 				cmdUsed = "result"
 
-				// Replicate the exact JSON unmarshal error
+				// Replicate the exact JSON unmarshal error. Body matches the
+				// canonical camelCase wire form in the
+				// `result.invalidJSON.response.golden` fixture so the inner
+				// json.Unmarshal error references `pageSize`, not `page_size`.
 				var response PerformanceResultsAPIResponse
-				innerErr := json.Unmarshal([]byte(`{"page_size": "25"}`), &response)
+				innerErr := json.Unmarshal([]byte(`{"pageSize": "25"}`), &response)
 
 				return ErrPerformanceProfileResult(ErrFailUnmarshal(innerErr))
 			}(),
