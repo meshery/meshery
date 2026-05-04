@@ -121,8 +121,22 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 					if err != nil {
 						return ErrModelInit(err)
 					}
+					if name == "model" {
+						if modelInitFlags.OutputFormat == "json" {
+							content = []byte(strings.ReplaceAll(
+								string(content),
+								fmt.Sprintf(`"name": "%s"`, initModelNamePlaceholder),
+								fmt.Sprintf(`"name": "%s"`, modelName),
+							))
+						} else {
+							content = []byte(strings.ReplaceAll(
+								string(content),
+								fmt.Sprintf("name: %s", initModelNamePlaceholder),
+								fmt.Sprintf("name: %s", modelName),
+							))
+						}
+					}
 					filePath := filepath.Join(
-
 						itemFolderPath,
 						strings.Join(
 							[]string{name, modelInitFlags.OutputFormat},
@@ -172,7 +186,6 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			return err
 		}
 
-		// TODO put a model name into generated model file
 		return nil
 	},
 }
@@ -185,6 +198,7 @@ func init() {
 
 const (
 	initModelDirPerm                  = 0o755
+	initModelNamePlaceholder          = "untitled-model"
 	initModelModelSchema              = "schemas/constructs/v1beta1/model/model.yaml"
 	initModelTemplatePathModel        = "schemas/constructs/v1beta1/model/templates/model_template"
 	initModelTemplatePathComponent    = "schemas/constructs/v1beta1/component/templates/component_template"

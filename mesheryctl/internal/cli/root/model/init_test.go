@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v3"
 )
 
 func TestModelInit(t *testing.T) {
@@ -83,6 +84,7 @@ func TestModelInit(t *testing.T) {
 		ExpectedResponse   string
 		ExpectedDirs       []string
 		ExpectedFiles      []string
+		ExpectedModelName  string
 		AfterTestRemoveDir string
 		ExpectedError      error
 		IsOutputGolden     bool
@@ -111,6 +113,7 @@ func TestModelInit(t *testing.T) {
 				filepath.Join(initTestEC2Controller, initTestVersion, "relationships/relationship.json"),
 			},
 			AfterTestRemoveDir: initTestEC2Controller,
+			ExpectedModelName:  initTestEC2Controller,
 		},
 		{
 			Name:             "given default parameters when model init model is initialized",
@@ -131,6 +134,7 @@ func TestModelInit(t *testing.T) {
 				filepath.Join(initTestEC2Controller, initTestVersion, "relationships/relationship.json"),
 			},
 			AfterTestRemoveDir: initTestEC2Controller,
+			ExpectedModelName:  initTestEC2Controller,
 		},
 		{
 			Name:             "given output format yaml when model init model is initialized in yaml format",
@@ -151,6 +155,7 @@ func TestModelInit(t *testing.T) {
 				filepath.Join(initTestDynamoController, initTestVersion, "relationships/relationship.yaml"),
 			},
 			AfterTestRemoveDir: initTestDynamoController,
+			ExpectedModelName:  initTestDynamoController,
 		},
 		// Added --output-format json in this test because somehow
 		// the --output-format yaml from the previous test case is propagated to this test case
@@ -175,6 +180,7 @@ func TestModelInit(t *testing.T) {
 				"test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller + "/v1.2.3/relationships/relationship.json",
 			},
 			AfterTestRemoveDir: "test_case_some_custom_dir",
+			ExpectedModelName:  initTestEC2Controller,
 		},
 		{
 			Name:             "given custom relative to current directory path when model init then model is initialized in custom relative path",
@@ -186,7 +192,11 @@ func TestModelInit(t *testing.T) {
 			ExpectedDirs: []string{
 				"./test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller,
 			},
+			ExpectedFiles: []string{
+				"./test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller + "/v1.2.3/model.json",
+			},
 			AfterTestRemoveDir: "./test_case_some_custom_dir",
+			ExpectedModelName:  initTestEC2Controller,
 		},
 		{
 			Name:             "given custom relative to parent directory path when model init then model is initialized in custom relative to parent directory path",
@@ -198,7 +208,11 @@ func TestModelInit(t *testing.T) {
 			ExpectedDirs: []string{
 				"../test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller,
 			},
+			ExpectedFiles: []string{
+				"../test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller + "/v1.2.3/model.json",
+			},
 			AfterTestRemoveDir: "../test_case_some_custom_dir",
+			ExpectedModelName:  initTestEC2Controller,
 		},
 		{
 			Name:             "given trailing folder separator in the path when model init then model is initialized in the path without trailing separator",
@@ -210,7 +224,11 @@ func TestModelInit(t *testing.T) {
 			ExpectedDirs: []string{
 				"test_case_some_other_custom_dir/with/trailing/separator/" + initTestEC2Controller,
 			},
+			ExpectedFiles: []string{
+				"test_case_some_other_custom_dir/with/trailing/separator/" + initTestEC2Controller + "/v1.2.3/model.json",
+			},
 			AfterTestRemoveDir: "test_case_some_other_custom_dir",
+			ExpectedModelName:  initTestEC2Controller,
 		},
 		{
 			Name: "given existing model/version folder when model init then throw error",
@@ -336,6 +354,19 @@ func TestModelInit(t *testing.T) {
 					assert.NoError(t, err)
 					if err == nil {
 						assert.False(t, info.IsDir())
+					}
+				}
+			}
+
+			if tc.ExpectedModelName != "" {
+				for _, file := range tc.ExpectedFiles {
+					if filepath.Base(file) == "model.json" || filepath.Base(file) == "model.yaml" {
+						content, err := os.ReadFile(file)
+						assert.NoError(t, err)
+						var modelDef map[string]interface{}
+						err = yaml.Unmarshal(content, &modelDef)
+						assert.NoError(t, err)
+						assert.Equal(t, tc.ExpectedModelName, modelDef["name"])
 					}
 				}
 			}
