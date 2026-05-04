@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 4th 2026, 3:21:10 am
+- Testing started at: May 4th 2026, 12:45:26 pm
 
 **📦 Test Result Summary**
 
-- ✅ 140 passed
+- ✅ 141 passed
 - ❌ 0 failed
 - ⚠️ 0 flaked
-- ⏩ 4 skipped
+- ⏩ 3 skipped
 
-⌛ _Duration: 7 minutes and 39 seconds_
+⌛ _Duration: 7 minutes and 21 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -46,7 +46,7 @@
 | 23 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 24 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 25 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
-| 26 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 26 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 27 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 28 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 29 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
