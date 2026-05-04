@@ -21,6 +21,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
+	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
@@ -397,6 +398,59 @@ func (h *Handler) EvaluateDesign(
 	return lastEvaluationResponse, nil
 }
 
+// bridgeComponentV1beta3ToV1beta1 is a shallow field copy used at the
+// meshkit-registry boundary inside processEvaluationResponse. It exists only
+// because pattern.PatternFile.Components is *v1beta1.ComponentDefinition while
+// the registry hands back *v1beta3.ComponentDefinition; the relevant inner
+// fields (Model pointer, Styles pointer, Capabilities slice, Configuration map,
+// Metadata.AdditionalProperties) are pointer-compatible across the two
+// versions, so an alias-style copy is sufficient.
+//
+// Mutations the surrounding handler makes to the returned value's pointer-
+// or map-typed fields (e.g. _component.Configuration = _c.Configuration)
+// remain isolated to the v1beta1 view, exactly as if the registry had
+// returned a v1beta1 type directly.
+func bridgeComponentV1beta3ToV1beta1(src *componentv1beta3.ComponentDefinition) *component.ComponentDefinition {
+	if src == nil {
+		return nil
+	}
+	dst := &component.ComponentDefinition{
+		ID:             src.ID,
+		SchemaVersion:  src.SchemaVersion,
+		Version:        src.Version,
+		DisplayName:    src.DisplayName,
+		Description:    src.Description,
+		Format:         component.ComponentDefinitionFormat(src.Format),
+		Model:          src.Model,
+		ModelReference: src.ModelReference,
+		Styles:         src.Styles,
+		Capabilities:   src.Capabilities,
+		Metadata: component.ComponentDefinition_Metadata{
+			Genealogy:             src.Metadata.Genealogy,
+			IsAnnotation:          src.Metadata.IsAnnotation,
+			IsNamespaced:          src.Metadata.IsNamespaced,
+			Published:             src.Metadata.Published,
+			InstanceDetails:       src.Metadata.InstanceDetails,
+			ConfigurationUISchema: src.Metadata.ConfigurationUISchema,
+			AdditionalProperties:  src.Metadata.AdditionalProperties,
+		},
+		Configuration: src.Configuration,
+		Component: component.Component{
+			Kind:    src.Component.Kind,
+			Version: src.Component.Version,
+			Schema:  src.Component.Schema,
+		},
+		CreatedAt: src.CreatedAt,
+		UpdatedAt: src.UpdatedAt,
+		ModelId:   src.ModelID,
+	}
+	if src.Status != nil {
+		st := component.ComponentDefinitionStatus(*src.Status)
+		dst.Status = &st
+	}
+	return dst
+}
+
 func processEvaluationResponse(reg *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
 
 	registryCache := &registry.RegistryEntityCache{}
@@ -439,13 +493,43 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 			compFilter.ModelName = _c.ModelReference.Name
 		}
 
+		// ModelName == "*" originates from policies that emit add_component
+		// without binding to a specific model — e.g. identify_additions.rego
+		// when the relationship's mutator selector specifies model.name "*".
+		// The registry's exact-match SQL filter on model_dbs.name returns zero
+		// rows for "*", which previously routed the component into
+		// unknownComponents and shipped it to the client unhydrated (no Styles,
+		// no Metadata) — leaving the user with default green-box styling until
+		// they manually triggered "reset styles". Drop the model filter so kind
+		// alone disambiguates; if multiple models register the same Kind we
+		// still take the first match (Limit:1) which is consistent with the
+		// pre-existing single-model assumption for evaluator-added components.
+		if compFilter.ModelName == "*" {
+			compFilter.ModelName = ""
+		}
+
 		entities, _, _, _ := reg.GetEntitiesMemoized(compFilter, registryCache)
 		if len(entities) == 0 {
 			unknownComponents = append(unknownComponents, &_c)
 			continue
 		}
+		// The meshkit registry exclusively returns *v1beta3.ComponentDefinition
+		// (v1beta3 is the only component package whose Entity interface is
+		// implemented and whose schema is bound to component_definition_dbs).
+		// This handler — and pattern.PatternFile.Components — are typed against
+		// v1beta1.ComponentDefinition, so a naive type assertion always fails
+		// and silently strands every evaluator-added component in
+		// unknownComponents (no Styles, no Metadata) — the very symptom users
+		// see as default-green nodes that need a manual style reset to render
+		// correctly. Try v1beta1 first to keep any legacy registry paths
+		// working, then fall back to v1beta3 with an explicit shallow bridge.
 		_component, ok := entities[0].(*component.ComponentDefinition)
 		if !ok || _component == nil {
+			if v3, vOk := entities[0].(*componentv1beta3.ComponentDefinition); vOk && v3 != nil {
+				_component = bridgeComponentV1beta3ToV1beta1(v3)
+			}
+		}
+		if _component == nil {
 			unknownComponents = append(unknownComponents, &_c)
 			continue
 		}

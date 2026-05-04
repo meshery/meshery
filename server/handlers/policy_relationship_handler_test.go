@@ -9,9 +9,10 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
-	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/category"
 	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
@@ -251,19 +252,25 @@ func TestProcessEvaluationResponse_NilPointerGuard(t *testing.T) {
 		assert.Equal(t, "Job", got[0].Component.Kind)
 	})
 
-	t.Run("type assertion failure routes to unknownComponents", func(t *testing.T) {
+	t.Run("v1beta3 registry entity is bridged into v1beta1 hydration", func(t *testing.T) {
 		t.Parallel()
-		// !ok guard: registry returns *v1beta3.ComponentDefinition (the real production
-		// type), which fails the *v1beta1.ComponentDefinition assertion in the handler.
-		// Without the guard this is the exact path that caused the production SIGSEGV.
+		// Registry returns *v1beta3.ComponentDefinition (the real production type);
+		// pattern.PatternFile.Components is typed against *v1beta1.ComponentDefinition.
+		// The handler now bridges v1beta3 → v1beta1 via a shallow field copy, so a
+		// successful registry hit hydrates the design. Previously the bare v1beta1
+		// type assertion silently failed, the component was stranded in
+		// unknownComponents, and the client rendered the node with default green
+		// styling until the user manually triggered a style reset.
 		rm, _ := newTestRegistryManager(t)
 		seedTestComponent(t, rm) // seeds via RegisterEntity — no raw SQL
+		resp := makeResp("test-job")
 		var got []*component.ComponentDefinition
 		require.NotPanics(t, func() {
-			got = processEvaluationResponse(rm, pattern.EvaluationRequest{}, makeResp("test-job"))
-		}, "must not panic when type assertion on registry entity fails")
-		require.Len(t, got, 1)
-		assert.Equal(t, "Job", got[0].Component.Kind)
+			got = processEvaluationResponse(rm, pattern.EvaluationRequest{}, resp)
+		}, "must not panic when bridging v1beta3 registry entity")
+		require.Empty(t, got, "registry hit should hydrate, not strand into unknownComponents")
+		require.Len(t, resp.Trace.ComponentsAdded, 1)
+		assert.Equal(t, "Job", resp.Trace.ComponentsAdded[0].Component.Kind)
 	})
 
 	t.Run("explicit DisplayName is preserved on unknown component", func(t *testing.T) {
@@ -335,6 +342,92 @@ func TestProcessEvaluationResponse_NilPointerGuard(t *testing.T) {
 		require.Len(t, got, 1)
 		assert.True(t, got[0].Metadata.IsAnnotation)
 	})
+}
+
+// seedStyledComponent registers a v1beta3 ComponentDefinition with a
+// non-empty Styles block, modeling how integrations like Kubernetes ship
+// visualization styles in their meshmodel JSON.
+func seedStyledComponent(t *testing.T, rm *registry.RegistryManager, kind, modelName string) {
+	t.Helper()
+	conn := connection.Connection{
+		Name:    modelName + "-registrant",
+		Kind:    modelName,
+		Type:    "platform",
+		SubType: "orchestration",
+		Status:  connection.ConnectionStatusConnected,
+	}
+	enabled := v1beta3comp.Enabled
+	comp := v1beta3comp.ComponentDefinition{
+		DisplayName:   kind,
+		SchemaVersion: "core.meshery.io/v1beta1",
+		Status:        &enabled,
+		Component: v1beta3comp.Component{
+			Kind:    kind,
+			Version: "v1",
+			Schema:  `{"properties":{}}`,
+		},
+		Styles: &core.ComponentStyles{
+			PrimaryColor: "#326CE5",
+			SvgColor:     "<svg>seeded</svg>",
+		},
+		Model: &model.ModelDefinition{
+			Name:          modelName,
+			DisplayName:   "Kubernetes",
+			SchemaVersion: "models.meshery.io/v1beta1",
+			Version:       "v1.25.0",
+			Model:         model.Model{Version: "v1.25.0"},
+			Category:      category.CategoryDefinition{Name: "Orchestration"},
+			Status:        model.Enabled,
+		},
+	}
+	id, err := comp.GenerateID()
+	require.NoError(t, err)
+	comp.ID = id
+	_, _, err = rm.RegisterEntity(conn, &comp)
+	require.NoError(t, err, "seedStyledComponent: RegisterEntity failed")
+}
+
+// Regression test for the Kanvas "evaluator-added components render with
+// default green styling on first paint" bug: rego identify_additions emits
+// add_component actions whose `model` field is the relationship selector
+// (e.g. {name: "*"}), and the registry's exact-match SQL filter on
+// model_dbs.name returns zero rows for "*". The component then shipped to
+// the client unhydrated — no styles, no metadata — and the user had to
+// manually trigger "reset styles" to make it render correctly.
+//
+// The fix: when ModelName is the wildcard "*", drop the model filter so the
+// kind alone disambiguates and the registry returns the canonical match.
+func TestProcessEvaluationResponse_HydratesWildcardModelEntries(t *testing.T) {
+	t.Parallel()
+
+	rm, _ := newTestRegistryManager(t)
+	seedStyledComponent(t, rm, "Namespace", "kubernetes")
+
+	resp := &pattern.EvaluationResponse{
+		Design: pattern.PatternFile{Version: "0.0.1"},
+		Trace: pattern.Trace{
+			ComponentsAdded: []component.ComponentDefinition{
+				{
+					Component: component.Component{Kind: "Namespace", Version: "v1"},
+					// Wildcard model name as emitted by identify_additions.rego
+					// when the relationship selector is `model: {name: "*"}`.
+					Model: &model.ModelDefinition{
+						Name:    "*",
+						Version: "v1.25.0",
+						Model:   model.Model{Version: "v1.25.0"},
+					},
+				},
+			},
+		},
+	}
+
+	got := processEvaluationResponse(rm, pattern.EvaluationRequest{}, resp)
+	require.Empty(t, got, "wildcard model should resolve to a registry entity, not unknownComponents")
+	require.Len(t, resp.Trace.ComponentsAdded, 1, "hydrated component should be in Trace.ComponentsAdded")
+	hydrated := resp.Trace.ComponentsAdded[0]
+	require.NotNil(t, hydrated.Styles, "hydrated component must carry registry Styles")
+	assert.Equal(t, "#326CE5", hydrated.Styles.PrimaryColor)
+	assert.Equal(t, "<svg>seeded</svg>", hydrated.Styles.SvgColor)
 }
 
 func TestParseRelationshipToAlias(t *testing.T) {
