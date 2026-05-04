@@ -130,6 +130,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/node": "25.5.2",
     "@vitejs/plugin-react": "^4.5.2",
     "allure-playwright": "^3.6.0",
     "dotenv": "^17.4.2",
@@ -144,16 +145,13 @@
     "js-yaml": "^4.1.1",
     "jsdom": "^26.1.0",
     "lint-staged": "^16.4.0",
-    "node-polyfill-webpack-plugin": "^4.1.0",
     "nodemon": "^3.1.14",
     "nyc": "^18.0.0",
     "prettier": "^3.8.1",
     "relay-compiler": "^20.1.1",
     "start-server-and-test": "^2.1.5",
     "typescript": "6.0.2",
-    "vitest": "^3.2.1",
-    "webpack": "^5.105.4",
-    "webpack-cli": "^7.0.2"
+    "vitest": "^3.2.1"
   },
   "engines": {
     "node": "^20.19.0 || ^22.13.0 || >=24"
