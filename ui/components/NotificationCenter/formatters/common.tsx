@@ -1,10 +1,14 @@
-// @ts-nocheck
 import React from 'react';
 import { Typography } from '@sistent/sistent';
 import { Launch as LaunchIcon } from '@mui/icons-material';
 import { TextWithLinks } from '../../DataFormatter';
 
-export const TitleLink = ({ href, children, ...props }) => {
+type TitleLinkProps = {
+  href: string;
+  children: React.ReactNode;
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>;
+
+export const TitleLink = ({ href, children, ...props }: TitleLinkProps) => {
   return (
     <a
       href={href}
@@ -33,7 +37,7 @@ export const TitleLink = ({ href, children, ...props }) => {
   );
 };
 
-export const EmptyState = ({ event }) => {
+export const EmptyState = ({ event }: { event: { description?: string } }) => {
   return (
     <Typography
       variant="body1"
@@ -55,7 +59,7 @@ export const EmptyState = ({ event }) => {
   );
 };
 
-export const DataToFileLink = ({ data }) => {
+export const DataToFileLink = ({ data }: { data: unknown }) => {
   // convert the trace to a file
   const dataString = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
   const file = new File([dataString], 'trace.txt', { type: 'text/plain' });

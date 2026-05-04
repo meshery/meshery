@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 2nd 2026, 9:23:01 am
+- Testing started at: May 3rd 2026, 9:22:28 pm
 
 **📦 Test Result Summary**
 
-- ✅ 135 passed
-- ❌ 2 failed
+- ✅ 141 passed
+- ❌ 0 failed
 - ⚠️ 0 flaked
-- ⏩ 7 skipped
+- ⏩ 3 skipped
 
-⌛ _Duration: 6 minutes and 49 seconds_
+⌛ _Duration: 7 minutes and 13 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
@@ -57,9 +57,9 @@
 | 34 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 35 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 36 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 37 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 38 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
-| 39 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
+| 37 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
+| 38 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
+| 39 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
 | 40 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 41 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 42 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
@@ -130,9 +130,9 @@
 | 107 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 108 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 109 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 110 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
-| 111 | None | chromium-local-provider | Import a Model via File Import |  | ❌ |
-| 112 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
+| 110 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
+| 111 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
+| 112 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
 | 113 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 114 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 115 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
@@ -171,42 +171,6 @@
 | 148 | None | remote-setup | authenticate with Remote Provider |  | ✅ |
 
 </div>
-</details>
-
-
-
-
-**❌ Failed Test Details**
-
-The following tests failed. Click on each to see the failure reason:
-
-
-<details>
-<summary>❌ Import a Model via File Import (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ Import a Model via File Import (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
 </details>
 
 
