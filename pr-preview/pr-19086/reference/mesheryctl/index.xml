@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Command Line Reference on Documentation</title><link>/reference/mesheryctl/</link><description>Recent content in Command Line Reference on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/reference/mesheryctl/index.xml" rel="self" type="application/rss+xml"/><item><title>mesheryctl-completion</title><link>/reference/mesheryctl/completion/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/completion/</guid><description>&lt;h1 id="mesheryctl-completion"&gt;
+	mesheryctl completion
+&lt;/h1&gt;
+&lt;p&gt;Generate shell completion scripts&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Output shell completion code&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl completion [bash|zsh|fish]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;h3 id="bash--32"&gt;
+	bash &amp;lt;= 3.2
+&lt;/h3&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+source /dev/stdin &lt;&lt;&lt; "$(mesheryctl completion bash)"
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;bash &amp;lt;= 3.2 on osx
+ensure you have bash-completion 1.3+&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+brew install bash-completion 
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryctl
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h3 id="bash--40"&gt;
+	bash &amp;gt;= 4.0
+&lt;/h3&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+source &lt;(mesheryctl completion bash)
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;bash &amp;gt;= 4.0 on osx&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+brew install bash-completion@2
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryctl
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h3 id="zsh"&gt;
+	zsh
+&lt;/h3&gt;
+&lt;p&gt;If shell completion is not already enabled in your environment you will need
+to enable it. You can execute the following once:
+Might need to start a new shell for this setup to take effect.&lt;/p&gt;</description></item><item><title>mesheryctl-exp</title><link>/reference/mesheryctl/exp/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/exp/</guid><description>&lt;h1 id="mesheryctl-exp"&gt;
+	mesheryctl exp
+&lt;/h1&gt;
+&lt;p&gt;Preview experimental commands&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Commands under the Experimental group are for testing and evaluation prior to promotion to general availability. Experimental commands are subject to change.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl exp [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for exp
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-version</title><link>/reference/mesheryctl/version/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/version/</guid><description>&lt;h1 id="mesheryctl-version"&gt;
+	mesheryctl version
+&lt;/h1&gt;
+&lt;p&gt;Show Meshery CLI and Server versions&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Version of Meshery command line client - mesheryctl.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl version [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;To view the current version and SHA of release binary of mesheryctl client&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl version
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for version
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="screenshots"&gt;
+	Screenshots
+&lt;/h2&gt;
+&lt;p&gt;Usage of mesheryctl version
+&lt;img class="content-image" src="../../reference/images/version.png" alt="version-usage" /&gt;&lt;/p&gt;</description></item></channel></rss>

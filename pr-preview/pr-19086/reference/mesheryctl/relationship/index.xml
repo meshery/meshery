@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mesheryctl-relationship on Documentation</title><link>/reference/mesheryctl/relationship/</link><description>Recent content in mesheryctl-relationship on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/reference/mesheryctl/relationship/index.xml" rel="self" type="application/rss+xml"/><item><title>mesheryctl-relationship-generate</title><link>/reference/mesheryctl/relationship/generate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/relationship/generate/</guid><description>&lt;h1 id="mesheryctl-relationship-generate"&gt;
+	mesheryctl relationship generate
+&lt;/h1&gt;
+&lt;p&gt;Generate relationships documents&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Generate relationships documents from the google spreadsheets&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship generate [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Generate relationships documentss&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for generate
+ --spreadsheet-cred string base64 encoded credential to download the spreadsheet
+ --spreadsheet-id string spreadsheet ID for the integration spreadsheet
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-relationship-list</title><link>/reference/mesheryctl/relationship/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/relationship/list/</guid><description>&lt;h1 id="mesheryctl-relationship-list"&gt;
+	mesheryctl relationship list
+&lt;/h1&gt;
+&lt;p&gt;List registered relationships&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;List all relationships registered in Meshery Server&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship list [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;List all relationships&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship list
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;List relationships for a specified page&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship list --page [page-number]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;List relationships with a custom page size&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship list --pagesize [page-size]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Display the total number of available relationships in Meshery&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship list --count
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -c, --count (optional) Display the total count of relationships only
+ -h, --help help for list
+ -p, --page int (optional) List next set of relationships with --page (default = 1) (default 1)
+ --pagesize int (optional) Number of results per page (default = 10) (default 10)
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-relationship-search</title><link>/reference/mesheryctl/relationship/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/relationship/search/</guid><description>&lt;h1 id="mesheryctl-relationship-search"&gt;
+	mesheryctl relationship search
+&lt;/h1&gt;
+&lt;p&gt;Search registered relationship(s)&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Search registered relationship(s) used by different models&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship search [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Search for a specific relationship&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship search [--kind &lt;kind&gt;] [--type &lt;type&gt;] [--subtype &lt;subtype&gt;] [--model &lt;model&gt;]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Search a relationship for a specified page&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship search [--kind &lt;kind&gt;] [--page &lt;int&gt;]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for search
+ -k, --kind string (optional) Search relationships of a particular kind
+ -m, --model string (optional) Search relationships of a particular model name
+ -p, --page int (optional) Page number of results to fetch (default = 1) (default 1)
+ -s, --subtype string (optional) Search relationships of a particular subtype
+ -t, --type string (optional) Search relationships of a particular type
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-relationship-view</title><link>/reference/mesheryctl/relationship/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/relationship/view/</guid><description>&lt;h1 id="mesheryctl-relationship-view"&gt;
+	mesheryctl relationship view
+&lt;/h1&gt;
+&lt;p&gt;view relationships of a model by its name&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;view a relationship queried by the model name&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship view [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;View relationships of a model in default format yaml&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship view [model-name]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View relationships of a model in JSON format&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship view [model-name] --output-format json
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View relationships of a model in json format and save it to a file&lt;/p&gt;</description></item></channel></rss>
