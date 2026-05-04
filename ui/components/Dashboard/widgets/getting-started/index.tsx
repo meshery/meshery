@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from 'react';
 import { iconMedium } from 'css/icons.styles';
 import { useTheme, ActionButtonCard, GetStartedModal, GetStartedIcon } from '@sistent/sistent';
@@ -17,7 +16,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useSelector } from 'react-redux';
 
-const GetStarted = (props) => {
+const GetStarted = (props: { iconsProps?: object }) => {
   const [openModal, setOpenModal] = useState(false);
   const theme = useTheme();
   const { data: currentUser } = useGetLoggedInUserQuery();

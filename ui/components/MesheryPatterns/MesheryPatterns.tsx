@@ -291,9 +291,7 @@ function MesheryPatterns({
   const [viewType, setViewType] = useState(view === 'table' ? 'table' : 'grid');
   const { notify } = useNotification();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
-  const { catalogVisibility } = useSelector((state) => state.ui);
-  const { user } = useSelector((state) => state.ui);
+  const { selectedK8sContexts, catalogVisibility, user } = useSelector((state) => state.ui);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
   const {
@@ -1068,7 +1066,7 @@ function MesheryPatterns({
               condition: visibility === VISIBILITY.PUBLISHED,
             },
             {
-              label: 'Design',
+              label: 'Edit',
               icon: <PatternConfigureIcon />,
               onClick: (e) => {
                 e.stopPropagation();

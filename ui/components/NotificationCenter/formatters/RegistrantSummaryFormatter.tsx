@@ -1,9 +1,8 @@
-// @ts-nocheck
 import React from 'react';
 import { TitleLink } from './common';
 import { Box, Typography } from '@sistent/sistent';
 
-export const RegistrantSummaryFormatter = ({ event }) => {
+export const RegistrantSummaryFormatter = ({ event }: { event: { description?: string } }) => {
   const docLink = 'https://docs.meshery.io/concepts/logical#logical-concepts';
 
   return (

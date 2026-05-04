@@ -1,4 +1,3 @@
-// @ts-nocheck
 import EmptyState from './empty-state';
 import FlipCard from './flip-card';
 
