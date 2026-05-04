@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user';
@@ -48,7 +47,7 @@ const HeaderMenu = () => {
   const [triggerGetToken, { isError: isTokenError, error: tokenError }] = useLazyGetTokenQuery();
 
   const handleLogout = () => {
-    window.location = '/user/logout';
+    window.location.href = '/user/logout';
     handleClose();
   };
 
@@ -92,13 +91,17 @@ const HeaderMenu = () => {
     }
   }, [userData, isGetUserSuccess, isGetUserError]);
 
-  if (isTokenError) {
-    notify({
-      message: 'Error fetching token',
-      event_type: EVENT_TYPES.ERROR,
-      details: tokenError?.data,
-    });
-  }
+  // Side-effect notifications belong in useEffect — calling notify during render
+  // fires on every render and triggers infinite update loops.
+  useEffect(() => {
+    if (isTokenError) {
+      notify({
+        message: 'Error fetching token',
+        event_type: EVENT_TYPES.ERROR,
+        details: tokenError?.data,
+      });
+    }
+  }, [isTokenError, tokenError, notify]);
 
   useEffect(() => {
     if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
@@ -227,6 +230,4 @@ const HeaderMenu = () => {
   );
 };
 
-const MenuProvider = (props) => <HeaderMenu {...props} />;
-
-export default MenuProvider;
+export default HeaderMenu;

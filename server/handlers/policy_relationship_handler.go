@@ -14,8 +14,8 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
-	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshery/server/models/pattern/utils"
+	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -397,7 +397,7 @@ func (h *Handler) EvaluateDesign(
 	return lastEvaluationResponse, nil
 }
 
-func processEvaluationResponse(registryManager *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
+func processEvaluationResponse(reg *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
 
 	registryCache := &registry.RegistryEntityCache{}
 
@@ -439,12 +439,16 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 			compFilter.ModelName = _c.ModelReference.Name
 		}
 
-		entities, _, _, _ := registryManager.GetEntitiesMemoized(compFilter, registryCache)
+		entities, _, _, _ := reg.GetEntitiesMemoized(compFilter, registryCache)
 		if len(entities) == 0 {
 			unknownComponents = append(unknownComponents, &_c)
 			continue
 		}
-		_component, _ := entities[0].(*component.ComponentDefinition)
+		_component, ok := entities[0].(*component.ComponentDefinition)
+		if !ok || _component == nil {
+			unknownComponents = append(unknownComponents, &_c)
+			continue
+		}
 
 		_component.ID = _c.ID
 		if _c.DisplayName != "" {
@@ -769,10 +773,10 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
+		Page:       page,
+		PageSize:   int(pgSize),
 		TotalCount: 0,
-		Policies: entities,
+		Policies:   entities,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -812,10 +816,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
+		Page:       page,
+		PageSize:   int(pgSize),
 		TotalCount: 0,
-		Policies: entities,
+		Policies:   entities,
 	}
 
 	if err := enc.Encode(response); err != nil {

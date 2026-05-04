@@ -1,10 +1,9 @@
-// @ts-nocheck
 import * as React from 'react';
 import { getColumnSize, getRowSize } from './helpers';
 import HoneycombCell from './HoneycombCell';
 import { HoneycombContainer } from '../../style';
 
-const Honeycomb = React.forwardRef(({ items, renderItem, size, columns, className }, ref) => {
+const Honeycomb = ({ items, renderItem, size, columns, className, ref }) => {
   const rowSize = getRowSize(size);
   const columnSize = getColumnSize(size);
 
@@ -29,8 +28,6 @@ const Honeycomb = React.forwardRef(({ items, renderItem, size, columns, classNam
       })}
     </HoneycombContainer>
   );
-});
-
-Honeycomb.displayName = 'Honeycomb';
+};
 
 export default Honeycomb;

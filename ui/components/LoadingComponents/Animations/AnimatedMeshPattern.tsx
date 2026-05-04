@@ -1,18 +1,17 @@
-// @ts-nocheck
-import { useTheme } from '@sistent/sistent';
+import { useTheme, Theme } from '@sistent/sistent';
 import React, { useState, useEffect } from 'react';
 
-function getClassName(className, isActive) {
+function getClassName(className: string, isActive: boolean): string {
   if (!isActive) {
     return className;
   }
 
   return `${className} active`;
 }
-function getLogoTextColor(theme) {
+function getLogoTextColor(theme: Theme): string {
   return theme.palette.mode == 'light' ? '#3c494f' : '#FFF';
 }
-const AnimatedMeshPattern = (props) => {
+const AnimatedMeshPattern = (props: React.SVGAttributes<SVGSVGElement>) => {
   const [isActive, setIsActive] = useState(true);
   const theme = useTheme();
   useEffect(() => {

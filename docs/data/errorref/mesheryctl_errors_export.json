@@ -124,8 +124,8 @@
         "name": "ErrGettingRequestContextCode",
         "code": "1015",
         "severity": "Fatal",
-        "long_description": "Unable to add token to config",
-        "short_description": "Unable to add token to config",
+        "long_description": "Unable to get request context",
+        "short_description": "Unable to get request context",
         "probable_cause": "",
         "suggested_remediation": ""
       },

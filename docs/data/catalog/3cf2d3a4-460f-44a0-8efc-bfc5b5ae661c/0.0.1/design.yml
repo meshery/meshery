@@ -1,0 +1,1949 @@
+{
+  "id": "3cf2d3a4-460f-44a0-8efc-bfc5b5ae661c",
+  "name": "Exam Portal with Real-Time Leaderboard (AWS)",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.34",
+  "metadata": {
+    "resolvedAliases": {}
+  },
+  "components": [
+    {
+      "id": "020cdc4f-f7cb-4632-8fe1-fb7dc93d70b7",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 80,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1040.1146881785382,
+          "y": 924.0572005145606
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": 80,
+        "z-index": 11
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.407067078Z",
+      "updated_at": "2026-01-20T01:39:20.407067078Z"
+    },
+    {
+      "id": "0d3c6658-f9cd-4146-8133-09226a05eb51",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 80,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1068.1660392490794,
+          "y": 652.8941401659972
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": 80,
+        "z-index": 19
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.407067078Z",
+      "updated_at": "2026-01-20T01:39:20.407067078Z"
+    },
+    {
+      "id": "39e94346-26b7-4877-bc0d-bf9078ffe762",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 80,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 877.001276397985,
+          "y": 821.2022465892435
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": 80,
+        "z-index": 14
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.407067078Z",
+      "updated_at": "2026-01-20T01:39:20.407067078Z"
+    },
+    {
+      "id": "5002fdc4-09b9-41db-9321-f23f6199421c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 80,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 891.5464213975247,
+          "y": 786.917261947471
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": 80,
+        "z-index": 13
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.407067078Z",
+      "updated_at": "2026-01-20T01:39:20.407067078Z"
+    },
+    {
+      "id": "86f2f307-5fc5-498c-be66-5bbb905c9dd4",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 80,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1085.8280010342348,
+          "y": 644.5826287376888
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": 80,
+        "z-index": 17
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.407067078Z",
+      "updated_at": "2026-01-20T01:39:20.407067078Z"
+    },
+    {
+      "id": "a13b8760-f0ad-45ad-b038-3e4185d131ed",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 80,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 923.75352818222,
+          "y": 745.3597048059288
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": 80,
+        "z-index": 15
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.407067078Z",
+      "updated_at": "2026-01-20T01:39:20.407067078Z"
+    },
+    {
+      "id": "a97fd1dc-3769-4bd1-b49d-e4481d379011",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 80,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 824.0153910425186,
+          "y": 810.8128573038579
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": 80,
+        "z-index": 12
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.407067078Z",
+      "updated_at": "2026-01-20T01:39:20.407067078Z"
+    },
+    {
+      "id": "b584e5cb-e64f-489c-9c5c-ffaffda61d4a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 80,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 984.0119860374563,
+          "y": 653.9330790945359
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": 80,
+        "z-index": 16
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.407067078Z",
+      "updated_at": "2026-01-20T01:39:20.407067078Z"
+    },
+    {
+      "id": "d3475c47-a427-4eef-aa73-8c2f9c59a3e8",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 80,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 953.882757109838,
+          "y": 716.2694148068492
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": 80,
+        "z-index": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.407067078Z",
+      "updated_at": "2026-01-20T01:39:20.407067078Z"
+    },
+    {
+      "id": "e400462e-041c-43f5-b5ce-1083676dd7c3",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 80,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 955.9606349669152,
+          "y": 784.839384090394
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": 80,
+        "z-index": 18
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.407067078Z",
+      "updated_at": "2026-01-20T01:39:20.407067078Z"
+    },
+    {
+      "id": "f7a5169c-b55c-4751-aded-bc341e27bb6f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 80,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 893.6242992546019,
+          "y": 693.4127583790009
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": 80,
+        "z-index": 21
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.407067078Z",
+      "updated_at": "2026-01-20T01:39:20.407067078Z"
+    },
+    {
+      "id": "5e397c47-f4c5-43d0-aa89-7faf619c7eca",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-arrows",
+        "displayName": "Meshery Arrows",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#00b39f",
+        "border-style": "solid",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 30,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 851.8151103914032,
+          "y": 479.543662690909
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "polygon",
+        "shape-polygon-points": "-0.23 -1 0.23 -1 0.23 0.38 0.46 0.38 0 1 -0.46 0.38 -0.23 0.38",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-arrows/color/downarrow-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-arrows/complete/downarrow-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-arrows/white/downarrow-white.svg",
+        "width": 30,
+        "z-index": 8
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "DownArrow",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.372919609Z",
+      "updated_at": "2026-01-20T01:39:20.372919609Z"
+    },
+    {
+      "id": "1b23c05f-0e4f-4f19-8153-fdfd0f02ea90",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "transparent",
+        "border-style": "dashed",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 1,
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": 613,
+          "y": 384
+        },
+        "primaryColor": "#00D3a9",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "width": 1,
+        "z-index": 9
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "PenTerminal",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.40590755Z",
+      "updated_at": "2026-01-20T01:39:20.40590755Z"
+    },
+    {
+      "id": "6809ae4e-5c97-42ee-bad7-9d983e62647e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "transparent",
+        "border-style": "dashed",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 1,
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": 758,
+          "y": 259
+        },
+        "primaryColor": "#00D3a9",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "width": 1,
+        "z-index": 10
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "PenTerminal",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:20.40590755Z",
+      "updated_at": "2026-01-20T01:39:20.40590755Z"
+    },
+    {
+      "id": "0f5d7bb2-d959-4871-960a-bd5b8e8e9c8c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Api Gateway",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "aws-apigatewayv2-controller",
+        "displayName": "AWS API Gateway v2",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.2.1"
+        }
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 752.7803809147734,
+          "y": 341.31177013519414
+        },
+        "primaryColor": "#ff9900",
+        "secondaryColor": "#F4BC79",
+        "shape": "triangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-apigatewayv2-controller/color/api-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-apigatewayv2-controller/white/api-white.svg",
+        "width": 24,
+        "z-index": 7
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "Api Gateway",
+          "namespace": "default"
+        },
+        "spec": {
+          "corsConfiguration": {
+            "allowHeaders": [],
+            "allowMethods": [],
+            "allowOrigins": [],
+            "exposeHeaders": []
+          }
+        }
+      },
+      "component": {
+        "version": "apigatewayv2.services.k8s.aws/v1alpha1",
+        "kind": "API",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:08.825894Z",
+      "updated_at": "2026-01-20T01:39:08.825894Z"
+    },
+    {
+      "id": "e3a71fd2-d7bd-4948-9816-12838a71c101",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Exam DB ( Postgresql )",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "aws-rds-controller",
+        "displayName": "AWS Relational Database Service",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.7.3"
+        }
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 853.4462089438371,
+          "y": 644.5872063853545
+        },
+        "primaryColor": "#C925D1",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-rds-controller/color/dbinstance-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-rds-controller/white/dbinstance-white.svg",
+        "width": 24,
+        "z-index": 4
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/rds-controller/main/helm"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "Exam DB ( Postgresql )",
+          "namespace": "default"
+        },
+        "spec": {
+          "enableCloudwatchLogsExports": [],
+          "processorFeatures": [],
+          "tags": [],
+          "vpcSecurityGroupIDs": [],
+          "vpcSecurityGroupRefs": []
+        }
+      },
+      "component": {
+        "version": "rds.services.k8s.aws/v1alpha1",
+        "kind": "DBInstance",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:09.226803435Z",
+      "updated_at": "2026-01-20T01:39:09.226803435Z"
+    },
+    {
+      "id": "ffce1a1b-b5d2-4fae-ae01-9dc62e1ec862",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Auth Service",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "aws-ec2-controller",
+        "displayName": "AWS EC2",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.9.2"
+        }
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 643.2456552338002,
+          "y": 489.7742824533794
+        },
+        "primaryColor": "#ED7100",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/instance-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/instance-white.svg",
+        "width": 24,
+        "z-index": 3
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "Auth Service",
+          "namespace": "default"
+        },
+        "spec": {
+          "blockDeviceMappings": [],
+          "elasticGPUSpecification": [],
+          "elasticInferenceAccelerators": [],
+          "ipv6Addresses": [],
+          "licenseSpecifications": [],
+          "networkInterfaces": [],
+          "securityGroupIDs": [],
+          "securityGroups": [],
+          "tags": []
+        }
+      },
+      "component": {
+        "version": "ec2.services.k8s.aws/v1alpha1",
+        "kind": "Instance",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:08.962896568Z",
+      "updated_at": "2026-01-20T01:39:08.962896568Z"
+    },
+    {
+      "id": "77c7ff25-45fc-4ccf-86ae-083e6e31c010",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Exam Service",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "aws-ec2-controller",
+        "displayName": "AWS EC2",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.9.2"
+        }
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 850.4377012412815,
+          "y": 494.6591026623162
+        },
+        "primaryColor": "#ED7100",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/instance-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/instance-white.svg",
+        "width": 24,
+        "z-index": 0
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "Exam Service",
+          "namespace": "default"
+        },
+        "spec": {
+          "blockDeviceMappings": [],
+          "elasticGPUSpecification": [],
+          "elasticInferenceAccelerators": [],
+          "ipv6Addresses": [],
+          "licenseSpecifications": [],
+          "networkInterfaces": [],
+          "securityGroupIDs": [],
+          "securityGroups": [],
+          "tags": []
+        }
+      },
+      "component": {
+        "version": "ec2.services.k8s.aws/v1alpha1",
+        "kind": "Instance",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:08.962896568Z",
+      "updated_at": "2026-01-20T01:39:08.962896568Z"
+    },
+    {
+      "id": "759f13d4-b1a0-47e6-91bf-ee5ee94c09df",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Leaderboard Processor",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "aws-ec2-controller",
+        "displayName": "AWS EC2",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.9.2"
+        }
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 967.7030475389917,
+          "y": 760.8534305388507
+        },
+        "primaryColor": "#ED7100",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/instance-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/instance-white.svg",
+        "width": 24,
+        "z-index": 1
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "Leaderboard Processor",
+          "namespace": "default"
+        },
+        "spec": {
+          "blockDeviceMappings": [],
+          "elasticGPUSpecification": [],
+          "elasticInferenceAccelerators": [],
+          "ipv6Addresses": [],
+          "licenseSpecifications": [],
+          "networkInterfaces": [],
+          "securityGroupIDs": [],
+          "securityGroups": [],
+          "tags": []
+        }
+      },
+      "component": {
+        "version": "ec2.services.k8s.aws/v1alpha1",
+        "kind": "Instance",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:08.962896568Z",
+      "updated_at": "2026-01-20T01:39:08.962896568Z"
+    },
+    {
+      "id": "a6710f43-0b00-4b5a-abbe-eef07acb7652",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Websocket Server",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "aws-ec2-controller",
+        "displayName": "AWS EC2",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.9.2"
+        }
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 968.2847363718034,
+          "y": 869.2262196219835
+        },
+        "primaryColor": "#ED7100",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/instance-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/instance-white.svg",
+        "width": 24,
+        "z-index": 2
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "Websocket Server",
+          "namespace": "default"
+        },
+        "spec": {
+          "blockDeviceMappings": [],
+          "elasticGPUSpecification": [],
+          "elasticInferenceAccelerators": [],
+          "ipv6Addresses": [],
+          "licenseSpecifications": [],
+          "networkInterfaces": [],
+          "securityGroupIDs": [],
+          "securityGroups": [],
+          "tags": []
+        }
+      },
+      "component": {
+        "version": "ec2.services.k8s.aws/v1alpha1",
+        "kind": "Instance",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:08.962896568Z",
+      "updated_at": "2026-01-20T01:39:08.962896568Z"
+    },
+    {
+      "id": "e2ecc4df-bffe-4861-8294-27ef39441baa",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Score Queue",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "aws-sqs-controller",
+        "displayName": "AWS Simple Queuing Service",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.4.1"
+        }
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 959.3345971093917,
+          "y": 642.7667248905876
+        },
+        "primaryColor": "#E7157B",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-sqs-controller/color/queue-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-sqs-controller/white/queue-white.svg",
+        "width": 24,
+        "z-index": 6
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/sqs-controller/main/helm"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "Score Queue",
+          "namespace": "default"
+        },
+        "spec": {}
+      },
+      "component": {
+        "version": "sqs.services.k8s.aws/v1alpha1",
+        "kind": "Queue",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:09.380547443Z",
+      "updated_at": "2026-01-20T01:39:09.380547443Z"
+    },
+    {
+      "id": "3b36cf26-faa1-4052-96ad-e087cda436d5",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Questions and Sessions",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "redis-operator",
+        "displayName": "Redis Operator",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v0.23.0"
+        }
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 745.0333124607934,
+          "y": 637.6944602783191
+        },
+        "primaryColor": "#3971e5",
+        "secondaryColor": "#3971e5",
+        "shape": "heptagon",
+        "svgColor": "ui/public/static/img/meshmodels/redis-operator/color/redis-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/redis-operator/white/redis-white.svg",
+        "width": 24,
+        "z-index": 5
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/OT-CONTAINER-KIT/redis-operator/master/charts/redis-operator"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "Questions and Sessions",
+          "namespace": "default"
+        },
+        "spec": {
+          "TLS": {
+            "secret": {
+              "items": []
+            }
+          },
+          "acl": {
+            "secret": {
+              "items": []
+            }
+          },
+          "affinity": {
+            "nodeAffinity": {
+              "preferredDuringSchedulingIgnoredDuringExecution": [],
+              "requiredDuringSchedulingIgnoredDuringExecution": {
+                "nodeSelectorTerms": []
+              }
+            },
+            "podAffinity": {
+              "preferredDuringSchedulingIgnoredDuringExecution": [],
+              "requiredDuringSchedulingIgnoredDuringExecution": []
+            },
+            "podAntiAffinity": {
+              "preferredDuringSchedulingIgnoredDuringExecution": [],
+              "requiredDuringSchedulingIgnoredDuringExecution": []
+            }
+          },
+          "env": [],
+          "initContainer": {
+            "args": [],
+            "command": [],
+            "env": [],
+            "resources": {
+              "claims": []
+            },
+            "securityContext": {
+              "capabilities": {
+                "add": [],
+                "drop": []
+              }
+            }
+          },
+          "kubernetesConfig": {
+            "ignoreAnnotations": [],
+            "imagePullSecrets": [],
+            "resources": {
+              "claims": []
+            },
+            "service": {
+              "additional": {
+                "enabled": true,
+                "type": "ClusterIP"
+              },
+              "headless": {
+                "enabled": true,
+                "type": "ClusterIP"
+              }
+            }
+          },
+          "livenessProbe": {
+            "exec": {
+              "command": []
+            },
+            "grpc": {
+              "service": ""
+            },
+            "httpGet": {
+              "httpHeaders": []
+            }
+          },
+          "podSecurityContext": {
+            "supplementalGroups": [],
+            "sysctls": []
+          },
+          "readinessProbe": {
+            "exec": {
+              "command": []
+            },
+            "grpc": {
+              "service": ""
+            },
+            "httpGet": {
+              "httpHeaders": []
+            }
+          },
+          "redisConfig": {
+            "dynamicConfig": []
+          },
+          "redisExporter": {
+            "env": [],
+            "port": 9121,
+            "resources": {
+              "claims": []
+            },
+            "securityContext": {
+              "capabilities": {
+                "add": [],
+                "drop": []
+              }
+            }
+          },
+          "securityContext": {
+            "capabilities": {
+              "add": [],
+              "drop": []
+            }
+          },
+          "sidecars": [],
+          "storage": {
+            "volumeClaimTemplate": {
+              "spec": {
+                "accessModes": [],
+                "selector": {
+                  "matchExpressions": []
+                }
+              },
+              "status": {
+                "accessModes": [],
+                "conditions": []
+              }
+            },
+            "volumeMount": {
+              "mountPath": [],
+              "volume": []
+            }
+          },
+          "tolerations": []
+        }
+      },
+      "component": {
+        "version": "redis.redis.opstreelabs.in/v1beta2",
+        "kind": "Redis",
+        "schema": ""
+      },
+      "created_at": "2026-01-20T01:39:22.528890907Z",
+      "updated_at": "2026-01-20T01:39:22.528890907Z"
+    }
+  ],
+  "preferences": {
+    "layers": {
+      "components": {
+        "DownArrow-meshery-arrows": false,
+        "Instance-aws-ec2-controller": true
+      }
+    }
+  },
+  "relationships": [
+    {
+      "id": "3a690a0f-2cce-492d-adbb-1b213093fb91",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "0f5d7bb2-d959-4871-960a-bd5b8e8e9c8c",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "77c7ff25-45fc-4ccf-86ae-083e6e31c010",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": null
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "cef5e6c8-544d-4ba1-894a-0f81317a66c1",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "0f5d7bb2-d959-4871-960a-bd5b8e8e9c8c",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "ffce1a1b-b5d2-4fae-ae01-9dc62e1ec862",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": null
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    }
+  ]
+}
