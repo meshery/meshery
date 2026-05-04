@@ -15,10 +15,10 @@ tools:
     - "*"
 safe-outputs:
   upload-asset:
-  create-discussion:
-    category: "audits"
-    close-older-discussions: true
-    fallback-to-issue: false
+  create-issue:
+    labels: ["docs", "automated-testing"]
+    close-older-issues: true
+    max: 10
   noop: false
   missing-tool: false
   missing-data: false
@@ -233,41 +233,64 @@ For each confusing or broken area:
 - Name the screenshot descriptively (for example: `confusing-quick-start-prereqs.png` or `broken-search-results-page.png`)
 - Note the page URL and specific section
 
-## Step 7: Create discussion report
+## Step 7: Create issue reports
 
-Create a GitHub discussion titled **"📚 Meshery Docs newcomer test report - [Date]"** with:
+For each distinct problem found during testing, create a **separate GitHub issue**. Each issue should be focused on a single, actionable finding so it can be independently triaged, assigned, and resolved.
 
-### Summary
-- Date of test: [Today's date]
-- Branch / commit tested: [fill from `git rev-parse --abbrev-ref HEAD` and `git rev-parse HEAD`]
-- Toolchain used: [Node version, Go version, Hugo version]
-- Pages visited: [List URLs]
-- Overall impression as a new Meshery user: [1-2 sentences]
-- Overall impression as a first-time docs contributor: [1-2 sentences]
+### Issue title format
 
-### Critical Issues Found
-[List any blocking issues with screenshots]
+Use the format: **"[Docs] [Date] Brief description of the problem"**
 
-### Confusing Areas
-[List confusing sections with explanations and screenshots]
+Examples:
+- `[Docs] 2026-04-30 make site fails after make setup — Hugo not on PATH`
+- `[Docs] 2026-04-30 Contributing docs reference nonexistent data/toc.yml`
+- `[Docs] 2026-04-30 Quick Start page has no prerequisites checklist`
 
-### Hugo / Docsy rendering and navigation findings
-[List issues related to shortcodes, search, redirects, sidebar structure, breadcrumbs, images, code blocks, and layout]
+### Issue body format
 
-### What Worked Well
-[Positive feedback on clear sections]
+Each issue body should follow this structure:
 
-### Recommendations
-- Prioritized suggestions for improving the newcomer and contributor experience
-- Quick wins that would help docs contributors immediately
-- Longer-term Meshery Docs improvements
+```
+**Source:** Meshery Docs Noob Tester (automated)
+**Date of test:** [Today's date]
+**Branch / commit tested:** [branch] @ [commit SHA]
+**Severity:** 🔴 Critical | 🟡 Confusing | 🟢 Minor
 
-### Screenshots
-[Embed all relevant screenshots showing issues or confusing areas]
+## Problem
 
-Start the discussion body with:
+[Clear, concise description of what is wrong or confusing]
 
-`Focus areas: docs, user-experience, hugo, docsy, newcomer-onboarding`
+## Location
+
+[File path(s) and/or URL(s) where the issue occurs]
+
+## Steps to Reproduce / How a Newcomer Encounters This
+
+[Describe the user journey that leads to this problem]
+
+## Suggested Fix
+
+[Concrete, actionable recommendation for resolving the issue]
+
+## Screenshots
+
+[Embed any relevant screenshots showing the issue]
+```
+
+### What to file and what to skip
+
+- **Do file**: Each distinct 🔴 Critical Issue and 🟡 Confusing Area as a separate issue
+- **Do file**: Hugo/Docsy rendering or navigation problems as separate issues
+- **Do NOT file**: Positive observations ("What Worked Well") — these are not issues
+- **Do NOT file**: Multiple unrelated problems in a single issue
+- **Do combine**: If two findings are closely related (e.g., same file, same root cause), they may share one issue
+
+### Grouping guidance
+
+Aim for **one issue per root cause**. For example:
+- A broken link and the file it lives in → one issue
+- An incorrect `make` command and a missing prerequisites section → two separate issues
+- Multiple rendering problems on the same page with the same root cause → one issue
 
 ## Step 8: Cleanup
 
@@ -291,4 +314,4 @@ You've successfully completed this task if you:
 - Checked search, redirects, and rendered Hugo/Docsy components
 - Identified specific pain points with examples
 - Provided actionable recommendations
-- Created a discussion with clear findings and screenshots
+- Created one or more GitHub issues, each focused on a single actionable finding with screenshots
