@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';

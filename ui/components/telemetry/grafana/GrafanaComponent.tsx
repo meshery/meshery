@@ -75,8 +75,7 @@ const GrafanaComponent = (props) => {
   const updateState = (newState) => {
     setState((prev) => ({ ...prev, ...newState }));
   };
-  const { k8sConfig } = useSelector((state) => state.ui);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig, selectedK8sContexts } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);

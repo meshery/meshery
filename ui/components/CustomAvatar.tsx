@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { styled, Badge } from '@sistent/sistent';
 
@@ -38,7 +37,12 @@ const Container = styled('div')(({ theme }) => ({
   },
 }));
 
-export default function BadgeAvatars({ children, color }) {
+type BadgeAvatarsProps = {
+  children: React.ReactNode;
+  color?: string;
+};
+
+export default function BadgeAvatars({ children, color }: BadgeAvatarsProps) {
   return (
     <Container>
       <StyledBadge

@@ -1,12 +1,17 @@
-// @ts-nocheck
 import * as React from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
 
 import Honeycomb from './Honeycomb';
 import { getGridColumnsCount } from './helpers';
 
-const ResponsiveHoneycomb = ({ size, defaultWidth, ...restProps }) => {
-  const containerRef = React.useRef(null);
+type ResponsiveHoneycombProps = {
+  size: number;
+  defaultWidth: number;
+  [key: string]: unknown;
+};
+
+const ResponsiveHoneycomb = ({ size, defaultWidth, ...restProps }: ResponsiveHoneycombProps) => {
+  const containerRef = React.useRef<HTMLDivElement>(null);
   const [columns, setColumns] = React.useState(() => {
     const calculatedColumns = getGridColumnsCount(size, defaultWidth);
     return Math.max(1, calculatedColumns); // Ensure at least 1 column

@@ -1,7 +1,6 @@
-// @ts-nocheck
 import BaseInput from './CustomBaseInput';
 
-const CustomColorWidget = (props) => {
+const CustomColorWidget = (props: { options?: object } & Record<string, unknown>) => {
   const { options } = props;
 
   return <BaseInput {...props} options={{ ...options, inputType: 'color' }} />;

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { gauge } from 'billboard.js';
 import { Box, Typography, Stack, KEPPEL, SAFFRON, CircularProgress } from '@sistent/sistent';
@@ -6,7 +5,17 @@ import BBChart from '@/components/BBChart';
 import ConnectCluster from './ConnectCluster';
 import { LoadingContainer, ChartSectionWithColumn } from '../style';
 
-export const ResourceUtilizationChart = ({ usageData, isClusterLoading }) => {
+type UsageDatum = { resource: string; percentage: number };
+
+type ResourceUtilizationChartProps = {
+  usageData?: UsageDatum[];
+  isClusterLoading?: boolean;
+};
+
+export const ResourceUtilizationChart = ({
+  usageData,
+  isClusterLoading,
+}: ResourceUtilizationChartProps) => {
   const commonConfig = {
     gauge: {
       max: 100,

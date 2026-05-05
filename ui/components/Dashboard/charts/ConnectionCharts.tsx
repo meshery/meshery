@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
@@ -25,8 +24,8 @@ export default function ConnectionStatsChart() {
   // Compute status counts from connections data
   const chartData = useMemo(() => {
     if (!connectionsData?.connections) return [];
-    const statusCounts = {};
-    connectionsData.connections.forEach((conn) => {
+    const statusCounts: Record<string, number> = {};
+    connectionsData.connections.forEach((conn: { status?: string }) => {
       const status = conn.status || 'unknown';
       statusCounts[status] = (statusCounts[status] || 0) + 1;
     });
