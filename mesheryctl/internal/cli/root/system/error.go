@@ -63,6 +63,8 @@ const (
 	ErrDockerUnknownCode                  = "mesheryctl-1211"
 	ErrOperatorUnsupportedPlatformCode    = "mesheryctl-1219"
 	ErrLogoutCode                         = "mesheryctl-1229"
+	ErrSetTokenToConfigCode               = "mesheryctl-1234"
+	ErrDeleteTokenFromConfigCode          = "mesheryctl-1235"
 )
 
 var (
@@ -436,4 +438,20 @@ func ErrLogout(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to complete the logout operation"},
 		[]string{"Check the token file path and permissions. The underlying error will provide more details."})
+}
+
+func ErrSetTokenToConfig(err error) error {
+	return errors.New(ErrSetTokenToConfigCode, errors.Alert,
+		[]string{"Could not set token to config"},
+		[]string{err.Error()},
+		[]string{"Token name or config file path may be invalid"},
+		[]string{"Verify the token name and the config file path"})
+}
+
+func ErrDeleteTokenFromConfig(err error) error {
+	return errors.New(ErrDeleteTokenFromConfigCode, errors.Alert,
+		[]string{"Could not delete token from config"},
+		[]string{err.Error()},
+		[]string{"Token may not exist in the config"},
+		[]string{"Verify the token exists before attempting deletion"})
 }

@@ -19,6 +19,7 @@ import (
 	"os"
 
 	"github.com/manifoldco/promptui"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -26,18 +27,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	tokenPath     string
-	ctx           string
-	viewAllTokens bool
-	set           bool
-)
-
 var tokenCmd = &cobra.Command{
 	Use:   "token",
 	Short: "Manage Meshery user tokens",
-	Long: `
-	Manipulate user tokens and their context assignments in your meshconfig`,
+	Long: `Manipulate user tokens and their context assignments in your meshconfig.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/token`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			if err := cmd.Help(); err != nil {
@@ -52,56 +46,61 @@ var tokenCmd = &cobra.Command{
 	},
 }
 
-func checkTokenName(n int) cobra.PositionalArgs {
-	return func(cmd *cobra.Command, args []string) error {
-		if len(args) != n || args[0] == "" {
-			return fmt.Errorf("token name is required in command, accepts %d arg(s), received %d or empty string", n, len(args))
-		}
-		return nil
-	}
+type cmdTokenCreateFlags struct {
+	Filepath string `json:"filepath" validate:"omitempty"`
+	Set      bool   `json:"set" validate:"boolean"`
 }
+
+var tokenCreateFlags cmdTokenCreateFlags
 
 var createTokenCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a token in your meshconfig",
-	Long:  "Create the token with provided token name (optionally token path) to your meshconfig tokens.",
+	Long: `Create the token with provided token name (optionally token path) to your meshconfig tokens.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/token/create`,
 	Example: `
 mesheryctl system token create [token-name] -f [token-path]
 mesheryctl system token create [token-name] (default path is auth.json)
 mesheryctl system token create [token-name] -f [token-path] --set
 	`,
 	Args: checkTokenName(1),
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &tokenCreateFlags)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
 		configPath := utils.GetActiveConfigPath()
-		if tokenPath == "" {
-			tokenPath = "auth.json"
+		if tokenCreateFlags.Filepath == "" {
+			tokenCreateFlags.Filepath = "auth.json"
 		}
 
 		token := config.Token{
 			Name:     tokenName,
-			Location: tokenPath,
+			Location: tokenCreateFlags.Filepath,
 		}
 		if err := config.AddTokenToConfig(token, configPath); err != nil {
 			return errors.Wrap(err, "Could not create specified token to config")
 		}
 		utils.Log.Info(fmt.Sprintf("Token %s created.", tokenName))
-		if set {
+		if tokenCreateFlags.Set {
+			ctx := tokenSetFlags.Context
 			if ctx == "" {
 				ctx = viper.GetString("current-context")
 			}
-			if err = config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
-				return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
+			if err := config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
+				return ErrSetTokenToConfig(err)
 			}
 			utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, ctx))
 		}
 		return nil
 	},
 }
+
 var deleteTokenCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a token from your meshconfig",
-	Long:  "Delete the token with provided token name from your meshconfig tokens.",
+	Long: `Delete the token with provided token name from your meshconfig tokens.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/token/delete`,
 	Example: `
 mesheryctl system token delete [token-name]
 	`,
@@ -110,40 +109,52 @@ mesheryctl system token delete [token-name]
 		tokenName := args[0]
 		configPath := utils.GetActiveConfigPath()
 
-		if err = config.DeleteTokenFromConfig(tokenName, configPath); err != nil {
-			return errors.Wrapf(err, "Could not delete token \"%s\" from config", tokenName)
+		if err := config.DeleteTokenFromConfig(tokenName, configPath); err != nil {
+			return ErrDeleteTokenFromConfig(err)
 		}
 		utils.Log.Infof("Token %s deleted.", tokenName)
 		return nil
 	},
 }
+
+type cmdTokenSetFlags struct {
+	Context string `json:"context" validate:"omitempty"`
+}
+
+var tokenSetFlags cmdTokenSetFlags
+
 var setTokenCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set token for context",
-	Long:  "Set token for current context or context specified with --context flag.",
+	Long: `Set token for current context or context specified with --context flag.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/token/set`,
 	Example: `
-mesheryctl system token set [token-name] 
+mesheryctl system token set [token-name]
 	`,
 	Args: cobra.ExactArgs(1),
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &tokenSetFlags)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
 		configPath := utils.GetActiveConfigPath()
-		if ctx == "" {
-			ctx = viper.GetString("current-context")
+		if tokenSetFlags.Context == "" {
+			tokenSetFlags.Context = viper.GetString("current-context")
 		}
 
-		if err = config.SetTokenToConfig(tokenName, configPath, ctx); err != nil {
-			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
-
+		if err := config.SetTokenToConfig(tokenName, configPath, tokenSetFlags.Context); err != nil {
+			return ErrSetTokenToConfig(err)
 		}
-		utils.Log.Infof("Token %s set for context %s", tokenName, ctx)
+		utils.Log.Infof("Token %s set for context %s", tokenName, tokenSetFlags.Context)
 		return nil
 	},
 }
+
 var listTokenCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List tokens",
-	Long:  "List all the tokens in your meshconfig",
+	Long: `List all the tokens in your meshconfig.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/token/list`,
 	Example: `
 mesheryctl system token list
 	`,
@@ -155,10 +166,8 @@ mesheryctl system token list
 		}
 
 		viper.SetConfigFile(configPath)
-		err := viper.ReadInConfig()
-		if err != nil {
-			utils.Log.Error(utils.ErrReadConfigFile(err))
-			return nil
+		if err := viper.ReadInConfig(); err != nil {
+			return utils.ErrReadConfigFile(err)
 		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -173,14 +182,25 @@ mesheryctl system token list
 		return nil
 	},
 }
+
+type cmdTokenViewFlags struct {
+	All bool `json:"all" validate:"boolean"`
+}
+
+var tokenViewFlags cmdTokenViewFlags
+
 var viewTokenCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View token",
-	Long:  "View a specific token in meshery config",
+	Long: `View a specific token in meshery config.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/token/view`,
 	Example: `
 mesheryctl system token view [token-name]
 mesheryctl system token view (show token of current context)
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &tokenViewFlags)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		configPath := utils.GetActiveConfigPath()
 		if _, err := os.Stat(configPath); os.IsNotExist(err) {
@@ -188,10 +208,8 @@ mesheryctl system token view (show token of current context)
 		}
 
 		viper.SetConfigFile(configPath)
-		err := viper.ReadInConfig()
-		if err != nil {
-			utils.Log.Error(utils.ErrReadConfigFile(err))
-			return nil
+		if err := viper.ReadInConfig(); err != nil {
+			return utils.ErrReadConfigFile(err)
 		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -199,7 +217,7 @@ mesheryctl system token view (show token of current context)
 			utils.Log.Error(err)
 			return nil
 		}
-		if viewAllTokens {
+		if tokenViewFlags.All {
 			utils.Log.Info("Listing all available tokens...\n")
 			for _, t := range *mctlCfg.GetTokens() {
 				utils.Log.Info("- token: ", t.Name)
@@ -207,7 +225,6 @@ mesheryctl system token view (show token of current context)
 			}
 			return nil
 		}
-		tokenName := ""
 		if len(args) == 0 {
 			token, err := mctlCfg.GetTokenForContext(viper.GetString("current-context"))
 			if err != nil {
@@ -219,7 +236,7 @@ mesheryctl system token view (show token of current context)
 			utils.Log.Info("location: ", token.Location)
 			return nil
 		}
-		tokenName = args[0]
+		tokenName := args[0]
 		var tokenNames []string
 		for _, t := range mctlCfg.Tokens {
 			if t.Name == tokenName {
@@ -227,7 +244,6 @@ mesheryctl system token view (show token of current context)
 				utils.Log.Info("location: ", t.Location)
 				return nil
 			}
-			// Collecting token names in case the provided token name is invalid and a prompt is to be shown.
 			tokenNames = append(tokenNames, t.Name)
 		}
 
@@ -246,10 +262,27 @@ mesheryctl system token view (show token of current context)
 	},
 }
 
+func checkTokenName(n int) cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		if len(args) != n || (len(args) > 0 && args[0] == "") {
+			return utils.ErrInvalidArgument(fmt.Errorf("token name is required in command, accepts %d arg(s), received %d or empty string", n, len(args)))
+		}
+		return nil
+	}
+}
+
 func init() {
-	tokenCmd.AddCommand(createTokenCmd, deleteTokenCmd, setTokenCmd, listTokenCmd, viewTokenCmd)
-	createTokenCmd.Flags().StringVarP(&tokenPath, "filepath", "f", "", "Add the token location")
-	createTokenCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current token")
-	setTokenCmd.Flags().StringVar(&ctx, "context", "", "Pass the context")
-	viewTokenCmd.Flags().BoolVar(&viewAllTokens, "all", false, "set the flag to view all the tokens.")
+	tokenCmd.AddCommand(createTokenCmd)
+	createTokenCmd.Flags().StringVarP(&tokenCreateFlags.Filepath, "filepath", "f", "", "Add the token location")
+	createTokenCmd.Flags().BoolVarP(&tokenCreateFlags.Set, "set", "s", false, "Set as current token")
+
+	tokenCmd.AddCommand(deleteTokenCmd)
+
+	tokenCmd.AddCommand(setTokenCmd)
+	setTokenCmd.Flags().StringVar(&tokenSetFlags.Context, "context", "", "Pass the context")
+
+	tokenCmd.AddCommand(listTokenCmd)
+
+	tokenCmd.AddCommand(viewTokenCmd)
+	viewTokenCmd.Flags().BoolVar(&tokenViewFlags.All, "all", false, "set the flag to view all the tokens.")
 }
