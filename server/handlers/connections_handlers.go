@@ -397,8 +397,8 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		if err != nil {
 			meshSyncErr := fmt.Errorf("error handling meshsync deployment mode change: %w", err)
 			metadata := map[string]any{
-				"error":         meshSyncErr,
-				"connection_id": connectionID.String(),
+				"error":        meshSyncErr,
+				"connectionId": connectionID,
 			}
 			event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to handle meshsync deployment mode change").WithMetadata(metadata).Build()
 			_ = provider.PersistEvent(*event, token)
@@ -413,9 +413,9 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		if modeChanged {
 			description := fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' for connection %s", oldMode, newMode, connectionID)
 			metadata := map[string]any{
-				"meshsync_deployment_mode_old": oldMode,
-				"meshsync_deployment_mode_new": newMode,
-				"connection_id":                connectionID.String(),
+				"meshsyncDeploymentModeOld": oldMode,
+				"meshsyncDeploymentModeNew": newMode,
+				"connectionId":              connectionID,
 			}
 			event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
 			_ = provider.PersistEvent(*event, token)

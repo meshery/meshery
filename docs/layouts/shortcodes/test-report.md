@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 2nd 2026, 9:23:01 am
+- Testing started at: May 5th 2026, 4:16:28 am
 
 **📦 Test Result Summary**
 
-- ✅ 135 passed
-- ❌ 2 failed
+- ✅ 137 passed
+- ❌ 3 failed
 - ⚠️ 0 flaked
-- ⏩ 7 skipped
+- ⏩ 4 skipped
 
-⌛ _Duration: 6 minutes and 49 seconds_
+⌛ _Duration: 7 minutes and 27 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -46,7 +46,7 @@
 | 23 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 24 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 25 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
-| 26 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
+| 26 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 27 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 28 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 29 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
@@ -57,9 +57,9 @@
 | 34 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 35 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 36 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 37 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 38 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
-| 39 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
+| 37 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
+| 38 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
+| 39 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
 | 40 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 41 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 42 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
@@ -90,10 +90,10 @@
 | 67 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
 | 68 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
 | 69 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ✅ |
-| 70 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ✅ |
+| 70 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ❌ |
 | 71 | Meshery | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ✅ |
 | 72 | Meshery | chromium-meshery-provider | Verify Performance Analysis Details |  | ✅ |
-| 73 | Meshery | chromium-meshery-provider | Verify that UI components are displayed |  | ✅ |
+| 73 | Meshery | chromium-meshery-provider | Verify that UI components are displayed |  | ❌ |
 | 74 | None | chromium-local-provider | Action buttons on adapters tab |  | ✅ |
 | 75 | None | chromium-local-provider | Aggregation Charts are displayed |  | ✅ |
 | 76 | None | chromium-local-provider | alias resolution | relationship | ✅ |
@@ -130,9 +130,9 @@
 | 107 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 108 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 109 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 110 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
-| 111 | None | chromium-local-provider | Import a Model via File Import |  | ❌ |
-| 112 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
+| 110 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
+| 111 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
+| 112 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
 | 113 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 114 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 115 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
@@ -166,7 +166,7 @@
 | 143 | None | chromium-local-provider | Verify Meshery Design Embed Details |  | ✅ |
 | 144 | None | chromium-local-provider | Verify Meshery Docker Extension Details |  | ✅ |
 | 145 | None | chromium-local-provider | Verify Performance Analysis Details |  | ✅ |
-| 146 | None | chromium-local-provider | Verify that UI components are displayed |  | ✅ |
+| 146 | None | chromium-local-provider | Verify that UI components are displayed |  | ❌ |
 | 147 | None | local-setup | authenticate as None provider |  | ✅ |
 | 148 | None | remote-setup | authenticate with Remote Provider |  | ✅ |
 
@@ -182,30 +182,71 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
-<summary>❌ Import a Model via File Import (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ Verify that UI components are displayed (Meshery - chromium-meshery-provider)</summary>
 
-**File Location:** `Not Found`
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/connections.spec.ts`
 
 **Error Message:**
 ```
-[31mTest timeout of 60000ms exceeded.[39m
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
 ```
 
-
+**Code Snippet:**
+```
+[0m [90m 48 |[39m
+ [90m 49 |[39m test[33m.[39mdescribe[33m.[39mserial([32m'Connection Management Tests'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 50 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 51 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
+ [90m 52 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
+ [90m 53 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToConnections()[33m;[39m[0m
+```
 
 </details>
 
 <details>
-<summary>❌ Import a Model via File Import (None - chromium-local-provider)</summary>
+<summary>❌ Verify Meshery Design Embed Details (Meshery - chromium-meshery-provider)</summary>
 
-**File Location:** `Not Found`
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
 
 **Error Message:**
 ```
-[31mTest timeout of 60000ms exceeded.[39m
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
 ```
 
+**Code Snippet:**
+```
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
+```
 
+</details>
+
+<details>
+<summary>❌ Verify that UI components are displayed (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/connections.spec.ts`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 48 |[39m
+ [90m 49 |[39m test[33m.[39mdescribe[33m.[39mserial([32m'Connection Management Tests'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 50 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 51 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
+ [90m 52 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
+ [90m 53 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToConnections()[33m;[39m[0m
+```
 
 </details>
 

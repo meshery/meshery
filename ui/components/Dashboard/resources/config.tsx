@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ConfigurationTableConfig } from './configuration/config';
 import { NetWorkTableConfig } from './network/config';
 import { SecurityTypesConfig } from './security/config';
