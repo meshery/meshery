@@ -207,6 +207,12 @@ jobs:
           script: |
             const fs = require('fs');
             const summary = fs.readFileSync('test-summary.md', 'utf8');
+            const commentCharLimit = 60000;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const summaryHeader = summary.split('<details>')[0].trim();
+            const commentBody = summary.length > commentCharLimit
+              ? `${summaryHeader}\n\n_Full Rego lint/test details exceeded GitHub's PR comment size limit. See the workflow summary and artifacts in [this run](${runUrl})._`
+              : summary;
             
             // Find existing comment
             const { data: comments } = await github.rest.issues.listComments({
@@ -225,14 +231,14 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: botComment.id,
-                body: summary
+                body: commentBody
               });
             } else {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: summary
+                body: commentBody
               });
             }
 
