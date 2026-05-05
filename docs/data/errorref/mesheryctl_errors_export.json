@@ -124,8 +124,8 @@
         "name": "ErrGettingRequestContextCode",
         "code": "1015",
         "severity": "Fatal",
-        "long_description": "Unable to add token to config",
-        "short_description": "Unable to add token to config",
+        "long_description": "Unable to get request context",
+        "short_description": "Unable to get request context",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -667,7 +667,7 @@
         "long_description": "",
         "short_description": "Error processing JSON response from Meshery Server",
         "probable_cause": "Either the JSON response is invalid or the Response is distorted",
-        "suggested_remediation": "Ensure Meshery Server is running and you have a strong newtwork connection"
+        "suggested_remediation": "Ensure Meshery Server is running and you have a strong network connection"
       },
       "1079": {
         "name": "ErrCreatingDockerClientCode",

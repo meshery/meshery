@@ -5,3 +5,4 @@ export { default as usePreventUserFromLeavingPage } from './usePreventUserFromLe
 export { useRegistryModal } from './useRegistryModal';
 export { default as useStateCB } from './useStateCB';
 export { useNotifiedMutation } from './useNotifiedMutation';
+export { usePageTitle } from './usePageTitle';

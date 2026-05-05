@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { styled } from '@sistent/sistent';
 import React, { useState } from 'react';
 
@@ -39,7 +38,13 @@ const FlipCardFront = styled('div')({
   backfaceVisibility: 'hidden',
 });
 
-const FlipCard = ({ frontComponents, backComponents, disableFlip }) => {
+type FlipCardProps = {
+  frontComponents?: React.ReactNode;
+  backComponents?: React.ReactNode;
+  disableFlip?: boolean;
+};
+
+const FlipCard = ({ frontComponents, backComponents, disableFlip }: FlipCardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => {

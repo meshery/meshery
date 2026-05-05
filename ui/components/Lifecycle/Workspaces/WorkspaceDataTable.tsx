@@ -1,4 +1,3 @@
-// @ts-nocheck
 import InfoIcon from '@/assets/icons/InfoIcon';
 import {
   useAssignEnvironmentToWorkspaceMutation,

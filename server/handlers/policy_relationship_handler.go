@@ -21,6 +21,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
+	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
@@ -269,6 +270,22 @@ const defaultPolicyEvalTimeout = 3 * time.Minute
 
 var errEvalTimeout = errors.New("relationship policy evaluation timed out")
 
+// buildPolicyEvaluationEventMetadata builds the metadata map emitted on
+// the relationship-evaluation success event. Extracted into a named
+// function so the canonical camelCase keys (`historyTitle`, `trace`,
+// `evaluationResponse`, `evaluatedAt`) are pinned by a focused unit test
+// — see TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys.
+// Drift here would silently re-introduce the snake_case keys that
+// production carried for 125,840 rows pre-flip.
+func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse) map[string]interface{} {
+	return map[string]interface{}{
+		"historyTitle":       fmt.Sprintf("%d changes made at version %s", len(resp.Actions), resp.Design.Version),
+		"trace":              resp.Trace,
+		"evaluationResponse": resp,
+		"evaluatedAt":        *resp.Timestamp,
+	}
+}
+
 func policyEvalTimeout() time.Duration {
 	if d := viper.GetDuration("POLICY_EVAL_TIMEOUT"); d > 0 {
 		return d
@@ -287,7 +304,7 @@ func (h *Handler) EvaluateDesign(
 	// meshkit's patternHelpers.HydratePattern is typed against
 	// v1beta3/design.PatternFile but this evaluation-engine carve-out
 	// still holds the design as v1beta1/pattern.PatternFile, so bridge
-	// via JSON round-trip and fold the hydrated fields back onto the
+	// via a typed shallow copy and fold the hydrated fields back onto the
 	// v1beta1 design before the policy passes run.
 	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&relationshipPolicyEvalPayload.Design); bridgeErr == nil && bridged != nil {
 		if hydrateErrs := patternHelpers.HydratePattern(bridged, h.registryManager); len(hydrateErrs) > 0 {
@@ -444,12 +461,13 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 			unknownComponents = append(unknownComponents, &_c)
 			continue
 		}
-		_component, ok := entities[0].(*component.ComponentDefinition)
-		if !ok || _component == nil {
+		_component, ok := registryComponentDefinitionToV1beta1(entities[0])
+		if !ok {
 			unknownComponents = append(unknownComponents, &_c)
 			continue
 		}
 
+		originalStyles := _c.Styles
 		_component.ID = _c.ID
 		if _c.DisplayName != "" {
 			_component.DisplayName = _c.DisplayName
@@ -461,6 +479,12 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 		_component.Metadata.IsAnnotation = _c.Metadata.IsAnnotation
 		_component.Configuration = _c.Configuration
 		_component.Capabilities = &defaultCapabilities
+		if originalStyles != nil && originalStyles.Position != nil {
+			if _component.Styles == nil {
+				_component.Styles = &core.ComponentStyles{}
+			}
+			_component.Styles.Position = originalStyles.Position
+		}
 		compsAdded = append(compsAdded, *_component)
 	}
 
@@ -474,6 +498,7 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 	evalResponse.Trace.ComponentsUpdated = compsUpdated
 
 	cmps := append(compsAdded, compsUpdated...)
+	hydrateAddComponentActions(evalResponse.Actions, compsAdded)
 
 	if evalPayload.Options != nil && evalPayload.Options.ReturnDiffOnly != nil && *evalPayload.Options.ReturnDiffOnly {
 		evalResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
@@ -517,6 +542,140 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 	}
 
 	return unknownComponents
+}
+
+func hydrateAddComponentActions(actions []pattern.Action, compsAdded []component.ComponentDefinition) {
+	if len(actions) == 0 || len(compsAdded) == 0 {
+		return
+	}
+
+	componentsByID := map[string]component.ComponentDefinition{}
+	for _, comp := range compsAdded {
+		componentsByID[comp.ID.String()] = comp
+	}
+	actionItemsByID := map[string]map[string]interface{}{}
+
+	for idx := range actions {
+		if actions[idx].Op != "add_component" {
+			continue
+		}
+		id := actionItemID(actions[idx])
+		if id == "" {
+			continue
+		}
+		comp, ok := componentsByID[id]
+		if !ok {
+			continue
+		}
+		item, ok := actionItemsByID[id]
+		if !ok {
+			item, ok = componentDefinitionToMap(&comp)
+			if !ok {
+				continue
+			}
+			actionItemsByID[id] = item
+		}
+		if actions[idx].Value == nil {
+			actions[idx].Value = map[string]interface{}{}
+		}
+		actions[idx].Value["item"] = item
+	}
+}
+
+func actionItemID(action pattern.Action) string {
+	if action.Value == nil {
+		return ""
+	}
+	item, ok := action.Value["item"].(map[string]interface{})
+	if !ok {
+		return ""
+	}
+	id, ok := item["id"].(string)
+	if !ok {
+		return ""
+	}
+	return id
+}
+
+func componentDefinitionToMap(comp *component.ComponentDefinition) (map[string]interface{}, bool) {
+	raw, err := json.Marshal(comp)
+	if err != nil {
+		return nil, false
+	}
+	var item map[string]interface{}
+	if err := json.Unmarshal(raw, &item); err != nil {
+		return nil, false
+	}
+	return item, true
+}
+
+// registryComponentDefinitionToV1beta1 bridges the v1beta3 ComponentDefinition
+// the meshkit registry returns into the v1beta1 ComponentDefinition that
+// pattern.PatternFile.Components is typed against. This handler — and every
+// caller of processEvaluationResponse — operates on v1beta1; v1beta3 is only
+// the registry's storage representation.
+//
+// Mechanism: a shallow field copy that keeps pointer- and reference-typed
+// inner fields (Model, Styles, Capabilities, Configuration,
+// Metadata.AdditionalProperties, ModelID) aliased across both versions, so
+// later in-place mutations meshkit helpers (e.g.
+// orchestration.EnrichComponentWithMesheryMetadata) might make through one
+// of those pointers remain visible from the v1beta1 view. This parallels
+// the existing models/pattern/utils.ComponentV1beta3ToV1beta2 bridge — same
+// pattern, different target version.
+//
+// Why not json.Marshal/json.Unmarshal: a JSON round-trip silently drops
+// fields whose tags differ across versions (already true today —
+// v1beta1 uses `json:"created_at,omitempty"` while v1beta3 uses
+// `json:"createdAt"`) and deep-clones the inner pointer targets, which
+// breaks the alias contract the existing bridge documents. Future tag
+// drift would compound the data loss with no compile-time signal.
+func registryComponentDefinitionToV1beta1(entity interface{}) (*component.ComponentDefinition, bool) {
+	if entity == nil {
+		return nil, false
+	}
+	src, ok := entity.(*componentv1beta3.ComponentDefinition)
+	if !ok || src == nil {
+		return nil, false
+	}
+	if src.Component.Kind == "" {
+		return nil, false
+	}
+	dst := &component.ComponentDefinition{
+		ID:             src.ID,
+		SchemaVersion:  src.SchemaVersion,
+		Version:        src.Version,
+		DisplayName:    src.DisplayName,
+		Description:    src.Description,
+		Format:         component.ComponentDefinitionFormat(src.Format),
+		Model:          src.Model,
+		ModelReference: src.ModelReference,
+		Styles:         src.Styles,
+		Capabilities:   src.Capabilities,
+		Metadata: component.ComponentDefinition_Metadata{
+			Genealogy:             src.Metadata.Genealogy,
+			IsAnnotation:          src.Metadata.IsAnnotation,
+			IsNamespaced:          src.Metadata.IsNamespaced,
+			Published:             src.Metadata.Published,
+			InstanceDetails:       src.Metadata.InstanceDetails,
+			ConfigurationUISchema: src.Metadata.ConfigurationUISchema,
+			AdditionalProperties:  src.Metadata.AdditionalProperties,
+		},
+		Configuration: src.Configuration,
+		Component: component.Component{
+			Kind:    src.Component.Kind,
+			Version: src.Component.Version,
+			Schema:  src.Component.Schema,
+		},
+		CreatedAt: src.CreatedAt,
+		UpdatedAt: src.UpdatedAt,
+		ModelId:   src.ModelID,
+	}
+	if src.Status != nil {
+		st := component.ComponentDefinitionStatus(*src.Status)
+		dst.Status = &st
+	}
+	return dst, true
 }
 
 // runRelationshipEvaluation runs eval behind a panic-recovery boundary and
@@ -664,12 +823,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		// include trace instead of design file in the event
 		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
 		event := eventBuilder.WithDescription(description).
-			WithMetadata(map[string]interface{}{
-				"history_title":       fmt.Sprintf("%d changes made at version %s", len(evaluationResponse.Actions), evaluationResponse.Design.Version),
-				"trace":               evaluationResponse.Trace,
-				"evaluation_response": evaluationResponse,
-				"evaluated_at":        *evaluationResponse.Timestamp,
-			}).WithSeverity(events.Informational).Build()
+			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse)).
+			WithSeverity(events.Informational).Build()
 		go func() {
 			_ = provider.PersistEvent(*event, token)
 		}()

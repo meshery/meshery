@@ -33,7 +33,7 @@ jobs:
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
       - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
       - name: Build meshery-ui and provider-ui
@@ -66,7 +66,7 @@ jobs:
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
 
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.13.0
+        uses: helm/kind-action@v1.14.0
         with:
           cluster_name: "kind-cluster"
       - name: Setup Go
@@ -78,7 +78,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
       - name: Download meshery-ui artifacts

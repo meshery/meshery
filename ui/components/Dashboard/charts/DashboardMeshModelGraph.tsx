@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useMemo } from 'react';
 import BBChart from '../../BBChart';
 import { donut } from 'billboard.js';
@@ -44,7 +43,7 @@ function MeshModelContructs() {
         columns: data,
         type: donut(),
         colors: dataToColors(data),
-        onclick: function (d) {
+        onclick: function (d: { name: string }) {
           router.push(`/settings?settingsCategory=Registry&tab=${d.name}`);
         },
       },
