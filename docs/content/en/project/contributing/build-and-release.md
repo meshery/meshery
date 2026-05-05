@@ -48,8 +48,6 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `MESHERY_TOKEN`: General Meshery authentication token
 - `METAL_AUTH_TOKEN`: Authentication token for metal provider
 - `METAL_SERVER1`: Configuration for metal server 1
-- `NETLIFY_AUTH_TOKEN`: Authentication token for Netlify
-- `NETLIFY_SITE_ID`: Site ID for Netlify deployments
 - `PLAYGROUND_CONFIG`: Configuration for playground environments
 - `PROVIDER_TOKEN`: General provider authentication token
 - `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter
@@ -445,48 +443,27 @@ The different types (Daily, Stable, LTS) represent different product quality lev
 
 ## Versioning Documentation
 
-### For new major release
+The Meshery documentation site is built with [Hugo](https://gohugo.io/) using the [Docsy](https://www.docsy.dev/) theme. Hugo content lives under `docs/content/en/`, and the rendered site is published from the `master` branch via the docs site workflow. There is no longer a Jekyll/Bundler step or per-version `_site` checkout — Hugo serves the live docs directly from the content tree on `master`, and historical versions are accessible via the GitHub repository's release tags (no static-HTML snapshots are produced as part of the release process).
 
-The structure which the docs follow right now is, The main `docs` folder has the most recent version of documentation, while there are sub-folders for previous versions, v0.x (x being the last major release).
-On release of a new major version, the static html files for the most recent version is generated and is renamed as the release version (v0.x).
+### For a new major release
 
-##### Steps:
+When a new major version is cut:
 
-After cloning the Meshery repository
+1. Update the version metadata in `docs/config.toml` (or the corresponding Hugo `params` block) so the site footer and version selector reflect the new release line.
+1. Add or update the release notes file at `docs/content/en/project/releases/<version>.md` (one file per release; the [release-flow workflow](https://github.com/meshery/meshery/actions) drafts these for maintainer review).
+1. If deprecating a docs section, mark the affected page with `aliases:` / `expiryDate:` in its front matter so Hugo emits redirects rather than 404s.
+1. To preview locally, install Hugo (extended) and run `make docs` from the repo root — the Makefile target wraps `hugo server` with the project's content path.
 
-1. `cd docs` > `bundle install` > `make docs`
-1. On executing `make docs` a `_site` folder is created which has static html files.
-1. The `_site` folder is renamed to `v0.x`.
-1. This `v0.x` folder is now the latest version of docs.
+### For an older release
 
-##### _In the `v0.x` folder_
-
-1. Search and replace all the instances where there is a direct path is defined to include the version name in the path, i.e, all paths to intra-page links and images should start with `/v0.x/`.
-
-- Look for `href="/` and replace with `href="/0.x/`
-- Look for `src="/`and replace with `src="/0.x/` <br/><br/>
-  <a href="/project/contributing/images/search-and-replace.png">
-  <img src="/project/contributing/images/search-and-replace.png" />
-  </a>
-
-### For old release
-
-For older releases we have to travel back in time. Using the `Tags` in github we go to a previous release, `v0.X.x`, the `.x` here should be the latest version of the archived docs.
-
-##### Steps:
-
-1. Copy the commit ID for that release. <br/><br/>
-   <a href="/project/contributing/images/commit-ID.png">
-   <img src="/project/contributing/images/commit-ID.png" />
-   </a>
-
-1. `git checkout <commit ID>` > `cd docs` > `bundle install` > `make docs`
-1. On executing `make docs` a `_site` folder is created which has static html files.
-1. The `_site` folder is renamed to `v0.X` and is copied into the `docs` folder of the present version.
+To browse the docs as they existed at a previous release tag, navigate to the `meshery/meshery` repository on GitHub, switch to the desired release tag (e.g. `v1.0.14`), and view `docs/content/en/` directly. The site does not host per-tag static archives; the GitHub source tree at the tagged commit is the canonical historical view.
 
 ## Bi-Weekly Meetings
 
 If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
+
+Note: This biweekly meeting series is currently on hiatus. We'll share an update when it resumes. Thank you for your patience!
+  
 
 <div class="training-video">
   <iframe width="560" height="315"

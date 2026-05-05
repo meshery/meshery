@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import {
   Button,
@@ -57,6 +56,7 @@ import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTest } from '@/store/slices/prefTest';
 import { updateStaticPrometheusBoardConfig } from '@/store/slices/telemetry';
 import { useGetStaticPrometheusBoardConfigQuery } from '@/rtk-query/telemetry';
+import { normalizeLoadTestPrefs } from '../../lib/load-test-prefs';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -207,8 +207,7 @@ const MesheryPerformanceComponent_ = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
-  const { k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
   const { prometheus, staticPrometheusBoardConfig } = useSelector((state) => state.telemetry);
   const { notify } = useNotification();
   const dispatch = useDispatch();
@@ -568,12 +567,15 @@ const MesheryPerformanceComponent_ = (props) => {
   }, [userData, isUserDataFetched, smpMeshes]);
 
   const getLoadTestPrefs = () => {
-    if (isUserDataFetched && userData && userData.loadTestPref) {
-      setQps(userData.loadTestPrefs.qps);
-      setC(userData.loadTestPrefs.c);
-      setT(userData.loadTestPrefs.t);
-      setLoadGenerator(userData.loadTestPrefs.gen);
-    }
+    if (!isUserDataFetched || !userData) return;
+    if (props.performanceProfileID) return;
+
+    const loadTestPrefs = normalizeLoadTestPrefs(userData.loadTestPrefs);
+
+    setQps(loadTestPrefs.qps);
+    setC(loadTestPrefs.c);
+    setT(loadTestPrefs.t);
+    setLoadGenerator(loadTestPrefs.gen);
   };
 
   const shouldSkipFetch =

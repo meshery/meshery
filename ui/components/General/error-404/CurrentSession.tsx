@@ -53,7 +53,7 @@ const CurrentSessionInfo = () => {
         </StyledTypographyDisabled>
         <StyledBox>
           {rolesRes
-            ? rolesRes?.roles?.map?.((role) => <StyledChip key={role.id} label={role.role_name} />)
+            ? rolesRes?.roles?.map?.((role) => <StyledChip key={role.id} label={role.roleName} />)
             : 'No roles found'}
         </StyledBox>
       </div>
@@ -63,7 +63,7 @@ const CurrentSessionInfo = () => {
         </StyledTypographyDisabled>
         <StyledBox>
           {providerRolesRes
-            ? providerRolesRes?.role_names?.map?.((role, index) => (
+            ? providerRolesRes?.roleNames?.map?.((role, index) => (
                 <StyledChip key={index} label={role} />
               ))
             : 'No roles found'}

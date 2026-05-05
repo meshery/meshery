@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 const (
@@ -53,9 +53,9 @@ type Events map[EventType]StateType
 
 type StateMachine struct {
 	// ID to trace the events originated from the machine, also used in logs
-	ID uuid.UUID
+	ID core.Uuid
 
-	UserID uuid.UUID
+	UserID core.Uuid
 
 	// Given name for the machine, used in logs to track issues
 	Name string
@@ -130,7 +130,7 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 // In cases when the event is received as part of some other event and not explicitly created by an actor, use the useID and systemID of the actor who initially invoked the machine.
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
 	ctx = context.WithValue(ctx, models.ProviderCtxKey, sm.Provider)
 	defaultEvent := events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested to %s for connection type %s.", eventType, sm.Name)).ActedUpon(sm.ID).FromUser(userUUID).FromSystem(*sysID).WithSeverity(events.Error)

@@ -1,8 +1,7 @@
 import React, { Suspense, lazy, useState } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@sistent/sistent';
+import { ExpandMoreIcon, NoSsr } from '@sistent/sistent';
 import { Grid2, ExpansionPanelDetails, Typography, styled } from '@sistent/sistent';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
 

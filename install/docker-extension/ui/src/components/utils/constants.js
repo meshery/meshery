@@ -16,7 +16,7 @@ export const topicsList = [
 export const REMOTE_PROVIDERS = [
     {
         name: "Layer5",
-        url: "https://cloud.layer5.io",
+        url: "https://cloud.meshery.io",
     },
     {
         name: "Exoscale",

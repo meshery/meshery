@@ -30,7 +30,7 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import SaveIcon from '@mui/icons-material/Save';
 import CustomToolbarSelect from './CustomToolbarSelect';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
+import AddIcon from '@mui/icons-material/AddCircleOutlined';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from '../CodeMirror';
 import Moment from 'react-moment';
@@ -146,7 +146,7 @@ const YamlDialogTitleText = styled(Typography)(() => ({
 }));
 
 function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
-  const [yaml, setYaml] = useState(pattern.pattern_file);
+  const [yaml, setYaml] = useState(pattern.patternFile);
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -195,7 +195,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
       <DialogContent>
         <FullScreenCodeMirrorWrapper>
           <CodeMirror
-            value={pattern.pattern_file}
+            value={pattern.patternFile}
             options={{
               theme: 'material',
               lineNumbers: true,
@@ -224,7 +224,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
                     id: pattern.id,
                     name: pattern.name,
                     type: FILE_OPS.UPDATE,
-                    catalog_data: pattern.catalog_data,
+                    catalogData: pattern.catalogData,
                   })
                 }
               >
@@ -241,7 +241,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
                     id: pattern.id,
                     name: pattern.name,
                     type: FILE_OPS.DELETE,
-                    catalog_data: pattern.catalog_data,
+                    catalogData: pattern.catalogData,
                   })
                 }
               >
@@ -291,9 +291,7 @@ function MesheryPatterns({
   const [viewType, setViewType] = useState(view === 'table' ? 'table' : 'grid');
   const { notify } = useNotification();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
-  const { catalogVisibility } = useSelector((state) => state.ui);
-  const { user } = useSelector((state) => state.ui);
+  const { selectedK8sContexts, catalogVisibility, user } = useSelector((state) => state.ui);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
   const {
@@ -325,7 +323,7 @@ function MesheryPatterns({
         }
         return false;
       });
-      setCount(patternsData.total_count || 0);
+      setCount(patternsData.totalCount || 0);
       handleSetPatterns(filteredPatterns);
       setVisibilityFilter(visibilityFilter);
       setPatterns(patternsData.patterns || []);
@@ -357,8 +355,8 @@ function MesheryPatterns({
   const handleDeploy = async ({ design, selectedK8sContexts }) => {
     updateProgress({ showProgress: true });
     await deployPatternMutation({
-      pattern_file: encodeDesignFile(design),
-      pattern_id: design.id,
+      patternFile: encodeDesignFile(design),
+      patternId: design.id,
       selectedK8sContexts,
     });
     updateProgress({ showProgress: false });
@@ -367,8 +365,8 @@ function MesheryPatterns({
   const handleUndeploy = async ({ design, selectedK8sContexts }) => {
     updateProgress({ showProgress: true });
     await undeployPatternMutation({
-      pattern_file: encodeDesignFile(design),
-      pattern_id: design.id,
+      patternFile: encodeDesignFile(design),
+      patternId: design.id,
       selectedK8sContexts,
     });
     updateProgress({ showProgress: false });
@@ -711,7 +709,7 @@ function MesheryPatterns({
 
     setInfoModal({
       open: true,
-      ownerID: pattern.user_id,
+      ownerID: pattern.userId,
       selectedResource: pattern,
     });
   };
@@ -775,7 +773,7 @@ function MesheryPatterns({
 
     const payload = {
       id: infoModal.selectedResource?.id,
-      catalog_data: {
+      catalogData: {
         ...formData,
         compatibility: compatibilityStore,
         type: _.toLower(formData?.type),
@@ -788,7 +786,7 @@ function MesheryPatterns({
       .unwrap()
       .then(() => {
         updateProgress({ showProgress: false });
-        if (user.role_names.includes('admin')) {
+        if (user.roleNames.includes('admin')) {
           notify({
             message: `${publishModal?.name} Design Published`,
             event_type: EVENT_TYPES.SUCCESS,
@@ -845,7 +843,7 @@ function MesheryPatterns({
     };
   }
 
-  async function handleSubmit({ data, id, name, type, metadata, catalog_data }) {
+  async function handleSubmit({ data, id, name, type, metadata, catalogData }) {
     updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
       const response = await showModal(1, name);
@@ -876,8 +874,8 @@ function MesheryPatterns({
         updateBody: JSON.stringify({
           id,
           name: data.name,
-          design_file: design,
-          catalog_data,
+          designFile: design,
+          catalogData,
         }),
       })
         .unwrap()
@@ -895,10 +893,10 @@ function MesheryPatterns({
       let body;
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
-          pattern_data: {
+          patternData: {
             name: metadata?.name || name,
-            pattern_file: getUnit8ArrayDecodedFile(data),
-            catalog_data,
+            patternFile: getUnit8ArrayDecodedFile(data),
+            catalogData,
           },
           save: true,
         });
@@ -908,7 +906,7 @@ function MesheryPatterns({
           url: data,
           save: true,
           name: metadata?.name || name,
-          catalog_data,
+          catalogData,
         });
       }
       uploadPatternFile({
@@ -941,7 +939,7 @@ function MesheryPatterns({
 
   const userCanEdit = (pattern) => {
     return (
-      CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) && user?.user_id == pattern?.user_id
+      CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) && user?.userId == pattern?.userId
     );
   };
 
@@ -1068,7 +1066,7 @@ function MesheryPatterns({
               condition: visibility === VISIBILITY.PUBLISHED,
             },
             {
-              label: 'Design',
+              label: 'Edit',
               icon: <PatternConfigureIcon />,
               onClick: (e) => {
                 e.stopPropagation();
@@ -1081,7 +1079,7 @@ function MesheryPatterns({
               label: 'Validate Design',
               icon: <CheckIcon data-cy="verify-button" />,
               onClick: (e) => {
-                openValidateModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                openValidateModal(e, rowData.patternFile, rowData.name, rowData.id);
               },
               disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
             },
@@ -1089,7 +1087,7 @@ function MesheryPatterns({
               label: 'Dry Run',
               icon: <DryRunIcon data-cy="verify-button" />,
               onClick: (e) => {
-                openDryRunModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                openDryRunModal(e, rowData.patternFile, rowData.name, rowData.id);
               },
               disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
             },
@@ -1097,7 +1095,7 @@ function MesheryPatterns({
               label: 'Undeploy',
               icon: <UndeployIcon fill="#F91313" data-cy="undeploy-button" />,
               onClick: (e) => {
-                openUndeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                openUndeployModal(e, rowData.patternFile, rowData.name, rowData.id);
               },
               disabled: !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject),
             },
@@ -1105,7 +1103,7 @@ function MesheryPatterns({
               label: 'Deploy',
               icon: <DoneAllIcon data-cy="deploy-button" />,
               onClick: (e) => {
-                openDeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                openDeployModal(e, rowData.patternFile, rowData.name, rowData.id);
               },
               disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
             },
@@ -1226,7 +1224,7 @@ function MesheryPatterns({
     filter: false,
     search: false,
     viewColumns: false,
-    sort: !(user && user.user_id === 'meshery'),
+    sort: !(user && user.userId === 'meshery'),
     filterType: 'textField',
     responsive: 'standard',
     resizableColumns: true,

@@ -85,7 +85,7 @@ const connectionsApi = api.injectEndpoints({
     pingKubernetes: builder.query({
       query: (connectionId) => ({
         url: mesheryApiPath(`system/kubernetes/ping`),
-        params: { connection_id: connectionId },
+        params: { connectionId: connectionId },
         credentials: 'include',
       }),
     }),

@@ -6,8 +6,8 @@ userId: 985074f5-27a0-406c-b83a-7f247ba77746
 userName: Kavya Katal
 userAvatarURL: 
 type: deployment
-compatibility: 
-
+compatibility:
+    - kubernetes
 patternId: a1eaf8c4-4da3-4cc4-ba75-edc9e808ab98
 image: /assets/images/logos/service-mesh-pattern.svg
 patternInfo: |

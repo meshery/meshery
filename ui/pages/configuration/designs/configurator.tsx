@@ -1,17 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
-import { getPath } from '../../../lib/path';
 import DesignConfigurator from '../../../components/configuratorComponents/MeshModel';
-import { useDispatch } from 'react-redux';
-import { updatePagePath, updateTitle } from '@/store/slices/mesheryUi';
+import { usePageTitle } from '@/utils/hooks';
 
 function DesignConfiguratorPage() {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(updatePagePath({ path: getPath() }));
-    dispatch(updateTitle({ title: 'Configure Design' }));
-  }, []);
+  usePageTitle('Configure Design');
 
   return (
     <NoSsr>

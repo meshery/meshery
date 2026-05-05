@@ -1,4 +1,4 @@
-export const PROVIDER_URL = "https://cloud.layer5.io";
+export const PROVIDER_URL = "https://cloud.meshery.io";
 
 // This can be migrated as a custom hook in React
 const dataFetch = (url, options = {}, successFn, errorFn) => {
