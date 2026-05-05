@@ -782,27 +782,27 @@
         "code": "1087",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error failed to get design",
-        "probable_cause": "Cannot get the design with the given design ID",
-        "suggested_remediation": "Check if the given design ID is correct"
+        "short_description": "Unable to open this design",
+        "probable_cause": "The design ID in the URL is malformed or does not exist.\nThe design has been deleted by its owner.\nYour account does not have permission to view this design — it may belong to another organization or be set to private.\nYour session has expired or the remote provider is currently unreachable.",
+        "suggested_remediation": "Verify the design link — confirm the full design ID is intact, with no missing or extra characters.\nOpen My Designs and confirm the design still exists; if it was shared with you, ask the owner to re-share or grant access.\nSign out and sign back in to refresh your session, then retry."
       },
       "1088": {
         "name": "ErrDeletePatternCode",
         "code": "1088",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error failed to delete design",
-        "probable_cause": "Failed to delete design with the given ID",
-        "suggested_remediation": "Check if the design ID is correct"
+        "short_description": "Unable to delete this design",
+        "probable_cause": "The design ID is malformed or no longer exists — it may already have been deleted.\nYour account does not have permission to delete this design — only authorized users (such as the owner) can delete it.\nYour session has expired or the remote provider is currently unreachable.",
+        "suggested_remediation": "Refresh the designs list to confirm the design still exists before retrying.\nIf the design was shared with you, ask its owner to delete it.\nSign out and sign back in to refresh your session, then retry."
       },
       "1089": {
         "name": "ErrFetchPatternCode",
         "code": "1089",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error failed to fetch design",
-        "probable_cause": "Failed to retrieve the list of all the designs",
-        "suggested_remediation": ""
+        "short_description": "Unable to load your designs",
+        "probable_cause": "The remote provider is currently unreachable or returned an error.\nYour session has expired or your authentication token is no longer valid.\nNetwork connectivity between Meshery Server and the remote provider has been interrupted.",
+        "suggested_remediation": "Check your network connection and reload the page.\nSign out and sign back in to refresh your session, then retry.\nConfirm that the configured remote provider is online."
       },
       "1090": {
         "name": "ErrImportPatternCode",
@@ -1183,13 +1183,13 @@
         "suggested_remediation": "check if the OCI artifact is valid and not corrupted"
       },
       "1132": {
-        "name": "ErrWaklingLocalDirectoryCode",
+        "name": "ErrWalkingLocalDirectoryCode",
         "code": "1132",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Failed to walk local directory",
-        "probable_cause": "unable to walk local directory\nlocal directory may be corrupted",
-        "suggested_remediation": "check if the local directory is valid and not corrupted"
+        "short_description": "Failed to walk local directory: ",
+        "probable_cause": "unable to walk local directory at \nlocal directory may be corrupted or inaccessible",
+        "suggested_remediation": "check if the local directory is valid and has correct permissions"
       },
       "1133": {
         "name": "ErrConvertingK8sManifestToDesignCode",

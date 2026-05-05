@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState } from 'react';
 import { Avatar, Divider, Grid2, IconButton, Typography, Link, useTheme } from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';

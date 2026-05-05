@@ -1,7 +1,6 @@
-// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 
-function getClassName(className, isActive) {
+function getClassName(className: string, isActive: boolean): string {
   if (!isActive) {
     return className;
   }
@@ -9,7 +8,7 @@ function getClassName(className, isActive) {
   return `${className} active`;
 }
 
-const AnimatedFilter = (props) => {
+const AnimatedFilter = (props: React.SVGAttributes<SVGSVGElement>) => {
   const [isActive, setIsActive] = useState(true);
 
   useEffect(() => {

@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import React from 'react';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';

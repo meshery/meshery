@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
@@ -155,8 +154,7 @@ const AdapterCard = styled(Card)(() => ({
 }));
 
 const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = (props) => {
-  const { k8sConfig } = useSelector((state) => state.ui);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig, selectedK8sContexts } = useSelector((state) => state.ui);
   const { adapter } = props;
   const { notify } = useNotification();
   const [triggerAdapterOp] = useAdapterOperationMutation();
@@ -927,7 +925,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
       },
     };
 
-    var data = [];
+    let data = [];
     if (smi_result && smi_result.results) {
       data = smi_result.results.map((val) => {
         return [

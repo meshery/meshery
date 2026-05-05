@@ -147,9 +147,11 @@ const getStatusTransition = (connectionKind, connectionState, transitionState) =
 
 const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithConnectionId }) => {
   const router = useRouter();
-  const { organization } = useSelector((state) => state.ui);
-  const { connectionMetadataState } = useSelector((state) => state.ui);
-  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
+  const {
+    organization,
+    connectionMetadataState,
+    controllerState: meshsyncControllerState,
+  } = useSelector((state) => state.ui);
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);

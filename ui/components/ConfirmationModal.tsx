@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   Box,
   Button,
@@ -140,24 +139,20 @@ function ConfirmationMsg(props) {
   } = props;
 
   const [tabVal, setTabVal] = useState(tab);
-  const [disabled, setDisabled] = useState(true);
   const [context, setContexts] = useState([]);
   const { notify } = useNotification();
   const [triggerPing] = useLazyPingKubernetesQuery();
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
-  const { k8sConfig: k8scontext } = useSelector((state) => state.ui);
+  const { selectedK8sContexts, k8sConfig: k8scontext } = useSelector((state) => state.ui);
 
-  let isDisabled =
+  // `disabled` is purely derived from selectedK8sContexts — no need for state.
+  const isDisabled =
     typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
+  const disabled = isDisabled;
   const dispatch = useDispatch();
   useEffect(() => {
     setTabVal(tab);
     setContexts(k8scontext);
   }, [open]);
-
-  useEffect(() => {
-    setDisabled(isDisabled);
-  }, [selectedK8sContexts]);
 
   const handleTabValChange = (event, newVal) => {
     setTabVal(newVal);

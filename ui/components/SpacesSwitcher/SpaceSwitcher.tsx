@@ -268,8 +268,7 @@ function OrganizationAndWorkSpaceSwitcher() {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const router = useRouter();
   const { organization } = useSelector((state) => state.ui);
-  const { isBeta } = useSelector((state) => state.ui.page);
-  const { title } = useSelector((state) => state.ui.page);
+  const { isBeta, title } = useSelector((state) => state.ui.page);
   const { selectedOrganization } = useGetSelectedOrganization();
 
   //->using the wksp cntxt

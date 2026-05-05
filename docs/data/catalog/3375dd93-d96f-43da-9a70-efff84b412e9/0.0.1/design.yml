@@ -1,0 +1,572 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "ms-payments-rest",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.2",
+  "components": [
+    {
+      "id": "88e41635-4fa0-4b01-8909-8e9b6460c750",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ms-payments-rest",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-07T05:09:08.674898279Z",
+          "updated_at": "2025-10-07T05:09:08.674898279Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "automountServiceAccountToken": true,
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "ms-payments-rest",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "ms-payments-rest",
+            "app.kubernetes.io/version": "0.0.22",
+            "helm.sh/chart": "ms-base-0.0.22"
+          },
+          "name": "ms-payments-rest"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "115c8c9a-b816-46c5-b09a-2eeb2c45b7f4",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ms-payments-rest-vaultsecret",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-07T05:09:08.674898279Z",
+          "updated_at": "2025-10-07T05:09:08.674898279Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "token": ""
+        },
+        "metadata": {
+          "name": "ms-payments-rest-vaultsecret"
+        },
+        "type": "Opaque"
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "e9a6e629-0bc4-4eff-a761-65a0c4fa2f93",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ms-payments-rest-vaultserver",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-07T05:09:08.674898279Z",
+          "updated_at": "2025-10-07T05:09:08.674898279Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "server": "http://vault-internal.vault-operator.svc.cluster.local:8200",
+          "solution": "security-codedesignplus"
+        },
+        "metadata": {
+          "name": "ms-payments-rest-vaultserver"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "f8be7758-9d8e-4680-ac02-ef190a536d6a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ms-payments-rest",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-07T05:09:08.674898279Z",
+          "updated_at": "2025-10-07T05:09:08.674898279Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "ms-payments-rest",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "ms-payments-rest",
+            "app.kubernetes.io/version": "0.0.22",
+            "helm.sh/chart": "ms-base-0.0.22"
+          },
+          "name": "ms-payments-rest"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 5000,
+              "protocol": "TCP",
+              "targetPort": "http"
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/instance": "ms-payments-rest",
+            "app.kubernetes.io/name": "ms-payments-rest"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "3d13986e-fb4f-46a5-9355-7ed08f60c3b2",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "ms-payments-rest",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-07T05:09:08.674898279Z",
+          "updated_at": "2025-10-07T05:09:08.674898279Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "ms-payments-rest",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "ms-payments-rest",
+            "app.kubernetes.io/version": "0.0.22",
+            "helm.sh/chart": "ms-base-0.0.22"
+          },
+          "name": "ms-payments-rest"
+        },
+        "spec": {
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "ms-payments-rest",
+              "app.kubernetes.io/name": "ms-payments-rest"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app.kubernetes.io/instance": "ms-payments-rest",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "ms-payments-rest",
+                "app.kubernetes.io/version": "0.0.22",
+                "helm.sh/chart": "ms-base-0.0.22"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "ASPNETCORE_ENVIRONMENT",
+                      "value": "Staging"
+                    },
+                    {
+                      "name": "OTEL_RESOURCE_ATTRIBUTES",
+                      "value": "service.name=ms-payments-rest,service.namespace=default,service.instance.id=ms-payments-rest,deployment.environment=Staging"
+                    },
+                    {
+                      "name": "VAULT__TOKEN",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "token",
+                          "name": "ms-payments-rest-vaultsecret"
+                        }
+                      }
+                    },
+                    {
+                      "name": "VAULT__ADDRESS",
+                      "valueFrom": {
+                        "configMapKeyRef": {
+                          "key": "server",
+                          "name": "ms-payments-rest-vaultserver"
+                        }
+                      }
+                    },
+                    {
+                      "name": "VAULT__SOLUTION",
+                      "valueFrom": {
+                        "configMapKeyRef": {
+                          "key": "solution",
+                          "name": "ms-payments-rest-vaultserver"
+                        }
+                      }
+                    }
+                  ],
+                  "image": "codedesignplus/ms-payments-rest:latest",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "httpGet": {
+                      "path": "/health/live",
+                      "port": "http"
+                    }
+                  },
+                  "name": "ms-base",
+                  "ports": [
+                    {
+                      "containerPort": 5000,
+                      "name": "http",
+                      "protocol": "TCP"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "httpGet": {
+                      "path": "/health/ready",
+                      "port": "http"
+                    }
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "100m",
+                      "memory": "128Mi"
+                    },
+                    "requests": {
+                      "cpu": "100m",
+                      "memory": "128Mi"
+                    }
+                  }
+                }
+              ],
+              "serviceAccountName": "ms-payments-rest"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      }
+    }
+  ],
+  "relationships": null
+}
