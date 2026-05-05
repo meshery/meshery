@@ -17,7 +17,7 @@ safe-outputs:
   upload-asset:
   create-issue:
     labels: ["docs", "automated-testing"]
-    close-older-issues: true
+    close-older-issues: false 
     max: 10
   noop: false
   missing-tool: false
