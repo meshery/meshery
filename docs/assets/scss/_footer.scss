@@ -12,29 +12,131 @@ html {
   );
   display: flex;
   flex-direction: column;
-  padding: min(2vh, 2vw);
-  gap: min(2vh, 5vw);
+  padding: min(3vh, 3vw) min(4vw, 4rem);
+  gap: 1.5rem;
+  min-height: var(--footer-height);
 
   @media (max-width: 600px) {
-    height: calc(var(--footer-height) - 4.0rem);
+    padding: 1.25rem;
   }
 
-  @media (max: 1200px){
-    height: var(--footer-height);
+  @media (max-width: 1200px){
+    padding-inline: 2rem;
   }
 
   & * {
     color: white;
   }
 
+  & .footer-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
   & .text-white {
     color: #adb5bd;
     font-size: 1rem;
+  }
+
+  & .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    align-items: center;
     text-align: center;
 
-    @media (max-width: 600px) {
-      font-size: .8rem;
+    @media (min-width: 1201px) {
+      align-items: flex-start;
+      text-align: left;
     }
+  }
+
+  & .footer-tagline {
+    margin: 0;
+    color: #adb5bd;
+    font-size: .95rem;
+  }
+
+  & .footer-privacy {
+    font-size: .9rem;
+
+    a {
+      color: #adb5bd;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: white;
+      }
+    }
+  }
+
+  & .footer-links-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  & .footer-section {
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+  }
+
+  & .footer-section-title {
+    margin: 0;
+    font-size: .95rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: white;
+  }
+
+  & .footer-link {
+    color: #adb5bd;
+    font-size: .95rem;
+    line-height: 1.4;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: white;
+      text-decoration: underline;
+    }
+  }
+
+  & .footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .75rem 1.25rem;
+    padding-top: .25rem;
+    font-size: .9rem;
+    text-align: center;
+
+    a {
+      color: #adb5bd;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: white;
+      }
+    }
+  }
+
+  & .text-white,
+  & .footer-tagline,
+  & .footer-privacy,
+  & .footer-meta {
+    width: 100%;
+  }
   }
 
   & .footer-icons-list {

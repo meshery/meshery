@@ -1,6 +1,6 @@
 <footer class="footer">
 
-  <!-- ✅ NEW SECTIONS (ADDED) -->
+  <!-- ✅ NEW: Added sections -->
   <div class="footer-sections">
 
     <div class="footer-section">
@@ -8,6 +8,8 @@
       <ul>
         <li><a href="https://meshery.io/community">Community</a></li>
         <li><a href="https://docs.meshery.io/project/contributing">Contributing</a></li>
+        <li><a href="https://meshery.io/community#discussion-forums">Discussion Forum</a></li>
+        <li><a href="https://slack.meshery.io">Community Slack</a></li>
       </ul>
     </div>
 
@@ -16,20 +18,23 @@
       <ul>
         <li><a href="https://docs.meshery.io/reference">Reference</a></li>
         <li><a href="https://docs.meshery.io/extensibility">Extensibility</a></li>
+        <li><a href="https://docs.meshery.io/project/contributing/build-and-release">Build & Release</a></li>
+        <li><a href="https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI">UI Designs (Figma)</a></li>
       </ul>
     </div>
 
   </div>
 
-  <!-- ✅ NEW PARAGRAPH -->
+  <!-- ✅ NEW: footer description -->
   <p style="margin-top: 15px;">
     Follow on <a href="https://x.com/mesheryio">X</a> or subscribe to our 
-    <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates.  
-    Get support on our <a href="https://meshery.io/community#discussion-forums">forum</a>.  
+    <a href="https://meshery.io/subscribe">newsletter</a>.  
+    Get support on our 
+    <a href="https://meshery.io/community#discussion-forums">forum</a>.  
     Join our <a href="https://slack.meshery.io">Slack</a>.
   </p>
 
-  <!-- ✅ ORIGINAL CODE STARTS -->
+  <!-- ✅ ORIGINAL CONTENT -->
   <div class="text-white">&copy; {{ now.Year }} The Meshery Authors</div>
 
   {{ with .Site.Params.privacy }}
@@ -44,6 +49,7 @@
       <a class="social__link social__link--forum"
         href="https://meshery.io/community#discussion-forums"
         target="_blank" rel="noreferrer">
+        <img src="data:image/svg+xml;base64,..."/>
         <span class="footer-icons-text">Community discussion forum</span>
       </a>
     </div>
@@ -52,6 +58,7 @@
       <a class="social__link social__link--mail"
         href="https://meshery.io/subscribe"
         target="_blank" rel="noreferrer">
+        <img src="data:image/svg+xml;base64,..."/>
         <span class="footer-icons-text">Get connected with the community</span>
       </a>
     </div>
@@ -60,13 +67,14 @@
       <a class="social__link social__link--slack"
         href="https://slack.meshery.io/"
         target="_blank" rel="noreferrer">
+        <img class="slack" src="data:image/svg+xml;base64,..."/>
         <span class="footer-icons-text">Join the Meshery Slack</span>
       </a>
     </div>
 
     <div class="footer-icons">
-      <a class="social__link"
-        href="https://meshery.io/calendar">
+      <a class="social__link" href="https://meshery.io/calendar">
+        <svg>...</svg>
         <span class="footer-icons-text">Subscribe to the community calendar</span>
       </a>
     </div>
@@ -75,6 +83,7 @@
       <a class="social__link"
         href="https://x.com/mesheryio"
         target="_blank" rel="noreferrer">
+        <svg>...</svg>
         <span class="footer-icons-text">Follow on X</span>
       </a>
     </div>
@@ -83,6 +92,7 @@
       <a class="social__link"
         href="https://github.com/meshery"
         target="_blank" rel="noreferrer">
+        <img class="github" src="data:image/svg+xml;base64,..."/>
         <span class="footer-icons-text">Contribute on GitHub</span>
       </a>
     </div>
@@ -91,6 +101,7 @@
       <a class="social__link"
         href="https://www.linkedin.com/showcase/meshery/"
         target="_blank" rel="noreferrer">
+        <img class="linkedin" src="data:image/svg+xml;base64,..."/>
         <span class="footer-icons-text">Connect on LinkedIn</span>
       </a>
     </div>
@@ -99,6 +110,7 @@
       <a class="social__link"
         href="https://hub.docker.com/u/meshery/"
         target="_blank" rel="noreferrer">
+        <img class="docker" src="data:image/svg+xml;base64,..."/>
         <span class="footer-icons-text">Access Docker images</span>
       </a>
     </div>
@@ -107,9 +119,14 @@
       <a class="social__link"
         href="https://www.youtube.com/@mesheryio?sub_confirmation=1"
         target="_blank" rel="noreferrer">
+        <svg>...</svg>
         <span class="footer-icons-text">Subscribe on YouTube</span>
       </a>
     </div>
 
   </div>
 </footer>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+<script type="module" src="https://md-block.verou.me/md-block.js"></script>
