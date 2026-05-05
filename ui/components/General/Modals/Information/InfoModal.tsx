@@ -76,7 +76,7 @@ const InfoModal_ = React.memo((props) => {
 
   const [updatePattern] = useUpdatePatternFileMutation();
   const currentUserID = currentUser?.id;
-  const isAdmin = currentUser?.role_names?.includes('admin') || false;
+  const isAdmin = currentUser?.roleNames?.includes('admin') || false;
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const isOwner = currentUserID === resourceOwnerID;
@@ -144,7 +144,7 @@ const InfoModal_ = React.memo((props) => {
       .unwrap()
       .then(() => {
         updateProgress({ showProgress: false });
-        if (currentUser.role_names.includes('admin')) {
+        if (currentUser.roleNames.includes('admin')) {
           notify({
             message: `${selectedResource.name} Design Published`,
             event_type: EVENT_TYPES.SUCCESS,
@@ -366,7 +366,7 @@ const InfoModal_ = React.memo((props) => {
                 <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Created</CreatAtContainer>
                   <CreatAtContainer isBold={false}>
-                    {getFormatDate(selectedResource?.created_at)}
+                    {getFormatDate(selectedResource?.createdAt)}
                   </CreatAtContainer>
                 </Typography>
               </Grid>
@@ -374,7 +374,7 @@ const InfoModal_ = React.memo((props) => {
                 <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Updated</CreatAtContainer>
                   <CreatAtContainer idBold={false}>
-                    {getFormatDate(selectedResource?.updated_at)}
+                    {getFormatDate(selectedResource?.updatedAt)}
                   </CreatAtContainer>
                 </Typography>
               </Grid>
@@ -393,7 +393,7 @@ const InfoModal_ = React.memo((props) => {
                   <Typography gutterBottom variant="subtitle1">
                     <CustomTooltip
                       title={`Owner: ${
-                        resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
+                        resourceUserProfile?.firstName + ' ' + resourceUserProfile?.lastName
                       }`}
                     >
                       <div>
@@ -470,7 +470,7 @@ const InfoModal_ = React.memo((props) => {
                   ? false
                   : !(
                       CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) &&
-                      currentUser?.id === selectedResource?.user_id
+                      currentUser?.id === selectedResource?.userId
                     ) || isPublished
               }
             >
@@ -509,9 +509,9 @@ const OwnerChip = ({ userProfile }) => {
       {userProfile ? (
         <>
           <Link href={`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`} rel="noopener noreferrer">
-            <Avatar src={userProfile.avatar_url} />
+            <Avatar src={userProfile.avatarUrl} />
           </Link>
-          <Typography>{`${userProfile.first_name} ${userProfile.last_name}`}</Typography>
+          <Typography>{`${userProfile.firstName} ${userProfile.lastName}`}</Typography>
         </>
       ) : (
         <Skeleton variant="circular" width={40} height={40} />

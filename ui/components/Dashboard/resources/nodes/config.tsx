@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { getResourceStr, resourceParsers, timeAgo, getStatus } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
@@ -142,7 +141,7 @@ export const NodeTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               </>
             );

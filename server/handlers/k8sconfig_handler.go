@@ -33,15 +33,15 @@ const ContextsFormKey = "contexts"
 
 // ContextOptions represents the configuration options for a specific context
 type ContextOptions struct {
-	MeshsyncDeploymentMode string `json:"meshsync_deployment_mode"`
+	MeshsyncDeploymentMode string `json:"meshsyncDeploymentMode"`
 }
 
 // SaveK8sContextResponse - struct used as (json marshaled) response to requests for saving k8s contexts
 type SaveK8sContextResponse struct {
-	RegisteredContexts []models.K8sContext `json:"registered_contexts"`
-	ConnectedContexts  []models.K8sContext `json:"connected_contexts"`
-	IgnoredContexts    []models.K8sContext `json:"ignored_contexts"`
-	ErroredContexts    []models.K8sContext `json:"errored_contexts"`
+	RegisteredContexts []models.K8sContext `json:"registeredContexts"`
+	ConnectedContexts  []models.K8sContext `json:"connectedContexts"`
+	IgnoredContexts    []models.K8sContext `json:"ignoredContexts"`
+	ErroredContexts    []models.K8sContext `json:"erroredContexts"`
 }
 
 // K8SConfigHandler is used for persisting kubernetes config and context info

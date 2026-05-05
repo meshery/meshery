@@ -47,14 +47,14 @@ jobs:
         uses: actions/checkout@v6
         
       - name: Setup Kubernetes (Kind)
-        uses: helm/kind-action@v1.13.0
+        uses: helm/kind-action@v1.14.0
         with:
           cluster_name: "kind-cluster"
         
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
     

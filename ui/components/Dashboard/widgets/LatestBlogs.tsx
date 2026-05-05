@@ -1,9 +1,15 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { useTheme, PlainCard, BellIcon, DesignIcon } from '@sistent/sistent';
-const LatestBlogs = (props) => {
+
+type LatestBlogsProps = {
+  iconsProps?: object;
+};
+
+type Resource = { name: string; link?: string; external?: boolean; icon?: React.ReactNode };
+
+const LatestBlogs = (props: LatestBlogsProps) => {
   const theme = useTheme();
-  const [resources, setResources] = useState([]);
+  const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
@@ -18,7 +17,7 @@ import { Box, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
 
 export default function MesheryConfigurationChart() {
   const router = useRouter();
-  const [chartData, setChartData] = useState([]);
+  const [chartData, setChartData] = useState<[string, number][]>([]);
   const theme = useTheme();
 
   const { data: patternsData, error: patternsError } = useGetPatternsQuery({
@@ -33,13 +32,13 @@ export default function MesheryConfigurationChart() {
 
   useEffect(() => {
     if (!patternsError && patternsData?.patterns) {
-      setChartData((prevData) => [...prevData, ['Designs', patternsData.total_count]]);
+      setChartData((prevData) => [...prevData, ['Designs', patternsData.totalCount]]);
     }
   }, [patternsData, patternsError]);
 
   useEffect(() => {
     if (!filtersError && filtersData?.filters) {
-      setChartData((prevData) => [...prevData, ['Filters', filtersData.total_count]]);
+      setChartData((prevData) => [...prevData, ['Filters', filtersData.totalCount]]);
     }
   }, [filtersData, filtersError]);
 
@@ -48,7 +47,7 @@ export default function MesheryConfigurationChart() {
       columns: chartData,
       type: donut(),
       colors: dataToColors(chartData),
-      onclick: function (d) {
+      onclick: function (d: { name: string }) {
         const routeName = d.name.charAt(0).toLowerCase() + d.name.slice(1);
         router.push(`/configuration/${routeName}`);
       },

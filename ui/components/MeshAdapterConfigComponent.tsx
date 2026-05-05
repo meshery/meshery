@@ -58,8 +58,9 @@ const STATUS = {
 
 const MeshAdapterConfigComponent = () => {
   const labelRef = useRef(null);
-  const { meshAdapters: globalAdapters } = useSelector((state) => state.adapter);
-  const { meshAdaptersts: meshAdapterStates } = useSelector((state) => state.adapter);
+  const { meshAdapters: globalAdapters, meshAdaptersts: meshAdapterStates } = useSelector(
+    (state) => state.adapter,
+  );
   const [meshAdapters, setMeshAdapters] = useState(globalAdapters);
   const [ts, setTs] = useState(meshAdapterStates);
   const [meshLocationURLError, setMeshLocationURLError] = useState(false);
@@ -79,13 +80,13 @@ const MeshAdapterConfigComponent = () => {
 
   const setAdapterURLs =
     adapters?.map((res) => ({
-      value: res.adapter_location,
-      label: res.adapter_location,
+      value: res.adapterLocation,
+      label: res.adapterLocation,
     })) || [];
 
   const availableAdapters =
     availableAdaptersData?.map((res) => ({
-      value: res.adapter_location,
+      value: res.adapterLocation,
       label: res.name,
     })) || [];
 
@@ -378,9 +379,9 @@ const MeshAdapterConfigComponent = () => {
                           .join(' ')} (${adapter.version})`}
               >
                 <AdapterChipStyled
-                  label={adapter.adapter_location}
-                  onDelete={handleDelete(adapter.adapter_location)}
-                  onClick={handleClick(adapter.adapter_location)}
+                  label={adapter.adapterLocation}
+                  onDelete={handleDelete(adapter.adapterLocation)}
+                  onClick={handleClick(adapter.adapterLocation)}
                   icon={
                     // logoIcon
                     <BadgeAvatars color={getStatusColor(adapterStates[adapter.name])}>
@@ -472,7 +473,7 @@ const MeshAdapterConfigComponent = () => {
                 type="text"
                 label="Enter Port"
                 variant="standard"
-                onChange={(e) => handleDeployPortChange(e.target)}
+                onChange={(e) => handleDeployPortChange(e.target as HTMLInputElement)}
                 value={meshDeployURL}
                 error={meshDeployURLError}
               />

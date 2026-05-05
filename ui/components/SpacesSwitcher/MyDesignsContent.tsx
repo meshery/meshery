@@ -82,8 +82,8 @@ const MyDesignsContent = () => {
       skip: !currentUser?.id,
     },
   );
-  const hasMore = designsData?.total_count > designsData?.page_size * (designsData?.page + 1);
-  const total_count = designsData?.total_count || 0;
+  const hasMore = designsData?.totalCount > designsData?.pageSize * (designsData?.page + 1);
+  const totalCount = designsData?.totalCount || 0;
   const theme = useTheme();
   const modalRef = useRef(null);
   const { handleDelete } = useContentDelete(modalRef);
@@ -118,7 +118,7 @@ const MyDesignsContent = () => {
             placeholder="Search Designs"
             value={filters.searchQuery}
             onChange={onSearchChange}
-            endAdornment={<p style={{ color: theme.palette.text.default }}>Total: {total_count}</p>}
+            endAdornment={<p style={{ color: theme.palette.text.default }}>Total: {totalCount}</p>}
           />
         </Grid2>
 
@@ -165,7 +165,7 @@ const MyDesignsContent = () => {
         hasMore={hasMore}
         refetch={refetch}
         isMultiSelectMode={true}
-        total_count={total_count}
+        totalCount={totalCount}
       />
       <PromptComponent ref={modalRef} />
       <ExportModal

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
 import { SINGLE_VIEW } from '../config';
@@ -132,7 +131,7 @@ export const ConfigurationTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -266,7 +265,7 @@ export const ConfigurationTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -382,7 +381,7 @@ export const ConfigurationTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -498,7 +497,7 @@ export const ConfigurationTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -662,7 +661,7 @@ export const ConfigurationTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -778,7 +777,7 @@ export const ConfigurationTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -956,7 +955,7 @@ export const ConfigurationTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -1072,7 +1071,7 @@ export const ConfigurationTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -1188,7 +1187,7 @@ export const ConfigurationTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -1321,7 +1320,7 @@ export const ConfigurationTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },
@@ -1427,7 +1426,7 @@ export const ConfigurationTableConfig = (
                       ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                       : ''
                   }
-                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                  handlePing={() => ping(context.name, context.server, context.connectionId)}
                 />
               );
             },

@@ -67,8 +67,7 @@ const PrometheusComponent = (props) => {
   const [prometheusURL, setPrometheusURL] = useState(initialPrometheus.prometheusURL);
   const [connectionID, setConnectionID] = useState(initialPrometheus.connectionID);
   const [connectionName, setConnectionName] = useState(initialPrometheus.connectionName);
-  const { k8sConfig } = useSelector((state) => state.ui);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig, selectedK8sContexts } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
 
   const getK8sClusterIds = () => {

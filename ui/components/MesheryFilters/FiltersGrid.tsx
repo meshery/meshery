@@ -81,10 +81,10 @@ function FilterCardGridItem({
     <Grid2 size={gridProps}>
       <FiltersCard
         name={filter.name}
-        updated_at={filter.updated_at}
-        created_at={filter.created_at}
-        ownerId={filter.user_id}
-        filter_resource={yaml}
+        updatedAt={filter.updatedAt}
+        createdAt={filter.createdAt}
+        ownerId={filter.userId}
+        filterResource={yaml}
         canPublishFilter={canPublishFilter}
         handlePublishModal={handlePublishModal}
         handleUnpublishModal={handleUnpublishModal}
