@@ -154,7 +154,7 @@ func ErrUnmarshalDockerCompose(err error, obj string) error {
 		[]string{"Error processing JSON response from Meshery Server", obj},
 		[]string{err.Error()},
 		[]string{"Either the JSON response is invalid or the Response is distorted"},
-		[]string{"Ensure Meshery Server is running and you have a strong newtwork connection"})
+		[]string{"Ensure Meshery Server is running and you have a strong network connection"})
 }
 
 func ErrUnsupportedPlatform(platform string, config string) error {

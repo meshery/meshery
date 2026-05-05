@@ -4,8 +4,14 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
+	component "github.com/meshery/schemas/models/v1beta2/component"
+	relationship "github.com/meshery/schemas/models/v1beta2/relationship"
+	design "github.com/meshery/schemas/models/v1beta3/design"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // buildDesignPostBody returns a JSON body that wraps a minimal PatternFile
@@ -593,4 +599,46 @@ func TestErrEncodePattern_PreservesMeshKitCode(t *testing.T) {
 	if got, want := errors.GetCode(wrapped), ErrEncodePatternCode; got != want {
 		t.Fatalf("ErrEncodePattern produced code %q, want %q", got, want)
 	}
+}
+
+// TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys pins
+// the canonical camelCase keys emitted into event_trackers.metadata on
+// design-save. Production carried 263,378 rows of legacy snake_case
+// `history_title` before this flip; this test guards against
+// regression and ensures the legacy spelling cannot be re-introduced
+// silently.
+func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) {
+	id := uuid.Must(uuid.NewV4())
+	df := design.PatternFile{
+		ID:            id,
+		Name:          "test-design",
+		SchemaVersion: "designs.meshery.io/v1beta3",
+		Version:       "0.0.1",
+		Components:    make([]*component.ComponentDefinition, 3),
+		Relationships: make([]*relationship.RelationshipDefinition, 5),
+	}
+
+	metadata := buildDesignSavedEventMetadata(df)
+
+	// Canonical camelCase keys MUST be present.
+	require.Contains(t, metadata, "historyTitle")
+	require.Contains(t, metadata, "design")
+	require.Contains(t, metadata, "doclink")
+
+	// Legacy snake_case key MUST NOT be present.
+	require.NotContains(t, metadata, "history_title")
+
+	// historyTitle reflects version + counts so future contributors
+	// don't repurpose the helper without keeping the user-visible label
+	// coherent.
+	assert.Contains(t, metadata["historyTitle"], "Version 0.0.1")
+	assert.Contains(t, metadata["historyTitle"], "3 components")
+	assert.Contains(t, metadata["historyTitle"], "5 relationships")
+
+	// `design` sub-object carries the design's id and name (single-word
+	// keys, exempt from the camelCase contract).
+	designSub, ok := metadata["design"].(map[string]interface{})
+	require.True(t, ok, "design field should be a map")
+	assert.Equal(t, "test-design", designSub["name"])
+	assert.Equal(t, id.String(), designSub["id"])
 }

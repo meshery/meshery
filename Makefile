@@ -323,16 +323,10 @@ ui-server: ui-meshery-build ui-provider-build server
 UI_BUILD_SCRIPT = build16
 UI_DEV_SCRIPT = dev16
 
-ifeq ($(findstring v20, $(shell node --version)), v20)
+ifeq ($(findstring v22, $(shell node --version)), v22)
     UI_BUILD_SCRIPT = build
     UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v19, $(shell node --version)), v19)
-    UI_BUILD_SCRIPT = build
-    UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v18, $(shell node --version)), v18)
-    UI_BUILD_SCRIPT = build
-    UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v17, $(shell node --version)), v17)
+else ifeq ($(findstring v20, $(shell node --version)), v20)
     UI_BUILD_SCRIPT = build
     UI_DEV_SCRIPT = dev
 
