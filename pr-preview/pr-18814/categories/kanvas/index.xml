@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kanvas on Documentation</title><link>/categories/kanvas/</link><description>Recent content in Kanvas on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/categories/kanvas/index.xml" rel="self" type="application/rss+xml"/><item><title>Import and Export Designs</title><link>/extensions/import-export-designs/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/import-export-designs/</guid><description>&lt;h1 id="import-and-export-designs"&gt;
+	Import and Export Designs
+&lt;/h1&gt;
+&lt;p&gt;Meshery supports two primary operations for working with designs: &lt;strong&gt;Import&lt;/strong&gt; and &lt;strong&gt;Export&lt;/strong&gt;.
+A &lt;strong&gt;&lt;a href="../../concepts/logical/designs/"&gt;design&lt;/a&gt;&lt;/strong&gt; in Meshery is a structured model describing how various components (e.g., Kubernetes manifests, Helm charts, or Docker Compose objects) should be managed and deployed. This document details the core concepts, the import/export processes, and the available methods to perform them.&lt;/p&gt;
+&lt;h2 id="core-operations"&gt;
+	Core Operations
+&lt;/h2&gt;
+&lt;p&gt;Meshery treats each design as a combination of:&lt;/p&gt;</description></item><item><title>kubectl MeshSync Snapshot</title><link>/extensions/kubectl-meshsync-snapshot/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/kubectl-meshsync-snapshot/</guid><description>&lt;h1 id="kubectl-meshsync-snapshot"&gt;
+	&lt;img style="height: 4rem; width: 4rem;" src="../../extensions/images/meshsync.svg" /&gt; kubectl MeshSync Snapshot
+&lt;/h1&gt;
+&lt;p&gt;A &lt;code&gt;kubectl&lt;/code&gt; plugin for performing an ad hoc collection of resource information from a Kubernetes cluster and sending the cluster resources details to a Meshery Server. &lt;code&gt;kubectl meshsync snapshot&lt;/code&gt; is a native kubectl plugin for conveniently synchronizing the state of your cluster with Meshery Server.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2 id="about-meshery-extensions"&gt;
+	About Meshery Extensions
+&lt;/h2&gt;
+&lt;p&gt;&lt;a href="https://meshery.io/extensions"&gt;Meshery Extensions&lt;/a&gt; are plugins or add-ons that enhance the functionality of the Meshery platform beyond its core capabilities. Meshery supports different types of extensions (&lt;a href="../../extensions/"&gt;docs&lt;/a&gt;):&lt;/p&gt;</description></item></channel></rss>
