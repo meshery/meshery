@@ -85,24 +85,33 @@
   height: 100%;
 
   &::-webkit-scrollbar {
-    overscroll-behavior: contain;
-    width: 5px;
-    padding: 6px;
+    display: none;
   }
 
-  &::-webkit-scrollbar-track {
-    width: 0.5rem;
-    border-radius: 11px;
-    overflow: hidden;
-    padding: 6px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #868e96;
-    width: 0.2rem;
-    border-radius: 11px;
-    margin: 5px;
+  &--active {
+    &::-webkit-scrollbar {
+      overscroll-behavior: contain;
+      width: 5px;
+      padding: 6px;
+      display: block;
+    }
+
+    &::-webkit-scrollbar-track {
+      width: 0.5rem;
+      border-radius: 11px;
+      overflow: hidden;
+      padding: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #868e96;
+      width: 0.2rem;
+      border-radius: 11px;
+      margin: 5px;
+    }
+
   }
 
+ 
   @media (max-width: 75em) {
     // position: fixed;
     top: var(--navbar-height);

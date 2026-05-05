@@ -92,12 +92,15 @@ clipboard.on("success", (e)=>{
 const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
 
 toggleBtnSidebarNav.addEventListener("click",()=>{
-    let sidebar=document.querySelector(".left-container")
-    if(sidebar){
-        isNowActive = sidebar.classList.toggle('left-container--active');
-        let newState = isNowActive ? 'active' : 'inactive';
-        localStorage.setItem('sidebar-state', newState);
-        
+    const leftContainer = document.querySelector(".left-container");
+    const sidebar = document.querySelector(".sidebar-container");
+
+    if(leftContainer && sidebar){
+        const isActive = leftContainer.classList.toggle('left-container--active');
+        sidebar.classList.toggle('sidebar-container--active', isActive);
+
+        const newState = isActive ? 'active' : 'inactive';
+        localStorage.setItem('sidebar-state', newState);   
     }
 })
 
