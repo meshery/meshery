@@ -167,6 +167,8 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 		u, err := url.Parse(promURL)
 		if err != nil {
+			h.log.Error(ErrParseBool(err, "prometheusURL"))
+			writeMeshkitError(w, ErrParseBool(err, "prometheusURL"), http.StatusBadRequest)
 			return
 		}
 		if strings.Contains(promURL, u.RequestURI()) {
