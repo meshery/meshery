@@ -1,7 +1,6 @@
-// @ts-nocheck
 import BaseInput from './CustomBaseInput';
 
-const CustomURLWidget = (props) => {
+const CustomURLWidget = (props: { options?: object } & Record<string, unknown>) => {
   return <BaseInput {...props} options={{ ...props.options }} />;
 };
 

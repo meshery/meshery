@@ -22,6 +22,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
@@ -30,7 +31,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-var verboseStatus bool
+type cmdSystemStatusFlags struct {
+	Verbose bool `json:"verbose" validate:"boolean"`
+}
+
+var systemStatusFlags cmdSystemStatusFlags
 
 var linkDocStatus = map[string]string{
 	"link":    "![status-usage](/reference/images/status.png)",
@@ -52,6 +57,9 @@ mesheryctl system status --verbose
 	Annotations: linkDocStatus,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check prerequisite
+		if err := mesheryctlflags.ValidateCmdFlags(cmd, &systemStatusFlags); err != nil {
+			return err
+		}
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
 			PrintLogs:  false,
@@ -59,8 +67,7 @@ mesheryctl system status --verbose
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			utils.Log.Error(ErrHealthCheckFailed(err))
-			return nil
+			return ErrHealthCheckFailed(err)
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
@@ -72,39 +79,39 @@ mesheryctl system status --verbose
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "status"))
+			return utils.ErrInvalidArgument(
+				fmt.Errorf("this command takes no arguments. See '%s --help' for more information", cmd.CommandPath()),
+			)
 		}
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		// get the platform, channel and the version of the current context
 		// if a temp context is set using the -c flag, use it as the current context
 		if tempContext != "" {
 			err = mctlCfg.SetCurrentContext(tempContext)
 			if err != nil {
-				utils.Log.Error(ErrSetCurrentContext(errors.Wrap(err, "failed to set temporary context")))
-				return nil
+				return ErrSetCurrentContext(errors.Wrap(err, "failed to set temporary context"))
 			}
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
 
 		currPlatform := currCtx.GetPlatform()
 
 		ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
+
+		// If Meshery is not running, print the status and return
 		if !ok {
-			utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
+			utils.Log.Infof("Context: %s\nPlatform: %s\nStatus: Meshery is not running", mctlCfg.GetCurrentContextName(), currPlatform)
 			return nil
 		}
 
@@ -129,19 +136,17 @@ mesheryctl system status --verbose
 				PrintLogs:           false,
 				IsPreRunE:           false,
 				Subcommand:          "status",
-				RunKubernetesChecks: true,
+				RunKubernetesChecks: false,
 			}
 			hc, err := NewHealthChecker(hcOptions)
 			if err != nil {
-				utils.Log.Error(ErrHealthCheckFailed(err))
-				return nil
+				return ErrHealthCheckFailed(err)
 			}
 			// If k8s is available print the status of pods in the MesheryNamespace
 			if err = hc.Run(); err != nil {
 				return nil
 			}
 
-			fallthrough
 		case platformKubernetes:
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
@@ -192,13 +197,13 @@ mesheryctl system status --verbose
 				row := []string{name, ready, status, restarts, ageS}
 
 				// Append this to data to be printed in a table
-				if verboseStatus {
+				if systemStatusFlags.Verbose {
 					row = append(row, pod.Name)
 					row = append(row, podStatus.PodIP)
 				}
 				data = append(data, row)
 			}
-			if verboseStatus {
+			if systemStatusFlags.Verbose {
 				columnNames = append(columnNames, "Pod-Names")
 				columnNames = append(columnNames, "Pod-IP")
 			}
@@ -210,7 +215,7 @@ mesheryctl system status --verbose
 
 			if currPlatform == "kubernetes" {
 				endpoint, err := utils.GetMesheryEndpoint(cmd.Context(), client)
-				if err != nil && verboseStatus {
+				if err != nil && systemStatusFlags.Verbose {
 					utils.Log.Warnf("Could not discover Meshery service endpoint: %v", err)
 				}
 				if err == nil && endpoint.External != nil && endpoint.External.Address != "" && endpoint.External.Address != "localhost" {
@@ -229,5 +234,5 @@ mesheryctl system status --verbose
 }
 
 func init() {
-	statusCmd.Flags().BoolVarP(&verboseStatus, "verbose", "v", false, "(optional) Extra data in status table")
+	statusCmd.Flags().BoolVarP(&systemStatusFlags.Verbose, "verbose", "v", false, "(optional) Extra data in status table")
 }

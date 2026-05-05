@@ -1,5 +1,5 @@
-import { graphql, requestSubscription } from 'react-relay';
-import { createRelayEnvironment } from '../../../lib/relayEnvironment';
+import { graphql } from 'react-relay';
+import { createSubscription } from '../../../lib/subscriptionHelper';
 
 const eventsSubscription = graphql`
   subscription EventsSubscription {
@@ -22,13 +22,11 @@ const eventsSubscription = graphql`
   }
 `;
 
-export default function subscribeEvents(dataCB, onError) {
-  const environment = createRelayEnvironment({});
-
-  return requestSubscription(environment, {
+export default function subscribeEvents(dataCB, onError?) {
+  return createSubscription({
     subscription: eventsSubscription,
     onNext: dataCB,
-    onError:
-      onError || ((error) => console.error('An error occurred in subscription to events:', error)),
+    onError,
+    subscriptionName: 'Events',
   });
 }

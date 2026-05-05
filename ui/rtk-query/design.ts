@@ -1,5 +1,5 @@
 import { urlEncodeParams } from '@/utils/utils';
-import { api } from './index';
+import { api, mesheryApiPath } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
 import { initiateQuery } from './utils';
 import _ from 'lodash';
@@ -24,13 +24,13 @@ export const designsApi = api
             visibility: queryArg.visibility,
             populate: queryArg.populate,
           });
-          return `pattern?${params}`;
+          return mesheryApiPath(`pattern?${params}`);
         },
         providesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       getDesign: builder.query({
         query: ({ design_id }) => ({
-          url: `pattern/${design_id}`,
+          url: mesheryApiPath(`pattern/${design_id}`),
           method: 'GET',
         }),
         providesTags: () => [{ type: TAGS.DESIGNS }],
@@ -41,15 +41,15 @@ export const designsApi = api
             page: queryArg.page,
             pagesize: queryArg.pagesize,
             order: queryArg.order,
-            user_id: queryArg.user_id,
+            userId: queryArg.userId,
             expandUser: queryArg.expandUser,
             metrics: queryArg.metrics,
             search: queryArg.search,
             visibility: queryArg.visibility,
-            orgID: queryArg.orgID,
+            orgId: queryArg.orgId,
             shared: queryArg.shared || false,
           });
-          return `extensions/api/content/patterns?${params}`;
+          return mesheryApiPath(`extensions/api/content/patterns?${params}`);
         },
         serializeQueryArgs: ({ endpointName }) => {
           return endpointName;
@@ -75,100 +75,113 @@ export const designsApi = api
       }),
       deployPattern: builder.mutation({
         query: ({
-          pattern_file,
-          pattern_id,
+          patternFile,
+          patternId,
           selectedK8sContexts,
           verify = false,
           dryRun = false,
           skipCRD = false,
         }) => ({
-          url: `${ctxUrl('pattern/deploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
-            dryRun ? '&dryRun=true' : ''
-          }${skipCRD ? '&skipCRD=true' : ''}`,
+          url: mesheryApiPath(
+            `${ctxUrl('pattern/deploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
+              dryRun ? '&dryRun=true' : ''
+            }${skipCRD ? '&skipCRD=true' : ''}`,
+          ),
           method: 'POST',
           body: {
-            pattern_file,
-            pattern_id,
+            patternFile,
+            patternId,
           },
         }),
+        invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       undeployPattern: builder.mutation({
         query: ({
-          pattern_file,
-          pattern_id,
+          patternFile,
+          patternId,
           selectedK8sContexts,
           verify = false,
           dryRun = false,
         }) => ({
-          url: `${ctxUrl('pattern/deploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
-            dryRun ? '&dryRun=true' : ''
-          }`,
+          url: mesheryApiPath(
+            `${ctxUrl('pattern/deploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
+              dryRun ? '&dryRun=true' : ''
+            }`,
+          ),
           method: 'DELETE',
           body: {
-            pattern_file,
-            pattern_id,
+            patternFile,
+            patternId,
           },
         }),
+        invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       clonePattern: builder.mutation({
         query: (queryArg) => ({
-          url: `pattern/clone/${queryArg.patternID}`,
+          url: mesheryApiPath(`pattern/clone/${queryArg.patternID}`),
           method: 'POST',
           body: queryArg.body,
         }),
+        invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       publishPattern: builder.mutation({
         query: (queryArg) => ({
-          url: `pattern/catalog/publish`,
+          url: mesheryApiPath(`pattern/catalog/publish`),
           method: 'POST',
           body: queryArg.publishBody,
         }),
+        invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       unpublishPattern: builder.mutation({
         query: (queryArg) => ({
-          url: `pattern/catalog/unpublish`,
+          url: mesheryApiPath(`pattern/catalog/unpublish`),
           method: 'DELETE',
           body: queryArg.unpublishBody,
         }),
+        invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       deletePattern: builder.mutation({
         query: (queryArg) => ({
-          url: `patterns/delete`,
+          url: mesheryApiPath(`patterns/delete`),
           method: 'POST',
           body: queryArg.deleteBody,
         }),
+        invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       importPattern: builder.mutation({
         query: (queryArg) => ({
-          url: `pattern/import`,
+          url: mesheryApiPath(`pattern/import`),
           method: 'POST',
           body: queryArg.importBody,
         }),
+        invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       deletePatternFile: builder.mutation({
         query: (queryArg) => ({
-          url: `pattern/${queryArg.id}`,
+          url: mesheryApiPath(`pattern/${queryArg.id}`),
           method: 'DELETE',
         }),
+        invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       updatePatternFile: builder.mutation({
         query: (queryArg) => ({
-          url: `pattern`,
+          url: mesheryApiPath(`pattern`),
           method: 'POST',
           credentials: 'include',
           body: queryArg.updateBody,
         }),
-        providesTags: () => [{ type: TAGS.DESIGNS }],
+        invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       uploadPatternFile: builder.mutation({
         query: (queryArg) => ({
-          url: `pattern/`,
+          url: mesheryApiPath(`pattern/`),
           method: 'POST',
           body: queryArg.uploadBody,
         }),
+        invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       downloadPatternFile: builder.query({
-        query: (queryArg) => `pattern/${queryArg.id}`,
+        query: (queryArg) => mesheryApiPath(`pattern/${queryArg.id}`),
       }),
     }),
   });
@@ -186,6 +199,7 @@ export const getDesign = async ({ design_id }) => {
 export const {
   useGetPatternsQuery,
   useGetDesignQuery,
+  useLazyGetDesignQuery,
   useGetUserDesignsQuery,
   useDeployPatternMutation,
   useUndeployPatternMutation,

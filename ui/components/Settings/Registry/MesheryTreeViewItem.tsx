@@ -1,5 +1,6 @@
 import React from 'react';
 import { MODELS } from '../../../constants/navigator';
+import { normalizeStaticImagePath } from '@/utils/fallback';
 import StyledTreeItem from './StyledTreeItem';
 
 import { StyledTreeItemDiv, StyledTreeItemNameDiv } from './MeshModel.style';
@@ -27,7 +28,7 @@ const MesheryTreeViewItem = ({
   selected,
   expanded,
 }: MesheryTreeViewItemProps) => {
-  const imgSrc = modelDef?.metadata?.svgColor ? `/${modelDef.metadata.svgColor}` : null;
+  const imgSrc = normalizeStaticImagePath(modelDef?.metadata?.svgColor);
   return (
     <StyledTreeItem
       key={modelDef.id}

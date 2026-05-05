@@ -1,7 +1,7 @@
 import { useNotification } from '../../utils/hooks/useNotification';
 import { errorHandlerGenerator, successHandlerGenerator } from '../../utils/helpers/common';
-import { pingKubernetes } from '../../utils/helpers/kubernetesHelpers';
 import { pingMesheryOperator } from '../../utils/helpers/mesheryOperator';
+import { useLazyPingKubernetesQuery } from '@/rtk-query/connection';
 import { EVENT_TYPES } from '../../lib/event-types';
 import MeshsyncStatusQuery from '../graphql/queries/MeshsyncStatusQuery';
 import { useEffect, useState } from 'react';
@@ -15,17 +15,18 @@ import { updateProgressAction } from '@/store/slices/mesheryUi';
 export default function useKubernetesHook() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
-  const ping = (name, server, connectionID) => {
+  const [triggerPing] = useLazyPingKubernetesQuery();
+
+  const ping = async (name, server, connectionID) => {
     dispatch(updateProgressAction({ showProgress: true }));
-    pingKubernetes(
-      successHandlerGenerator(notify, `Kubernetes context ${name} at ${server} pinged`, () =>
-        dispatch(updateProgressAction({ showProgress: false })),
-      ),
-      errorHandlerGenerator(notify, `Kubernetes context ${name} at ${server} not reachable`, () =>
-        dispatch(updateProgressAction({ showProgress: false })),
-      ),
-      connectionID,
-    );
+    try {
+      await triggerPing(connectionID).unwrap();
+      dispatch(updateProgressAction({ showProgress: false }));
+      successHandlerGenerator(notify, `Kubernetes context ${name} at ${server} pinged`)();
+    } catch (err) {
+      dispatch(updateProgressAction({ showProgress: false }));
+      errorHandlerGenerator(notify, `Kubernetes context ${name} at ${server} not reachable`)(err);
+    }
   };
 
   return ping;
@@ -335,7 +336,7 @@ export const useFilterK8sContexts = (k8sContexts, predicate) => {
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   return k8sContexts.filter((ctx) => {
-    const operatorsStatus = getControllerStatesByConnectionID(ctx.connection_id);
+    const operatorsStatus = getControllerStatesByConnectionID(ctx.connectionId);
     return predicate({ ...operatorsStatus, context: ctx });
   });
 };

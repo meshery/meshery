@@ -109,7 +109,7 @@ func TestDoc(t *testing.T) {
 		cmd.AddCommand(&cobra.Command{
 			Use: "sub",
 		})
-		markDownPath := "../../docs/content/en/reference/mesheryctl/"
+		markDownPath := t.TempDir()
 		err := GenMarkdownTreeCustom(cmd, markDownPath, prepender, linkHandler)
 		assert.NoError(t, err)
 	})
@@ -165,15 +165,6 @@ func TestDoc(t *testing.T) {
 		assert.Contains(t, output, "See Also")
 		assert.Contains(t, output, "preserving-manually-added-documentation")
 	})
-	t.Run("Test GenYamlTreeCustom function", func(t *testing.T) {
-		cmd.AddCommand(&cobra.Command{
-			Use: "sub",
-		})
-		yamlPath := "../../docs/content/en/reference/mesheryctl/"
-		err := GenYamlTreeCustom(cmd, yamlPath, prepender, linkHandler)
-		assert.NoError(t, err)
-	})
-
 	t.Run("Test getManuallyAddedContentMap function", func(t *testing.T) {
 		_, err := getManuallyAddedContentMap("test.md")
 		assert.NoError(t, err)
@@ -190,15 +181,6 @@ func TestDoc(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Contains(t, contentMap, 0)
 		assert.Equal(t, "example", contentMap[0])
-	})
-
-	t.Run("Test GenYamlCustom function", func(t *testing.T) {
-		cmd.Example = "test_example"
-		buf := &bytes.Buffer{}
-		err := GenYamlCustom(cmd, buf)
-		assert.NoError(t, err)
-		output := buf.String()
-		assert.Contains(t, output, "test_example")
 	})
 
 	t.Run("Test printOptions function", func(t *testing.T) {

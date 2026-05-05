@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Checkbox, CircularProgress, Stack, styled, Typography } from '@sistent/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
+import { normalizeStaticImagePath } from '@/utils/fallback';
 import { processDesign } from '@/utils/utils';
 import { CustomTooltip } from '@sistent/sistent';
 import { InfoCircleIcon, useTheme } from '@sistent/sistent';
@@ -18,7 +19,9 @@ const ModelName = styled(Typography)(() => ({
 }));
 export const ComponentIcon = ({ iconSrc, label }) => {
   const [imgError, setImgError] = React.useState(false);
-  if (!iconSrc) {
+  const normalizedIconSrc = normalizeStaticImagePath(iconSrc);
+
+  if (!normalizedIconSrc) {
     return <PatternIcon fill="#fff" height="1.5rem" width="1.5rem" />;
   }
   if (imgError) {
@@ -28,7 +31,7 @@ export const ComponentIcon = ({ iconSrc, label }) => {
   return (
     <div style={{ height: '24px', width: '24px' }}>
       <img
-        src={iconSrc}
+        src={normalizedIconSrc}
         style={{
           height: '100%',
           width: '100%',
@@ -59,7 +62,7 @@ export const Loading = ({ message, 'data-testid': testId = 'loading' }) => {
 };
 
 export const getSvgWhiteForComponent = (component) => {
-  return `/${component.styles.svgWhite}`;
+  return normalizeStaticImagePath(component?.styles?.svgWhite);
 };
 
 export const CheckBoxField = ({

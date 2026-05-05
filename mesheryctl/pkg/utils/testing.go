@@ -206,6 +206,7 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 
 	viper.SetConfigFile(pathToContext)
 	DefaultConfigPath = pathToContext
+	CfgFile = pathToContext
 	err := viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
@@ -345,7 +346,7 @@ func formatToTabs(data string) string {
 	return s
 }
 
-// AssertMeshkitErrorsEqual compares  relevant fields of two meshkit errors
+// AssertMeshkitErrorsEqual compares relevant fields of two meshkit errors
 func AssertMeshkitErrorsEqual(t *testing.T, got, expected error) {
 	t.Helper()
 	assert.Equal(t, reflect.TypeOf(got), reflect.TypeOf(expected), "error type mismatch")

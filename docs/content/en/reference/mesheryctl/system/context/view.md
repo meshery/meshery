@@ -14,6 +14,7 @@ Display the current Meshery CLI configuration context
 Display the current Meshery CLI context configuration.
 This command shows which Kubernetes cluster, platform, and provider Meshery is configured to communicate with.
 Use this to verify or debug your current CLI settings.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context view [context-name | --context context-name | --all] --flags [flags]

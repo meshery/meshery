@@ -11,7 +11,8 @@ switch context
 
 ## Synopsis
 
-Configure mesheryctl to actively use one one context vs. another context
+Configure mesheryctl to actively use one one context vs. another context.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context switch context-name [flags]

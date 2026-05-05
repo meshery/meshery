@@ -25,7 +25,7 @@ mesheryctl environment create [flags]
 Create a new environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+mesheryctl environment create --orgId [orgId] --name [name] --description [description]
 
 </div>
 </pre> 
@@ -37,7 +37,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
   -d, --description string   Description of the environment
   -h, --help                 help for create
   -n, --name string          Name of the environment
-  -o, --orgID string         Organization ID
+  -o, --orgId string         Organization ID
 
 </div>
 </pre>

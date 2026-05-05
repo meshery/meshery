@@ -1,13 +1,30 @@
-// @ts-nocheck
 import React from 'react';
 import { Typography, Grid2, Box, List, ListItem, RenderMarkdown } from '@sistent/sistent';
 import { FormatStructuredData } from '../../DataFormatter';
 
-export const ErrorMetadataFormatter = ({ metadata, event }) => {
+type ErrorMetadata = {
+  LongDescription?: string[];
+  ProbableCause?: string[];
+  SuggestedRemediation?: string[];
+};
+
+export const ErrorMetadataFormatter = ({
+  metadata,
+  event,
+}: {
+  metadata: ErrorMetadata;
+  event: { description?: unknown };
+}) => {
   const longDescription = metadata?.LongDescription || [];
   const probableCause = metadata?.ProbableCause || [];
   const suggestedRemediation = metadata?.SuggestedRemediation || [];
-  const ErrorDetailsObjectFormatter = ({ heading, value }) => {
+  const ErrorDetailsObjectFormatter = ({
+    heading,
+    value,
+  }: {
+    heading: string;
+    value: string[];
+  }) => {
     const isUnorderedList = heading === 'Details' && value.length <= 1;
     return (
       <Box>

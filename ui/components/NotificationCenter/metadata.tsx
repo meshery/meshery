@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../DataFormatter';
 import { isEmptyAtAllDepths } from '../../utils/objects';

@@ -76,7 +76,7 @@ const InfoModal_ = React.memo((props) => {
 
   const [updatePattern] = useUpdatePatternFileMutation();
   const currentUserID = currentUser?.id;
-  const isAdmin = currentUser?.role_names?.includes('admin') || false;
+  const isAdmin = currentUser?.roleNames?.includes('admin') || false;
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const isOwner = currentUserID === resourceOwnerID;
@@ -144,7 +144,7 @@ const InfoModal_ = React.memo((props) => {
       .unwrap()
       .then(() => {
         updateProgress({ showProgress: false });
-        if (currentUser.role_names.includes('admin')) {
+        if (currentUser.roleNames.includes('admin')) {
           notify({
             message: `${selectedResource.name} Design Published`,
             event_type: EVENT_TYPES.SUCCESS,
@@ -186,7 +186,7 @@ const InfoModal_ = React.memo((props) => {
     body = JSON.stringify({
       name: selectedResource.name,
       catalog_data: modifiedData,
-      design_file: yaml.load(selectedResource.pattern_file),
+      design_file: yaml.load(selectedResource.patternFile),
       id: selectedResource.id,
       visibility: visibility,
     });
@@ -330,7 +330,7 @@ const InfoModal_ = React.memo((props) => {
       >
         <ModalBody>
           <Grid container spacing={2}>
-            <Grid item>
+            <Grid>
               <Button
                 variant="outlined"
                 disabled
@@ -362,24 +362,24 @@ const InfoModal_ = React.memo((props) => {
                 )}
               </Button>
               <ResourceName variant="subtitle1">{selectedResource?.name}</ResourceName>
-              <Grid item xs={12} style={{ marginTop: '1rem' }}>
+              <Grid size={12} style={{ marginTop: '1rem' }}>
                 <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Created</CreatAtContainer>
                   <CreatAtContainer isBold={false}>
-                    {getFormatDate(selectedResource?.created_at)}
+                    {getFormatDate(selectedResource?.createdAt)}
                   </CreatAtContainer>
                 </Typography>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Updated</CreatAtContainer>
                   <CreatAtContainer idBold={false}>
-                    {getFormatDate(selectedResource?.updated_at)}
+                    {getFormatDate(selectedResource?.updatedAt)}
                   </CreatAtContainer>
                 </Typography>
               </Grid>
               {version === '' ? null : (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                     <CreatAtContainer isBold={true}>Version</CreatAtContainer>
                     <CreatAtContainer isBold={false}>{version}</CreatAtContainer>
@@ -387,13 +387,13 @@ const InfoModal_ = React.memo((props) => {
                 </Grid>
               )}
             </Grid>
-            <Grid item xs={8} lg>
+            <Grid size={{ xs: 8, lg: 'grow' }}>
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography gutterBottom variant="subtitle1">
                     <CustomTooltip
                       title={`Owner: ${
-                        resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
+                        resourceUserProfile?.firstName + ' ' + resourceUserProfile?.lastName
                       }`}
                     >
                       <div>
@@ -403,8 +403,7 @@ const InfoModal_ = React.memo((props) => {
                   </Typography>
                 </Grid>
                 <Grid
-                  item
-                  xs={6}
+                  size={6}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
                 >
                   <Typography
@@ -428,7 +427,6 @@ const InfoModal_ = React.memo((props) => {
                 </Grid>
 
                 <Grid
-                  item
                   style={{
                     marginLeft: '-1rem',
                     marginTop: '-1rem',
@@ -472,7 +470,7 @@ const InfoModal_ = React.memo((props) => {
                   ? false
                   : !(
                       CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) &&
-                      currentUser?.id === selectedResource?.user_id
+                      currentUser?.id === selectedResource?.userId
                     ) || isPublished
               }
             >
@@ -511,9 +509,9 @@ const OwnerChip = ({ userProfile }) => {
       {userProfile ? (
         <>
           <Link href={`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`} rel="noopener noreferrer">
-            <Avatar src={userProfile.avatar_url} />
+            <Avatar src={userProfile.avatarUrl} />
           </Link>
-          <Typography>{`${userProfile.first_name} ${userProfile.last_name}`}</Typography>
+          <Typography>{`${userProfile.firstName} ${userProfile.lastName}`}</Typography>
         </>
       ) : (
         <Skeleton variant="circular" width={40} height={40} />

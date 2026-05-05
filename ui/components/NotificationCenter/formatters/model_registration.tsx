@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { Typography, Grid2, Box } from '@sistent/sistent';
 import { ErrorMetadataFormatter } from './error';
@@ -7,8 +6,20 @@ import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
 import { normalizeStaticImagePath } from '@/utils/fallback';
 import { iconMedium } from 'css/icons.styles';
 
-const UnsuccessfulEntityWithError = ({ modelName, error }) => {
-  const entityTypesAndQuantities = {};
+type ImportError = {
+  name: string[];
+  entityType: string[];
+  error: Record<string, unknown>;
+};
+
+const UnsuccessfulEntityWithError = ({
+  modelName,
+  error,
+}: {
+  modelName: string;
+  error: ImportError;
+}) => {
+  const entityTypesAndQuantities: Record<string, number> = {};
   error.name.forEach((name, idx) => {
     if (name === modelName) {
       entityTypesAndQuantities[error.entityType[idx]] =
@@ -40,7 +51,7 @@ const UnsuccessfulEntityWithError = ({ modelName, error }) => {
   );
 };
 
-const checkImageExists = async (url) => {
+const checkImageExists = async (url: string): Promise<boolean> => {
   try {
     const response = await fetch(url);
     return response.ok;
@@ -49,7 +60,14 @@ const checkImageExists = async (url) => {
   }
 };
 
-const ComponentWithIcon = ({ component }) => {
+type ModelComponent = {
+  DisplayName: string;
+  Metadata: string;
+  Model: string;
+  Version?: string;
+};
+
+const ComponentWithIcon = ({ component }: { component: ModelComponent }) => {
   const { DisplayName, Metadata, Model, Version } = component;
   const modelname = Model;
   const kind = Metadata.toLowerCase();
@@ -130,10 +148,21 @@ const ComponentWithIcon = ({ component }) => {
   );
 };
 
-const RelationshipDetail = ({ relationship }) => {
+type Selector = {
+  allow: { from: { kind: string }[]; to: { kind: string }[] };
+};
+
+type Relationship = {
+  Kind: string;
+  Subtype: string;
+  RelationshipType: string;
+  Selectors?: Selector[];
+};
+
+const RelationshipDetail = ({ relationship }: { relationship: Relationship }) => {
   const { Kind, Subtype, Selectors, RelationshipType } = relationship;
 
-  const renderSelectors = (selectors) => {
+  const renderSelectors = (selectors: Selector[]) => {
     return selectors.map((selector, index) => {
       return (
         <div key={index} style={{ marginLeft: '2rem', marginTop: '0.5rem' }}>
@@ -172,15 +201,27 @@ const RelationshipDetail = ({ relationship }) => {
   return <Box>{Selectors && Selectors.length > 0 && renderSelectors(Selectors)}</Box>;
 };
 
-export const ModelImportedSection = ({ modelDetails }) => {
+type ModelDetail = {
+  Components?: ModelComponent[];
+  Relationships?: Relationship[];
+  Errors?: ImportError[];
+};
+
+export const ModelImportedSection = ({
+  modelDetails,
+}: {
+  modelDetails: Record<string, ModelDetail> | unknown;
+}) => {
   if (typeof modelDetails !== 'object' || Array.isArray(modelDetails)) {
     return null;
   }
 
+  const details = modelDetails as Record<string, ModelDetail>;
+
   return (
     <>
-      {Object.keys(modelDetails).map((modelName, index) => {
-        const detail = modelDetails[modelName];
+      {Object.keys(details).map((modelName, index) => {
+        const detail = details[modelName];
         const isEntityFile =
           modelName.includes('.yaml') || modelName.includes('.yml') || modelName.includes('.json');
 
@@ -255,7 +296,7 @@ export const ModelImportedSection = ({ modelDetails }) => {
   );
 };
 
-export const ModelImportMessages = ({ message }) => (
+export const ModelImportMessages = ({ message }: { message: React.ReactNode }) => (
   <Typography data-testid="ModelImportMessages-Wrapper">
     <span style={{ fontWeight: 'bold', fontSize: '17px' }}>{`SUMMARY: `}</span>
     <span style={{ fontSize: '17px' }}>{message}</span>

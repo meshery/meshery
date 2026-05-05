@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import jsYaml from 'js-yaml';
-import { promisifiedDataFetch } from '../../../../lib/data-fetch';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
+import {
+  useUpdatePatternFileMutation,
+  useDeletePatternFileMutation,
+  useLazyGetDesignQuery,
+} from '@/rtk-query/design';
 
 export default function useDesignLifecycle() {
   const [designId, setDesignId] = useState();
@@ -13,6 +17,9 @@ export default function useDesignLifecycle() {
   });
   const [designYaml, setDesignyaml] = useState('');
   const { notify } = useNotification();
+  const [updatePatternFile] = useUpdatePatternFileMutation();
+  const [deletePatternFile] = useDeletePatternFileMutation();
+  const [fetchDesign] = useLazyGetDesignQuery();
 
   useEffect(
     function updateDesignYamlFromJson() {
@@ -90,14 +97,14 @@ export default function useDesignLifecycle() {
   function onDelete() {}
 
   function designSave() {
-    promisifiedDataFetch('/api/pattern', {
-      body: JSON.stringify({
+    updatePatternFile({
+      updateBody: {
         id: designJson.id,
         name: designJson.name,
         design_file: designJson,
-      }),
-      method: 'POST',
+      },
     })
+      .unwrap()
       .then((data) => {
         setDesignId(data[0].id);
         notify({
@@ -116,14 +123,13 @@ export default function useDesignLifecycle() {
 
   async function designUpdate() {
     try {
-      await promisifiedDataFetch('/api/pattern', {
-        body: JSON.stringify({
+      await updatePatternFile({
+        updateBody: {
           name: designJson.name,
           design_file: designJson,
           id: designId,
-        }),
-        method: 'POST',
-      });
+        },
+      }).unwrap();
       notify({
         message: `"${designJson.name}" updated`,
         event_type: EVENT_TYPES.SUCCESS,
@@ -139,7 +145,7 @@ export default function useDesignLifecycle() {
 
   async function designDelete() {
     try {
-      await promisifiedDataFetch('/api/pattern/' + designId, { method: 'DELETE' });
+      await deletePatternFile({ id: designId }).unwrap();
       notify({ message: `Design "${designJson.name}" Deleted`, event_type: EVENT_TYPES.SUCCESS });
       setDesignId(undefined);
       setDesignJson({
@@ -162,9 +168,9 @@ export default function useDesignLifecycle() {
 
   const loadDesign = async (design_id) => {
     try {
-      const data = await promisifiedDataFetch('/api/pattern/' + design_id);
+      const data = await fetchDesign({ design_id }).unwrap();
       setDesignId(design_id);
-      setDesignJson(jsYaml.load(data.pattern_file));
+      setDesignJson(jsYaml.load(data.patternFile));
     } catch (err) {
       notify({
         message: `failed to load design file`,

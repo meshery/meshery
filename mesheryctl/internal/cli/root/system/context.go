@@ -9,6 +9,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/manifoldco/promptui"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -19,13 +20,6 @@ import (
 var (
 	configuration     *config.MesheryCtlConfig
 	tempCntxt         = "local"
-	set               = false
-	components        = []string{}
-	platform          = ""
-	serverURL         = ""
-	newContext        = ""
-	currContext       string
-	allContext        bool
 	tokenNameLocation = map[string]string{} //maps each token name to its specified location
 )
 
@@ -45,19 +39,38 @@ var linkDocContextCreate = map[string]string{
 	"caption": "Usage of mesheryctl context create",
 }
 
+type cmdContextCreateFlags struct {
+	URL        string   `json:"url" validate:"omitempty,url"`
+	Components []string `json:"components" validate:"omitempty"`
+	Platform   string   `json:"platform" validate:"omitempty,oneof=docker kubernetes"`
+	Provider   string   `json:"provider" validate:"omitempty,oneof=Layer5 None"`
+	Set        bool     `json:"set" validate:"boolean"`
+}
+
+type cmdContextDeleteFlags struct {
+	Set string `json:"set" validate:"omitempty"`
+}
+
+var contextCreateFlags cmdContextCreateFlags
+var contextDeleteFlags cmdContextDeleteFlags
+
 // createContextCmd represents the create command
 var createContextCmd = &cobra.Command{
 	Use:   "create context-name",
 	Short: "Create a new context (a named Meshery deployment)",
-	Long:  `Add a new context to Meshery config.yaml file`,
+	Long: `Add a new context to Meshery config.yaml file.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/create`,
 	Example: `
 // Create new context
 mesheryctl system context create [context-name]
 
-// Create new context and provide list of components, platform & URL
-mesheryctl system context create context-name --components meshery-nsm --platform docker --url http://localhost:9081 --set --yes
+// Create new context and provide list of components, platform & URL and set it as current context
+mesheryctl system context create [context-name] --components [meshery-nsm] --platform [docker|kubernetes] --url [server-url] --set --yes
 	`,
 	Annotations: linkDocContextCreate,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &contextCreateFlags)
+	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg))
@@ -69,31 +82,31 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 
 		tempCntxt := utils.TemplateContext
 
-		if serverURL != "" {
-			err := utils.ValidateURL(serverURL)
+		if contextCreateFlags.URL != "" {
+			err := utils.ValidateURL(contextCreateFlags.URL)
 			if err != nil {
 				return err
 			}
-			tempCntxt.Endpoint = serverURL
+			tempCntxt.Endpoint = contextCreateFlags.URL
 		}
 
 		utils.Log.Debug("serverURL: `" + tempCntxt.Endpoint + "`")
 
-		if platform != "" {
-			tempCntxt.Platform = platform
+		if contextCreateFlags.Platform != "" {
+			tempCntxt.Platform = contextCreateFlags.Platform
 		}
 
-		if providerFlag != "" {
-			tempCntxt.Provider = providerFlag
+		if contextCreateFlags.Provider != "" {
+			tempCntxt.Provider = contextCreateFlags.Provider
 		}
 
-		if len(components) >= 1 {
-			tempCntxt.Components = components
+		if len(contextCreateFlags.Components) >= 1 {
+			tempCntxt.Components = contextCreateFlags.Components
 		}
 
 		contextName := strings.ToLower(args[0])
 
-		err := config.AddContextToConfig(contextName, tempCntxt, viper.ConfigFileUsed(), set, false)
+		err := config.AddContextToConfig(contextName, tempCntxt, viper.ConfigFileUsed(), contextCreateFlags.Set, false)
 		if err != nil {
 			return err
 		}
@@ -107,12 +120,15 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 var deleteContextCmd = &cobra.Command{
 	Use:   "delete [context-name]",
 	Short: "Delete context",
-	Long:  `Delete an existing context (a named Meshery deployment) from Meshery config file`,
+	Long: `Delete an existing context (a named Meshery deployment) from Meshery config file.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/delete`,
 	Example: `
 // ### Delete context
 mesheryctl system context delete [context name]
 	`,
-
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &contextDeleteFlags)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextDeleteUsageMsg))
@@ -142,19 +158,19 @@ mesheryctl system context delete [context name]
 				return nil
 			}
 
-			var result string
+			var newContext string
 
-			if newContext != "" {
-				_, exists := configuration.Contexts[newContext]
+			if contextDeleteFlags.Set != "" {
+				_, exists := configuration.Contexts[contextDeleteFlags.Set]
 				if !exists {
 					return ErrSetCurrentContext(fmt.Errorf("new context wrongly set"))
 				}
 
-				if newContext == contextName {
+				if contextDeleteFlags.Set == contextName {
 					return ErrSetCurrentContext(fmt.Errorf("choose a new context other than the context being deleted"))
 				}
 
-				result = newContext
+				newContext = contextDeleteFlags.Set
 			} else {
 				var listContexts []string
 				for context := range configuration.Contexts {
@@ -168,22 +184,23 @@ mesheryctl system context delete [context name]
 					Items: listContexts,
 				}
 
-				_, result, err = prompt.Run()
-
+				_, newContext, err = prompt.Run()
 				if err != nil {
-					fmt.Printf("Prompt failed %v\n", err)
-					return err
+					return utils.ErrPromptCancelled()
 				}
 			}
 
-			fmt.Printf("The current context is now %q\n", result)
-			viper.Set("current-context", result)
+			viper.Set("current-context", newContext)
+			utils.Log.Infof("The current context is now %q", newContext)
 		}
 		delete(configuration.Contexts, contextName)
 		viper.Set("contexts", configuration.Contexts)
 		utils.Log.Infof("deleted context %s", contextName)
 		err = viper.WriteConfig()
-		return err
+		if err != nil {
+			return config.ErrWriteMeshConfig(err)
+		}
+		return nil
 	},
 }
 
@@ -191,7 +208,8 @@ mesheryctl system context delete [context name]
 var listContextCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list contexts",
-	Long:  `List current context and available contexts`,
+	Long: `List current context and available contexts.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/list`,
 	Example: `
 // List all contexts present
 mesheryctl system context list
@@ -199,12 +217,13 @@ mesheryctl system context list
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return errors.New(utils.SystemContextSubError("this command takes no arguments.\n", "list"))
+			return utils.ErrInvalidArgument(errors.New(utils.SystemContextSubError("this command takes no arguments.\n", "list")))
 		}
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
-			return err
+			return utils.ErrUnmarshal(err)
 		}
+		var currContext string
 		var contexts = configuration.Contexts
 		if contexts == nil {
 			utils.Log.Info("No contexts available. Use `mesheryctl system context create <name>` to create a new Meshery deployment context.\n")
@@ -244,13 +263,21 @@ var linkDocContextView = map[string]string{
 	"caption": "Usage of mesheryctl context view",
 }
 
+type cmdContextViewFlags struct {
+	Context string `json:"context" validate:"omitempty"`
+	All     bool   `json:"all" validate:"boolean"`
+}
+
+var contextViewFlags cmdContextViewFlags
+
 // viewContextCmd represents the view command
 var viewContextCmd = &cobra.Command{
 	Use:   "view [context-name | --context context-name | --all] --flags",
 	Short: "Display the current Meshery CLI configuration context",
 	Long: `Display the current Meshery CLI context configuration.
 This command shows which Kubernetes cluster, platform, and provider Meshery is configured to communicate with.
-Use this to verify or debug your current CLI settings.`,
+Use this to verify or debug your current CLI settings.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/view`,
 	Example: `
 // View the default context
 mesheryctl system context view
@@ -266,6 +293,9 @@ mesheryctl system context view --all
     `,
 	Annotations:  linkDocContextView,
 	SilenceUsage: true,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &contextViewFlags)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
@@ -276,7 +306,7 @@ mesheryctl system context view --all
 			tokenNameLocation[tok.Name] = tok.Location
 		}
 
-		if allContext {
+		if contextViewFlags.All {
 			tempcontexts := make(map[string]contextWithLocation)
 
 			//Populating auxiliary struct with token-locations
@@ -300,35 +330,34 @@ mesheryctl system context view --all
 			return nil
 		}
 		if len(args) != 0 {
-			currContext = strings.ToLower(args[0])
+			contextViewFlags.Context = strings.ToLower(args[0])
 		}
-		if currContext == "" {
-			currContext = viper.GetString("current-context")
-
+		if contextViewFlags.Context == "" {
+			contextViewFlags.Context = viper.GetString("current-context")
 		}
-		if currContext == "" {
+		if contextViewFlags.Context == "" {
 			return ErrContextNotExists(fmt.Errorf("current context not set"))
 		}
 
-		contextData, ok := configuration.Contexts[currContext]
+		contextData, ok := configuration.Contexts[contextViewFlags.Context]
 		if !ok {
 			return ErrContextNotExists(
 				fmt.Errorf(
 					"context `%s` does not exist",
-					currContext,
+					contextViewFlags.Context,
 				),
 			)
 		}
 
 		if contextData.Token == "" {
-			utils.Log.Warnf("[Warning]: Token not specified/empty for context \"%s\"", currContext)
-			utils.Log.Infof("\nCurrent Context: %s\n", currContext)
+			utils.Log.Warnf("[Warning]: Token not specified/empty for context \"%s\"", contextViewFlags.Context)
+			utils.Log.Infof("\nCurrent Context: %s\n", contextViewFlags.Context)
 			utils.Log.Info(getYAML(contextData))
 		} else {
 			temp, ok := getContextWithTokenLocation(&contextData)
-			utils.Log.Infof("\nCurrent Context: %s\n", currContext)
+			utils.Log.Infof("\nCurrent Context: %s\n", contextViewFlags.Context)
 			if !ok {
-				utils.Log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", temp.Token, currContext)
+				utils.Log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", temp.Token, contextViewFlags.Context)
 			}
 			utils.Log.Info(getYAML(temp))
 		}
@@ -346,7 +375,8 @@ var linkDocContextSwitch = map[string]string{
 var switchContextCmd = &cobra.Command{
 	Use:   "switch context-name",
 	Short: "switch context",
-	Long:  `Configure mesheryctl to actively use one one context vs. another context`,
+	Long: `Configure mesheryctl to actively use one one context vs. another context.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/switch`,
 	Example: `
 // Switch to context named "sample"
 mesheryctl system context switch sample
@@ -387,7 +417,7 @@ mesheryctl system context create `
 			return ErrGetCurrentContext(err)
 		}
 		isRunning, _ := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
-		//if meshery running stop meshery before context switch
+		// if meshery running stop meshery before context switch
 		if isRunning {
 			utils.Log.Info("Meshery is running... switching context without stopping Meshery deployments.")
 		}
@@ -396,8 +426,11 @@ mesheryctl system context create `
 		viper.Set("current-context", configuration.CurrentContext)
 		utils.Log.Infof("switched to context '%s'", contextName)
 		err = viper.WriteConfig()
+		if err != nil {
+			return config.ErrWriteMeshConfig(err)
+		}
 
-		return err
+		return nil
 	},
 }
 
@@ -405,7 +438,8 @@ mesheryctl system context create `
 var ContextCmd = &cobra.Command{
 	Use:   "context [command]",
 	Short: "Configure your Meshery deployment(s)",
-	Long:  `Configure and switch between different named Meshery server and component versions and deployments.`,
+	Long: `Configure and switch between different named Meshery server and component versions and deployments.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context`,
 	Example: `
 // Base command
 mesheryctl system context
@@ -420,6 +454,7 @@ mesheryctl system context
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemContextSubError(fmt.Sprintf("'%s' is an invalid command. Include one of these arguments: [ create | delete | list | switch | view ]. Use 'mesheryctl system context --help' to display sample usage.\n", args[0]), "context"))
 		}
+
 		return nil
 	},
 }
@@ -432,14 +467,14 @@ func init() {
 		viewContextCmd,
 		listContextCmd,
 	}
-	createContextCmd.Flags().StringVarP(&serverURL, "url", "u", "", "Meshery Server URL with Port")
-	createContextCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current context")
-	createContextCmd.Flags().StringArrayVarP(&components, "components", "a", []string{}, "List of components")
-	createContextCmd.Flags().StringVarP(&platform, "platform", "p", "", "Platform to deploy Meshery")
-	createContextCmd.Flags().StringVar(&providerFlag, "provider", "", "Provider to use with the Meshery server")
-	deleteContextCmd.Flags().StringVarP(&newContext, "set", "s", "", "New context to deploy Meshery")
-	viewContextCmd.Flags().StringVarP(&currContext, "context", "c", "", "Show config for the context")
-	viewContextCmd.Flags().BoolVar(&allContext, "all", false, "Show configs for all of the context")
+	createContextCmd.Flags().StringVarP(&contextCreateFlags.URL, "url", "u", "", "Meshery Server URL with Port (default: http://localhost:9081)")
+	createContextCmd.Flags().BoolVarP(&contextCreateFlags.Set, "set", "s", false, "Set as current context")
+	createContextCmd.Flags().StringArrayVarP(&contextCreateFlags.Components, "components", "a", nil, "List of components")
+	createContextCmd.Flags().StringVarP(&contextCreateFlags.Platform, "platform", "p", "", "Platform to deploy Meshery (docker or kubernetes)")
+	createContextCmd.Flags().StringVar(&contextCreateFlags.Provider, "provider", "", "Provider to use with the Meshery server (Layer5 or None)")
+	deleteContextCmd.Flags().StringVarP(&contextDeleteFlags.Set, "set", "s", "", "New context to deploy Meshery")
+	viewContextCmd.Flags().StringVarP(&contextViewFlags.Context, "context", "c", "", "Show config for the context")
+	viewContextCmd.Flags().BoolVar(&contextViewFlags.All, "all", false, "Show configs for all of the context")
 	ContextCmd.PersistentFlags().StringVarP(&tempCntxt, "context", "c", "", "(optional) temporarily change the current context.")
 	ContextCmd.AddCommand(availableSubcommands...)
 }

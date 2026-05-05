@@ -1,5 +1,5 @@
-import { graphql, requestSubscription } from 'relay-runtime';
-import { createRelayEnvironment } from '../../../lib/relayEnvironment';
+import { graphql } from 'relay-runtime';
+import { createSubscription } from '../../../lib/subscriptionHelper';
 
 const k8sContextSubscription = graphql`
   subscription K8sContextSubscription($selector: PageFilter!) {
@@ -10,25 +10,24 @@ const k8sContextSubscription = graphql`
         name
         server
         owner
-        created_by
-        meshery_instance_id
-        kubernetes_server_id
-        deployment_type
-        updated_at
-        created_at
+        createdBy
+        mesheryInstanceId
+        kubernetesServerId
+        deploymentType
+        updatedAt
+        createdAt
         version
-        connection_id
+        connectionId
       }
     }
   }
 `;
 
 export default function subscribeK8sContext(dataCB, variables) {
-  const environment = createRelayEnvironment({});
-  return requestSubscription(environment, {
+  return createSubscription({
     subscription: k8sContextSubscription,
-    variables: variables,
+    variables,
     onNext: dataCB,
-    onError: (error) => console.log('K8sContextSubscription: An error occured:', error),
+    subscriptionName: 'K8sContext',
   });
 }

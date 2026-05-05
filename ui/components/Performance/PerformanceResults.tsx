@@ -15,7 +15,7 @@ import LinkedinIcon from './assets/linkedinIcon';
 import TwitterIcon from './assets/twitterIcon';
 import { iconMedium, iconLarge } from '../../css/icons.styles';
 import { TwitterShareButton, LinkedinShareButton, FacebookShareButton } from 'react-share';
-import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceResultSubscription';
+import subscribePerformanceResults from '../graphql/subscriptions/PerformanceResultSubscription';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import {
@@ -507,7 +507,7 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
     fetchResults(page, pageSize, search, sortOrder);
 
     //TODO: remove this
-    const subscription = subscribePerformanceProfiles(
+    const subscription = subscribePerformanceResults(
       (res) => {
         // @ts-ignore
         let result = res?.subscribePerfResults;
@@ -626,8 +626,8 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   const options = {
     elevation: elevation,
     filter: false,
-    sort: !(user?.user_id === 'meshery'),
-    search: !(user?.user_id === 'meshery'),
+    sort: !(user?.userId === 'meshery'),
+    search: !(user?.userId === 'meshery'),
     filterType: 'textField',
     responsive: 'standard',
     resizableColumns: true,

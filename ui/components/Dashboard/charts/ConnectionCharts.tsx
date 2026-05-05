@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
@@ -7,13 +6,12 @@ import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
-import { InfoOutlined } from '@mui/icons-material';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, Typography, useTheme } from '@sistent/sistent';
+import { Box, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
 
 export default function ConnectionStatsChart() {
   const { data: connectionsData } = useGetConnectionsQuery({
@@ -26,8 +24,8 @@ export default function ConnectionStatsChart() {
   // Compute status counts from connections data
   const chartData = useMemo(() => {
     if (!connectionsData?.connections) return [];
-    const statusCounts = {};
-    connectionsData.connections.forEach((conn) => {
+    const statusCounts: Record<string, number> = {};
+    connectionsData.connections.forEach((conn: { status?: string }) => {
       const status = conn.status || 'unknown';
       statusCounts[status] = (statusCounts[status] || 0) + 1;
     });
@@ -72,6 +70,7 @@ export default function ConnectionStatsChart() {
     <Link
       href="/management/connections"
       style={{
+        textDecoration: 'none',
         pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
           ? 'none'
           : 'auto',

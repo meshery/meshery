@@ -1,4 +1,3 @@
-// @ts-nocheck
 import InfoIcon from '@/assets/icons/InfoIcon';
 import {
   useAssignEnvironmentToWorkspaceMutation,
@@ -57,26 +56,31 @@ const WorkspaceDataTable = ({
     ['owner', 'xs'],
     ['actions', 'xs'],
     ['environments', 'm'],
-    ['updated_at', 'l'],
-    ['created_at', 'na'],
+    ['updatedAt', 'l'],
+    ['createdAt', 'na'],
   ];
 
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
   const { selectedOrganization: organization } = useGetSelectedOrganization();
-  const { id: org_id } = organization;
+  const orgId = organization?.id;
 
   const theme = useTheme();
 
-  const { data: workspaces } = useGetWorkspacesQuery({
-    page: page,
-    pagesize: pageSize,
-    search: search,
-    order: sortOrder,
-    orgID: org_id,
-    expandInfo: true,
-  });
+  const { data: workspaces } = useGetWorkspacesQuery(
+    {
+      page: page,
+      pagesize: pageSize,
+      search: search,
+      order: sortOrder,
+      orgId: orgId,
+      expandInfo: true,
+    },
+    {
+      skip: !orgId,
+    },
+  );
 
   const workspacesData = workspaces?.workspaces ? workspaces.workspaces : [];
 
@@ -87,12 +91,12 @@ const WorkspaceDataTable = ({
       filter: false,
     },
     {
-      name: 'owner_email',
+      name: 'ownerEmail',
       label: 'Owner Email',
       filter: false,
     },
     {
-      name: 'owner_id',
+      name: 'ownerId',
       label: 'Owner Id',
       filter: false,
       options: {
@@ -244,7 +248,7 @@ const WorkspaceDataTable = ({
       },
     },
     {
-      name: 'created_at',
+      name: 'createdAt',
       label: 'Created At',
       options: {
         filter: false,
@@ -253,7 +257,7 @@ const WorkspaceDataTable = ({
       },
     },
     {
-      name: 'updated_at',
+      name: 'updatedAt',
       label: 'Updated At',
       options: {
         filter: false,
@@ -305,7 +309,7 @@ const WorkspaceDataTable = ({
     selectableRows: 'none',
     responsive: 'standard',
     onRowClick: handleRowClick,
-    count: workspaces?.total_count,
+    count: workspaces?.totalCount,
     rowsPerPage: pageSize,
     page,
     print: false,

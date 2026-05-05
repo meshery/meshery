@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   Box,
   Button,
@@ -20,7 +19,7 @@ import {
   Search,
 } from '@sistent/sistent';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
-import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
+import { useLazyPingKubernetesQuery } from '@/rtk-query/connection';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import { useEffect, useState } from 'react';
 import { iconMedium, iconSmall } from '../css/icons.styles';
@@ -140,39 +139,35 @@ function ConfirmationMsg(props) {
   } = props;
 
   const [tabVal, setTabVal] = useState(tab);
-  const [disabled, setDisabled] = useState(true);
   const [context, setContexts] = useState([]);
   const { notify } = useNotification();
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
-  const { k8sConfig: k8scontext } = useSelector((state) => state.ui);
+  const [triggerPing] = useLazyPingKubernetesQuery();
+  const { selectedK8sContexts, k8sConfig: k8scontext } = useSelector((state) => state.ui);
 
-  let isDisabled =
+  // `disabled` is purely derived from selectedK8sContexts — no need for state.
+  const isDisabled =
     typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
+  const disabled = isDisabled;
   const dispatch = useDispatch();
   useEffect(() => {
     setTabVal(tab);
     setContexts(k8scontext);
   }, [open]);
 
-  useEffect(() => {
-    setDisabled(isDisabled);
-  }, [selectedK8sContexts]);
-
   const handleTabValChange = (event, newVal) => {
     setTabVal(newVal);
   };
 
-  const handleKubernetesClick = (ctxID) => {
+  const handleKubernetesClick = async (ctxID) => {
     updateProgress({ showProgress: true });
-    pingKubernetes(
-      successHandlerGenerator(notify, 'Kubernetes pinged', () =>
-        updateProgress({ showProgress: false }),
-      ),
-      errorHandlerGenerator(notify, 'Kubernetes not pinged', () =>
-        updateProgress({ showProgress: false }),
-      ),
-      ctxID,
-    );
+    try {
+      await triggerPing(ctxID).unwrap();
+      updateProgress({ showProgress: false });
+      successHandlerGenerator(notify, 'Kubernetes pinged')();
+    } catch (err) {
+      updateProgress({ showProgress: false });
+      errorHandlerGenerator(notify, 'Kubernetes not pinged')(err);
+    }
   };
 
   const handleSubmit = () => {
@@ -394,7 +389,7 @@ function ConfirmationMsg(props) {
                           />
                           <TooltipWrappedConnectionChip
                             title={ctx.name}
-                            handlePing={() => handleKubernetesClick(ctx.connection_id)}
+                            handlePing={() => handleKubernetesClick(ctx.connectionId)}
                             iconSrc={'/static/img/kubernetes.svg'}
                           />
                         </div>

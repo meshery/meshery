@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
@@ -37,8 +36,12 @@ import { useRouter } from 'next/router';
 import { Controlled as CodeMirror } from './CodeMirror';
 import Moment from 'react-moment';
 import yaml from 'js-yaml';
-import dataFetch from '../lib/data-fetch';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
+import {
+  useAdapterOperationMutation,
+  useLazyPingAdapterQuery,
+  useLazyGetSmiResultsQuery,
+} from '../rtk-query/system';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
 import MesheryMetrics from './Performance/MesheryMetrics';
@@ -63,7 +66,7 @@ interface AdapterOperation {
 
 interface Adapter {
   name: string;
-  adapter_location: string;
+  adapterLocation: string;
   ops?: AdapterOperation[];
 }
 
@@ -87,21 +90,21 @@ interface _SMIResult {
   results?: Array<{
     id: string;
     date: string;
-    mesh_name: string;
-    mesh_version: string;
-    passing_percentage: string;
+    meshName: string;
+    meshVersion: string;
+    passingPercentage: string;
     status: string;
-    more_details: Array<{
-      smi_specification: string;
+    moreDetails: Array<{
+      smiSpecification: string;
       assertions: string;
       time: string;
-      smi_version: string;
+      smiVersion: string;
       capability: string;
       status: string;
       reason: string;
     }>;
   }>;
-  total_count?: number;
+  totalCount?: number;
 }
 
 export const AdapterChip = styled(Chip)(({ theme }) => ({
@@ -151,10 +154,12 @@ const AdapterCard = styled(Card)(() => ({
 }));
 
 const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = (props) => {
-  const { k8sConfig } = useSelector((state) => state.ui);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig, selectedK8sContexts } = useSelector((state) => state.ui);
   const { adapter } = props;
   const { notify } = useNotification();
+  const [triggerAdapterOp] = useAdapterOperationMutation();
+  const [triggerPingAdapter] = useLazyPingAdapterQuery();
+  const [triggerGetSmiResults] = useLazyGetSmiResultsQuery();
   const { grafana } = useSelector((state) => state.telemetry);
   const router = useRouter();
   const addIconEles = useRef({});
@@ -466,7 +471,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
 
   const submitOp = (cat, op, deleteOp = false) => {
     const data = {
-      adapter: adapter.adapter_location,
+      adapter: adapter.adapterLocation,
       query: op,
       namespace: namespace.value,
       customBody: deleteOp ? cmEditorValDel : cmEditorValAdd,
@@ -481,15 +486,12 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
     updateProgress({ showProgress: true });
     handleClose();
 
-    dataFetch(
-      ctxUrl('/api/system/adapter/operation', selectedK8sContexts),
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        body: params,
-      },
-      (result) => {
+    triggerAdapterOp({
+      url: ctxUrl('system/adapter/operation', selectedK8sContexts),
+      body: params,
+    })
+      .unwrap()
+      .then((result) => {
         updateProgress({ showProgress: false });
 
         const newMenuState = { ...menuState };
@@ -505,57 +507,47 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
         if (typeof result !== 'undefined') {
           notify({ message: 'Operation executing...', event_type: EVENT_TYPES.INFO });
         }
-      },
-      handleError(cat, deleteOp, op),
-    );
+      })
+      .catch(handleError(cat, deleteOp, op));
   };
 
-  const handleAdapterClick = (adapterLoc) => () => {
+  const handleAdapterClick = (adapterLoc) => async () => {
     updateProgress({ showProgress: true });
-
-    dataFetch(
-      `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-      {
-        credentials: 'include',
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          notify({ message: 'Adapter pinged!', event_type: EVENT_TYPES.SUCCESS });
-        }
-      },
-      handleError('Could not ping adapter.'),
-    );
+    try {
+      await triggerPingAdapter(adapterLoc).unwrap();
+      updateProgress({ showProgress: false });
+      notify({ message: 'Adapter pinged!', event_type: EVENT_TYPES.SUCCESS });
+    } catch (err) {
+      updateProgress({ showProgress: false });
+      handleError('Could not ping adapter.')(err);
+    }
   };
 
-  const fetchSMIResults = (adapterName, page, pageSize, search, sortOrder) => {
-    let query = '';
+  const fetchSMIResults = async (adapterName, page, pageSize, search, sortOrder) => {
     if (typeof search === 'undefined' || search === null) {
       search = '';
     }
     if (typeof sortOrder === 'undefined' || sortOrder === null) {
       sortOrder = '';
     }
-    query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-      search,
-    )}&order=${encodeURIComponent(sortOrder)}`;
 
-    dataFetch(
-      `/api/smi/results${query}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (typeof result !== 'undefined' && result.results) {
-          const results = result.results.filter(
-            (val) => val.mesh_name.toLowerCase() == adapterName.toLowerCase(),
-          );
-          setSmiResult({ ...result, results: results, total_count: results.length });
-        }
-      },
-      (error) => console.log('Could not fetch SMI results.', error),
-    );
+    try {
+      const result = await triggerGetSmiResults({
+        page,
+        pagesize: pageSize,
+        search,
+        order: sortOrder,
+      }).unwrap();
+
+      if (typeof result !== 'undefined' && result.results) {
+        const results = result.results.filter(
+          (val) => val.meshName.toLowerCase() == adapterName.toLowerCase(),
+        );
+        setSmiResult({ ...result, results: results, totalCount: results.length });
+      }
+    } catch (error) {
+      console.log('Could not fetch SMI results.', error);
+    }
   };
 
   // const handleSMIClick = (adapterName) => () => {
@@ -814,8 +806,8 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
     ];
 
     const smi_options = {
-      sort: !(props.user && props.user.user_id === 'meshery'),
-      search: !(props.user && props.user.user_id === 'meshery'),
+      sort: !(props.user && props.user.userId === 'meshery'),
+      search: !(props.user && props.user.userId === 'meshery'),
       filterType: 'textField',
       expandableRows: true,
       selectableRows: 'none',
@@ -933,7 +925,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
       },
     };
 
-    var data = [];
+    let data = [];
     if (smi_result && smi_result.results) {
       data = smi_result.results.map((val) => {
         return [
@@ -1121,9 +1113,9 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
   let imageSrc = '/static/img/' + adapterName + '.svg';
   let adapterChip = (
     <AdapterChip
-      label={adapter.adapter_location}
+      label={adapter.adapterLocation}
       data-cy="adapter-chip-ping"
-      onClick={handleAdapterClick(adapter.adapter_location)}
+      onClick={handleAdapterClick(adapter.adapterLocation)}
       icon={<img src={imageSrc} width={'1.25rem'} />}
       variant="outlined"
     />

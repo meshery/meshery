@@ -1,4 +1,3 @@
-// @ts-nocheck
 import WorkspaceActivityThumbnail from './Thumbnails/WorkspaceActivity.svg';
 import GettingStartedThumbnail from './Thumbnails/GettingStartedProgress.svg';
 import ClusterOverviewThumbnail from './Thumbnails/ClusterOverview.png';

@@ -96,9 +96,9 @@ const (
 	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
 	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
 	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
-	workspaceUsageURL              = docsBaseURL + "reference/mesheryctl/exp/workspace"
-	workspaceCreateURL             = docsBaseURL + "reference/mesheryctl/exp/workspace/create"
-	workspaceListURL               = docsBaseURL + "reference/mesheryctl/exp/workspace/list"
+	workspaceUsageURL              = docsBaseURL + "reference/mesheryctl/workspace"
+	workspaceCreateURL             = docsBaseURL + "reference/mesheryctl/workspace/create"
+	workspaceListURL               = docsBaseURL + "reference/mesheryctl/workspace/list"
 	environmentUsageURL            = docsBaseURL + "reference/mesheryctl/exp/environment"
 	environmentCreateURL           = docsBaseURL + "reference/mesheryctl/exp/environment/create"
 	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/exp/environment/delete"
@@ -172,9 +172,9 @@ const (
 	cmdRelationshipView         cmdType = "relationship view"
 	cmdRelationshipSearch       cmdType = "relationship search"
 	cmdRelationshipList         cmdType = "relationship list"
-	cmdExpWorkspace             cmdType = "exp workspace"
-	cmdExpWorkspaceList         cmdType = "exp workspace list"
-	cmdExpWorkspaceCreate       cmdType = "exp workspace create"
+	cmdWorkspace                cmdType = "workspace"
+	cmdWorkspaceList            cmdType = "workspace list"
+	cmdWorkspaceCreate          cmdType = "workspace create"
 	cmdEnvironment              cmdType = "environment"
 	cmdEnvironmentCreate        cmdType = "environment create"
 	cmdEnvironmentDelete        cmdType = "environment delete"
@@ -264,6 +264,21 @@ var (
 
 var CfgFile string
 
+// GetActiveConfigPath returns the meshconfig path selected for the current command.
+// Prefer the explicit CLI flag value, then the config file Viper has already loaded,
+// and finally fall back to the default meshconfig path.
+func GetActiveConfigPath() string {
+	if CfgFile != "" {
+		return CfgFile
+	}
+
+	if configPath := viper.ConfigFileUsed(); configPath != "" {
+		return configPath
+	}
+
+	return DefaultConfigPath
+}
+
 // TODO: add "meshery-perf" as a component
 
 // ListOfComponents returns the list of components available
@@ -284,7 +299,7 @@ var Services = map[string]Service{
 		Image:  "meshery/meshery:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
-			"PROVIDER_BASE_URLS=https://cloud.layer5.io",
+			"PROVIDER_BASE_URLS=https://cloud.meshery.io",
 			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012",
 			"EVENT=mesheryLocal",
 			"PORT=9081",
@@ -550,10 +565,10 @@ func CreateConfigFile() error {
 func ValidateURL(URL string) error {
 	ParsedURL, err := url.ParseRequestURI(URL)
 	if err != nil {
-		return err
+		return ErrParsingUrl(err)
 	}
 	if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
-		return fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme)
+		return ErrParsingUrl(fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme))
 	}
 	return nil
 }
@@ -814,15 +829,14 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
-	client := &http.Client{}
 	req, err := NewRequest(method, path, nil)
 	if err != nil {
 		return nil, ErrCreatingRequest(err)
 	}
 
-	res, err := client.Do(req)
+	res, err := MakeRequest(req)
 	if err != nil {
-		return nil, ErrRequestResponse(err)
+		return nil, err
 	}
 	defer func() { _ = res.Body.Close() }()
 
@@ -834,7 +848,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	prefs := &models.Preference{}
 	err = encoding.Unmarshal(body, prefs)
 	if err != nil {
-		return nil, errors.New("Failed to process JSON data. Please sign into Meshery")
+		return nil, ErrUnmarshal(err)
 	}
 
 	return prefs, nil

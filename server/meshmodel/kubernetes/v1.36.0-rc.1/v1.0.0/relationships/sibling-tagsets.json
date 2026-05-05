@@ -1,0 +1,99 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "hierarchical",
+  "metadata": {
+    "description": "",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.36.0-rc.1"
+    },
+    "name": "kubernetes",
+    "registrant": {
+      "kind": ""
+    },
+    "version": ""
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "*",
+            "match": {
+              "refs": [
+                [
+                  "configuration",
+                  "metadata",
+                  "labels"
+                ]
+              ]
+            },
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "*",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "*",
+            "match": {
+              "refs": [
+                [
+                  "configuration",
+                  "metadata",
+                  "labels"
+                ]
+              ]
+            },
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "*",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": null
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "matchlabels",
+  "status": "enabled",
+  "type": "sibling",
+  "version": "v1.0.0"
+}

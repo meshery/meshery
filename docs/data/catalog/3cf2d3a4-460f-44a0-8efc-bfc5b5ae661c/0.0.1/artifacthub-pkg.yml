@@ -1,0 +1,20 @@
+version: 0.0.1
+name: exam-portal-with-real-time-leaderboard-(aws)
+displayName: Exam Portal with Real-Time Leaderboard (AWS)
+createdAt: "2026-01-20T10:42:37Z"
+description: Exam Portal with Real-Time Leaderboard (AWS)
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3cf2d3a4-460f-44a0-8efc-bfc5b5ae661c/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: f7f16f53-fdd7-44bd-b27b-52c7b972d198
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Badge, Box, Button, Drawer, Grid, IconButton, Typography, styled } from '@sistent/sistent';
 import { alpha } from '@mui/system';
 import { STATUS } from './constants';
@@ -259,4 +258,5 @@ export const Summary = styled(Grid)(({ notificationcolor }) => ({
   paddingBlock: '0.5rem',
   cursor: 'pointer',
   backgroundColor: alpha(notificationcolor, 0.2),
+  alignItems: 'center',
 }));

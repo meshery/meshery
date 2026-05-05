@@ -25,12 +25,12 @@ mesheryctl workspace view [workspace-name|workspace-id] [flags]
 View details of a specific workspace by ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace view [workspace-id]
+mesheryctl workspace view [workspace-id] --orgId [orgId]
 
 </div>
 </pre> 
 
-View details of a specific workspace by name (requires --orgId)
+View details of a specific workspace by name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl workspace view [workspace-name] --orgId [orgId]
@@ -41,7 +41,7 @@ mesheryctl workspace view [workspace-name] --orgId [orgId]
 View details of a specific workspace in JSON format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace view [workspace-id] --output-format json
+mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json
 
 </div>
 </pre> 
@@ -49,7 +49,7 @@ mesheryctl workspace view [workspace-id] --output-format json
 View details of a specific workspace and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace view [workspace-id] --output-format json --save
+mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --save
 
 </div>
 </pre> 
@@ -59,7 +59,7 @@ mesheryctl workspace view [workspace-id] --output-format json --save
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help                   help for view
-      --orgId string           (optional) organization ID to search workspace by name
+      --orgId string           (required) organization ID
   -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
   -s, --save                   (optional) save output as a JSON/YAML file
 

@@ -8,8 +8,8 @@ type SqliteSchema struct {
 
 type DatabaseSummary struct {
 	Page        int             `json:"page"`
-	PageSize    int             `json:"page_size"`
-	TotalTables int             `json:"total_tables"`
-	RecordCount int             `json:"record_count"`
+	PageSize    int             `json:"pageSize"`
+	TotalTables int             `json:"totalTables"`
+	RecordCount int             `json:"recordCount"`
 	Tables      []*SqliteSchema `json:"tables"`
 }

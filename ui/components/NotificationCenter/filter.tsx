@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useGetEventFiltersQuery } from '../../rtk-query/notificationCenter';
 import TypingFilter from '../TypingFilter';
 import { SEVERITY, STATUS } from './constants';
@@ -39,7 +38,7 @@ const useFilterSchema = () => {
   };
 };
 
-const Filter = ({ handleFilter }) => {
+const Filter = ({ handleFilter }: { handleFilter: (filters: unknown) => void }) => {
   const filterSchema = useFilterSchema();
   return (
     <TypingFilter

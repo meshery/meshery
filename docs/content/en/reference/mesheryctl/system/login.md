@@ -45,7 +45,7 @@ mesheryctl system login -p Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help              help for login
-  -p, --provider string   login Meshery with specified provider
+  -p, --provider string   login Meshery with specified provider (Layer5 or None)
 
 </div>
 </pre>

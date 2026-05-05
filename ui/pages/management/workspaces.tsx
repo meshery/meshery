@@ -1,17 +1,11 @@
-import React, { useEffect } from 'react';
-import { NoSsr } from '@sistent/sistent';
-import { connect, useDispatch } from 'react-redux';
+import React from 'react';
+import { NoSsr, Box } from '@sistent/sistent';
 import Head from 'next/head';
 import { WorkspacesComponent } from '../../components/Lifecycle';
-import { Box } from '@sistent/sistent';
-import { updatePage } from '@/store/slices/mesheryUi';
-import { getPath } from 'lib/path';
+import { usePageTitle } from '@/utils/hooks';
 
 const Workspaces = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(updatePage({ path: getPath(), title: 'Workspaces' }));
-  }, []);
+  usePageTitle('Workspaces');
 
   return (
     <NoSsr>
@@ -25,4 +19,4 @@ const Workspaces = () => {
   );
 };
 
-export default connect(null)(Workspaces);
+export default Workspaces;

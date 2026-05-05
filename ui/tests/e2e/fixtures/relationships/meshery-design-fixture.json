@@ -383,7 +383,7 @@
                     },
                     {
                       "name": "PROVIDER_BASE_URLS",
-                      "value": "https://cloud.layer5.io"
+                      "value": "https://cloud.meshery.io"
                     },
                     {
                       "name": "ADAPTER_URLS",
@@ -2661,7 +2661,7 @@
                 },
                 "patch": {
                   "patchStrategy": "replace",
-                  "mutatedRef": [["metadata", "name"]]
+                  "mutatedRef": [["configuration", "metadata", "name"]]
                 }
               }
             ]

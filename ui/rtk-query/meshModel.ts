@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { api } from './index';
+import { api, mesheryApiPath } from './index';
 import _ from 'lodash';
 import { initiateQuery } from './utils';
 
@@ -23,49 +23,49 @@ const meshModelApi = api
     endpoints: (builder) => ({
       getMeshModels: builder.query({
         query: (queryArgs) => ({
-          url: `meshmodels/models`,
+          url: mesheryApiPath(`meshmodels/models`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getComponents: builder.query({
         query: (queryArgs) => ({
-          url: `meshmodels/components`,
+          url: mesheryApiPath(`meshmodels/components`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getRelationships: builder.query({
         query: (queryArgs) => ({
-          url: `meshmodels/relationships`,
+          url: mesheryApiPath(`meshmodels/relationships`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getRegistrants: builder.query({
         query: (queryArgs) => ({
-          url: `meshmodels/registrants`,
+          url: mesheryApiPath(`meshmodels/registrants`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getComponentsFromModal: builder.query({
         query: (queryArgs) => ({
-          url: `meshmodels/models/${queryArgs.model}/components`,
+          url: mesheryApiPath(`meshmodels/models/${queryArgs.model}/components`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getRelationshipsFromModal: builder.query({
         query: (queryArgs) => ({
-          url: `meshmodels/models/${queryArgs.model}/relationships`,
+          url: mesheryApiPath(`meshmodels/models/${queryArgs.model}/relationships`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       updateEntityStatus: builder.mutation({
         query: (queryArgs) => ({
-          url: `meshmodels/${queryArgs.entityType}/status`,
+          url: mesheryApiPath(`meshmodels/${queryArgs.entityType}/status`),
           method: 'POST',
           body: queryArgs.body,
         }),
@@ -73,41 +73,43 @@ const meshModelApi = api
       }),
       getModelCategories: builder.query({
         query: () => ({
-          url: `meshmodels/categories`,
+          url: mesheryApiPath(`meshmodels/categories`),
           method: 'GET',
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getModelFromCategory: builder.query({
         query: (queryArgs) => ({
-          url: `meshmodels/categories/${queryArgs.category}/models`,
+          url: mesheryApiPath(`meshmodels/categories/${queryArgs.category}/models`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getModelByName: builder.query({
         query: (queryArgs) => ({
-          url: `meshmodels/models/${queryArgs.name}`,
+          url: mesheryApiPath(`meshmodels/models/${queryArgs.name}`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getComponentByName: builder.query({
         query: (queryArgs) => ({
-          url: `meshmodels/components/${queryArgs.name}`,
+          url: mesheryApiPath(`meshmodels/components/${queryArgs.name}`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getComponentsByModelAndKind: builder.query({
         query: (queryArg) => ({
-          url: `meshmodels/models/${queryArg.model}/components/${queryArg.component}`,
+          url: mesheryApiPath(
+            `meshmodels/models/${queryArg.model}/components/${queryArg.component}`,
+          ),
           params: _.merge({}, defaultOptions, queryArg.params),
         }),
       }),
       exportModel: builder.query({
         query: (queryArg) => ({
-          url: `meshmodels/export`,
+          url: mesheryApiPath(`meshmodels/export`),
           params: _.merge({}, defaultOptions, queryArg.params),
           providesTags: () => [{ type: TAGS.MESH_MODELS }],
         }),
@@ -115,7 +117,7 @@ const meshModelApi = api
       importMeshModel: builder.mutation({
         query: (queryArgs) => {
           return {
-            url: `meshmodels/register`,
+            url: mesheryApiPath(`meshmodels/register`),
             method: 'POST',
             body: queryArgs.importBody,
           };

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useMemo } from 'react';
 import BBChart from '../../BBChart';
 import { donut } from 'billboard.js';
@@ -6,7 +5,6 @@ import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { InfoOutlined } from '@mui/icons-material';
 import {
   useGetCategoriesSummary,
   useGetComponentsQuery,
@@ -18,17 +16,17 @@ import { DashboardSection } from '../style';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-import { Typography, useTheme, Grid2 } from '@sistent/sistent';
+import { Grid2, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
 
 function MeshModelContructs() {
   const params = {
     page: 0,
     pagesize: '1',
   };
-  const modelCount = useGetMeshModelsQuery({ params }).data?.total_count || 0;
-  const componentCount = useGetComponentsQuery({ params }).data?.total_count || 0;
-  const relationshipCount = useGetRelationshipsQuery({ params }).data?.total_count || 0;
-  const registrantsConut = useGetRegistrantsQuery({ params }).data?.total_count || 0;
+  const modelCount = useGetMeshModelsQuery({ params }).data?.totalCount || 0;
+  const componentCount = useGetComponentsQuery({ params }).data?.totalCount || 0;
+  const relationshipCount = useGetRelationshipsQuery({ params }).data?.totalCount || 0;
+  const registrantsConut = useGetRegistrantsQuery({ params }).data?.totalCount || 0;
   const theme = useTheme();
 
   // Data Cleanup
@@ -45,7 +43,7 @@ function MeshModelContructs() {
         columns: data,
         type: donut(),
         colors: dataToColors(data),
-        onclick: function (d) {
+        onclick: function (d: { name: string }) {
           router.push(`/settings?settingsCategory=Registry&tab=${d.name}`);
         },
       },
@@ -73,6 +71,7 @@ function MeshModelContructs() {
     <Link
       href="/settings?settingsCategory=Registry"
       style={{
+        textDecoration: 'none',
         pointerEvents: !CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)
           ? 'none'
           : 'auto',
@@ -156,7 +155,7 @@ function MeshModelCategories() {
   );
 
   return (
-    <Link href="/settings?settingsCategory=Registry&tab=Models">
+    <Link href="/settings?settingsCategory=Registry&tab=Models" style={{ textDecoration: 'none' }}>
       <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom>
