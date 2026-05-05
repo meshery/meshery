@@ -116,10 +116,10 @@ type ConnectionPayload struct {
 
 func BuildMesheryConnectionPayload(serverURL string, credential map[string]interface{}) *ConnectionPayload {
 	metadata := map[string]interface{}{
-		"server_id":        viper.GetString("INSTANCE_ID"),
-		"server_version":   viper.GetString("BUILD"),
-		"server_build_sha": viper.GetString("COMMITSHA"),
-		"server_location":  serverURL,
+		"serverId":       viper.GetString("INSTANCE_ID"),
+		"serverVersion":  viper.GetString("BUILD"),
+		"serverBuildSha": viper.GetString("COMMITSHA"),
+		"serverLocation": serverURL,
 	}
 	return &ConnectionPayload{
 		Kind:             "meshery",

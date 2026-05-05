@@ -140,7 +140,7 @@ const (
 	ErrSaveOCIArtifactCode                 = "meshery-server-1129"
 	ErrIOReaderCode                        = "meshery-server-1130"
 	ErrUnCompressOCIArtifactCode           = "meshery-server-1131"
-	ErrWaklingLocalDirectoryCode           = "meshery-server-1132"
+	ErrWalkingLocalDirectoryCode           = "meshery-server-1132"
 	ErrConvertingK8sManifestToDesignCode   = "meshery-server-1133"
 	ErrConvertingDockerComposeToDesignCode = "meshery-server-1134"
 	ErrConvertingHelmChartToDesignCode     = "meshery-server-1136"
@@ -549,15 +549,61 @@ func ErrDeleteApplication(err error) error {
 }
 
 func ErrGetPattern(err error) error {
-	return errors.New(ErrGetPatternCode, errors.Alert, []string{"Error failed to get design"}, []string{err.Error()}, []string{"Cannot get the design with the given design ID"}, []string{"Check if the given design ID is correct"})
+	return errors.New(
+		ErrGetPatternCode,
+		errors.Alert,
+		[]string{"Unable to open this design"},
+		[]string{fmt.Sprintf("The server could not return the requested design. Underlying error: %v", err)},
+		[]string{
+			"The design ID in the URL is malformed or does not exist.",
+			"The design has been deleted by its owner.",
+			"Your account does not have permission to view this design — it may belong to another organization or be set to private.",
+			"Your session has expired or the remote provider is currently unreachable.",
+		},
+		[]string{
+			"Verify the design link — confirm the full design ID is intact, with no missing or extra characters.",
+			"Open My Designs and confirm the design still exists; if it was shared with you, ask the owner to re-share or grant access.",
+			"Sign out and sign back in to refresh your session, then retry.",
+		},
+	)
 }
 
 func ErrDeletePattern(err error) error {
-	return errors.New(ErrDeletePatternCode, errors.Alert, []string{"Error failed to delete design"}, []string{err.Error()}, []string{"Failed to delete design with the given ID"}, []string{"Check if the design ID is correct"})
+	return errors.New(
+		ErrDeletePatternCode,
+		errors.Alert,
+		[]string{"Unable to delete this design"},
+		[]string{fmt.Sprintf("The server could not delete the requested design. Underlying error: %v", err)},
+		[]string{
+			"The design ID is malformed or no longer exists — it may already have been deleted.",
+			"Your account does not have permission to delete this design — only authorized users (such as the owner) can delete it.",
+			"Your session has expired or the remote provider is currently unreachable.",
+		},
+		[]string{
+			"Refresh the designs list to confirm the design still exists before retrying.",
+			"If the design was shared with you, ask its owner to delete it.",
+			"Sign out and sign back in to refresh your session, then retry.",
+		},
+	)
 }
 
 func ErrFetchPattern(err error) error {
-	return errors.New(ErrFetchPatternCode, errors.Alert, []string{"Error failed to fetch design"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the designs"}, []string{})
+	return errors.New(
+		ErrFetchPatternCode,
+		errors.Alert,
+		[]string{"Unable to load your designs"},
+		[]string{fmt.Sprintf("The server could not retrieve the list of designs. Underlying error: %v", err)},
+		[]string{
+			"The remote provider is currently unreachable or returned an error.",
+			"Your session has expired or your authentication token is no longer valid.",
+			"Network connectivity between Meshery Server and the remote provider has been interrupted.",
+		},
+		[]string{
+			"Check your network connection and reload the page.",
+			"Sign out and sign back in to refresh your session, then retry.",
+			"Confirm that the configured remote provider is online.",
+		},
+	)
 }
 
 func ErrFetchProfile(err error) error {
@@ -699,8 +745,8 @@ func ErrUnCompressOCIArtifact(err error) error {
 	return errors.New(ErrUnCompressOCIArtifactCode, errors.Alert, []string{"Failed to uncompress OCI artifact"}, []string{err.Error()}, []string{"unable to uncompress OCI artifact", "OCI artifact may be corrupted"}, []string{"check if the OCI artifact is valid and not corrupted"})
 }
 
-func ErrWaklingLocalDirectory(err error) error {
-	return errors.New(ErrWaklingLocalDirectoryCode, errors.Alert, []string{"Failed to walk local directory"}, []string{err.Error()}, []string{"unable to walk local directory", "local directory may be corrupted"}, []string{"check if the local directory is valid and not corrupted"})
+func ErrWalkingLocalDirectory(err error, path string) error {
+	return errors.New(ErrWalkingLocalDirectoryCode, errors.Alert, []string{"Failed to walk local directory: ", path}, []string{err.Error()}, []string{"unable to walk local directory at ", path, "local directory may be corrupted or inaccessible"}, []string{"check if the local directory is valid and has correct permissions"})
 }
 
 func ErrConvertingK8sManifestToDesign(err error) error {

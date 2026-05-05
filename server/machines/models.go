@@ -231,8 +231,8 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// If "event" is nil, it indicates actions were execeuted successfully, hence send an confirmation that request was processed successsfully.
 	if event == nil {
 		event = events.NewEvent().WithDescription(fmt.Sprintf("%s connection changed to %s", sm.Name, sm.CurrentState)).FromSystem(*sysID).FromUser(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithMetadata(map[string]interface{}{
-			"previous_status": sm.PreviousState,
-			"current_status":  sm.CurrentState,
+			"previousStatus": sm.PreviousState,
+			"currentStatus":  sm.CurrentState,
 		}).WithSeverity(events.Informational).Build()
 	}
 
