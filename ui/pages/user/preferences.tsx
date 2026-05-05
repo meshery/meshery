@@ -1,38 +1,30 @@
 import UserPreferences from '../../components/UserPreferences';
-import { getPath } from '../../lib/path';
 import Head from 'next/head';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NoSsr } from '@sistent/sistent';
-import { useDispatch, useSelector } from 'react-redux';
-import { updatePage } from '@/store/slices/mesheryUi';
+import { useSelector } from 'react-redux';
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
+import { usePageTitle } from '@/utils/hooks';
 
 const UserPref = () => {
-  const dispatch = useDispatch();
+  usePageTitle('User Preferences');
   const { selectedK8sContext } = useSelector((state) => state.ui);
   const { data: prefData } = useGetUserPrefWithContextQuery(selectedK8sContext);
 
   const anonymousStats = prefData?.anonymousUsageStats;
   const perfResultStats = prefData?.anonymousPerfResults;
 
-  useEffect(() => {
-    dispatch(updatePage({ path: getPath(), title: 'User Preferences' }));
-  }, []);
+  if (anonymousStats === undefined || perfResultStats === undefined) {
+    return null;
+  }
 
   return (
-    <>
-      {anonymousStats === undefined || perfResultStats === undefined ? (
-        <div></div>
-      ) : (
-        <NoSsr>
-          <Head>
-            <title>Preferences | Meshery</title>
-          </Head>
-
-          <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats} />
-        </NoSsr>
-      )}
-    </>
+    <NoSsr>
+      <Head>
+        <title>Preferences | Meshery</title>
+      </Head>
+      <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats} />
+    </NoSsr>
   );
 };
 

@@ -108,6 +108,16 @@ func (e *GoEngine) evaluate(design *pattern.PatternFile, relsInScope []*relation
 	combinedActions := append(allActions, identifyActions...)
 	designWithIdentified := applyActionsToDesign(design, combinedActions)
 
+	// Phase 2.5: Identify inventory parents the design is missing. Mirrors
+	// identify_additions.rego — without this the Go engine silently skips
+	// auto-creating Namespaces for namespaced resources, diverging from the
+	// Rego engine's behavior.
+	inventoryActions := identifyInventoryAdditions(designWithIdentified, relsInScope)
+	if len(inventoryActions) > 0 {
+		combinedActions = append(combinedActions, inventoryActions...)
+		designWithIdentified = applyActionsToDesign(design, combinedActions)
+	}
+
 	// Phase 3: Generate and apply actions.
 	var phaseActions []PolicyAction
 	for _, policy := range e.policies {
@@ -116,6 +126,7 @@ func (e *GoEngine) evaluate(design *pattern.PatternFile, relsInScope []*relation
 	}
 
 	allActions = append(allActions, identifyActions...)
+	allActions = append(allActions, inventoryActions...)
 	allActions = append(allActions, phaseActions...)
 
 	finalDesign := applyActionsToDesign(designWithIdentified, phaseActions)

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Typography, Paper, styled, Tab, Tabs, gray, charcoal, Card } from '@sistent/sistent';
 
 export const DashboardSection = styled(Card)(({ theme }) => ({

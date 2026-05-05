@@ -1,20 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
-import { getPath } from '../../lib/path';
 import { VISIBILITY } from '../../utils/Enum';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404';
 import MesheryPatterns from '@/components/MesheryPatterns/MesheryPatterns';
-import { useDispatch } from 'react-redux';
-import { updatePage } from '@/store/slices/mesheryUi';
+import { usePageTitle } from '@/utils/hooks';
 
 function CatalogPage() {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(updatePage({ path: getPath(), title: 'Catalog' }));
-  }, []);
+  usePageTitle('Catalog');
 
   return (
     <NoSsr>

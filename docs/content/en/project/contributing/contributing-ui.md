@@ -66,7 +66,7 @@ See <a href='/project/contributing/meshery-windows'>Setting up Meshery Developme
 
 ### Required Node Version
 
-Node 20 LTS
+Node 22 LTS
 
 ### Linting-UI
 

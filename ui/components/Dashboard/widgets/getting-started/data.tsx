@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
 import { Link } from '@sistent/sistent';
 
