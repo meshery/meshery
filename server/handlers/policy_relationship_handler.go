@@ -445,23 +445,13 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 			unknownComponents = append(unknownComponents, &_c)
 			continue
 		}
-		// meshkit's registry stores entities as v1beta3/component.ComponentDefinition
-		// (the entity-implementing canonical-casing version), so the lookup
-		// returns v1beta3 even though this carve-out keeps the rest of the
-		// evaluator on v1beta1/component. Bridge once at the meshkit boundary.
-		// A v1beta1 fallback is retained so any future code path that hands
-		// back v1beta1 entities still hydrates correctly instead of being
-		// silently routed to unknownComponents.
-		var _component *component.ComponentDefinition
-		if registryComp, ok := entities[0].(*componentv1beta3.ComponentDefinition); ok && registryComp != nil {
-			_component = utils.ComponentV1beta3ToV1beta1(registryComp)
-		} else if legacy, ok := entities[0].(*component.ComponentDefinition); ok && legacy != nil {
-			_component = legacy
-		} else {
+		_component, ok := registryComponentDefinitionToV1beta1(entities[0])
+		if !ok {
 			unknownComponents = append(unknownComponents, &_c)
 			continue
 		}
 
+		originalStyles := _c.Styles
 		_component.ID = _c.ID
 		if _c.DisplayName != "" {
 			_component.DisplayName = _c.DisplayName
@@ -473,6 +463,12 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 		_component.Metadata.IsAnnotation = _c.Metadata.IsAnnotation
 		_component.Configuration = _c.Configuration
 		_component.Capabilities = &defaultCapabilities
+		if originalStyles != nil && originalStyles.Position != nil {
+			if _component.Styles == nil {
+				_component.Styles = &core.ComponentStyles{}
+			}
+			_component.Styles.Position = originalStyles.Position
+		}
 		compsAdded = append(compsAdded, *_component)
 	}
 
@@ -486,6 +482,7 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 	evalResponse.Trace.ComponentsUpdated = compsUpdated
 
 	cmps := append(compsAdded, compsUpdated...)
+	hydrateAddComponentActions(evalResponse.Actions, compsAdded)
 
 	if evalPayload.Options != nil && evalPayload.Options.ReturnDiffOnly != nil && *evalPayload.Options.ReturnDiffOnly {
 		evalResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
@@ -529,6 +526,102 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 	}
 
 	return unknownComponents
+}
+
+func hydrateAddComponentActions(actions []pattern.Action, compsAdded []component.ComponentDefinition) {
+	if len(actions) == 0 || len(compsAdded) == 0 {
+		return
+	}
+
+	componentsByID := map[string]component.ComponentDefinition{}
+	for _, comp := range compsAdded {
+		componentsByID[comp.ID.String()] = comp
+	}
+	actionItemsByID := map[string]map[string]interface{}{}
+
+	for idx := range actions {
+		if actions[idx].Op != "add_component" {
+			continue
+		}
+		id := actionItemID(actions[idx])
+		if id == "" {
+			continue
+		}
+		comp, ok := componentsByID[id]
+		if !ok {
+			continue
+		}
+		item, ok := actionItemsByID[id]
+		if !ok {
+			item, ok = componentDefinitionToMap(&comp)
+			if !ok {
+				continue
+			}
+			actionItemsByID[id] = item
+		}
+		if actions[idx].Value == nil {
+			actions[idx].Value = map[string]interface{}{}
+		}
+		actions[idx].Value["item"] = item
+	}
+}
+
+func actionItemID(action pattern.Action) string {
+	if action.Value == nil {
+		return ""
+	}
+	item, ok := action.Value["item"].(map[string]interface{})
+	if !ok {
+		return ""
+	}
+	id, ok := item["id"].(string)
+	if !ok {
+		return ""
+	}
+	return id
+}
+
+func componentDefinitionToMap(comp *component.ComponentDefinition) (map[string]interface{}, bool) {
+	raw, err := json.Marshal(comp)
+	if err != nil {
+		return nil, false
+	}
+	var item map[string]interface{}
+	if err := json.Unmarshal(raw, &item); err != nil {
+		return nil, false
+	}
+	return item, true
+}
+
+// registryComponentDefinitionToV1beta1 bridges the v1beta3 ComponentDefinition
+// the meshkit registry returns into the v1beta1 ComponentDefinition that
+// pattern.PatternFile.Components is typed against. This handler — and every
+// caller of processEvaluationResponse — operates on v1beta1; v1beta3 is only
+// the registry's storage representation.
+//
+// The actual field copy lives in models/pattern/utils.ComponentV1beta3ToV1beta1
+// alongside the existing v1beta2<->v1beta3 bridges, so all three pairings
+// share one shallow-copy / aliased-inner-pointer contract and the metadata
+// is propagated via a direct type conversion that picks up future schema
+// fields automatically. This wrapper adds the call-site-specific guards:
+// reject nil entities, reject the wrong concrete type, and reject malformed
+// registry rows whose Component.Kind is empty (treated as unknown).
+func registryComponentDefinitionToV1beta1(entity interface{}) (*component.ComponentDefinition, bool) {
+	if entity == nil {
+		return nil, false
+	}
+	src, ok := entity.(*componentv1beta3.ComponentDefinition)
+	if !ok || src == nil {
+		return nil, false
+	}
+	if src.Component.Kind == "" {
+		return nil, false
+	}
+	dst := utils.ComponentV1beta3ToV1beta1(src)
+	if dst == nil {
+		return nil, false
+	}
+	return dst, true
 }
 
 // runRelationshipEvaluation runs eval behind a panic-recovery boundary and

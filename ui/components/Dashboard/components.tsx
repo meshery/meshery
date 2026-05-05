@@ -1,4 +1,4 @@
-// @ts-nocheck
+import React from 'react';
 import {
   Box,
   useTheme,
@@ -12,18 +12,36 @@ import {
   Button,
   DeleteIcon,
   DragIcon,
+  Theme,
 } from '@sistent/sistent';
 
 import { iconMedium } from 'css/icons.styles';
 
-const layoutIconProps = (theme) => ({
+type Widget = {
+  key: string;
+  title: string;
+  thumbnail?: string;
+  component?: React.ReactNode;
+};
+
+const layoutIconProps = (theme: Theme) => ({
   fill: theme.palette.background.neutral.default,
   primaryFill: theme.palette.background.neutral.default,
   width: '30',
   height: '30',
 });
 
-export const AddWidgetsToLayoutPanel = ({ widgetsToAdd, editMode, onAddWidget }) => {
+type AddWidgetsToLayoutPanelProps = {
+  widgetsToAdd: Widget[];
+  editMode: boolean;
+  onAddWidget: (widget: Widget, key: string) => void;
+};
+
+export const AddWidgetsToLayoutPanel = ({
+  widgetsToAdd,
+  editMode,
+  onAddWidget,
+}: AddWidgetsToLayoutPanelProps) => {
   const theme = useTheme();
   const iconsProps = layoutIconProps(theme);
 
@@ -81,7 +99,15 @@ export const AddWidgetsToLayoutPanel = ({ widgetsToAdd, editMode, onAddWidget })
   );
 };
 
-export const StyledCard = ({ title, icon, children, sx = {}, button }) => {
+type StyledCardProps = {
+  title?: React.ReactNode;
+  icon?: React.ReactNode;
+  children?: React.ReactNode;
+  sx?: object;
+  button?: React.ReactNode;
+};
+
+export const StyledCard = ({ title, icon, children, sx = {}, button }: StyledCardProps) => {
   const theme = useTheme();
   return (
     <>
@@ -121,7 +147,26 @@ export const StyledCard = ({ title, icon, children, sx = {}, button }) => {
   );
 };
 
-export const LayoutActionButton = ({ Icon, label, action, description, isShown }) => {
+type LayoutActionButtonProps = {
+  Icon: React.ComponentType<{
+    fill?: string;
+    primaryFill?: string;
+    width?: string;
+    height?: string;
+  }>;
+  label: React.ReactNode;
+  action: () => void;
+  description: React.ReactNode;
+  isShown: boolean;
+};
+
+export const LayoutActionButton = ({
+  Icon,
+  label,
+  action,
+  description,
+  isShown,
+}: LayoutActionButtonProps) => {
   const theme = useTheme();
   const iconsProps = layoutIconProps(theme);
 
@@ -145,8 +190,13 @@ export const LayoutActionButton = ({ Icon, label, action, description, isShown }
   );
 };
 
-// render the widget inside the layout
-export const LayoutWidget = ({ widget, removeWidget, isEditMode }) => {
+type LayoutWidgetProps = {
+  widget: Widget;
+  removeWidget: (key: string) => void;
+  isEditMode: boolean;
+};
+
+export const LayoutWidget = ({ widget, removeWidget, isEditMode }: LayoutWidgetProps) => {
   const theme = useTheme();
   const iconsProps = layoutIconProps(theme);
 

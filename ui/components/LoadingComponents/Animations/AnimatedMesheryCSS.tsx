@@ -1,7 +1,8 @@
-// @ts-nocheck
 import React from 'react';
 
-const AnimatedMeshery = (props) => {
+type AnimatedMesheryProps = React.SVGAttributes<SVGSVGElement> & { textFill?: string };
+
+const AnimatedMeshery = (props: AnimatedMesheryProps) => {
   const textfill = props.textFill || '#ccc';
   return (
     <div>
@@ -148,5 +149,5 @@ const AnimatedMeshery = (props) => {
   );
 };
 
-export const AnimatedMesheryDark = (props) => <AnimatedMeshery {...props} />;
+export const AnimatedMesheryDark = (props: AnimatedMesheryProps) => <AnimatedMeshery {...props} />;
 export default AnimatedMeshery;

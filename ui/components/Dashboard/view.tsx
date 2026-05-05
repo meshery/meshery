@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState } from 'react';
 import { TooltipIconButton } from '../../utils/TooltipButton';
 import {

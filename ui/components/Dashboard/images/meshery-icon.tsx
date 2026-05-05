@@ -1,5 +1,13 @@
-// @ts-nocheck
 import React from 'react';
+
+type MesheryIconProps = {
+  width?: number | string;
+  height?: number | string;
+  fill?: string;
+  style?: React.CSSProperties;
+  primaryFill?: string;
+  secondaryFill?: string;
+};
 
 const MesheryIcon = ({
   width,
@@ -8,7 +16,7 @@ const MesheryIcon = ({
   style,
   primaryFill = '#00b39f',
   secondaryFill = '#00d3a9',
-}) => (
+}: MesheryIconProps) => (
   <svg
     style={style}
     xmlns="http://www.w3.org/2000/svg"
