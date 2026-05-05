@@ -3,7 +3,6 @@ package models
 import (
 	"net/http"
 
-	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/broker"
@@ -11,8 +10,9 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 )
 
 // ContextKey is a custom type for setting context key
@@ -42,12 +42,12 @@ type ProviderType string
 
 // ProviderProperties represents the structure of properties that a provider has
 type ProviderProperties struct {
-	ProviderType        ProviderType      `json:"provider_type,omitempty"`
-	PackageVersion      string            `json:"package_version,omitempty"`
-	PackageURL          string            `json:"package_url,omitempty"`
-	ProviderName        string            `json:"provider_name,omitempty"`
-	ProviderDescription []string          `json:"provider_description,omitempty"`
-	ProviderURL         string            `json:"provider_url,omitempty"`
+	ProviderType        ProviderType      `json:"providerType,omitempty"`
+	PackageVersion      string            `json:"packageVersion,omitempty"`
+	PackageURL          string            `json:"packageUrl,omitempty"`
+	ProviderName        string            `json:"providerName,omitempty"`
+	ProviderDescription []string          `json:"providerDescription,omitempty"`
+	ProviderURL         string            `json:"providerUrl,omitempty"`
 	Extensions          Extensions        `json:"extensions,omitempty"`
 	Capabilities        Capabilities      `json:"capabilities,omitempty"`
 	RestrictedAccess    RestrictedAccess  `json:"restrictedAccess,omitempty"`
@@ -96,14 +96,14 @@ type MesheryUICapabilities struct {
 }
 
 type RestrictedAccess struct {
-	IsMesheryUIRestricted bool                  `json:"isMesheryUiRestricted"`
+	IsMesheryUIRestricted bool                  `json:"isMesheryUIRestricted"`
 	AllowedComponents     MesheryUICapabilities `json:"allowedComponents,omitempty"`
 }
 
 // Extensions defines the UI extension points
 type Extensions struct {
 	Navigator    NavigatorExtensions    `json:"navigator,omitempty"`
-	UserPrefs    UserPrefsExtensions    `json:"user_prefs,omitempty"`
+	UserPrefs    UserPrefsExtensions    `json:"userPrefs,omitempty"`
 	GraphQL      GraphQLExtensions      `json:"graphql,omitempty"`
 	Acccount     AccountExtensions      `json:"account,omitempty"`
 	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
@@ -151,7 +151,7 @@ type MeshMapComponentSet struct {
 // NavigatorExtension describes the Navigator extension point in the UI
 type NavigatorExtension struct {
 	Title           string              `json:"title,omitempty"`
-	OnClickCallback int                 `json:"on_click_callback,omitempty"`
+	OnClickCallback int                 `json:"onClickCallback,omitempty"`
 	Href            Href                `json:"href,omitempty"`
 	Component       string              `json:"component,omitempty"`
 	Icon            string              `json:"icon,omitempty"`
@@ -166,7 +166,7 @@ type NavigatorExtension struct {
 // AccountExtension describes the Account extension point in the UI
 type AccountExtension struct {
 	Title           string            `json:"title,omitempty"`
-	OnClickCallback int               `json:"on_click_callback,omitempty"`
+	OnClickCallback int               `json:"onClickCallback,omitempty"`
 	Href            Href              `json:"href,omitempty"`
 	Component       string            `json:"component,omitempty"`
 	Link            *bool             `json:"link,omitempty"`
@@ -204,13 +204,13 @@ type Capability struct {
 
 // K8sContextResponse - struct of response sent by provider when requested to persist k8s config
 type K8sContextPersistResponse struct {
-	K8sContext K8sContext `json:"k8s_context,omitempty"`
+	K8sContext K8sContext `json:"k8sContext,omitempty"`
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
-	StatusCode int    `json:"status_code,omitempty"`
+	StatusCode int    `json:"statusCode,omitempty"`
 }
 
 // Feature is a type to store the features of the provider
@@ -391,15 +391,19 @@ type Provider interface {
 	FetchAllResults(tokenVal string, page, pageSize, search, order, from, to string) ([]byte, error)
 	PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error)
 	FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
-	FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID uuid.UUID) ([]byte, error)
+	FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID core.Uuid) ([]byte, error)
 	PublishSmiResults(result *SmiResult) (string, error)
 	PublishMetrics(tokenVal string, data *MesheryResult) error
-	GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error)
+	GetResult(tokenVal string, resultID core.Uuid) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
-	// in case of a provider that does not support persisting results, it should return an error
-	// if the token is null then then a safe pass is used if the provider supports it else an error is returned
-	PersistEvent(event events.Event, token *string) error
+	// PersistEvent persists a user-initiated event to the remote provider using the given auth token.
+	PersistEvent(event events.Event, token string) error
+
+	// PersistSystemEvent persists a system-initiated event (e.g. MeshSync updates, registry seeding,
+	// auto-registration) that occurs outside of a user request context and has no auth token.
+	// These events are persisted to the local database.
+	PersistSystemEvent(event events.Event) error
 
 	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
 	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)
@@ -447,8 +451,6 @@ type Provider interface {
 	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error)
 
-	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
-	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
 	GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
@@ -470,18 +472,22 @@ type Provider interface {
 
 	SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error)
 	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error)
-	GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error)
+	GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error)
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
 	UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error)
-	UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
-	DeleteConnection(req *http.Request, connID uuid.UUID) (*connections.Connection, error)
+	UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
+	DeleteConnection(req *http.Request, connID core.Uuid) (*connections.Connection, error)
 	DeleteMesheryConnection() error
+	// LogoutMesheryServer revokes the server-cached user session against the
+	// provider. Called at shutdown after DeleteMesheryConnection so that
+	// logout occurs post-deregistration.
+	LogoutMesheryServer() error
 
 	SaveUserCredential(token string, credential *Credential) (*Credential, error)
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
-	GetCredentialByID(token string, credentialID uuid.UUID) (*Credential, int, error)
+	GetCredentialByID(token string, credentialID core.Uuid) (*Credential, int, error)
 	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
-	DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error)
+	DeleteUserCredential(req *http.Request, credentialID core.Uuid) (*Credential, error)
 
 	GetEnvironments(token, page, pageSize, search, order, filter, orgID string) ([]byte, error)
 	GetEnvironmentByID(req *http.Request, environmentID, orgID string) ([]byte, error)
@@ -498,18 +504,25 @@ type Provider interface {
 	GetWorkspaceByID(req *http.Request, workspaceID, orgID string) ([]byte, error)
 	SaveWorkspace(req *http.Request, workspace *workspace.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteWorkspace(req *http.Request, workspaceID string) ([]byte, error)
-	UpdateWorkspace(req *http.Request, workspace *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error)
+	UpdateWorkspace(req *http.Request, workspace *workspace.WorkspaceUpdatePayload, workspaceID string) (*workspace.Workspace, error)
 	GetEnvironmentsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
 	AddEnvironmentToWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
 	RemoveEnvironmentFromWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
 	GetDesignsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string, visibility []string) ([]byte, error)
 	AddDesignToWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
+	RemoveDesignFromWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
+	GetViewsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
+	AddViewToWorkspace(req *http.Request, workspaceID string, viewID string) ([]byte, error)
+	RemoveViewFromWorkspace(req *http.Request, workspaceID string, viewID string) ([]byte, error)
+	GetTeamsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
+	AddTeamToWorkspace(req *http.Request, workspaceID string, teamID string) ([]byte, error)
+	RemoveTeamFromWorkspace(req *http.Request, workspaceID string, teamID string) ([]byte, error)
 
 	// events
-	GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error)
-	GetEventTypes(token string, userID uuid.UUID, sysID uuid.UUID) (EventTypesResponse, error)
-	UpdateEventStatus(token string, eventID uuid.UUID, status string) error
-	BulkUpdateEventStatus(token string, eventIDs []*uuid.UUID, status string) error
-	DeleteEvent(token string, eventID uuid.UUID) error
-	BulkDeleteEvent(token string, eventIDs []*uuid.UUID) error
+	GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error)
+	GetEventTypes(token string, userID core.Uuid, sysID core.Uuid) (EventTypesResponse, error)
+	UpdateEventStatus(token string, eventID core.Uuid, status string) error
+	BulkUpdateEventStatus(token string, eventIDs []*core.Uuid, status string) error
+	DeleteEvent(token string, eventID core.Uuid) error
+	BulkDeleteEvent(token string, eventIDs []*core.Uuid) error
 }

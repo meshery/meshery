@@ -139,7 +139,7 @@ For more information, visit [https://gcc.gnu.org/install/binaries.html](https://
 
 #### - nodejs (for npm)
 
-You will need **Node 20**. Download it from [https://nodejs.org/en/download](https://nodejs.org/en/download) and install it. The path is usually automatically added.
+You will need Nodejs. Download it from [https://nodejs.org/en/download](https://nodejs.org/en/download) and install it. The path is usually automatically added.
 
 #### - go
 

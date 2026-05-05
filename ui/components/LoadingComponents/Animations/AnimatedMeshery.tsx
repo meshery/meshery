@@ -1,7 +1,6 @@
-// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 
-function getClassName(className, isActive) {
+function getClassName(className: string, isActive: boolean): string {
   if (!isActive) {
     return className;
   }
@@ -9,20 +8,24 @@ function getClassName(className, isActive) {
   return `${className} active`;
 }
 
-const AnimatedMeshery = (props) => {
+type AnimatedMesheryProps = React.SVGAttributes<SVGSVGElement> & { textFill?: string };
+
+const AnimatedMeshery = (props: AnimatedMesheryProps) => {
   const [isActive, setIsActive] = useState(true);
   const textfill = props.textFill || '#000000';
 
   useEffect(() => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       setIsActive(false);
     }, 100);
+    return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsActive(!isActive);
+    const timeout = setTimeout(() => {
+      setIsActive((prev) => !prev);
     }, 4000);
+    return () => clearTimeout(timeout);
   }, [isActive]);
 
   return (
@@ -170,5 +173,7 @@ const AnimatedMeshery = (props) => {
   );
 };
 
-export const AnimatedMesheryDark = (props) => <AnimatedMeshery {...props} textfill="#fff" />;
+export const AnimatedMesheryDark = (props: AnimatedMesheryProps) => (
+  <AnimatedMeshery {...props} textFill="#fff" />
+);
 export default AnimatedMeshery;

@@ -22,9 +22,10 @@ export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose 
     : selectedResource;
   const resourceType = dataName === 'design' ? 'pattern' : dataName;
 
-  const { data: ownerData, isSuccess: isOwnerDataFetched } = useGetUserProfileSummaryByIdQuery({
-    id: firstSelectedResource?.user_id,
-  });
+  const { data: ownerData, isSuccess: isOwnerDataFetched } = useGetUserProfileSummaryByIdQuery(
+    { id: firstSelectedResource?.userId },
+    { skip: !firstSelectedResource?.userId },
+  );
 
   const { data: accessActorsInfoOfResource, isSuccess: accessActorsFetched } =
     useGetAccessActorsInfoOfResourceQuery({
@@ -61,8 +62,8 @@ export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose 
       body: {
         id: firstSelectedResource?.id,
         name: firstSelectedResource?.name,
-        catalog_data: firstSelectedResource?.catalog_data,
-        design_file: JsonParse(firstSelectedResource?.pattern_file),
+        catalogData: firstSelectedResource?.catalogData,
+        designFile: JsonParse(firstSelectedResource?.patternFile),
         visibility: value,
       },
     });
@@ -102,7 +103,7 @@ export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose 
       currentUser={currentUser}
       shareableLink={shareableLink}
       useGetAllUsersQuery={useGetAllUsersQuery}
-      ownerData={{ ...ownerData, user_id: ownerData?.id }}
+      ownerData={{ ...ownerData, userId: ownerData?.id }}
       fetchAccessActors={fetchAccessActors}
       hostURL={MESHERY_CLOUD_PROD}
       handleUpdateVisibility={handleUpdateVisibility}

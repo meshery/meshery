@@ -55,12 +55,17 @@ const InstallButton = styled(Button)({
   marginBottom: '1rem',
 });
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+type SlideTransitionProps = React.ComponentProps<typeof Slide>;
 
-export default function PlaygroundMeshDeploy(props) {
-  const handlePage = (e) => {
+const Transition = (props: SlideTransitionProps) => <Slide direction="up" {...props} />;
+
+type PlaygroundMeshDeployProps = {
+  isOpen: boolean;
+  closeForm: () => void;
+};
+
+export default function PlaygroundMeshDeploy({ isOpen, closeForm }: PlaygroundMeshDeployProps) {
+  const handlePage = (e: React.MouseEvent<HTMLButtonElement>) => {
     window.open('https://meshery.io/#getting-started', '_blank');
     e.stopPropagation();
   };
@@ -69,13 +74,13 @@ export default function PlaygroundMeshDeploy(props) {
     <div>
       <Dialog
         aria-labelledby="customized-dialog-title"
-        open={props.isOpen}
-        onClose={props.closeForm}
+        open={isOpen}
+        onClose={closeForm}
         TransitionComponent={Transition}
       >
         <DialogTitleStyled id="customized-dialog-title">
           <Typography variant="h6">The Cloud Native Playground</Typography>
-          <CloseButton aria-label="close" onClick={props.closeForm}>
+          <CloseButton aria-label="close" onClick={closeForm}>
             <CloseIcon />
           </CloseButton>
         </DialogTitleStyled>

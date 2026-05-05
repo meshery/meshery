@@ -6,12 +6,11 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	"github.com/spf13/viper"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/core"
+	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
 )
 
-// swagger:response ConnectionStatus
 type ConnectionStatus = schemasConnection.ConnectionStatus
 
 type InitFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
@@ -34,7 +33,7 @@ type ConnectionRegisterPayload struct {
 	EventType string
 	// It is different from connection id, this is used to track the registration process for the connection.
 	// Connection ID is generated after the registration process is completed.
-	ID    uuid.UUID
+	ID    core.Uuid
 	Model string
 	// The concrete type depends on the type of connection and the corresponding connection definition.
 	Connection struct {
@@ -65,7 +64,6 @@ type GrafanaCred struct {
 	APIKeyOrBasicAuth string `json:"secret,omitempty"`
 }
 
-// swagger:response Connection
 type Connection = schemasConnection.Connection
 
 var validConnectionStatusToManage = []ConnectionStatus{
@@ -86,7 +84,6 @@ func ShouldConnectionBeManaged(c Connection) bool {
 	return false
 }
 
-// swagger:response ConnectionPage
 type ConnectionPage = schemasConnection.ConnectionPage
 
 type ConnectionStatusInfo struct {
@@ -94,31 +91,35 @@ type ConnectionStatusInfo struct {
 	Count  int    `json:"count" db:"count"`
 }
 
-// swagger:response ConnectionsStatusPage
+// ConnectionsStatusPage is a Meshery-local swagger stub for the status-per-kind
+// response wrapper surfaced on a few integrations endpoints. The canonical
+// v1beta3 schema publishes camelCase on the wire, so the JSON tag here matches
+// `connectionsStatus`. No runtime handler emits this struct today — it is a
+// doc-only placeholder referenced from server/handlers/doc.go.
 type ConnectionsStatusPage struct {
-	ConnectionsStatus []*ConnectionStatusInfo `json:"connections_status"`
+	ConnectionsStatus []*ConnectionStatusInfo `json:"connectionsStatus"`
 }
 
 type ConnectionPayload struct {
-	ID                         uuid.UUID              `json:"id,omitempty"`
+	ID                         core.Uuid              `json:"id,omitempty"`
 	Kind                       string                 `json:"kind,omitempty"`
-	SubType                    string                 `json:"sub_type,omitempty"`
+	SubType                    string                 `json:"subType,omitempty"`
 	Type                       string                 `json:"type,omitempty"`
 	MetaData                   map[string]interface{} `json:"metadata,omitempty"`
 	Status                     ConnectionStatus       `json:"status,omitempty"`
-	CredentialSecret           map[string]interface{} `json:"credential_secret,omitempty"`
+	CredentialSecret           map[string]interface{} `json:"credentialSecret,omitempty"`
 	Name                       string                 `json:"name,omitempty"`
-	CredentialID               *uuid.UUID             `json:"credential_id,omitempty"`
+	CredentialID               *core.Uuid             `json:"credentialId,omitempty"`
 	Model                      string                 `json:"model,omitempty"`
-	SkipCredentialVerification bool                   `json:"skip_credential_verification"`
+	SkipCredentialVerification bool                   `json:"skipCredentialVerification"`
 }
 
 func BuildMesheryConnectionPayload(serverURL string, credential map[string]interface{}) *ConnectionPayload {
 	metadata := map[string]interface{}{
-		"server_id":        viper.GetString("INSTANCE_ID"),
-		"server_version":   viper.GetString("BUILD"),
-		"server_build_sha": viper.GetString("COMMITSHA"),
-		"server_location":  serverURL,
+		"serverId":       viper.GetString("INSTANCE_ID"),
+		"serverVersion":  viper.GetString("BUILD"),
+		"serverBuildSha": viper.GetString("COMMITSHA"),
+		"serverLocation": serverURL,
 	}
 	return &ConnectionPayload{
 		Kind:             "meshery",

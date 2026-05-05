@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/schemas/models/core"
 )
 
 // KeyPersister is the persister for persisting keys in the database
@@ -62,7 +62,7 @@ func (kp *KeyPersister) SaveUsersKeys(keys []Key) ([]Key, error) {
 }
 
 // GetUsersKey retrieves a key by its ID
-func (kp *KeyPersister) GetUsersKey(id uuid.UUID) ([]byte, error) {
+func (kp *KeyPersister) GetUsersKey(id core.Uuid) ([]byte, error) {
 	var key Key
 	err := kp.DB.First(&key, id).Error
 	return marshalKey(&key), err

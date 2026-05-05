@@ -1,6 +1,5 @@
 import React from 'react';
-import { Typography, Button, styled } from '@sistent/sistent';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
+import { AddCircleIcon as AddIcon, Button, styled, Typography } from '@sistent/sistent';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
