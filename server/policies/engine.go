@@ -1,11 +1,11 @@
 package policies
 
 import (
-	"encoding/json"
-
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/meshkit/logger"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
+	relationshipv1alpha3 "github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // GoEngine is the native Go policy evaluation engine.
@@ -38,16 +38,16 @@ func ConvertRelationships(registeredRelationships []interface{}) []*relationship
 			rels = append(rels, v)
 		case relationship.RelationshipDefinition:
 			rels = append(rels, &v)
+		case *relationshipv1alpha3.RelationshipDefinition:
+			if bridged := patternutils.RelationshipV1alpha3ToV1beta2(v); bridged != nil {
+				rels = append(rels, bridged)
+			}
+		case relationshipv1alpha3.RelationshipDefinition:
+			if bridged := patternutils.RelationshipV1alpha3ToV1beta2(&v); bridged != nil {
+				rels = append(rels, bridged)
+			}
 		default:
-			data, err := json.Marshal(r)
-			if err != nil {
-				continue
-			}
-			var rel relationship.RelationshipDefinition
-			if err := json.Unmarshal(data, &rel); err != nil {
-				continue
-			}
-			rels = append(rels, &rel)
+			continue
 		}
 	}
 	return rels
@@ -194,4 +194,3 @@ func buildTrace(actions []PolicyAction, originalDesign, finalDesign *pattern.Pat
 	}
 	return trace
 }
-

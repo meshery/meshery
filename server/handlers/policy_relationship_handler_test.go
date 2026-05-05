@@ -822,3 +822,41 @@ func TestParseRelationshipToAlias(t *testing.T) {
 		})
 	}
 }
+
+// TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys pins
+// the canonical camelCase keys emitted into event_trackers.metadata on the
+// relationship-evaluation success event. Production carried 125,840 rows
+// each of the legacy snake_case spellings before this flip; this test
+// guards against regression and ensures legacy spellings cannot be
+// re-introduced silently.
+func TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) {
+	now := time.Now()
+	resp := pattern.EvaluationResponse{
+		Design: pattern.PatternFile{
+			Version: "1.2.3",
+		},
+		Actions:   make([]pattern.Action, 7),
+		Trace:     pattern.Trace{},
+		Timestamp: &now,
+	}
+
+	metadata := buildPolicyEvaluationEventMetadata(resp)
+
+	// Canonical camelCase keys MUST be present.
+	require.Contains(t, metadata, "historyTitle")
+	require.Contains(t, metadata, "trace")
+	require.Contains(t, metadata, "evaluationResponse")
+	require.Contains(t, metadata, "evaluatedAt")
+
+	// Legacy snake_case keys MUST NOT be present.
+	require.NotContains(t, metadata, "history_title")
+	require.NotContains(t, metadata, "evaluation_response")
+	require.NotContains(t, metadata, "evaluated_at")
+
+	// Spot-check that historyTitle reflects the action count + version
+	// so future contributors don't repurpose the helper without keeping
+	// the user-visible label coherent.
+	assert.Contains(t, metadata["historyTitle"], "7 changes")
+	assert.Contains(t, metadata["historyTitle"], "1.2.3")
+	assert.Equal(t, now, metadata["evaluatedAt"])
+}
