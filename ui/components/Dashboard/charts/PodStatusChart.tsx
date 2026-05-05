@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { donut } from 'billboard.js';
 import {
@@ -16,10 +15,15 @@ import ConnectCluster from './ConnectCluster';
 import { LoadingContainer, ChartSectionWithColumn, LegendSection } from '../style';
 import { ERROR_COLOR } from '@/constants/colors';
 
-export const PodStatusChart = ({ podData, isClusterLoading }) => {
-  const columns = podData?.map((pod) => {
-    return [pod.status, pod.count];
-  });
+type PodStatus = { status: string; count: number };
+
+type PodStatusChartProps = {
+  podData?: PodStatus[];
+  isClusterLoading?: boolean;
+};
+
+export const PodStatusChart = ({ podData, isClusterLoading }: PodStatusChartProps) => {
+  const columns = podData?.map((pod) => [pod.status, pod.count]);
 
   const totalPods = podData?.reduce((acc, pod) => acc + pod.count, 0);
   const chartOptions = {

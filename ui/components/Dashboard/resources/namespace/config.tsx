@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { getStatus, timeAgo } from '../../../../utils/k8s-utils';
 import { SINGLE_VIEW } from '../config';
