@@ -1,7 +1,7 @@
 // Package utils contains helpers that bridge the v1beta2/component and
 // v1beta3/component representations of a component definition.
 //
-// Why this bridge exists
+// # Why this bridge exists
 //
 // meshery/schemas pins v1beta3/design.PatternFile.Components to
 // *v1beta2/component.ComponentDefinition (see schemas' v1beta3/const.go
@@ -23,9 +23,102 @@
 package utils
 
 import (
+	componentv1beta1 "github.com/meshery/schemas/models/v1beta1/component"
 	componentv1beta2 "github.com/meshery/schemas/models/v1beta2/component"
 	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 )
+
+// ComponentV1beta1ToV1beta2 returns a v1beta2/component.ComponentDefinition
+// whose inner reference-typed fields (Model pointer, Capabilities slice,
+// Configuration map, Styles pointer, Metadata.AdditionalProperties map,
+// ModelId pointer) alias the source. Mutations through those aliased maps /
+// pointer targets on the returned value remain visible on the source; scalar
+// field updates on the returned value do NOT.
+func ComponentV1beta1ToV1beta2(src *componentv1beta1.ComponentDefinition) *componentv1beta2.ComponentDefinition {
+	if src == nil {
+		return nil
+	}
+	dst := &componentv1beta2.ComponentDefinition{
+		ID:             src.ID,
+		SchemaVersion:  src.SchemaVersion,
+		Version:        src.Version,
+		DisplayName:    src.DisplayName,
+		Description:    src.Description,
+		Format:         componentv1beta2.ComponentDefinitionFormat(src.Format),
+		Model:          src.Model,
+		ModelReference: src.ModelReference,
+		Styles:         src.Styles,
+		Capabilities:   src.Capabilities,
+		Metadata: componentv1beta2.ComponentDefinition_Metadata{
+			Genealogy:             src.Metadata.Genealogy,
+			IsAnnotation:          src.Metadata.IsAnnotation,
+			IsNamespaced:          src.Metadata.IsNamespaced,
+			Published:             src.Metadata.Published,
+			InstanceDetails:       src.Metadata.InstanceDetails,
+			ConfigurationUISchema: src.Metadata.ConfigurationUISchema,
+			AdditionalProperties:  src.Metadata.AdditionalProperties,
+		},
+		Configuration: src.Configuration,
+		Component: componentv1beta2.Component{
+			Kind:    src.Component.Kind,
+			Version: src.Component.Version,
+			Schema:  src.Component.Schema,
+		},
+		CreatedAt: src.CreatedAt,
+		UpdatedAt: src.UpdatedAt,
+		ModelId:   src.ModelId,
+	}
+	if src.Status != nil {
+		st := componentv1beta2.ComponentDefinitionStatus(*src.Status)
+		dst.Status = &st
+	}
+	return dst
+}
+
+// ComponentV1beta2ToV1beta1 is the inverse bridge: a shallow field copy that
+// keeps pointer/reference-typed inner fields (Model, Styles, Capabilities,
+// Configuration, Metadata.AdditionalProperties, ModelId) aliased across both
+// versions so mutations remain visible across the bridge.
+func ComponentV1beta2ToV1beta1(src *componentv1beta2.ComponentDefinition) *componentv1beta1.ComponentDefinition {
+	if src == nil {
+		return nil
+	}
+	dst := &componentv1beta1.ComponentDefinition{
+		ID:             src.ID,
+		SchemaVersion:  src.SchemaVersion,
+		Version:        src.Version,
+		DisplayName:    src.DisplayName,
+		Description:    src.Description,
+		Format:         componentv1beta1.ComponentDefinitionFormat(src.Format),
+		Model:          src.Model,
+		ModelReference: src.ModelReference,
+		Styles:         src.Styles,
+		Capabilities:   src.Capabilities,
+		Metadata: componentv1beta1.ComponentDefinition_Metadata{
+			Genealogy:             src.Metadata.Genealogy,
+			IsAnnotation:          src.Metadata.IsAnnotation,
+			IsNamespaced:          src.Metadata.IsNamespaced,
+			Published:             src.Metadata.Published,
+			InstanceDetails:       src.Metadata.InstanceDetails,
+			ConfigurationUISchema: src.Metadata.ConfigurationUISchema,
+			AdditionalProperties:  src.Metadata.AdditionalProperties,
+		},
+		Configuration: src.Configuration,
+		Component: componentv1beta1.Component{
+			Kind:    src.Component.Kind,
+			Version: src.Component.Version,
+			Schema:  src.Component.Schema,
+		},
+		CreatedAt: src.CreatedAt,
+		UpdatedAt: src.UpdatedAt,
+		ModelId:   src.ModelId,
+	}
+	if src.Status != nil {
+		st := componentv1beta1.ComponentDefinitionStatus(*src.Status)
+		dst.Status = &st
+	}
+	return dst
+}
 
 // ComponentV1beta2ToV1beta3 returns a v1beta3/component.ComponentDefinition
 // whose inner reference-typed fields (Model pointer, Capabilities slice,

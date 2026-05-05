@@ -1,8 +1,26 @@
-// @ts-nocheck
-
+import React from 'react';
 import { Grid2, Tooltip, Typography, TableCell, TableSortLabel } from '@sistent/sistent';
 
-export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon, tooltip }) => {
+type ColumnData = { name: string; label: React.ReactNode };
+type ColumnMeta = { name: string; direction?: 'asc' | 'desc' };
+
+type SortableTableCellProps = {
+  index: number;
+  columnData: ColumnData;
+  columnMeta: ColumnMeta;
+  onSort?: () => void;
+  icon?: React.ReactNode;
+  tooltip?: React.ReactNode;
+};
+
+export const SortableTableCell = ({
+  index,
+  columnData,
+  columnMeta,
+  onSort,
+  icon,
+  tooltip,
+}: SortableTableCellProps) => {
   return (
     <TableCell key={index} onClick={onSort}>
       <Grid2 style={{ display: 'flex' }}>
@@ -29,7 +47,13 @@ export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon,
   );
 };
 
-export const DefaultTableCell = ({ columnData, icon, tooltip }) => {
+type DefaultTableCellProps = {
+  columnData: ColumnData;
+  icon?: React.ReactNode;
+  tooltip?: React.ReactNode;
+};
+
+export const DefaultTableCell = ({ columnData, icon, tooltip }: DefaultTableCellProps) => {
   return (
     <TableCell>
       <Grid2 style={{ display: 'flex' }}>

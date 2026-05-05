@@ -22,8 +22,33 @@ import (
 )
 
 type Provider struct {
-	ProviderURL  string `json:"provider_url,omitempty"`
-	ProviderName string `json:"provider_name,omitempty"`
+	ProviderURL  string `json:"providerUrl,omitempty"`
+	ProviderName string `json:"providerName,omitempty"`
+}
+
+func (p *Provider) UnmarshalJSON(data []byte) error {
+	type providerAlias Provider
+	aux := struct {
+		providerAlias
+		ProviderURLLegacy  string `json:"provider_url,omitempty"`
+		ProviderNameLegacy string `json:"provider_name,omitempty"`
+	}{}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return ErrUnmarshal(err)
+	}
+
+	p.ProviderURL = aux.ProviderURL
+	if p.ProviderURL == "" {
+		p.ProviderURL = aux.ProviderURLLegacy
+	}
+
+	p.ProviderName = aux.ProviderName
+	if p.ProviderName == "" {
+		p.ProviderName = aux.ProviderNameLegacy
+	}
+
+	return nil
 }
 
 // NewRequest creates *http.Request and handles adding authentication for Meshery itself

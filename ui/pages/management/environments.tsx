@@ -1,16 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NoSsr, Box } from '@sistent/sistent';
-import { connect, useDispatch } from 'react-redux';
 import Head from 'next/head';
 import { EnvironmentComponent } from '../../components/Lifecycle';
-import { updatePage } from '@/store/slices/mesheryUi';
-import { getPath } from 'lib/path';
+import { usePageTitle } from '@/utils/hooks';
 
 const Environments = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(updatePage({ path: getPath(), title: 'Environments' }));
-  }, []);
+  usePageTitle('Environments');
 
   return (
     <NoSsr>
@@ -24,4 +19,4 @@ const Environments = () => {
   );
 };
 
-export default connect(null)(Environments);
+export default Environments;

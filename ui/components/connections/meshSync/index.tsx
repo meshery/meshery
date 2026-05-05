@@ -55,8 +55,7 @@ export default function MeshSyncTable(props) {
   const [kindFilter, setKindFilter] = useState();
   const [namespaceFilter, setNamespaceFilter] = useState();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const { k8sConfig } = useSelector((state) => state.ui);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig, selectedK8sContexts } = useSelector((state) => state.ui);
   const [selectedFilters, setSelectedFilters] = useState({
     kind: 'All',
     model: 'All',

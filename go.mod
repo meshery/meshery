@@ -22,10 +22,10 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/briandowns/spinner v1.23.2
 	github.com/compose-spec/compose-go/v2 v2.10.0
-	github.com/docker/cli v28.5.1+incompatible
+	github.com/docker/cli v28.5.2+incompatible
 	github.com/docker/compose/v2 v2.40.3
 	github.com/docker/docker v28.5.2+incompatible
-	github.com/docker/go-connections v0.6.0
+	github.com/docker/go-connections v0.7.0
 	github.com/eiannone/keyboard v0.0.0-20220611211555-0d226195f203
 	github.com/envoyproxy/go-control-plane/envoy v1.36.0
 	github.com/fatih/color v1.18.0
@@ -59,7 +59,7 @@ require (
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.23.2
-	github.com/prometheus/common v0.67.4
+	github.com/prometheus/common v0.67.5
 	github.com/qri-io/jsonschema v0.2.1
 	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/cobra v1.10.2

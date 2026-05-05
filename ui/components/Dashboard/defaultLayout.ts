@@ -1,4 +1,3 @@
-// @ts-nocheck
 export const DEFAULT_LAYOUT = {
   lg: [
     {
