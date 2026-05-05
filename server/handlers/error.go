@@ -210,6 +210,7 @@ const (
 	ErrExtensionProxyCode                  = "meshery-server-1427"
 	ErrInitializeMachineCode               = "meshery-server-1428"
 	ErrSendMachineEventCode                = "meshery-server-1429"
+	ErrInvalidURLCode                      = "meshery-server-1430"
 )
 
 var (
@@ -1001,4 +1002,8 @@ func ErrInitializeMachine(err error) error {
 // caller input.
 func ErrSendMachineEvent(err error) error {
 	return errors.New(ErrSendMachineEventCode, errors.Alert, []string{"Failed to advance connection state machine"}, []string{err.Error()}, []string{"The requested event is not valid from the connection's current state.", "A side-effect action attached to the transition (e.g. provisioning, discovery) returned an error."}, []string{"Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."})
+}
+
+func ErrInvalidURL(err error, url string) error {
+	return errors.New(ErrInvalidURLCode, errors.Alert, []string{"invalid URL: ", url}, []string{err.Error()}, []string{"The provided URL is malformed or cannot be parsed"}, []string{"Ensure the URL is a valid absolute URL including scheme (e.g. http:// or https://)"})
 }

@@ -48,8 +48,8 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		connName := req.FormValue("grafanaConnectioncName")
 		u, err := url.Parse(grafanaURL)
 		if err != nil {
-			h.log.Error(ErrParseBool(err, "grafanaURL"))
-			writeMeshkitError(w, ErrParseBool(err, "grafanaURL"), http.StatusBadRequest)
+			h.log.Error(ErrInvalidURL(err, grafanaURL))
+			writeMeshkitError(w, ErrInvalidURL(err, grafanaURL), http.StatusBadRequest)
 			return
 		}
 		if strings.Contains(grafanaURL, u.RequestURI()) {
