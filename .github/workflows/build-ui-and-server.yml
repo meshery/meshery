@@ -203,6 +203,7 @@ jobs:
         run: |
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
           docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}
+<<<<<<< HEAD
   # Run Rego policy tests
   rego-tests:
     name: Rego Policy Tests
@@ -230,3 +231,18 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+=======
+      - name: Docker edge push
+        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
+        run: |
+          docker push ${{ secrets.IMAGE_NAME }}:edge-latest
+          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_REF/refs\/tags\//}
+          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+      - name: Docker Hub Description
+        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
+        uses: peter-evans/dockerhub-description@v5
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: ${{ secrets.IMAGE_NAME }}
+>>>>>>> 3510c62e495 (chore: remove redudant Rego policy tests from CI workflow)
