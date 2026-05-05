@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 5th 2026, 4:16:28 am
+- Testing started at: May 5th 2026, 9:08:32 am
 
 **📦 Test Result Summary**
 
-- ✅ 137 passed
-- ❌ 3 failed
+- ✅ 138 passed
+- ❌ 2 failed
 - ⚠️ 0 flaked
 - ⏩ 4 skipped
 
-⌛ _Duration: 7 minutes and 27 seconds_
+⌛ _Duration: 7 minutes and 19 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -90,7 +90,7 @@
 | 67 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
 | 68 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
 | 69 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ✅ |
-| 70 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ❌ |
+| 70 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ✅ |
 | 71 | Meshery | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ✅ |
 | 72 | Meshery | chromium-meshery-provider | Verify Performance Analysis Details |  | ✅ |
 | 73 | Meshery | chromium-meshery-provider | Verify that UI components are displayed |  | ❌ |
@@ -200,29 +200,6 @@ The following tests failed. Click on each to see the failure reason:
  [90m 51 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
  [90m 52 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
  [90m 53 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToConnections()[33m;[39m[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Verify Meshery Design Embed Details (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
- [90m 20 |[39m
-[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
- [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
- [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
