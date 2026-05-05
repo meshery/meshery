@@ -4,15 +4,15 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/gofrs/uuid"
 	isql "github.com/meshery/meshery/server/internal/sql"
+	"github.com/meshery/schemas/models/core"
 )
 
 type ApplicationType string
 
 type ApplicationTypeResponse struct {
-	Type                ApplicationType `json:"application_type"`
-	SupportedExtensions []string        `json:"supported_extensions"`
+	Type                ApplicationType `json:"applicationType"`
+	SupportedExtensions []string        `json:"supportedExtensions"`
 }
 
 func GetApplicationTypes() (r []DesignTypeResponse) {
@@ -33,16 +33,16 @@ func GetApplicationTypes() (r []DesignTypeResponse) {
 
 // MesheryApplication represents the applications that needs to be saved
 type MesheryApplication struct {
-	ID *uuid.UUID `json:"id,omitempty"`
+	ID *core.Uuid `json:"id,omitempty"`
 
 	Name            string `json:"name,omitempty"`
-	ApplicationFile string `json:"application_file"`
+	ApplicationFile string `json:"applicationFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID        *string        `json:"user_id" gorm:"-"`
+	UserID        *string        `json:"userId" gorm:"-"`
 	Location      isql.Map       `json:"location"`
 	Type          sql.NullString `json:"type"`
-	SourceContent []byte         `json:"source_content"`
-	UpdatedAt     *time.Time     `json:"updated_at,omitempty"`
-	CreatedAt     *time.Time     `json:"created_at,omitempty"`
+	SourceContent []byte         `json:"sourceContent"`
+	UpdatedAt     *time.Time     `json:"updatedAt,omitempty"`
+	CreatedAt     *time.Time     `json:"createdAt,omitempty"`
 }

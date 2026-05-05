@@ -8,7 +8,12 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"time"
+
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+
+	"github.com/meshery/schemas/models/core"
 
 	"github.com/fsnotify/fsnotify"
 
@@ -34,10 +39,9 @@ import (
 	"github.com/meshery/meshkit/utils/broadcast"
 	"github.com/meshery/meshkit/utils/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	schemasOrganization "github.com/meshery/schemas/models/v1beta1/organization"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
+	schemasOrganization "github.com/meshery/schemas/models/v1beta2/organization"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -51,7 +55,7 @@ var (
 
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL = "https://cloud.layer5.io"
+	DefaultProviderURL = "https://cloud.meshery.io"
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
 
@@ -121,18 +125,25 @@ func main() {
 	viper.SetDefault("SKIP_DOWNLOAD_EXTENSIONS", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
-	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", schemasConnection.MeshsyncDeploymentModeDefault)
+	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", connections.MeshsyncDeploymentModeDefault)
 	store.Initialize()
 
-	// initialize tracing
-	otelConfigString := viper.GetString("OTEL_CONFIG")
-	log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
-	tracingProvider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
-
-	if err != nil {
-		log.Error(fmt.Errorf("failed to initialize OpenTelemetry tracing: %v", err))
+	// initialize tracing. Skip entirely when OTEL_CONFIG is unset so local dev
+	// doesn't pay for a failing OTLP gRPC exporter that logs
+	// "traces export: ... connection refused" every ~10s.
+	var tracingProvider *sdktrace.TracerProvider
+	otelConfigString := strings.TrimSpace(viper.GetString("OTEL_CONFIG"))
+	if otelConfigString == "" {
+		log.Info("OpenTelemetry config not set; tracing disabled")
 	} else {
-		log.Info("OpenTelemetry tracing initialized with config:" + otelConfigString)
+		log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
+		provider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
+		if err != nil {
+			log.Error(fmt.Errorf("failed to initialize OpenTelemetry tracing: %v", err))
+		} else {
+			tracingProvider = provider
+			log.Info("OpenTelemetry tracing initialized with config:" + otelConfigString)
+		}
 	}
 	// Defer shutdown of tracer provider
 	defer func() {
@@ -247,6 +258,8 @@ func main() {
 		workspace.Workspace{},
 		workspace.WorkspacesEnvironmentsMapping{},
 		workspace.WorkspacesDesignsMapping{},
+		workspace.WorkspacesTeamsMapping{},
+		workspace.WorkspacesViewsMapping{},
 		_events.Event{},
 	)
 	if err != nil {
@@ -254,12 +267,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	meshsyncDefaultDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromString(
+	meshsyncDefaultDeploymentMode := connections.MeshsyncDeploymentModeFromString(
 		viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
 	)
 
-	if meshsyncDefaultDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
-		meshsyncDefaultDeploymentMode = schemasConnection.MeshsyncDeploymentModeDefault
+	if meshsyncDefaultDeploymentMode == connections.MeshsyncDeploymentModeUndefined {
+		meshsyncDefaultDeploymentMode = connections.MeshsyncDeploymentModeDefault
 	}
 
 	lProv := &models.DefaultLocalProvider{
@@ -390,7 +403,7 @@ func main() {
 		&instanceID,
 	)
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
-		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
+		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine, 0),
 	}
 
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
@@ -440,8 +453,14 @@ func main() {
 		// so it doesn't throw error each server is stopped. Reason: support for none provider is not yet implemented
 		if p.Name() != "None" {
 			log.Info("De-registering Meshery server.")
-			err = p.DeleteMesheryConnection()
-			if err != nil {
+			if err = p.DeleteMesheryConnection(); err != nil {
+				log.Error(err)
+				continue
+			}
+			// Logout follows deregistration so the session that authorized
+			// the delete is revoked only after the connection is removed.
+			log.Info("Logging out Meshery server session.")
+			if err = p.LogoutMesheryServer(); err != nil {
 				log.Error(err)
 			}
 		}

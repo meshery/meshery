@@ -47,14 +47,14 @@ jobs:
         uses: actions/checkout@v6
         
       - name: Setup Kubernetes (Kind)
-        uses: helm/kind-action@v1.13.0
+        uses: helm/kind-action@v1.14.0
         with:
           cluster_name: "kind-cluster"
         
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
     
@@ -78,6 +78,7 @@ jobs:
         run: make ui-test-setup
 
       - name: Run Playwright Tests (Local Only)
+        id: playwright-tests
         env:
           MESHERY_SERVER_URL: 'http://localhost:9081'
         run: |
@@ -86,6 +87,11 @@ jobs:
         continue-on-error: true
       
       - name: Upload Test Artifacts
+        if: always()
         uses: ./.github/actions/upload-test-artifacts
         with:
           include-pr-metadata: ${{ github.event_name == 'pull_request' }}
+
+      - name: Fail job when Playwright reports test failures
+        if: ${{ steps.playwright-tests.outcome == 'failure' }}
+        run: exit 1

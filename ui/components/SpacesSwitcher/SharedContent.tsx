@@ -59,10 +59,10 @@ const SharedContent = () => {
     }));
   }, []);
 
-  const handleAuthorChange = useCallback((user_id) => {
+  const handleAuthorChange = useCallback((userId) => {
     setFilters((prev) => ({
       ...prev,
-      author: user_id,
+      author: userId,
       designsPage: 0,
       viewsPage: 0,
     }));
@@ -106,7 +106,7 @@ const SharedContent = () => {
       search: filters.searchQuery,
       visibility: filters.visibility,
       shared: true,
-      user_id: filters.author,
+      userId: filters.author,
     },
     {
       skip: filters.type !== RESOURCE_TYPE.DESIGN,
@@ -125,7 +125,7 @@ const SharedContent = () => {
       order: filters.sortBy,
       visibility: filters.visibility,
       search: filters.searchQuery,
-      user_id: filters.author,
+      userId: filters.author,
       shared: true,
     },
     {
@@ -160,11 +160,11 @@ const SharedContent = () => {
               endAdornment={
                 filters.type === RESOURCE_TYPE.DESIGN ? (
                   <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
-                    Total: {designsData?.total_count ?? 0}
+                    Total: {designsData?.totalCount ?? 0}
                   </p>
                 ) : (
                   <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
-                    Total: {viewsData?.total_count ?? 0}
+                    Total: {viewsData?.totalCount ?? 0}
                   </p>
                 )
               }
@@ -224,10 +224,8 @@ const SharedContent = () => {
               isLoading={isLoading}
               isFetching={isFetching}
               designs={designsData?.patterns}
-              hasMore={
-                designsData?.total_count > (filters.designsPage + 1) * designsData?.page_size
-              }
-              total_count={designsData?.total_count}
+              hasMore={designsData?.totalCount > (filters.designsPage + 1) * designsData?.pageSize}
+              totalCount={designsData?.totalCount}
               refetch={refetch}
             />
           )}
@@ -239,8 +237,8 @@ const SharedContent = () => {
               isLoading={isViewLoading}
               isFetching={isViewFetching}
               views={viewsData?.views}
-              hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
-              total_count={viewsData?.total_count}
+              hasMore={viewsData?.totalCount > viewsData?.pageSize * (viewsData?.page + 1)}
+              totalCount={viewsData?.totalCount}
               refetch={refetch}
             />
           )}

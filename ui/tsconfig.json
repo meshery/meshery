@@ -13,13 +13,15 @@
       "@/constants/*": ["constants/*"],
       "@/api/*": ["api/*"],
       "@/assets/*": ["assets/*"],
+      "@/theme": ["theme/index"],
+      "@/theme/*": ["theme/*"],
       "@/themes/*": ["themes/*"],
       "@/store/*": ["store/*"]
     },
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "target": "esnext",
     "allowJs": true,
     // "types": [],

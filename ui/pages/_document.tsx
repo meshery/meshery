@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import Document, {
   Html,
   Head,
@@ -75,12 +75,6 @@ class MesheryDocument extends Document<MyDocumentProps> {
             type="font/otf"
             crossOrigin="anonymous"
           />
-          <link
-            href="/static/fonts/qanelas-soft/QanelasSoftRegular.otf"
-            as="font"
-            type="font/otf"
-            crossOrigin="anonymous"
-          />
 
           {/* Google Tag Manager */}
           {/* eslint-disable-next-line @next/next/next-script-for-ga */}
@@ -111,6 +105,12 @@ class MesheryDocument extends Document<MyDocumentProps> {
            */}
           <style type="text/css">
             {`
+              @font-face {
+                font-family: 'Qanelas Soft';
+                src: url('/static/fonts/qanelas-soft/QanelasSoftRegular.otf') format('opentype');
+                font-weight: 400;
+                font-display: swap;
+              }
               .hide-scrollbar::-webkit-scrollbar {
                 width: 0 !important;
               }
@@ -140,15 +140,12 @@ class MesheryDocument extends Document<MyDocumentProps> {
             dangerouslySetInnerHTML={{
               __html: `
                 (function () {
-                  const loaderId = "PRE_REACT_LOADER-text-message"
-
                   try {
-                    var el = document.getElementById(loaderId)
-                    if (!el) return;
-
-                    el.textContent = window.Loader.PersistedRandomLoadingMessage()
+                    if (window.Loader?.initializePreReactLoader) {
+                      window.Loader.initializePreReactLoader();
+                    }
                   } catch (e) {
-                    console.log("Failed to set loading message",e)
+                    console.log("Failed to initialize pre-react loader", e)
                   }
                 })();
               `,

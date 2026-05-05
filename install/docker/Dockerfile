@@ -9,7 +9,7 @@ WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
-FROM node:20-alpine AS base-node
+FROM node:22-alpine AS base-node
 
 # Installing NodeJS Dependencies
 FROM base-node AS meshery-ui-deps
@@ -112,7 +112,6 @@ COPY ./server/permissions /app/server/permissions/
 COPY ./docs/data/catalog /app/docs/data/catalog/
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
-COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
 COPY --from=meshery-ui-builder /app/out /app/ui/out
 COPY --from=meshery-ui-builder /app/public /app/ui/public
 COPY --from=meshery-ui-provider-builder /app/out /app/provider-ui/out

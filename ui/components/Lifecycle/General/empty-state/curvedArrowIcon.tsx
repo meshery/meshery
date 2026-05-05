@@ -1,5 +1,16 @@
-// @ts-nocheck
-export const CurvedArrowIcon = ({ width = '4.5rem', height = '4.5rem', props }) => {
+import React from 'react';
+
+type CurvedArrowIconProps = {
+  width?: string | number;
+  height?: string | number;
+  props?: React.SVGAttributes<SVGSVGElement>;
+};
+
+export const CurvedArrowIcon = ({
+  width = '4.5rem',
+  height = '4.5rem',
+  props,
+}: CurvedArrowIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
@@ -8,10 +7,15 @@ import ConnectCluster from './ConnectCluster';
 import { LoadingContainer, ChartSectionWithColumn, LegendSection } from '../style';
 import { ERROR_COLOR } from '@/constants/colors';
 
-export const NodeStatusChart = ({ nodeData, isClusterLoading }) => {
-  const data = nodeData?.map((node) => {
-    return [node.status, node.count];
-  });
+type NodeStatus = { status: string; count: number };
+
+type NodeStatusChartProps = {
+  nodeData?: NodeStatus[];
+  isClusterLoading?: boolean;
+};
+
+export const NodeStatusChart = ({ nodeData, isClusterLoading }: NodeStatusChartProps) => {
+  const data = nodeData?.map((node) => [node.status, node.count]);
   const totalNodes = nodeData?.reduce((acc, node) => acc + node.count, 0);
   const chartOptions = {
     data: {

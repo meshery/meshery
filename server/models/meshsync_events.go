@@ -1,17 +1,18 @@
 package models
 
 import (
+	"fmt"
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/utils"
+	"github.com/meshery/schemas/models/core"
 
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta3/component"
 	"gorm.io/gorm"
 )
 
@@ -20,15 +21,14 @@ const (
 	MeshsyncRequestSubject      = "meshery.meshsync.request"
 )
 
-// TODO: Create proper error codes for the functionalities this struct implements
 type MeshsyncDataHandler struct {
 	broker       broker.Handler
 	dbHandler    database.Handler
 	log          logger.Handler
 	Provider     Provider
-	UserID       uuid.UUID
-	ConnectionID uuid.UUID
-	InstanceID   uuid.UUID
+	UserID       core.Uuid
+	ConnectionID core.Uuid
+	InstanceID   core.Uuid
 	Token        string
 	StopFunc     func()
 	stopCh       chan struct{}
@@ -36,7 +36,7 @@ type MeshsyncDataHandler struct {
 	listenerWg   *sync.WaitGroup
 }
 
-func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID uuid.UUID, token string, stopFunc func()) *MeshsyncDataHandler {
+func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID core.Uuid, token string, stopFunc func()) *MeshsyncDataHandler {
 	return &MeshsyncDataHandler{
 		broker:       broker,
 		dbHandler:    dbHandler,
@@ -102,18 +102,21 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 			if !ok {
 				return
 			}
-		if event.EventType == broker.ErrorEvent {
-			// TODO: Handle errors accordingly
-			mh.log.Error(event.Object.(error))
-			continue
-		}
+			if event.EventType == broker.ErrorEvent {
+				if err, ok := event.Object.(error); ok {
+					mh.log.Error(ErrMeshsyncEvent(err))
+				} else {
+					mh.log.Error(ErrMeshsyncEvent(fmt.Errorf("received meshsync error event with non-error object: %T", event.Object)))
+				}
+				continue
+			}
 
-		// handle the events
-		err := mh.meshsyncEventsAccumulator(event)
-		if err != nil {
-			mh.log.Error(err)
-			continue
-		}
+			// handle the events
+			err := mh.meshsyncEventsAccumulator(event)
+			if err != nil {
+				mh.log.Error(err)
+				continue
+			}
 		}
 	}
 }
@@ -148,25 +151,33 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 			if !ok {
 				return
 			}
-		if storeUpdate.EventType == broker.ErrorEvent {
-			mh.log.Error(storeUpdate.Object.(error))
-			continue
-		}
-
-		objectsSlice := storeUpdate.Object.([]interface{})
-
-		for _, object := range objectsSlice {
-			obj, err := mh.Unmarshal(object)
-			if err != nil {
+			if storeUpdate.EventType == broker.ErrorEvent {
+				if err, ok := storeUpdate.Object.(error); ok {
+					mh.log.Error(ErrMeshsyncStoreUpdates(err))
+				} else {
+					mh.log.Error(ErrMeshsyncStoreUpdates(fmt.Errorf("received store update error event with non-error object: %T", storeUpdate.Object)))
+				}
 				continue
 			}
 
-			err = mh.persistStoreUpdate(&obj)
-			if err != nil {
-				mh.log.Error(err)
+			objectsSlice, ok := storeUpdate.Object.([]interface{})
+			if !ok {
+				mh.log.Error(ErrMeshsyncStoreUpdates(fmt.Errorf("received store update event with unexpected object type: %T", storeUpdate.Object)))
 				continue
 			}
-		}
+
+			for _, object := range objectsSlice {
+				obj, err := mh.Unmarshal(object)
+				if err != nil {
+					continue
+				}
+
+				err = mh.persistStoreUpdate(&obj)
+				if err != nil {
+					mh.log.Error(err)
+					continue
+				}
+			}
 		}
 	}
 }

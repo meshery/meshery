@@ -116,12 +116,13 @@ func start() error {
 	if err := ensureMesheryFolder(); err != nil {
 		return err
 	}
-
+	utils.Log.Debug("Meshery folder exists. Preparing start context...")
 	mctlCfg, currCtx, mesheryImageVersion, callbackURL, providerURL, err := prepareStartContext()
 	if err != nil {
 		return err
 	}
 
+	utils.Log.Debugf("Starting Meshery using platform: %s", currCtx.GetPlatform())
 	switch currCtx.GetPlatform() {
 	case platformDocker:
 		if err := startDockerDeployment(mctlCfg, currCtx, mesheryImageVersion, callbackURL); err != nil {
@@ -135,7 +136,14 @@ func start() error {
 		return unsupportedPlatformError(currCtx.GetPlatform())
 	}
 
-	return dashboardCmd.RunE(nil, nil)
+	if skipBrowserFlag {
+		utils.Log.Info("Meshery deployed. Use `mesheryctl system dashboard` to access the UI.")
+		return nil
+	}
+	if err := dashboardCmd.RunE(nil, nil); err != nil {
+		utils.Log.Warnf("Meshery deployed successfully, but could not open dashboard: %v\nRun `mesheryctl system dashboard` to access the UI.", err)
+	}
+	return nil
 }
 
 func ensureMesheryFolder() error {

@@ -224,7 +224,7 @@ export function getSharableCommonHostAndprotocolLink(sharedResource) {
   if (sharedResource?.application_file) {
     return `${webAddr}?${APPLICATION}=${sharedResource.id}`;
   }
-  if (sharedResource?.pattern_file) {
+  if (sharedResource?.patternFile) {
     return `${webAddr}?mode=${DESIGN}&${DESIGN}=${sharedResource.id}`;
   }
   if (sharedResource?.filter_resource) {
@@ -435,11 +435,11 @@ export const getComponentFromDesign = (design, componentId) => {
  */
 export const getDesignVersion = (design) => {
   if (design?.visibility === 'published') {
-    return design.catalog_data.published_version;
+    return design.catalog_data?.published_version;
   } else {
     try {
-      const parsedYaml = yaml.load(design.pattern_file);
-      return parsedYaml.version;
+      const parsedYaml = yaml.load(design.patternFile);
+      return parsedYaml?.version;
     } catch (error) {
       console.error('Version is not available for this design: ', error);
     }

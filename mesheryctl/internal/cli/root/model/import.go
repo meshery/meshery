@@ -5,24 +5,20 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
-	"github.com/meshery/meshkit/errors"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	meshkitutils "github.com/meshery/meshkit/utils"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 )
 
 type cmdModelImportFlags struct {
@@ -75,12 +71,7 @@ mesheryctl model import --file [path-to-csv-directory]
 		}
 
 		if utils.IsValidUrl(path) {
-			err := registerModel(nil, nil, nil, "", "urlImport", path, true)
-			if err != nil {
-				utils.Log.Error(err)
-				return nil
-			}
-			return nil
+			return registerModel(nil, nil, nil, "", "urlImport", path, true)
 		}
 
 		hasCSVs := hasCSVs(path)
@@ -88,20 +79,7 @@ mesheryctl model import --file [path-to-csv-directory]
 		if hasCSVs {
 			modelcsvpath, componentcsvpath, relationshipcsvpath, err := meshkitRegistryUtils.GetCsv(path)
 			if err != nil {
-				utils.Log.Infof("%s: %s", utils.BoldString("ERROR"), "Error importing model using CSV files")
-				if meshkitErr, ok := err.(*errors.Error); ok {
-					if len(meshkitErr.ProbableCause) != 0 {
-						utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), strings.Join(meshkitErr.ProbableCause, ". "))
-					}
-					if len(meshkitErr.SuggestedRemediation) != 0 {
-						utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("SUGGESTED REMEDIATION"), strings.Join(meshkitErr.SuggestedRemediation, ". "))
-					}
-				} else {
-					utils.Log.Error(err)
-				}
-
 				return err
-
 			} else {
 				modelData, err := os.ReadFile(modelcsvpath)
 				if err != nil {
@@ -176,13 +154,7 @@ func hasCSVs(path string) bool {
 }
 
 func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return err
-	}
-
-	baseURL := mctlCfg.GetBaseMesheryURL()
-	url := baseURL + "/api/meshmodels/register"
+	urlPath := "api/meshmodels/register"
 	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
 	switch dataType {
@@ -194,9 +166,9 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 		importRequest.ImportBody.ModelFile = data
 	default:
 		if data != nil {
-			err = encoding.Unmarshal(data, &importRequest.ImportBody.Model)
+			err := encoding.Unmarshal(data, &importRequest.ImportBody.Model)
 			if err != nil {
-				return err
+				return utils.ErrUnmarshal(err)
 			}
 		}
 	}
@@ -205,38 +177,24 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 	importRequest.Register = register
 	requestBody, err := json.Marshal(importRequest)
 	if err != nil {
-		return err
+		return utils.ErrMarshal(err)
 	}
 
-	req, err := utils.NewRequest(http.MethodPost, url, bytes.NewReader(requestBody))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := api.Add(urlPath, bytes.NewReader(requestBody), headers)
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := utils.MakeRequest(req)
+	response, err := api.GenerateDataFromBodyResponse[models.RegistryAPIResponse](req)
 	if err != nil {
 		return err
 	}
 
-	defer func() { _ = resp.Body.Close() }()
-	if resp.StatusCode != http.StatusOK {
-		err = models.ErrDoRequest(err, resp.Request.Method, url)
-		return err
-	}
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		err = models.ErrDataRead(err, "response body")
-		return err
-	}
-	var response models.RegistryAPIResponse
-
-	if err := encoding.Unmarshal((bodyBytes), &response); err != nil {
-		err = models.ErrUnmarshal(err, "response body")
-		return err
-	}
-
-	displayEntities(&response)
+	displayEntities(response)
 
 	if len(response.EntityTypeSummary.SuccessfulModels) == 0 {
 		return utils.ErrInvalidModel()

@@ -16,8 +16,8 @@ import (
 
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"gorm.io/gorm"

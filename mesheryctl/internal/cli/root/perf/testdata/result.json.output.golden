@@ -1,11 +1,11 @@
 [
   {
-    "meshery_id": "71fc9834-8968-4d61-bab6-689b013b5a34",
+    "mesheryId": "71fc9834-8968-4d61-bab6-689b013b5a34",
     "name": "istio_1630091576784",
     "mesh": "istio",
-    "performance_profile": "303c3586-fd65-4846-91de-0c67b9b152a5",
-    "user_id": "4ea5c578-1cd4-4078-a08d-fbe1ca553663",
-    "runner_results": {
+    "performanceProfile": "303c3586-fd65-4846-91de-0c67b9b152a5",
+    "userId": "4ea5c578-1cd4-4078-a08d-fbe1ca553663",
+    "runnerResults": {
       "URL": "https://github.com",
       "load-generator": "fortio",
       "ActualDuration": 30103028366,
@@ -40,16 +40,16 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-27T19:12:58.295332Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-27T19:12:58.295332Z"
   },
   {
-    "meshery_id": "c8e67a8a-258e-49d6-8e28-20adb61081c9",
+    "mesheryId": "c8e67a8a-258e-49d6-8e28-20adb61081c9",
     "name": "istio_1630011460550",
     "mesh": "istio",
-    "performance_profile": "a947dff3-1415-4ca6-8922-e35b3232bd78",
-    "user_id": "107368cd-85cc-499f-a8bc-3a7ad1bc0f8b",
-    "runner_results": {
+    "performanceProfile": "a947dff3-1415-4ca6-8922-e35b3232bd78",
+    "userId": "107368cd-85cc-499f-a8bc-3a7ad1bc0f8b",
+    "runnerResults": {
       "URL": "https://localhost:10000",
       "load-generator": "fortio",
       "ActualDuration": 30000705481,
@@ -84,16 +84,16 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-27T02:27:41.155598Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-27T02:27:41.155598Z"
   },
   {
-    "meshery_id": "d2cf975b-272e-484f-aba3-3a022ee2a540",
+    "mesheryId": "d2cf975b-272e-484f-aba3-3a022ee2a540",
     "name": "istio_1630008597557",
     "mesh": "istio",
-    "performance_profile": "f331c784-aba0-4944-8d7d-ae264221bcbf",
-    "user_id": "107368cd-85cc-499f-a8bc-3a7ad1bc0f8b",
-    "runner_results": {
+    "performanceProfile": "f331c784-aba0-4944-8d7d-ae264221bcbf",
+    "userId": "107368cd-85cc-499f-a8bc-3a7ad1bc0f8b",
+    "runnerResults": {
       "URL": "https://localhost:10001",
       "load-generator": "fortio",
       "ActualDuration": 30024017320,
@@ -128,15 +128,15 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-27T01:39:59.14584Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-27T01:39:59.14584Z"
   },
   {
-    "meshery_id": "dd9fb290-5a69-46a8-badc-0b1ba3dc855e",
+    "mesheryId": "dd9fb290-5a69-46a8-badc-0b1ba3dc855e",
     "name": "istio_1629986124516",
     "mesh": "istio",
-    "user_id": "107368cd-85cc-499f-a8bc-3a7ad1bc0f8b",
-    "runner_results": {
+    "userId": "107368cd-85cc-499f-a8bc-3a7ad1bc0f8b",
+    "runnerResults": {
       "URL": "https://localhost:10000",
       "load-generator": "fortio",
       "ActualDuration": 30000149089,
@@ -171,15 +171,15 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-26T19:26:25.959847Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-26T19:26:25.959847Z"
   },
   {
-    "meshery_id": "0f5f3bdd-54ab-4a27-926d-abbe4fc87643",
+    "mesheryId": "0f5f3bdd-54ab-4a27-926d-abbe4fc87643",
     "name": "istio_1629986124516",
     "mesh": "istio",
-    "user_id": "107368cd-85cc-499f-a8bc-3a7ad1bc0f8b",
-    "runner_results": {
+    "userId": "107368cd-85cc-499f-a8bc-3a7ad1bc0f8b",
+    "runnerResults": {
       "URL": "https://localhost:10000",
       "load-generator": "fortio",
       "ActualDuration": 30019891521,
@@ -214,15 +214,15 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-26T19:25:25.124595Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-26T19:25:25.124595Z"
   },
   {
-    "meshery_id": "ac3d9763-fa50-457e-9790-c873ad8f2ac5",
+    "mesheryId": "ac3d9763-fa50-457e-9790-c873ad8f2ac5",
     "name": "octarine_1629905150548",
     "mesh": "octarine",
-    "user_id": "145496f6-f5d2-40b9-841e-1b5471b60411",
-    "runner_results": {
+    "userId": "145496f6-f5d2-40b9-841e-1b5471b60411",
+    "runnerResults": {
       "URL": "https://www.youtube.com/watch?v=-f16Qlg8v6Q&ab_channel=StudyMD",
       "load-generator": "fortio",
       "ActualDuration": 15379418200,
@@ -257,15 +257,15 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-25T15:25:51.399348Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-25T15:25:51.399348Z"
   },
   {
-    "meshery_id": "a4f7b101-c9b7-43da-8195-d7c7598881a1",
+    "mesheryId": "a4f7b101-c9b7-43da-8195-d7c7598881a1",
     "name": "kuma_1629905088843",
     "mesh": "kuma",
-    "user_id": "145496f6-f5d2-40b9-841e-1b5471b60411",
-    "runner_results": {
+    "userId": "145496f6-f5d2-40b9-841e-1b5471b60411",
+    "runnerResults": {
       "URL": "https://www.youtube.com:443/watch?v=-f16Qlg8v6Q&ab_channel=StudyMD",
       "load-generator": "wrk2",
       "ActualDuration": 19997982000,
@@ -304,16 +304,16 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-25T15:24:49.772682Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-25T15:24:49.772682Z"
   },
   {
-    "meshery_id": "2df2f40c-8296-4ca1-862b-e31c5b5f368b",
+    "mesheryId": "2df2f40c-8296-4ca1-862b-e31c5b5f368b",
     "name": "istio_1629903571922",
     "mesh": "istio",
-    "performance_profile": "0bc8f57c-38a5-415d-a994-87a3791a931e",
-    "user_id": "145496f6-f5d2-40b9-841e-1b5471b60411",
-    "runner_results": {
+    "performanceProfile": "0bc8f57c-38a5-415d-a994-87a3791a931e",
+    "userId": "145496f6-f5d2-40b9-841e-1b5471b60411",
+    "runnerResults": {
       "URL": "https://www.youtube.com/watch?v=-f16Qlg8v6Q&ab_channel=StudyMD",
       "load-generator": "fortio",
       "ActualDuration": 30221856700,
@@ -348,15 +348,15 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-25T14:59:33.533Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-25T14:59:33.533Z"
   },
   {
-    "meshery_id": "8e15c1bc-84d7-40fa-b7a6-1bd18c2f844d",
+    "mesheryId": "8e15c1bc-84d7-40fa-b7a6-1bd18c2f844d",
     "name": "linkerd_1629903535068",
     "mesh": "linkerd",
-    "user_id": "145496f6-f5d2-40b9-841e-1b5471b60411",
-    "runner_results": {
+    "userId": "145496f6-f5d2-40b9-841e-1b5471b60411",
+    "runnerResults": {
       "URL": "https://www.youtube.com/watch?v=-f16Qlg8v6Q&ab_channel=StudyMD",
       "load-generator": "fortio",
       "ActualDuration": 10445208300,
@@ -391,15 +391,15 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-25T14:58:56.192014Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-25T14:58:56.192014Z"
   },
   {
-    "meshery_id": "9fb03799-045a-4b64-9017-d4fd1d17d5ac",
+    "mesheryId": "9fb03799-045a-4b64-9017-d4fd1d17d5ac",
     "name": "consul_1629903480840",
     "mesh": "consul",
-    "user_id": "145496f6-f5d2-40b9-841e-1b5471b60411",
-    "runner_results": {
+    "userId": "145496f6-f5d2-40b9-841e-1b5471b60411",
+    "runnerResults": {
       "URL": "https://guides.github.com/features/mastering-markdown/",
       "load-generator": "fortio",
       "ActualDuration": 30004869700,
@@ -434,15 +434,15 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-25T14:58:01.391148Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-25T14:58:01.391148Z"
   },
   {
-    "meshery_id": "e6df1bc4-5f09-475c-b818-b09c625e180d",
+    "mesheryId": "e6df1bc4-5f09-475c-b818-b09c625e180d",
     "name": "consul_1629903024533",
     "mesh": "consul",
-    "user_id": "145496f6-f5d2-40b9-841e-1b5471b60411",
-    "runner_results": {
+    "userId": "145496f6-f5d2-40b9-841e-1b5471b60411",
+    "runnerResults": {
       "URL": "https://guides.github.com/features/mastering-markdown/",
       "load-generator": "fortio",
       "ActualDuration": 30013893200,
@@ -477,15 +477,15 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-25T14:50:25.402335Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-25T14:50:25.402335Z"
   },
   {
-    "meshery_id": "73428715-e40a-43a1-a0bc-ed7d58a2832b",
+    "mesheryId": "73428715-e40a-43a1-a0bc-ed7d58a2832b",
     "name": "istio_1629902923911",
     "mesh": "istio",
-    "user_id": "145496f6-f5d2-40b9-841e-1b5471b60411",
-    "runner_results": {
+    "userId": "145496f6-f5d2-40b9-841e-1b5471b60411",
+    "runnerResults": {
       "URL": "https://github.com/meshery/meshery/issues/3972",
       "load-generator": "fortio",
       "ActualDuration": 30017936600,
@@ -520,14 +520,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-25T14:48:45.0421Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-25T14:48:45.0421Z"
   },
   {
-    "meshery_id": "ec91b448-6234-4d9e-b1be-59dd8f9223c2",
+    "mesheryId": "ec91b448-6234-4d9e-b1be-59dd8f9223c2",
     "name": "No mesh_1629812585899",
-    "user_id": "862b94d4-e210-4a1c-b58e-32f93be806f6",
-    "runner_results": {
+    "userId": "862b94d4-e210-4a1c-b58e-32f93be806f6",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 5087239700,
@@ -562,14 +562,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-24T21:43:05.670523Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-24T21:43:05.670523Z"
   },
   {
-    "meshery_id": "fdf39ac7-a8f1-4a88-85e4-0ebeb4a0e9bf",
+    "mesheryId": "fdf39ac7-a8f1-4a88-85e4-0ebeb4a0e9bf",
     "name": "No mesh_1629812560411",
-    "user_id": "862b94d4-e210-4a1c-b58e-32f93be806f6",
-    "runner_results": {
+    "userId": "862b94d4-e210-4a1c-b58e-32f93be806f6",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 6397944100,
@@ -604,14 +604,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-24T21:42:40.789443Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-24T21:42:40.789443Z"
   },
   {
-    "meshery_id": "03b331d6-f838-4d9f-8f3f-f9c372993380",
+    "mesheryId": "03b331d6-f838-4d9f-8f3f-f9c372993380",
     "name": "No mesh_1629785430145",
-    "user_id": "24187768-ce8a-41f0-be74-c537c8e41adc",
-    "runner_results": {
+    "userId": "24187768-ce8a-41f0-be74-c537c8e41adc",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 6369133863,
@@ -646,14 +646,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-24T11:40:32.122358Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-24T11:40:32.122358Z"
   },
   {
-    "meshery_id": "c5497cf8-13b8-4468-b776-cfe2c03105b2",
+    "mesheryId": "c5497cf8-13b8-4468-b776-cfe2c03105b2",
     "name": "No mesh_1629699211991",
-    "user_id": "862b94d4-e210-4a1c-b58e-32f93be806f6",
-    "runner_results": {
+    "userId": "862b94d4-e210-4a1c-b58e-32f93be806f6",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 5301191500,
@@ -688,14 +688,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-23T14:15:48.239279Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-23T14:15:48.239279Z"
   },
   {
-    "meshery_id": "956a2074-5975-4250-aff6-334345daeac6",
+    "mesheryId": "956a2074-5975-4250-aff6-334345daeac6",
     "name": "No mesh_1629699211991",
-    "user_id": "862b94d4-e210-4a1c-b58e-32f93be806f6",
-    "runner_results": {
+    "userId": "862b94d4-e210-4a1c-b58e-32f93be806f6",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 5510294100,
@@ -730,14 +730,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-23T14:15:35.745148Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-23T14:15:35.745148Z"
   },
   {
-    "meshery_id": "68cf3a7a-ebd9-434e-bddd-703fee5d732a",
+    "mesheryId": "68cf3a7a-ebd9-434e-bddd-703fee5d732a",
     "name": "No mesh_1629699211991",
-    "user_id": "862b94d4-e210-4a1c-b58e-32f93be806f6",
-    "runner_results": {
+    "userId": "862b94d4-e210-4a1c-b58e-32f93be806f6",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 5517988400,
@@ -772,14 +772,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-23T14:15:21.874222Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-23T14:15:21.874222Z"
   },
   {
-    "meshery_id": "9d06c7e6-18bc-4cab-b7f1-5d48375a993e",
+    "mesheryId": "9d06c7e6-18bc-4cab-b7f1-5d48375a993e",
     "name": "No mesh_1629699211991",
-    "user_id": "862b94d4-e210-4a1c-b58e-32f93be806f6",
-    "runner_results": {
+    "userId": "862b94d4-e210-4a1c-b58e-32f93be806f6",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 5369296600,
@@ -814,14 +814,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-23T14:14:57.746444Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-23T14:14:57.746444Z"
   },
   {
-    "meshery_id": "83775082-52a2-4f91-a7b9-c7eb2157c6b3",
+    "mesheryId": "83775082-52a2-4f91-a7b9-c7eb2157c6b3",
     "name": "No mesh_1629699211991",
-    "user_id": "862b94d4-e210-4a1c-b58e-32f93be806f6",
-    "runner_results": {
+    "userId": "862b94d4-e210-4a1c-b58e-32f93be806f6",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 5491033700,
@@ -856,14 +856,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-23T14:13:32.277429Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-23T14:13:32.277429Z"
   },
   {
-    "meshery_id": "f22cdd21-d1ac-49cd-97c1-134a243fa4da",
+    "mesheryId": "f22cdd21-d1ac-49cd-97c1-134a243fa4da",
     "name": "No mesh_1629698942959",
-    "user_id": "862b94d4-e210-4a1c-b58e-32f93be806f6",
-    "runner_results": {
+    "userId": "862b94d4-e210-4a1c-b58e-32f93be806f6",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 5295368000,
@@ -898,14 +898,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-23T14:13:21.626586Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-23T14:13:21.626586Z"
   },
   {
-    "meshery_id": "055338a4-f041-4b18-9c6d-d1bb6c750736",
+    "mesheryId": "055338a4-f041-4b18-9c6d-d1bb6c750736",
     "name": "No mesh_1629698942959",
-    "user_id": "862b94d4-e210-4a1c-b58e-32f93be806f6",
-    "runner_results": {
+    "userId": "862b94d4-e210-4a1c-b58e-32f93be806f6",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 5306313700,
@@ -940,14 +940,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-23T14:13:13.399304Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-23T14:13:13.399304Z"
   },
   {
-    "meshery_id": "a88dbb71-777a-44b0-a19f-4a4eca99261c",
+    "mesheryId": "a88dbb71-777a-44b0-a19f-4a4eca99261c",
     "name": "No mesh_1629698942959",
-    "user_id": "862b94d4-e210-4a1c-b58e-32f93be806f6",
-    "runner_results": {
+    "userId": "862b94d4-e210-4a1c-b58e-32f93be806f6",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 5168728100,
@@ -982,14 +982,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-23T14:12:58.438274Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-23T14:12:58.438274Z"
   },
   {
-    "meshery_id": "1b6fd362-d925-4138-a410-1e31ed5489eb",
+    "mesheryId": "1b6fd362-d925-4138-a410-1e31ed5489eb",
     "name": "No mesh_1629698942959",
-    "user_id": "862b94d4-e210-4a1c-b58e-32f93be806f6",
-    "runner_results": {
+    "userId": "862b94d4-e210-4a1c-b58e-32f93be806f6",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 6182968600,
@@ -1024,14 +1024,14 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-23T14:09:03.480043Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-23T14:09:03.480043Z"
   },
   {
-    "meshery_id": "089c159f-3e58-481c-b4ae-e92497bff5c1",
+    "mesheryId": "089c159f-3e58-481c-b4ae-e92497bff5c1",
     "name": "No mesh_1629698569178",
-    "user_id": "862b94d4-e210-4a1c-b58e-32f93be806f6",
-    "runner_results": {
+    "userId": "862b94d4-e210-4a1c-b58e-32f93be806f6",
+    "runnerResults": {
       "URL": "https://google.com",
       "load-generator": "fortio",
       "ActualDuration": 5283787900,
@@ -1066,7 +1066,7 @@
         ]
       }
     },
-    "server_metrics": null,
-    "test_start_time": "2021-08-23T14:04:44.592265Z"
+    "serverMetrics": null,
+    "testStartTime": "2021-08-23T14:04:44.592265Z"
   }
 ]

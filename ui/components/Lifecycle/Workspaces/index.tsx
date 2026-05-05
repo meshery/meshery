@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   Breadcrumbs,
   ErrorBoundary,
@@ -14,6 +13,7 @@ import {
   Modal,
   createAndEditWorkspaceSchema,
   createAndEditWorkspaceUiSchema,
+  editWorkspaceSchema,
   Button,
   Typography,
   SearchBar,
@@ -179,7 +179,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       pagesize: pageSize,
       search: search,
       order: sortOrder,
-      orgID: organization?.id,
+      orgId: organization?.id,
     },
     {
       skip: !organization?.id ? true : false,
@@ -239,9 +239,13 @@ const Workspaces = ({ onSelectWorkspace }) => {
       .catch((error) => handleError(`Workspace Delete Error: ${error?.data}`));
   };
 
-  const fetchSchema = () => {
+  const fetchSchema = (workspaceActionType) => {
+    const baseSchema =
+      workspaceActionType === WORKSPACE_ACTION_TYPES.EDIT
+        ? editWorkspaceSchema
+        : createAndEditWorkspaceSchema;
     const updatedSchema = {
-      schema: createAndEditWorkspaceSchema,
+      schema: baseSchema,
       uiSchema: createAndEditWorkspaceUiSchema,
     };
     updatedSchema.schema?.properties?.organization &&
@@ -286,14 +290,14 @@ const Workspaces = ({ onSelectWorkspace }) => {
     });
   };
 
-  const handleWorkspaceModalOpen = (e, actionType, workspaceObject) => {
+  const handleWorkspaceModalOpen = (e, workspaceActionType, workspaceObject) => {
     e.stopPropagation();
-    if (actionType === WORKSPACE_ACTION_TYPES.EDIT) {
+    if (workspaceActionType === WORKSPACE_ACTION_TYPES.EDIT) {
       setActionType(WORKSPACE_ACTION_TYPES.EDIT);
       setInitialData({
         name: workspaceObject.name,
         description: workspaceObject.description,
-        organization: workspaceObject.organization_id,
+        organization: workspaceObject.organizationId,
       });
       setEditWorkspaceId(workspaceObject.id);
     } else {
@@ -305,7 +309,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       });
       setEditWorkspaceId('');
     }
-    fetchSchema();
+    fetchSchema(workspaceActionType);
   };
 
   const handleTeamsModalOpen = (e, workspaceId, workspaceName) => {
@@ -485,7 +489,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
               handleWorkspaceModalOpen={handleWorkspaceModalOpen}
               page={page}
               setPage={setPage}
-              totalPages={Math.ceil(workspacesData?.total_count / pageSize)}
+              totalPages={Math.ceil(workspacesData?.totalCount / pageSize)}
               workspacesData={workspaces}
               key={`grid-view-${viewType}`}
             />

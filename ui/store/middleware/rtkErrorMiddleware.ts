@@ -30,7 +30,7 @@ export const rtkErrorMiddleware: Middleware = (storeApi) => (next) => (action) =
         description: `${endpointName}: ${errorMessage}`,
         action: 'api_error',
         category: 'api',
-        created_at: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       }),
     );
   }

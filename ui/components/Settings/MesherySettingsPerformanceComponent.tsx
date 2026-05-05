@@ -23,6 +23,7 @@ import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-
 import { useSelector, useDispatch } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
+import { normalizeLoadTestPrefs } from '../../lib/load-test-prefs';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
 
@@ -34,7 +35,12 @@ const FormControlWrapper = styled(FormControl)({
 const MesherySettingsPerformanceComponent = () => {
   const { notify } = useNotification();
   const { loadTestPref } = useSelector((state) => state.prefTest);
-  const { qps: initialQps, c: initialC, t: initialT, gen: initialGen } = loadTestPref;
+  const {
+    qps: initialQps = 0,
+    c: initialC = 0,
+    t: initialT = '30s',
+    gen: initialGen = 'fortio',
+  } = loadTestPref;
   const { selectedK8sContexts } = useSelector((state) => state.ui);
 
   const { data: loadTestPrefs } = useGetLoadTestPrefsQuery(selectedK8sContexts);
@@ -49,11 +55,11 @@ const MesherySettingsPerformanceComponent = () => {
 
   useEffect(() => {
     if (loadTestPrefs) {
-      setQps(loadTestPrefs.qps);
-      setC(loadTestPrefs.c);
-      setT(loadTestPrefs.t);
-      setGen(loadTestPrefs.gen);
-      setTValue(loadTestPrefs.t);
+      setQps(loadTestPrefs.qps ?? 0);
+      setC(loadTestPrefs.c ?? 0);
+      setT(loadTestPrefs.t ?? '30s');
+      setGen(loadTestPrefs.gen ?? 'fortio');
+      setTValue(loadTestPrefs.t ?? '30s');
     }
   }, [loadTestPrefs]);
 
@@ -81,14 +87,18 @@ const MesherySettingsPerformanceComponent = () => {
   };
 
   const handleSubmit = () => {
+    if (!t) {
+      setTError('error-autocomplete-value');
+      return;
+    }
     try {
-      const tNum = parseInt(t.substring(0, t.length - 1), 10);
-      if (isNaN(tNum) || tNum <= 0 || !['h', 'm', 's'].includes(t.slice(-1).toLowerCase())) {
+const tNum = t.length > 1 ? parseInt(t.substring(0, t.length - 1), 10) : NaN;
+      if (isNaN(tNum) || tNum <= 0 || !['d', 'h', 'm', 's'].includes(t.slice(-1).toLowerCase())) {
         setTError('error-autocomplete-value');
         return;
       }
-    } catch(e) {
-      console.error("[MesherySettingsPerformance] autocomplete error:", e);
+    } catch (e) {
+      console.error('[MesherySettingsPerformance] autocomplete error:', e);
       setTError('error-autocomplete-value');
       return;
     }

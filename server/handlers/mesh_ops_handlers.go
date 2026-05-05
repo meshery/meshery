@@ -18,30 +18,21 @@ func init() {
 	gob.Register([]*models.Adapter{})
 }
 
-// swagger:route GET /api/system/adapters/available SystemAPI idGetAvailableAdapters
-// Handle GET request for available adapters
-//
-// Fetches and returns all the adapters available for deployment
-// Responses:
-//  200: systemAdaptersRespWrapper
-
 // AdaptersHandler is used to fetch all the adapters
 func (h *Handler) AvailableAdaptersHandler(w http.ResponseWriter, _ *http.Request) {
 	err := json.NewEncoder(w).Encode(models.ListAvailableAdapters)
 	if err != nil {
 		obj := "data"
-		h.log.Error(models.ErrMarshal(err, obj))
-		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		// Encode streams to w; failure here means the body has already
+		// started — log only, don't double-write.
+		if isClientDisconnect(err) {
+			h.log.Debug(models.ErrMarshal(err, obj))
+		} else {
+			h.log.Error(models.ErrMarshal(err, obj))
+		}
 		return
 	}
 }
-
-// swagger:route GET /api/system/adapters SystemAPI idGetSystemAdapters
-// Handle GET request for adapters
-//
-// Fetches and returns all the adapters and ping adapters
-// Responses:
-//  200: systemAdaptersRespWrapper
 
 // AdaptersHandler is used to fetch all the adapters
 func (h *Handler) AdaptersHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -61,8 +52,12 @@ func (h *Handler) AdaptersHandler(w http.ResponseWriter, req *http.Request, pref
 	err := json.NewEncoder(w).Encode(h.config.AdapterTracker.GetAdapters(req.Context()))
 	if err != nil {
 		obj := "data"
-		h.log.Error(models.ErrMarshal(err, obj))
-		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		// Streaming encode failure — log only.
+		if isClientDisconnect(err) {
+			h.log.Debug(models.ErrMarshal(err, obj))
+		} else {
+			h.log.Error(models.ErrMarshal(err, obj))
+		}
 		return
 	}
 }
@@ -92,13 +87,14 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 	}
 	if aID < 0 {
 		h.log.Error(ErrValidAdapter)
-		http.Error(w, ErrValidAdapter.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrValidAdapter, http.StatusBadRequest)
 		return
 	}
 
 	mClient, err := meshes.CreateClient(req.Context(), meshAdapters[aID].Location)
 	if err != nil {
-		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
+		h.log.Error(ErrMeshClient)
+		writeMeshkitError(w, ErrMeshClient, http.StatusInternalServerError)
 		return
 	}
 	defer func() {
@@ -107,26 +103,12 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 	_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
 	if err != nil {
 		h.log.Error(ErrMeshClient)
-		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrMeshClient, http.StatusInternalServerError)
 		return
 	}
 
-	_, _ = w.Write([]byte("{}"))
+	writeJSONEmptyObject(w, http.StatusOK)
 }
-
-// swagger:route POST /api/system/adapter/manage SystemAPI idPostAdapterConfig
-// Handle POST requests to persist adapter config
-//
-// Used to persist adapter config
-// responses:
-// 	200: mesheryAdaptersRespWrapper
-
-// swagger:route DELETE /api/system/adapter/manage SystemAPI idDeleteAdapterConfig
-// Handle DELETE requests to delete adapter config
-//
-// Used to delete adapter configuration
-// responses:
-// 	200:
 
 // MeshAdapterConfigHandler is used to persist adapter config
 func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -143,13 +125,13 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 		h.log.Debug("meshLocationURL: ", meshLocationURL)
 		if strings.TrimSpace(meshLocationURL) == "" {
 			h.log.Error(ErrAddAdapter)
-			http.Error(w, ErrAddAdapter.Error(), http.StatusBadRequest)
+			writeMeshkitError(w, ErrAddAdapter, http.StatusBadRequest)
 			return
 		}
 		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, prefObj, meshLocationURL, provider)
 		if err != nil {
-			// h.log.Error(ErrRetrieveData(err))
-			http.Error(w, ErrRetrieveData(err).Error(), http.StatusInternalServerError)
+			h.log.Error(ErrRetrieveData(err))
+			writeMeshkitError(w, ErrRetrieveData(err), http.StatusInternalServerError)
 			return // error is handled appropriately in the relevant method
 		}
 	case http.MethodDelete:
@@ -158,7 +140,9 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 			return // error is handled appropriately in the relevant method
 		}
 	default:
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		// Correct status is 405 (Method Not Allowed), not 404 — the
+		// endpoint exists but the verb is wrong. Fixing alongside JSON.
+		writeMeshkitError(w, ErrMethodNotAllowed(req.Method), http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -166,15 +150,19 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	err = provider.RecordPreferences(req, user.UserId, prefObj)
 	if err != nil {
 		h.log.Error(ErrRecordPreferences(err))
-		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRecordPreferences(err), http.StatusInternalServerError)
 		return
 	}
 
 	err = json.NewEncoder(w).Encode(meshAdapters)
 	if err != nil {
 		obj := "data"
-		h.log.Error(models.ErrMarshal(err, obj))
-		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		// Streaming encode failure — log only.
+		if isClientDisconnect(err) {
+			h.log.Debug(models.ErrMarshal(err, obj))
+		} else {
+			h.log.Error(models.ErrMarshal(err, obj))
+		}
 		return
 	}
 }
@@ -183,10 +171,6 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	alreadyConfigured := false
 	for _, adapter := range meshAdapters {
 		if adapter.Location == meshLocationURL {
-			// err := errors.New("Adapter with the given meshLocationURL already exists.")
-			// h.log.Error(err)
-			// http.Error(w, err.Error(), http.StatusForbidden)
-			// return nil, err
 			alreadyConfigured = true
 			break
 		}
@@ -199,7 +183,6 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	mClient, err := meshes.CreateClient(ctx, meshLocationURL)
 	if err != nil {
 		h.log.Error(ErrMeshClient)
-		// http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
 		return meshAdapters, ErrMeshClient
 	}
 	h.log.Debug("created client for adapter: ", meshLocationURL)
@@ -209,14 +192,12 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	respOps, err := mClient.MClient.SupportedOperations(ctx, &meshes.SupportedOperationsRequest{})
 	if err != nil {
 		h.log.Error(ErrRetrieveMeshData(err))
-		// http.Error(w, ErrRetrieveMeshData(err).Error(), http.StatusInternalServerError)
 		return meshAdapters, err
 	}
 	h.log.Debug("retrieved supported ops for adapter: ", meshLocationURL)
 	meshInfo, err := mClient.MClient.ComponentInfo(ctx, &meshes.ComponentInfoRequest{})
 	if err != nil {
 		h.log.Error(ErrRetrieveMeshData(err))
-		// http.Error(w, ErrRetrieveMeshData(err).Error(), http.StatusInternalServerError)
 		return meshAdapters, err
 	}
 	h.log.Debug("retrieved name for adapter: ", meshLocationURL)
@@ -247,7 +228,7 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 	}
 	if aID < 0 {
 		h.log.Error(ErrValidAdapter)
-		http.Error(w, ErrValidAdapter.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrValidAdapter, http.StatusBadRequest)
 		return meshAdapters, ErrValidAdapter
 	}
 
@@ -269,13 +250,6 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 	h.log.Debug("New adapters: ", b)
 	return newMeshAdapters, nil
 }
-
-// swagger:route POST /api/system/adapter/operation SystemAPI idPostAdapterOperation
-// Handle POST requests for Adapter Operations
-//
-// Used to send operations to the adapters
-// responses:
-// 	200:
 
 // MeshOpsHandler is used to send operations to the adapters
 func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -308,7 +282,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	}
 	if aID < 0 {
 		h.log.Error(ErrValidAdapter)
-		http.Error(w, ErrValidAdapter.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrValidAdapter, http.StatusBadRequest)
 		return
 	}
 
@@ -323,7 +297,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	mk8sContexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(mk8sContexts) == 0 {
 		h.log.Error(ErrInvalidK8SConfigNil)
-		http.Error(w, ErrInvalidK8SConfigNil.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidK8SConfigNil, http.StatusBadRequest)
 		return
 	}
 	var configs []string
@@ -337,7 +311,8 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	}
 	mClient, err := meshes.CreateClient(req.Context(), meshAdapters[aID].Location)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.log.Error(ErrMeshClient)
+		writeMeshkitError(w, ErrMeshClient, http.StatusInternalServerError)
 		return
 	}
 	defer func() {
@@ -346,7 +321,8 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	operationID, err := uuid.NewV4()
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.log.Error(ErrGenerateUUID(err))
+		writeMeshkitError(w, ErrGenerateUUID(err), http.StatusInternalServerError)
 		return
 	}
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
@@ -360,7 +336,8 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		Version:     version,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.log.Error(ErrApplyChange(err))
+		writeMeshkitError(w, ErrApplyChange(err), http.StatusInternalServerError)
 		return
 	}
 }

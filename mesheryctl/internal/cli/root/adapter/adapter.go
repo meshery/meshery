@@ -54,8 +54,7 @@ var (
 			// get the meshery config
 			mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 
 			if len(args) > 0 {
@@ -77,12 +76,12 @@ var (
 			// if no mesh was specified, the user will be prompted to select one
 			meshName, err = validateMesh(mctlCfg, meshName)
 			if err != nil {
-				utils.Log.Error(err)
+				return err
 			}
 
 			// ensure the mesh's adapter is available and update adapterURL if so
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				utils.Log.Error(err)
+				return err
 			}
 			return nil
 		},

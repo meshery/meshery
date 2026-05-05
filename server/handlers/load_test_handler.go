@@ -38,12 +38,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-
-		w.WriteHeader(http.StatusBadRequest)
-		if _, writeErr := fmt.Fprintf(w, "failed to read request body: %s", err); writeErr != nil {
-			h.log.Error(writeErr)
-		}
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -51,7 +46,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		body, err = yaml.JSONToYAML(body)
 		if err != nil {
 			h.log.Error(ErrPatternFile(err))
-			http.Error(w, ErrPatternFile(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrPatternFile(err), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -61,7 +56,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	perfTest := &models.PerformanceTestConfigFile{}
 	if err := json.Unmarshal(jsonBytes, perfTest); err != nil {
 		h.log.Error(ErrParseBool(err, "provided input"))
-		http.Error(w, ErrParseBool(err, "provided input").Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrParseBool(err, "provided input"), http.StatusBadRequest)
 		return
 	}
 
@@ -69,7 +64,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	testName := perfTest.Config.Name
 	if testName == "" {
 		h.log.Error(ErrBlankName(err))
-		http.Error(w, ErrBlankName(err).Error(), http.StatusForbidden)
+		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
 		return
 	}
 
@@ -83,7 +78,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	testDuration, err := time.ParseDuration(perfTest.Config.Duration)
 	if err != nil {
 		h.log.Error(ErrParseDuration)
-		http.Error(w, ErrParseDuration.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrParseDuration, http.StatusBadRequest)
 		return
 	}
 	loadTestOptions.Duration = testDuration
@@ -107,12 +102,12 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	if err != nil {
 		obj := "the provided load test"
 		h.log.Error(ErrParseBool(err, obj))
-		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrParseBool(err, obj), http.StatusBadRequest)
 		return
 	}
 	if !ltURL.IsAbs() {
 		h.log.Error(ErrInvalidLTURL(ltURL.String()))
-		http.Error(w, ErrInvalidLTURL(ltURL.String()).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidLTURL(ltURL.String()), http.StatusBadRequest)
 		return
 	}
 	loadTestOptions.Name = testName
@@ -145,20 +140,6 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 	return &headers
 }
 
-// swagger:route GET /api/perf/profile PerfAPI idRunPerfTest
-// Handle GET request to run a test
-//
-// Runs the load test with the given parameters
-// responses:
-// 	200:
-
-// swagger:route GET /api/user/performance/profiles/{id}/run PerformanceAPI idRunPerformanceTest
-// Handle GET request to run a performance test
-//
-// Runs the load test with the given parameters
-// responses:
-// 	200:
-
 // LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	cleanUpFiles := make([]string, 0)
@@ -174,7 +155,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -200,7 +181,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	performanceProfileData, err := provider.GetPerformanceProfile(req, profileID)
 	if err != nil {
 		h.log.Error(err)
-		http.Error(w, ErrFetchProfile(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrFetchProfile(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -208,7 +189,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	err = json.Unmarshal(performanceProfileData, &performanceProfile)
 	if err != nil {
 		h.log.Error(models.ErrUnmarshal(err, "performance profile"))
-		http.Error(w, models.ErrUnmarshal(err, "performance profile").Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrUnmarshal(err, "performance profile"), http.StatusBadRequest)
 		return
 	}
 
@@ -230,7 +211,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 				file, err := os.CreateTemp(os.TempDir(), filePath)
 				if err != nil {
 					h.log.Error(ErrCreateFile(err, certificateName))
-					http.Error(w, ErrCreateFile(err, certificateName).Error(), http.StatusInternalServerError)
+					writeMeshkitError(w, ErrCreateFile(err, certificateName), http.StatusInternalServerError)
 					return
 				}
 				cleanUpFiles = append(cleanUpFiles, file.Name())
@@ -239,7 +220,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 				_, err = file.Write([]byte(certificateData))
 				if err != nil {
 					h.log.Error(ErrCreateFile(err, certificateName))
-					http.Error(w, ErrCreateFile(err, certificateName).Error(), http.StatusInternalServerError)
+					writeMeshkitError(w, ErrCreateFile(err, certificateName), http.StatusInternalServerError)
 					return
 				}
 				assignCertificatePath("ca_certificate", file.Name(), loadTestOptions)
@@ -260,7 +241,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	if err != nil {
 		obj := "form"
 		h.log.Error(ErrParseBool(err, obj))
-		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusForbidden)
+		writeMeshkitError(w, ErrParseBool(err, obj), http.StatusForbidden)
 		return
 	}
 	q := req.URL.Query()
@@ -268,7 +249,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	testName := q.Get("name")
 	if testName == "" {
 		h.log.Error(ErrBlankName(err))
-		http.Error(w, ErrBlankName(err).Error(), http.StatusForbidden)
+		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
 		return
 	}
 	meshName := q.Get("mesh")
@@ -308,7 +289,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	if err != nil {
 		obj := "load test duration"
 		h.log.Error(ErrParseBool(err, obj))
-		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusForbidden)
+		writeMeshkitError(w, ErrParseBool(err, obj), http.StatusForbidden)
 		return
 	}
 
@@ -323,7 +304,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	if err != nil || !ltURL.IsAbs() {
 		obj := "the provided load test url"
 		h.log.Error(ErrParseBool(err, obj))
-		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrParseBool(err, obj), http.StatusBadRequest)
 		return
 	}
 	loadTestOptions.URL = loadTestURL
@@ -356,7 +337,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	flusher, ok := w.(http.Flusher)
 	if !ok {
 		h.log.Error(ErrEventStreamingNotSupported)
-		http.Error(w, ErrEventStreamingNotSupported.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrEventStreamingNotSupported, http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "text/event-stream")
@@ -379,17 +360,39 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 		for data := range respChan {
 			bd, err := json.Marshal(data)
 			if err != nil {
+				// We are inside an active SSE connection — Content-Type:
+				// text/event-stream has already been committed above. Calling
+				// http.Error here would silently corrupt the stream (it tries
+				// to set text/plain after headers are flushed, then writes a
+				// trailing newline that breaks SSE framing). Instead, emit an
+				// in-protocol error event using the same LoadTestResponse
+				// envelope the client already understands (status="error" is
+				// handled by the EventSource onmessage consumer in the UI).
+				//
+				// We deliberately do NOT return here: the worker goroutine
+				// will keep writing into respChan until executeLoadTest
+				// exits, and an early return would block the worker once
+				// the buffered slots fill. Continue draining so the worker
+				// can finish and close(respChan) terminates this loop.
 				h.log.Error(models.ErrMarshal(err, "meshery result for shipping"))
-				http.Error(w, models.ErrMarshal(err, "meshery result for shipping").Error(), http.StatusInternalServerError)
-				return
+				errPayload, mErr := json.Marshal(&models.LoadTestResponse{
+					Status:  models.LoadTestError,
+					Message: models.ErrMarshal(err, "meshery result for shipping").Error(),
+				})
+				if mErr != nil {
+					// Last-resort: a static, hand-rolled JSON literal so the
+					// stream stays well-formed even if envelope marshal fails.
+					errPayload = []byte(`{"status":"error","message":"failed to marshal load test result"}`)
+				}
+				_, _ = fmt.Fprintf(w, "data: %s\n\n", errPayload)
+				flusher.Flush()
+				continue
 			}
 
 			h.log.Debug("received new data on response channel")
 			_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
-			if flusher != nil {
-				flusher.Flush()
-				h.log.Debug("Flushed the messages on the wire...")
-			}
+			flusher.Flush()
+			h.log.Debug("Flushed the messages on the wire...")
 		}
 		endChan <- struct{}{}
 		h.log.Debug("response channel closed")

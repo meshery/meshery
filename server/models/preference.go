@@ -9,17 +9,17 @@ import (
 
 // K8SNode - represents a kubernetes node
 type K8SNode struct {
-	InternalIP              string `json:"internal_ip,omitempty"`
+	InternalIP              string `json:"internalIp,omitempty"`
 	HostName                string `json:"hostname,omitempty"`
-	AllocatableCPU          string `json:"allocatable_cpu,omitempty"`
-	AllocatableMemory       string `json:"allocatable_memory,omitempty"`
-	CapacityCPU             string `json:"capacity_cpu,omitempty"`
-	CapacityMemory          string `json:"capacity_memory,omitempty"`
-	OSImage                 string `json:"os_image,omitempty"`
-	OperatingSystem         string `json:"operating_system,omitempty"`
-	KubeletVersion          string `json:"kubelet_version,omitempty"`
-	KubeProxyVersion        string `json:"kubeproxy_version,omitempty"`
-	ContainerRuntimeVersion string `json:"container_runtime_version,omitempty"`
+	AllocatableCPU          string `json:"allocatableCpu,omitempty"`
+	AllocatableMemory       string `json:"allocatableMemory,omitempty"`
+	CapacityCPU             string `json:"capacityCpu,omitempty"`
+	CapacityMemory          string `json:"capacityMemory,omitempty"`
+	OSImage                 string `json:"osImage,omitempty"`
+	OperatingSystem         string `json:"operatingSystem,omitempty"`
+	KubeletVersion          string `json:"kubeletVersion,omitempty"`
+	KubeProxyVersion        string `json:"kubeproxyVersion,omitempty"`
+	ContainerRuntimeVersion string `json:"containerRuntimeVersion,omitempty"`
 	Architecture            string `json:"architecture,omitempty"`
 }
 
@@ -66,7 +66,7 @@ type Preference struct {
 	LoadTestPreferences               *LoadTestPreferences   `json:"loadTestPrefs,omitempty"`
 	AnonymousUsageStats               bool                   `json:"anonymousUsageStats"`
 	AnonymousPerfResults              bool                   `json:"anonymousPerfResults"`
-	UpdatedAt                         time.Time              `json:"updated_at,omitempty"`
+	UpdatedAt                         time.Time              `json:"updatedAt,omitempty"`
 	DashboardPreferences              map[string]interface{} `json:"dashboardPreferences,omitempty"`
 	SelectedOrganizationID            string                 `json:"selectedOrganizationID,omitempty"`
 	SelectedWorkspaceForOrganizations map[string]string      `json:"selectedWorkspaceForOrganizations,omitempty"` // map[orgID]workspaceID

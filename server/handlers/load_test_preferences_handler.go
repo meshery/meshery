@@ -33,58 +33,35 @@ func (h *Handler) UserTestPreferenceHandler(w http.ResponseWriter, req *http.Req
 	}
 }
 
-// swagger:route POST /api/user/prefs/perf UserAPI idPostLoadPreferences
-// Handle POST request for load test preferences
-//
-// Used for persisting load test preferences
-// responses:
-// 	200:
-
 // UserTestPreferenceStore is used for persisting load test preferences
 func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		// logrus.Error(err)
-		// http.Error(w, msg, http.StatusInternalServerError)
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 	perfTest := &SMP.PerformanceTestConfig{}
 	if err = protojson.Unmarshal(body, perfTest); err != nil {
 		obj := "the provided input"
-		// err = errors.Wrapf(err, msg)
-		// logrus.Error(err)
-		// http.Error(w, msg, http.StatusBadRequest)
 		h.log.Error(models.ErrUnmarshal(err, obj))
-		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
 	if err = models.SMPPerformanceTestConfigValidator(perfTest); err != nil {
-		// logrus.Error(err)
-		// http.Error(w, err.Error(), http.StatusBadRequest)
 		h.log.Error(ErrRecordPreferences(err))
-		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrRecordPreferences(err), http.StatusBadRequest)
 		return
 	}
 	tid, err := provider.SMPTestConfigStore(req, perfTest)
 	if err != nil {
 		obj := "user preference"
-		// logrus.Errorf("unable to save user preferences: %v", err)
-		// http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
 		h.log.Error(ErrFailToSave(err, obj))
-		http.Error(w, ErrFailToSave(err, obj).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrFailToSave(err, obj), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write([]byte(tid))
+	writeJSONMessage(w, map[string]string{"test_uuid": tid}, http.StatusOK)
 }
-
-// swagger:route GET /api/user/prefs/perf UserAPI idGetLoadPreferences
-// Handle GET request for load test preferences
-//
-// Used for fetching load test preferences
-// responses:
-// 	200: loadTestPreferencesWrapper
 
 // UserTestPreferenceGet gets the PerformanceTestConfig object
 func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -99,20 +76,16 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		h.log.Debug(testPage, testPageSize)
 		testObjJSON, err := provider.SMPTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
 		if err != nil {
-			// logrus.Error("error fetching test configs")
-			// http.Error(w, "error fetching test configs", http.StatusInternalServerError)
 			h.log.Error(ErrTestConfigs)
-			http.Error(w, ErrTestConfigs.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrTestConfigs, http.StatusInternalServerError)
 			return
 		}
 		_, _ = w.Write(testObjJSON)
 	} else {
 		testObj, err := provider.SMPTestConfigGet(req, testUUID)
 		if err != nil {
-			// logrus.Error("error fetching test configs")
-			// http.Error(w, "error fetching test configs", http.StatusInternalServerError)
 			h.log.Error(ErrTestConfigs)
-			http.Error(w, ErrTestConfigs.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrTestConfigs, http.StatusInternalServerError)
 			return
 		}
 		if testObj == nil {
@@ -122,47 +95,34 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		fmt.Printf("%v", testObj)
 		data, err := protojson.Marshal(testObj)
 		if err != nil {
-			// logrus.Errorf("error reading database: %v", err)
-			// http.Error(w, "error reading database", http.StatusInternalServerError)
 			h.log.Error(ErrReadConfig(err))
-			http.Error(w, ErrReadConfig(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrReadConfig(err), http.StatusInternalServerError)
 			return
 		}
 		_, err = w.Write(data)
 		if err != nil {
-			// logrus.Errorf("error writing response: %v", err)
-			// http.Error(w, "error writing response", http.StatusInternalServerError)
+			// Response body has already been written (protojson.Marshal
+			// succeeded and w.Write is partway through) — a fresh error
+			// response would corrupt the in-flight body, so log only.
 			h.log.Error(ErrWriteResponse(err))
-			http.Error(w, ErrWriteResponse(err).Error(), http.StatusInternalServerError)
 			return
 		}
 	}
 }
-
-// swagger:route DELETE /api/user/prefs/perf UserAPI idDeleteLoadPreferences
-// Handle DELETE request for load test preferences
-//
-// Used for deleting load test preferences
-// responses:
-// 	200:
 
 // UserTestPreferenceDelete deletes the PerformanceTestConfig object
 func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	testUUID := req.URL.Query().Get("uuid")
 	if testUUID == "" {
 		obj := "field uuid"
-		// logrus.Error("field uuid not found")
-		// http.Error(w, "field uuid not found", http.StatusBadRequest)
 		h.log.Error(ErrQueryGet(obj))
-		http.Error(w, ErrQueryGet(obj).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrQueryGet(obj), http.StatusBadRequest)
 		return
 	}
 	if err := provider.SMPTestConfigDelete(req, testUUID); err != nil {
 		obj := "testConfig"
-		// logrus.Errorf("error deleting testConfig: %v", err)
-		// http.Error(w, "error deleting testConfig", http.StatusBadRequest)
 		h.log.Error(ErrFailToDelete(err, obj))
-		http.Error(w, ErrFailToDelete(err, obj).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrFailToDelete(err, obj), http.StatusInternalServerError)
 		return
 	}
 }

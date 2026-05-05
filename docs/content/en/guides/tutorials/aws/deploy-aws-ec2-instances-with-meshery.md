@@ -108,7 +108,7 @@ While this step is already handled in the design, but it's worth clarifying how 
 
 #### Deploy EC2 Controller Design
 
-After configuring your design, the next step is deployment. To learn more about deploying your designs in Meshery, see [Deploying Meshery Designs](https://cloud.layer5.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs). To deploy the resources, follow these steps:
+After configuring your design, the next step is deployment. To learn more about deploying your designs in Meshery, see [Deploying Meshery Designs](https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs). To deploy the resources, follow these steps:
 
 1. Click the **Actions** button at the top of the Kanvas and click **Deploy**.
 
@@ -134,7 +134,7 @@ This step involves deploying all the necessary resources to create the VPC and o
 - 2 Subnets (1 Public, 1 Private)
 - 1 Security Group
 
-1. Start by [cloning the design](https://cloud.layer5.io/catalog/content/catalog/vpc-workflow-design-50cac19e-209c-4acf-b91c-4784281db033) from the catalog.
+1. Start by [cloning the design](https://cloud.meshery.io/catalog/content/catalog/vpc-workflow-design-50cac19e-209c-4acf-b91c-4784281db033) from the catalog.
 
 2. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
 
@@ -148,7 +148,7 @@ This step involves deploying all the necessary resources to create the VPC and o
 
 With the VPC and networking resources set up, deploy the EC2 instances within the VPC using the following steps.
 
-1. [Clone the EC2 instances design](https://cloud.layer5.io/catalog/content/catalog/ec2-instances-design-a344f109-2d92-41da-8644-3bc285c3ca9e) from the catalog.
+1. [Clone the EC2 instances design](https://cloud.meshery.io/catalog/content/catalog/ec2-instances-design-a344f109-2d92-41da-8644-3bc285c3ca9e) from the catalog.
 
 2. Open the design on the Playground and deploy the instances.
 
