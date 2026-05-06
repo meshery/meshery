@@ -17,7 +17,7 @@ safe-outputs:
   upload-asset:
   create-issue:
     labels: ["docs", "automated-testing"]
-    close-older-issues: false 
+    close-older-issues: true
     max: 10
   noop: false
   missing-tool: false
@@ -292,6 +292,46 @@ Aim for **one issue per root cause**. For example:
 - An incorrect `make` command and a missing prerequisites section → two separate issues
 - Multiple rendering problems on the same page with the same root cause → one issue
 
+## Step 7b: Create test run summary issue
+
+After filing all individual bug/confusion issues, create **one additional issue** that captures the overall qualitative impressions from this test run. This preserves the newcomer "vibe check" that provides valuable context beyond individual bugs.
+
+Use the title format: **"[Docs] [Date] Test run summary — newcomer experience impressions"**
+
+Issue body structure:
+
+```
+**Source:** Meshery Docs Noob Tester (automated)
+**Date of test:** [Today's date]
+**Branch / commit tested:** [branch] @ [commit SHA]
+**Toolchain used:** [Node version, Go version, Hugo version]
+**Pages visited:** [List URLs]
+
+## Overall Impression as a New Meshery User
+
+[1-2 sentences on how welcoming and navigable the docs feel to a total newcomer]
+
+## Overall Impression as a First-Time Docs Contributor
+
+[1-2 sentences on how easy it is to set up the local preview, understand contribution flow, and submit a first docs PR]
+
+## What Worked Well
+
+[Bullet list of positive observations — clear sections, helpful examples, good navigation, etc.]
+
+## Recommendations
+
+- Prioritized suggestions for improving the newcomer and contributor experience
+- Quick wins that would help docs contributors immediately
+- Longer-term Meshery Docs improvements
+
+## Issues Filed This Run
+
+[List links to the individual bug/confusion issues created in Step 7]
+```
+
+This summary issue should be filed **last**, after all individual bug issues, so it can reference them.
+
 ## Step 8: Cleanup
 
 Follow the shared **Documentation Server Lifecycle Management** instructions for cleanup and stop the local Hugo preview server cleanly.
@@ -315,3 +355,4 @@ You've successfully completed this task if you:
 - Identified specific pain points with examples
 - Provided actionable recommendations
 - Created one or more GitHub issues, each focused on a single actionable finding with screenshots
+- Created a test run summary issue capturing overall newcomer impressions and linking to all filed issues
