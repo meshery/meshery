@@ -23,6 +23,8 @@ tags:
     description: Operations related to design evaluation
   - name: Feature_Features
     description: Operations related to features and entitlements
+  - name: Support_Support
+    description: Operations related to help and support requests
   - name: Academy_API_Academy
     description: Operations related to Meshery Academy content and curriculum
   - name: Badge_Badge
@@ -15098,12 +15100,31 @@ paths:
                           description: Connection Name
                           minLength: 1
                           maxLength: 255
+                        description:
+                          x-oapi-codegen-extra-tags:
+                            db: description
+                            json: description
+                          x-order: 3
+                          type: string
+                          description: Human-readable description of the connection and its purpose.
+                          maxLength: 1000
+                        url:
+                          x-oapi-codegen-extra-tags:
+                            db: url
+                            json: url
+                          x-order: 4
+                          type: string
+                          format: uri
+                          description: >-
+                            URL of the remote resource this connection points to (e.g. the Helm repository URL, the
+                            Kubernetes API server endpoint, the Grafana instance URL).
+                          maxLength: 2048
                         credentialId:
                           x-go-name: CredentialID
                           x-oapi-codegen-extra-tags:
                             db: credential_id
                             json: credentialId
-                          x-order: 3
+                          x-order: 5
                           description: Associated Credential ID
                           type: string
                           format: uuid
@@ -15113,7 +15134,7 @@ paths:
                         type:
                           x-oapi-codegen-extra-tags:
                             db: type
-                          x-order: 4
+                          x-order: 6
                           type: string
                           description: Connection Type (platform, telemetry, collaboration)
                           maxLength: 255
@@ -15121,21 +15142,21 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: sub_type
                             json: subType
-                          x-order: 5
+                          x-order: 7
                           type: string
                           description: Connection Subtype (cloud, identity, metrics, chat, git, orchestration)
                           maxLength: 255
                         kind:
                           x-oapi-codegen-extra-tags:
                             db: kind
-                          x-order: 6
+                          x-order: 8
                           type: string
                           description: Connection Kind (meshery, kubernetes, prometheus, grafana, gke, aws, azure, slack, github)
                           maxLength: 255
                         metadata:
                           x-oapi-codegen-extra-tags:
                             db: metadata
-                          x-order: 7
+                          x-order: 9
                           x-go-type: core.Map
                           x-go-type-import:
                             path: github.com/meshery/schemas/models/core
@@ -15145,7 +15166,7 @@ paths:
                         status:
                           x-oapi-codegen-extra-tags:
                             db: status
-                          x-order: 8
+                          x-order: 10
                           description: Connection Status
                           type: string
                           enum:
@@ -15162,7 +15183,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: user_id
                             json: userId
-                          x-order: 9
+                          x-order: 11
                           description: User ID who owns this connection
                           type: string
                           format: uuid
@@ -15174,7 +15195,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: created_at
                             json: createdAt
-                          x-order: 10
+                          x-order: 12
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -15183,7 +15204,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: updated_at
                             json: updatedAt
-                          x-order: 11
+                          x-order: 13
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -15192,7 +15213,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: deleted_at
                             json: deletedAt
-                          x-order: 12
+                          x-order: 14
                           x-go-type: meshcore.NullTime
                           x-go-type-import:
                             name: meshcore
@@ -15355,10 +15376,10 @@ paths:
                             db: '-'
                             gorm: '-'
                           x-go-type-skip-optional-pointer: true
-                          x-order: 13
+                          x-order: 15
                         schemaVersion:
                           description: Specifies the version of the schema used for the definition.
-                          x-order: 14
+                          x-order: 16
                           x-oapi-codegen-extra-tags:
                             db: '-'
                             gorm: '-'
@@ -15542,12 +15563,31 @@ paths:
                     description: Connection Name
                     minLength: 1
                     maxLength: 255
+                  description:
+                    x-oapi-codegen-extra-tags:
+                      db: description
+                      json: description
+                    x-order: 3
+                    type: string
+                    description: Human-readable description of the connection and its purpose.
+                    maxLength: 1000
+                  url:
+                    x-oapi-codegen-extra-tags:
+                      db: url
+                      json: url
+                    x-order: 4
+                    type: string
+                    format: uri
+                    description: >-
+                      URL of the remote resource this connection points to (e.g. the Helm repository URL, the Kubernetes
+                      API server endpoint, the Grafana instance URL).
+                    maxLength: 2048
                   credentialId:
                     x-go-name: CredentialID
                     x-oapi-codegen-extra-tags:
                       db: credential_id
                       json: credentialId
-                    x-order: 3
+                    x-order: 5
                     description: Associated Credential ID
                     type: string
                     format: uuid
@@ -15557,7 +15597,7 @@ paths:
                   type:
                     x-oapi-codegen-extra-tags:
                       db: type
-                    x-order: 4
+                    x-order: 6
                     type: string
                     description: Connection Type (platform, telemetry, collaboration)
                     maxLength: 255
@@ -15565,21 +15605,21 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: sub_type
                       json: subType
-                    x-order: 5
+                    x-order: 7
                     type: string
                     description: Connection Subtype (cloud, identity, metrics, chat, git, orchestration)
                     maxLength: 255
                   kind:
                     x-oapi-codegen-extra-tags:
                       db: kind
-                    x-order: 6
+                    x-order: 8
                     type: string
                     description: Connection Kind (meshery, kubernetes, prometheus, grafana, gke, aws, azure, slack, github)
                     maxLength: 255
                   metadata:
                     x-oapi-codegen-extra-tags:
                       db: metadata
-                    x-order: 7
+                    x-order: 9
                     x-go-type: core.Map
                     x-go-type-import:
                       path: github.com/meshery/schemas/models/core
@@ -15589,7 +15629,7 @@ paths:
                   status:
                     x-oapi-codegen-extra-tags:
                       db: status
-                    x-order: 8
+                    x-order: 10
                     description: Connection Status
                     type: string
                     enum:
@@ -15606,7 +15646,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: user_id
                       json: userId
-                    x-order: 9
+                    x-order: 11
                     description: User ID who owns this connection
                     type: string
                     format: uuid
@@ -15618,7 +15658,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: created_at
                       json: createdAt
-                    x-order: 10
+                    x-order: 12
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -15627,7 +15667,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: updated_at
                       json: updatedAt
-                    x-order: 11
+                    x-order: 13
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -15636,7 +15676,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: deleted_at
                       json: deletedAt
-                    x-order: 12
+                    x-order: 14
                     x-go-type: meshcore.NullTime
                     x-go-type-import:
                       name: meshcore
@@ -15797,10 +15837,10 @@ paths:
                       db: '-'
                       gorm: '-'
                     x-go-type-skip-optional-pointer: true
-                    x-order: 13
+                    x-order: 15
                   schemaVersion:
                     description: Specifies the version of the schema used for the definition.
-                    x-order: 14
+                    x-order: 16
                     x-oapi-codegen-extra-tags:
                       db: '-'
                       gorm: '-'
@@ -15893,12 +15933,31 @@ paths:
                     description: Connection Name
                     minLength: 1
                     maxLength: 255
+                  description:
+                    x-oapi-codegen-extra-tags:
+                      db: description
+                      json: description
+                    x-order: 3
+                    type: string
+                    description: Human-readable description of the connection and its purpose.
+                    maxLength: 1000
+                  url:
+                    x-oapi-codegen-extra-tags:
+                      db: url
+                      json: url
+                    x-order: 4
+                    type: string
+                    format: uri
+                    description: >-
+                      URL of the remote resource this connection points to (e.g. the Helm repository URL, the Kubernetes
+                      API server endpoint, the Grafana instance URL).
+                    maxLength: 2048
                   credentialId:
                     x-go-name: CredentialID
                     x-oapi-codegen-extra-tags:
                       db: credential_id
                       json: credentialId
-                    x-order: 3
+                    x-order: 5
                     description: Associated Credential ID
                     type: string
                     format: uuid
@@ -15908,7 +15967,7 @@ paths:
                   type:
                     x-oapi-codegen-extra-tags:
                       db: type
-                    x-order: 4
+                    x-order: 6
                     type: string
                     description: Connection Type (platform, telemetry, collaboration)
                     maxLength: 255
@@ -15916,21 +15975,21 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: sub_type
                       json: subType
-                    x-order: 5
+                    x-order: 7
                     type: string
                     description: Connection Subtype (cloud, identity, metrics, chat, git, orchestration)
                     maxLength: 255
                   kind:
                     x-oapi-codegen-extra-tags:
                       db: kind
-                    x-order: 6
+                    x-order: 8
                     type: string
                     description: Connection Kind (meshery, kubernetes, prometheus, grafana, gke, aws, azure, slack, github)
                     maxLength: 255
                   metadata:
                     x-oapi-codegen-extra-tags:
                       db: metadata
-                    x-order: 7
+                    x-order: 9
                     x-go-type: core.Map
                     x-go-type-import:
                       path: github.com/meshery/schemas/models/core
@@ -15940,7 +15999,7 @@ paths:
                   status:
                     x-oapi-codegen-extra-tags:
                       db: status
-                    x-order: 8
+                    x-order: 10
                     description: Connection Status
                     type: string
                     enum:
@@ -15957,7 +16016,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: user_id
                       json: userId
-                    x-order: 9
+                    x-order: 11
                     description: User ID who owns this connection
                     type: string
                     format: uuid
@@ -15969,7 +16028,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: created_at
                       json: createdAt
-                    x-order: 10
+                    x-order: 12
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -15978,7 +16037,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: updated_at
                       json: updatedAt
-                    x-order: 11
+                    x-order: 13
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -15987,7 +16046,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: deleted_at
                       json: deletedAt
-                    x-order: 12
+                    x-order: 14
                     x-go-type: meshcore.NullTime
                     x-go-type-import:
                       name: meshcore
@@ -16148,10 +16207,10 @@ paths:
                       db: '-'
                       gorm: '-'
                     x-go-type-skip-optional-pointer: true
-                    x-order: 13
+                    x-order: 15
                   schemaVersion:
                     description: Specifies the version of the schema used for the definition.
-                    x-order: 14
+                    x-order: 16
                     x-oapi-codegen-extra-tags:
                       db: '-'
                       gorm: '-'
@@ -16320,12 +16379,31 @@ paths:
                     description: Connection Name
                     minLength: 1
                     maxLength: 255
+                  description:
+                    x-oapi-codegen-extra-tags:
+                      db: description
+                      json: description
+                    x-order: 3
+                    type: string
+                    description: Human-readable description of the connection and its purpose.
+                    maxLength: 1000
+                  url:
+                    x-oapi-codegen-extra-tags:
+                      db: url
+                      json: url
+                    x-order: 4
+                    type: string
+                    format: uri
+                    description: >-
+                      URL of the remote resource this connection points to (e.g. the Helm repository URL, the Kubernetes
+                      API server endpoint, the Grafana instance URL).
+                    maxLength: 2048
                   credentialId:
                     x-go-name: CredentialID
                     x-oapi-codegen-extra-tags:
                       db: credential_id
                       json: credentialId
-                    x-order: 3
+                    x-order: 5
                     description: Associated Credential ID
                     type: string
                     format: uuid
@@ -16335,7 +16413,7 @@ paths:
                   type:
                     x-oapi-codegen-extra-tags:
                       db: type
-                    x-order: 4
+                    x-order: 6
                     type: string
                     description: Connection Type (platform, telemetry, collaboration)
                     maxLength: 255
@@ -16343,21 +16421,21 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: sub_type
                       json: subType
-                    x-order: 5
+                    x-order: 7
                     type: string
                     description: Connection Subtype (cloud, identity, metrics, chat, git, orchestration)
                     maxLength: 255
                   kind:
                     x-oapi-codegen-extra-tags:
                       db: kind
-                    x-order: 6
+                    x-order: 8
                     type: string
                     description: Connection Kind (meshery, kubernetes, prometheus, grafana, gke, aws, azure, slack, github)
                     maxLength: 255
                   metadata:
                     x-oapi-codegen-extra-tags:
                       db: metadata
-                    x-order: 7
+                    x-order: 9
                     x-go-type: core.Map
                     x-go-type-import:
                       path: github.com/meshery/schemas/models/core
@@ -16367,7 +16445,7 @@ paths:
                   status:
                     x-oapi-codegen-extra-tags:
                       db: status
-                    x-order: 8
+                    x-order: 10
                     description: Connection Status
                     type: string
                     enum:
@@ -16384,7 +16462,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: user_id
                       json: userId
-                    x-order: 9
+                    x-order: 11
                     description: User ID who owns this connection
                     type: string
                     format: uuid
@@ -16396,7 +16474,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: created_at
                       json: createdAt
-                    x-order: 10
+                    x-order: 12
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -16405,7 +16483,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: updated_at
                       json: updatedAt
-                    x-order: 11
+                    x-order: 13
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
@@ -16414,7 +16492,7 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: deleted_at
                       json: deletedAt
-                    x-order: 12
+                    x-order: 14
                     x-go-type: meshcore.NullTime
                     x-go-type-import:
                       name: meshcore
@@ -16575,10 +16653,10 @@ paths:
                       db: '-'
                       gorm: '-'
                     x-go-type-skip-optional-pointer: true
-                    x-order: 13
+                    x-order: 15
                   schemaVersion:
                     description: Specifies the version of the schema used for the definition.
-                    x-order: 14
+                    x-order: 16
                     x-oapi-codegen-extra-tags:
                       db: '-'
                       gorm: '-'
@@ -40681,6 +40759,33 @@ components:
       x-oapi-codegen-extra-tags:
         yaml: subCategory
         json: subCategory
+    Support_SupportRequest:
+      type: object
+      description: Payload for submitting a help-and-support request.
+      required:
+        - subject
+        - message
+      properties:
+        subject:
+          type: string
+          title: Subject
+          minLength: 1
+          maxLength: 255
+          description: Concise and descriptive title for the support request.
+        message:
+          type: string
+          title: Description
+          minLength: 10
+          description: Detailed description of the issue or question.
+        scope:
+          type: string
+          title: Scope
+          enum:
+            - Support
+            - Community
+            - Account
+            - Commercial
+          description: Category that best represents the nature of the inquiry.
     Academy_API_AcademyCurriculaOrgId:
       type: string
       description: Organization ID that owns this learning path
@@ -52399,6 +52504,51 @@ components:
             type: object
             additionalProperties: true
           description: The models of the meshmodelmodelspage.
+    Model_MesheryModelImportFormPayload:
+      type: object
+      description: >
+        Flat canonical representation of the model import form that combines the UI-level uploadType discriminator with
+        the union of fields from the ImportBody oneOf variants. This schema is the authoritative source for the
+        canonical RJSF form schema at schemas/constructs/v1beta2/model/forms/import.json. The server receives an
+        ImportRequest; this form schema captures the superset of user-facing fields so the form schema can be validated
+        as a subset of this canonical type.
+      required:
+        - uploadType
+      properties:
+        uploadType:
+          type: string
+          title: Upload method
+          x-enum-casing-exempt: true
+          enum:
+            - file
+            - urlImport
+            - csv
+          description: >-
+            Choose the method you prefer. Select 'File Import' or 'CSV Import' if you have the file on your local
+            system, or 'URL Import' if you have the file hosted online.
+        fileName:
+          type: string
+          description: Name of the model file being uploaded.
+          maxLength: 255
+        modelFile:
+          type: string
+          description: 'Model file content. Supported formats: .tar, .tar.gz, .tgz.'
+        url:
+          type: string
+          format: uri
+          description: 'A direct URL to a single model file. Supported formats: .tar, .tar.gz, .tgz.'
+        modelCsv:
+          type: string
+          format: binary
+          description: CSV file containing model definitions.
+        componentCsv:
+          type: string
+          format: binary
+          description: CSV file containing component definitions.
+        relationshipCsv:
+          type: string
+          format: binary
+          description: CSV file containing relationship definitions.
     Organization_UUID:
       type: string
       format: uuid
@@ -57512,12 +57662,31 @@ components:
           description: Connection Name
           minLength: 1
           maxLength: 255
+        description:
+          x-oapi-codegen-extra-tags:
+            db: description
+            json: description
+          x-order: 3
+          type: string
+          description: Human-readable description of the connection and its purpose.
+          maxLength: 1000
+        url:
+          x-oapi-codegen-extra-tags:
+            db: url
+            json: url
+          x-order: 4
+          type: string
+          format: uri
+          description: >-
+            URL of the remote resource this connection points to (e.g. the Helm repository URL, the Kubernetes API
+            server endpoint, the Grafana instance URL).
+          maxLength: 2048
         credentialId:
           x-go-name: CredentialID
           x-oapi-codegen-extra-tags:
             db: credential_id
             json: credentialId
-          x-order: 3
+          x-order: 5
           description: Associated Credential ID
           type: string
           format: uuid
@@ -57527,7 +57696,7 @@ components:
         type:
           x-oapi-codegen-extra-tags:
             db: type
-          x-order: 4
+          x-order: 6
           type: string
           description: Connection Type (platform, telemetry, collaboration)
           maxLength: 255
@@ -57535,21 +57704,21 @@ components:
           x-oapi-codegen-extra-tags:
             db: sub_type
             json: subType
-          x-order: 5
+          x-order: 7
           type: string
           description: Connection Subtype (cloud, identity, metrics, chat, git, orchestration)
           maxLength: 255
         kind:
           x-oapi-codegen-extra-tags:
             db: kind
-          x-order: 6
+          x-order: 8
           type: string
           description: Connection Kind (meshery, kubernetes, prometheus, grafana, gke, aws, azure, slack, github)
           maxLength: 255
         metadata:
           x-oapi-codegen-extra-tags:
             db: metadata
-          x-order: 7
+          x-order: 9
           x-go-type: core.Map
           x-go-type-import:
             path: github.com/meshery/schemas/models/core
@@ -57559,7 +57728,7 @@ components:
         status:
           x-oapi-codegen-extra-tags:
             db: status
-          x-order: 8
+          x-order: 10
           description: Connection Status
           type: string
           enum:
@@ -57576,7 +57745,7 @@ components:
           x-oapi-codegen-extra-tags:
             db: user_id
             json: userId
-          x-order: 9
+          x-order: 11
           description: User ID who owns this connection
           type: string
           format: uuid
@@ -57588,7 +57757,7 @@ components:
           x-oapi-codegen-extra-tags:
             db: created_at
             json: createdAt
-          x-order: 10
+          x-order: 12
           type: string
           format: date-time
           x-go-type-skip-optional-pointer: true
@@ -57597,7 +57766,7 @@ components:
           x-oapi-codegen-extra-tags:
             db: updated_at
             json: updatedAt
-          x-order: 11
+          x-order: 13
           type: string
           format: date-time
           x-go-type-skip-optional-pointer: true
@@ -57606,7 +57775,7 @@ components:
           x-oapi-codegen-extra-tags:
             db: deleted_at
             json: deletedAt
-          x-order: 12
+          x-order: 14
           x-go-type: meshcore.NullTime
           x-go-type-import:
             name: meshcore
@@ -57767,10 +57936,10 @@ components:
             db: '-'
             gorm: '-'
           x-go-type-skip-optional-pointer: true
-          x-order: 13
+          x-order: 15
         schemaVersion:
           description: Specifies the version of the schema used for the definition.
-          x-order: 14
+          x-order: 16
           x-oapi-codegen-extra-tags:
             db: '-'
             gorm: '-'
@@ -57836,12 +58005,31 @@ components:
                 description: Connection Name
                 minLength: 1
                 maxLength: 255
+              description:
+                x-oapi-codegen-extra-tags:
+                  db: description
+                  json: description
+                x-order: 3
+                type: string
+                description: Human-readable description of the connection and its purpose.
+                maxLength: 1000
+              url:
+                x-oapi-codegen-extra-tags:
+                  db: url
+                  json: url
+                x-order: 4
+                type: string
+                format: uri
+                description: >-
+                  URL of the remote resource this connection points to (e.g. the Helm repository URL, the Kubernetes API
+                  server endpoint, the Grafana instance URL).
+                maxLength: 2048
               credentialId:
                 x-go-name: CredentialID
                 x-oapi-codegen-extra-tags:
                   db: credential_id
                   json: credentialId
-                x-order: 3
+                x-order: 5
                 description: Associated Credential ID
                 type: string
                 format: uuid
@@ -57851,7 +58039,7 @@ components:
               type:
                 x-oapi-codegen-extra-tags:
                   db: type
-                x-order: 4
+                x-order: 6
                 type: string
                 description: Connection Type (platform, telemetry, collaboration)
                 maxLength: 255
@@ -57859,21 +58047,21 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: sub_type
                   json: subType
-                x-order: 5
+                x-order: 7
                 type: string
                 description: Connection Subtype (cloud, identity, metrics, chat, git, orchestration)
                 maxLength: 255
               kind:
                 x-oapi-codegen-extra-tags:
                   db: kind
-                x-order: 6
+                x-order: 8
                 type: string
                 description: Connection Kind (meshery, kubernetes, prometheus, grafana, gke, aws, azure, slack, github)
                 maxLength: 255
               metadata:
                 x-oapi-codegen-extra-tags:
                   db: metadata
-                x-order: 7
+                x-order: 9
                 x-go-type: core.Map
                 x-go-type-import:
                   path: github.com/meshery/schemas/models/core
@@ -57883,7 +58071,7 @@ components:
               status:
                 x-oapi-codegen-extra-tags:
                   db: status
-                x-order: 8
+                x-order: 10
                 description: Connection Status
                 type: string
                 enum:
@@ -57900,7 +58088,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: user_id
                   json: userId
-                x-order: 9
+                x-order: 11
                 description: User ID who owns this connection
                 type: string
                 format: uuid
@@ -57912,7 +58100,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: created_at
                   json: createdAt
-                x-order: 10
+                x-order: 12
                 type: string
                 format: date-time
                 x-go-type-skip-optional-pointer: true
@@ -57921,7 +58109,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: updated_at
                   json: updatedAt
-                x-order: 11
+                x-order: 13
                 type: string
                 format: date-time
                 x-go-type-skip-optional-pointer: true
@@ -57930,7 +58118,7 @@ components:
                 x-oapi-codegen-extra-tags:
                   db: deleted_at
                   json: deletedAt
-                x-order: 12
+                x-order: 14
                 x-go-type: meshcore.NullTime
                 x-go-type-import:
                   name: meshcore
@@ -58091,10 +58279,10 @@ components:
                   db: '-'
                   gorm: '-'
                 x-go-type-skip-optional-pointer: true
-                x-order: 13
+                x-order: 15
               schemaVersion:
                 description: Specifies the version of the schema used for the definition.
-                x-order: 14
+                x-order: 16
                 x-oapi-codegen-extra-tags:
                   db: '-'
                   gorm: '-'
@@ -64432,6 +64620,46 @@ components:
             name of your design after importing it.
           minLength: 1
           maxLength: 255
+    Design_MesheryPatternImportFormPayload:
+      type: object
+      description: >
+        Flat canonical representation of the design import form that combines the discriminator field with the union of
+        properties from MesheryPatternImportFilePayload and MesheryPatternImportURLPayload. This schema is the
+        authoritative source for the canonical RJSF form schema at schemas/constructs/v1beta3/design/forms/import.json.
+        The server receives either a File-import payload or a URL-import payload (as defined by
+        MesheryPatternImportRequestBody); this form schema captures the superset of user-facing fields so the form
+        schema can be validated as a subset of this canonical type.
+      properties:
+        name:
+          type: string
+          default: Untitled Design
+          description: >-
+            Provide a name for your design. This name will help you identify the design later. You can also change the
+            name of your design after importing it.
+          minLength: 1
+          maxLength: 255
+        uploadType:
+          type: string
+          title: Upload method
+          x-enum-casing-exempt: true
+          enum:
+            - File Upload
+            - URL Import
+          description: >
+            UI-level discriminator that controls which import variant the form submits. The client maps "File Upload" to
+            MesheryPatternImportFilePayload and "URL Import" to MesheryPatternImportURLPayload before calling the API.
+        file:
+          type: string
+          format: byte
+          description: >-
+            Base64-encoded file bytes. Supported formats: Kubernetes Manifests, Helm Charts, Docker Compose, and Meshery
+            Designs.
+        url:
+          type: string
+          format: uri
+          description: >-
+            A direct URL to a single file. Ensure the resource is in a supported format: Kubernetes Manifest, Helm
+            Chart, Docker Compose, or Meshery Design.
     Design_DesignPreferences:
       type: object
       description: Design-level preferences
@@ -66985,6 +67213,45 @@ components:
             currently ignores the field, but it is documented here so
             the canonical contract is single-sourced.
           maxLength: 65536
+    Filter_MesheryFilterImportFormPayload:
+      type: object
+      description: >
+        Flat canonical representation of the filter import form that combines the UI-level uploadType discriminator with
+        the union of properties from MesheryFilterPayload (filterFile, filterResource). This schema is the authoritative
+        source for the canonical RJSF form schema at schemas/constructs/v1beta3/filter/forms/import.json. The server
+        receives a MesheryFilterPayload; this form schema captures the superset of user-facing fields (including the
+        UI-only uploadType discriminator) so the form schema can be validated as a subset of this canonical type.
+      required:
+        - name
+        - uploadType
+      properties:
+        name:
+          type: string
+          description: Human-readable filter name.
+          minLength: 1
+          maxLength: 255
+        uploadType:
+          type: string
+          title: Upload method
+          x-enum-casing-exempt: true
+          enum:
+            - File Upload
+            - URL Upload
+          description: >
+            UI-level discriminator that controls which import variant the form submits. "File Upload" maps to a
+            base64-encoded filterFile body; "URL Upload" maps to a filterResource path/URL.
+        filterFile:
+          type: string
+          format: byte
+          description: |
+            Raw filter source as base64-encoded bytes. Required when uploadType is "File Upload".
+          maxLength: 10485760
+        filterResource:
+          type: string
+          description: >
+            Filter resource discriminator describing the body's source format (e.g. WASM module identifier or external
+            resource path). Required when uploadType is "URL Upload".
+          maxLength: 5000
     Invitation_Uuid:
       type: string
       format: uuid
@@ -75174,6 +75441,12 @@ components:
         text/plain:
           schema:
             type: string
+    Support_401:
+      description: Expired JWT token used or insufficient privilege
+      content:
+        text/plain:
+          schema:
+            type: string
     Academy_API_400:
       description: Invalid request body or request param
       content:
@@ -75738,6 +76011,10 @@ components:
       scheme: bearer
       bearerFormat: JWT
     Feature_jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Support_jwt:
       type: http
       scheme: bearer
       bearerFormat: JWT
