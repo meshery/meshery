@@ -4,8 +4,6 @@ import {
   FormControl,
   RadioGroup,
   Radio,
-  importModelUiSchema,
-  importModelSchema,
   Typography,
   ModalFooter,
   Box,
@@ -92,6 +90,63 @@ const FinishDeploymentStep = ({
   );
 };
 
+// Local schema/uiSchema for the Import Model modal.
+//
+// The upstream `importModelSchema`/`importModelUiSchema` exported by
+// @sistent/sistent (>=0.21.3) renamed properties (`file` → `modelFile`) and
+// switched the `uploadType` enum to internal tokens (`file`/`urlImport`/`csv`)
+// without `enumNames`. That broke the consumer code below — which keys off the
+// human-readable labels and the `file` form field — and also stripped the
+// friendly "File Import" / "URL Import" / "CSV Import" radio labels relied on
+// by the e2e tests. Until sistent ships a schema that round-trips through this
+// modal we hold the form shape locally so the registry import flow keeps
+// working end-to-end.
+const importModelSchema = {
+  $schema: 'https://json-schema.org/draft-07/schema#',
+  title: 'Import Model',
+  type: 'object',
+  properties: {
+    uploadType: {
+      type: 'string',
+      title: 'Upload method',
+      enum: ['File Import', 'URL Import', 'CSV Import'],
+      description:
+        "Choose the method you prefer to upload your model file. Select 'File Import' or 'CSV Import' if you have the file on your local system, or 'URL Import' if you have the file hosted online.",
+      'x-rjsf-grid-area': '12',
+    },
+    file: {
+      type: 'string',
+      title: 'Model file',
+      description: 'Model file content. Supported formats: .tar, .tar.gz, .tgz.',
+      'x-rjsf-grid-area': '12',
+    },
+    url: {
+      type: 'string',
+      format: 'uri',
+      title: 'URL',
+      description: 'A direct URL to a single model file. Supported formats: .tar, .tar.gz, .tgz.',
+      'x-rjsf-grid-area': '12',
+    },
+  },
+  allOf: [
+    {
+      if: { properties: { uploadType: { const: 'File Import' } } },
+      then: { required: ['file'] },
+    },
+    {
+      if: { properties: { uploadType: { const: 'URL Import' } } },
+      then: { required: ['url'] },
+    },
+  ],
+  required: ['uploadType'],
+};
+
+const importModelUiSchema = {
+  uploadType: { 'ui:widget': 'radio' },
+  file: { 'ui:widget': 'file' },
+  'ui:order': ['uploadType', 'file', 'url'],
+};
+
 type ImportModelModalProps = {
   isImportModalOpen: boolean;
   setIsImportModalOpen: (_open: boolean) => void;
@@ -120,24 +175,27 @@ const ImportModelModal = React.memo(
       const { uploadType, url, file } = data;
       let requestBody = null;
 
-      const fileElement = document.getElementById('root_file');
+      const fileElement = document.getElementById('root_file') as HTMLInputElement | null;
 
       switch (uploadType) {
         case 'File Import': {
-          const fileName = fileElement.files[0].name;
-          const fileData = getUnit8ArrayDecodedFile(file);
-          if (fileData) {
+          const fileName = fileElement?.files?.[0]?.name;
+          const fileData = file ? getUnit8ArrayDecodedFile(file) : null;
+          if (fileData && fileName) {
+            // Server expects ImportBody.FileName (json:"file_name"); the legacy
+            // `filename` key was silently dropped, leaving the temp file with
+            // no name and breaking model registration.
             requestBody = {
               importBody: {
                 model_file: fileData,
                 url: '',
-                filename: fileName,
+                file_name: fileName,
               },
               uploadType: 'file',
               register: true,
             };
           } else {
-            console.error('Error: File data is empty or invalid');
+            console.error('Error: File data or file name is empty or invalid');
             return;
           }
           break;
