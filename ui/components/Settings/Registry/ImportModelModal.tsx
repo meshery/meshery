@@ -110,6 +110,13 @@ const importModelSchema = {
       type: 'string',
       title: 'Upload method',
       enum: ['File Import', 'URL Import', 'CSV Import'],
+      // CustomRadioWidget below reads `schema.enumDescriptions[index]` per
+      // option; missing this would crash the modal at render.
+      enumDescriptions: [
+        'Upload a model file from your local system.',
+        'Import a model from a remote URL.',
+        'Upload a CSV file containing model definitions.',
+      ],
       description:
         "Choose the method you prefer to upload your model file. Select 'File Import' or 'CSV Import' if you have the file on your local system, or 'URL Import' if you have the file hosted online.",
       'x-rjsf-grid-area': '12',
@@ -262,7 +269,7 @@ const ImportModelModal = React.memo(
                   <div>
                     <Typography variant="subtitle1">{option.label}</Typography>
                     <Typography variant="body2" color="textSecondary" textTransform={'none'}>
-                      {schema.enumDescriptions[index]}
+                      {schema.enumDescriptions?.[index]}
                     </Typography>
                   </div>
                 }
