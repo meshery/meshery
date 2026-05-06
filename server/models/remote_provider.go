@@ -515,27 +515,26 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 
 	ck, err := r.Cookie(TokenCookieName)
 	if err != nil || ck.Value == "" {
+		// Capture the originally-requested in-app path as the post-login
+		// redirect target. Meshery owns this state in a cookie on its own
+		// domain rather than round-tripping it through the remote provider's
+		// auth chain, where intermediate hops (e.g. custom-domain bounces)
+		// could drop or rewrite the value and land the user on a non-existent
+		// route after authentication. TokenHandler reads the cookie back when
+		// the provider redirects to /api/user/token.
 		http.SetCookie(w, &http.Cookie{
 			Name:     l.RefCookieName,
-			Value:    "/",
+			Value:    refURLqueryParam,
 			Expires:  time.Now().Add(l.LoginCookieDuration),
 			Path:     "/",
 			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode, // sent on top-level cross-site GET back from the provider
 		})
-
-		var refURL []string
-		// If refURL is empty, generate the refURL based on the current request path and query param.
-		if refURLqueryParam == "" {
-			refURL = []string{base64.RawURLEncoding.EncodeToString([]byte(strings.TrimPrefix(callbackURL.String(), baseCallbackURL)))}
-		} else {
-			refURL = append(refURL, refURLqueryParam)
-		}
 
 		queryParams := url.Values{
 			"source":           []string{base64.RawURLEncoding.EncodeToString([]byte(baseCallbackURL))},
 			"provider_version": []string{l.ProviderVersion},
 			"meshery_version":  []string{mesheryVersion},
-			"ref":              refURL,
 		}
 
 		if supportsAnonymousUserSessions {
@@ -4032,7 +4031,19 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		redirectURL = GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
 	}
 
-	redirectURL = resolvePostLoginRedirect(r.URL.Query().Get("ref"), redirectURL)
+	// Post-login redirect target: read from the cookie set by InitiateLogin.
+	// resolvePostLoginRedirect's "/" fallback handles the missing-cookie case
+	// without us needing to trust any provider-side state. See
+	// selectPostLoginRefValue for the rationale.
+	redirectURL = resolvePostLoginRedirect(selectPostLoginRefValue(r, l.RefCookieName), redirectURL)
+	// One-shot cookie: clear it now that we've resolved the destination so a
+	// stale value can't override the next login flow.
+	http.SetCookie(w, &http.Cookie{
+		Name:     l.RefCookieName,
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   -1,
+	})
 
 	go func() {
 		credential := make(map[string]interface{}, 0)
