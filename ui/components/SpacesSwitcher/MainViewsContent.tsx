@@ -297,8 +297,8 @@ const MainViewsContent = ({
         <ViewInfoModal
           open={infoModal}
           closeModal={handleCloseInfoModal}
-          view_id={selectedView?.id}
-          view_name={selectedView?.name}
+          viewId={selectedView?.id}
+          viewName={selectedView?.name}
           metadata={selectedView?.metadata}
         />
       )}

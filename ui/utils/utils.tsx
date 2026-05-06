@@ -505,8 +505,8 @@ export const openViewScopedToDesignInOperator = (designName, designId, router) =
     mesheryEventBus.publish({
       type: 'OPEN_VIEW_SCOPED_TO_DESIGN',
       data: {
-        design_id: designId,
-        design_name: designName,
+        designId,
+        designName,
       },
     });
     return;
@@ -531,8 +531,8 @@ export const openDesignInKanvas = (designId, designName, router) => {
     mesheryEventBus.publish({
       type: 'OPEN_DESIGN_IN_KANVAS',
       data: {
-        design_id: designId,
-        design_name: designName,
+        designId,
+        designName,
       },
     });
     return;
@@ -547,8 +547,8 @@ export const openViewInKanvas = (viewId, viewName, router) => {
     mesheryEventBus.publish({
       type: 'OPEN_VIEW_IN_KANVAS',
       data: {
-        view_id: viewId,
-        view_name: viewName,
+        viewId,
+        viewName,
       },
     });
     return;
