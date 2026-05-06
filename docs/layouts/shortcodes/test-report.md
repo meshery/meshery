@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 6th 2026, 8:02:22 pm
+- Testing started at: May 6th 2026, 8:17:22 pm
 
 **📦 Test Result Summary**
 
-- ✅ 132 passed
-- ❌ 4 failed
+- ✅ 131 passed
+- ❌ 5 failed
 - ⚠️ 0 flaked
 - ⏩ 8 skipped
 
-⌛ _Duration: 6 minutes and 54 seconds_
+⌛ _Duration: 6 minutes and 51 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -56,7 +56,7 @@
 | 33 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 34 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 35 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
-| 36 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
+| 36 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ❌ |
 | 37 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
 | 38 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
 | 39 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
@@ -215,6 +215,29 @@ The following tests failed. Click on each to see the failure reason:
 ```
 
 
+
+</details>
+
+<details>
+<summary>❌ Grafana elements on metrics tab (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 36 |[39m
+ [90m 37 |[39m   test[33m.[39mdescribe([32m'Configure Metrics Navigation and Settings'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 38 |[39m     test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m          [31m[1m^[22m[39m
+ [90m 39 |[39m       [36mawait[39m page[33m.[39mgetByTestId([32m'configure-metrics-button'[39m)[33m.[39mclick()[33m;[39m
+ [90m 40 |[39m       [36mawait[39m expect(page)[33m.[39mtoHaveURL([35m/metrics/i[39m)[33m;[39m
+ [90m 41 |[39m     })[33m;[39m[0m
+```
 
 </details>
 
