@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 6th 2026, 4:20:08 am
+- Testing started at: May 6th 2026, 1:34:08 pm
 
 **📦 Test Result Summary**
 
-- ✅ 138 passed
-- ❌ 2 failed
+- ✅ 137 passed
+- ❌ 3 failed
 - ⚠️ 0 flaked
 - ⏩ 4 skipped
 
-⌛ _Duration: 7 minutes and 0 seconds_
+⌛ _Duration: 7 minutes and 25 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -105,7 +105,7 @@
 | 82 | None | chromium-local-provider | alias resolution | relationship | ✅ |
 | 83 | None | chromium-local-provider | alias resolution | relationship | ✅ |
 | 84 | None | chromium-local-provider | alias resolution | relationship | ✅ |
-| 85 | None | chromium-local-provider | All settings tabs |  | ✅ |
+| 85 | None | chromium-local-provider | All settings tabs |  | ❌ |
 | 86 | None | chromium-local-provider | Common UI elements |  | ✅ |
 | 87 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 88 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
@@ -223,6 +223,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 51 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
  [90m 52 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
  [90m 53 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToConnections()[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ All settings tabs (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 36 |[39m
+ [90m 37 |[39m   test[33m.[39mdescribe([32m'Configure Metrics Navigation and Settings'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 38 |[39m     test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m          [31m[1m^[22m[39m
+ [90m 39 |[39m       [36mawait[39m page[33m.[39mgetByTestId([32m'configure-metrics-button'[39m)[33m.[39mclick()[33m;[39m
+ [90m 40 |[39m       [36mawait[39m expect(page)[33m.[39mtoHaveURL([35m/metrics/i[39m)[33m;[39m
+ [90m 41 |[39m     })[33m;[39m[0m
 ```
 
 </details>
