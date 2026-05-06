@@ -137,11 +137,21 @@ const importModelSchema = {
   },
   allOf: [
     {
-      if: { properties: { uploadType: { const: 'File Import' } } },
+      // The `required: ['uploadType']` inside each `if` ensures the branch
+      // only triggers when uploadType is present — without it, JSON Schema's
+      // `properties` keyword silently passes when the property is absent, so
+      // both `file` and `url` would be marked required on first render.
+      if: {
+        properties: { uploadType: { const: 'File Import' } },
+        required: ['uploadType'],
+      },
       then: { required: ['file'] },
     },
     {
-      if: { properties: { uploadType: { const: 'URL Import' } } },
+      if: {
+        properties: { uploadType: { const: 'URL Import' } },
+        required: ['uploadType'],
+      },
       then: { required: ['url'] },
     },
   ],
