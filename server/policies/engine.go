@@ -1,8 +1,6 @@
 package policies
 
 import (
-	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
-	relationshipv1alpha3 "github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
@@ -45,16 +43,10 @@ func ConvertRelationships(registeredRelationships []interface{}) []*relationship
 			rels = append(rels, v)
 		case relationship.RelationshipDefinition:
 			rels = append(rels, &v)
-		case *relationshipv1alpha3.RelationshipDefinition:
-			if bridged := patternutils.RelationshipV1alpha3ToV1beta2(v); bridged != nil {
-				rels = append(rels, bridged)
-			}
-		case relationshipv1alpha3.RelationshipDefinition:
-			if bridged := patternutils.RelationshipV1alpha3ToV1beta2(&v); bridged != nil {
-				rels = append(rels, bridged)
-			}
 		default:
-			continue
+			if bridged := bridgeRelationship(r); bridged != nil {
+				rels = append(rels, bridged)
+			}
 		}
 	}
 	return rels
