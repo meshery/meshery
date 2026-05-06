@@ -1,7 +1,7 @@
 ---
 layout: item
 name: LoxiLB 5G Load Balancer & LBO architecture
-publishedVersion: 0.0.1
+publishedVersion: 0.0.524
 userId: 79c5452f-2f36-412e-a5c5-e09794b15055
 userName: Dominic Fatonade
 userAvatarURL: 
@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   ""
 permalink: catalog/traffic-management/loxilb-5g-load-balancer-lbo-architecture-cc4fcaaa-5b7e-492c-9920-f2408bdcefed.html
-URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/cc4fcaaa-5b7e-492c-9920-f2408bdcefed/0.0.1/design.yml'
+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/cc4fcaaa-5b7e-492c-9920-f2408bdcefed/0.0.524/design.yml'
 downloadLink: cc4fcaaa-5b7e-492c-9920-f2408bdcefed/design.yml
 ---

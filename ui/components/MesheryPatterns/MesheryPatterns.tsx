@@ -30,7 +30,7 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import SaveIcon from '@mui/icons-material/Save';
 import CustomToolbarSelect from './CustomToolbarSelect';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
+import AddIcon from '@mui/icons-material/AddCircleOutlined';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from '../CodeMirror';
 import Moment from 'react-moment';

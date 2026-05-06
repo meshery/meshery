@@ -30,8 +30,7 @@ Sistent leverages Material UI libraries and provides a custom theme on top of it
 - [How to use Sistent tokens/theme colors](#how-to-use-tokenscolors-from-sistent-theme)
 - [Examples](#examples)
 
-The Sistent design system includes a variety of base components such as `Button`, `Textfield`, `Checkbox`, and more, which can be found [here](https://github.com/layer5io/sistent/tree/master/src/base)
-Additionally, it provides custom components like `Modal`, `TransferList`, and others, which are available [here](https://github.com/layer5io/sistent/tree/master/src/custom)
+The Sistent design system includes a variety of base components such as `Button`, `Textfield`, `Checkbox`, and more, which can be found at https://github.com/layer5io/sistent. These components are designed to be flexible and customizable, allowing developers to easily adapt them to their specific needs while maintaining a consistent design language across the application.
 
 ### Usage
 
@@ -103,5 +102,5 @@ export default MyComponent;
 ```
 
 {{% alert color="info" title="NOTE" %}}
-The <a href='https://github.com/layer5io/sistent/blob/master/src/theme/palette.ts'>tokens</a> and their roles are specific to their use. For example, use the background palette for background styles and the text palette for text styles.
+The tokens and their roles are specific to their use. For example, use the background palette for background styles and the text palette for text styles.
 {{% /alert %}}

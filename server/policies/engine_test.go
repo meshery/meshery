@@ -6,10 +6,11 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
+	relationshipv1alpha3 "github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // strPtr returns a pointer to the given string.
@@ -235,6 +236,75 @@ func TestFromAndToComponentsExist(t *testing.T) {
 	if fromAndToComponentsExist(relMissing, design) {
 		t.Error("Expected missing component to be detected")
 	}
+}
+
+func TestConvertRelationships(t *testing.T) {
+	t.Run("keeps v1beta2 pointers untouched", func(t *testing.T) {
+		src := &relationship.RelationshipDefinition{RelationshipType: "non-binding"}
+
+		got := ConvertRelationships([]interface{}{src})
+
+		if len(got) != 1 {
+			t.Fatalf("expected 1 relationship, got %d", len(got))
+		}
+		if got[0] != src {
+			t.Fatal("v1beta2 relationship pointer should be returned unchanged")
+		}
+	})
+
+	t.Run("bridges v1alpha3 without json tag loss", func(t *testing.T) {
+		sourceLabel := "mounted-by"
+		matchStrategyMatrix := [][]string{{"from.kind", "to.kind"}}
+		kind := "Deployment"
+
+		src := relationshipv1alpha3.RelationshipDefinition{
+			Kind:             relationshipv1alpha3.RelationshipDefinitionKind("edge"),
+			RelationshipType: "non-binding",
+			Metadata: &relationshipv1alpha3.RelationshipMetadata{
+				Styles: &relationshipv1alpha3.RelationshipDefinitionMetadataStyles{
+					SourceLabel:  &sourceLabel,
+					PrimaryColor: "#00B39F",
+					SvgColor:     "#111111",
+					SvgWhite:     "#FFFFFF",
+				},
+			},
+			Selectors: &relationshipv1alpha3.SelectorSet{
+				{
+					Allow: relationshipv1alpha3.Selector{
+						From: []relationshipv1alpha3.SelectorItem{
+							{
+								Kind:                &kind,
+								MatchStrategyMatrix: &matchStrategyMatrix,
+								Model:               &modelv1beta1.ModelReference{Name: "kubernetes"},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		got := ConvertRelationships([]interface{}{src})
+
+		if len(got) != 1 {
+			t.Fatalf("expected 1 relationship, got %d", len(got))
+		}
+		if got[0].RelationshipMetadata == nil || got[0].RelationshipMetadata.Styles == nil || got[0].RelationshipMetadata.Styles.SourceLabel == nil {
+			t.Fatal("converted relationship lost SourceLabel")
+		}
+		if *got[0].RelationshipMetadata.Styles.SourceLabel != sourceLabel {
+			t.Fatalf("SourceLabel = %q, want %q", *got[0].RelationshipMetadata.Styles.SourceLabel, sourceLabel)
+		}
+		if got[0].Selectors == nil || (*got[0].Selectors)[0].Allow.From[0].MatchStrategyMatrix == nil {
+			t.Fatal("converted relationship lost MatchStrategyMatrix")
+		}
+	})
+
+	t.Run("skips unsupported relationship shapes", func(t *testing.T) {
+		got := ConvertRelationships([]interface{}{"not-a-relationship"})
+		if len(got) != 0 {
+			t.Fatalf("expected unsupported value to be skipped, got %d relationships", len(got))
+		}
+	})
 }
 
 func TestValidateRelationshipsInDesign(t *testing.T) {

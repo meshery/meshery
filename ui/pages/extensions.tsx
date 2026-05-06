@@ -323,7 +323,7 @@ const Layer5CloudExtension = () => (
       <UnifiedDescription hasIcon>
         <ResponsiveImage
           src="/static/img/extensions/layer5.svg"
-          alt="Meshery Cloud Logo"
+          alt="Cloud Logo"
           testId="layer5-cloud-image"
         />
         <div>
