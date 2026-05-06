@@ -9,9 +9,10 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
-	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/category"
 	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
@@ -168,8 +169,7 @@ func TestRunRelationshipEvaluation_PassesThroughEvalError(t *testing.T) {
 // seedTestComponent registers a v1beta3.ComponentDefinition into the given
 // RegistryManager using the registry's own RegisterEntity API — no raw SQL.
 // The returned component has Kind/Version matching the evalResp fixture so
-// that ComponentFilter.Get finds it and returns *v1beta3.ComponentDefinition,
-// which triggers the *v1beta1.ComponentDefinition type-assertion failure.
+// that ComponentFilter.Get finds it and returns the canonical registry type.
 func seedTestComponent(t *testing.T, rm *registry.RegistryManager) {
 	t.Helper()
 	conn := connection.Connection{
@@ -180,6 +180,8 @@ func seedTestComponent(t *testing.T, rm *registry.RegistryManager) {
 		Status:  connection.ConnectionStatusConnected,
 	}
 	enabled := v1beta3comp.Enabled
+	bgColor := "#123456"
+	shape := core.Shape("round-rectangle")
 	comp := v1beta3comp.ComponentDefinition{
 		DisplayName:   "Job",
 		SchemaVersion: "core.meshery.io/v1beta1",
@@ -198,6 +200,11 @@ func seedTestComponent(t *testing.T, rm *registry.RegistryManager) {
 			Category:      category.CategoryDefinition{Name: "Orchestration"},
 			Status:        model.Enabled,
 		},
+		Styles: &core.ComponentStyles{
+			BackgroundColor: &bgColor,
+			PrimaryColor:    "#123456",
+			Shape:           &shape,
+		},
 	}
 	id, err := comp.GenerateID()
 	require.NoError(t, err)
@@ -208,10 +215,10 @@ func seedTestComponent(t *testing.T, rm *registry.RegistryManager) {
 
 // Regression test for #18915: nil pointer dereference in processEvaluationResponse.
 //
-// Root cause: ComponentFilter.Get (meshkit v1beta1 filter package) returns
-// *v1beta3.ComponentDefinition, but the handler asserts *v1beta1.ComponentDefinition.
-// Without the guard the assertion silently returns nil=(*v1beta1.ComponentDefinition)(nil)
-// and the next dereference causes a SIGSEGV.
+// Original root cause: ComponentFilter.Get (meshkit v1beta1 filter package)
+// returns *v1beta3.ComponentDefinition, while this handler works with
+// v1beta1 evaluation payloads. The conversion must be explicit so the handler
+// neither panics nor treats valid registry-backed components as unknown.
 //
 // Real production panic (guard absent):
 //
@@ -251,19 +258,60 @@ func TestProcessEvaluationResponse_NilPointerGuard(t *testing.T) {
 		assert.Equal(t, "Job", got[0].Component.Kind)
 	})
 
-	t.Run("type assertion failure routes to unknownComponents", func(t *testing.T) {
+	t.Run("v1beta3 registry component hydrates v1beta1 evaluation response", func(t *testing.T) {
 		t.Parallel()
-		// !ok guard: registry returns *v1beta3.ComponentDefinition (the real production
-		// type), which fails the *v1beta1.ComponentDefinition assertion in the handler.
-		// Without the guard this is the exact path that caused the production SIGSEGV.
 		rm, _ := newTestRegistryManager(t)
-		seedTestComponent(t, rm) // seeds via RegisterEntity — no raw SQL
+		seedTestComponent(t, rm)
+		id, err := uuid.NewV4()
+		require.NoError(t, err)
+		position := &struct {
+			X float64 `json:"x" yaml:"x"`
+			Y float64 `json:"y" yaml:"y"`
+		}{X: 10, Y: 20}
+		partial := &component.ComponentDefinition{
+			ID:             id,
+			Component:      component.Component{Kind: "Job", Version: "batch/v1"},
+			DisplayName:    "test-job",
+			ModelReference: model.ModelReference{Name: "kubernetes"},
+			Styles:         &core.ComponentStyles{Position: position},
+		}
+		resp := &pattern.EvaluationResponse{
+			Design: pattern.PatternFile{
+				Version:    "0.0.1",
+				Components: []*component.ComponentDefinition{partial},
+			},
+			Trace: pattern.Trace{
+				ComponentsAdded: []component.ComponentDefinition{*partial},
+			},
+			Actions: []pattern.Action{
+				{
+					Op: "add_component",
+					Value: map[string]interface{}{
+						"item": map[string]interface{}{
+							"id": id.String(),
+						},
+					},
+				},
+			},
+		}
 		var got []*component.ComponentDefinition
 		require.NotPanics(t, func() {
-			got = processEvaluationResponse(rm, pattern.EvaluationRequest{}, makeResp("test-job"))
-		}, "must not panic when type assertion on registry entity fails")
-		require.Len(t, got, 1)
-		assert.Equal(t, "Job", got[0].Component.Kind)
+			got = processEvaluationResponse(rm, pattern.EvaluationRequest{}, resp)
+		}, "must not panic when registry returns canonical v1beta3 components")
+		require.Empty(t, got)
+		require.Len(t, resp.Design.Components, 1)
+		require.NotNil(t, resp.Design.Components[0].Styles)
+		require.NotNil(t, resp.Design.Components[0].Styles.BackgroundColor)
+		assert.Equal(t, "#123456", *resp.Design.Components[0].Styles.BackgroundColor)
+		require.NotNil(t, resp.Design.Components[0].Styles.Position)
+		assert.Equal(t, float64(10), resp.Design.Components[0].Styles.Position.X)
+		assert.Equal(t, float64(20), resp.Design.Components[0].Styles.Position.Y)
+		require.Len(t, resp.Actions, 1)
+		item, ok := resp.Actions[0].Value["item"].(map[string]interface{})
+		require.True(t, ok)
+		styles, ok := item["styles"].(map[string]interface{})
+		require.True(t, ok)
+		assert.Equal(t, "#123456", styles["background-color"])
 	})
 
 	t.Run("explicit DisplayName is preserved on unknown component", func(t *testing.T) {
@@ -335,6 +383,209 @@ func TestProcessEvaluationResponse_NilPointerGuard(t *testing.T) {
 		require.Len(t, got, 1)
 		assert.True(t, got[0].Metadata.IsAnnotation)
 	})
+}
+
+// seedNamespaceComponent registers a second styled component (Namespace)
+// alongside the Job from seedTestComponent so multi-component hydration
+// scenarios have two distinct kinds with two distinct styles to
+// disambiguate. Reuses the same connection/model identity as
+// seedTestComponent (kubernetes v1.25.0) to keep the model_dbs row
+// shared — RegisterEntity rejects two components claiming the same
+// generated model ID via separate registrations otherwise.
+func seedNamespaceComponent(t *testing.T, rm *registry.RegistryManager) {
+	t.Helper()
+	conn := connection.Connection{
+		Name:    "test-registrant",
+		Kind:    "kubernetes",
+		Type:    "platform",
+		SubType: "orchestration",
+		Status:  connection.ConnectionStatusConnected,
+	}
+	enabled := v1beta3comp.Enabled
+	bgColor := "#326CE5"
+	primary := "#326CE5"
+	shape := core.Shape("rectangle")
+	comp := v1beta3comp.ComponentDefinition{
+		DisplayName:   "Namespace",
+		SchemaVersion: "core.meshery.io/v1beta1",
+		Status:        &enabled,
+		Component: v1beta3comp.Component{
+			Kind:    "Namespace",
+			Version: "v1",
+			Schema:  `{"properties":{}}`,
+		},
+		Model: &model.ModelDefinition{
+			Name:          "kubernetes",
+			DisplayName:   "Kubernetes",
+			SchemaVersion: "models.meshery.io/v1beta1",
+			Version:       "v1.25.0",
+			Model:         model.Model{Version: "v1.25.0"},
+			Category:      category.CategoryDefinition{Name: "Orchestration"},
+			Status:        model.Enabled,
+		},
+		Styles: &core.ComponentStyles{
+			BackgroundColor: &bgColor,
+			PrimaryColor:    primary,
+			Shape:           &shape,
+		},
+	}
+	id, err := comp.GenerateID()
+	require.NoError(t, err)
+	comp.ID = id
+	_, _, err = rm.RegisterEntity(conn, &comp)
+	require.NoError(t, err, "seedNamespaceComponent: RegisterEntity failed")
+}
+
+// Per-instance preservation invariant: when the evaluator adds a new
+// component (e.g. Namespace auto-added for a Pod), the user's custom
+// styling on EXISTING design components (e.g. a Pod whose color the user
+// changed from green to red) must not be overwritten. Hydration is for
+// new components only — existing components flow through unmodified.
+//
+// This is the contract that lets users customize node appearance without
+// losing those customizations every time the evaluator runs (and the
+// evaluator runs after almost every UI mutation: ADD_COMPONENT,
+// UPDATE_CONFIGURATION, MERGE_DESIGN, …).
+//
+// Regression guard: a future "improvement" that loops over
+// Design.Components and applies registry styles to all of them — rather
+// than only to Trace.ComponentsAdded — would silently destroy every
+// per-instance customization in the design. This test fails fast if that
+// happens.
+func TestProcessEvaluationResponse_PreservesUserCustomizationsOnExistingComponents(t *testing.T) {
+	t.Parallel()
+
+	rm, _ := newTestRegistryManager(t)
+	seedTestComponent(t, rm)        // Job, registry BackgroundColor "#123456"
+	seedNamespaceComponent(t, rm)   // Namespace, registry BackgroundColor "#326CE5"
+
+	existingPodID, err := uuid.NewV4()
+	require.NoError(t, err)
+	addedNamespaceID, err := uuid.NewV4()
+	require.NoError(t, err)
+
+	// User customization on the existing component: red background. The
+	// registry's default for "Job" is "#123456"; if hydration accidentally
+	// touched existing components it would overwrite this with "#123456".
+	userBg := "#FF0000"
+	existingPod := &component.ComponentDefinition{
+		ID:          existingPodID,
+		Component:   component.Component{Kind: "Job", Version: "batch/v1"},
+		DisplayName: "user-customized-job",
+		Styles:      &core.ComponentStyles{BackgroundColor: &userBg},
+	}
+
+	// New component the evaluator just added — bare, no styles.
+	addedNamespace := &component.ComponentDefinition{
+		ID:          addedNamespaceID,
+		Component:   component.Component{Kind: "Namespace", Version: "v1"},
+		DisplayName: "default",
+		ModelReference: model.ModelReference{Name: "kubernetes"},
+	}
+
+	resp := &pattern.EvaluationResponse{
+		Design: pattern.PatternFile{
+			Version:    "0.0.1",
+			Components: []*component.ComponentDefinition{existingPod, addedNamespace},
+		},
+		Trace: pattern.Trace{
+			ComponentsAdded: []component.ComponentDefinition{*addedNamespace},
+		},
+	}
+
+	got := processEvaluationResponse(rm, pattern.EvaluationRequest{}, resp)
+	require.Empty(t, got, "Namespace must hydrate from registry, not strand into unknownComponents")
+
+	require.Len(t, resp.Design.Components, 2)
+	var hydratedPod, hydratedNs *component.ComponentDefinition
+	for _, c := range resp.Design.Components {
+		switch c.ID {
+		case existingPodID:
+			hydratedPod = c
+		case addedNamespaceID:
+			hydratedNs = c
+		}
+	}
+	require.NotNil(t, hydratedPod, "existing user-customized component must remain in design")
+	require.NotNil(t, hydratedNs, "evaluator-added component must be present in design")
+
+	// Invariant 1: existing user customization survives unmodified.
+	require.NotNil(t, hydratedPod.Styles)
+	require.NotNil(t, hydratedPod.Styles.BackgroundColor)
+	assert.Equal(t, "#FF0000", *hydratedPod.Styles.BackgroundColor,
+		"user-customized BackgroundColor must not be overwritten by hydration")
+	assert.Equal(t, "user-customized-job", string(hydratedPod.DisplayName),
+		"user-set DisplayName must not be overwritten by hydration")
+
+	// Invariant 2: newly-added component is hydrated from the registry.
+	require.NotNil(t, hydratedNs.Styles, "new component must have registry styles after hydration")
+	require.NotNil(t, hydratedNs.Styles.BackgroundColor)
+	assert.Equal(t, "#326CE5", *hydratedNs.Styles.BackgroundColor,
+		"new component must carry the registry's BackgroundColor")
+}
+
+// Multi-component hydration: the evaluator may add several components
+// in a single pass (e.g. a Pod referencing both a missing Namespace and
+// a missing ServiceAccount). Each must hydrate to its own registry-defined
+// styles, and the registry-cache reuse across the loop must not bleed
+// styles from one kind into another.
+//
+// Regression guard for any future change that breaks the per-iteration
+// filter construction, the registry-cache scoping, or the ID-match
+// loop in the design-component swap.
+func TestProcessEvaluationResponse_HydratesMultipleAddedComponents(t *testing.T) {
+	t.Parallel()
+
+	rm, _ := newTestRegistryManager(t)
+	seedTestComponent(t, rm)       // Job → BackgroundColor "#123456"
+	seedNamespaceComponent(t, rm)  // Namespace → BackgroundColor "#326CE5"
+
+	jobID, err := uuid.NewV4()
+	require.NoError(t, err)
+	nsID, err := uuid.NewV4()
+	require.NoError(t, err)
+
+	bareJob := &component.ComponentDefinition{
+		ID:             jobID,
+		Component:      component.Component{Kind: "Job", Version: "batch/v1"},
+		DisplayName:    "auto-job",
+		ModelReference: model.ModelReference{Name: "kubernetes"},
+	}
+	bareNs := &component.ComponentDefinition{
+		ID:             nsID,
+		Component:      component.Component{Kind: "Namespace", Version: "v1"},
+		DisplayName:    "auto-ns",
+		ModelReference: model.ModelReference{Name: "kubernetes"},
+	}
+
+	resp := &pattern.EvaluationResponse{
+		Design: pattern.PatternFile{
+			Version:    "0.0.1",
+			Components: []*component.ComponentDefinition{bareJob, bareNs},
+		},
+		Trace: pattern.Trace{
+			ComponentsAdded: []component.ComponentDefinition{*bareJob, *bareNs},
+		},
+	}
+
+	got := processEvaluationResponse(rm, pattern.EvaluationRequest{}, resp)
+	require.Empty(t, got, "all known kinds must hydrate; nothing should fall to unknownComponents")
+	require.Len(t, resp.Design.Components, 2)
+
+	byID := map[core.Uuid]*component.ComponentDefinition{}
+	for _, c := range resp.Design.Components {
+		byID[c.ID] = c
+	}
+
+	// Each kind hydrates to ITS OWN registry colour — no cross-bleed
+	// from registry-cache reuse.
+	require.NotNil(t, byID[jobID].Styles)
+	require.NotNil(t, byID[jobID].Styles.BackgroundColor)
+	assert.Equal(t, "#123456", *byID[jobID].Styles.BackgroundColor, "Job must hydrate to its own colour")
+
+	require.NotNil(t, byID[nsID].Styles)
+	require.NotNil(t, byID[nsID].Styles.BackgroundColor)
+	assert.Equal(t, "#326CE5", *byID[nsID].Styles.BackgroundColor, "Namespace must hydrate to its own colour")
 }
 
 func TestParseRelationshipToAlias(t *testing.T) {
@@ -570,4 +821,42 @@ func TestParseRelationshipToAlias(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys pins
+// the canonical camelCase keys emitted into event_trackers.metadata on the
+// relationship-evaluation success event. Production carried 125,840 rows
+// each of the legacy snake_case spellings before this flip; this test
+// guards against regression and ensures legacy spellings cannot be
+// re-introduced silently.
+func TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) {
+	now := time.Now()
+	resp := pattern.EvaluationResponse{
+		Design: pattern.PatternFile{
+			Version: "1.2.3",
+		},
+		Actions:   make([]pattern.Action, 7),
+		Trace:     pattern.Trace{},
+		Timestamp: &now,
+	}
+
+	metadata := buildPolicyEvaluationEventMetadata(resp)
+
+	// Canonical camelCase keys MUST be present.
+	require.Contains(t, metadata, "historyTitle")
+	require.Contains(t, metadata, "trace")
+	require.Contains(t, metadata, "evaluationResponse")
+	require.Contains(t, metadata, "evaluatedAt")
+
+	// Legacy snake_case keys MUST NOT be present.
+	require.NotContains(t, metadata, "history_title")
+	require.NotContains(t, metadata, "evaluation_response")
+	require.NotContains(t, metadata, "evaluated_at")
+
+	// Spot-check that historyTitle reflects the action count + version
+	// so future contributors don't repurpose the helper without keeping
+	// the user-visible label coherent.
+	assert.Contains(t, metadata["historyTitle"], "7 changes")
+	assert.Contains(t, metadata["historyTitle"], "1.2.3")
+	assert.Equal(t, now, metadata["evaluatedAt"])
 }
