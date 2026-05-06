@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // componentDeclarationByID finds a component in the design by its ID.
@@ -228,14 +228,18 @@ func configurationForComponentAtPath(path []string, comp *component.ComponentDef
 	}
 	if path[0] == "configuration" {
 		config := getComponentConfiguration(comp, design)
-		return objectGetNested(config, popFirst(path), nil)
+		resolvedPath := popFirst(path)
+		if configMap, ok := config.(map[string]interface{}); ok {
+			resolvedPath = resolvePath(resolvedPath, configMap)
+		}
+		return objectGetNested(config, resolvedPath, nil)
 	}
 	// For non-configuration paths, convert to map for nested access.
 	compMap, err := toGenericMap(comp)
 	if err != nil {
 		return nil
 	}
-	return objectGetNested(compMap, path, nil)
+	return objectGetNested(compMap, resolvePath(path, compMap), nil)
 }
 
 // resolveComponentAlias checks if a component is an alias and returns the

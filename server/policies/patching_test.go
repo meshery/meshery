@@ -5,9 +5,9 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // TestWalletPatching verifies that wallet relationships patch the child component's
@@ -503,7 +503,7 @@ func TestBindingIdentification(t *testing.T) {
 			Allow: relationship.Selector{
 				From: []relationship.SelectorItem{
 					{
-						Kind: strPtr("Role"),
+						Kind:  strPtr("Role"),
 						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
 						Match: &relationship.MatchSelector{
 							From: &fromMatchFrom,
@@ -513,7 +513,7 @@ func TestBindingIdentification(t *testing.T) {
 				},
 				To: []relationship.SelectorItem{
 					{
-						Kind: strPtr("ServiceAccount"),
+						Kind:  strPtr("ServiceAccount"),
 						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
 						Match: &relationship.MatchSelector{
 							From: &toMatchFrom,
@@ -723,6 +723,118 @@ func TestBindingIdentificationFullPipeline(t *testing.T) {
 	}
 }
 
+func TestBindingPatchingIsIdempotentWithWildcardSubjectPath(t *testing.T) {
+	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000101")
+	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000102")
+	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000103")
+	relID, _ := uuid.FromString("00000000-0000-0000-0000-000000000104")
+
+	role := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Role"},
+		DisplayName:    "my-role",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"name": "my-role",
+			},
+		},
+	}
+	role.ID = roleID
+
+	rb := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "RoleBinding"},
+		DisplayName:    "my-rb",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"configuration-source": "test",
+			"spec": map[string]interface{}{
+				"roleRef": map[string]interface{}{
+					"kind": "Role",
+					"name": "my-role",
+				},
+				"subjects": []interface{}{
+					map[string]interface{}{
+						"kind": "ServiceAccount",
+						"name": "my-sa",
+					},
+				},
+			},
+		},
+	}
+	rb.ID = rbID
+
+	sa := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "ServiceAccount"},
+		DisplayName:    "my-sa",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"name": "my-service-account",
+			},
+		},
+	}
+	sa.ID = saID
+
+	roleMutatorRef := relationship.MutatorRef{{"component", "kind"}, {"displayName"}}
+	rbMutatedRef := relationship.MutatedRef{{"configuration", "spec", "roleRef", "kind"}, {"configuration", "spec", "roleRef", "name"}}
+	saMutatorRef := relationship.MutatorRef{{"displayName"}}
+	rbSubjectMutatedRef := relationship.MutatedRef{{"configuration", "spec", "subjects", "_", "name"}}
+	relStatus := relationship.RelationshipDefinitionStatus(StatusApproved)
+
+	fromMatchFrom := []relationship.MatchSelectorItem{{Kind: "self", MutatorRef: &roleMutatorRef, ID: &roleID}}
+	fromMatchTo := []relationship.MatchSelectorItem{{Kind: "RoleBinding", MutatedRef: &rbMutatedRef, ID: &rbID}}
+	toMatchFrom := []relationship.MatchSelectorItem{{Kind: "RoleBinding", MutatedRef: &rbSubjectMutatedRef, ID: &rbID}}
+	toMatchTo := []relationship.MatchSelectorItem{{Kind: "self", MutatorRef: &saMutatorRef, ID: &saID}}
+
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:    &roleID,
+						Kind:  strPtr("Role"),
+						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+						Match: &relationship.MatchSelector{From: &fromMatchFrom, To: &fromMatchTo},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:    &saID,
+						Kind:  strPtr("ServiceAccount"),
+						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+						Match: &relationship.MatchSelector{From: &toMatchFrom, To: &toMatchTo},
+					},
+				},
+			},
+		},
+	}
+
+	existingRel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Edge,
+		RelationshipType: "binding",
+		SubType:          "permission",
+		Status:           &relStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	existingRel.ID = relID
+
+	design := makePatternFile([]*component.ComponentDefinition{role, rb, sa}, []*relationship.RelationshipDefinition{existingRel})
+
+	log, _ := logger.New("test", logger.Options{Format: logger.SyslogLogFormat})
+	engine := NewGoEngine(log)
+	resp, err := engine.EvaluateDesign(*design, nil)
+	if err != nil {
+		t.Fatalf("EvaluateDesign failed: %v", err)
+	}
+
+	for _, action := range resp.Actions {
+		if action.Op == UpdateComponentConfigurationOp {
+			t.Fatalf("expected wildcard binding patch to be idempotent, got action: %#v", action)
+		}
+	}
+}
+
 // TestInventoryNamespaceIdentification tests that inventory relationships identify
 // namespace relationships using displayName as mutatorRef (not configuration-prefixed).
 func TestInventoryNamespaceIdentification(t *testing.T) {
@@ -778,15 +890,15 @@ func TestInventoryNamespaceIdentification(t *testing.T) {
 			Allow: relationship.Selector{
 				From: []relationship.SelectorItem{
 					{
-						Kind:  strPtr("*"),
-						Model: &modelv1beta1.ModelReference{Name: "*"},
+						Kind:                                 strPtr("*"),
+						Model:                                &modelv1beta1.ModelReference{Name: "*"},
 						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{MutatedRef: &mutatedRef},
 					},
 				},
 				To: []relationship.SelectorItem{
 					{
-						Kind:  strPtr("Namespace"),
-						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+						Kind:                                 strPtr("Namespace"),
+						Model:                                &modelv1beta1.ModelReference{Name: "kubernetes"},
 						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{MutatorRef: &mutatorRef},
 					},
 				},
