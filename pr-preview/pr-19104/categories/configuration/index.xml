@@ -15,27 +15,7 @@
 &lt;li&gt;&lt;strong&gt;Import&lt;/strong&gt; is ideal when you already have a model definition file (e.g., JSON, CSV) and simply want to bring it into Meshery.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Create&lt;/strong&gt; is the recommended approach if you’re starting fresh — it guides you through building a model step by step using an intuitive UI wizard.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;This section walks you through the &lt;strong&gt;Create&lt;/strong&gt; workflow — perfect for users who want full control over naming, styling, and categorizing their models while sourcing CRDs from GitHub or ArtifactHub.&lt;/p&gt;</description></item><item><title>Creating a Meshery Design</title><link>/guides/configuration-management/creating-a-meshery-design/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/configuration-management/creating-a-meshery-design/</guid><description>&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Learn about Designs&lt;/div&gt;
-&lt;p&gt;Learn more about &lt;a href='../../concepts/logical/designs'&gt;what a Meshery Design&lt;/a&gt; is and how it fits into Meshery&amp;rsquo;s approach to cloud native management.&lt;/p&gt;
-&lt;/div&gt;
-&lt;h2 id="ways-to-create-a-meshery-design"&gt;
-	Ways to create a Meshery Design
-&lt;/h2&gt;
-&lt;p&gt;You can create a Meshery design in two ways:&lt;/p&gt;
-&lt;h3 id="from-scratch"&gt;
-	From scratch
-&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;Click on the &amp;ldquo;Design&amp;rdquo; tab to start creating a new design.&lt;/li&gt;
-&lt;li&gt;In the left panel, click &amp;ldquo;Components&amp;rdquo; and browse the type of component you want to add.&lt;/li&gt;
-&lt;li&gt;Drag and drop the components onto the canvas.&lt;/li&gt;
-&lt;li&gt;Click and drag from one component to another to create connections between components. You can customize the connections by adding labels or adjusting their properties.&lt;/li&gt;
-&lt;li&gt;Once you&amp;rsquo;re satisfied with your design, click the &amp;ldquo;Save&amp;rdquo; button on the toolbar. Your design will be saved as &amp;ldquo;Untitled design&amp;rdquo; by default. You can give your design a name to help identify and manage it later.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id="from-a-template"&gt;
-	From a template
-&lt;/h3&gt;
-&lt;p&gt;Another way to create a Meshery design is to use an already curated template. You can either import designs that others have published and made available for public use or clone patterns from the Meshery Catalog.&lt;/p&gt;</description></item><item><title>Edge Styles Guide</title><link>/guides/configuration-management/edges-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/configuration-management/edges-guide/</guid><description>&lt;p&gt;In Meshery, the line that connects &lt;a href="../../concepts/logical/components/"&gt;components&lt;/a&gt; is called an &lt;strong&gt;edge&lt;/strong&gt;. Each edge visually represents a &lt;a href="../../concepts/logical/relationships/"&gt;relationship&lt;/a&gt; and uses a specific style to communicate its nature.&lt;/p&gt;
+&lt;p&gt;This section walks you through the &lt;strong&gt;Create&lt;/strong&gt; workflow — perfect for users who want full control over naming, styling, and categorizing their models while sourcing CRDs from GitHub or ArtifactHub.&lt;/p&gt;</description></item><item><title>Edge Styles Guide</title><link>/guides/configuration-management/edges-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/configuration-management/edges-guide/</guid><description>&lt;p&gt;In Meshery, the line that connects &lt;a href="../../concepts/logical/components/"&gt;components&lt;/a&gt; is called an &lt;strong&gt;edge&lt;/strong&gt;. Each edge visually represents a &lt;a href="../../concepts/logical/relationships/"&gt;relationship&lt;/a&gt; and uses a specific style to communicate its nature.&lt;/p&gt;
 &lt;p&gt;This guide helps you interpret the most common edge styles you will encounter.&lt;/p&gt;
 &lt;h3 id="interpreting-common-edge-styles"&gt;
 	Interpreting Common Edge Styles
