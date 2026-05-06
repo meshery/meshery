@@ -1,0 +1,8 @@
+{{- $count := 1 -}}
+{{- with .flags }}
+  {{- $count = add $count (len .) -}}
+{{- end }}
+{{- range .subcommands }}
+  {{- $count = add $count (partial "mesheryctl-command-row-count.html" .) -}}
+{{- end }}
+{{- return $count -}}
