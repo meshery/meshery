@@ -28,11 +28,11 @@ export const getK8sClusterIdsFromCtxId = (selectedContexts, k8sconfig) => {
   }
 
   if (selectedContexts.includes('all')) {
-    return k8sconfig.map((cfg) => cfg?.kubernetes_server_id);
+    return k8sconfig.map((cfg) => cfg?.kubernetesServerId);
   }
   const clusterIds = [];
   selectedContexts.forEach((context) => {
-    const clusterId = k8sconfig.find((cfg) => cfg.id === context)?.kubernetes_server_id;
+    const clusterId = k8sconfig.find((cfg) => cfg.id === context)?.kubernetesServerId;
     if (clusterId) {
       clusterIds.push(clusterId);
     }
@@ -100,7 +100,7 @@ export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
  * @returns {string} Kubernetes context
  */
 export function getK8sContextFromClusterId(clusterId, k8sConfig) {
-  const cluster = k8sConfig.find((cfg) => cfg.kubernetes_server_id === clusterId);
+  const cluster = k8sConfig.find((cfg) => cfg.kubernetesServerId === clusterId);
   if (!cluster) {
     return {};
   }
@@ -114,7 +114,7 @@ export function getK8sContextFromClusterId(clusterId, k8sConfig) {
  * @returns {string} Kubernetes cluster name
  */
 export function getClusterNameFromClusterId(clusterId, k8sConfig) {
-  const cluster = k8sConfig.find((cfg) => cfg.kubernetes_server_id === clusterId);
+  const cluster = k8sConfig.find((cfg) => cfg.kubernetesServerId === clusterId);
   if (!cluster) {
     return '';
   }
@@ -128,7 +128,7 @@ export function getClusterNameFromClusterId(clusterId, k8sConfig) {
  * @returns {string} Kubernetes cluster name
  */
 export function getClusterNameFromConnectionId(connId, k8sConfig) {
-  const cluster = k8sConfig.find((cfg) => cfg.connection_id === connId);
+  const cluster = k8sConfig.find((cfg) => cfg.connectionId === connId);
   if (!cluster) {
     return '';
   }
@@ -142,11 +142,11 @@ export function getClusterNameFromConnectionId(connId, k8sConfig) {
  * @returns {string} Kubernetes connection ID
  */
 export function getConnectionIdFromClusterId(clusterId, k8sConfig) {
-  const cluster = k8sConfig.find((cfg) => cfg.kubernetes_server_id === clusterId);
+  const cluster = k8sConfig.find((cfg) => cfg.kubernetesServerId === clusterId);
   if (!cluster) {
     return '';
   }
-  return cluster.connection_id;
+  return cluster.connectionId;
 }
 
 /**
@@ -173,5 +173,5 @@ export function getConnectionIDsFromContextIds(contexts, k8sConfig) {
   const filteredK8sConnfigs = k8sConfig.filter((config) =>
     contexts.some((context) => context == config.id),
   );
-  return filteredK8sConnfigs.map((config) => config.connection_id);
+  return filteredK8sConnfigs.map((config) => config.connectionId);
 }

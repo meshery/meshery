@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
@@ -379,8 +378,8 @@ function PerformanceProfile({ handleDelete }) {
     filter: false,
     search: false,
     viewColumns: false,
-    sort: !(user && user.user_id === 'meshery'),
-    // search : !(user && user.user_id === "meshery"),
+    sort: !(user && user.userId === 'meshery'),
+    // search : !(user && user.userId === "meshery"),
     filterType: 'textField',
     responsive: 'standard',
     resizableColumns: true,

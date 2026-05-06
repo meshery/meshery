@@ -6,8 +6,6 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
-features:
-  copilot-requests: true
 engine: copilot
 timeout-minutes: 30
 tools:

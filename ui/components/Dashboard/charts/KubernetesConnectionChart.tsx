@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
@@ -25,12 +24,15 @@ export default function KubernetesConnectionStatsChart() {
 
   const chartData = connectionData?.connections
     ? Object.entries(
-        connectionData.connections.reduce((acc, connection) => {
-          if (isValidColumnName(connection.status)) {
-            acc[connection.status] = (acc[connection.status] || 0) + 1;
-          }
-          return acc;
-        }, {}),
+        connectionData.connections.reduce(
+          (acc: Record<string, number>, connection: { status: string }) => {
+            if (isValidColumnName(connection.status)) {
+              acc[connection.status] = (acc[connection.status] || 0) + 1;
+            }
+            return acc;
+          },
+          {} as Record<string, number>,
+        ),
       )
     : [];
 
