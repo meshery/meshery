@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 5th 2026, 4:16:28 am
+- Testing started at: May 6th 2026, 1:34:08 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 4 skipped
 
-⌛ _Duration: 7 minutes and 27 seconds_
+⌛ _Duration: 7 minutes and 25 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -90,7 +90,7 @@
 | 67 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
 | 68 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
 | 69 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ✅ |
-| 70 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ❌ |
+| 70 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ✅ |
 | 71 | Meshery | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ✅ |
 | 72 | Meshery | chromium-meshery-provider | Verify Performance Analysis Details |  | ✅ |
 | 73 | Meshery | chromium-meshery-provider | Verify that UI components are displayed |  | ❌ |
@@ -105,7 +105,7 @@
 | 82 | None | chromium-local-provider | alias resolution | relationship | ✅ |
 | 83 | None | chromium-local-provider | alias resolution | relationship | ✅ |
 | 84 | None | chromium-local-provider | alias resolution | relationship | ✅ |
-| 85 | None | chromium-local-provider | All settings tabs |  | ✅ |
+| 85 | None | chromium-local-provider | All settings tabs |  | ❌ |
 | 86 | None | chromium-local-provider | Common UI elements |  | ✅ |
 | 87 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 88 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
@@ -205,29 +205,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Verify Meshery Design Embed Details (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
- [90m 20 |[39m
-[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
- [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
- [90m 24 |[39m   })[33m;[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify that UI components are displayed (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/connections.spec.ts`
@@ -246,6 +223,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 51 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
  [90m 52 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
  [90m 53 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToConnections()[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ All settings tabs (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 36 |[39m
+ [90m 37 |[39m   test[33m.[39mdescribe([32m'Configure Metrics Navigation and Settings'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 38 |[39m     test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m          [31m[1m^[22m[39m
+ [90m 39 |[39m       [36mawait[39m page[33m.[39mgetByTestId([32m'configure-metrics-button'[39m)[33m.[39mclick()[33m;[39m
+ [90m 40 |[39m       [36mawait[39m expect(page)[33m.[39mtoHaveURL([35m/metrics/i[39m)[33m;[39m
+ [90m 41 |[39m     })[33m;[39m[0m
 ```
 
 </details>
