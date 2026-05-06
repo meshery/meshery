@@ -5,11 +5,11 @@
   "profiles": [
     {
       "id": "a2a555cf-ae16-479c-b5d2-a35656ba741e",
-      "name": "Abhishek",
+      "name": "John Doe",
       "userId": "a99bf5ae-10c3-44fa-bee1-af4238e2c847",
       "loadGenerators": [],
       "endpoints": [
-        "https://twitter.com/layer5"
+        "https://x.com/mesheryio"
       ],
       "serviceMesh": "consul",
       "concurrentRequest": 10,
