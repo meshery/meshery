@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { NoSsr } from '@sistent/sistent';
 import { ErrorBoundary, AppBar } from '@sistent/sistent';
-import Modal from '../General/Modals/Modal';
+import Modal from '../shared/Modal/Modal';
 import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';
 import ConnectionIcon from '../../assets/icons/Connection';

@@ -11,7 +11,7 @@ import ConfigurationSubscription from '../components/graphql/subscriptions/Confi
 import _PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import { useNotification } from '../utils/hooks/useNotification';
-import Modal from './General/Modals/Modal';
+import Modal from './shared/Modal/Modal';
 import ExportModal from './ExportModal';
 import { FormatStructuredData } from './DataFormatter';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';

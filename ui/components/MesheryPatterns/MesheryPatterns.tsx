@@ -46,7 +46,7 @@ import LoadingScreen from '../LoadingComponents/LoadingComponent';
 import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../../utils/Enum';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import { RJSFModalWrapper } from '../General/Modals/Modal';
+import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import downloadContent from '../../utils/fileDownloader';
 import ConfigurationSubscription from '../graphql/subscriptions/ConfigurationSubscription';
 import Pattern from '../../public/static/img/drawer-icons/pattern_svg';

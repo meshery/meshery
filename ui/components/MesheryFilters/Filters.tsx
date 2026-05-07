@@ -22,7 +22,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import ConfigurationSubscription from '../graphql/subscriptions/ConfigurationSubscription';
 import fetchCatalogFilter from '../graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
-import { RJSFModalWrapper } from '../General/Modals/Modal';
+import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../../utils/utils';
 import Filter from '../../public/static/img/drawer-icons/filter_svg';
 import { getMeshModels } from '../../api/meshmodel';
