@@ -10,7 +10,7 @@
   margin-top: calc(var(--navbar-height));
   margin-right: calc(-1 * (var(--sidebar-width)));
   
-  transform: translateX(calc(-1 * var(--sidebar-width)));
+  transform: translateX(calc(-1 * var(--sidebar-wrapper-width)));
   transition: 0.5s ease-in-out, margin-right 0.5s ease-in-out;
 
   @media (max-width: 75em) {
@@ -37,6 +37,8 @@
   & .sidebar-container-wrapper {
     height: 100%;
     padding: 0.5rem;
+
+    width: var(--sidebar-wrapper-width);
     background: var(--background-grey);
     box-shadow: var(--box-shadow-primary);
   }
@@ -45,7 +47,7 @@
     z-index: 9;
     display: block;
     position: absolute;
-    right: -2rem;
+    right: -3rem;
     bottom: 3rem;
     
     @media (max-width: 37.5em) {
@@ -73,42 +75,24 @@
 }
 
 .sidebar-container {
-  overscroll-behavior: contain;
   padding: .25rem min(2vh, 2vw);
+  overscroll-behavior: contain;
   overflow-y: scroll;
-  height: calc(100vh - var(--navbar-height));
+  scrollbar-gutter: stable;
+  height: calc(100vh - var(--navbar-height) - 3vh);
   transition: all 0.5s ease-in-out;
   font-size: 1.5rem;
   width: var(--sidebar-width);
   max-width: var(--sidebar-width);
   min-width: var(--sidebar-width);
-  height: 100%;
 
   &::-webkit-scrollbar {
-    display: none;
+    width: 5px;
   }
 
-  &--active {
-    &::-webkit-scrollbar {
-      overscroll-behavior: contain;
-      width: 5px;
-      padding: 6px;
-      display: block;
-    }
-
-    &::-webkit-scrollbar-track {
-      width: 0.5rem;
-      border-radius: 11px;
-      overflow: hidden;
-      padding: 6px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: #868e96;
-      width: 0.2rem;
-      border-radius: 11px;
-      margin: 5px;
-    }
-
+  &::-webkit-scrollbar-thumb {
+    background: #868e96;
+    border-radius: 11px;
   }
 
  
@@ -117,7 +101,6 @@
     top: var(--navbar-height);
     left: 0;
     width: 100%;
-    height: calc(100vh - var(--navbar-height));
     z-index: 9;
     transition: 0.5s ease-in-out;
     padding: 1rem 2rem;

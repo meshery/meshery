@@ -36,27 +36,25 @@
 
     <div class="flex-container">
       <div class="left-container">
+        <script>
+          (function () {
+            const leftContainer = document.querySelector(".left-container");
+                
+            if (!leftContainer) return
+
+            let state = localStorage.getItem('leftContainer-state');
+
+            if (!state) {  
+              const isDesktop = window.matchMedia("(min-width: 75em)").matches;
+              state =  isDesktop ? 'active' : 'inactive';
+              localStorage.setItem('leftContainer-state', state);
+            }
+                
+            leftContainer.classList.toggle('left-container--active', state === 'active')
+          })();
+        </script>
         <div class="sidebar-container-wrapper">
           <div class="sidebar-container">
-            <script>
-              (function () {
-                const leftContainer = document.querySelector(".left-container");
-                const sidebar = document.querySelector(".sidebar-container");
-                
-                if (!leftContainer || !sidebar) return
-
-                let state = localStorage.getItem('sidebar-state');
-
-                if (!state) {  
-                  const isDesktop = window.matchMedia("(min-width: 75em)").matches;
-                  state =  isDesktop ? 'active' : 'inactive';
-                  localStorage.setItem('sidebar-state', state);
-                }
-                
-                leftContainer.classList.toggle('left-container--active', state === 'active')
-                sidebar.classList.toggle('sidebar-container--active', state === 'active')
-              })();
-            </script>
             {{ partial "sidebar.html" . }}
           </div>
         </div>
