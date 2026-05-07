@@ -2,16 +2,20 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/meshery/meshkit/logger"
+	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
 
@@ -39,6 +43,106 @@ func encodeTestToken(t *testing.T, token oauth2.Token) string {
 	}
 
 	return base64.RawStdEncoding.EncodeToString(data)
+}
+
+func setViperKeyForRemoteAuthTest(t *testing.T, key string, value any) {
+	t.Helper()
+
+	hadPrevious := viper.IsSet(key)
+	previous := viper.Get(key)
+	viper.Set(key, value)
+
+	t.Cleanup(func() {
+		if hadPrevious {
+			viper.Set(key, previous)
+			return
+		}
+		viper.Set(key, nil)
+	})
+}
+
+func newRemoteLoginRequest(t *testing.T, rawURL string) *http.Request {
+	t.Helper()
+
+	req := httptest.NewRequest(http.MethodGet, rawURL, nil)
+	ctx := context.WithValue(req.Context(), MesheryServerCallbackURL, "http://localhost:9081/api/user/token")
+	return req.WithContext(ctx)
+}
+
+func redirectQuery(t *testing.T, location string) url.Values {
+	t.Helper()
+
+	redirectURL, err := url.Parse(location)
+	if err != nil {
+		t.Fatalf("parse redirect location %q: %v", location, err)
+	}
+
+	return redirectURL.Query()
+}
+
+func TestRemoteProviderInitiateLogin_OmitsPlaceholderVersions(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+	provider.RefCookieName = "localhost:9876_ref"
+	provider.LoginCookieDuration = time.Hour
+	provider.ProviderVersion = "Not Set"
+
+	setViperKeyForRemoteAuthTest(t, "BUILD", "Not Set")
+
+	req := newRemoteLoginRequest(t, "http://localhost:9081/user/login")
+	rec := httptest.NewRecorder()
+
+	provider.InitiateLogin(rec, req, false)
+
+	resp := rec.Result()
+	t.Cleanup(func() {
+		_ = resp.Body.Close()
+	})
+
+	if resp.StatusCode != http.StatusFound {
+		t.Fatalf("expected %d, got %d", http.StatusFound, resp.StatusCode)
+	}
+
+	query := redirectQuery(t, resp.Header.Get("Location"))
+	if got := query.Get("meshery_version"); got != "" {
+		t.Fatalf("expected meshery_version to be omitted, got %q", got)
+	}
+	if got := query.Get("provider_version"); got != "" {
+		t.Fatalf("expected provider_version to be omitted, got %q", got)
+	}
+	if got := query.Get("source"); got == "" {
+		t.Fatal("expected source to be present")
+	}
+}
+
+func TestRemoteProviderInitiateLogin_PropagatesKnownVersions(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+	provider.RefCookieName = "localhost:9876_ref"
+	provider.LoginCookieDuration = time.Hour
+	provider.ProviderVersion = "v0.8.0"
+
+	setViperKeyForRemoteAuthTest(t, "BUILD", "v0.8.0")
+
+	req := newRemoteLoginRequest(t, "http://localhost:9081/user/login")
+	rec := httptest.NewRecorder()
+
+	provider.InitiateLogin(rec, req, false)
+
+	resp := rec.Result()
+	t.Cleanup(func() {
+		_ = resp.Body.Close()
+	})
+
+	if resp.StatusCode != http.StatusFound {
+		t.Fatalf("expected %d, got %d", http.StatusFound, resp.StatusCode)
+	}
+
+	query := redirectQuery(t, resp.Header.Get("Location"))
+	if got := query.Get("meshery_version"); got != "v0.8.0" {
+		t.Fatalf("expected meshery_version %q, got %q", "v0.8.0", got)
+	}
+	if got := query.Get("provider_version"); got != "v0.8.0" {
+		t.Fatalf("expected provider_version %q, got %q", "v0.8.0", got)
+	}
 }
 
 func TestRemoteProviderDoRequest_DoesNotRefreshAnonymousToken(t *testing.T) {
