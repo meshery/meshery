@@ -5,7 +5,7 @@ on:
   pull_request_target:
     types: [opened]
   roles: all
-if: github.repository == 'meshery/meshery' && github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
+if: github.repository == 'meshery/meshery' && (github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' || github.event.pull_request.author_association == 'NONE')
 
 permissions:
   contents: read
