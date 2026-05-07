@@ -1217,7 +1217,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	nilUserID := ""
 
 	// Use the relative directory for patterns
-	catalogDir := filepath.Join("..", "..", "docs", "catalog")
+	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
 
 	for _, seedContent := range seedContents {
 		go func(comp string, log logger.Handler) {
