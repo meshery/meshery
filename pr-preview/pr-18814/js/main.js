@@ -93,14 +93,12 @@ const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
 
 toggleBtnSidebarNav.addEventListener("click",()=>{
     const leftContainer = document.querySelector(".left-container");
-    const sidebar = document.querySelector(".sidebar-container");
 
-    if(leftContainer && sidebar){
+    if(leftContainer){
         const isActive = leftContainer.classList.toggle('left-container--active');
-        sidebar.classList.toggle('sidebar-container--active', isActive);
 
         const newState = isActive ? 'active' : 'inactive';
-        localStorage.setItem('sidebar-state', newState);   
+        localStorage.setItem('leftContainer-state', newState);   
     }
 })
 
