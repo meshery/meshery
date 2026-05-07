@@ -40,7 +40,7 @@ import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { VisibilityChipMenu } from '@sistent/sistent';
-import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
+import { VIEW_VISIBILITY } from '../shared/Modal/Information/InfoModal';
 import { Public, Lock } from '@mui/icons-material';
 import { iconMedium } from 'css/icons.styles';
 

@@ -28,7 +28,7 @@ import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } f
 import ExportModal from '../ExportModal';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import ShareModal from './ShareModal';
-import InfoModal from '../General/Modals/Information/InfoModal';
+import InfoModal from '../shared/Modal/Information/InfoModal';
 import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import {
   isDesignOpenInKanvas,

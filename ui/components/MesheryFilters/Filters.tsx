@@ -52,7 +52,7 @@ import {
 } from '@sistent/sistent';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
-import InfoModal from '../General/Modals/Information/InfoModal';
+import InfoModal from '../shared/Modal/Information/InfoModal';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { DefaultTableCell, SortableTableCell } from '../connections/common/index';
 import CAN from '@/utils/can';
