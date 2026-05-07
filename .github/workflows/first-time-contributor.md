@@ -20,7 +20,7 @@ tools:
     toolsets: [default]
 
 safe-outputs:
-  add-comment:
+  update-pull-request:
     max: 1
   add-labels:
   missing-data: false
@@ -107,7 +107,7 @@ Check if commits are signed (`Signed-off-by`).
 
 ### Step 4: Finalize Action
 
-1. Post the final message as a comment on the pull request using the `add-comment` safe output.
+1. Prepend the final message to the pull request description (body) using the `update-pull-request` safe output. Ensure you don't overwrite the existing description; only prepend your greeting at the top.
 2. Add the `first-time-contributor` label to the PR using the `add-labels` safe output.
 
 ## Guidelines
