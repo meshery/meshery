@@ -107,10 +107,7 @@ test.describe.serial('Model Workflow Tests', () => {
 
   test('Import a Model via File Import', async ({ page }) => {
     await page.getByTestId('TabBar-Button-ImportModel').click();
-    // The radio labels track the canonical RJSF schema's `uploadType.enum`
-    // tokens in @meshery/schemas (file/urlImport/csv). When the upstream
-    // schema gains `enumNames` the friendly labels can come back.
-    await page.getByRole('heading', { name: 'file', exact: true }).click();
+    await page.getByRole('heading', { name: 'File Import' }).click();
 
     await page.setInputFiles('input[type="file"]', model_import.MODEL_FILE_IMPORT);
 
@@ -125,7 +122,7 @@ test.describe.serial('Model Workflow Tests', () => {
 
   test('Import a Model via Url Import', async ({ page }) => {
     await page.getByTestId('TabBar-Button-ImportModel').click();
-    await page.getByRole('heading', { name: 'urlImport', exact: true }).click();
+    await page.getByRole('heading', { name: 'URL Import' }).click();
 
     await page.getByRole('textbox', { name: 'URL' }).click();
     await page.getByRole('textbox', { name: 'URL' }).fill(model_import.MODEL_URL_IMPORT);
@@ -141,7 +138,7 @@ test.describe.serial('Model Workflow Tests', () => {
 
   test('Import a Model via CSV Import', async ({ page }) => {
     await page.getByTestId('TabBar-Button-ImportModel').click();
-    await page.getByRole('heading', { name: 'csv', exact: true }).click();
+    await page.getByRole('heading', { name: 'CSV Import' }).click();
 
     await page.getByRole('button', { name: 'Next' }).click();
 
