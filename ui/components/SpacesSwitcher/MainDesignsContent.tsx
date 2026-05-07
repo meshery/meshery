@@ -267,9 +267,9 @@ const MainDesignsContent = ({
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
-  const providerUrl = capabilitiesRegistry?.provider_url;
+  const providerUrl = capabilitiesRegistry?.providerUrl;
   const [activeUsers] = useRoomActivity({
-    provider_url: providerUrl,
+    providerUrl,
     getUserAccessToken: getUserAccessToken,
     getUserProfile: getUserProfile,
   });

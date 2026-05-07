@@ -58,8 +58,9 @@ const STATUS = {
 
 const MeshAdapterConfigComponent = () => {
   const labelRef = useRef(null);
-  const { meshAdapters: globalAdapters } = useSelector((state) => state.adapter);
-  const { meshAdaptersts: meshAdapterStates } = useSelector((state) => state.adapter);
+  const { meshAdapters: globalAdapters, meshAdaptersts: meshAdapterStates } = useSelector(
+    (state) => state.adapter,
+  );
   const [meshAdapters, setMeshAdapters] = useState(globalAdapters);
   const [ts, setTs] = useState(meshAdapterStates);
   const [meshLocationURLError, setMeshLocationURLError] = useState(false);
@@ -472,7 +473,7 @@ const MeshAdapterConfigComponent = () => {
                 type="text"
                 label="Enter Port"
                 variant="standard"
-                onChange={(e) => handleDeployPortChange(e.target)}
+                onChange={(e) => handleDeployPortChange(e.target as HTMLInputElement)}
                 value={meshDeployURL}
                 error={meshDeployURLError}
               />

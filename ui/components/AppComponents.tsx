@@ -8,7 +8,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
 import { StyledDrawer, StyledFooterBody, StyledFooterText } from '../themes/App.styles';
 
-export const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }) => {
+type FooterProps = {
+  capabilitiesRegistry?: { restrictedAccess?: { isMesheryUiRestricted?: boolean } } | null;
+  handleMesheryCommunityClick: () => void;
+};
+
+export const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }: FooterProps) => {
   const theme = useTheme();
   const isPlaygroundBuild = process.env.NEXT_PUBLIC_PLAYGROUND_BUILD === 'true';
   const { extensionType: extension } = useSelector((state) => state.ui);
@@ -53,18 +58,21 @@ export const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }) =>
   );
 };
 
-export const KubernetesSubscription = ({ setAppState }) => {
+type SetAppState = (partial: Record<string, unknown>) => void;
+
+export const KubernetesSubscription = ({ setAppState }: { setAppState: SetAppState }) => {
   const dispatch = useDispatch();
-  const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
+
+  useEffect(() => {
     if (!CAN(keys.VIEW_ALL_KUBERNETES_CLUSTERS.action, keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject)) {
-      return () => {};
+      return;
     }
 
     const subscription = subscribeK8sContext(
       (result) => {
-        const allContexts = [];
+        const allContexts: string[] = [];
         if (result.k8sContext?.contexts?.length > 0) {
-          result.k8sContext.contexts.forEach((ctx) => allContexts.push(ctx.id));
+          result.k8sContext.contexts.forEach((ctx: { id: string }) => allContexts.push(ctx.id));
           allContexts.push('all');
         }
 
@@ -76,31 +84,28 @@ export const KubernetesSubscription = ({ setAppState }) => {
         dispatch(updateK8SConfig({ k8sConfig: result.k8sContext.contexts }));
       },
       {
-        selector: {
-          page: page,
-          pageSize: pageSize,
-          order: order,
-          search: search,
-        },
+        selector: { page: '', pageSize: '10', order: '', search: '' },
       },
     );
 
-    return () => {
+    const dispose = () => {
       if (subscription && typeof subscription.dispose === 'function') {
         subscription.dispose();
       }
     };
-  };
-
-  useEffect(() => {
-    const disposeK8sContextSubscription = k8sContextSubscription();
-    setAppState({ disposeK8sContextSubscription });
-    return () => {
-      disposeK8sContextSubscription();
-    };
-  }, []);
+    setAppState({ disposeK8sContextSubscription: dispose });
+    return dispose;
+  }, [dispatch, setAppState]);
 
   return null;
+};
+
+type NavigationBarProps = {
+  isDrawerCollapsed: boolean;
+  mobileOpen: boolean;
+  handleDrawerToggle: () => void;
+  updateExtensionType: (type: string | null) => void;
+  canShowNav: boolean;
 };
 
 export const NavigationBar = ({
@@ -109,7 +114,7 @@ export const NavigationBar = ({
   handleDrawerToggle,
   updateExtensionType,
   canShowNav,
-}) => {
+}: NavigationBarProps) => {
   if (!canShowNav) {
     return null;
   }
