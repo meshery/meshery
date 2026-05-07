@@ -10,7 +10,7 @@ import {
   TableSortLabel,
   Tooltip,
 } from '@sistent/sistent';
-import Modal from './Modal';
+import Modal from '@sistent/sistent';
 import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
 import Moment from 'react-moment';
 import LoadingScreen from './LoadingComponents/LoadingComponent';

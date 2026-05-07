@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
 import _ from 'lodash';
-import { getMeshModels } from '../../api/meshmodel';
-import { modifyRJSFSchema } from '../../utils/utils';
+import { getMeshModels } from '../../../api/meshmodel';
+import { modifyRJSFSchema } from '../../../utils/utils';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { PublicIcon } from '@sistent/sistent';
 
