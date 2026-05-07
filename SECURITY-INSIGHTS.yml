@@ -11,9 +11,9 @@ project:
   homepage: https://meshery.io
   roadmap: https://github.com/meshery/meshery/blob/master/ROADMAP.md
   administrators:
-    - name: Lee Calcote
-      affiliation: Layer5
-      social: https://layer5.io/community/members/lee-calcote/
+    - name: Meshery Maintainers
+      affiliation: Meshery
+      social: https://slack.meshery.io
       primary: true
   documentation:
     quickstart-guide: https://docs.meshery.io/installation/quick-start
@@ -80,6 +80,9 @@ repository:
     - name: Sangram Rath
       affiliation: OD10
       social: https://layer5.io/community/members/sangram-rath/
+    - name: Mia Grenell
+      affiliation: The University of Texas at Austin
+      social: https://layer5.io/community/members/mia-grenell/
   license:
     url: https://github.com/meshery/meshery/blob/master/LICENSE
     expression: Apache-2.0
