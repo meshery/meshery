@@ -119,13 +119,13 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                 <ListItem>
                   <StyledListItemText
                     primary="Created At"
-                    secondary={<FormattedDate date={connection.created_at} />}
+                    secondary={<FormattedDate date={connection.createdAt} />}
                   />
                 </ListItem>
                 <ListItem>
                   <StyledListItemText
                     primary="Updated At"
-                    secondary={<FormattedDate date={connection.updated_at} />}
+                    secondary={<FormattedDate date={connection.updatedAt} />}
                   />
                 </ListItem>
               </List>

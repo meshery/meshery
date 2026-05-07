@@ -50,9 +50,9 @@ type FilterDescription = Record<string, string>;
 
 type FiltersCardProps = {
   name: string;
-  updated_at?: string;
-  created_at?: string;
-  filter_resource: string;
+  updatedAt?: string;
+  createdAt?: string;
+  filterResource: string;
   handleClone: (_ev: React.MouseEvent) => void;
   handleDownload: (_ev: React.MouseEvent) => void;
   deleteHandler: () => void;
@@ -69,9 +69,9 @@ type FiltersCardProps = {
 
 function FiltersCard_({
   name,
-  updated_at,
-  created_at,
-  filter_resource,
+  updatedAt,
+  createdAt,
+  filterResource,
   handleClone,
   handleDownload,
   deleteHandler,
@@ -93,7 +93,7 @@ function FiltersCard_({
   const [fullScreen, setFullScreen] = useState(false);
   const [showCode, setShowCode] = useState(false);
 
-  const { data: owner } = useGetUserByIdQuery(ownerId || '');
+  const { data: owner } = useGetUserByIdQuery(ownerId);
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
@@ -110,7 +110,7 @@ function FiltersCard_({
           fullScreen={fullScreen}
           name={name}
           toggleFullScreen={toggleFullScreen}
-          config_file={filter_resource}
+          config_file={filterResource}
           setYaml={setYaml}
           deleteHandler={deleteHandler}
           updateHandler={updateHandler}
@@ -147,9 +147,9 @@ function FiltersCard_({
             </div>
             <div style={{ marginRight: '0.5rem' }}>
               <div>
-                {updated_at ? (
+                {updatedAt ? (
                   <Typography variant="caption" style={{ fontStyle: 'italic' }}>
-                    Modified On: <Moment format="LLL">{updated_at}</Moment>
+                    Modified On: <Moment format="LLL">{updatedAt}</Moment>
                   </Typography>
                 ) : null}
               </div>
@@ -251,7 +251,7 @@ function FiltersCard_({
               <Typography variant="h6">{name}</Typography>
               <CardHeaderRight>
                 <Link href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`} target="_blank">
-                  <Avatar alt="profile-avatar" src={owner?.avatar_url} />
+                  <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
                 </Link>
                 <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
                   <IconButton
@@ -274,7 +274,7 @@ function FiltersCard_({
               {catalogContentKeys.length === 0 ? (
                 <StyledCodeMirrorWrapper fullScreen={fullScreen}>
                   <CodeMirror
-                    value={showCode && filter_resource}
+                    value={showCode && filterResource}
                     options={{
                       theme: 'material',
                       lineNumbers: true,
@@ -300,9 +300,9 @@ function FiltersCard_({
             <Grid2 size={{ xs: 8 }}>
               <div style={{ marginRight: '0.5rem' }}>
                 <div>
-                  {created_at ? (
+                  {createdAt ? (
                     <Typography variant="caption" style={{ fontStyle: 'italic' }}>
-                      Created at: <Moment format="LLL">{created_at}</Moment>
+                      Created at: <Moment format="LLL">{createdAt}</Moment>
                     </Typography>
                   ) : null}
                 </div>

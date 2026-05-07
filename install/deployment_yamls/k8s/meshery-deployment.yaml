@@ -26,7 +26,7 @@ spec:
         - name: EVENT
           value: mesheryLocal
         - name: PROVIDER_BASE_URLS
-          value: https://cloud.layer5.io
+          value: https://cloud.meshery.io
         - name: ADAPTER_URLS
           value: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-nginx-sm:10010
         image: meshery/meshery:stable-latest

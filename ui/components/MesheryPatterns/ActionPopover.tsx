@@ -42,7 +42,7 @@ const ActionPopover = ({ actions = [] }) => {
         </Tooltip>
       </div>
 
-      <ClickAwayListener onClickAway={handleClose}>
+      <ClickAwayListener mouseEvent="onMouseDown" onClickAway={handleClose}>
         <Popper
           sx={{ zIndex: 1 }}
           open={open}

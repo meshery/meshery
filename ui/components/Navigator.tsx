@@ -92,11 +92,9 @@ const NavigatorWrapper = () => {
 };
 
 const Navigator_ = () => {
-  const { meshAdapters } = useSelector((state) => state.adapter);
-  const { meshAdaptersts } = useSelector((state) => state.adapter);
+  const { meshAdapters, meshAdaptersts } = useSelector((state) => state.adapter);
   const dispatch = useDispatch();
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
-  const { catalogVisibility } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry, catalogVisibility } = useSelector((state) => state.ui);
   const theme = useTheme();
   const router = useRouter();
   const [state, setState] = useState({
@@ -408,7 +406,10 @@ const Navigator_ = () => {
               title={`Newer version of Meshery available: ${latest}`}
               placement="right"
             >
-              <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
+              <OpenInNewIcon
+                fill={theme.palette.background.constant.white}
+                style={{ width: '0.85rem', verticalAlign: 'middle' }}
+              />
             </CustomTextTooltip>
           </a>
         </span>
@@ -428,7 +429,10 @@ const Navigator_ = () => {
           rel="noreferrer"
           style={{ color: 'white' }}
         >
-          <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
+          <OpenInNewIcon
+            fill={theme.palette.background.constant.white}
+            style={{ width: '0.85rem', verticalAlign: 'middle' }}
+          />
         </a>
       );
 
@@ -439,7 +443,10 @@ const Navigator_ = () => {
         rel="noreferrer"
         style={{ color: 'white' }}
       >
-        <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
+        <OpenInNewIcon
+          fill={theme.palette.background.constant.white}
+          style={{ width: '0.85rem', verticalAlign: 'middle' }}
+        />
       </a>
     );
   };

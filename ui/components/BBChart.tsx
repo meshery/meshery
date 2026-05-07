@@ -1,10 +1,9 @@
-// @ts-nocheck
 import { useRef, useEffect, memo } from 'react';
-import { bb } from 'billboard.js';
+import { bb, ChartOptions } from 'billboard.js';
 import { ErrorBoundary } from '@sistent/sistent';
 
-const BBChart = ({ options }) => {
-  const chartRef = useRef(null);
+const BBChart = ({ options }: { options: ChartOptions }) => {
+  const chartRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const chart = bb.generate({ ...options, bindto: chartRef.current });

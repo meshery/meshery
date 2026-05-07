@@ -7,20 +7,23 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"runtime/debug"
 	"strings"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
-	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshery/server/models/pattern/utils"
+	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
+	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 
+	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -267,6 +270,22 @@ const defaultPolicyEvalTimeout = 3 * time.Minute
 
 var errEvalTimeout = errors.New("relationship policy evaluation timed out")
 
+// buildPolicyEvaluationEventMetadata builds the metadata map emitted on
+// the relationship-evaluation success event. Extracted into a named
+// function so the canonical camelCase keys (`historyTitle`, `trace`,
+// `evaluationResponse`, `evaluatedAt`) are pinned by a focused unit test
+// — see TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys.
+// Drift here would silently re-introduce the snake_case keys that
+// production carried for 125,840 rows pre-flip.
+func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse) map[string]interface{} {
+	return map[string]interface{}{
+		"historyTitle":       fmt.Sprintf("%d changes made at version %s", len(resp.Actions), resp.Design.Version),
+		"trace":              resp.Trace,
+		"evaluationResponse": resp,
+		"evaluatedAt":        *resp.Timestamp,
+	}
+}
+
 func policyEvalTimeout() time.Duration {
 	if d := viper.GetDuration("POLICY_EVAL_TIMEOUT"); d > 0 {
 		return d
@@ -281,9 +300,23 @@ func (h *Handler) EvaluateDesign(
 	evalIterations int,
 ) (pattern.EvaluationResponse, error) {
 
-	// hydrate the design file components from the registry if needed
-	if err := patternHelpers.HydratePattern(&relationshipPolicyEvalPayload.Design, h.registryManager); err != nil {
-		h.log.Warnf("failed to hydrate pattern for evaluation: %v", err)
+	// hydrate the design file components from the registry if needed.
+	// meshkit's patternHelpers.HydratePattern is typed against
+	// v1beta3/design.PatternFile but this evaluation-engine carve-out
+	// still holds the design as v1beta1/pattern.PatternFile, so bridge
+	// via a typed shallow copy and fold the hydrated fields back onto the
+	// v1beta1 design before the policy passes run.
+	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&relationshipPolicyEvalPayload.Design); bridgeErr == nil && bridged != nil {
+		if hydrateErrs := patternHelpers.HydratePattern(bridged, h.registryManager); len(hydrateErrs) > 0 {
+			h.log.Warnf("failed to hydrate pattern for evaluation: %v", hydrateErrs)
+		}
+		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
+			relationshipPolicyEvalPayload.Design = *roundtripped
+		} else if rtErr != nil {
+			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Hydrate; evaluation will proceed against the pre-hydration design: %v", rtErr)
+		}
+	} else if bridgeErr != nil {
+		h.log.Warnf("failed to bridge pattern for evaluation: %v", bridgeErr)
 	}
 
 	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
@@ -364,13 +397,24 @@ func (h *Handler) EvaluateDesign(
 	// Deduplicate actions by (op, id) to avoid duplicates from re-evaluation iterations.
 	lastEvaluationResponse.Actions = deduplicateActions(lastEvaluationResponse.Actions)
 
-	// dehydrate the design file components to remove unnecessary details
-	patternHelpers.DehydratePattern(&lastEvaluationResponse.Design)
+	// dehydrate the design file components to remove unnecessary details.
+	// Same v1beta1 ↔ v1beta3 bridge rationale as the HydratePattern call
+	// above: meshkit is v1beta3-only, this carve-out is v1beta1.
+	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&lastEvaluationResponse.Design); bridgeErr == nil && bridged != nil {
+		patternHelpers.DehydratePattern(bridged)
+		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
+			lastEvaluationResponse.Design = *roundtripped
+		} else if rtErr != nil {
+			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Dehydrate; response will ship un-dehydrated: %v", rtErr)
+		}
+	} else if bridgeErr != nil {
+		h.log.Warnf("failed to bridge pattern for dehydration: %v", bridgeErr)
+	}
 
 	return lastEvaluationResponse, nil
 }
 
-func processEvaluationResponse(registryManager *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
+func processEvaluationResponse(reg *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
 
 	registryCache := &registry.RegistryEntityCache{}
 
@@ -412,13 +456,18 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 			compFilter.ModelName = _c.ModelReference.Name
 		}
 
-		entities, _, _, _ := registryManager.GetEntitiesMemoized(compFilter, registryCache)
+		entities, _, _, _ := reg.GetEntitiesMemoized(compFilter, registryCache)
 		if len(entities) == 0 {
 			unknownComponents = append(unknownComponents, &_c)
 			continue
 		}
-		_component, _ := entities[0].(*component.ComponentDefinition)
+		_component, ok := registryComponentDefinitionToV1beta1(entities[0])
+		if !ok {
+			unknownComponents = append(unknownComponents, &_c)
+			continue
+		}
 
+		originalStyles := _c.Styles
 		_component.ID = _c.ID
 		if _c.DisplayName != "" {
 			_component.DisplayName = _c.DisplayName
@@ -430,6 +479,12 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 		_component.Metadata.IsAnnotation = _c.Metadata.IsAnnotation
 		_component.Configuration = _c.Configuration
 		_component.Capabilities = &defaultCapabilities
+		if originalStyles != nil && originalStyles.Position != nil {
+			if _component.Styles == nil {
+				_component.Styles = &core.ComponentStyles{}
+			}
+			_component.Styles.Position = originalStyles.Position
+		}
 		compsAdded = append(compsAdded, *_component)
 	}
 
@@ -443,6 +498,7 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 	evalResponse.Trace.ComponentsUpdated = compsUpdated
 
 	cmps := append(compsAdded, compsUpdated...)
+	hydrateAddComponentActions(evalResponse.Actions, compsAdded)
 
 	if evalPayload.Options != nil && evalPayload.Options.ReturnDiffOnly != nil && *evalPayload.Options.ReturnDiffOnly {
 		evalResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
@@ -488,6 +544,202 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 	return unknownComponents
 }
 
+func hydrateAddComponentActions(actions []pattern.Action, compsAdded []component.ComponentDefinition) {
+	if len(actions) == 0 || len(compsAdded) == 0 {
+		return
+	}
+
+	componentsByID := map[string]component.ComponentDefinition{}
+	for _, comp := range compsAdded {
+		componentsByID[comp.ID.String()] = comp
+	}
+	actionItemsByID := map[string]map[string]interface{}{}
+
+	for idx := range actions {
+		if actions[idx].Op != "add_component" {
+			continue
+		}
+		id := actionItemID(actions[idx])
+		if id == "" {
+			continue
+		}
+		comp, ok := componentsByID[id]
+		if !ok {
+			continue
+		}
+		item, ok := actionItemsByID[id]
+		if !ok {
+			item, ok = componentDefinitionToMap(&comp)
+			if !ok {
+				continue
+			}
+			actionItemsByID[id] = item
+		}
+		if actions[idx].Value == nil {
+			actions[idx].Value = map[string]interface{}{}
+		}
+		actions[idx].Value["item"] = item
+	}
+}
+
+func actionItemID(action pattern.Action) string {
+	if action.Value == nil {
+		return ""
+	}
+	item, ok := action.Value["item"].(map[string]interface{})
+	if !ok {
+		return ""
+	}
+	id, ok := item["id"].(string)
+	if !ok {
+		return ""
+	}
+	return id
+}
+
+func componentDefinitionToMap(comp *component.ComponentDefinition) (map[string]interface{}, bool) {
+	raw, err := json.Marshal(comp)
+	if err != nil {
+		return nil, false
+	}
+	var item map[string]interface{}
+	if err := json.Unmarshal(raw, &item); err != nil {
+		return nil, false
+	}
+	return item, true
+}
+
+// registryComponentDefinitionToV1beta1 bridges the v1beta3 ComponentDefinition
+// the meshkit registry returns into the v1beta1 ComponentDefinition that
+// pattern.PatternFile.Components is typed against. This handler — and every
+// caller of processEvaluationResponse — operates on v1beta1; v1beta3 is only
+// the registry's storage representation.
+//
+// Mechanism: a shallow field copy that keeps pointer- and reference-typed
+// inner fields (Model, Styles, Capabilities, Configuration,
+// Metadata.AdditionalProperties, ModelID) aliased across both versions, so
+// later in-place mutations meshkit helpers (e.g.
+// orchestration.EnrichComponentWithMesheryMetadata) might make through one
+// of those pointers remain visible from the v1beta1 view. This parallels
+// the existing models/pattern/utils.ComponentV1beta3ToV1beta2 bridge — same
+// pattern, different target version.
+//
+// Why not json.Marshal/json.Unmarshal: a JSON round-trip silently drops
+// fields whose tags differ across versions (already true today —
+// v1beta1 uses `json:"created_at,omitempty"` while v1beta3 uses
+// `json:"createdAt"`) and deep-clones the inner pointer targets, which
+// breaks the alias contract the existing bridge documents. Future tag
+// drift would compound the data loss with no compile-time signal.
+func registryComponentDefinitionToV1beta1(entity interface{}) (*component.ComponentDefinition, bool) {
+	if entity == nil {
+		return nil, false
+	}
+	src, ok := entity.(*componentv1beta3.ComponentDefinition)
+	if !ok || src == nil {
+		return nil, false
+	}
+	if src.Component.Kind == "" {
+		return nil, false
+	}
+	dst := &component.ComponentDefinition{
+		ID:             src.ID,
+		SchemaVersion:  src.SchemaVersion,
+		Version:        src.Version,
+		DisplayName:    src.DisplayName,
+		Description:    src.Description,
+		Format:         component.ComponentDefinitionFormat(src.Format),
+		Model:          src.Model,
+		ModelReference: src.ModelReference,
+		Styles:         src.Styles,
+		Capabilities:   src.Capabilities,
+		Metadata: component.ComponentDefinition_Metadata{
+			Genealogy:             src.Metadata.Genealogy,
+			IsAnnotation:          src.Metadata.IsAnnotation,
+			IsNamespaced:          src.Metadata.IsNamespaced,
+			Published:             src.Metadata.Published,
+			InstanceDetails:       src.Metadata.InstanceDetails,
+			ConfigurationUISchema: src.Metadata.ConfigurationUISchema,
+			AdditionalProperties:  src.Metadata.AdditionalProperties,
+		},
+		Configuration: src.Configuration,
+		Component: component.Component{
+			Kind:    src.Component.Kind,
+			Version: src.Component.Version,
+			Schema:  src.Component.Schema,
+		},
+		CreatedAt: src.CreatedAt,
+		UpdatedAt: src.UpdatedAt,
+		ModelId:   src.ModelID,
+	}
+	if src.Status != nil {
+		st := component.ComponentDefinitionStatus(*src.Status)
+		dst.Status = &st
+	}
+	return dst, true
+}
+
+// runRelationshipEvaluation runs eval behind a panic-recovery boundary and
+// fans the result out to both the per-request channels and the coalescing
+// tracker so coalesced followers unblock on every termination path
+// (success, error, cancellation, panic).
+//
+// A panic inside EvaluateDesign (engine bug, malformed design, nil deref
+// deep in the registry) used to crash the whole Meshery process: an
+// unrecovered panic in a non-handler goroutine is fatal in Go, and
+// gorilla/mux's per-request recovery does not extend to goroutines a
+// handler spawns. In CI this manifested as the e2e suite cascading from
+// one failed /relationships/evaluate call to ECONNREFUSED on every
+// subsequent request. Centralising the recovery here keeps the server
+// alive and lets the requesting client see a 500.
+//
+// Defined at package scope (rather than inlined as an anonymous goroutine)
+// so the panic path is unit-testable without standing up the full HTTP
+// handler dependency tree.
+func runRelationshipEvaluation(
+	ctx context.Context,
+	log logger.Handler,
+	tracker *evaluationTracker,
+	designKey string,
+	eval func() (pattern.EvaluationResponse, error),
+	respCh chan<- pattern.EvaluationResponse,
+	errCh chan<- error,
+) {
+	defer func() {
+		r := recover()
+		if r == nil {
+			return
+		}
+		// Stack stays server-side: ErrPolicyEval flows the inner error
+		// string into the JSON longDescription returned to API clients,
+		// so the full stack is logged here and only the panic value
+		// propagates to errCh / coalesced followers / the response body.
+		panicErr := fmt.Errorf("panic during relationship evaluation: %v", r)
+		log.Error(fmt.Errorf("%s\n%s", panicErr.Error(), debug.Stack()))
+		tracker.publish(designKey, evalResult{err: panicErr})
+		// Non-blocking send: if the leader's select already returned
+		// via ctx.Done() the receiver is gone and a blocking send
+		// would leak this goroutine forever.
+		select {
+		case errCh <- panicErr:
+		default:
+		}
+	}()
+
+	if ctx.Err() != nil {
+		tracker.publish(designKey, evalResult{err: ctx.Err()})
+		return
+	}
+
+	resp, err := eval()
+	if err != nil {
+		tracker.publish(designKey, evalResult{err: err})
+		errCh <- err
+		return
+	}
+	tracker.publish(designKey, evalResult{resp: resp})
+	respCh <- resp
+}
+
 func (h *Handler) EvaluateRelationshipPolicy(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -512,8 +764,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-		rw.WriteHeader((http.StatusBadRequest))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -521,7 +772,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
 
 	if err != nil {
-		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
+		h.log.Error(ErrDecoding(err, "design file"))
+		writeMeshkitError(rw, ErrDecoding(err, "design file"), http.StatusBadRequest)
 		return
 	}
 	// decode the pattern file
@@ -547,41 +799,32 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	evalRespChan := make(chan pattern.EvaluationResponse, 1)
 	evalErrChan := make(chan error, 1)
 
-	go func() {
-		// Skip evaluation if the request was already cancelled
-		if evalCtx.Err() != nil {
-			h.evalTracker.publish(designKey, evalResult{err: evalCtx.Err()})
-			return
-		}
-		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
-
-		if err != nil {
-			h.evalTracker.publish(designKey, evalResult{err: err})
-			evalErrChan <- err
-		} else {
-			h.evalTracker.publish(designKey, evalResult{resp: evaluationResponse})
-			evalRespChan <- evaluationResponse
-		}
-	}()
+	go runRelationshipEvaluation(
+		evalCtx,
+		h.log,
+		h.evalTracker,
+		designKey,
+		func() (pattern.EvaluationResponse, error) {
+			return h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
+		},
+		evalRespChan,
+		evalErrChan,
+	)
 
 	select {
 
 	case err := <-evalErrChan:
 		h.log.Debug(err)
 		// log an event
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPolicyEval(err), http.StatusInternalServerError)
 		return
 
 	case evaluationResponse := <-evalRespChan:
 		// include trace instead of design file in the event
 		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
 		event := eventBuilder.WithDescription(description).
-			WithMetadata(map[string]interface{}{
-				"history_title":       fmt.Sprintf("%d changes made at version %s", len(evaluationResponse.Actions), evaluationResponse.Design.Version),
-				"trace":               evaluationResponse.Trace,
-				"evaluation_response": evaluationResponse,
-				"evaluated_at":        *evaluationResponse.Timestamp,
-			}).WithSeverity(events.Informational).Build()
+			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse)).
+			WithSeverity(events.Informational).Build()
 		go func() {
 			_ = provider.PersistEvent(*event, token)
 		}()
@@ -598,20 +841,23 @@ func (h *Handler) EvaluateRelationshipPolicy(
 func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResult) {
 	if result.err != nil {
 		h.log.Debug(result.err)
-		http.Error(rw, result.err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPolicyEval(result.err), http.StatusInternalServerError)
 		return
 	}
 	ec := json.NewEncoder(rw)
 	if err := ec.Encode(result.resp); err != nil {
+		// Response body has already started streaming via json.Encoder —
+		// a partial JSON envelope is on the wire and a fresh error
+		// response would corrupt it, so log only.
 		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
-		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
 	}
 }
 
 func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context) {
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-		h.log.Warnf("relationship policy evaluation exceeded %s", policyEvalTimeout())
-		http.Error(rw, errEvalTimeout.Error(), http.StatusGatewayTimeout)
+		timeout := policyEvalTimeout()
+		h.log.Warnf("relationship policy evaluation exceeded %s", timeout)
+		writeMeshkitError(rw, ErrPolicyEvalTimeout(timeout), http.StatusGatewayTimeout)
 		return
 	}
 	h.log.Info("Evaluation terminated: request context closed")
@@ -682,10 +928,10 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		Count:    0,
-		Policies: entities,
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: 0,
+		Policies:   entities,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -725,10 +971,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		Count:    0,
-		Policies: entities,
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: 0,
+		Policies:   entities,
 	}
 
 	if err := enc.Encode(response); err != nil {
