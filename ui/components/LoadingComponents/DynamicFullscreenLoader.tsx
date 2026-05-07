@@ -1,7 +1,29 @@
-// @ts-nocheck
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
-export const DynamicFullScreenLoader = ({ children, isLoading, message }) => {
+type Loader = {
+  show?: () => void;
+  hide?: () => void;
+  setMessage?: (message: string) => void;
+  resetMessage?: () => void;
+};
+
+declare global {
+  interface Window {
+    Loader?: Loader;
+  }
+}
+
+type DynamicFullScreenLoaderProps = {
+  children: React.ReactNode;
+  isLoading: boolean;
+  message?: string;
+};
+
+export const DynamicFullScreenLoader = ({
+  children,
+  isLoading,
+  message,
+}: DynamicFullScreenLoaderProps) => {
   useEffect(() => {
     const loader = window.Loader;
     if (!loader) {

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useDeletePatternMutation } from '@/rtk-query/design';
 import { usePublishFilterMutation } from '@/rtk-query/filter';
 import { useUnassignDesignFromWorkspaceMutation } from '@/rtk-query/workspace';

@@ -1,0 +1,2210 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "wordpress-26.0.0.tgz",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.1",
+  "components": [
+    {
+      "id": "07208319-75f3-4cae-85c4-3716836b0944",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress-mariadb",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "mariadb",
+            "app.kubernetes.io/part-of": "mariadb",
+            "app.kubernetes.io/version": "12.0.2",
+            "helm.sh/chart": "mariadb-22.0.0"
+          },
+          "name": "wordpress-mariadb",
+          "namespace": "default"
+        },
+        "spec": {
+          "egress": [
+            {}
+          ],
+          "ingress": [
+            {
+              "ports": [
+                {
+                  "port": 3306
+                },
+                {
+                  "port": 3306
+                }
+              ]
+            }
+          ],
+          "podSelector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "wordpress",
+              "app.kubernetes.io/managed-by": "Helm",
+              "app.kubernetes.io/name": "mariadb",
+              "app.kubernetes.io/version": "12.0.2",
+              "helm.sh/chart": "mariadb-22.0.0"
+            }
+          },
+          "policyTypes": [
+            "Ingress",
+            "Egress"
+          ]
+        }
+      },
+      "component": {
+        "version": "networking.k8s.io/v1",
+        "kind": "NetworkPolicy",
+        "schema": ""
+      }
+    },
+    {
+      "id": "1e1aeb11-5658-46fc-9534-5188aeea129e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "wordpress",
+            "app.kubernetes.io/version": "6.8.2",
+            "helm.sh/chart": "wordpress-26.0.0"
+          },
+          "name": "wordpress",
+          "namespace": "default"
+        },
+        "spec": {
+          "egress": [
+            {}
+          ],
+          "ingress": [
+            {
+              "ports": [
+                {
+                  "port": 8080
+                },
+                {
+                  "port": 8443
+                }
+              ]
+            }
+          ],
+          "podSelector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "wordpress",
+              "app.kubernetes.io/name": "wordpress"
+            }
+          },
+          "policyTypes": [
+            "Ingress",
+            "Egress"
+          ]
+        }
+      },
+      "component": {
+        "version": "networking.k8s.io/v1",
+        "kind": "NetworkPolicy",
+        "schema": ""
+      }
+    },
+    {
+      "id": "5c749f8c-3685-436f-8e86-14d983e5e9da",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress-mariadb",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "concave-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "mariadb",
+            "app.kubernetes.io/part-of": "mariadb",
+            "app.kubernetes.io/version": "12.0.2",
+            "helm.sh/chart": "mariadb-22.0.0"
+          },
+          "name": "wordpress-mariadb",
+          "namespace": "default"
+        },
+        "spec": {
+          "maxUnavailable": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "primary",
+              "app.kubernetes.io/instance": "wordpress",
+              "app.kubernetes.io/name": "mariadb"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "schema": ""
+      }
+    },
+    {
+      "id": "b633ff2b-d062-457b-8a73-19f63e94b8af",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "concave-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "wordpress",
+            "app.kubernetes.io/version": "6.8.2",
+            "helm.sh/chart": "wordpress-26.0.0"
+          },
+          "name": "wordpress",
+          "namespace": "default"
+        },
+        "spec": {
+          "maxUnavailable": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "wordpress",
+              "app.kubernetes.io/name": "wordpress"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "schema": ""
+      }
+    },
+    {
+      "id": "ed2aae95-010f-445a-beaa-3aac7978f6ea",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress-mariadb",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "automountServiceAccountToken": false,
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "mariadb",
+            "app.kubernetes.io/part-of": "mariadb",
+            "app.kubernetes.io/version": "12.0.2",
+            "helm.sh/chart": "mariadb-22.0.0"
+          },
+          "name": "wordpress-mariadb",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "73618096-ca1f-4222-b144-53db7415457d",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "automountServiceAccountToken": false,
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "wordpress",
+            "app.kubernetes.io/version": "6.8.2",
+            "helm.sh/chart": "wordpress-26.0.0"
+          },
+          "name": "wordpress",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "f2005a6c-6d2e-4838-97cb-de79914ae453",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress-mariadb",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "mariadb-password": "eW9qUkhQeWdOdQ==",
+          "mariadb-root-password": "V3BSUE5pMTI4ag=="
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "mariadb",
+            "app.kubernetes.io/part-of": "mariadb",
+            "app.kubernetes.io/version": "12.0.2",
+            "helm.sh/chart": "mariadb-22.0.0"
+          },
+          "name": "wordpress-mariadb",
+          "namespace": "default"
+        },
+        "type": "Opaque"
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "f7ab0f0a-a6de-4c63-ab24-050eefbb01e6",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "wordpress-password": "d3JDSUlVWWNqbA=="
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "wordpress",
+            "app.kubernetes.io/version": "6.8.2",
+            "helm.sh/chart": "wordpress-26.0.0"
+          },
+          "name": "wordpress",
+          "namespace": "default"
+        },
+        "type": "Opaque"
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "6ac67173-8f1b-4377-991d-01bee6f942f3",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress-mariadb",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "my.cnf": "[mysqld]\nskip-name-resolve\nexplicit_defaults_for_timestamp\nbasedir=/opt/bitnami/mariadb\ndatadir=/bitnami/mariadb/data\nplugin_dir=/opt/bitnami/mariadb/plugin\nport=3306\nsocket=/opt/bitnami/mariadb/tmp/mysql.sock\ntmpdir=/opt/bitnami/mariadb/tmp\nmax_allowed_packet=16M\nbind-address=*\npid-file=/opt/bitnami/mariadb/tmp/mysqld.pid\nlog-error=/opt/bitnami/mariadb/logs/mysqld.log\ncharacter-set-server=UTF8\ncollation-server=utf8_general_ci\nslow_query_log=0\nlong_query_time=10.0\nbinlog_expire_logs_seconds=2592000\n\n[client]\nport=3306\nsocket=/opt/bitnami/mariadb/tmp/mysql.sock\ndefault-character-set=UTF8\nplugin_dir=/opt/bitnami/mariadb/plugin\n\n[manager]\nport=3306\nsocket=/opt/bitnami/mariadb/tmp/mysql.sock\npid-file=/opt/bitnami/mariadb/tmp/mysqld.pid"
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "mariadb",
+            "app.kubernetes.io/part-of": "mariadb",
+            "app.kubernetes.io/version": "12.0.2",
+            "helm.sh/chart": "mariadb-22.0.0"
+          },
+          "name": "wordpress-mariadb",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "e06e0239-cf25-44e3-bae6-4d8729804c19",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/persistentvolumeclaim-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/persistentvolumeclaim-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "wordpress",
+            "app.kubernetes.io/version": "6.8.2",
+            "helm.sh/chart": "wordpress-26.0.0"
+          },
+          "name": "wordpress",
+          "namespace": "default"
+        },
+        "spec": {
+          "accessModes": [
+            "ReadWriteOnce"
+          ],
+          "resources": {
+            "requests": {
+              "storage": "10Gi"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "PersistentVolumeClaim",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a83228bf-ba2c-45d1-9d3f-fd8890c0b91d",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress-mariadb-headless",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "mariadb",
+            "app.kubernetes.io/part-of": "mariadb",
+            "app.kubernetes.io/version": "12.0.2",
+            "helm.sh/chart": "mariadb-22.0.0"
+          },
+          "name": "wordpress-mariadb-headless",
+          "namespace": "default"
+        },
+        "spec": {
+          "clusterIP": "None",
+          "ports": [
+            {
+              "name": "mysql",
+              "port": 3306,
+              "protocol": "TCP",
+              "targetPort": "mysql"
+            }
+          ],
+          "publishNotReadyAddresses": true,
+          "selector": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/name": "mariadb",
+            "app.kubernetes.io/part-of": "mariadb"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a4b52ffd-38db-40c0-8249-e23fcff793cc",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress-mariadb",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": null,
+          "labels": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "mariadb",
+            "app.kubernetes.io/part-of": "mariadb",
+            "app.kubernetes.io/version": "12.0.2",
+            "helm.sh/chart": "mariadb-22.0.0"
+          },
+          "name": "wordpress-mariadb",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "mysql",
+              "nodePort": null,
+              "port": 3306,
+              "protocol": "TCP",
+              "targetPort": "mysql"
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/name": "mariadb"
+          },
+          "sessionAffinity": "None",
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "1edb636e-cd82-4e66-bce4-83bf32cf13fc",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "wordpress",
+            "app.kubernetes.io/version": "6.8.2",
+            "helm.sh/chart": "wordpress-26.0.0"
+          },
+          "name": "wordpress",
+          "namespace": "default"
+        },
+        "spec": {
+          "externalTrafficPolicy": "Cluster",
+          "ports": [
+            {
+              "name": "http",
+              "port": 80,
+              "protocol": "TCP",
+              "targetPort": "http"
+            },
+            {
+              "name": "https",
+              "port": 443,
+              "protocol": "TCP",
+              "targetPort": "https"
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/name": "wordpress"
+          },
+          "sessionAffinity": "None",
+          "type": "LoadBalancer"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "355c2a4e-f044-40dd-8335-2ce4897f287e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "wordpress",
+            "app.kubernetes.io/version": "6.8.2",
+            "helm.sh/chart": "wordpress-26.0.0"
+          },
+          "name": "wordpress",
+          "namespace": "default"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "wordpress",
+              "app.kubernetes.io/name": "wordpress"
+            }
+          },
+          "strategy": {
+            "type": "RollingUpdate"
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app.kubernetes.io/instance": "wordpress",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "wordpress",
+                "app.kubernetes.io/version": "6.8.2",
+                "helm.sh/chart": "wordpress-26.0.0"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "nodeAffinity": null,
+                "podAffinity": null,
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchLabels": {
+                            "app.kubernetes.io/instance": "wordpress",
+                            "app.kubernetes.io/name": "wordpress"
+                          }
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 1
+                    }
+                  ]
+                }
+              },
+              "automountServiceAccountToken": false,
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "BITNAMI_DEBUG",
+                      "value": "false"
+                    },
+                    {
+                      "name": "ALLOW_EMPTY_PASSWORD",
+                      "value": "yes"
+                    },
+                    {
+                      "name": "WORDPRESS_SKIP_BOOTSTRAP",
+                      "value": "no"
+                    },
+                    {
+                      "name": "MARIADB_HOST",
+                      "value": "wordpress-mariadb"
+                    },
+                    {
+                      "name": "MARIADB_PORT_NUMBER",
+                      "value": "3306"
+                    },
+                    {
+                      "name": "WORDPRESS_DATABASE_NAME",
+                      "value": "bitnami_wordpress"
+                    },
+                    {
+                      "name": "WORDPRESS_DATABASE_USER",
+                      "value": "bn_wordpress"
+                    },
+                    {
+                      "name": "WORDPRESS_DATABASE_PASSWORD_FILE",
+                      "value": "/secrets/mariadb-password"
+                    },
+                    {
+                      "name": "WORDPRESS_USERNAME",
+                      "value": "user"
+                    },
+                    {
+                      "name": "WORDPRESS_PASSWORD_FILE",
+                      "value": "/secrets/wordpress-password"
+                    },
+                    {
+                      "name": "WORDPRESS_EMAIL",
+                      "value": "user@example.com"
+                    },
+                    {
+                      "name": "WORDPRESS_FIRST_NAME",
+                      "value": "FirstName"
+                    },
+                    {
+                      "name": "WORDPRESS_LAST_NAME",
+                      "value": "LastName"
+                    },
+                    {
+                      "name": "WORDPRESS_HTACCESS_OVERRIDE_NONE",
+                      "value": "no"
+                    },
+                    {
+                      "name": "WORDPRESS_ENABLE_HTACCESS_PERSISTENCE",
+                      "value": "no"
+                    },
+                    {
+                      "name": "WORDPRESS_BLOG_NAME",
+                      "value": "User's Blog!"
+                    },
+                    {
+                      "name": "WORDPRESS_TABLE_PREFIX",
+                      "value": "wp_"
+                    },
+                    {
+                      "name": "WORDPRESS_SCHEME",
+                      "value": "http"
+                    },
+                    {
+                      "name": "WORDPRESS_EXTRA_WP_CONFIG_CONTENT",
+                      "value": ""
+                    },
+                    {
+                      "name": "WORDPRESS_PLUGINS",
+                      "value": "none"
+                    },
+                    {
+                      "name": "WORDPRESS_OVERRIDE_DATABASE_SETTINGS",
+                      "value": "no"
+                    },
+                    {
+                      "name": "APACHE_HTTP_PORT_NUMBER",
+                      "value": "8080"
+                    },
+                    {
+                      "name": "APACHE_HTTPS_PORT_NUMBER",
+                      "value": "8443"
+                    }
+                  ],
+                  "envFrom": null,
+                  "image": "docker.io/bitnami/wordpress:6.8.2-debian-12-r4",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "failureThreshold": 6,
+                    "initialDelaySeconds": 120,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "tcpSocket": {
+                      "port": "http"
+                    },
+                    "timeoutSeconds": 5
+                  },
+                  "name": "wordpress",
+                  "ports": [
+                    {
+                      "containerPort": 8080,
+                      "name": "http"
+                    },
+                    {
+                      "containerPort": 8443,
+                      "name": "https"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 6,
+                    "httpGet": {
+                      "httpHeaders": [],
+                      "path": "/wp-login.php",
+                      "port": "http",
+                      "scheme": "HTTP"
+                    },
+                    "initialDelaySeconds": 30,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "375m",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "384Mi"
+                    },
+                    "requests": {
+                      "cpu": "250m",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "256Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 1001,
+                    "runAsNonRoot": true,
+                    "runAsUser": 1001,
+                    "seLinuxOptions": {},
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/opt/bitnami/apache/conf",
+                      "name": "empty-dir",
+                      "subPath": "apache-conf-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/apache/logs",
+                      "name": "empty-dir",
+                      "subPath": "apache-logs-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/apache/var/run",
+                      "name": "empty-dir",
+                      "subPath": "apache-tmp-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/php/etc",
+                      "name": "empty-dir",
+                      "subPath": "php-conf-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/php/tmp",
+                      "name": "empty-dir",
+                      "subPath": "php-tmp-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/php/var",
+                      "name": "empty-dir",
+                      "subPath": "php-var-dir"
+                    },
+                    {
+                      "mountPath": "/tmp",
+                      "name": "empty-dir",
+                      "subPath": "tmp-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/wordpress",
+                      "name": "empty-dir",
+                      "subPath": "app-base-dir"
+                    },
+                    {
+                      "mountPath": "/bitnami/wordpress",
+                      "name": "wordpress-data",
+                      "subPath": "wordpress"
+                    },
+                    {
+                      "mountPath": "/secrets",
+                      "name": "wordpress-secrets"
+                    }
+                  ]
+                }
+              ],
+              "hostAliases": [
+                {
+                  "hostnames": [
+                    "status.localhost"
+                  ],
+                  "ip": "127.0.0.1"
+                }
+              ],
+              "initContainers": [
+                {
+                  "args": [
+                    "-ec",
+                    "#!/bin/bash\n\n. /opt/bitnami/scripts/liblog.sh\n. /opt/bitnami/scripts/libfs.sh\n\ninfo \"Copying base dir to empty dir\"\n# In order to not break the application functionality (such as upgrades or plugins) we need\n# to make the base directory writable, so we need to copy it to an empty dir volume\ncp -r --preserve=mode /opt/bitnami/wordpress /emptydir/app-base-dir\n\ninfo \"Copying symlinks to stdout/stderr\"\n# We copy the logs folder because it has symlinks to stdout and stderr\nif ! is_dir_empty /opt/bitnami/apache/logs; then\n  cp -r /opt/bitnami/apache/logs /emptydir/apache-logs-dir\nfi\n\ninfo \"Copying default PHP config\"\ncp -r --preserve=mode /opt/bitnami/php/etc /emptydir/php-conf-dir\n\ninfo \"Copying php var directory\"\nif ! is_dir_empty /opt/bitnami/php/var; then\n  cp -r /opt/bitnami/php/var /emptydir/php-var-dir\nfi\n\ninfo \"Copy operation completed\"\n"
+                  ],
+                  "command": [
+                    "/bin/bash"
+                  ],
+                  "image": "docker.io/bitnami/wordpress:6.8.2-debian-12-r4",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "prepare-base-dir",
+                  "resources": {
+                    "limits": {
+                      "cpu": "375m",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "384Mi"
+                    },
+                    "requests": {
+                      "cpu": "250m",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "256Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 1001,
+                    "runAsNonRoot": true,
+                    "runAsUser": 1001,
+                    "seLinuxOptions": {},
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/emptydir",
+                      "name": "empty-dir"
+                    }
+                  ]
+                }
+              ],
+              "securityContext": {
+                "fsGroup": 1001,
+                "fsGroupChangePolicy": "Always",
+                "supplementalGroups": [],
+                "sysctls": []
+              },
+              "serviceAccountName": "wordpress",
+              "volumes": [
+                {
+                  "emptyDir": {},
+                  "name": "empty-dir"
+                },
+                {
+                  "name": "wordpress-secrets",
+                  "projected": {
+                    "sources": [
+                      {
+                        "secret": {
+                          "name": "wordpress"
+                        }
+                      },
+                      {
+                        "secret": {
+                          "name": "wordpress-mariadb"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "name": "wordpress-data",
+                  "persistentVolumeClaim": {
+                    "claimName": "wordpress"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      }
+    },
+    {
+      "id": "582ddde3-00b7-498d-8e53-9ff525284215",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "wordpress-mariadb",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-25T00:00:21.104361+05:30",
+          "updated_at": "2025-09-25T00:00:21.104361+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "wordpress",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "mariadb",
+            "app.kubernetes.io/part-of": "mariadb",
+            "app.kubernetes.io/version": "12.0.2",
+            "helm.sh/chart": "mariadb-22.0.0"
+          },
+          "name": "wordpress-mariadb",
+          "namespace": "default"
+        },
+        "spec": {
+          "replicas": 1,
+          "revisionHistoryLimit": 10,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "primary",
+              "app.kubernetes.io/instance": "wordpress",
+              "app.kubernetes.io/name": "mariadb",
+              "app.kubernetes.io/part-of": "mariadb"
+            }
+          },
+          "serviceName": "wordpress-mariadb-headless",
+          "template": {
+            "metadata": {
+              "annotations": {
+                "checksum/configuration": "641425ca924c8850a90e89d297ff981e633753cd7f358ff3805b27289ff60fac"
+              },
+              "labels": {
+                "app.kubernetes.io/component": "primary",
+                "app.kubernetes.io/instance": "wordpress",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "mariadb",
+                "app.kubernetes.io/part-of": "mariadb",
+                "app.kubernetes.io/version": "12.0.2",
+                "helm.sh/chart": "mariadb-22.0.0"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "nodeAffinity": null,
+                "podAffinity": null,
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchLabels": {
+                            "app.kubernetes.io/component": "primary",
+                            "app.kubernetes.io/instance": "wordpress",
+                            "app.kubernetes.io/name": "mariadb"
+                          }
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 1
+                    }
+                  ]
+                }
+              },
+              "automountServiceAccountToken": false,
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "BITNAMI_DEBUG",
+                      "value": "false"
+                    },
+                    {
+                      "name": "MARIADB_ROOT_PASSWORD_FILE",
+                      "value": "/opt/bitnami/mariadb/secrets/mariadb-root-password"
+                    },
+                    {
+                      "name": "MARIADB_USER",
+                      "value": "bn_wordpress"
+                    },
+                    {
+                      "name": "MARIADB_PASSWORD_FILE",
+                      "value": "/opt/bitnami/mariadb/secrets/mariadb-password"
+                    },
+                    {
+                      "name": "MARIADB_DATABASE",
+                      "value": "bitnami_wordpress"
+                    },
+                    {
+                      "name": "MARIADB_ENABLE_SSL",
+                      "value": "no"
+                    }
+                  ],
+                  "image": "docker.io/bitnami/mariadb:12.0.2-debian-12-r0",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "exec": {
+                      "command": [
+                        "/bin/bash",
+                        "-ec",
+                        "password_aux=\"${MARIADB_ROOT_PASSWORD:-}\"\nif [[ -f \"${MARIADB_ROOT_PASSWORD_FILE:-}\" ]]; then\n    password_aux=$(cat \"$MARIADB_ROOT_PASSWORD_FILE\")\nfi\nmariadb-admin status -uroot -p\"${password_aux}\"\n"
+                      ]
+                    },
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 120,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 1
+                  },
+                  "name": "mariadb",
+                  "ports": [
+                    {
+                      "containerPort": 3306,
+                      "name": "mysql"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "exec": {
+                      "command": [
+                        "/bin/bash",
+                        "-ec",
+                        "password_aux=\"${MARIADB_ROOT_PASSWORD:-}\"\nif [[ -f \"${MARIADB_ROOT_PASSWORD_FILE:-}\" ]]; then\n    password_aux=$(cat \"$MARIADB_ROOT_PASSWORD_FILE\")\nfi\nmariadb-admin ping -uroot -p\"${password_aux}\"\n"
+                      ]
+                    },
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 30,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 1
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "375m",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "384Mi"
+                    },
+                    "requests": {
+                      "cpu": "250m",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "256Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 1001,
+                    "runAsNonRoot": true,
+                    "runAsUser": 1001,
+                    "seLinuxOptions": {},
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/bitnami/mariadb",
+                      "name": "data"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/mariadb/conf/my.cnf",
+                      "name": "config",
+                      "subPath": "my.cnf"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/mariadb/secrets/",
+                      "name": "mariadb-credentials"
+                    },
+                    {
+                      "mountPath": "/tmp",
+                      "name": "empty-dir",
+                      "subPath": "tmp-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/mariadb/conf",
+                      "name": "empty-dir",
+                      "subPath": "app-conf-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/mariadb/tmp",
+                      "name": "empty-dir",
+                      "subPath": "app-tmp-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/mariadb/logs",
+                      "name": "empty-dir",
+                      "subPath": "app-logs-dir"
+                    }
+                  ]
+                }
+              ],
+              "initContainers": [
+                {
+                  "args": [
+                    "-ec",
+                    "#!/bin/bash\n\n. /opt/bitnami/scripts/libfs.sh\n# We copy the logs folder because it has symlinks to stdout and stderr\nif ! is_dir_empty /opt/bitnami/mariadb/logs; then\n  cp -r /opt/bitnami/mariadb/logs /emptydir/app-logs-dir\nfi\n"
+                  ],
+                  "command": [
+                    "/bin/bash"
+                  ],
+                  "image": "docker.io/bitnami/mariadb:12.0.2-debian-12-r0",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "preserve-logs-symlinks",
+                  "resources": {
+                    "limits": {
+                      "cpu": "375m",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "384Mi"
+                    },
+                    "requests": {
+                      "cpu": "250m",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "256Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 1001,
+                    "runAsNonRoot": true,
+                    "runAsUser": 1001,
+                    "seLinuxOptions": {},
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/emptydir",
+                      "name": "empty-dir"
+                    }
+                  ]
+                }
+              ],
+              "securityContext": {
+                "fsGroup": 1001,
+                "fsGroupChangePolicy": "Always",
+                "supplementalGroups": [],
+                "sysctls": []
+              },
+              "serviceAccountName": "wordpress-mariadb",
+              "volumes": [
+                {
+                  "emptyDir": {},
+                  "name": "empty-dir"
+                },
+                {
+                  "configMap": {
+                    "name": "wordpress-mariadb"
+                  },
+                  "name": "config"
+                },
+                {
+                  "name": "mariadb-credentials",
+                  "secret": {
+                    "items": [
+                      {
+                        "key": "mariadb-root-password",
+                        "path": "mariadb-root-password"
+                      },
+                      {
+                        "key": "mariadb-password",
+                        "path": "mariadb-password"
+                      }
+                    ],
+                    "secretName": "wordpress-mariadb"
+                  }
+                }
+              ]
+            }
+          },
+          "updateStrategy": {
+            "type": "RollingUpdate"
+          },
+          "volumeClaimTemplates": [
+            {
+              "metadata": {
+                "labels": {
+                  "app.kubernetes.io/component": "primary",
+                  "app.kubernetes.io/instance": "wordpress",
+                  "app.kubernetes.io/name": "mariadb"
+                },
+                "name": "data"
+              },
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "8Gi"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    }
+  ],
+  "relationships": null
+}

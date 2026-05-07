@@ -1193,6 +1193,12 @@ func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
 	return err
 }
 
+// LogoutMesheryServer is a no-op for the local provider: there is no
+// remote session to revoke.
+func (l *DefaultLocalProvider) LogoutMesheryServer() error {
+	return nil
+}
+
 // GetGenericPersister - to return persister
 func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
 	return l.GenericPersister

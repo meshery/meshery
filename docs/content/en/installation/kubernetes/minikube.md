@@ -14,12 +14,12 @@ Meshery can manage your minikube clusters and is particularly useful for multi-c
 
 For Meshery to manage your Minikube cluster, it has to be discovered and added as a Kubernetes connection in the Meshery server.
 
-After your cluster has been added as a connection, you can use Meshery to make infrastructure deployments of your [Meshery Designs](https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=creating-designs) to your cluster. To learn more about this, See [Deploying Meshery Designs](https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs). You can also Visualize the resources in your cluster in Operator Mode, See [Views in Visualizer](https://docs.layer5.io/kanvas/operator/operator-views/).
+After your cluster has been added as a connection, you can use Meshery to make infrastructure deployments of your [Meshery Designs](https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=creating-designs) to your cluster. To learn more about this, See [Deploying Meshery Designs](https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs).
 
 **There are two ways to create this connection:**
 
 1. Deploying Meshery in minikube [(in-cluster)](#in-cluster-installation).
-1. Deploying Meshery using Docker and connect it to minikube [(out-of-cluster)](#out-of-cluster-installation).
+2. Deploying Meshery using Docker and connect it to minikube [(out-of-cluster)](#out-of-cluster-installation).
 
 **_Note: It is advisable to install Meshery in your Minikube clusters_**
 
@@ -36,19 +36,16 @@ Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
 
 ## Available Deployment Methods
 
-- [Preflight Checks](#preflight-checks)
-  - [Preflight: Cluster Connectivity](#1-preflight-cluster-connectivity)
-  - [Preflight: Meshery Authentication](#2-preflight-meshery-authentication)
-
 - [In-cluster Installation](#in-cluster-installation)
   - [Installation: Install Meshery on Kubernetes Using `mesheryctl`](#installation-install-meshery-on-kubernetes-using-mesheryctl)
   - [Installation: Using Helm](#installation-using-helm)
-
 - [Out-of-cluster Installation](#out-of-cluster-installation)
-  - [Installation: Install Meshery on Docker Using `mesheryctl`](#installation-install-meshery-on-docker)
-  - [Minikube Docker Driver Users](#minikube-docker-driver-users)
-
+  - [Installation: Install Meshery on Docker](#installation-install-meshery-on-docker)
+    - [Minikube Docker Driver Users](#minikube-docker-driver-users)
+      - [Next Step: Update the Kubernetes API Server Address for Meshery Access](#next-step-update-the-kubernetes-api-server-address-for-meshery-access)
+  - [Change the server address](#change-the-server-address)
 - [Uploading Configuration File in the Meshery Web UI](#uploading-configuration-file-in-the-meshery-web-ui)
+      - [Troubleshooting Meshery Installation](#troubleshooting-meshery-installation)
 - [Post-Installation Steps](#post-installation-steps)
   
 ## Preflight Checks

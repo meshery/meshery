@@ -63,6 +63,12 @@ const (
 	ErrDockerUnknownCode                  = "mesheryctl-1211"
 	ErrOperatorUnsupportedPlatformCode    = "mesheryctl-1219"
 	ErrLogoutCode                         = "mesheryctl-1229"
+	ErrSystemAzureAksGetCredentialsCode   = "mesheryctl-1234"
+	ErrSystemAzureCliNotFoundCode         = "mesheryctl-1235"
+	ErrSystemAwsCliNotFoundCode           = "mesheryctl-1236"
+	ErrSystemGkeGenerateConfigCode        = "mesheryctl-1237"
+	ErrSystemEksGetCredentialsCode        = "mesheryctl-1238"
+	ErrSystemMinikubeKubeconfigCode       = "mesheryctl-1239"
 )
 
 var (
@@ -121,6 +127,22 @@ func ErrHealthCheckFailed(err error) error {
 		[]string{"Ensure Mesheryctl is running and has the right configurations."})
 }
 
+func ErrSystemAwsCliNotFound(err error) error {
+	return errors.New(ErrSystemAwsCliNotFoundCode, errors.Alert, []string{"[System] AWS CLI not found"}, []string{"The AWS CLI is required to configure an EKS connection but was not found on your system"}, []string{err.Error()}, []string{"Please install the AWS CLI from https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html and ensure it is accessible in your system's PATH"})
+}
+
+func ErrSystemGkeGenerateConfig(err error) error {
+	return errors.New(ErrSystemGkeGenerateConfigCode, errors.Alert, []string{"[System] Failed to generate GKE config"}, []string{"There was an error while generating the GKE cluster configuration"}, []string{err.Error()}, []string{"Ensure you have the necessary Google Cloud permissions and that your gcloud CLI is authenticated properly"})
+}
+
+func ErrSystemMinikubeKubeconfig(err error) error {
+	return errors.New(ErrSystemMinikubeKubeconfigCode, errors.Alert, []string{"[System] Minikube kubeconfig error"}, []string{"There was an error reading or processing the default minikube kubeconfig"}, []string{err.Error()}, []string{"Ensure minikube is running and that your local kubeconfig file is accessible at the default location"})
+}
+
+func ErrSystemEksGetCredentials(err error) error {
+	return errors.New(ErrSystemEksGetCredentialsCode, errors.Alert, []string{"[System] Unable to get EKS cluster credentials"}, []string{"There was an error while fetching the EKS cluster credentials or reading inputs"}, []string{err.Error()}, []string{"Ensure that the EKS cluster name and region are correct, and that you have the necessary AWS permissions"})
+}
+
 func ErrStopMeshery(err error) error {
 	return errors.New(ErrStopMesheryCode, errors.Alert, []string{"Error stopping Meshery"}, []string{err.Error()}, []string{"Meshery server is not stopped, some of the docker containers are still running"}, []string{"Verify all docker containers of Meshery server are stopped"})
 }
@@ -147,6 +169,14 @@ func ErrCreateDir(err error, obj string) error {
 	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
+func ErrSystemAzureCliNotFound(err error) error {
+	return errors.New(ErrSystemAzureCliNotFoundCode, errors.Alert, []string{"[System] Azure CLI not found"}, []string{"The Azure CLI is required but was not found on your system"}, []string{err.Error()}, []string{"Please install the Azure CLI from https://learn.microsoft.com/en-us/cli/azure/install-azure-cli and ensure it is accessible in your system's PATH"})
+}
+
+func ErrSystemAzureAksGetCredentials(err error) error {
+	return errors.New(ErrSystemAzureAksGetCredentialsCode, errors.Alert, []string{"[System] Unable to get AKS cluster credentials"}, []string{"There was an error while fetching the AKS cluster credentials"}, []string{err.Error()}, []string{"Ensure that the AKS cluster name and resource group are correct, and that you have the necessary permissions to access the cluster"})
+}
+
 func ErrUnmarshalDockerCompose(err error, obj string) error {
 	return errors.New(
 		ErrUnmarshalDockerComposeCode,
@@ -154,7 +184,7 @@ func ErrUnmarshalDockerCompose(err error, obj string) error {
 		[]string{"Error processing JSON response from Meshery Server", obj},
 		[]string{err.Error()},
 		[]string{"Either the JSON response is invalid or the Response is distorted"},
-		[]string{"Ensure Meshery Server is running and you have a strong newtwork connection"})
+		[]string{"Ensure Meshery Server is running and you have a strong network connection"})
 }
 
 func ErrUnsupportedPlatform(platform string, config string) error {
