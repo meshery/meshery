@@ -179,22 +179,9 @@ test.describe.serial('Connection Management Tests', () => {
     });
   });
 
-  test('Delete Kubernetes cluster connections', async ({ page, clusterMetaData }, testInfo) => {
+  test('Delete Kubernetes cluster connections', async ({ page, clusterMetaData }) => {
     // The full search → delete → confirm → snackbar flow can be slow in CI
     test.slow();
-
-    // Cloud-backed (meshery) provider currently 500s on connection update with
-    // `pq: column "description" of relation "connections" does not exist
-    // (42703)`. v1beta3 `Connection` carries `Description *string`
-    // `db:"description"` since meshery/schemas v1.2.x but the cloud's
-    // `connections` table doesn't yet have that column, so any UPDATE the
-    // cloud composes from the struct fails. Skip on cloud until the upstream
-    // migration lands; the local provider already skips at the row-not-found
-    // guard below in CI environments without a pre-connected cluster.
-    test.skip(
-      testInfo.project.name === 'chromium-meshery-provider',
-      'meshery cloud connections table missing description column (db migration pending upstream)',
-    );
 
     // beforeEach already navigates to the connections page
     // Find the row with the connection to be deleted
