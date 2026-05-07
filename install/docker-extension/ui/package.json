@@ -43,7 +43,7 @@
       "plugin:react-hooks/recommended"
     ],
     "parserOptions": {
-      "ecmaVersion": 2021,
+      "ecmaVersion": "latest",
       "sourceType": "module",
       "ecmaFeatures": {
         "jsx": true
