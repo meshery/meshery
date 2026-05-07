@@ -93,19 +93,67 @@ const FinishDeploymentStep = ({
 
 // Canonical RJSF form schemas authored in `meshery/schemas` and validated
 // by its `validation/forms_test.go` to be a strict subset of the OpenAPI
-// `MesheryModelImportFormPayload` construct. Importing them directly
-// keeps the modal locked to the canonical field shape (uploadType enum
-// tokens, modelFile/fileName/url naming, allOf required branches) — any
-// drift surfaces as a build/test failure here rather than as silent
-// runtime divergence.
-const importModelSchema = ModelImportRjsfSchemaV1Beta2;
-const importModelUiSchema = ModelImportRjsfUiSchemaV1Beta2;
+// `MesheryModelImportFormPayload` construct. Importing them keeps the
+// modal locked to the canonical field shape (uploadType enum tokens,
+// modelFile/fileName/url naming) — any drift surfaces as a build/test
+// failure here rather than silent runtime divergence.
+//
+// Two consumer-side overrides on top of the canonical:
+//
+//  1. `allOf` is relaxed: the canonical requires `fileName` for the
+//     file branch and the CSV trio for the csv branch, but this modal
+//     doesn't render either. `fileName` is derived from the file
+//     widget's `data:...;name=foo;base64,...` URL, and the CSV files
+//     are uploaded via `CsvStepper` (a separate modal opened on the
+//     csv branch). Keeping the canonical `required` would block the
+//     `Next` click on validation errors for fields the user can't see.
+//
+//  2. `uiSchema` hides `fileName` and the CSV inputs so the form only
+//     surfaces the inputs that match this modal's UX (uploadType radio,
+//     modelFile, url). The hidden fields stay schema-valid; they are
+//     just not rendered.
+const UPLOAD_TYPE_FILE = 'file';
+const UPLOAD_TYPE_URL = 'urlImport';
+const UPLOAD_TYPE_CSV = 'csv';
 
-// Token vocabulary the canonical schema uses. Pull these from the schema
-// (rather than hard-code) so adding/renaming an upload method upstream
-// flows through this consumer with one constant change.
-const [UPLOAD_TYPE_FILE, UPLOAD_TYPE_URL, UPLOAD_TYPE_CSV] = importModelSchema.properties.uploadType
-  .enum as string[];
+const importModelSchema = {
+  ...ModelImportRjsfSchemaV1Beta2,
+  allOf: [
+    {
+      if: {
+        properties: { uploadType: { const: UPLOAD_TYPE_FILE } },
+        required: ['uploadType'],
+      },
+      then: { required: ['modelFile'] },
+    },
+    {
+      if: {
+        properties: { uploadType: { const: UPLOAD_TYPE_URL } },
+        required: ['uploadType'],
+      },
+      then: { required: ['url'] },
+    },
+    // csv branch: required CSV fields handled by CsvStepper, not this form.
+  ],
+};
+
+const importModelUiSchema = {
+  ...ModelImportRjsfUiSchemaV1Beta2,
+  fileName: { 'ui:widget': 'hidden' },
+  modelCsv: { 'ui:widget': 'hidden' },
+  componentCsv: { 'ui:widget': 'hidden' },
+  relationshipCsv: { 'ui:widget': 'hidden' },
+};
+
+// RJSF's file widget encodes the original filename inside the data URL
+// (`data:<mime>;name=<file>;base64,<payload>`). Pull it back out so the
+// server-side ImportBody.FileName is populated even though the form
+// doesn't surface a separate `fileName` input.
+const filenameFromDataUrl = (dataUrl: string | undefined): string | undefined => {
+  if (!dataUrl) return undefined;
+  const match = dataUrl.match(/;name=([^;]+);/);
+  return match ? decodeURIComponent(match[1]) : undefined;
+};
 
 type ImportModelModalProps = {
   isImportModalOpen: boolean;
@@ -138,13 +186,15 @@ const ImportModelModal = React.memo(
       const { uploadType, url, modelFile, fileName: formFileName } = data;
       let requestBody = null;
 
-      // RJSF doesn't surface the original filename through form data, so
-      // read it off the input element. The id matches the schema field name.
+      // RJSF's file widget encodes the original filename in the data URL,
+      // but we also fall back to the input element's `files[0].name` in
+      // case the widget shape changes upstream.
       const fileElement = document.getElementById('root_modelFile') as HTMLInputElement | null;
 
       switch (uploadType) {
         case UPLOAD_TYPE_FILE: {
-          const fileName = formFileName || fileElement?.files?.[0]?.name;
+          const fileName =
+            formFileName || filenameFromDataUrl(modelFile) || fileElement?.files?.[0]?.name;
           const fileData = modelFile ? getUnit8ArrayDecodedFile(modelFile) : null;
           if (fileData && fileName) {
             // Server's ImportBody.FileName / .ModelFile are tagged
