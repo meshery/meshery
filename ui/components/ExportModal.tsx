@@ -151,7 +151,7 @@ const ExportModal = (props) => {
               content={option.content}
               disabled={option.disabled}
               description={option.description}
-              onClick={(e) => option.onClick(e)}
+              onClick={option.onClick}
             />
           ))}
         </ModalBody>

@@ -1,16 +1,11 @@
 import { NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
-import React, { useEffect } from 'react';
+import React from 'react';
 import Dashboard from '../components/Dashboard';
-import { getPath } from '../lib/path';
-import { useDispatch } from 'react-redux';
-import { updatePage } from '@/store/slices/mesheryUi';
+import { usePageTitle } from '@/utils/hooks';
 
 function Index() {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(updatePage({ path: getPath(), title: 'Dashboard' }));
-  }, []);
+  usePageTitle('Dashboard');
 
   return (
     <NoSsr>

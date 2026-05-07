@@ -57,7 +57,7 @@ const MainDesignsContent = ({
   isFetching,
   designs,
   hasMore,
-  total_count,
+  totalCount,
   workspace,
   refetch,
   isMultiSelectMode,
@@ -131,7 +131,7 @@ const MainDesignsContent = ({
     });
     setInfoModal({
       open: true,
-      userId: selectedDesignWithPatternFile?.data?.user_id,
+      userId: selectedDesignWithPatternFile?.data?.userId,
     });
   };
 
@@ -263,13 +263,13 @@ const MainDesignsContent = ({
     return options.filter((option) => option.enabled({ design }));
   };
   const isInitialFetch = isFetching && page === 0;
-  const isEmpty = total_count === 0;
+  const isEmpty = totalCount === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
-  const providerUrl = capabilitiesRegistry?.provider_url;
+  const providerUrl = capabilitiesRegistry?.providerUrl;
   const [activeUsers] = useRoomActivity({
-    provider_url: providerUrl,
+    providerUrl,
     getUserAccessToken: getUserAccessToken,
     getUserProfile: getUserProfile,
   });
@@ -283,7 +283,7 @@ const MainDesignsContent = ({
         {shouldRenderDesigns &&
           designs?.map((design) => {
             const isPublished = design?.visibility === 'published';
-            const isOwner = currentUser?.id === design?.user_id;
+            const isOwner = currentUser?.id === design?.userId;
             const canChangeVisibility = !isPublished && isOwner;
 
             return (

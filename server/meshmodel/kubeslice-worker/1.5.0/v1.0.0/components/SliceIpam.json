@@ -131,6 +131,7 @@
     "kind": "SliceIpam",
     "schema": "{\n \"description\": \"SliceIpam is the Schema for the sliceipams API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SliceIpamSpec defines the desired state of SliceIpam\",\n   \"properties\": {\n    \"sliceName\": {\n     \"description\": \"SliceName is the name of the slice for which IPAM is being managed\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"sliceSubnet\": {\n     \"description\": \"SliceSubnet is the CIDR block allocated to the slice\",\n     \"pattern\": \"^([0-9]{1,3}\\\\.){3}[0-9]{1,3}\\\\/([0-9]|[1-2][0-9]|3[0-2])$\",\n     \"type\": \"string\"\n    },\n    \"subnetSize\": {\n     \"default\": 24,\n     \"description\": \"SubnetSize defines the size of subnets to be allocated to clusters\",\n     \"maximum\": 30,\n     \"minimum\": 16,\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"sliceName\",\n    \"sliceSubnet\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Slice Ipam\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

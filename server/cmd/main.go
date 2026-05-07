@@ -39,10 +39,9 @@ import (
 	"github.com/meshery/meshkit/utils/broadcast"
 	"github.com/meshery/meshkit/utils/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	schemasOrganization "github.com/meshery/schemas/models/v1beta1/organization"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
+	schemasOrganization "github.com/meshery/schemas/models/v1beta2/organization"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -56,7 +55,7 @@ var (
 
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL = "https://cloud.layer5.io"
+	DefaultProviderURL = "https://cloud.meshery.io"
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
 
@@ -126,7 +125,7 @@ func main() {
 	viper.SetDefault("SKIP_DOWNLOAD_EXTENSIONS", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
-	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", schemasConnection.MeshsyncDeploymentModeDefault)
+	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", connections.MeshsyncDeploymentModeDefault)
 	store.Initialize()
 
 	// initialize tracing. Skip entirely when OTEL_CONFIG is unset so local dev
@@ -268,12 +267,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	meshsyncDefaultDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromString(
+	meshsyncDefaultDeploymentMode := connections.MeshsyncDeploymentModeFromString(
 		viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
 	)
 
-	if meshsyncDefaultDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
-		meshsyncDefaultDeploymentMode = schemasConnection.MeshsyncDeploymentModeDefault
+	if meshsyncDefaultDeploymentMode == connections.MeshsyncDeploymentModeUndefined {
+		meshsyncDefaultDeploymentMode = connections.MeshsyncDeploymentModeDefault
 	}
 
 	lProv := &models.DefaultLocalProvider{
@@ -454,8 +453,14 @@ func main() {
 		// so it doesn't throw error each server is stopped. Reason: support for none provider is not yet implemented
 		if p.Name() != "None" {
 			log.Info("De-registering Meshery server.")
-			err = p.DeleteMesheryConnection()
-			if err != nil {
+			if err = p.DeleteMesheryConnection(); err != nil {
+				log.Error(err)
+				continue
+			}
+			// Logout follows deregistration so the session that authorized
+			// the delete is revoked only after the connection is removed.
+			log.Info("Logging out Meshery server session.")
+			if err = p.LogoutMesheryServer(); err != nil {
 				log.Error(err)
 			}
 		}

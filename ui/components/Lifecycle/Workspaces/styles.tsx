@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { styled, Box } from '@sistent/sistent';
 
 export const TableIconsContainer = styled('span')(({ disabled, theme }) => ({

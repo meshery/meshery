@@ -1,0 +1,375 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "myFirstMesheryDesign",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.2",
+  "components": [
+    {
+      "id": "e2aebbf6-323f-4d6e-966c-070c970fdd70",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "\u003cName of the Component\u003e",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "schemaVersion": "",
+        "version": "v1.0.0",
+        "name": "gitlab",
+        "displayName": "",
+        "status": "",
+        "registrant": {
+          "id": "8f03cc0c-e476-d004-1c56-d4cefabaeefb",
+          "name": "Artifact Hub",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "created_at": "2025-07-16T15:04:43.816256772Z",
+          "updated_at": "2025-07-16T15:04:43.816256772Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "00000000-0000-0000-0000-000000000000",
+        "category": {
+          "id": "57ac9798-d7b7-f045-bfc0-b0d89924101f",
+          "name": "App Definition and Development"
+        },
+        "subCategory": "",
+        "metadata": null,
+        "model": {
+          "version": ""
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "config": {
+            "cookie": {
+              "domain": []
+            },
+            "default_server": {
+              "proxy-v2-options": []
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "core.haproxy.org/v1alpha1",
+        "kind": "Backend",
+        "schema": "{}"
+      }
+    },
+    {
+      "id": "e669dcf3-cc61-4c68-9ac1-8dca74128544",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "\u003cbackend\u003e",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "schemaVersion": "",
+        "version": "v1.0.0",
+        "name": "gitlab",
+        "displayName": "",
+        "status": "",
+        "registrant": {
+          "id": "8f03cc0c-e476-d004-1c56-d4cefabaeefb",
+          "name": "Artifact Hub",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "created_at": "2025-07-16T15:04:43.816256772Z",
+          "updated_at": "2025-07-16T15:04:43.816256772Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "00000000-0000-0000-0000-000000000000",
+        "category": {
+          "id": "57ac9798-d7b7-f045-bfc0-b0d89924101f",
+          "name": "App Definition and Development"
+        },
+        "subCategory": "",
+        "metadata": null,
+        "model": {
+          "version": ""
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "config": {
+            "cookie": {
+              "domain": []
+            },
+            "default_server": {
+              "proxy-v2-options": []
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "core.haproxy.org/v1alpha1",
+        "kind": "Backend",
+        "schema": "{}"
+      }
+    },
+    {
+      "id": "e6641d2f-21e8-4cac-bb23-7e4b78bf4b41",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "\u003cName of the Component\u003e",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "schemaVersion": "",
+        "version": "v1.0.0",
+        "name": "gitlab",
+        "displayName": "",
+        "status": "",
+        "registrant": {
+          "id": "8f03cc0c-e476-d004-1c56-d4cefabaeefb",
+          "name": "Artifact Hub",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "created_at": "2025-07-16T15:04:43.816256772Z",
+          "updated_at": "2025-07-16T15:04:43.816256772Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "00000000-0000-0000-0000-000000000000",
+        "category": {
+          "id": "57ac9798-d7b7-f045-bfc0-b0d89924101f",
+          "name": "App Definition and Development"
+        },
+        "subCategory": "",
+        "metadata": null,
+        "model": {
+          "version": ""
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "config": {
+            "cookie": {
+              "domain": []
+            },
+            "default_server": {
+              "proxy-v2-options": []
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "core.haproxy.org/v1alpha1",
+        "kind": "Backend",
+        "schema": "{}"
+      }
+    },
+    {
+      "id": "97e9a4e8-cd97-4939-a3bd-1f3a31b6e806",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "\u003cName of the Component\u003e",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "schemaVersion": "",
+        "version": "v1.0.0",
+        "name": "gitlab",
+        "displayName": "",
+        "status": "",
+        "registrant": {
+          "id": "8f03cc0c-e476-d004-1c56-d4cefabaeefb",
+          "name": "Artifact Hub",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "created_at": "2025-07-16T15:04:43.816256772Z",
+          "updated_at": "2025-07-16T15:04:43.816256772Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "00000000-0000-0000-0000-000000000000",
+        "category": {
+          "id": "57ac9798-d7b7-f045-bfc0-b0d89924101f",
+          "name": "App Definition and Development"
+        },
+        "subCategory": "",
+        "metadata": null,
+        "model": {
+          "version": ""
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "config": {
+            "cookie": {
+              "domain": []
+            },
+            "default_server": {
+              "proxy-v2-options": []
+            },
+            "error_files": []
+          }
+        }
+      },
+      "component": {
+        "version": "core.haproxy.org/v1alpha1",
+        "kind": "Defaults",
+        "schema": "{}"
+      }
+    },
+    {
+      "id": "c566cffc-6d08-42e4-915d-3e2e49cb9b62",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "\u003cName of the Component\u003e",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "schemaVersion": "",
+        "version": "v1.0.0",
+        "name": "gitlab",
+        "displayName": "",
+        "status": "",
+        "registrant": {
+          "id": "8f03cc0c-e476-d004-1c56-d4cefabaeefb",
+          "name": "Artifact Hub",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "created_at": "2025-07-16T15:04:43.816256772Z",
+          "updated_at": "2025-07-16T15:04:43.816256772Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "00000000-0000-0000-0000-000000000000",
+        "category": {
+          "id": "57ac9798-d7b7-f045-bfc0-b0d89924101f",
+          "name": "App Definition and Development"
+        },
+        "subCategory": "",
+        "metadata": null,
+        "model": {
+          "version": ""
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "config": {
+            "cookie": {
+              "domain": []
+            },
+            "default_server": {
+              "proxy-v2-options": []
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "core.haproxy.org/v1alpha1",
+        "kind": "Backend",
+        "schema": "{}"
+      }
+    }
+  ],
+  "relationships": null
+}

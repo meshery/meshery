@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 22nd 2026, 4:11:55 am
+- Testing started at: May 7th 2026, 4:45:07 am
 
 **📦 Test Result Summary**
 
-- ✅ 141 passed
-- ❌ 0 failed
+- ✅ 134 passed
+- ❌ 3 failed
 - ⚠️ 0 flaked
-- ⏩ 3 skipped
+- ⏩ 7 skipped
 
-⌛ _Duration: 6 minutes and 4 seconds_
+⌛ _Duration: 7 minutes and 3 seconds_
 
-**Overall Result**: 👍 All tests passed.
+**Overall Result**: 👎 Some tests failed.
 
 
 
@@ -46,7 +46,7 @@
 | 23 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 24 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 25 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
-| 26 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
+| 26 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ❌ |
 | 27 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 28 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 29 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
@@ -57,9 +57,9 @@
 | 34 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 35 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 36 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 37 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
-| 38 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
-| 39 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
+| 37 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
+| 38 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
+| 39 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
 | 40 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 41 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 42 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
@@ -130,9 +130,9 @@
 | 107 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 108 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 109 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 110 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
-| 111 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
-| 112 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
+| 110 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 111 | None | chromium-local-provider | Import a Model via File Import |  | ❌ |
+| 112 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
 | 113 | None | chromium-local-provider | Logout from current user session |  | ✅ |
 | 114 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 115 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
@@ -171,6 +171,77 @@
 | 148 | None | remote-setup | authenticate with Remote Provider |  | ✅ |
 
 </div>
+</details>
+
+
+
+
+**❌ Failed Test Details**
+
+The following tests failed. Click on each to see the failure reason:
+
+
+<details>
+<summary>❌ Delete Kubernetes cluster connections (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/utils/waitForSnackBar.ts`
+
+**Error Message:**
+```
+Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+Locator: locator('text=Connection status updated').first()
+Expected: visible
+Timeout: 60000ms
+Error: element(s) not found
+
+Call log:
+[2m  - Expect "toBeVisible" with timeout 60000ms[22m
+[2m  - waiting for locator('text=Connection status updated').first()[22m
+
+```
+
+**Code Snippet:**
+```
+   at utils/waitForSnackBar.ts:5
+
+[0m [90m 3 |[39m [36mexport[39m [36mconst[39m waitForSnackBar [33m=[39m [36masync[39m (page[33m:[39m [33mPage[39m[33m,[39m message[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[36mvoid[39m[33m>[39m [33m=>[39m {
+ [90m 4 |[39m   [36mconst[39m snackbar [33m=[39m page[33m.[39mlocator([32m`text=${message}`[39m)[33m.[39mfirst()[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m   [36mawait[39m expect(snackbar)[33m.[39mtoBeVisible()[33m;[39m
+ [90m   |[39m                          [31m[1m^[22m[39m
+ [90m 6 |[39m   [36mawait[39m snackbar[33m.[39mwaitFor({ state[33m:[39m [32m'detached'[39m[33m,[39m timeout[33m:[39m [35m10000[39m })[33m;[39m
+ [90m 7 |[39m }[33m;[39m
+ [90m 8 |[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Import a Model via File Import (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ Import a Model via File Import (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
 </details>
 
 

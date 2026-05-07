@@ -92,11 +92,9 @@ const NavigatorWrapper = () => {
 };
 
 const Navigator_ = () => {
-  const { meshAdapters } = useSelector((state) => state.adapter);
-  const { meshAdaptersts } = useSelector((state) => state.adapter);
+  const { meshAdapters, meshAdaptersts } = useSelector((state) => state.adapter);
   const dispatch = useDispatch();
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
-  const { catalogVisibility } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry, catalogVisibility } = useSelector((state) => state.ui);
   const theme = useTheme();
   const router = useRouter();
   const [state, setState] = useState({

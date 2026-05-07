@@ -48,8 +48,8 @@ REMOTE_PROVIDER_LOCAL="http://localhost:9876"
 EQUINIX_DEV="http://meshery.console.equinix.com"
 EQUINIX_DEV2="http://meshery-2.console.equinix.com"
 MESHERY_CLOUD_DEV="http://localhost:9876"
-MESHERY_CLOUD_PROD="https://cloud.layer5.io"
-MESHERY_CLOUD_STAGING="https://staging-cloud.layer5.io"
+MESHERY_CLOUD_PROD="https://cloud.meshery.io"
+MESHERY_CLOUD_STAGING="https://staging-cloud.meshery.io"
 EXOSCALE_PROD="https://sks.exoscale.com"
 EXOSCALE_STG="https://stg-sks.exoscale.com"
 EXOSCALE_DEV="https://dev-sks.exoscale.com"
@@ -60,7 +60,8 @@ PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provide
 #-----------------------------------------------------------------------------
 MESHERY_K8S_SKIP_COMP_GEN ?= TRUE
 APPLICATIONCONFIGPATH="./apps.json"
-PORT:=9081
+PORT ?= 9081
+USE_GO_POLICY_ENGINE ?= true
 # OpenTelemetry Config (Ansi-C string format). Defaults to empty so tracing
 # is disabled unless a developer explicitly points it at a live collector.
 # Previously this defaulted to localhost:4317 which floods logs with
