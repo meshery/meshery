@@ -14,10 +14,8 @@ import {
   MenuItem,
 } from '@sistent/sistent';
 import { GlobalStyles } from '@mui/material';
-import { styled } from '@sistent/sistent';
+import { styled, DescriptionIcon, CodeIcon } from '@sistent/sistent';
 import { RelationshipDefinitionV1Beta2OpenApiSchema } from '@meshery/schemas';
-import DescriptionIcon from '@mui/icons-material/Description';
-import CodeIcon from '@mui/icons-material/Code';
 import LinkIcon from '@mui/icons-material/Link';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
