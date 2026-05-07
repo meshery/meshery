@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import UploadIcon from '@mui/icons-material/Upload';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
+import AddIcon from '@mui/icons-material/AddCircleOutlined';
 import LinkIcon from '@mui/icons-material/Link';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constants/navigator';
 import {
