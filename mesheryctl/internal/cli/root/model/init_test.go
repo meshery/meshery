@@ -87,11 +87,7 @@ func TestModelInit(t *testing.T) {
 		ExpectedError      error
 		IsOutputGolden     bool
 	}{
-		// NOTE:
-		// we need this test with full params on the first place,
-		// to prevent side effects of using same command object in model build test.
-		//
-		// TODO: think about how to fix this.
+		// NOTE: Test with full params provided explicitly.
 		{
 			Name:             "given all default parameters when model init model is initialized",
 			Args:             []string{"init", initTestEC2Controller, "--version", initTestVersion, "--path", ".", "--output-format", "json"},
@@ -152,13 +148,11 @@ func TestModelInit(t *testing.T) {
 			},
 			AfterTestRemoveDir: initTestDynamoController,
 		},
-		// Added --output-format json in this test because somehow
-		// the --output-format yaml from the previous test case is propagated to this test case
-		// which is only the behaviour inside the test.
-		// TODO think about how to reset the flags between the test cases.
+		// Test case with custom path and version specified.
+		// Flag leakage was fixed, so --output-format yaml from previous test case won't bleed here.
 		{
 			Name:             "given custom path and version when model init model is initialized with custom path and version specified",
-			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
+			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
 			ExpectedDirs: []string{
