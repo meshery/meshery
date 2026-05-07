@@ -13,9 +13,10 @@ import (
 )
 
 type cmdModelGenerateFlags struct {
-	File             string `json:"file" validate:"omitempty,dirpath|filepath|url"`
-	Template         string `json:"template" validate:"omitempty,filepath"`
-	SkipRegistration bool   `json:"skip-registration" validate:"boolean"`
+	File     string `json:"file" validate:"omitempty,dirpath|filepath|url"`
+	Template string `json:"template" validate:"omitempty,filepath"`
+	Model    string `json:"model" validate:"omitempty"`
+	Register bool   `json:"register" validate:"boolean"`
 }
 
 type ModelGenerator interface {
@@ -32,6 +33,7 @@ type CsvModelGenerator struct {
 	ModelFile        string
 	ComponentFile    string
 	RelationshipFile string
+	ModelName        string
 	SkipRegister     bool
 }
 
@@ -50,7 +52,10 @@ mesheryctl model generate -f [path-to-csv-directory]
 mesheryctl model generate -f [URL] -t [path-to-template.json]
 
 // Generate a model from a URL based on a JSON template skipping registration
-mesheryctl model generate --file [URL] --template [path-to-template.json] --skip-registration
+mesheryctl model generate --f [URL] -t [path-to-template.json] -r
+
+// Generate a specific model from a CSV directory
+mesheryctl model generate --f [path-to-csv-directory] -m [model-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &modelGenerateFlags)
@@ -79,6 +84,9 @@ mesheryctl model generate --file [URL] --template [path-to-template.json] --skip
 			if modelGenerateFlags.Template == "" {
 				return ErrTemplateFileNotPresent()
 			}
+			if strings.TrimSpace(modelGenerateFlags.Model) != "" {
+				return utils.ErrInvalidArgument(fmt.Errorf("--model is supported only for CSV directory input"))
+			}
 
 			urlModelGenerator := &UrlModelGenerator{
 				TemplateFile: modelGenerateFlags.Template,
@@ -104,7 +112,8 @@ mesheryctl model generate --file [URL] --template [path-to-template.json] --skip
 			ModelFile:        modelcsvpath,
 			ComponentFile:    componentcsvpath,
 			RelationshipFile: relationshipcsvpath,
-			SkipRegister:     modelGenerateFlags.SkipRegistration,
+			ModelName:        strings.TrimSpace(modelGenerateFlags.Model),
+			SkipRegister:     modelGenerateFlags.Register,
 		}
 
 		return csvModelGenerator.Generate()
@@ -118,7 +127,8 @@ func init() {
 
 	generateModelCmd.Flags().StringVarP(&modelGenerateFlags.File, "file", "f", "", "Specify path to the file or directory")
 	generateModelCmd.Flags().StringVarP(&modelGenerateFlags.Template, "template", "t", "", "Specify path to the template JSON file")
-	generateModelCmd.Flags().BoolVar(&modelGenerateFlags.SkipRegistration, "skip-registration", false, "Skip registration of the model (default is false)")
+	generateModelCmd.Flags().StringVarP(&modelGenerateFlags.Model, "model", "m", "", "Generate only the specified model from CSV input")
+	generateModelCmd.Flags().BoolVarP(&modelGenerateFlags.Register, "register", "r", false, "Skip registration of the model")
 
 }
 
@@ -130,7 +140,7 @@ func (u *UrlModelGenerator) Generate() error {
 		return utils.ErrFileRead(err)
 	}
 
-	err = registerModel(fileData, nil, nil, "", "url", u.Url, !u.SkipRegister)
+	err = registerModel(fileData, nil, nil, "", "url", u.Url, "", !u.SkipRegister)
 	if err != nil {
 		return err
 	}
@@ -163,7 +173,7 @@ func (c *CsvModelGenerator) Generate() error {
 		}
 	}
 
-	err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", !c.SkipRegister)
+	err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", c.ModelName, !c.SkipRegister)
 	if err != nil {
 		return err
 	}

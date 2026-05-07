@@ -71,7 +71,7 @@ mesheryctl model import --file [path-to-csv-directory]
 		}
 
 		if utils.IsValidUrl(path) {
-			return registerModel(nil, nil, nil, "", "urlImport", path, true)
+			return registerModel(nil, nil, nil, "", "urlImport", path, "", true)
 		}
 
 		hasCSVs := hasCSVs(path)
@@ -93,7 +93,7 @@ mesheryctl model import --file [path-to-csv-directory]
 				if err != nil {
 					return utils.ErrFileRead(err)
 				}
-				err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", true)
+				err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", "", true)
 				if err != nil {
 					return err
 				}
@@ -131,7 +131,7 @@ mesheryctl model import --file [path-to-csv-directory]
 			fileName = filepath.Base(path)
 		}
 
-		err = registerModel(tarData, nil, nil, fileName, "file", "", true)
+		err = registerModel(tarData, nil, nil, fileName, "file", "", "", true)
 		if err != nil {
 			return err
 		}
@@ -153,7 +153,7 @@ func hasCSVs(path string) bool {
 	return false
 }
 
-func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {
+func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, selectedModel string, register bool) error {
 	urlPath := "api/meshmodels/register"
 	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
@@ -162,6 +162,7 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 		importRequest.ImportBody.ModelCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(data)
 		importRequest.ImportBody.ComponentCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(componentData)
 		importRequest.ImportBody.RelationshipCSV = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(relationshipData)
+		importRequest.ImportBody.Model.Model = strings.TrimSpace(selectedModel)
 	case "file":
 		importRequest.ImportBody.ModelFile = data
 	default:
