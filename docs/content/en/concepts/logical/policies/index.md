@@ -13,7 +13,7 @@ The relationships are a powerful way to design your infrastructure and each of t
 [![Meshery Models Policy Evaluation](./images/meshery-models-policy-evaluation.svg
 )](./images/meshery-models-policy-evaluation.svg)
 
-Meshery Server has a built-in policy engine implemented natively in Go (ported from the original Open Policy Agent / Rego runtime). Currently, Meshery Server is the only place where the policy evals occur. Policy evaluation is invoked each time a design is updated, and each time a design is imported. By default, policies evaluate for all registered relationships.
+Meshery Server has a built-in policy engine implemented natively in Go (ported from the Open Policy Agent (OPA) Rego engine). Currently, Meshery Server is the only place where the policy evaluations occur. Policy evaluation is invoked each time a design is updated, and each time a design is imported. By default, policies evaluate for all registered relationships.
 
 ### Engine Behavior
 
