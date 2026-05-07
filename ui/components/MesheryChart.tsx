@@ -99,8 +99,8 @@ function MesheryChart(props) {
   const handleSocialExpandClick = (e, metadata, percentiles) => {
     setAnchorEl(e.currentTarget);
     const qpsValue = metadata?.qps?.display?.value || '';
-    const rps = qpsValue.split(' ')[1] || '0';
-    const p99_9 = percentiles?.[4]?.Value || '0';
+    const rps = qpsValue.match(/[\d.]+/)?.[0] || '0';
+    const p99_9 = percentiles?.find((p: any) => p.Percentile === 99.9)?.Value || '0';
 
     setSocialMessage(getSocialMessageForPerformanceTest(rps, p99_9));
     e.stopPropagation();
@@ -119,12 +119,12 @@ function MesheryChart(props) {
       if (chartData && chartData.data && chartData.options) {
         const xAxes = [];
         const yAxes = [];
-        const colors: any = {};
-        const types: any = {};
-        const axes: any = {};
-        const axis: any = {};
-        const yAxisTracker: any = {};
-        const xAxisTracker: any = {};
+        const colors: Record<string, string> = {};
+        const types: Record<string, any> = {};
+        const axes: Record<string, string> = {};
+        const axis: Record<string, any> = {};
+        const yAxisTracker: Record<string, string> = {};
+        const xAxisTracker: Record<string, string> = {};
 
         if (chartData.data && chartData.data.datasets) {
           chartData.data.datasets.forEach((ds, ind) => {
@@ -169,7 +169,7 @@ function MesheryChart(props) {
           });
         }
 
-        const grid: any = {};
+        const grid: Record<string, any> = {};
 
         if (chartData.percentiles && chartData.percentiles.length > 0) {
           // position: "middle"
@@ -250,11 +250,11 @@ function MesheryChart(props) {
       const xAxes = [];
       const categories = [];
       const yAxes = [];
-      const colors: any = {};
-      const axes: any = {};
-      const axis: any = {};
+      const colors: Record<string, string> = {};
+      const axes: Record<string, string> = {};
+      const axis: Record<string, any> = {};
       let yTrack = 1;
-      const yAxisTracker: any = {};
+      const yAxisTracker: Record<string, string> = {};
       // const xAxisTracker = {};
 
       if (chartData.data && chartData.data.datasets) {
@@ -405,16 +405,12 @@ function MesheryChart(props) {
                     </TwitterShareButton>
                   </SocialIconWrapper>
                   <SocialIconWrapper>
-                    <LinkedinShareButton url={'https://meshery.io'} summary={socialMessage}>
+                    <LinkedinShareButton url={'https://meshery.io'}>
                       <LinkedinIcon size={32} />
                     </LinkedinShareButton>
                   </SocialIconWrapper>
                   <SocialIconWrapper>
-                    <FacebookShareButton
-                      url={'https://meshery.io'}
-                      title={socialMessage}
-                      hashtag={'#opensource'}
-                    >
+                    <FacebookShareButton url={'https://meshery.io'} hashtag={'#opensource'}>
                       <FacebookIcon size={32} />
                     </FacebookShareButton>
                   </SocialIconWrapper>
