@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { useNotificationHandlers } from '../../utils/hooks/useNotification';
@@ -28,10 +27,10 @@ import {
 import { WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
-import { Responsive, WidthProvider } from 'react-grid-layout/legacy';
+import { Responsive } from 'react-grid-layout/legacy';
+import debounceWidthProvider from './debounceWidthProvider';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
 import { applyMinSizeConstraints } from './layoutConstraints';
-import Popup from '../General/Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
@@ -39,7 +38,7 @@ import { useSelector } from 'react-redux';
 import useUnsavedChanges from './useUnsavedChanges';
 import UnsavedChangesModal from './UnsavedChangesModal';
 
-const ResponsiveReactGridLayout = WidthProvider(Responsive);
+const ResponsiveReactGridLayout = debounceWidthProvider(Responsive);
 
 const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 
@@ -109,8 +108,7 @@ const Dashboard = () => {
   };
 
   const [currentBreakPoint, setCurrentBreakpoint] = useState('lg');
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
-  const { k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const iconsProps = useMemo(
@@ -468,7 +466,6 @@ const Dashboard = () => {
           );
         })}
       </>
-      <Popup />
       <UnsavedChangesModal
         open={showUnsavedModal}
         onClose={cancelNavigation}

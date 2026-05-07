@@ -33,8 +33,5 @@ func (p *HierarchicalWalletPolicy) IdentifyRelationship(relDef *relationship.Rel
 }
 
 func (p *HierarchicalWalletPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
-	if getRelStatus(rel) == StatusDeleted {
-		return nil
-	}
 	return patchMutatorsAction(rel, design)
 }

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useCallback } from 'react';
 import ResponsiveHoneycomb from './ResponsiveHoneycomb';
 import Hexagon from './Hexagon';
@@ -29,15 +28,28 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useResourceOptions, useResourceFiltering, SORT_DIRECTIONS } from './useResourceOptions';
 import GetKubernetesNodeIcon from '../../utils';
 
-const HoneycombComponent = (props) => {
-  const { kinds, isClusterLoading, isClusterIdsEmpty, isEditMode } = props;
+type Kind = { Kind: string; Model?: string; Count?: number };
+
+type HoneycombComponentProps = {
+  kinds?: Kind[];
+  isClusterLoading?: boolean;
+  isClusterIdsEmpty?: boolean;
+  isEditMode?: boolean;
+};
+
+const HoneycombComponent = ({
+  kinds,
+  isClusterLoading,
+  isClusterIdsEmpty,
+  isEditMode,
+}: HoneycombComponentProps) => {
   const router = useRouter();
   const [groupBy, setGroupBy] = useState('all');
-  const [sortDirection, setSortDirection] = useState(null);
+  const [sortDirection, setSortDirection] = useState<string | null>(null);
 
   const groupOptions = useResourceOptions();
   const filteredKinds = useResourceFiltering(kinds, groupBy, sortDirection);
-  const handleGroupChange = useCallback((e) => {
+  const handleGroupChange = useCallback((e: { target: { value: string } }) => {
     setGroupBy(e.target.value);
   }, []);
 

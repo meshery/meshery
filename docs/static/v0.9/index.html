@@ -365,7 +365,8 @@
 
       <button class="nav-mode-icon" id="mode-toggle-btn">
         <img
-          id="logo-dark-light"
+          class="logo-dark-light"
+          style="visibility: hidden;"
           src="/v0.9/images/nav-icons/mode-toggle-icon-moon.png"
           data-logo-for-dark="/v0.9/images/nav-icons/mode-toggle-icon-moon.png"
           data-logo-for-light="/v0.9/images/nav-icons/mode-toggle-icon-sun.png"
@@ -382,14 +383,26 @@
     
   </head>
 
-  <body class="td-home dark-mode ">
+  <body class="td-home ">
     <script>
-      if (localStorage.getItem("mode") === "light-mode") {
-        document.body.classList.remove("dark-mode");
-        document.querySelectorAll("#logo-dark-light").forEach(e => {
-          e.src = e.dataset.logoForLight;
+      (function() {
+        const savedMode = localStorage.getItem("mode");
+        const isLight = savedMode === "light-mode";
+        if (isLight) {
+          document.body.classList.remove("dark-mode");
+        } else {
+          document.body.classList.add("dark-mode");
+        }
+        
+        document.querySelectorAll(".logo-dark-light").forEach(logo => {
+          if (isLight) {
+            logo.src = logo.dataset.logoForLight;
+          } else {
+            logo.src = logo.dataset.logoForDark;
+          }
+          logo.style.visibility = "visible";
         });
-      }
+      })();
     </script>
 
     
@@ -1357,9 +1370,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
     integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
-<script src="v0.9/js/navbar.js"></script>
-<script src="v0.9/js/lightbox.js"></script>
-<script src="v0.9/js/main.js"></script>
+<script src="/js/navbar.js"></script>
+<script src="/js/lightbox.js"></script>
+<script src="/js/main.js"></script>
 
     
 

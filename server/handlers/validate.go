@@ -48,7 +48,7 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
 	// Unmarshal request body
@@ -56,7 +56,7 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &pld)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 	// Validate
@@ -69,9 +69,13 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 		Result: validationResults,
 	})
 	if err != nil {
-		h.log.Error(ErrValidate(err))
-		http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
-		return
+		// Encode streams directly to rw; a failure here means the body has
+		// already started — log only, don't double-write.
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrValidate(err))
+		} else {
+			h.log.Error(ErrValidate(err))
+		}
 	}
 }
 

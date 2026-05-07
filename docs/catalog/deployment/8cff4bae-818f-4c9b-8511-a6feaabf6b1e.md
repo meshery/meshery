@@ -6,8 +6,8 @@ userId: 6ad60df0-67bb-4c3f-8c9d-d4cd51f00644
 userName: Darshan N
 userAvatarURL: https://avatars.githubusercontent.com/u/91359578?v=4
 type: deployment
-compatibility: 
-
+compatibility:
+    - kubernetes
 patternId: 8cff4bae-818f-4c9b-8511-a6feaabf6b1e
 image: /assets/images/logos/service-mesh-pattern.svg
 patternInfo: |

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useMemo } from 'react';
 import BBChart from '../../BBChart';
 import { donut } from 'billboard.js';
@@ -24,10 +23,10 @@ function MeshModelContructs() {
     page: 0,
     pagesize: '1',
   };
-  const modelCount = useGetMeshModelsQuery({ params }).data?.total_count || 0;
-  const componentCount = useGetComponentsQuery({ params }).data?.total_count || 0;
-  const relationshipCount = useGetRelationshipsQuery({ params }).data?.total_count || 0;
-  const registrantsConut = useGetRegistrantsQuery({ params }).data?.total_count || 0;
+  const modelCount = useGetMeshModelsQuery({ params }).data?.totalCount || 0;
+  const componentCount = useGetComponentsQuery({ params }).data?.totalCount || 0;
+  const relationshipCount = useGetRelationshipsQuery({ params }).data?.totalCount || 0;
+  const registrantsConut = useGetRegistrantsQuery({ params }).data?.totalCount || 0;
   const theme = useTheme();
 
   // Data Cleanup
@@ -44,7 +43,7 @@ function MeshModelContructs() {
         columns: data,
         type: donut(),
         colors: dataToColors(data),
-        onclick: function (d) {
+        onclick: function (d: { name: string }) {
           router.push(`/settings?settingsCategory=Registry&tab=${d.name}`);
         },
       },

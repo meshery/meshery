@@ -68,12 +68,12 @@ func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.
 	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
 
 	if err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
+		writeMeshkitError(responseWriter, ErrInvalidFileRequest(err), http.StatusBadRequest)
 		return
 	}
 	file, err := os.Open(filePath)
 	if err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(responseWriter, ErrReadFileContent(err, filePath), http.StatusInternalServerError)
 		return
 	}
 	defer func() {
@@ -85,10 +85,12 @@ func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.
 	// Set the content type to plain text
 	responseWriter.Header().Set("Content-Type", "text/plain")
 
-	// Copy the file content to the response writer
+	// Copy the file content to the response writer. If io.Copy fails mid-stream
+	// the response status and headers are already committed, so we log the
+	// error for diagnostics and return rather than attempting a second write.
 	_, err = io.Copy(responseWriter, file)
 	if err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrCopy(err, filePath))
 		return
 	}
 }
@@ -97,13 +99,13 @@ func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.
 func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *http.Request) {
 	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
 	if err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
+		writeMeshkitError(responseWriter, ErrInvalidFileRequest(err), http.StatusBadRequest)
 		return
 	}
 
 	file, err := os.Open(filePath)
 	if err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(responseWriter, ErrReadFileContent(err, filePath), http.StatusInternalServerError)
 		return
 	}
 	defer func() {
@@ -116,9 +118,11 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 	responseWriter.Header().Set("Content-Type", "text/plain")
 	responseWriter.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
 
+	// See ViewHandler: response has already started streaming, so a second
+	// error write would corrupt the body. Log and return.
 	_, err = io.Copy(responseWriter, file)
 	if err != nil {
-		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrCopy(err, filePath))
 		return
 	}
 }

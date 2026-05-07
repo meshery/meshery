@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
@@ -9,13 +8,23 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Box, MenuItem, Select, Typography } from '@sistent/sistent';
 
+type WorkloadResource = { kind?: string; count?: number };
+
+type WorkloadChartProps = {
+  classes: { dashboardSection: string; link: string };
+  resourses?: WorkloadResource[];
+  namespaces?: string[];
+  selectedNamespace?: string;
+  handleSetNamespace: (ns: string) => void;
+};
+
 export default function WorkloadChart({
   classes,
   resourses = [],
   namespaces = [],
   selectedNamespace = '',
   handleSetNamespace,
-}) {
+}: WorkloadChartProps) {
   resourses = resourses || [];
   namespaces = namespaces || [];
   const chartData = resourses
@@ -81,10 +90,10 @@ export default function WorkloadChart({
             Workloads
           </Typography>
         </Link>
-        {namespaces?.length > 0 && (
+        {namespaces.length > 0 && (
           <Select value={selectedNamespace} onChange={(e) => handleSetNamespace(e.target.value)}>
             {namespaces.map((ns) => (
-              <MenuItem key={ns.uniqueID} value={ns}>
+              <MenuItem key={ns} value={ns}>
                 {ns}
               </MenuItem>
             ))}

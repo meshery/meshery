@@ -1,11 +1,14 @@
-// @ts-nocheck
-import React from 'react';
-import PropTypes from 'prop-types';
+﻿import React from 'react';
 import uiConfig from '../../ui.config';
 
-function LoadingScreen(props) {
-  const { message, children, isLoading, id, ...other } = props;
+type LoadingScreenProps = {
+  message: string;
+  children?: React.ReactNode;
+  isLoading: boolean;
+  id?: string;
+} & React.HTMLAttributes<HTMLDivElement>;
 
+function LoadingScreen({ message, children, isLoading, id, ...other }: LoadingScreenProps) {
   if (isLoading) {
     return <PureHtmlLoadingScreen message={message} id={id} {...other} />;
   }
@@ -13,8 +16,12 @@ function LoadingScreen(props) {
   return <>{children}</>;
 }
 
-export const PureHtmlLoadingScreen = (props) => {
-  const { message, id, ...other } = props;
+type PureHtmlLoadingScreenProps = {
+  message: string;
+  id?: string;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+export const PureHtmlLoadingScreen = ({ message, id, ...other }: PureHtmlLoadingScreenProps) => {
   const AnimatedLogoDark = uiConfig.AnimatedLogoDark;
 
   return (
@@ -29,7 +36,7 @@ export const PureHtmlLoadingScreen = (props) => {
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
-        fontFamily: 'QanelasSoftRegular, sans-serif',
+        fontFamily: '"Qanelas Soft", sans-serif',
         fontWeight: 'normal',
         fontSize: '1.15rem',
         backgroundColor: '#263238', // color of navigation menu
@@ -50,7 +57,7 @@ export const PureHtmlLoadingScreen = (props) => {
         <h1
           id={id + '-text-message'}
           style={{
-            fontFamily: 'QanelasSoftRegular, sans-serif', // this is important to have consistent font between prereact render
+            fontFamily: '"Qanelas Soft", sans-serif', // this is important to have consistent font between prereact render
             fontSize: '1.15rem',
             fontWeight: 'normal',
             marginTop: '0rem',
@@ -61,12 +68,6 @@ export const PureHtmlLoadingScreen = (props) => {
       </div>
     </div>
   );
-};
-
-LoadingScreen.propTypes = {
-  message: PropTypes.string.isRequired,
-  className: PropTypes.string,
-  isLoading: PropTypes.bool.isRequired,
 };
 
 export default LoadingScreen;

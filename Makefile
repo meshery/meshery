@@ -181,7 +181,7 @@ server: dep-check
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=$(PORT) \
 	DEBUG=true \
-	USE_GO_POLICY_ENGINE=true \
+	USE_GO_POLICY_ENGINE=$(USE_GO_POLICY_ENGINE) \
 	OTEL_CONFIG=$(OTEL_CONFIG) \
 	PROVIDER_CAPABILITIES_FILEPATH=$(PROVIDER_CAPABILITIES_FILEPATH) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
@@ -323,16 +323,10 @@ ui-server: ui-meshery-build ui-provider-build server
 UI_BUILD_SCRIPT = build16
 UI_DEV_SCRIPT = dev16
 
-ifeq ($(findstring v20, $(shell node --version)), v20)
+ifeq ($(findstring v22, $(shell node --version)), v22)
     UI_BUILD_SCRIPT = build
     UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v19, $(shell node --version)), v19)
-    UI_BUILD_SCRIPT = build
-    UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v18, $(shell node --version)), v18)
-    UI_BUILD_SCRIPT = build
-    UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v17, $(shell node --version)), v17)
+else ifeq ($(findstring v20, $(shell node --version)), v20)
     UI_BUILD_SCRIPT = build
     UI_DEV_SCRIPT = dev
 
@@ -475,11 +469,7 @@ helm-meshery-lint:
 #-----------------------------------------------------------------------------
 # Meshery APIs
 #-----------------------------------------------------------------------------
-.PHONY: graphql-docs-build graphql-build
-
-## Build Meshery GraphQL API documentation
-graphql-docs-build:
-	cd docs; bundle exec rake graphql:compile_docs
+.PHONY: graphql-build
 
 ## Build Meshery GraphQl API specifications
 graphql-build: dep-check
