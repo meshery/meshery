@@ -1,0 +1,19 @@
+/* Light mode sidebar improvements */
+.light-mode {
+  --sidebar-text-color: #333;
+  --sidebar-link-color: #0066cc;
+  --sidebar-link-hover: #0052a3;
+}
+
+.light-mode .td-sidebar-nav a{
+  color: var(--sidebar-link-color);
+}
+
+.light-mode .td-sidebar-nav a:hover {
+  color: var(--sidebar-link-hover);
+}
+
+.light-mode .td-sidebar-nav span,
+.light-mode .td-sidebar-nav li {
+  color: var(--sidebar-text-color) ;
+}
