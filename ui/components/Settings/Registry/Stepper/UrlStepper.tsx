@@ -1,5 +1,4 @@
 import React from 'react';
-import DescriptionIcon from '@mui/icons-material/Description';
 import {
   ModalFooter,
   useStepper,
@@ -22,6 +21,7 @@ import {
   AppRegistrationIcon,
   BrushIcon,
   CategoryIcon,
+  DescriptionIcon,
 } from '@sistent/sistent';
 
 import {
