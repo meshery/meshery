@@ -6,8 +6,8 @@ import {
 } from '@paciolan/remote-component';
 import MesheryPerformanceComponent from './Performance';
 import PatternServiceFormCore from './MesheryMeshInterface/PatternServiceFormCore';
-import InfoModal from '../components/General/Modals/Information/InfoModal';
-import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
+import InfoModal from '../components/shared/Modal/Information/InfoModal';
+import ConfigurationSubscription from '../components/graphql/subscriptions/ConfigurationSubscription';
 import _PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import { useNotification } from '../utils/hooks/useNotification';
