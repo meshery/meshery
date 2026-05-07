@@ -25,7 +25,8 @@ title: Rest API Docs
 
 {% for route in sorted_paths %}
 <div class="swagger-path">
-    <h2 class="swagger-path">{{ route[0] }}</h2>
+    {% assign route_id = route[0] | slugify %}
+    <h2 class="swagger-path" id="{{ route_id }}">{{ route[0] }}</h2>
 {% if route[0] contains '/api/oam' %}
     <span class="deprecated-label">Deprecated</span>
 {% endif %}
