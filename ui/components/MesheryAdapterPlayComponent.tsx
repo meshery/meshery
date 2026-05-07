@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
+  AddIcon,
   Box,
   Card,
   CardActions,
   CardHeader,
   Chip,
+  DeleteIcon,
   Dialog,
   DialogActions,
   DialogContent,
@@ -17,6 +19,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  PlayArrowIcon as PlayIcon,
   Switch,
   Table,
   Tooltip,
@@ -28,9 +31,6 @@ import {
   NoSsr,
   TableHead,
 } from '@sistent/sistent';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PlayIcon from '@mui/icons-material/PlayArrow';
 import MUIDataTable from '@sistent/mui-datatables';
 import { useRouter } from 'next/router';
 import { Controlled as CodeMirror } from './CodeMirror';
