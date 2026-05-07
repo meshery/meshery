@@ -4,14 +4,13 @@ import {
   FormControl,
   RadioGroup,
   Radio,
-  importModelUiSchema,
-  importModelSchema,
   Typography,
   ModalFooter,
   Box,
   Modal,
   useTheme,
 } from '@sistent/sistent';
+import { ModelImportRjsfSchemaV1Beta2, ModelImportRjsfUiSchemaV1Beta2 } from '@meshery/schemas';
 import { RJSFModalWrapper } from '@/components/General/Modals/Modal';
 import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
@@ -92,6 +91,22 @@ const FinishDeploymentStep = ({
   );
 };
 
+// Canonical RJSF form schemas authored in `meshery/schemas` and validated
+// by its `validation/forms_test.go` to be a strict subset of the OpenAPI
+// `MesheryModelImportFormPayload` construct. Importing them directly
+// keeps the modal locked to the canonical field shape (uploadType enum
+// tokens, modelFile/fileName/url naming, allOf required branches) — any
+// drift surfaces as a build/test failure here rather than as silent
+// runtime divergence.
+const importModelSchema = ModelImportRjsfSchemaV1Beta2;
+const importModelUiSchema = ModelImportRjsfUiSchemaV1Beta2;
+
+// Token vocabulary the canonical schema uses. Pull these from the schema
+// (rather than hard-code) so adding/renaming an upload method upstream
+// flows through this consumer with one constant change.
+const [UPLOAD_TYPE_FILE, UPLOAD_TYPE_URL, UPLOAD_TYPE_CSV] = importModelSchema.properties.uploadType
+  .enum as string[];
+
 type ImportModelModalProps = {
   isImportModalOpen: boolean;
   setIsImportModalOpen: (_open: boolean) => void;
@@ -117,38 +132,45 @@ const ImportModelModal = React.memo(
     };
 
     const handleImportModelSubmit = async (data) => {
-      const { uploadType, url, file } = data;
+      // Canonical field names from ModelImportRjsfSchemaV1Beta2:
+      // `uploadType` (enum: file/urlImport/csv), `modelFile`, `fileName`,
+      // `url`, plus the CSV trio handled by CsvStepper.
+      const { uploadType, url, modelFile, fileName: formFileName } = data;
       let requestBody = null;
 
-      const fileElement = document.getElementById('root_file');
+      // RJSF doesn't surface the original filename through form data, so
+      // read it off the input element. The id matches the schema field name.
+      const fileElement = document.getElementById('root_modelFile') as HTMLInputElement | null;
 
       switch (uploadType) {
-        case 'File Import': {
-          const fileName = fileElement.files[0].name;
-          const fileData = getUnit8ArrayDecodedFile(file);
-          if (fileData) {
+        case UPLOAD_TYPE_FILE: {
+          const fileName = formFileName || fileElement?.files?.[0]?.name;
+          const fileData = modelFile ? getUnit8ArrayDecodedFile(modelFile) : null;
+          if (fileData && fileName) {
+            // Server's ImportBody.FileName / .ModelFile are tagged
+            // `file_name` / `model_file` (snake_case wire format).
             requestBody = {
               importBody: {
                 model_file: fileData,
                 url: '',
-                filename: fileName,
+                file_name: fileName,
               },
-              uploadType: 'file',
+              uploadType: UPLOAD_TYPE_FILE,
               register: true,
             };
           } else {
-            console.error('Error: File data is empty or invalid');
+            console.error('Error: File data or file name is empty or invalid');
             return;
           }
           break;
         }
-        case 'URL Import': {
+        case UPLOAD_TYPE_URL: {
           if (url) {
             requestBody = {
               importBody: {
                 url: url,
               },
-              uploadType: 'urlImport',
+              uploadType: UPLOAD_TYPE_URL,
               register: true,
             };
           } else {
@@ -157,7 +179,7 @@ const ImportModelModal = React.memo(
           }
           break;
         }
-        case 'CSV Import': {
+        case UPLOAD_TYPE_CSV: {
           handleClose();
           setIsCsvModalOpen(true);
           return;
@@ -204,7 +226,7 @@ const ImportModelModal = React.memo(
                   <div>
                     <Typography variant="subtitle1">{option.label}</Typography>
                     <Typography variant="body2" color="textSecondary" textTransform={'none'}>
-                      {schema.enumDescriptions[index]}
+                      {schema.enumDescriptions?.[index]}
                     </Typography>
                   </div>
                 }
