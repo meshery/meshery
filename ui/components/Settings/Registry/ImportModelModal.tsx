@@ -92,14 +92,14 @@ const FinishDeploymentStep = ({
 };
 
 // Build the Import Model RJSF schema from the canonical
-// `@meshery/schemas` OpenAPI definition rather than from sistent's
-// derived `importModelSchema` export. Sistent's derivation (since
-// v0.21.3) renames `file` → `modelFile` and emits the `uploadType` enum
-// without `enumNames`, which doesn't round-trip through this modal —
-// `getUnit8ArrayDecodedFile(file)` and the `'File Import'`/`'URL Import'`/
-// `'CSV Import'` switch keys can't both move with the upstream rename
-// without churn here, and the e2e suite searches for the friendly
-// "File Import" heading to begin with.
+// `@meshery/schemas` OpenAPI definition and keep only a thin local
+// adapter here. We cannot use sistent's derived `importModelSchema`
+// export directly because, since v0.21.3, that derivation renames
+// `file` → `modelFile` and emits the `uploadType` enum as internal
+// tokens. This modal still depends on the existing RJSF field id
+// (`root_file`), the `getUnit8ArrayDecodedFile(file)` handler contract,
+// and the friendly `'File Import'`/`'URL Import'`/`'CSV Import'` labels
+// that the e2e selectors look for.
 //
 // We pull the canonical strings (title, description, enum tokens,
 // enumDescriptions) straight from `ImportRequest.properties.uploadType`
@@ -108,7 +108,8 @@ const FinishDeploymentStep = ({
 // those titles are what RJSF would have surfaced if the schema were
 // rendered as a discriminated union, so nothing is being invented
 // here. Only the RJSF-specific shape (top-level `file`/`url` fields,
-// widget mapping, conditional `required`) is added on top.
+// widget mapping, conditional `required`) is added on top until the
+// shared export round-trips through this modal unchanged.
 const canonicalImportRequest = ModelDefinitionV1Beta1OpenApiSchema.components.schemas.ImportRequest;
 const canonicalImportBody = canonicalImportRequest.properties.importBody;
 const canonicalUploadType = canonicalImportRequest.properties.uploadType;
