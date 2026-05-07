@@ -122,6 +122,15 @@ const UPLOAD_TYPE_FILE = 'file';
 const UPLOAD_TYPE_URL = 'urlImport';
 const UPLOAD_TYPE_CSV = 'csv';
 
+// `allOf` intentionally does NOT mark `modelFile` required for the file
+// branch even though the canonical does. CustomFileWidget reads the file
+// asynchronously (FileReader → `Promise.then(props.onChange)`) and only
+// then lifts the data URL into RJSF's form state, while validation runs
+// synchronously on Next-click. Gating submit on `required: ['modelFile']`
+// loses the race on every test run and the form sits silently. We trust
+// the user-flow guard in `handleImportModelSubmit` instead — it reads
+// the file off the DOM input as the synchronous source-of-truth and
+// short-circuits if no file is selected.
 const importModelSchema = {
   $schema: 'https://json-schema.org/draft-07/schema#',
   title: ModelImportRjsfSchemaV1Beta2.title,
@@ -132,13 +141,6 @@ const importModelSchema = {
     url: canonicalProps.url,
   },
   allOf: [
-    {
-      if: {
-        properties: { uploadType: { const: UPLOAD_TYPE_FILE } },
-        required: ['uploadType'],
-      },
-      then: { required: ['modelFile'] },
-    },
     {
       if: {
         properties: { uploadType: { const: UPLOAD_TYPE_URL } },
@@ -168,6 +170,45 @@ const filenameFromDataUrl = (dataUrl: string | undefined): string | undefined =>
   const match = dataUrl.match(/;name=([^;]+);/);
   return match ? decodeURIComponent(match[1]) : undefined;
 };
+
+// Re-encode an RJSF data URL into the byte array the server expects.
+// Mirrors `getUnit8ArrayDecodedFile` for the happy path; returns `null`
+// when no data URL is present so callers can fall back to the DOM input.
+const encodeFileToBase64Bytes = async (dataUrl: string | undefined): Promise<number[] | null> => {
+  if (!dataUrl) return null;
+  return getUnit8ArrayDecodedFile(dataUrl);
+};
+
+// Locate the `<input type="file">` rendered for the modelFile field. RJSF
+// uses the schema title as the id prefix (`<title>_modelFile`), so we
+// can't hard-code `root_modelFile`; query the live modal dialog instead.
+const findSelectedModelFile = (): File | undefined => {
+  if (typeof document === 'undefined') return undefined;
+  const inputs = document.querySelectorAll<HTMLInputElement>(
+    'input[type="file"][id$="_modelFile"]',
+  );
+  for (const input of Array.from(inputs)) {
+    const file = input.files?.[0];
+    if (file) return file;
+  }
+  return undefined;
+};
+
+// Read a `File` synchronously-from-the-DOM-but-asynchronously-into-bytes,
+// matching the wire shape `getUnit8ArrayDecodedFile` produces from a
+// data URL. Used as the synchronous fallback when RJSF's form data
+// hasn't received the data URL yet (the FileReader chain inside
+// CustomFileWidget can lose the race against a quick Next-click).
+const readFileAsBytes = (file: File): Promise<number[]> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const buffer = reader.result as ArrayBuffer;
+      resolve(Array.from(new Uint8Array(buffer)));
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsArrayBuffer(file);
+  });
 
 type ImportModelModalProps = {
   isImportModalOpen: boolean;
@@ -200,16 +241,30 @@ const ImportModelModal = React.memo(
       const { uploadType, url, modelFile, fileName: formFileName } = data;
       let requestBody = null;
 
-      // RJSF's file widget encodes the original filename in the data URL,
-      // but we also fall back to the input element's `files[0].name` in
-      // case the widget shape changes upstream.
-      const fileElement = document.getElementById('root_modelFile') as HTMLInputElement | null;
-
       switch (uploadType) {
         case UPLOAD_TYPE_FILE: {
-          const fileName =
-            formFileName || filenameFromDataUrl(modelFile) || fileElement?.files?.[0]?.name;
-          const fileData = modelFile ? getUnit8ArrayDecodedFile(modelFile) : null;
+          // Two source-of-truth paths for the file:
+          //   1. RJSF form data (`data.modelFile` data URL) — this is the
+          //      happy path when the user clicked Next after the upload
+          //      finished round-tripping through CustomFileWidget's async
+          //      FileReader → onChange chain.
+          //   2. DOM input fallback — Playwright e2e (and any quick
+          //      keystroke after upload) can race the FileReader, so the
+          //      data URL hasn't landed in form state yet on submit. The
+          //      `<input type="file">` rendered by the widget already
+          //      carries the selected `File` synchronously (the browser
+          //      sets `.files` on the input the instant the user picks a
+          //      file), so re-read + base64-encode it here.
+          const formData = await encodeFileToBase64Bytes(modelFile);
+          let fileName = formFileName || filenameFromDataUrl(modelFile);
+          let fileData: number[] | null = formData;
+          if (!fileData) {
+            const inputFile = findSelectedModelFile();
+            if (inputFile) {
+              fileData = await readFileAsBytes(inputFile);
+              fileName = fileName || inputFile.name;
+            }
+          }
           if (fileData && fileName) {
             // Server's ImportBody.FileName / .ModelFile are tagged
             // `file_name` / `model_file` (snake_case wire format).
