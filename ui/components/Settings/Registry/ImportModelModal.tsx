@@ -10,7 +10,7 @@ import {
   Modal,
   useTheme,
 } from '@sistent/sistent';
-import { ModelImportRjsfSchemaV1Beta2, ModelImportRjsfUiSchemaV1Beta2 } from '@meshery/schemas';
+import { ModelImportRjsfSchemaV1Beta2 } from '@meshery/schemas';
 import { RJSFModalWrapper } from '@/components/General/Modals/Modal';
 import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
@@ -93,31 +93,44 @@ const FinishDeploymentStep = ({
 
 // Canonical RJSF form schemas authored in `meshery/schemas` and validated
 // by its `validation/forms_test.go` to be a strict subset of the OpenAPI
-// `MesheryModelImportFormPayload` construct. Importing them keeps the
-// modal locked to the canonical field shape (uploadType enum tokens,
-// modelFile/fileName/url naming) — any drift surfaces as a build/test
-// failure here rather than silent runtime divergence.
+// `MesheryModelImportFormPayload` construct. The canonical is the source
+// of truth for property shapes, types, descriptions, enum tokens, and
+// upload-type labels — pull them through directly.
 //
-// Two consumer-side overrides on top of the canonical:
+// The canonical describes the full form-data shape (file + url + csv
+// branches), but this modal only renders the file-and-url subset; the
+// CSV branch is handled by a separate `CsvStepper` modal opened on the
+// `csv` upload-type. Keeping the unused fields in the rendered form
+// caused two real problems:
+//   (a) RJSF v6's @rjsf/validator-ajv8 rejected the form on `Next` —
+//       even though `modelCsv` / `componentCsv` / `relationshipCsv` were
+//       hidden via `ui:widget: 'hidden'`, their `format: "binary"` and
+//       the canonical's csv-branch `allOf` required-list still blocked
+//       `validateForm()`, so the import POST never fired and the test
+//       hung waiting for the registration event.
+//   (b) the canonical's schema-level `enumNames` is silently ignored
+//       by @rjsf/utils' `optionsList()` — RJSF v6 reads the radio
+//       labels from `ui:enumNames` on the uiSchema instead.
 //
-//  1. `allOf` is relaxed: the canonical requires `fileName` for the
-//     file branch and the CSV trio for the csv branch, but this modal
-//     doesn't render either. `fileName` is derived from the file
-//     widget's `data:...;name=foo;base64,...` URL, and the CSV files
-//     are uploaded via `CsvStepper` (a separate modal opened on the
-//     csv branch). Keeping the canonical `required` would block the
-//     `Next` click on validation errors for fields the user can't see.
-//
-//  2. `uiSchema` hides `fileName` and the CSV inputs so the form only
-//     surfaces the inputs that match this modal's UX (uploadType radio,
-//     modelFile, url). The hidden fields stay schema-valid; they are
-//     just not rendered.
+// Hold the consumer-shaped subset locally with content pulled from the
+// canonical (titles, descriptions, enum tokens, friendly labels). When
+// the upstream schema gains a UI-friendly variant or RJSF starts
+// honoring schema-level `enumNames`, this override can shrink.
+const canonicalProps = ModelImportRjsfSchemaV1Beta2.properties;
+const canonicalUploadType = canonicalProps.uploadType;
 const UPLOAD_TYPE_FILE = 'file';
 const UPLOAD_TYPE_URL = 'urlImport';
 const UPLOAD_TYPE_CSV = 'csv';
 
 const importModelSchema = {
-  ...ModelImportRjsfSchemaV1Beta2,
+  $schema: 'https://json-schema.org/draft-07/schema#',
+  title: ModelImportRjsfSchemaV1Beta2.title,
+  type: 'object',
+  properties: {
+    uploadType: canonicalUploadType,
+    modelFile: canonicalProps.modelFile,
+    url: canonicalProps.url,
+  },
   allOf: [
     {
       if: {
@@ -133,27 +146,17 @@ const importModelSchema = {
       },
       then: { required: ['url'] },
     },
-    // csv branch: required CSV fields handled by CsvStepper, not this form.
   ],
+  required: ['uploadType'],
 };
 
 const importModelUiSchema = {
-  ...ModelImportRjsfUiSchemaV1Beta2,
-  // RJSF v6 reads `enumNames` from the uiSchema (`ui:enumNames`) rather than
-  // from the JSON Schema itself — the canonical `import.json` declares
-  // `enumNames` at the schema level, which @rjsf/utils' `optionsList()`
-  // silently ignores. Without this override the radio surfaces the raw
-  // `file`/`urlImport`/`csv` enum tokens instead of the friendly labels,
-  // breaking the e2e selectors that look for `getByRole('heading', { name:
-  // 'File Import' })`.
   uploadType: {
     'ui:widget': 'radio',
-    'ui:enumNames': [...(ModelImportRjsfSchemaV1Beta2.properties.uploadType.enumNames as string[])],
+    'ui:enumNames': [...(canonicalUploadType.enumNames as string[])],
   },
-  fileName: { 'ui:widget': 'hidden' },
-  modelCsv: { 'ui:widget': 'hidden' },
-  componentCsv: { 'ui:widget': 'hidden' },
-  relationshipCsv: { 'ui:widget': 'hidden' },
+  modelFile: { 'ui:widget': 'file' },
+  'ui:order': ['uploadType', 'modelFile', 'url'],
 };
 
 // RJSF's file widget encodes the original filename inside the data URL
