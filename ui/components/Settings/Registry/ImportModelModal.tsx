@@ -139,6 +139,17 @@ const importModelSchema = {
 
 const importModelUiSchema = {
   ...ModelImportRjsfUiSchemaV1Beta2,
+  // RJSF v6 reads `enumNames` from the uiSchema (`ui:enumNames`) rather than
+  // from the JSON Schema itself — the canonical `import.json` declares
+  // `enumNames` at the schema level, which @rjsf/utils' `optionsList()`
+  // silently ignores. Without this override the radio surfaces the raw
+  // `file`/`urlImport`/`csv` enum tokens instead of the friendly labels,
+  // breaking the e2e selectors that look for `getByRole('heading', { name:
+  // 'File Import' })`.
+  uploadType: {
+    'ui:widget': 'radio',
+    'ui:enumNames': [...(ModelImportRjsfSchemaV1Beta2.properties.uploadType.enumNames as string[])],
+  },
   fileName: { 'ui:widget': 'hidden' },
   modelCsv: { 'ui:widget': 'hidden' },
   componentCsv: { 'ui:widget': 'hidden' },
