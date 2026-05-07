@@ -45,6 +45,17 @@ const (
 	SKIP_DOWNLOAD_EXTENSIONS_ENV       = "SKIP_DOWNLOAD_EXTENSIONS"
 )
 
+func shouldPropagateProviderVersion(version string) bool {
+	normalized := strings.TrimSpace(version)
+	if normalized == "" {
+		return false
+	}
+	if strings.EqualFold(normalized, "not set") || strings.EqualFold(normalized, "not_set") || normalized == "edge-latest" {
+		return false
+	}
+	return true
+}
+
 // RemoteProvider - represents a local provider
 type RemoteProvider struct {
 	ProviderProperties
@@ -532,9 +543,13 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 		})
 
 		queryParams := url.Values{
-			"source":           []string{base64.RawURLEncoding.EncodeToString([]byte(baseCallbackURL))},
-			"provider_version": []string{l.ProviderVersion},
-			"meshery_version":  []string{mesheryVersion},
+			"source": []string{base64.RawURLEncoding.EncodeToString([]byte(baseCallbackURL))},
+		}
+		if shouldPropagateProviderVersion(l.ProviderVersion) {
+			queryParams.Set("provider_version", l.ProviderVersion)
+		}
+		if shouldPropagateProviderVersion(mesheryVersion) {
+			queryParams.Set("meshery_version", mesheryVersion)
 		}
 
 		if supportsAnonymousUserSessions {
