@@ -4,7 +4,7 @@ import Moment from 'react-moment';
 import CustomToolbarSelect from '../CustomToolbarSelect';
 import MesheryChart from '../MesheryChart';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
-import GenericModal from '../General/Modals/GenericModal';
+import GenericModal from '../shared/Modal/GenericModal';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import InfoIcon from '@mui/icons-material/Info';
 import fetchPerformanceResults from '../graphql/queries/PerformanceResultQuery';
