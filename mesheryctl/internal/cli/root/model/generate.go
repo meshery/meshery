@@ -44,10 +44,10 @@ var generateModelCmd = &cobra.Command{
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/generate`,
 	Example: ` 
 // Generate a model from a CSV directory
-mesheryctl model generate --f [path-to-csv-directory]
+mesheryctl model generate -f [path-to-csv-directory]
 
 // Generate a model from a URL based on a JSON template
-mesheryctl model generate --f [URL] -t [path-to-template.json]
+mesheryctl model generate -f [URL] -t [path-to-template.json]
 
 // Generate a model from a URL based on a JSON template skipping registration
 mesheryctl model generate --file [URL] --template [path-to-template.json] --skip-registration
