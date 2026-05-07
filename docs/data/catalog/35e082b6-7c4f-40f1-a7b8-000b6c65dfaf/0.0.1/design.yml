@@ -1,0 +1,673 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "cluster-istio-18.11.60.tgz",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.1",
+  "components": [
+    {
+      "id": "ade46081-3d96-4426-941a-a08c4d0ea296",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "default-istio",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T20:28:35.331536+05:30",
+          "updated_at": "2025-10-12T20:28:35.331536+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-style": "dashed",
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {
+            "argocd.argoproj.io/sync-wave": "-10",
+            "openshift.io/description": "ISTIO System running tracing, monitoring, management and routing tools example from startx",
+            "openshift.io/display-name": "ISTIO Example",
+            "openshift.io/generated-by": "startx-helm-project",
+            "openshift.io/requester": "project"
+          },
+          "labels": {
+            "app.kubernetes.io/component": "mycomponent",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "default-istio-project",
+            "app.kubernetes.io/part-of": "default-istio",
+            "app.startx.fr/app": "default-istio",
+            "app.startx.fr/cluster": "default",
+            "app.startx.fr/component": "mycomponent",
+            "app.startx.fr/environment": "myenv",
+            "app.startx.fr/scope": "myscope",
+            "helm.sh/chart": "project",
+            "openshift.io/cluster-monitoring": "true"
+          },
+          "name": "default-istio"
+        },
+        "spec": {}
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Namespace",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d4e18a93-f6ab-48a6-bbf7-ccac1478c03b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "istio-operators",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T20:28:35.331536+05:30",
+          "updated_at": "2025-10-12T20:28:35.331536+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-style": "dashed",
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {
+            "argocd.argoproj.io/sync-wave": "-10",
+            "openshift.io/description": "ISTIO operators configured by startx",
+            "openshift.io/display-name": "Operator ISTIO",
+            "openshift.io/generated-by": "startx-helm-projectOperator",
+            "openshift.io/requester": "projectOperator"
+          },
+          "labels": {
+            "app.kubernetes.io/component": "mycomponent",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "default-istio-project",
+            "app.kubernetes.io/part-of": "default-istio",
+            "app.startx.fr/app": "default-istio",
+            "app.startx.fr/cluster": "default",
+            "app.startx.fr/component": "mycomponent",
+            "app.startx.fr/environment": "myenv",
+            "app.startx.fr/scope": "myscope",
+            "helm.sh/chart": "projectOperator",
+            "openshift.io/cluster-monitoring": "true"
+          },
+          "name": "istio-operators"
+        },
+        "spec": {}
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Namespace",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a2a5fe16-bd7c-4e26-b771-d5a371f36c6a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "default-istio-quotas",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T20:28:35.331536+05:30",
+          "updated_at": "2025-10-12T20:28:35.331536+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/resourcequota-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/resourcequota-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {
+            "openshift.io/generated-by": "startx-helm-project"
+          },
+          "labels": {
+            "app.kubernetes.io/component": "mycomponent",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "default-istio-2.6.7-quotas",
+            "app.kubernetes.io/part-of": "default-istio",
+            "app.startx.fr/app": "default-istio",
+            "app.startx.fr/cluster": "default",
+            "app.startx.fr/component": "mycomponent",
+            "app.startx.fr/environment": "myenv",
+            "app.startx.fr/scope": "myscope",
+            "helm.sh/chart": "project"
+          },
+          "name": "default-istio-quotas",
+          "namespace": "default-istio"
+        },
+        "spec": {
+          "hard": {
+            "limits.cpu": "400m",
+            "limits.memory": "1024Mi",
+            "persistentvolumeclaims": "0",
+            "pods": "4",
+            "requests.cpu": "400m",
+            "requests.memory": "512Mi",
+            "services": "2"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ResourceQuota",
+        "schema": ""
+      }
+    },
+    {
+      "id": "8236ee91-f305-4412-89da-60a55f24eaef",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "istio-operators-quotas",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T20:28:35.331536+05:30",
+          "updated_at": "2025-10-12T20:28:35.331536+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/resourcequota-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/resourcequota-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {
+            "openshift.io/generated-by": "startx-helm-projectOperator"
+          },
+          "labels": {
+            "app.kubernetes.io/component": "mycomponent",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "default-istio-2.6.7-quotas",
+            "app.kubernetes.io/part-of": "default-istio",
+            "app.startx.fr/app": "default-istio",
+            "app.startx.fr/cluster": "default",
+            "app.startx.fr/component": "mycomponent",
+            "app.startx.fr/environment": "myenv",
+            "app.startx.fr/scope": "myscope",
+            "helm.sh/chart": "projectOperator"
+          },
+          "name": "istio-operators-quotas",
+          "namespace": "istio-operators"
+        },
+        "spec": {
+          "hard": {
+            "limits.cpu": "400m",
+            "limits.memory": "1024Mi",
+            "persistentvolumeclaims": "0",
+            "pods": "4",
+            "requests.cpu": "400m",
+            "requests.memory": "512Mi",
+            "services": "2"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ResourceQuota",
+        "schema": ""
+      }
+    },
+    {
+      "id": "f390da01-9fe3-40ff-aa8b-62b04424483f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "default-istio-limits",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T20:28:35.331536+05:30",
+          "updated_at": "2025-10-12T20:28:35.331536+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/limitrange-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/limitrange-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {
+            "openshift.io/generated-by": "startx-helm-project"
+          },
+          "labels": {
+            "app.kubernetes.io/component": "mycomponent",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "default-istio-2.6.7-limits",
+            "app.kubernetes.io/part-of": "default-istio",
+            "app.startx.fr/app": "default-istio",
+            "app.startx.fr/cluster": "default",
+            "app.startx.fr/component": "mycomponent",
+            "app.startx.fr/environment": "myenv",
+            "app.startx.fr/scope": "myscope",
+            "helm.sh/chart": "project"
+          },
+          "name": "default-istio-limits",
+          "namespace": "default-istio"
+        },
+        "spec": {
+          "limits": [
+            {
+              "max": {
+                "cpu": "200m",
+                "memory": "256Mi"
+              },
+              "type": "Pod"
+            },
+            {
+              "max": {
+                "cpu": "100m",
+                "memory": "128Mi"
+              },
+              "type": "Container"
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "LimitRange",
+        "schema": ""
+      }
+    },
+    {
+      "id": "1f3d4e4c-fe20-4a16-8196-31788c151f6a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "istio-operators-limits",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T20:28:35.331536+05:30",
+          "updated_at": "2025-10-12T20:28:35.331536+05:30",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/limitrange-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/limitrange-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {
+            "openshift.io/generated-by": "startx-helm-projectOperator"
+          },
+          "labels": {
+            "app.kubernetes.io/component": "mycomponent",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "default-istio-2.6.7-limits",
+            "app.kubernetes.io/part-of": "default-istio",
+            "app.startx.fr/app": "default-istio",
+            "app.startx.fr/cluster": "default",
+            "app.startx.fr/component": "mycomponent",
+            "app.startx.fr/environment": "myenv",
+            "app.startx.fr/scope": "myscope",
+            "helm.sh/chart": "projectOperator"
+          },
+          "name": "istio-operators-limits",
+          "namespace": "istio-operators"
+        },
+        "spec": {
+          "limits": [
+            {
+              "max": {
+                "cpu": "200m",
+                "memory": "256Mi"
+              },
+              "type": "Pod"
+            },
+            {
+              "max": {
+                "cpu": "100m",
+                "memory": "128Mi"
+              },
+              "type": "Container"
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "LimitRange",
+        "schema": ""
+      }
+    }
+  ],
+  "relationships": null
+}

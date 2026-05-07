@@ -1,7 +1,5 @@
-// @ts-nocheck
 import { Typography, useTheme, styled } from '@sistent/sistent';
 import React from 'react';
-import PropTypes from 'prop-types';
 import AnimatedMeshSync from './Animations/AnimatedMeshSync';
 import AnimatedMeshPattern from './Animations/AnimatedMeshPattern';
 import AnimatedMeshery from './Animations/AnimatedMeshery';
@@ -48,8 +46,15 @@ const animatedLightIconList = {
   AnimatedMeshery: <AnimatedLightMeshery style={{ height: '100px', margin: '4px 0px 8px' }} />,
 };
 
-function LoadingScreen(props) {
-  const { message, className, animatedIcon, ...other } = props;
+type AnimatedIconKey = keyof typeof animatedIconList;
+
+type LoadingScreenProps = {
+  message: string;
+  className?: string;
+  animatedIcon: AnimatedIconKey;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+function LoadingScreen({ message, className, animatedIcon, ...other }: LoadingScreenProps) {
   const theme = useTheme();
 
   return (
@@ -63,11 +68,5 @@ function LoadingScreen(props) {
     </LoadingContainer>
   );
 }
-
-LoadingScreen.propTypes = {
-  message: PropTypes.string.isRequired,
-  className: PropTypes.string,
-  animatedIcon: PropTypes.string.isRequired,
-};
 
 export default LoadingScreen;

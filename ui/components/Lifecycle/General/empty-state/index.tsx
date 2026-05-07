@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Grid2, Typography } from '@sistent/sistent';
 import React from 'react';
 import CurvedArrowIcon from './curvedArrowIcon';
@@ -12,7 +11,13 @@ import CurvedArrowIcon from './curvedArrowIcon';
  *
  */
 
-const EmptyState = ({ icon, message, pointerLabel }) => {
+type EmptyStateProps = {
+  icon?: React.ReactNode;
+  message?: React.ReactNode;
+  pointerLabel?: React.ReactNode;
+};
+
+const EmptyState = ({ icon, message, pointerLabel }: EmptyStateProps) => {
   return (
     <div
       style={{

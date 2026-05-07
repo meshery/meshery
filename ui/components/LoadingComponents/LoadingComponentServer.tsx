@@ -1,11 +1,14 @@
-﻿// @ts-nocheck
-import React from 'react';
-import PropTypes from 'prop-types';
+﻿import React from 'react';
 import uiConfig from '../../ui.config';
 
-function LoadingScreen(props) {
-  const { message, children, isLoading, id, ...other } = props;
+type LoadingScreenProps = {
+  message: string;
+  children?: React.ReactNode;
+  isLoading: boolean;
+  id?: string;
+} & React.HTMLAttributes<HTMLDivElement>;
 
+function LoadingScreen({ message, children, isLoading, id, ...other }: LoadingScreenProps) {
   if (isLoading) {
     return <PureHtmlLoadingScreen message={message} id={id} {...other} />;
   }
@@ -13,8 +16,12 @@ function LoadingScreen(props) {
   return <>{children}</>;
 }
 
-export const PureHtmlLoadingScreen = (props) => {
-  const { message, id, ...other } = props;
+type PureHtmlLoadingScreenProps = {
+  message: string;
+  id?: string;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+export const PureHtmlLoadingScreen = ({ message, id, ...other }: PureHtmlLoadingScreenProps) => {
   const AnimatedLogoDark = uiConfig.AnimatedLogoDark;
 
   return (
@@ -61,12 +68,6 @@ export const PureHtmlLoadingScreen = (props) => {
       </div>
     </div>
   );
-};
-
-LoadingScreen.propTypes = {
-  message: PropTypes.string.isRequired,
-  className: PropTypes.string,
-  isLoading: PropTypes.bool.isRequired,
 };
 
 export default LoadingScreen;

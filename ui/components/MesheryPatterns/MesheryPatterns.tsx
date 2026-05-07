@@ -30,7 +30,7 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import SaveIcon from '@mui/icons-material/Save';
 import CustomToolbarSelect from './CustomToolbarSelect';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
+import AddIcon from '@mui/icons-material/AddCircleOutlined';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from '../CodeMirror';
 import Moment from 'react-moment';
@@ -291,9 +291,7 @@ function MesheryPatterns({
   const [viewType, setViewType] = useState(view === 'table' ? 'table' : 'grid');
   const { notify } = useNotification();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
-  const { catalogVisibility } = useSelector((state) => state.ui);
-  const { user } = useSelector((state) => state.ui);
+  const { selectedK8sContexts, catalogVisibility, user } = useSelector((state) => state.ui);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
   const {

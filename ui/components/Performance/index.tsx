@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import {
   Button,
@@ -208,8 +207,7 @@ const MesheryPerformanceComponent_ = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
-  const { k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
   const { prometheus, staticPrometheusBoardConfig } = useSelector((state) => state.telemetry);
   const { notify } = useNotification();
   const dispatch = useDispatch();

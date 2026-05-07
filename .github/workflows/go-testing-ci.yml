@@ -58,7 +58,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
       - name: Run coverage
         run: go test -json --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic > server-test-output.json
       - name: Convert Go test results to Allure
@@ -133,7 +133,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
       - name: Run mesheryctl coverage
         run: go test -json --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic | tee mesheryctl-test-output.json
       - name: Convert Go test results to Allure

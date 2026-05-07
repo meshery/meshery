@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';

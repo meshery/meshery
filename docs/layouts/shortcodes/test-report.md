@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 3rd 2026, 6:26:27 pm
+- Testing started at: May 7th 2026, 4:45:07 am
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 7 skipped
 
-⌛ _Duration: 7 minutes and 5 seconds_
+⌛ _Duration: 7 minutes and 3 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -46,7 +46,7 @@
 | 23 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 24 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 25 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
-| 26 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
+| 26 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ❌ |
 | 27 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 28 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 29 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
@@ -87,7 +87,7 @@
 | 64 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Performance Results&quot; |  | ✅ |
 | 65 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ✅ |
 | 66 | Meshery | chromium-meshery-provider | Verify Kanvas Details |  | ✅ |
-| 67 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ❌ |
+| 67 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
 | 68 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
 | 69 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ✅ |
 | 70 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ✅ |
@@ -182,16 +182,37 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
-<summary>❌ Verify Kanvas Snapshot UI elements (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ Delete Kubernetes cluster connections (Meshery - chromium-meshery-provider)</summary>
 
-**File Location:** `Not Found`
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/utils/waitForSnackBar.ts`
 
 **Error Message:**
 ```
-[31mTest timeout of 60000ms exceeded.[39m
+Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+Locator: locator('text=Connection status updated').first()
+Expected: visible
+Timeout: 60000ms
+Error: element(s) not found
+
+Call log:
+[2m  - Expect "toBeVisible" with timeout 60000ms[22m
+[2m  - waiting for locator('text=Connection status updated').first()[22m
+
 ```
 
+**Code Snippet:**
+```
+   at utils/waitForSnackBar.ts:5
 
+[0m [90m 3 |[39m [36mexport[39m [36mconst[39m waitForSnackBar [33m=[39m [36masync[39m (page[33m:[39m [33mPage[39m[33m,[39m message[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[36mvoid[39m[33m>[39m [33m=>[39m {
+ [90m 4 |[39m   [36mconst[39m snackbar [33m=[39m page[33m.[39mlocator([32m`text=${message}`[39m)[33m.[39mfirst()[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m   [36mawait[39m expect(snackbar)[33m.[39mtoBeVisible()[33m;[39m
+ [90m   |[39m                          [31m[1m^[22m[39m
+ [90m 6 |[39m   [36mawait[39m snackbar[33m.[39mwaitFor({ state[33m:[39m [32m'detached'[39m[33m,[39m timeout[33m:[39m [35m10000[39m })[33m;[39m
+ [90m 7 |[39m }[33m;[39m
+ [90m 8 |[39m[0m
+```
 
 </details>
 

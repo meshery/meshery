@@ -83,18 +83,6 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 
 <p style="clear:both;">&nbsp;</p>
 
-# Project Structure
-
-The following are important sub-projects and repositories that are produced by the **Meshery** Project: 
-
-| Sub Project                | Status | Description                                                                    |
-|--------------------------|-----------------|---------------------------------------------------------------|
-| **[Meshery Operator](https://github.com/meshery/meshery-operator)**     | Active | A Kubernetes Operator that deploys and manages the lifecycle of two Meshery components critical to Meshery’s operations of Kubernetes clusters. Deploys one Meshery Operator per Kubernetes cluster under management - whether Meshery Server is deployed inside or outside of the clusters under management.     |
-| **[MeshSync](https://github.com/meshery/meshsync)** | Active | An event-driven, continuous synchronization controller responsible for the task of ensuring that the state of configuration and status of operation of any infrastructure under management are known to Meshery. MeshSync runs as a Kubernetes custom controller under the control of Meshery Operator. |
-| **[Meshery Broker](https://github.com/meshery/meshery-operator)**   | Active | A custom Kubernetes controller that provides data streaming across independent components of Meshery whether those components are running inside or outside of the Kubernetes cluster. |
-| **[MeshKit](https://github.com/meshery/meshkit)** | Active | A toolkit for Meshery's microservices and various individual architectural components to reuse and share common functionality. |
-| **[Schemas](https://github.com/meshery/schemas)** | Active | A central location for storing schemas from which all Meshery components can take reference. |
-
 # Functionality
 
 ## Infrastructure Lifecycle Management
@@ -321,7 +309,7 @@ Learn more about the <a href="https://meshery.io/community#meshmates">MeshMates<
 
 Please do! We're a warm and welcoming community of open source contributors. Please join. All types of contributions are welcome. Be sure to read the [Contributor Guides](https://docs.meshery.io/project/contributing) for a tour of resources available to you and how to get started.
 
-**Naming conventions.** This repository adheres to the canonical camelCase-wire identifier-naming contract shared across the Meshery / Layer5 ecosystem. See the [identifier-naming contributor guide](https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md) in `meshery/schemas` for the full reader-friendly directory (26-row naming table with before/after and do/don't examples). Repo-specific mandates live in [`AGENTS.md § Identifier Naming Conventions`](./AGENTS.md).
+**Naming conventions.** This repository adheres to the canonical camelCase-wire identifier-naming contract shared across the Meshery ecosystem. See the [identifier-naming contributor guide](https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md) in `meshery/schemas` for the full reader-friendly directory (26-row naming table with before/after and do/don't examples). Repo-specific mandates live in [`AGENTS.md § Identifier Naming Conventions`](./AGENTS.md).
 
 <!-- <a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="https://docs.meshery.io/assets/img/readme/deploying-linkerd-with-meshery.png" width="100%" align="center" /></a> -->
 

@@ -1,4 +1,4 @@
-// @ts-nocheck
+import React from 'react';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
   CatalogIcon,
@@ -33,7 +33,7 @@ const cardData = [
   },
 ];
 
-const MyDesignsWidget = (props) => {
+const MyDesignsWidget = (props: { iconsProps?: object }) => {
   const [sortOrder, setSortOrder] = useState('updated_at desc');
   const { data: userData } = useGetLoggedInUserQuery();
   const { data: patternsData, isFetching: isPatternsFetching } = useGetUserDesignsQuery({

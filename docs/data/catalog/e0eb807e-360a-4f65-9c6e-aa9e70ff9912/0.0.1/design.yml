@@ -1,0 +1,1008 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "nexus3-5.15.0.tgz",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.1",
+  "components": [
+    {
+      "id": "00d3faae-14da-4112-b5b4-2f1f9d87ed22",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "nexus3",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "automountServiceAccountToken": false,
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "repository",
+            "app.kubernetes.io/instance": "nexus3",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "nexus3",
+            "app.kubernetes.io/version": "3.85.0",
+            "helm.sh/chart": "nexus3-5.15.0"
+          },
+          "name": "nexus3",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "764ee6e4-cfa5-4634-8c98-2bce195bc54e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "nexus3-logback",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "logback-access.xml": "\u003c?xml version=\"1.0\"?\u003e\n\u003cconfiguration\u003e\n  \u003cappender name=\"request.logfile\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n    \u003cFile\u003e${karaf.data}/log/request.log\u003c/File\u003e\n    \u003cAppend\u003etrue\u003c/Append\u003e\n    \u003cencoder class=\"org.sonatype.nexus.logging.AccessPatternLayoutEncoder\"\u003e\n      \u003cpattern\u003e%clientHost %l %user [%date] \"%requestURL\" %statusCode %header{Content-Length} %bytesSent %elapsedTime \"%header{User-Agent}\" [%thread]\u003c/pattern\u003e\n    \u003c/encoder\u003e\n    \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n      \u003cfileNamePattern\u003e${karaf.data}/log/request-%d{yyyy-MM-dd}.log.gz\u003c/fileNamePattern\u003e\n      \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n    \u003c/rollingPolicy\u003e\n  \u003c/appender\u003e\n\n  \u003cappender-ref ref=\"request.logfile\"/\u003e\n\u003c/configuration\u003e\n",
+          "logback.xml": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\n\u003c!-- https://github.com/sonatype/nexus-public/blob/main/assemblies/nexus-base-overlay/src/main/resources/overlay/etc/logback/logback.xml --\u003e\n\u003cconfiguration\u003e\n  \u003c!-- disable logback initialization status messages, which go to stdout prior to the rest of this being loaded --\u003e\n  \u003cstatusListener class=\"ch.qos.logback.core.status.NopStatusListener\" /\u003e\n\n  \u003ccontextListener class=\"ch.qos.logback.classic.jul.LevelChangePropagator\"\u003e\n    \u003cresetJUL\u003etrue\u003c/resetJUL\u003e\n  \u003c/contextListener\u003e\n\n  \u003cjmxConfigurator/\u003e\n\n  \u003cappender name=\"console\" class=\"ch.qos.logback.core.ConsoleAppender\"\u003e\n    \u003cfilter class=\"org.sonatype.nexus.logging.NexusLogFilter\" /\u003e\n    \u003cencoder\u003e\n      \u003cpattern\u003e%d{\"yyyy-MM-dd HH:mm:ss,SSSZ\"} %-5p [%thread] %mdc{userId:-*SYSTEM} %c - %m%n\u003c/pattern\u003e\n    \u003c/encoder\u003e\n  \u003c/appender\u003e\n\n  \u003cappender name=\"logfile\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n    \u003cFile\u003e${karaf.data}/log/nexus.log\u003c/File\u003e\n    \u003cAppend\u003etrue\u003c/Append\u003e\n    \u003cencoder class=\"org.sonatype.nexus.logging.NexusLayoutEncoder\"\u003e\n      \u003cpattern\u003e%d{\"yyyy-MM-dd HH:mm:ss,SSSZ\"} %-5p [%thread] %node %mdc{userId:-*SYSTEM} %c - %m%n\u003c/pattern\u003e\n    \u003c/encoder\u003e\n    \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n      \u003cfileNamePattern\u003e${karaf.data}/log/nexus-%d{yyyy-MM-dd}.log.gz\u003c/fileNamePattern\u003e\n      \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n    \u003c/rollingPolicy\u003e\n    \u003cfilter class=\"org.sonatype.nexus.logging.NexusLogFilter\" /\u003e\n  \u003c/appender\u003e\n\n  \u003cappender name=\"clusterlogfile\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n    \u003cFile\u003e${karaf.data}/log/nexus_cluster.log\u003c/File\u003e\n    \u003cAppend\u003etrue\u003c/Append\u003e\n    \u003cencoder class=\"org.sonatype.nexus.logging.NexusLayoutEncoder\"\u003e\n      \u003cpattern\u003e%d{\"yyyy-MM-dd HH:mm:ss,SSSZ\"} %-5p [%thread] %node %mdc{userId:-*SYSTEM} %c - %m%n\u003c/pattern\u003e\n    \u003c/encoder\u003e\n    \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n      \u003cfileNamePattern\u003e${karaf.data}/log/nexus_cluster-%d{yyyy-MM-dd}.log.gz\u003c/fileNamePattern\u003e\n      \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n    \u003c/rollingPolicy\u003e\n    \u003cfilter class=\"org.sonatype.nexus.logging.ClusterLogFilter\" /\u003e\n  \u003c/appender\u003e\n\n  \u003cappender name=\"tasklogfile\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n    \u003cFile\u003e${karaf.data}/log/tasks/allTasks.log\u003c/File\u003e\n    \u003cfilter class=\"org.sonatype.nexus.logging.TaskLogsFilter\" /\u003e\n    \u003cAppend\u003etrue\u003c/Append\u003e\n    \u003cencoder class=\"org.sonatype.nexus.logging.NexusLayoutEncoder\"\u003e\n      \u003cpattern\u003e%d{\"yyyy-MM-dd HH:mm:ss,SSSZ\"} %-5p [%thread] %node %mdc{userId:-*SYSTEM} %c - %m%n\u003c/pattern\u003e\n    \u003c/encoder\u003e\n    \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n      \u003cfileNamePattern\u003e${karaf.data}/log/tasks/allTasks-%d{yyyy-MM-dd}.log.gz\u003c/fileNamePattern\u003e\n      \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n    \u003c/rollingPolicy\u003e\n  \u003c/appender\u003e\n\n  \u003cappender name=\"replicationlogfile\" class=\"ch.qos.logback.classic.sift.SiftingAppender\"\u003e\n    \u003cfilter class=\"org.sonatype.nexus.logging.ReplicationLogsFilter\" /\u003e\n    \u003cdiscriminator\u003e\n      \u003ckey\u003erepositoryName\u003c/key\u003e\n      \u003cdefaultValue\u003eunknown\u003c/defaultValue\u003e\n    \u003c/discriminator\u003e\n    \u003csift\u003e\n      \u003cappender name=\"replicationAppender\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n        \u003cfile\u003e${karaf.data}/log/replication/replication-${repositoryName}.log\u003c/file\u003e\n        \u003cencoder class=\"org.sonatype.nexus.logging.NexusLayoutEncoder\"\u003e\n          \u003cpattern\u003e%d{\"yyyy-MM-dd HH:mm:ss,SSSZ\"} %-5p [%thread] %node %mdc{userId:-*SYSTEM} %c - %m%n\u003c/pattern\u003e\n        \u003c/encoder\u003e\n        \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n          \u003cfileNamePattern\u003e${karaf.data}/log/replication/replication-${repositoryName}-%d{yyyy-MM-dd}.log.gz\u003c/fileNamePattern\u003e\n          \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n        \u003c/rollingPolicy\u003e\n      \u003c/appender\u003e\n    \u003c/sift\u003e\n  \u003c/appender\u003e\n\n  \u003cappender name=\"outboundRequestslogfile\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n    \u003cFile\u003e${karaf.data}/log/outbound-request.log\u003c/File\u003e\n    \u003cAppend\u003etrue\u003c/Append\u003e\n    \u003cencoder\u003e\n      \u003cpattern\u003e%msg%n\u003c/pattern\u003e\n    \u003c/encoder\u003e\n    \u003cfilter class=\"org.sonatype.nexus.logging.OutboundRequestsLogFilter\" /\u003e\n    \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n      \u003cfileNamePattern\u003e${karaf.data}/log/outbound-request-%d{yyyy-MM-dd}.log.gz\u003c/fileNamePattern\u003e\n      \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n    \u003c/rollingPolicy\u003e\n  \u003c/appender\u003e\n  \u003clogger name=\"outboundRequests\"\u003e\n    \u003cappender-ref ref=\"outboundRequestslogfile\"/\u003e\n  \u003c/logger\u003e\n\n  \u003cappender name=\"auditlogfile\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n    \u003cFile\u003e${karaf.data}/log/audit/audit.log\u003c/File\u003e\n    \u003cAppend\u003etrue\u003c/Append\u003e\n    \u003cencoder\u003e\n      \u003cpattern\u003e%msg%n\u003c/pattern\u003e\n    \u003c/encoder\u003e\n    \u003cfilter class=\"org.sonatype.nexus.logging.AuditLogFilter\"/\u003e\n    \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n      \u003cfileNamePattern\u003e${karaf.data}/log/audit/audit-%d{yyyy-MM-dd}.log.gz\u003c/fileNamePattern\u003e\n      \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n    \u003c/rollingPolicy\u003e\n  \u003c/appender\u003e\n\n  \u003clogger name=\"auditlog\" additivity=\"false\"\u003e\n    \u003cappender-ref ref=\"auditlogfile\"/\u003e\n  \u003c/logger\u003e\n\n  \u003cappender name=\"blobstore-reconciliation-log-file\" class=\"ch.qos.logback.classic.sift.SiftingAppender\"\u003e\n    \u003cdiscriminator\u003e\n      \u003ckey\u003eblobstore-reconciliation-path\u003c/key\u003e\n      \u003cdefaultValue\u003eunknown\u003c/defaultValue\u003e\n    \u003c/discriminator\u003e\n    \u003csift\u003e\n      \u003cappender name=\"FILE-${blobstore}\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n        \u003cencoder class=\"ch.qos.logback.classic.encoder.PatternLayoutEncoder\"\u003e\n          \u003cPattern\u003e%d{\"yyyy-MM-dd HH:mm:ss\"},%msg%n\u003c/Pattern\u003e\n        \u003c/encoder\u003e\n        \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n          \u003cfileNamePattern\u003e${blobstore-reconciliation-path}/%d\u003c/fileNamePattern\u003e\n          \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n        \u003c/rollingPolicy\u003e\n      \u003c/appender\u003e\n    \u003c/sift\u003e\n  \u003c/appender\u003e\n  \u003clogger name=\"blobstore-reconciliation-log\" additivity=\"false\"\u003e\n    \u003cappender-ref ref=\"blobstore-reconciliation-log-file\"/\u003e\n  \u003c/logger\u003e\n\n  \u003cappender name=\"metrics\" class=\"org.sonatype.nexus.logging.InstrumentedAppender\"/\u003e\n\n  \u003clogger name=\"ch.qos.logback\" level=\"WARN\"/\u003e\n  \u003clogger name=\"org.eclipse.jetty.webapp\" level=\"INFO\"/\u003e\n  \u003clogger name=\"org.eclipse.jetty.webapp.StandardDescriptorProcessor\" level=\"WARN\"/\u003e\n\n  \u003clogger name=\"com.amazonaws.internal.InstanceMetadataServiceResourceFetcher\" level=\"ERROR\"/\u003e\n  \u003clogger name=\"com.amazonaws.util.EC2MetadataUtils\" level=\"ERROR\"/\u003e\n\n  \u003croot level=\"${root.level:-INFO}\"\u003e\n    \u003cappender-ref ref=\"console\"/\u003e\n    \u003cappender-ref ref=\"logfile\"/\u003e\n    \u003cappender-ref ref=\"clusterlogfile\"/\u003e\n    \u003cappender-ref ref=\"tasklogfile\"/\u003e\n    \u003cappender-ref ref=\"replicationlogfile\"/\u003e\n    \u003cappender-ref ref=\"metrics\"/\u003e\n  \u003c/root\u003e\n\u003c/configuration\u003e\n"
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "repository",
+            "app.kubernetes.io/instance": "nexus3",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "nexus3",
+            "app.kubernetes.io/version": "3.85.0",
+            "helm.sh/chart": "nexus3-5.15.0"
+          },
+          "name": "nexus3-logback",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d32cf7c5-face-47c4-8c58-708f2de3de99",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "nexus3-props",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "nexus-store.properties": "",
+          "nexus.properties": "nexus.datastore.enabled=true\nnexus.loadAsOSS=true\n"
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "repository",
+            "app.kubernetes.io/instance": "nexus3",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "nexus3",
+            "app.kubernetes.io/version": "3.85.0",
+            "helm.sh/chart": "nexus3-5.15.0"
+          },
+          "name": "nexus3-props",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "5868edb8-16d2-4f39-b12b-f7d45eb32b13",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "nexus3-scripts",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "chown-data-dir.sh": "#!/usr/bin/env bash\nset -euo pipefail\n\nmkdir -p /nexus-data/etc/logback\nmkdir -p /nexus-data/log/tasks\nmkdir -p /nexus-data/log/audit\n\ntouch -a /nexus-data/log/tasks/allTasks.log\ntouch -a /nexus-data/log/audit/audit.log\ntouch -a /nexus-data/log/request.log\n\nchown -R 200:200 /nexus-data\n",
+          "download-plugins.sh": "#!/usr/bin/env bash\nset -euo pipefail\n",
+          "import-ca-certs.sh": "#!/usr/bin/env bash\nset -euo pipefail\nmkdir -p /nexus-data/keystores\ncp -f \"${JAVA_HOME}/lib/security/cacerts\" /nexus-data/keystores/cacerts\nfor f in /nexus-data/secrets/cas/*\ndo\n  keytool -importcert -file \"${f}\" -alias \"$(basename \"${f}\")\" -keystore /nexus-data/keystores/cacerts -storepass changeit -trustcacerts -noprompt\ndone\n",
+          "tail-logs.sh": "#!/usr/bin/env bash\nset -euo pipefail\n\n_term() {\n  kill -TERM \"${child}\" 2\u003e/dev/null\n}\n\ntrap _term SIGTERM\n\ntail -F -n+1 \"${LOG_FILE}\" \u0026\n\nchild=$!\nwait \"${child}\"\n"
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "repository",
+            "app.kubernetes.io/instance": "nexus3",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "nexus3",
+            "app.kubernetes.io/version": "3.85.0",
+            "helm.sh/chart": "nexus3-5.15.0"
+          },
+          "name": "nexus3-scripts",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "43757f60-3b3b-42f4-a071-dfd0cba77bdc",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "nexus3-hl",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "repository",
+            "app.kubernetes.io/instance": "nexus3",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "nexus3",
+            "app.kubernetes.io/version": "3.85.0",
+            "helm.sh/chart": "nexus3-5.15.0",
+            "prometheus.io/service-monitor": "false"
+          },
+          "name": "nexus3-hl",
+          "namespace": "default"
+        },
+        "spec": {
+          "clusterIP": "None",
+          "ports": [
+            {
+              "name": "http",
+              "port": 8081,
+              "protocol": "TCP",
+              "targetPort": "http"
+            }
+          ],
+          "publishNotReadyAddresses": true,
+          "selector": {
+            "app.kubernetes.io/component": "repository",
+            "app.kubernetes.io/instance": "nexus3",
+            "app.kubernetes.io/name": "nexus3"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "4ffc3436-78ec-4c04-89c1-58b238078a4c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "nexus3",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "repository",
+            "app.kubernetes.io/instance": "nexus3",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "nexus3",
+            "app.kubernetes.io/version": "3.85.0",
+            "helm.sh/chart": "nexus3-5.15.0"
+          },
+          "name": "nexus3",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 8081,
+              "protocol": "TCP",
+              "targetPort": "http"
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/component": "repository",
+            "app.kubernetes.io/instance": "nexus3",
+            "app.kubernetes.io/name": "nexus3"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "b5863932-e0e9-468a-8006-84424f5eee9a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "nexus3",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-08T20:44:09.794579921Z",
+          "updated_at": "2025-10-08T20:44:09.794579921Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "repository",
+            "app.kubernetes.io/instance": "nexus3",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "nexus3",
+            "app.kubernetes.io/version": "3.85.0",
+            "helm.sh/chart": "nexus3-5.15.0"
+          },
+          "name": "nexus3",
+          "namespace": "default"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "repository",
+              "app.kubernetes.io/instance": "nexus3",
+              "app.kubernetes.io/name": "nexus3"
+            }
+          },
+          "serviceName": "nexus3",
+          "template": {
+            "metadata": {
+              "annotations": {
+                "checksum/logback": "35aecc377b55c2a6da8bbaa2866d6648f023b7b5e46be657e9113883c8382006",
+                "checksum/properties": "9b79b5422604fc1daf9e13c1051a459e0567cf7860190d24782fcfba7fe1fe70",
+                "checksum/scripts": "093a8f8cac693a6449a9ad3f85f032cf3c93aaf4876f2871b418ab2d63a0d7cf"
+              },
+              "labels": {
+                "app.kubernetes.io/component": "repository",
+                "app.kubernetes.io/instance": "nexus3",
+                "app.kubernetes.io/name": "nexus3"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "INSTALL4J_ADD_VM_PARAMS",
+                      "value": "-Djava.util.prefs.userRoot=${NEXUS_DATA}/javaprefs -Xms1024m -Xmx1024m -XX:MaxDirectMemorySize=2048m"
+                    },
+                    {
+                      "name": "NEXUS_SECURITY_RANDOMPASSWORD",
+                      "value": "true"
+                    }
+                  ],
+                  "image": "docker.io/sonatype/nexus3:3.85.0-java17-ubi",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "failureThreshold": 6,
+                    "httpGet": {
+                      "path": "/",
+                      "port": "http"
+                    },
+                    "initialDelaySeconds": 0,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 1
+                  },
+                  "name": "nexus3",
+                  "ports": [
+                    {
+                      "containerPort": 8081,
+                      "name": "http",
+                      "protocol": "TCP"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 6,
+                    "httpGet": {
+                      "path": "/service/rest/v1/status",
+                      "port": "http"
+                    },
+                    "initialDelaySeconds": 0,
+                    "periodSeconds": 60,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 1
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 200,
+                    "runAsNonRoot": true,
+                    "runAsUser": 200
+                  },
+                  "startupProbe": {
+                    "failureThreshold": 180,
+                    "httpGet": {
+                      "path": "/",
+                      "port": "http"
+                    },
+                    "initialDelaySeconds": 0,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 1
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/tmp",
+                      "name": "temp"
+                    },
+                    {
+                      "mountPath": "/nexus-data",
+                      "name": "data"
+                    },
+                    {
+                      "mountPath": "/opt/sonatype/nexus/etc/logback",
+                      "name": "logback"
+                    },
+                    {
+                      "mountPath": "/nexus-data/etc/nexus.properties",
+                      "name": "properties",
+                      "subPath": "nexus.properties"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    "/scripts/tail-logs.sh"
+                  ],
+                  "env": [
+                    {
+                      "name": "LOG_FILE",
+                      "value": "/nexus-data/log/request.log"
+                    }
+                  ],
+                  "image": "cgr.dev/chainguard/bash:latest",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "tail-request-log",
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 200,
+                    "runAsNonRoot": true,
+                    "runAsUser": 200
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/scripts/tail-logs.sh",
+                      "name": "scripts",
+                      "subPath": "tail-logs.sh"
+                    },
+                    {
+                      "mountPath": "/nexus-data",
+                      "name": "data"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    "/scripts/tail-logs.sh"
+                  ],
+                  "env": [
+                    {
+                      "name": "LOG_FILE",
+                      "value": "/nexus-data/log/audit/audit.log"
+                    }
+                  ],
+                  "image": "cgr.dev/chainguard/bash:latest",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "tail-audit-log",
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 200,
+                    "runAsNonRoot": true,
+                    "runAsUser": 200
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/scripts/tail-logs.sh",
+                      "name": "scripts",
+                      "subPath": "tail-logs.sh"
+                    },
+                    {
+                      "mountPath": "/nexus-data",
+                      "name": "data"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    "/scripts/tail-logs.sh"
+                  ],
+                  "env": [
+                    {
+                      "name": "LOG_FILE",
+                      "value": "/nexus-data/log/tasks/allTasks.log"
+                    }
+                  ],
+                  "image": "cgr.dev/chainguard/bash:latest",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "tail-tasks-log",
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 200,
+                    "runAsNonRoot": true,
+                    "runAsUser": 200
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/scripts/tail-logs.sh",
+                      "name": "scripts",
+                      "subPath": "tail-logs.sh"
+                    },
+                    {
+                      "mountPath": "/nexus-data",
+                      "name": "data"
+                    }
+                  ]
+                }
+              ],
+              "initContainers": [
+                {
+                  "args": [
+                    "/scripts/chown-data-dir.sh"
+                  ],
+                  "image": "cgr.dev/chainguard/bash:latest",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "chown-data-dir",
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 0,
+                    "runAsNonRoot": false,
+                    "runAsUser": 0
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/scripts/chown-data-dir.sh",
+                      "name": "scripts",
+                      "subPath": "chown-data-dir.sh"
+                    },
+                    {
+                      "mountPath": "/nexus-data",
+                      "name": "data"
+                    }
+                  ]
+                }
+              ],
+              "securityContext": {
+                "fsGroup": 200,
+                "runAsNonRoot": false,
+                "seccompProfile": {
+                  "type": "RuntimeDefault"
+                }
+              },
+              "serviceAccountName": "nexus3",
+              "terminationGracePeriodSeconds": 120,
+              "volumes": [
+                {
+                  "emptyDir": {},
+                  "name": "temp"
+                },
+                {
+                  "configMap": {
+                    "defaultMode": 365,
+                    "name": "nexus3-scripts"
+                  },
+                  "name": "scripts"
+                },
+                {
+                  "configMap": {
+                    "defaultMode": 292,
+                    "name": "nexus3-logback"
+                  },
+                  "name": "logback"
+                },
+                {
+                  "configMap": {
+                    "defaultMode": 292,
+                    "name": "nexus3-props"
+                  },
+                  "name": "properties"
+                },
+                {
+                  "emptyDir": {},
+                  "name": "data"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    }
+  ],
+  "relationships": null
+}

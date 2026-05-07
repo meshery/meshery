@@ -12,8 +12,9 @@ import 'billboard.js/dist/theme/dark.min.css';
 import _ from 'lodash';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
-import React, { useEffect, useMemo, useCallback, useState } from 'react';
+import React, { useEffect, useMemo, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { startSessionTimer } from '../lib/sessionTimer';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
@@ -143,6 +144,14 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     abilities: [],
     abilityUpdated: false,
   });
+
+  // Mirror the dispose callback into a ref so the bootstrap effect's cleanup
+  // can call the latest value rather than the (always-null) initial-mount
+  // closure of `state.disposeK8sContextSubscription`.
+  const disposeK8sContextSubscriptionRef = useRef<null | (() => void)>(null);
+  useEffect(() => {
+    disposeK8sContextSubscriptionRef.current = state.disposeK8sContextSubscription;
+  }, [state.disposeK8sContextSubscription]);
 
   const setAppState = useCallback((partialState, callback) => {
     setState((prevState) => {
@@ -428,7 +437,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   }, [dispatch, fetchSystemSync]);
 
   useEffect(() => {
-    const { startSessionTimer } = require('../lib/sessionTimer');
     startSessionTimer();
 
     const loadAll = async () => {
@@ -460,9 +468,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
 
     return () => {
       document.removeEventListener('fullscreenchange', fullScreenChanged);
-      if (state.disposeK8sContextSubscription) {
-        state.disposeK8sContextSubscription();
-      }
+      disposeK8sContextSubscriptionRef.current?.();
     };
   }, []);
 
