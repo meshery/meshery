@@ -10,6 +10,7 @@ import {
   Modal,
   useTheme,
 } from '@sistent/sistent';
+import { ModelDefinitionV1Beta1OpenApiSchema } from '@meshery/schemas';
 import { RJSFModalWrapper } from '@/components/General/Modals/Modal';
 import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
@@ -90,17 +91,36 @@ const FinishDeploymentStep = ({
   );
 };
 
-// Local schema/uiSchema for the Import Model modal.
+// Build the Import Model RJSF schema from the canonical
+// `@meshery/schemas` OpenAPI definition rather than from sistent's
+// derived `importModelSchema` export. Sistent's derivation (since
+// v0.21.3) renames `file` → `modelFile` and emits the `uploadType` enum
+// without `enumNames`, which doesn't round-trip through this modal —
+// `getUnit8ArrayDecodedFile(file)` and the `'File Import'`/`'URL Import'`/
+// `'CSV Import'` switch keys can't both move with the upstream rename
+// without churn here, and the e2e suite searches for the friendly
+// "File Import" heading to begin with.
 //
-// The upstream `importModelSchema`/`importModelUiSchema` exported by
-// @sistent/sistent (>=0.21.3) renamed properties (`file` → `modelFile`) and
-// switched the `uploadType` enum to internal tokens (`file`/`urlImport`/`csv`)
-// without `enumNames`. That broke the consumer code below — which keys off the
-// human-readable labels and the `file` form field — and also stripped the
-// friendly "File Import" / "URL Import" / "CSV Import" radio labels relied on
-// by the e2e tests. Until sistent ships a schema that round-trips through this
-// modal we hold the form shape locally so the registry import flow keeps
-// working end-to-end.
+// We pull the canonical strings (title, description, enum tokens,
+// enumDescriptions) straight from `ImportRequest.properties.uploadType`
+// so wording stays in lockstep with `meshery/schemas`. The friendly
+// radio labels come from the canonical `ImportBody.oneOf[i].title` —
+// those titles are what RJSF would have surfaced if the schema were
+// rendered as a discriminated union, so nothing is being invented
+// here. Only the RJSF-specific shape (top-level `file`/`url` fields,
+// widget mapping, conditional `required`) is added on top.
+const canonicalImportRequest = ModelDefinitionV1Beta1OpenApiSchema.components.schemas.ImportRequest;
+const canonicalImportBody = canonicalImportRequest.properties.importBody;
+const canonicalUploadType = canonicalImportRequest.properties.uploadType;
+const [fileImportBranch, urlImportBranch, csvImportBranch] = canonicalImportBody.oneOf;
+
+// Friendly labels — what the user sees in the radio group and what the
+// e2e suite searches for via `getByRole('heading', { name: ... })`.
+const FILE_IMPORT_LABEL = fileImportBranch.title;
+const URL_IMPORT_LABEL = urlImportBranch.title;
+const CSV_IMPORT_LABEL = csvImportBranch.title;
+const UPLOAD_TYPE_OPTIONS = [FILE_IMPORT_LABEL, URL_IMPORT_LABEL, CSV_IMPORT_LABEL];
+
 const importModelSchema = {
   $schema: 'https://json-schema.org/draft-07/schema#',
   title: 'Import Model',
@@ -108,30 +128,27 @@ const importModelSchema = {
   properties: {
     uploadType: {
       type: 'string',
-      title: 'Upload method',
-      enum: ['File Import', 'URL Import', 'CSV Import'],
-      // CustomRadioWidget below reads `schema.enumDescriptions[index]` per
-      // option; missing this would crash the modal at render.
-      enumDescriptions: [
-        'Upload a model file from your local system.',
-        'Import a model from a remote URL.',
-        'Upload a CSV file containing model definitions.',
-      ],
-      description:
-        "Choose the method you prefer to upload your model file. Select 'File Import' or 'CSV Import' if you have the file on your local system, or 'URL Import' if you have the file hosted online.",
+      title: canonicalUploadType.title,
+      // The canonical enum is the lowercase tokens (`file`/`urlImport`/...).
+      // The form keys off the friendly `oneOf` titles instead so the
+      // radio labels and the consumer switch share a single vocabulary
+      // and the e2e selectors keep working against unchanged copy.
+      enum: UPLOAD_TYPE_OPTIONS,
+      enumDescriptions: canonicalUploadType.enumDescriptions,
+      description: canonicalUploadType.description,
       'x-rjsf-grid-area': '12',
     },
     file: {
       type: 'string',
       title: 'Model file',
-      description: 'Model file content. Supported formats: .tar, .tar.gz, .tgz.',
+      description: fileImportBranch.properties.modelFile.description,
       'x-rjsf-grid-area': '12',
     },
     url: {
       type: 'string',
       format: 'uri',
       title: 'URL',
-      description: 'A direct URL to a single model file. Supported formats: .tar, .tar.gz, .tgz.',
+      description: urlImportBranch.properties.url.description,
       'x-rjsf-grid-area': '12',
     },
   },
@@ -142,14 +159,14 @@ const importModelSchema = {
       // `properties` keyword silently passes when the property is absent, so
       // both `file` and `url` would be marked required on first render.
       if: {
-        properties: { uploadType: { const: 'File Import' } },
+        properties: { uploadType: { const: FILE_IMPORT_LABEL } },
         required: ['uploadType'],
       },
       then: { required: ['file'] },
     },
     {
       if: {
-        properties: { uploadType: { const: 'URL Import' } },
+        properties: { uploadType: { const: URL_IMPORT_LABEL } },
         required: ['uploadType'],
       },
       then: { required: ['url'] },
@@ -195,7 +212,7 @@ const ImportModelModal = React.memo(
       const fileElement = document.getElementById('root_file') as HTMLInputElement | null;
 
       switch (uploadType) {
-        case 'File Import': {
+        case FILE_IMPORT_LABEL: {
           const fileName = fileElement?.files?.[0]?.name;
           const fileData = file ? getUnit8ArrayDecodedFile(file) : null;
           if (fileData && fileName) {
@@ -217,7 +234,7 @@ const ImportModelModal = React.memo(
           }
           break;
         }
-        case 'URL Import': {
+        case URL_IMPORT_LABEL: {
           if (url) {
             requestBody = {
               importBody: {
@@ -232,7 +249,7 @@ const ImportModelModal = React.memo(
           }
           break;
         }
-        case 'CSV Import': {
+        case CSV_IMPORT_LABEL: {
           handleClose();
           setIsCsvModalOpen(true);
           return;
