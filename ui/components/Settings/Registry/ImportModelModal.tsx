@@ -4,14 +4,13 @@ import {
   FormControl,
   RadioGroup,
   Radio,
-  importModelUiSchema,
-  importModelSchema,
   Typography,
   ModalFooter,
   Box,
   Modal,
   useTheme,
 } from '@sistent/sistent';
+import { ModelImportRjsfSchemaV1Beta2, ModelImportRjsfUiSchemaV1Beta2 } from '@meshery/schemas';
 import { RJSFModalWrapper } from '@/components/General/Modals/Modal';
 import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
@@ -92,6 +91,81 @@ const FinishDeploymentStep = ({
   );
 };
 
+// Canonical RJSF form schemas authored in `meshery/schemas` and validated
+// by its `validation/forms_test.go` to be a strict subset of the OpenAPI
+// `MesheryModelImportFormPayload` construct. Importing them keeps the
+// modal locked to the canonical field shape (uploadType enum tokens,
+// modelFile/fileName/url naming) — any drift surfaces as a build/test
+// failure here rather than silent runtime divergence.
+//
+// Two consumer-side overrides on top of the canonical:
+//
+//  1. `allOf` is relaxed: the canonical requires `fileName` for the
+//     file branch and the CSV trio for the csv branch, but this modal
+//     doesn't render either. `fileName` is derived from the file
+//     widget's `data:...;name=foo;base64,...` URL, and the CSV files
+//     are uploaded via `CsvStepper` (a separate modal opened on the
+//     csv branch). Keeping the canonical `required` would block the
+//     `Next` click on validation errors for fields the user can't see.
+//
+//  2. `uiSchema` hides `fileName` and the CSV inputs so the form only
+//     surfaces the inputs that match this modal's UX (uploadType radio,
+//     modelFile, url). The hidden fields stay schema-valid; they are
+//     just not rendered.
+const UPLOAD_TYPE_FILE = 'file';
+const UPLOAD_TYPE_URL = 'urlImport';
+const UPLOAD_TYPE_CSV = 'csv';
+
+const importModelSchema = {
+  ...ModelImportRjsfSchemaV1Beta2,
+  allOf: [
+    {
+      if: {
+        properties: { uploadType: { const: UPLOAD_TYPE_FILE } },
+        required: ['uploadType'],
+      },
+      then: { required: ['modelFile'] },
+    },
+    {
+      if: {
+        properties: { uploadType: { const: UPLOAD_TYPE_URL } },
+        required: ['uploadType'],
+      },
+      then: { required: ['url'] },
+    },
+    // csv branch: required CSV fields handled by CsvStepper, not this form.
+  ],
+};
+
+const importModelUiSchema = {
+  ...ModelImportRjsfUiSchemaV1Beta2,
+  // RJSF v6 reads `enumNames` from the uiSchema (`ui:enumNames`) rather than
+  // from the JSON Schema itself — the canonical `import.json` declares
+  // `enumNames` at the schema level, which @rjsf/utils' `optionsList()`
+  // silently ignores. Without this override the radio surfaces the raw
+  // `file`/`urlImport`/`csv` enum tokens instead of the friendly labels,
+  // breaking the e2e selectors that look for `getByRole('heading', { name:
+  // 'File Import' })`.
+  uploadType: {
+    'ui:widget': 'radio',
+    'ui:enumNames': [...(ModelImportRjsfSchemaV1Beta2.properties.uploadType.enumNames as string[])],
+  },
+  fileName: { 'ui:widget': 'hidden' },
+  modelCsv: { 'ui:widget': 'hidden' },
+  componentCsv: { 'ui:widget': 'hidden' },
+  relationshipCsv: { 'ui:widget': 'hidden' },
+};
+
+// RJSF's file widget encodes the original filename inside the data URL
+// (`data:<mime>;name=<file>;base64,<payload>`). Pull it back out so the
+// server-side ImportBody.FileName is populated even though the form
+// doesn't surface a separate `fileName` input.
+const filenameFromDataUrl = (dataUrl: string | undefined): string | undefined => {
+  if (!dataUrl) return undefined;
+  const match = dataUrl.match(/;name=([^;]+);/);
+  return match ? decodeURIComponent(match[1]) : undefined;
+};
+
 type ImportModelModalProps = {
   isImportModalOpen: boolean;
   setIsImportModalOpen: (_open: boolean) => void;
@@ -117,38 +191,47 @@ const ImportModelModal = React.memo(
     };
 
     const handleImportModelSubmit = async (data) => {
-      const { uploadType, url, file } = data;
+      // Canonical field names from ModelImportRjsfSchemaV1Beta2:
+      // `uploadType` (enum: file/urlImport/csv), `modelFile`, `fileName`,
+      // `url`, plus the CSV trio handled by CsvStepper.
+      const { uploadType, url, modelFile, fileName: formFileName } = data;
       let requestBody = null;
 
-      const fileElement = document.getElementById('root_file');
+      // RJSF's file widget encodes the original filename in the data URL,
+      // but we also fall back to the input element's `files[0].name` in
+      // case the widget shape changes upstream.
+      const fileElement = document.getElementById('root_modelFile') as HTMLInputElement | null;
 
       switch (uploadType) {
-        case 'File Import': {
-          const fileName = fileElement.files[0].name;
-          const fileData = getUnit8ArrayDecodedFile(file);
-          if (fileData) {
+        case UPLOAD_TYPE_FILE: {
+          const fileName =
+            formFileName || filenameFromDataUrl(modelFile) || fileElement?.files?.[0]?.name;
+          const fileData = modelFile ? getUnit8ArrayDecodedFile(modelFile) : null;
+          if (fileData && fileName) {
+            // Server's ImportBody.FileName / .ModelFile are tagged
+            // `file_name` / `model_file` (snake_case wire format).
             requestBody = {
               importBody: {
                 model_file: fileData,
                 url: '',
-                filename: fileName,
+                file_name: fileName,
               },
-              uploadType: 'file',
+              uploadType: UPLOAD_TYPE_FILE,
               register: true,
             };
           } else {
-            console.error('Error: File data is empty or invalid');
+            console.error('Error: File data or file name is empty or invalid');
             return;
           }
           break;
         }
-        case 'URL Import': {
+        case UPLOAD_TYPE_URL: {
           if (url) {
             requestBody = {
               importBody: {
                 url: url,
               },
-              uploadType: 'urlImport',
+              uploadType: UPLOAD_TYPE_URL,
               register: true,
             };
           } else {
@@ -157,7 +240,7 @@ const ImportModelModal = React.memo(
           }
           break;
         }
-        case 'CSV Import': {
+        case UPLOAD_TYPE_CSV: {
           handleClose();
           setIsCsvModalOpen(true);
           return;
@@ -204,7 +287,7 @@ const ImportModelModal = React.memo(
                   <div>
                     <Typography variant="subtitle1">{option.label}</Typography>
                     <Typography variant="body2" color="textSecondary" textTransform={'none'}>
-                      {schema.enumDescriptions[index]}
+                      {schema.enumDescriptions?.[index]}
                     </Typography>
                   </div>
                 }
