@@ -368,3 +368,55 @@ func TestRemoteProviderDoRequest_RetriesWithFreshBodyAfterRefresh(t *testing.T) 
 		t.Fatalf("expected exactly one refresh request, got %d", got)
 	}
 }
+
+// TestRemoteProviderDoRequest_XAPIKeyAnonymousOnly guards the anonymous
+// passphrase contract: X-API-Key MUST only be set when the outbound request
+// is being made with the global anonymous token, never with a real user JWT.
+// Setting X-API-Key with a user JWT pollutes the cloud's static-token
+// fallback path and broke anonymous flows in kanvas.new.
+func TestRemoteProviderDoRequest_XAPIKeyAnonymousOnly(t *testing.T) {
+	var anonHeader, userHeader string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/anon":
+			anonHeader = r.Header.Get("X-API-Key")
+			w.WriteHeader(http.StatusOK)
+		case "/user":
+			userHeader = r.Header.Get("X-API-Key")
+			w.WriteHeader(http.StatusOK)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+
+	anonReq, err := http.NewRequest(http.MethodGet, server.URL+"/anon", nil)
+	if err != nil {
+		t.Fatalf("failed to build anonymous request: %v", err)
+	}
+	resp, err := provider.DoRequest(anonReq, GlobalTokenForAnonymousResults)
+	if err != nil {
+		t.Fatalf("anon request failed: %v", err)
+	}
+	_ = resp.Body.Close()
+
+	userToken := encodeTestToken(t, oauth2.Token{AccessToken: "real-user-jwt", TokenType: "Bearer"})
+	userReq, err := http.NewRequest(http.MethodGet, server.URL+"/user", nil)
+	if err != nil {
+		t.Fatalf("failed to build user request: %v", err)
+	}
+	resp, err = provider.DoRequest(userReq, userToken)
+	if err != nil {
+		t.Fatalf("user request failed: %v", err)
+	}
+	_ = resp.Body.Close()
+
+	if anonHeader != GlobalTokenForAnonymousResults {
+		t.Fatalf("anonymous request must carry X-API-Key=%q, got %q", GlobalTokenForAnonymousResults, anonHeader)
+	}
+	if userHeader != "" {
+		t.Fatalf("authenticated request must NOT set X-API-Key, got %q", userHeader)
+	}
+}
