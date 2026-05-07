@@ -45,7 +45,7 @@ import CheckIcon from '@/assets/icons/CheckIcon';
 import { VISIBILITY } from '@/utils/Enum';
 import PatternIcon from '@/assets/icons/Pattern';
 import { iconLarge, iconMedium } from 'css/icons.styles';
-import { VIEW_VISIBILITY } from '../../General/Modals/Information/InfoModal';
+import { VIEW_VISIBILITY } from '../shared/Modal/Information/InfoModal';
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function MesheryPatternCard_({
