@@ -11,7 +11,7 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import { ModelImportRjsfSchemaV1Beta2, ModelImportRjsfUiSchemaV1Beta2 } from '@meshery/schemas';
-import { RJSFModalWrapper } from '@/components/General/Modals/Modal';
+import { RJSFModalWrapper } from '@/components/shared/Modal/Modal';
 import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';

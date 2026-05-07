@@ -6,7 +6,7 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import { useState } from 'react';
-import { RJSFModalWrapper } from './Modals/Modal';
+import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import SupportIcon from '@/assets/icons/support';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { useSupportWebHookMutation } from '@/rtk-query/webhook';
