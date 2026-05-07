@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
@@ -112,7 +110,7 @@ const ResourcesTableInner = (props) => {
         selectedK8sContexts,
       );
 
-  const encodedClusterIds = encodeURIComponent(JSON.stringify(clusterIds));
+  const encodedClusterIds = JSON.stringify(clusterIds);
 
   const { notify } = useNotification();
   const [fetchMeshSyncResources] = useLazyGetMeshSyncResourcesQuery();
@@ -124,7 +122,7 @@ const ResourcesTableInner = (props) => {
       query.resourceName ||
       (['Node', 'Namespace'].includes(query.resource) ? query.resource : search);
     const resourceCategory = query.resource || tableConfig.name;
-    const decodedClusterIds = JSON.parse(decodeURIComponent(encodedClusterIds));
+    const decodedClusterIds = JSON.parse(encodedClusterIds);
     if (decodedClusterIds.length === 0) {
       setLoading(false);
       return;
@@ -149,8 +147,8 @@ const ResourcesTableInner = (props) => {
 
       setMeshSyncResources(res?.resources || []);
       setPage(res?.page || 0);
-      setCount(res?.total_count || 0);
-      setPageSize(res?.page_size || 0);
+      setCount(res?.totalCount || 0);
+      setPageSize(res?.pageSize || 0);
       setLoading(false);
       if (query.resourceCategory && query.resourceName && res?.resources.length === 1) {
         switchView(SINGLE_VIEW, res?.resources[0]);

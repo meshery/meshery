@@ -47,7 +47,7 @@ const MainViewsContent = ({
   isFetching,
   views,
   hasMore,
-  total_count,
+  totalCount,
   workspace,
   refetch,
   isMultiSelectMode,
@@ -141,7 +141,7 @@ const MainViewsContent = ({
       title: 'Delete View',
       icon: <DeleteIcon fill={theme.palette.icon.default} />,
       enabled: ({ view, userId }) =>
-        CAN(keys.DELETE_VIEW.action, keys.DELETE_VIEW.subject) && view.user_id === userId,
+        CAN(keys.DELETE_VIEW.action, keys.DELETE_VIEW.subject) && view.userId === userId,
     },
   };
   const getMenuOptions = ({
@@ -198,13 +198,13 @@ const MainViewsContent = ({
     openViewInKanvas(viewId, viewName, Router);
   };
   const isInitialFetch = isFetching && page === 0;
-  const isEmpty = total_count === 0;
+  const isEmpty = totalCount === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
-  const providerUrl = capabilitiesRegistry?.provider_url;
+  const providerUrl = capabilitiesRegistry?.providerUrl;
   const [activeUsers] = useRoomActivity({
-    provider_url: providerUrl,
+    providerUrl,
     getUserAccessToken: getUserAccessToken,
     getUserProfile: getUserProfile,
   });
@@ -217,7 +217,7 @@ const MainViewsContent = ({
         {shouldRenderDesigns &&
           views?.map((view) => {
             const isPublished = view?.visibility === 'published';
-            const isOwner = currentUser?.id === view?.user_id;
+            const isOwner = currentUser?.id === view?.userId;
             const canChangeVisibility = !isPublished && isOwner;
 
             return (
@@ -297,8 +297,8 @@ const MainViewsContent = ({
         <ViewInfoModal
           open={infoModal}
           closeModal={handleCloseInfoModal}
-          view_id={selectedView?.id}
-          view_name={selectedView?.name}
+          viewId={selectedView?.id}
+          viewName={selectedView?.name}
           metadata={selectedView?.metadata}
         />
       )}

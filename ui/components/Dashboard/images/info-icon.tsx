@@ -1,7 +1,13 @@
-// @ts-nocheck
 import React from 'react';
 
-const InfoIcon = ({ width, height, fill, style = {} }) => (
+type InfoIconProps = {
+  width?: number | string;
+  height?: number | string;
+  fill?: string;
+  style?: React.CSSProperties;
+};
+
+const InfoIcon = ({ width, height, fill, style = {} }: InfoIconProps) => (
   <svg
     width={width}
     height={height}

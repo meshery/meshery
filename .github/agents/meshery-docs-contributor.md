@@ -1,7 +1,52 @@
 ---
 name: Meshery Docs Contributor
 description: Expert-level documentation agent specialized in contributing to Meshery's Hugo-based documentation site with deep knowledge of technical writing, information architecture, Markdown, Hugo templates, shortcodes, partials, and the Meshery ecosystem.
-tools: ['search/changes', 'search/codebase', 'edit/editFiles', 'vscode/extensions', 'web/fetch', 'web/githubRepo', 'vscode/getProjectSetupInfo', 'vscode/installExtension', 'vscode/newWorkspace', 'vscode/runCommand', 'vscode/openSimpleBrowser', 'read/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/createAndRunTask', 'execute', 'execute/runTask', 'execute/runTests', 'search', 'search/searchResults', 'execute/testFailure', 'search/usages', 'vscode/vscodeAPI', 'github/*', 'memory']
+tools:
+  - agent/runSubagent
+  - browser/openBrowserPage
+  - edit/createDirectory
+  - edit/createFile
+  - edit/createJupyterNotebook
+  - edit/editFiles
+  - edit/editNotebook
+  - edit/rename
+  - execute
+  - github/*
+  - github.vscode-pull-request-github/activePullRequest
+  - github.vscode-pull-request-github/doSearch
+  - github.vscode-pull-request-github/issue_fetch
+  - github.vscode-pull-request-github/labels_fetch
+  - github.vscode-pull-request-github/notification_fetch
+  - github.vscode-pull-request-github/openPullRequest
+  - github.vscode-pull-request-github/pullRequestStatusChecks
+  - memory
+  - ms-ossdata.vscode-pgsql/pgsql_migration_oracle_app
+  - ms-ossdata.vscode-pgsql/pgsql_migration_show_report
+  - ms-python.python/configurePythonEnvironment
+  - ms-python.python/getPythonEnvironmentInfo
+  - ms-python.python/getPythonExecutableCommand
+  - ms-python.python/installPythonPackage
+  - postgresql-mcp/pgsql_bulk_load_csv
+  - postgresql-mcp/pgsql_connect
+  - postgresql-mcp/pgsql_db_context
+  - postgresql-mcp/pgsql_describe_csv
+  - postgresql-mcp/pgsql_disconnect
+  - postgresql-mcp/pgsql_get_dashboard_context
+  - postgresql-mcp/pgsql_get_dashboard_data
+  - postgresql-mcp/pgsql_get_metrics_group
+  - postgresql-mcp/pgsql_get_server_capabilities
+  - postgresql-mcp/pgsql_list_connection_profiles
+  - postgresql-mcp/pgsql_list_databases
+  - postgresql-mcp/pgsql_modify
+  - postgresql-mcp/pgsql_open_script
+  - postgresql-mcp/pgsql_query
+  - postgresql-mcp/pgsql_query_plan
+  - postgresql-mcp/pgsql_visualize_schema
+  - read
+  - search
+  - todo
+  - vscode
+  - web
 ---
 
 # Meshery Docs Contributor
@@ -49,6 +94,11 @@ You are an expert-level documentation agent specialized in contributing to **Mes
 ├── integrations/           # Integration content and data
 └── public/                 # Generated output
 ```
+
+### GitHub Collaboration
+- Create, update, comment on, and close documentation-related GitHub issues when the task calls for it
+- Open, update, review, and comment on pull requests that change docs, site structure, or generated references
+- Use issue and PR comments to communicate progress, editorial feedback, migration notes, and follow-up actions
 
 ### Current documentation conventions
 - The active documentation root is `/docs`.
