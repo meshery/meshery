@@ -18,23 +18,23 @@ import {
   useTheme,
   Search,
 } from '@sistent/sistent';
-import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
+import { errorHandlerGenerator, successHandlerGenerator } from '../../../utils/helpers/common';
 import { useLazyPingKubernetesQuery } from '@/rtk-query/connection';
-import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
+import { getK8sConfigIdsFromK8sConfig } from '../../../utils/multi-ctx';
 import React, { useEffect, useState, FC } from 'react';
-import { iconMedium, iconSmall } from '../css/icons.styles';
-import { RoundedTriangleShape } from '../assets/icons/shapes/RoundedTriangle';
-import RedOctagonSvg from '../assets/icons/shapes/Octagon';
-import PatternIcon from '../assets/icons/Pattern';
-import { useNotification } from '../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../lib/event-types';
-import { K8sEmptyState } from './EmptyState/K8sContextEmptyState';
-import { ACTIONS } from '../utils/Enum';
-import CAN from '../utils/can';
+import { iconMedium, iconSmall } from '../../../css/icons.styles';
+import { RoundedTriangleShape } from '../../../assets/icons/shapes/RoundedTriangle';
+import RedOctagonSvg from '../../../assets/icons/shapes/Octagon';
+import PatternIcon from '../../../assets/icons/Pattern';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../lib/event-types';
+import { K8sEmptyState } from '../EmptyState/K8sContextEmptyState';
+import { ACTIONS } from '../../../utils/Enum';
+import CAN from '../../../utils/can';
 import { keys } from '@/utils/permission_constants';
-import { K8sContextConnectionChip } from './Header';
+import { K8sContextConnectionChip } from '../../Header';
 import { useFilterK8sContexts } from '@/utils/hooks/useKubernetesHook';
-import { TooltipWrappedConnectionChip } from './connections/ConnectionChip';
+import { TooltipWrappedConnectionChip } from '../../connections/ConnectionChip';
 import { setK8sContexts, updateProgress } from '@/store/slices/mesheryUi';
 import { useDispatch, useSelector } from 'react-redux';
 
