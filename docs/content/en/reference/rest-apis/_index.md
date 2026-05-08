@@ -16,12 +16,11 @@ Meshery's REST API specifications are now maintained and published from the [mes
 
 Each of Meshery's APIs is subject to Meshery's authentication and authorization system. Meshery requires a valid token in order to allow clients to invoke its APIs.
 
-<details>
-  <summary>Authentication</summary>
-  Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. The type of authentication is determined by the selected <a href='/extensibility/providers'>Providers</a>. Use of the Local Provider, "None", puts Meshery into single-user mode and uses minimal, intentionally insecure authentication.
+### Authentication
 
-  {{% alert color="dark" title="What are authentication tokens?" %}}Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>Meshery UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provides secure access to Meshery's management features.</p>{{% /alert %}}
-</details>
+Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. The type of authentication is determined by the selected <a href='/extensibility/providers'>Providers</a>. Use of the Local Provider, "None", puts Meshery into single-user mode and uses minimal, intentionally insecure authentication.
+
+{{% alert color="dark" title="What are authentication tokens?" %}}Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>Meshery UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provides secure access to Meshery's management features.</p>{{% /alert %}}
 
 ### How to get your token
 
