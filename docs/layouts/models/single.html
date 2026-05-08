@@ -47,6 +47,7 @@
     <section>
         <h3 id="related-designs-header">Designs containing {{ .Title }}</h3>
         {{ $tech := path.Base (strings.TrimSuffix "/" .Params.docURL) }}
+        {{ $catalogFilterURL := printf "https://meshery.io/catalog/designs?search=%s" ($tech | urlquery) }}
         <ul>
         {{ $catalogRoot := "catalog" }}
         {{ range readDir $catalogRoot }}
@@ -74,6 +75,9 @@
             {{ end }}
         {{ end }}
     </ul>
+    <p>
+        <a href="{{ $catalogFilterURL }}" target="_blank" rel="noopener noreferrer">View more {{ .Title }} designs in Meshery Catalog</a>
+    </p>
     </section>
 
     <!-- Related Tutorials -->
@@ -143,11 +147,6 @@
         image.onerror = null;
         image.src = '{{ .Params.image }}';
     }
-    const designLinks = document.querySelectorAll('.design-link');
-    if (designLinks.length === 0) {
-        document.getElementById('related-designs-header').style.display = 'none';
-    }
-
     const relatedTutorials = document.querySelectorAll(".tutorial-link");
     if (relatedTutorials.length === 0) {
         document.getElementById("related-tutorials-header").style.display = "none";
