@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 7th 2026, 4:43:31 pm
+- Testing started at: May 7th 2026, 11:54:01 pm
 
 **📦 Test Result Summary**
 
-- ✅ 134 passed
-- ❌ 3 failed
+- ✅ 135 passed
+- ❌ 2 failed
 - ⚠️ 0 flaked
 - ⏩ 7 skipped
 
-⌛ _Duration: 6 minutes and 53 seconds_
+⌛ _Duration: 6 minutes and 58 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -46,7 +46,7 @@
 | 23 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 24 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 25 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
-| 26 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ❌ |
+| 26 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 27 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 28 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 29 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
@@ -180,41 +180,6 @@
 
 The following tests failed. Click on each to see the failure reason:
 
-
-<details>
-<summary>❌ Delete Kubernetes cluster connections (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/utils/waitForSnackBar.ts`
-
-**Error Message:**
-```
-Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
-
-Locator: locator('text=Connection status updated').first()
-Expected: visible
-Timeout: 60000ms
-Error: element(s) not found
-
-Call log:
-[2m  - Expect "toBeVisible" with timeout 60000ms[22m
-[2m  - waiting for locator('text=Connection status updated').first()[22m
-
-```
-
-**Code Snippet:**
-```
-   at utils/waitForSnackBar.ts:5
-
-[0m [90m 3 |[39m [36mexport[39m [36mconst[39m waitForSnackBar [33m=[39m [36masync[39m (page[33m:[39m [33mPage[39m[33m,[39m message[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[36mvoid[39m[33m>[39m [33m=>[39m {
- [90m 4 |[39m   [36mconst[39m snackbar [33m=[39m page[33m.[39mlocator([32m`text=${message}`[39m)[33m.[39mfirst()[33m;[39m
-[31m[1m>[22m[39m[90m 5 |[39m   [36mawait[39m expect(snackbar)[33m.[39mtoBeVisible()[33m;[39m
- [90m   |[39m                          [31m[1m^[22m[39m
- [90m 6 |[39m   [36mawait[39m snackbar[33m.[39mwaitFor({ state[33m:[39m [32m'detached'[39m[33m,[39m timeout[33m:[39m [35m10000[39m })[33m;[39m
- [90m 7 |[39m }[33m;[39m
- [90m 8 |[39m[0m
-```
-
-</details>
 
 <details>
 <summary>❌ Import a Model via File Import (Meshery - chromium-meshery-provider)</summary>
