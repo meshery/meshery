@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -366,5 +367,104 @@ func TestRemoteProviderDoRequest_RetriesWithFreshBodyAfterRefresh(t *testing.T) 
 
 	if got := atomic.LoadInt32(&refreshCalls); got != 1 {
 		t.Fatalf("expected exactly one refresh request, got %d", got)
+	}
+}
+
+// TestRemoteProviderDoRequest_XAPIKeyAnonymousOnly guards the anonymous
+// passphrase contract: X-API-Key MUST only be set when the outbound request
+// is being made with the global anonymous token, never with a real user JWT.
+// Setting X-API-Key with a user JWT pollutes the cloud's static-token
+// fallback path and broke anonymous flows in kanvas.new. The test also
+// covers the defensive Del path: a caller-supplied X-API-Key on a
+// non-anonymous outbound request must be stripped before reaching cloud.
+func TestRemoteProviderDoRequest_XAPIKeyAnonymousOnly(t *testing.T) {
+	var (
+		mu      sync.Mutex
+		headers = map[string]string{}
+	)
+	record := func(label, value string) {
+		mu.Lock()
+		defer mu.Unlock()
+		headers[label] = value
+	}
+	read := func(label string) string {
+		mu.Lock()
+		defer mu.Unlock()
+		return headers[label]
+	}
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/anon":
+			record("anon", r.Header.Get("X-API-Key"))
+			w.WriteHeader(http.StatusOK)
+		case "/user":
+			record("user", r.Header.Get("X-API-Key"))
+			w.WriteHeader(http.StatusOK)
+		case "/user-with-stale-api-key":
+			record("stale", r.Header.Get("X-API-Key"))
+			w.WriteHeader(http.StatusOK)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+
+	assertOK := func(resp *http.Response, label string) {
+		t.Helper()
+		defer func() {
+			if cerr := resp.Body.Close(); cerr != nil {
+				t.Logf("%s: error closing response body: %v", label, cerr)
+			}
+		}()
+		if resp.StatusCode != http.StatusOK {
+			body, _ := io.ReadAll(resp.Body)
+			t.Fatalf("%s: status %d, body: %s", label, resp.StatusCode, strings.TrimSpace(string(body)))
+		}
+	}
+
+	anonReq, err := http.NewRequest(http.MethodGet, server.URL+"/anon", nil)
+	if err != nil {
+		t.Fatalf("failed to build anonymous request: %v", err)
+	}
+	resp, err := provider.DoRequest(anonReq, GlobalTokenForAnonymousResults)
+	if err != nil {
+		t.Fatalf("anon request failed: %v", err)
+	}
+	assertOK(resp, "anon request")
+
+	userToken := encodeTestToken(t, oauth2.Token{AccessToken: "real-user-jwt", TokenType: "Bearer"})
+	userReq, err := http.NewRequest(http.MethodGet, server.URL+"/user", nil)
+	if err != nil {
+		t.Fatalf("failed to build user request: %v", err)
+	}
+	resp, err = provider.DoRequest(userReq, userToken)
+	if err != nil {
+		t.Fatalf("user request failed: %v", err)
+	}
+	assertOK(resp, "user request")
+
+	// Inbound proxy header that should be stripped, not forwarded.
+	staleReq, err := http.NewRequest(http.MethodGet, server.URL+"/user-with-stale-api-key", nil)
+	if err != nil {
+		t.Fatalf("failed to build stale request: %v", err)
+	}
+	staleReq.Header.Set("X-API-Key", "leaked-from-inbound-request")
+	resp, err = provider.DoRequest(staleReq, userToken)
+	if err != nil {
+		t.Fatalf("stale request failed: %v", err)
+	}
+	assertOK(resp, "stale request")
+
+	if got := read("anon"); got != GlobalTokenForAnonymousResults {
+		t.Fatalf("anonymous request must carry X-API-Key=%q, got %q", GlobalTokenForAnonymousResults, got)
+	}
+	if got := read("user"); got != "" {
+		t.Fatalf("authenticated request must NOT set X-API-Key, got %q", got)
+	}
+	if got := read("stale"); got != "" {
+		t.Fatalf("authenticated request with inbound X-API-Key must strip it, got %q", got)
 	}
 }
