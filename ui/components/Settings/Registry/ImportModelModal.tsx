@@ -10,13 +10,13 @@ import {
   Modal,
   useTheme,
 } from '@sistent/sistent';
-import { ModelImportRjsfSchemaV1Beta2, ModelImportRjsfUiSchemaV1Beta2 } from '@meshery/schemas';
+import { ModelImportRjsfSchemaV1Beta2 } from '@meshery/schemas';
 import { RJSFModalWrapper } from '@/components/General/Modals/Modal';
 import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { capitalize } from 'lodash';
 import { Loading } from '@/components/DesignLifeCycle/common';
 import { NotificationCenterContext } from '@/components/NotificationCenter';
@@ -91,41 +91,22 @@ const FinishDeploymentStep = ({
   );
 };
 
-// Canonical RJSF form schemas authored in `meshery/schemas` and validated
-// by its `validation/forms_test.go` to be a strict subset of the OpenAPI
-// `MesheryModelImportFormPayload` construct. Importing them keeps the
-// modal locked to the canonical field shape (uploadType enum tokens,
-// modelFile/fileName/url naming) — any drift surfaces as a build/test
-// failure here rather than silent runtime divergence.
-//
-// Two consumer-side overrides on top of the canonical:
-//
-//  1. `allOf` is relaxed: the canonical requires `fileName` for the
-//     file branch and the CSV trio for the csv branch, but this modal
-//     doesn't render either. `fileName` is derived from the file
-//     widget's `data:...;name=foo;base64,...` URL, and the CSV files
-//     are uploaded via `CsvStepper` (a separate modal opened on the
-//     csv branch). Keeping the canonical `required` would block the
-//     `Next` click on validation errors for fields the user can't see.
-//
-//  2. `uiSchema` hides `fileName` and the CSV inputs so the form only
-//     surfaces the inputs that match this modal's UX (uploadType radio,
-//     modelFile, url). The hidden fields stay schema-valid; they are
-//     just not rendered.
+const canonicalProps = ModelImportRjsfSchemaV1Beta2?.properties || {};
+const canonicalUploadType = canonicalProps.uploadType || {};
 const UPLOAD_TYPE_FILE = 'file';
 const UPLOAD_TYPE_URL = 'urlImport';
 const UPLOAD_TYPE_CSV = 'csv';
 
 const importModelSchema = {
-  ...ModelImportRjsfSchemaV1Beta2,
+  $schema: 'https://json-schema.org/draft-07/schema#',
+  title: ModelImportRjsfSchemaV1Beta2?.title,
+  type: 'object',
+  properties: {
+    uploadType: canonicalUploadType,
+    modelFile: canonicalProps.modelFile || {},
+    url: canonicalProps.url || {},
+  },
   allOf: [
-    {
-      if: {
-        properties: { uploadType: { const: UPLOAD_TYPE_FILE } },
-        required: ['uploadType'],
-      },
-      then: { required: ['modelFile'] },
-    },
     {
       if: {
         properties: { uploadType: { const: UPLOAD_TYPE_URL } },
@@ -133,38 +114,54 @@ const importModelSchema = {
       },
       then: { required: ['url'] },
     },
-    // csv branch: required CSV fields handled by CsvStepper, not this form.
   ],
+  required: ['uploadType'],
 };
 
 const importModelUiSchema = {
-  ...ModelImportRjsfUiSchemaV1Beta2,
-  // RJSF v6 reads `enumNames` from the uiSchema (`ui:enumNames`) rather than
-  // from the JSON Schema itself — the canonical `import.json` declares
-  // `enumNames` at the schema level, which @rjsf/utils' `optionsList()`
-  // silently ignores. Without this override the radio surfaces the raw
-  // `file`/`urlImport`/`csv` enum tokens instead of the friendly labels,
-  // breaking the e2e selectors that look for `getByRole('heading', { name:
-  // 'File Import' })`.
   uploadType: {
     'ui:widget': 'radio',
-    'ui:enumNames': [...(ModelImportRjsfSchemaV1Beta2.properties.uploadType.enumNames as string[])],
+    'ui:enumNames': Array.isArray(canonicalUploadType?.enumNames)
+      ? [...(canonicalUploadType.enumNames as string[])]
+      : undefined,
   },
-  fileName: { 'ui:widget': 'hidden' },
-  modelCsv: { 'ui:widget': 'hidden' },
-  componentCsv: { 'ui:widget': 'hidden' },
-  relationshipCsv: { 'ui:widget': 'hidden' },
+  modelFile: { 'ui:widget': 'file' },
+  'ui:order': ['uploadType', 'modelFile', 'url'],
 };
 
-// RJSF's file widget encodes the original filename inside the data URL
-// (`data:<mime>;name=<file>;base64,<payload>`). Pull it back out so the
-// server-side ImportBody.FileName is populated even though the form
-// doesn't surface a separate `fileName` input.
 const filenameFromDataUrl = (dataUrl: string | undefined): string | undefined => {
   if (!dataUrl) return undefined;
   const match = dataUrl.match(/;name=([^;]+);/);
   return match ? decodeURIComponent(match[1]) : undefined;
 };
+
+const decodeDataUrlToBytes = (dataUrl: string | undefined): number[] | null => {
+  if (!dataUrl) return null;
+  return getUnit8ArrayDecodedFile(dataUrl);
+};
+
+const findSelectedModelFile = (container: HTMLElement | null): File | undefined => {
+  if (!container) return undefined;
+
+  const inputs = container.querySelectorAll<HTMLInputElement>('input[type="file"][id$="_modelFile"]');
+  for (const input of Array.from(inputs)) {
+    const file = input.files?.[0];
+    if (file) return file;
+  }
+
+  return undefined;
+};
+
+const readFileAsBytes = (file: File): Promise<number[]> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const buffer = reader.result as ArrayBuffer;
+      resolve(Array.from(new Uint8Array(buffer)));
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsArrayBuffer(file);
+  });
 
 type ImportModelModalProps = {
   isImportModalOpen: boolean;
@@ -177,12 +174,7 @@ const ImportModelModal = React.memo(
     const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
     const [importModelReq] = useImportMeshModelMutation();
     const [activeStep, setActiveStep] = useState(0);
-
-    const handleNext = () => {
-      if (activeStep === 0) {
-        setActiveStep(1);
-      }
-    };
+    const importFormContainerRef = useRef<HTMLDivElement | null>(null);
 
     const handleClose = () => {
       setIsImportModalOpen(false);
@@ -191,25 +183,28 @@ const ImportModelModal = React.memo(
     };
 
     const handleImportModelSubmit = async (data) => {
-      // Canonical field names from ModelImportRjsfSchemaV1Beta2:
-      // `uploadType` (enum: file/urlImport/csv), `modelFile`, `fileName`,
-      // `url`, plus the CSV trio handled by CsvStepper.
       const { uploadType, url, modelFile, fileName: formFileName } = data;
       let requestBody = null;
 
-      // RJSF's file widget encodes the original filename in the data URL,
-      // but we also fall back to the input element's `files[0].name` in
-      // case the widget shape changes upstream.
-      const fileElement = document.getElementById('root_modelFile') as HTMLInputElement | null;
-
       switch (uploadType) {
         case UPLOAD_TYPE_FILE: {
-          const fileName =
-            formFileName || filenameFromDataUrl(modelFile) || fileElement?.files?.[0]?.name;
-          const fileData = modelFile ? getUnit8ArrayDecodedFile(modelFile) : null;
+          let fileName = formFileName || filenameFromDataUrl(modelFile);
+          let fileData: number[] | null = decodeDataUrlToBytes(modelFile);
+
+          if (!fileData) {
+            const inputFile = findSelectedModelFile(importFormContainerRef.current);
+            if (inputFile) {
+              try {
+                fileData = await readFileAsBytes(inputFile);
+                fileName = fileName || inputFile.name;
+              } catch (error) {
+                console.error('Error reading model file:', error);
+                return;
+              }
+            }
+          }
+
           if (fileData && fileName) {
-            // Server's ImportBody.FileName / .ModelFile are tagged
-            // `file_name` / `model_file` (snake_case wire format).
             requestBody = {
               importBody: {
                 model_file: fileData,
@@ -250,9 +245,14 @@ const ImportModelModal = React.memo(
           return;
         }
       }
+
+      setActiveStep(1);
       updateProgress({ showProgress: true });
-      await importModelReq({ importBody: requestBody });
-      updateProgress({ showProgress: false });
+      try {
+        await importModelReq({ importBody: requestBody });
+      } finally {
+        updateProgress({ showProgress: false });
+      }
     };
 
     const CustomRadioWidget = (props: {
@@ -314,29 +314,30 @@ const ImportModelModal = React.memo(
           }}
         >
           {activeStep === 0 ? (
-            <RJSFModalWrapper
-              schema={importModelSchema}
-              uiSchema={importModelUiSchema}
-              handleSubmit={handleImportModelSubmit}
-              handleNext={handleNext}
-              submitBtnText="Next"
-              handleClose={handleClose}
-              widgets={widgets}
-              helpText={
-                <p>
-                  {importModalDescription} <br />
-                  Learn more about importing Models in our{' '}
-                  <StyledDocsRedirectLink
-                    href={`${MESHERY_DOCS_URL}/guides/configuration-management/importing-models`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    documentation
-                  </StyledDocsRedirectLink>
-                  .
-                </p>
-              }
-            />
+            <Box ref={importFormContainerRef}>
+              <RJSFModalWrapper
+                schema={importModelSchema}
+                uiSchema={importModelUiSchema}
+                handleSubmit={handleImportModelSubmit}
+                submitBtnText="Next"
+                handleClose={handleClose}
+                widgets={widgets}
+                helpText={
+                  <p>
+                    {importModalDescription} <br />
+                    Learn more about importing Models in our{' '}
+                    <StyledDocsRedirectLink
+                      href={`${MESHERY_DOCS_URL}/guides/configuration-management/importing-models`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      documentation
+                    </StyledDocsRedirectLink>
+                    .
+                  </p>
+                }
+              />
+            </Box>
           ) : (
             <FinishDeploymentStep deploymentType="register" handleClose={handleClose} />
           )}
