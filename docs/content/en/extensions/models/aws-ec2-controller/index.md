@@ -109,7 +109,11 @@ components:
   colorIcon: content/en/extensions/models/aws-ec2-controller/components/egress-only-internet-gateway/icons/color/egress-only-internet-gateway-color.svg
   whiteIcon: content/en/extensions/models/aws-ec2-controller/components/egress-only-internet-gateway/icons/white/egress-only-internet-gateway-white.svg
   description: 
-components-count: 25
+- name: egress-only-internet-gateway
+  colorIcon: content/en/extensions/models/aws-ec2-controller/components/egress-only-internet-gateway/icons/color/egress-only-internet-gateway-color.svg
+  whiteIcon: content/en/extensions/models/aws-ec2-controller/components/egress-only-internet-gateway/icons/white/egress-only-internet-gateway-white.svg
+  description: 
+components-count: 26
 relationships: 
 - type: "non-binding"
   kind: "edge"
