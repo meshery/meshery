@@ -19,6 +19,9 @@ import {
   MenuItem,
   Radio,
   Grid2,
+  AppRegistrationIcon,
+  BrushIcon,
+  CategoryIcon,
 } from '@sistent/sistent';
 
 import {
@@ -28,12 +31,9 @@ import {
   StyledColorBox,
   StyledDocsRedirectLink,
 } from './style';
-import BrushIcon from '@mui/icons-material/Brush';
-import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import { capitalize } from 'lodash';
-import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import {
   CategoryDefinitionV1Beta1OpenApiSchema,
