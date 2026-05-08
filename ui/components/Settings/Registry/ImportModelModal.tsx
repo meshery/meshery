@@ -186,22 +186,24 @@ const filenameFromDataUrl = (dataUrl: string | undefined): string | undefined =>
   return match ? decodeURIComponent(match[1]) : undefined;
 };
 
-// Re-encode an RJSF data URL into the byte array the server expects.
-// Mirrors `getUnit8ArrayDecodedFile` for the happy path; returns `null`
-// when no data URL is present so callers can fall back to the DOM input.
-const encodeFileToBase64Bytes = async (dataUrl: string | undefined): Promise<number[] | null> => {
+// Decode an RJSF data URL into the byte array the server expects.
+// `getUnit8ArrayDecodedFile` is synchronous, so this wrapper is too;
+// returns `null` when no data URL is present so callers can fall back
+// to the DOM input.
+const decodeDataUrlToBytes = (dataUrl: string | undefined): number[] | null => {
   if (!dataUrl) return null;
   return getUnit8ArrayDecodedFile(dataUrl);
 };
 
 // Locate the `<input type="file">` rendered for the modelFile field. RJSF
 // uses the schema title as the id prefix (`<title>_modelFile`), so we
-// can't hard-code `root_modelFile`; query the live modal dialog instead.
+// can't hard-code `root_modelFile`. Scope the query to the active modal
+// dialog to avoid false matches from other file inputs on the page.
 const findSelectedModelFile = (): File | undefined => {
   if (typeof document === 'undefined') return undefined;
-  const inputs = document.querySelectorAll<HTMLInputElement>(
-    'input[type="file"][id$="_modelFile"]',
-  );
+  const dialog = document.querySelector<HTMLElement>('[role="dialog"]');
+  const root = dialog ?? document;
+  const inputs = root.querySelectorAll<HTMLInputElement>('input[type="file"][id$="_modelFile"]');
   for (const input of Array.from(inputs)) {
     const file = input.files?.[0];
     if (file) return file;
@@ -276,15 +278,21 @@ const ImportModelModal = React.memo(
           //      `<input type="file">` rendered by the widget already
           //      carries the selected `File` synchronously (the browser
           //      sets `.files` on the input the instant the user picks a
-          //      file), so re-read + base64-encode it here.
-          const formData = await encodeFileToBase64Bytes(modelFile);
+          //      file), so re-read it here via readFileAsBytes.
+          const formData = decodeDataUrlToBytes(modelFile);
           let fileName = formFileName || filenameFromDataUrl(modelFile);
           let fileData: number[] | null = formData;
           if (!fileData) {
             const inputFile = findSelectedModelFile();
             if (inputFile) {
-              fileData = await readFileAsBytes(inputFile);
-              fileName = fileName || inputFile.name;
+              try {
+                fileData = await readFileAsBytes(inputFile);
+                fileName = fileName || inputFile.name;
+              } catch (err) {
+                console.error('Error reading file from DOM:', err);
+                skipNextRef.current = true;
+                return;
+              }
             }
           }
           if (fileData && fileName) {
