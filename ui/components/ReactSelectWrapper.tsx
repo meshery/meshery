@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CreateSelect from 'react-select/creatable';
 import {
+  CancelIcon,
   Typography,
   TextField,
   Paper,
@@ -11,7 +12,6 @@ import {
   styled,
   NoSsr,
 } from '@sistent/sistent';
-import CancelIcon from '@mui/icons-material/Cancel';
 
 const StyledNoOptionsMessage = styled(Typography)(({ theme }) => ({
   padding: '0.2rem',
