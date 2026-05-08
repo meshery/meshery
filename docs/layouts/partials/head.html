@@ -108,9 +108,10 @@
   {{- $sass := resources.Get "scss/_styles_project.scss" -}} {{- $opts := dict "transpiler"
   "dartsass" "targetPath" "css/styles.css" -}} {{- with $sass | toCSS $opts |
   minify | fingerprint -}}
+  {{- $cssPath := printf "/%s" (strings.TrimPrefix "/" .RelPermalink) -}}
   <link
     rel="stylesheet"
-    href="{{ .Permalink }}"
+    href="{{ $cssPath }}"
     integrity="{{ .Data.Integrity }}"
     crossorigin="anonymous"
   />
