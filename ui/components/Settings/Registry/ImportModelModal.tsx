@@ -10,13 +10,13 @@ import {
   Modal,
   useTheme,
 } from '@sistent/sistent';
-import { ModelImportRjsfSchemaV1Beta2 } from '@meshery/schemas';
+import { ModelImportRjsfSchemaV1Beta2, ModelImportRjsfUiSchemaV1Beta2 } from '@meshery/schemas';
 import { RJSFModalWrapper } from '@/components/General/Modals/Modal';
 import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { capitalize } from 'lodash';
 import { Loading } from '@/components/DesignLifeCycle/common';
 import { NotificationCenterContext } from '@/components/NotificationCenter';
@@ -112,25 +112,26 @@ const FinishDeploymentStep = ({
 //       by @rjsf/utils' `optionsList()` — RJSF v6 reads the radio
 //       labels from `ui:enumNames` on the uiSchema instead.
 //
-// Hold the consumer-shaped subset locally with content pulled from the
-// canonical (titles, descriptions, enum tokens, friendly labels). When
-// the upstream schema gains a UI-friendly variant or RJSF starts
-// honoring schema-level `enumNames`, this override can shrink.
-const canonicalProps = ModelImportRjsfSchemaV1Beta2.properties;
-const canonicalUploadType = canonicalProps.uploadType;
+// v1.2.16 of @meshery/schemas adds `ModelImportRjsfUiSchemaV1Beta2` and
+// changes `modelFile.format` from `"binary"` to `"data-url"` (the format
+// RJSF's FileWidget actually produces). We base `importModelUiSchema` on
+// the canonical and overlay our consumer overrides on top.
+const canonicalProps = ModelImportRjsfSchemaV1Beta2?.properties || {};
+const canonicalUploadType = canonicalProps.uploadType || {};
 const UPLOAD_TYPE_FILE = 'file';
 const UPLOAD_TYPE_URL = 'urlImport';
 const UPLOAD_TYPE_CSV = 'csv';
 
-// `allOf` intentionally does NOT mark `modelFile` required for the file
-// branch even though the canonical does. CustomFileWidget reads the file
-// asynchronously (FileReader → `Promise.then(props.onChange)`) and only
-// then lifts the data URL into RJSF's form state, while validation runs
-// synchronously on Next-click. Gating submit on `required: ['modelFile']`
+// `allOf` intentionally does NOT mark `modelFile` or `fileName` required
+// for the file branch even though the canonical does. CustomFileWidget
+// reads the file asynchronously (FileReader → `Promise.then(props.onChange)`)
+// and only then lifts the data URL into RJSF's form state, while validation
+// runs synchronously on Next-click. Gating submit on `required: ['modelFile']`
 // loses the race on every test run and the form sits silently. We trust
 // the user-flow guard in `handleImportModelSubmit` instead — it reads
 // the file off the DOM input as the synchronous source-of-truth and
-// short-circuits if no file is selected.
+// short-circuits if no file is selected. `fileName` is hidden and derived
+// from the data URL / DOM fallback at submit time.
 const importModelSchema = {
   $schema: 'https://json-schema.org/draft-07/schema#',
   title: ModelImportRjsfSchemaV1Beta2.title,
@@ -139,6 +140,7 @@ const importModelSchema = {
     uploadType: canonicalUploadType,
     modelFile: canonicalProps.modelFile,
     url: canonicalProps.url,
+    fileName: canonicalProps.fileName,
   },
   allOf: [
     {
@@ -152,12 +154,25 @@ const importModelSchema = {
   required: ['uploadType'],
 };
 
+// Extend the canonical uiSchema (added in @meshery/schemas v1.2.16) with
+// consumer-specific overrides:
+//   - uploadType: add ui:enumNames so RJSF v6 renders friendly radio labels
+//     (optionsList() reads labels from uiSchema, not schema-level enumNames).
+//   - fileName: hidden — derived from the uploaded file at submit time.
+//   - CSV fields: not rendered in this modal (handled by CsvStepper).
 const importModelUiSchema = {
+  ...ModelImportRjsfUiSchemaV1Beta2,
   uploadType: {
     'ui:widget': 'radio',
-    'ui:enumNames': [...(canonicalUploadType.enumNames as string[])],
+    'ui:enumNames': Array.isArray(canonicalUploadType?.enumNames)
+      ? [...(canonicalUploadType.enumNames as string[])]
+      : undefined,
   },
   modelFile: { 'ui:widget': 'file' },
+  fileName: { 'ui:widget': 'hidden' },
+  modelCsv: { 'ui:widget': 'hidden' },
+  componentCsv: { 'ui:widget': 'hidden' },
+  relationshipCsv: { 'ui:widget': 'hidden' },
   'ui:order': ['uploadType', 'modelFile', 'url'],
 };
 
@@ -221,8 +236,15 @@ const ImportModelModal = React.memo(
     const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
     const [importModelReq] = useImportMeshModelMutation();
     const [activeStep, setActiveStep] = useState(0);
+    // Prevents RJSFModalWrapper from advancing the step when the submit
+    // handler short-circuits (CSV branch, no-file guard, empty-URL guard).
+    const skipNextRef = useRef(false);
 
     const handleNext = () => {
+      if (skipNextRef.current) {
+        skipNextRef.current = false;
+        return;
+      }
       if (activeStep === 0) {
         setActiveStep(1);
       }
@@ -279,6 +301,7 @@ const ImportModelModal = React.memo(
             };
           } else {
             console.error('Error: File data or file name is empty or invalid');
+            skipNextRef.current = true;
             return;
           }
           break;
@@ -294,17 +317,20 @@ const ImportModelModal = React.memo(
             };
           } else {
             console.error('Error: URL is empty');
+            skipNextRef.current = true;
             return;
           }
           break;
         }
         case UPLOAD_TYPE_CSV: {
+          skipNextRef.current = true;
           handleClose();
           setIsCsvModalOpen(true);
           return;
         }
         default: {
           console.error('Error: Invalid upload type');
+          skipNextRef.current = true;
           return;
         }
       }
