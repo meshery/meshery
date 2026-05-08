@@ -1,3 +1,4 @@
+---
 title: Exploring Kubernetes Pods with Meshery
 model: kubernetes
 params:
