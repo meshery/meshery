@@ -10,6 +10,7 @@ import {
 import { InputField, Root, DropDown } from './style';
 import React, { useState, useEffect } from 'react';
 import { iconSmall } from 'css/icons.styles';
+import { buildCustomInputProps } from './buildCustomInputProps';
 
 function transformData(data) {
   const result = {};
@@ -283,20 +284,12 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
           />
         }
         renderInput={(params) => {
-          const customInputProps = {
-            ...params.InputProps,
-            startAdornment: (
-              <>
-                <InputAdornment
-                  position="start"
-                  style={{ marginInline: '0.25rem', height: 'auto' }}
-                >
-                  <ContentFilterIcon fill={theme.palette.icon.default} />
-                </InputAdornment>
-                {params.InputProps.startAdornment}
-              </>
-            ),
-          };
+          const customInputProps = buildCustomInputProps(
+            params.InputProps,
+            <InputAdornment position="start" style={{ marginInline: '0.25rem', height: 'auto' }}>
+              <ContentFilterIcon fill={theme.palette.icon.default} />
+            </InputAdornment>,
+          );
 
           return (
             <InputField
