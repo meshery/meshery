@@ -131,7 +131,7 @@ const InfoModal_ = React.memo((props) => {
 
     const payload = {
       id: selectedResource?.id,
-      catalog_data: {
+      catalogData: {
         ...formData,
         compatibility: compatibilityStore,
         type: _.toLower(formData?.type),
@@ -185,8 +185,8 @@ const InfoModal_ = React.memo((props) => {
 
     body = JSON.stringify({
       name: selectedResource.name,
-      catalog_data: modifiedData,
-      design_file: yaml.load(selectedResource.patternFile),
+      catalogData: modifiedData,
+      designFile: yaml.load(selectedResource.patternFile),
       id: selectedResource.id,
       visibility: visibility,
     });
@@ -240,14 +240,14 @@ const InfoModal_ = React.memo((props) => {
   }
   const handleFormChange = (data) => {
     formStateRef.current = data;
-    setIsCatalogDataEqual(isEqualIgnoringCase(selectedResource?.catalog_data, data));
+    setIsCatalogDataEqual(isEqualIgnoringCase(selectedResource?.catalogData, data));
   };
 
   useEffect(() => {
-    if (selectedResource?.catalog_data && Object.keys(selectedResource?.catalog_data).length > 0) {
+    if (selectedResource?.catalogData && Object.keys(selectedResource?.catalogData).length > 0) {
       if (meshModels) {
         const compatibilitySet = new Set(
-          (selectedResource?.catalog_data?.compatibility || []).map((comp) => comp.toLowerCase()),
+          (selectedResource?.catalogData?.compatibility || []).map((comp) => comp.toLowerCase()),
         );
 
         const filteredCompatibilityArray = _.uniq(
@@ -260,16 +260,16 @@ const InfoModal_ = React.memo((props) => {
         );
 
         let modifiedData = {
-          ...selectedResource.catalog_data,
-          type: _.startCase(selectedResource?.catalog_data?.type),
+          ...selectedResource.catalogData,
+          type: _.startCase(selectedResource?.catalogData?.type),
           compatibility: filteredCompatibilityArray,
         };
         formStateRef.current = filterEmptyFields(modifiedData);
       }
     } else {
-      formStateRef.current = filterEmptyFields(selectedResource?.catalog_data);
+      formStateRef.current = filterEmptyFields(selectedResource?.catalogData);
     }
-  }, [selectedResource?.catalog_data, meshModels]);
+  }, [selectedResource?.catalogData, meshModels]);
 
   useEffect(() => {
     if (publishSchema) {
@@ -343,9 +343,9 @@ const InfoModal_ = React.memo((props) => {
                   alignItems: 'center',
                 }}
               >
-                {selectedResource?.catalog_data?.imageURL && !imageError ? (
+                {selectedResource?.catalogData?.imageURL && !imageError ? (
                   <img
-                    src={selectedResource.catalog_data.imageURL[0]}
+                    src={selectedResource.catalogData.imageURL[0]}
                     width="140"
                     alt={selectedResource?.name}
                     onError={handleError}
