@@ -82,7 +82,7 @@ const GrafanaComponent = (props) => {
   };
 
   const isValidGrafanaURL = (url) => {
-    const urlStr = url?.value;
+    const urlStr = typeof url === 'string' ? url : url?.value;
     return (
       Boolean(urlStr) &&
       (urlStr.toLowerCase().startsWith('http://') || urlStr.toLowerCase().startsWith('https://'))
@@ -92,7 +92,7 @@ const GrafanaComponent = (props) => {
   const handleGrafanaConfigure = () => {
     const { grafanaURL } = state;
     // Validate URL with regex
-    if (!isValidGrafanaURL(grafanaURL.value)) {
+    if (!isValidGrafanaURL(grafanaURL)) {
       updateState({ urlError: true });
       return;
     }
@@ -140,7 +140,7 @@ const GrafanaComponent = (props) => {
   const submitGrafanaConfigure = async () => {
     const { grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs } =
       state;
-    const urlStr = grafanaURL?.value;
+    const urlStr = typeof grafanaURL === 'string' ? grafanaURL : grafanaURL?.value;
     if (!urlStr) return;
 
     // Build URL-encoded params (using URLSearchParams for brevity)
@@ -179,30 +179,33 @@ const GrafanaComponent = (props) => {
     if (name === 'grafanaURL') {
       updateState({ [name]: value });
       updateState({ urlError: false });
+
+      // Only update global configuration if a connection object with a credential is provided
+      if (value?.credential_id) {
+        const grafanaConnectionObj = value;
+        try {
+          const res = await fetchCredentialById(grafanaConnectionObj.credential_id).unwrap();
+          const grafanaCfg = {
+            grafanaURL: grafanaConnectionObj?.value || '',
+            grafanaAPIKey: res?.secret?.secret || '',
+            grafanaBoardSearch:
+              grafanaConnectionObj?.metadata?.grafanaBoardSearch || state.grafanaBoardSearch,
+            grafanaBoards: grafanaConnectionObj?.metadata?.grafana_boards || [],
+            selectedBoardsConfigs: grafanaConnectionObj?.metadata?.selectedBoardsConfigs,
+            connectionID: grafanaConnectionObj?.id,
+            connectionName: grafanaConnectionObj?.name,
+          };
+          dispatch(updateGrafanaConfig(grafanaCfg));
+        } catch (error) {
+          console.error('Error fetching credential by ID:', error);
+        }
+      }
     }
 
     // For board search, update state and call debounced fetch directly
     if (name === 'grafanaBoardSearch') {
       updateState({ [name]: value });
       debouncedFetchBoards();
-    }
-    // Get the connection object from the event value and update configuration
-    const grafanaConnectionObj = value;
-    try {
-      const res = await fetchCredentialById(grafanaConnectionObj.credential_id).unwrap();
-      const grafanaCfg = {
-        grafanaURL: grafanaConnectionObj?.value || '',
-        grafanaAPIKey: res?.secret?.secret || '',
-        grafanaBoardSearch:
-          grafanaConnectionObj?.metadata?.grafanaBoardSearch || state.grafanaBoardSearch,
-        grafanaBoards: grafanaConnectionObj?.metadata?.grafana_boards || [],
-        selectedBoardsConfigs: grafanaConnectionObj?.metadata?.selectedBoardsConfigs,
-        connectionID: grafanaConnectionObj?.id,
-        connectionName: grafanaConnectionObj?.name,
-      };
-      dispatch(updateGrafanaConfig(grafanaCfg));
-    } catch (error) {
-      console.error('Error fetching credential by ID:', error);
     }
   };
 
@@ -404,7 +407,7 @@ const GrafanaComponent = (props) => {
       <NoSsr>
         <>
           <GrafanaSelectionComponent
-            grafanaURL={grafanaURL?.valu}
+            grafanaURL={typeof grafanaURL === 'string' ? grafanaURL : grafanaURL?.value}
             grafanaBoards={grafanaBoards}
             grafanaBoardSearch={grafanaBoardSearch}
             handleGrafanaBoardSearchChange={handleChange}

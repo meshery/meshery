@@ -156,10 +156,14 @@ test.describe('Relationship Evaluation Properties', { tag: '@relationship' }, ()
           const to = toSelector(rel);
           if (!from?.id || !to?.id) continue;
 
-          expect(
-            findComponent(design, from.id),
-            `from component ${from.id} (${from.kind}) missing for ${rel.kind}/${rel.type}/${rel.subType}`,
-          ).toBeDefined();
+          // For alias relationships, the 'from' component (the alias) is merged
+          // into the parent and removed from the design by the evaluation engine.
+          if (rel.subType !== 'alias') {
+            expect(
+              findComponent(design, from.id),
+              `from component ${from.id} (${from.kind}) missing for ${rel.kind}/${rel.type}/${rel.subType}`,
+            ).toBeDefined();
+          }
           expect(
             findComponent(design, to.id),
             `to component ${to.id} (${to.kind}) missing for ${rel.kind}/${rel.type}/${rel.subType}`,
