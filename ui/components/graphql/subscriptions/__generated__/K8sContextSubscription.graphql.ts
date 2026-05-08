@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<278e14f6854f506f524bcf6aa3c5edb6>>
+ * @generated SignedSource<<618276d0b05863710731d7859b7864cb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,17 +27,17 @@ export type K8sContextSubscription$variables = {
 export type K8sContextSubscription$data = {
   readonly k8sContext: {
     readonly contexts: ReadonlyArray<{
-      readonly connection_id: string;
-      readonly created_at: string;
-      readonly created_by: string;
-      readonly deployment_type: string;
+      readonly connectionId: string;
+      readonly createdAt: string;
+      readonly createdBy: string;
+      readonly deploymentType: string;
       readonly id: string;
-      readonly kubernetes_server_id: string;
-      readonly meshery_instance_id: string;
+      readonly kubernetesServerId: string;
+      readonly mesheryInstanceId: string;
       readonly name: string;
       readonly owner: string;
       readonly server: string;
-      readonly updated_at: string;
+      readonly updatedAt: string;
       readonly version: string;
     } | null | undefined>;
     readonly total_count: number;
@@ -118,42 +118,42 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "created_by",
+            "name": "createdBy",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "meshery_instance_id",
+            "name": "mesheryInstanceId",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "kubernetes_server_id",
+            "name": "kubernetesServerId",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "deployment_type",
+            "name": "deploymentType",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "updated_at",
+            "name": "updatedAt",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "created_at",
+            "name": "createdAt",
             "storageKey": null
           },
           {
@@ -167,7 +167,7 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "connection_id",
+            "name": "connectionId",
             "storageKey": null
           }
         ],
@@ -195,16 +195,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6c554db6a024337ed225dbb949aa970f",
+    "cacheID": "1e512bbef451c100458530583edd6f05",
     "id": null,
     "metadata": {},
     "name": "K8sContextSubscription",
     "operationKind": "subscription",
-    "text": "subscription K8sContextSubscription(\n  $selector: PageFilter!\n) {\n  k8sContext: subscribeK8sContext(selector: $selector) {\n    total_count\n    contexts {\n      id\n      name\n      server\n      owner\n      created_by\n      meshery_instance_id\n      kubernetes_server_id\n      deployment_type\n      updated_at\n      created_at\n      version\n      connection_id\n    }\n  }\n}\n"
+    "text": "subscription K8sContextSubscription(\n  $selector: PageFilter!\n) {\n  k8sContext: subscribeK8sContext(selector: $selector) {\n    total_count\n    contexts {\n      id\n      name\n      server\n      owner\n      createdBy\n      mesheryInstanceId\n      kubernetesServerId\n      deploymentType\n      updatedAt\n      createdAt\n      version\n      connectionId\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8b7ae007f5dced76f0d0b1b3c90a4525";
+(node as any).hash = "dd6309365102dfa11d8873daf998b343";
 
 export default node;

@@ -291,27 +291,27 @@ func (p *MeshmodelRelationshipsAPIResponse) UnmarshalJSON(data []byte) error {
 }
 
 type EntityCount struct {
-	CompCount     int `json:"comp_count"`
-	RelCount      int `json:"rel_count"`
-	ModelCount    int `json:"model_count"`
-	ErrCompCount  int `json:"err_comp_count"`
-	ErrRelCount   int `json:"err_rel_count"`
-	ErrModelCount int `json:"err_model_count"`
-	TotalErrCount int `json:"total_err_count"`
+	CompCount     int `json:"compCount"`
+	RelCount      int `json:"relCount"`
+	ModelCount    int `json:"modelCount"`
+	ErrCompCount  int `json:"errCompCount"`
+	ErrRelCount   int `json:"errRelCount"`
+	ErrModelCount int `json:"errModelCount"`
+	TotalErrCount int `json:"totalErrCount"`
 }
 
 type EntityTypeSummary struct {
-	SuccessfulComponents            []map[string]interface{} `json:"successful_components"`
-	SuccessfulRelationships         []map[string]interface{} `json:"successful_relationships"`
-	SuccessfulModels                []map[string]interface{} `json:"successful_models"`
-	UnsuccessfulEntityNameWithError []interface{}            `json:"unsuccessful_component_names"`
+	SuccessfulComponents            []map[string]interface{} `json:"successfulComponents"`
+	SuccessfulRelationships         []map[string]interface{} `json:"successfulRelationships"`
+	SuccessfulModels                []map[string]interface{} `json:"successfulModels"`
+	UnsuccessfulEntityNameWithError []interface{}            `json:"unsuccessfulComponentNames"`
 }
 
 type RegistryAPIResponse struct {
-	EntityCount       EntityCount       `json:"entity_count"`
-	ErrMsg            string            `json:"err_msg"`
-	EntityTypeSummary EntityTypeSummary `json:"entity_type_summary"`
-	ModelName         []string          `json:"model_name"`
+	EntityCount       EntityCount       `json:"entityCount"`
+	ErrMsg            string            `json:"errMsg"`
+	EntityTypeSummary EntityTypeSummary `json:"entityTypeSummary"`
+	ModelName         []string          `json:"modelName"`
 }
 
 // MeshmodelCategoriesAPIResponse is the response envelope for the

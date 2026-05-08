@@ -307,14 +307,14 @@ type K8sContext {
   name: String!,
   server: String!,
   owner: ID!,
-  created_by: ID!,
-  meshery_instance_id: ID!,
-  kubernetes_server_id: ID!,
-  deployment_type: String!,
+  createdBy: ID!,
+  mesheryInstanceId: ID!,
+  kubernetesServerId: ID!,
+  deploymentType: String!,
   version: String!,
-  updated_at: String!,
-  created_at: String!,
-  connection_id: String!
+  updatedAt: String!,
+  createdAt: String!,
+  connectionId: String!
 }
 
 type K8sContextsPage {

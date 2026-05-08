@@ -107,7 +107,7 @@ test.describe.serial('Model Workflow Tests', () => {
 
   test('Import a Model via File Import', async ({ page }) => {
     await page.getByTestId('TabBar-Button-ImportModel').click();
-    await page.getByRole('heading', { name: 'File Import' }).click();
+    await page.getByRole('heading', { name: 'File Import', exact: true }).click();
 
     await page.setInputFiles('input[type="file"]', model_import.MODEL_FILE_IMPORT);
 
@@ -122,7 +122,7 @@ test.describe.serial('Model Workflow Tests', () => {
 
   test('Import a Model via Url Import', async ({ page }) => {
     await page.getByTestId('TabBar-Button-ImportModel').click();
-    await page.getByRole('heading', { name: 'URL Import' }).click();
+    await page.getByRole('heading', { name: 'URL Import', exact: true }).click();
 
     await page.getByRole('textbox', { name: 'URL' }).click();
     await page.getByRole('textbox', { name: 'URL' }).fill(model_import.MODEL_URL_IMPORT);
@@ -138,7 +138,7 @@ test.describe.serial('Model Workflow Tests', () => {
 
   test('Import a Model via CSV Import', async ({ page }) => {
     await page.getByTestId('TabBar-Button-ImportModel').click();
-    await page.getByRole('heading', { name: 'CSV Import' }).click();
+    await page.getByRole('heading', { name: 'CSV Import', exact: true }).click();
 
     await page.getByRole('button', { name: 'Next' }).click();
 

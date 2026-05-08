@@ -17,8 +17,8 @@ type PerformanceProfilePersister struct {
 // PerformanceProfilePage represents a page of performance profiles
 type PerformanceProfilePage struct {
 	Page       uint64                `json:"page"`
-	PageSize   uint64                `json:"page_size"`
-	TotalCount int                   `json:"total_count"`
+	PageSize   uint64                `json:"pageSize"`
+	TotalCount int                   `json:"totalCount"`
 	Profiles   []*PerformanceProfile `json:"profiles"`
 }
 

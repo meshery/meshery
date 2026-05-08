@@ -1,0 +1,2134 @@
+{
+  "id": "11d54f4a-129a-43f5-9c17-7e7518202ea6",
+  "name": "dremio-helm",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.3",
+  "metadata": {
+    "resolvedAliases": {}
+  },
+  "components": [
+    {
+      "id": "ec5b4ecf-1656-44fc-b08f-87545e662c53",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "dremio-hive2-config",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 781.24609375,
+          "y": 635.2548828125
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "README.md": "### Hive 2 Configuration Files\nThis directory is used to store Hive 2 configuration files to be deployed to Dremio."
+        },
+        "metadata": {
+          "name": "dremio-hive2-config"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "5edea03a-412a-4474-a64b-dd12a8c18468",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "dremio-hive3-config",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 873.24609375,
+          "y": 635.2548828125
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "README.md": "### Hive 3 Configuration Files\nThis directory is used to store Hive 3 configuration files to be deployed to Dremio."
+        },
+        "metadata": {
+          "name": "dremio-hive3-config"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "e338d4d9-050e-4900-bc9d-dfea0fc4f7c4",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "dremio-config",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 997.24609375,
+          "y": 527.2548828125
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "core-site.xml": "\u003c?xml version=\"1.0\"?\u003e\n\u003cconfiguration\u003e\n  \u003c!-- If you are editing any content in this file, please remove lines with double curly braces around them --\u003e\n  \u003c!-- S3 Configuration Section --\u003e\n  \u003cproperty\u003e\n    \u003cname\u003efs.dremioS3.impl\u003c/name\u003e\n    \u003cdescription\u003eThe FileSystem implementation. Must be set to com.dremio.plugins.s3.store.S3FileSystem\u003c/description\u003e\n    \u003cvalue\u003ecom.dremio.plugins.s3.store.S3FileSystem\u003c/value\u003e\n  \u003c/property\u003e\n  \u003cproperty\u003e\n    \u003cname\u003efs.s3a.aws.credentials.provider\u003c/name\u003e\n    \u003cdescription\u003eThe credential provider type.\u003c/description\u003e\n    \u003cvalue\u003ecom.amazonaws.auth.InstanceProfileCredentialsProvider\u003c/value\u003e\n  \u003c/property\u003e\n  \n\u003c/configuration\u003e",
+          "dremio-env": "#\n# Copyright (C) 2017-2018 Dremio Corporation\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this file except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#     http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\n\n#\n# Dremio environment variables used by Dremio daemon\n#\n\n#\n# Directory where Dremio logs are written\n# Default to $DREMIO_HOME/log\n#\n#DREMIO_LOG_DIR=${DREMIO_HOME}/log\n\n#\n# Send logs to console and not to log files. The DREMIO_LOG_DIR is ignored if set.\n#\n#DREMIO_LOG_TO_CONSOLE=1\n\n#\n# Directory where Dremio pidfiles are written\n# Default to $DREMIO_HOME/run\n#\n#DREMIO_PID_DIR=${DREMIO_HOME}/run\n\n#\n# Max total memory size (in MB) for the Dremio process\n#\n# If not set, default to using max heap and max direct.\n#\n# If both max heap and max direct are set, this is not used\n# If one is set, the other is calculated as difference\n# of max memory and the one that is set.\n#\n#DREMIO_MAX_MEMORY_SIZE_MB=\n\n#\n# Max heap memory size (in MB) for the Dremio process\n#\n# Default to 4096 for server\n#\n#DREMIO_MAX_HEAP_MEMORY_SIZE_MB=4096\n\n#\n# Max direct memory size (in MB) for the Dremio process\n#\n# Default to 8192 for server\n#\n#DREMIO_MAX_DIRECT_MEMORY_SIZE_MB=8192\n\n#\n# Max permanent generation memory size (in MB) for the Dremio process\n# (Only used for Java 7)\n#\n# Default to 512 for server\n#\n#DREMIO_MAX_PERMGEN_MEMORY_SIZE_MB=512\n\n#\n# Garbage collection logging is enabled by default. Set the following\n# parameter to \"no\" to disable garbage collection logging.\n#\n#DREMIO_GC_LOGS_ENABLED=\"yes\"\n\n#\n# The scheduling priority for the server\n#\n# Default to 0\n#\n# DREMIO_NICENESS=0\n#\n\n#\n# Number of seconds after which the server is killed forcibly it it hasn't stopped\n#\n# Default to 120\n#\n#DREMIO_STOP_TIMEOUT=120\n\n# Extra Java options - shared between dremio and dremio-admin commands\n#\n#DREMIO_JAVA_EXTRA_OPTS=\n\n# Extra Java options - client only (dremio-admin command)\n#\n#DREMIO_JAVA_CLIENT_EXTRA_OPTS=\n\n# Warning: Do not set DREMIO_JAVA_SERVER_EXTRA_OPTS in dremio-env.\n# Please see the values.yaml extraStartParams for setting additional options for Dremio process startup.\n",
+          "dremio.conf": "#\n# Copyright (C) 2017-2018 Dremio Corporation\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this file except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#     http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\n\npaths: {\n  # Local path for dremio to store data.\n  local: ${DREMIO_HOME}\"/data\"\n  # Distributed path Dremio data including job results, downloads,\n  # uploads, etc\n  results: \"pdfs://\"${paths.local}\"/results\"\n  dist: \"dremioS3:///AWS Bucket Name/\"\n}\n\nservices: {\n  # The services running are controlled via command line options passed in\n  # while starting the services via kubernetes. Updating the values listed below will not\n  # impact what is running:\n  # - coordinator.enabled\n  # - coordinator.master.enabled\n  # - coordinator.master.embedded-zookeeper.enabled\n  # - executor.enabled\n  #\n  # Other service parameters can be customized via this file.\n  executor: {\n    cache: {\n      path.db: \"/opt/dremio/cloudcache/c0\"\n      pctquota.db: 100\n\n      path.fs: [\"/opt/dremio/cloudcache/c0\"]\n      pctquota.fs: [100]\n      ensurefreespace.fs: [0]\n      \n    }\n  }\n}\ndebug: {\n  # Enable caching for distributed storage, it is turned off by default\n  dist.caching.enabled: true,\n  # Max percent of total available cache space to use when possible for distributed storage\n  dist.max.cache.space.percent: 100\n}\n",
+          "logback-access.xml": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\" ?\u003e\n\u003c!--\n\n    Copyright (C) 2017-2018 Dremio Corporation\n\n    Licensed under the Apache License, Version 2.0 (the \"License\");\n    you may not use this file except in compliance with the License.\n    You may obtain a copy of the License at\n\n        http://www.apache.org/licenses/LICENSE-2.0\n\n    Unless required by applicable law or agreed to in writing, software\n    distributed under the License is distributed on an \"AS IS\" BASIS,\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n    See the License for the specific language governing permissions and\n    limitations under the License.\n\n--\u003e\n\u003cconfiguration\u003e\n\n  \u003c!-- The following appender is only available if dremio.log.path is defined --\u003e\n  \u003cif condition='isDefined(\"dremio.log.path\")'\u003e\n    \u003cthen\u003e\n      \u003cappender name=\"access-text\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n        \u003cfile\u003e${dremio.log.path}/access.log\u003c/file\u003e\n        \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n          \u003cfileNamePattern\u003e${dremio.log.path}/archive/access.%d{yyyy-MM-dd}.%i.log.gz\u003c/fileNamePattern\u003e\n          \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n          \u003ctimeBasedFileNamingAndTriggeringPolicy class=\"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP\"\u003e\n            \u003cmaxFileSize\u003e100MB\u003c/maxFileSize\u003e\n          \u003c/timeBasedFileNamingAndTriggeringPolicy\u003e\n        \u003c/rollingPolicy\u003e\n\n        \u003cencoder\u003e\n          \u003cpattern\u003ecombined\u003c/pattern\u003e\n        \u003c/encoder\u003e\n      \u003c/appender\u003e\n\n      \u003cappender-ref ref=\"access-text\" /\u003e\n    \u003c/then\u003e\n    \u003celse\u003e\n      \u003cappender name=\"console\" class=\"ch.qos.logback.core.ConsoleAppender\"\u003e\n        \u003cencoder\u003e\n          \u003cpattern\u003ecombined\u003c/pattern\u003e\n        \u003c/encoder\u003e\n      \u003c/appender\u003e\n\n      \u003cappender-ref ref=\"console\"/\u003e\n    \u003c/else\u003e\n  \u003c/if\u003e\n\u003c/configuration\u003e\n",
+          "logback-admin.xml": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\" ?\u003e\n\u003c!--\n\n    Copyright (C) 2017-2018 Dremio Corporation\n\n    Licensed under the Apache License, Version 2.0 (the \"License\");\n    you may not use this file except in compliance with the License.\n    You may obtain a copy of the License at\n\n        http://www.apache.org/licenses/LICENSE-2.0\n\n    Unless required by applicable law or agreed to in writing, software\n    distributed under the License is distributed on an \"AS IS\" BASIS,\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n    See the License for the specific language governing permissions and\n    limitations under the License.\n\n--\u003e\n\u003cconfiguration\u003e\n  \u003cappender name=\"STDOUT\" class=\"ch.qos.logback.core.ConsoleAppender\"\u003e\n    \u003cencoder\u003e\n      \u003cpattern\u003e%msg%n%ex{0}%n\u003c/pattern\u003e\n    \u003c/encoder\u003e\n  \u003c/appender\u003e\n\n\n  \u003cappender name=\"CONSOLE\" class=\"ch.qos.logback.core.ConsoleAppender\"\u003e\n    \u003cfilter class=\"ch.qos.logback.classic.filter.ThresholdFilter\"\u003e\n      \u003clevel\u003e${dremio.admin.log.verbosity:-OFF}\u003c/level\u003e\n    \u003c/filter\u003e\n    \u003cencoder\u003e\n      \u003cpattern\u003e%date{ISO8601} [%thread] %-5level %logger{30} - %msg%n\u003c/pattern\u003e\n    \u003c/encoder\u003e\n  \u003c/appender\u003e\n\n\n  \u003cif condition='isDefined(\"dremio.admin.log.path\")'\u003e\n    \u003cthen\u003e\n      \u003cappender name=\"ADMINLOG\" class=\"ch.qos.logback.core.FileAppender\"\u003e\n        \u003cfilter class=\"ch.qos.logback.classic.filter.ThresholdFilter\"\u003e\n          \u003clevel\u003e${dremio.admin.log.verbosity:-OFF}\u003c/level\u003e\n        \u003c/filter\u003e\n        \u003cfile\u003e${dremio.admin.log.path}\u003c/file\u003e\n        \u003cencoder\u003e\n          \u003cpattern\u003e%date{ISO8601} [%thread] %-5level %logger{36} - %msg%n\u003c/pattern\u003e\n        \u003c/encoder\u003e\n      \u003c/appender\u003e\n    \u003c/then\u003e\n  \u003c/if\u003e\n\n  \u003clogger name=\"admin\" level=\"INFO\" additivity=\"true\"\u003e\n    \u003cappender-ref ref=\"STDOUT\"/\u003e\n  \u003c/logger\u003e\n\n  \u003croot\u003e\n    \u003clevel value=\"${dremio.admin.log.verbosity:-OFF}\"/\u003e\n    \u003cif condition='isDefined(\"dremio.admin.log.path\")'\u003e\n      \u003cthen\u003e\n        \u003cappender-ref ref=\"ADMINLOG\"/\u003e\n      \u003c/then\u003e\n      \u003celse\u003e\n        \u003cappender-ref ref=\"CONSOLE\"/\u003e\n      \u003c/else\u003e\n    \u003c/if\u003e\n  \u003c/root\u003e\n\n\u003c/configuration\u003e\n",
+          "logback.xml": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\" ?\u003e\n\u003c!--\n\n    Copyright (C) 2017-2018 Dremio Corporation\n\n    Licensed under the Apache License, Version 2.0 (the \"License\");\n    you may not use this file except in compliance with the License.\n    You may obtain a copy of the License at\n\n        http://www.apache.org/licenses/LICENSE-2.0\n\n    Unless required by applicable law or agreed to in writing, software\n    distributed under the License is distributed on an \"AS IS\" BASIS,\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n    See the License for the specific language governing permissions and\n    limitations under the License.\n\n--\u003e\n\u003cconfiguration scan=\"true\" scanPeriod=\"30 seconds\"\u003e\n  \u003ccontextListener class=\"ch.qos.logback.classic.jul.LevelChangePropagator\"/\u003e\n  \u003cappender name=\"console\" class=\"ch.qos.logback.core.ConsoleAppender\"\u003e\n    \u003cencoder\u003e\n      \u003cpattern\u003e%date{ISO8601} [%thread] %-5level %logger{36} - %msg%n\u003c/pattern\u003e\n    \u003c/encoder\u003e\n  \u003c/appender\u003e\n\n  \u003c!-- The following appenders are only available if dremio.log.path is defined --\u003e\n  \u003cif condition='isDefined(\"dremio.log.path\")'\u003e\n    \u003cthen\u003e\n      \u003cappender name=\"text\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n        \u003cfile\u003e${dremio.log.path}/server.log\u003c/file\u003e\n        \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n          \u003cfileNamePattern\u003e${dremio.log.path}/archive/server.%d{yyyy-MM-dd}.%i.log.gz\u003c/fileNamePattern\u003e\n          \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n          \u003ctimeBasedFileNamingAndTriggeringPolicy class=\"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP\"\u003e\n            \u003cmaxFileSize\u003e100MB\u003c/maxFileSize\u003e\n          \u003c/timeBasedFileNamingAndTriggeringPolicy\u003e\n        \u003c/rollingPolicy\u003e\n\n        \u003cencoder\u003e\n          \u003cpattern\u003e%date{ISO8601} [%thread] %-5level %logger{36} - %msg%n\u003c/pattern\u003e\n        \u003c/encoder\u003e\n      \u003c/appender\u003e\n\n      \u003cappender name=\"metadata_refresh\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n        \u003cfile\u003e${dremio.log.path}/metadata_refresh.log\u003c/file\u003e\n        \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n          \u003cfileNamePattern\u003e${dremio.log.path}/archive/metadata_refresh.%d{yyyy-MM-dd}.log.gz\u003c/fileNamePattern\u003e\n          \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n        \u003c/rollingPolicy\u003e\n\n        \u003cencoder\u003e\n          \u003cpattern\u003e%date{ISO8601} [%thread] %-5level %logger{36} - %msg%n\u003c/pattern\u003e\n        \u003c/encoder\u003e\n      \u003c/appender\u003e\n\n      \u003cappender name=\"json\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n        \u003cfile\u003e${dremio.log.path}/json/server.json\u003c/file\u003e\n        \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n          \u003cfileNamePattern\u003e${dremio.log.path}/json/archive/server.%d{yyyy-MM-dd}.%i.json.gz\u003c/fileNamePattern\u003e\n          \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n          \u003ctimeBasedFileNamingAndTriggeringPolicy class=\"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP\"\u003e\n            \u003cmaxFileSize\u003e100MB\u003c/maxFileSize\u003e\n          \u003c/timeBasedFileNamingAndTriggeringPolicy\u003e\n        \u003c/rollingPolicy\u003e\n\n        \u003cencoder class=\"net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder\"\u003e\n          \u003cproviders\u003e\n            \u003cpattern\u003e\u003cpattern\u003e{\"timestamp\": \"%date{ISO8601}\", \"host\":\"${HOSTNAME}\" }\u003c/pattern\u003e\u003c/pattern\u003e\n            \u003cthreadName\u003e\u003cfieldName\u003ethread\u003c/fieldName\u003e\u003c/threadName\u003e\n            \u003clogLevel\u003e\u003cfieldName\u003elevelName\u003c/fieldName\u003e\u003c/logLevel\u003e\n            \u003clogLevelValue\u003e\u003cfieldName\u003elevelValue\u003c/fieldName\u003e\u003c/logLevelValue\u003e\n            \u003cloggerName\u003e\u003cfieldName\u003elogger\u003c/fieldName\u003e\u003c/loggerName\u003e\n            \u003cmessage\u003e\u003cfieldName\u003emessage\u003c/fieldName\u003e\u003c/message\u003e\n            \u003carguments /\u003e\n            \u003cstackTrace /\u003e\n          \u003c/providers\u003e\n        \u003c/encoder\u003e\n      \u003c/appender\u003e\n\n      \u003cappender name=\"query\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n        \u003cfile\u003e${dremio.log.path}/queries.json\u003c/file\u003e\n        \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n          \u003cfileNamePattern\u003e${dremio.log.path}/archive/queries.%d{yyyy-MM-dd}.%i.json.gz\u003c/fileNamePattern\u003e\n          \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n          \u003ctimeBasedFileNamingAndTriggeringPolicy class=\"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP\"\u003e\n            \u003cmaxFileSize\u003e100MB\u003c/maxFileSize\u003e\n          \u003c/timeBasedFileNamingAndTriggeringPolicy\u003e\n        \u003c/rollingPolicy\u003e\n\n        \u003cencoder class=\"net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder\"\u003e\n          \u003cproviders\u003e\n            \u003carguments /\u003e\n          \u003c/providers\u003e\n        \u003c/encoder\u003e\n      \u003c/appender\u003e\n\n      \u003cappender name=\"audit\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n        \u003cfile\u003e${dremio.log.path}/audit.json\u003c/file\u003e\n        \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n          \u003cfileNamePattern\u003e${dremio.log.path}/archive/audit.%d{yyyy-MM-dd}.%i.json.gz\u003c/fileNamePattern\u003e\n          \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n          \u003ctimeBasedFileNamingAndTriggeringPolicy class=\"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP\"\u003e\n            \u003cmaxFileSize\u003e100MB\u003c/maxFileSize\u003e\n          \u003c/timeBasedFileNamingAndTriggeringPolicy\u003e\n        \u003c/rollingPolicy\u003e\n\n        \u003cencoder class=\"net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder\"\u003e\n          \u003cproviders\u003e\n            \u003cpattern\u003e\u003cpattern\u003e{\"timestamp\": \"%date{ISO8601}\"}\u003c/pattern\u003e\u003c/pattern\u003e\n            \u003carguments /\u003e\n          \u003c/providers\u003e\n        \u003c/encoder\u003e\n      \u003c/appender\u003e\n\n      \u003cappender name=\"tracker\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n        \u003cfile\u003e${dremio.log.path}/tracker.json\u003c/file\u003e\n        \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n          \u003cfileNamePattern\u003e${dremio.log.path}/archive/tracker.%d{yyyy-MM-dd}.%i.json.gz\u003c/fileNamePattern\u003e\n          \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n          \u003ctimeBasedFileNamingAndTriggeringPolicy class=\"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP\"\u003e\n              \u003cmaxFileSize\u003e100MB\u003c/maxFileSize\u003e\n          \u003c/timeBasedFileNamingAndTriggeringPolicy\u003e\n        \u003c/rollingPolicy\u003e\n\n        \u003cencoder\u003e\n          \u003cpattern\u003e%date{ISO8601} [%thread] %-5level %logger{36} - %msg%n\u003c/pattern\u003e\n        \u003c/encoder\u003e\n      \u003c/appender\u003e\n\n      \u003cappender name=\"vacuum\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n        \u003cfile\u003e${dremio.log.path}/vacuum.json\u003c/file\u003e\n        \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n          \u003cfileNamePattern\u003e${dremio.log.path}/archive/vacuum.%d{yyyy-MM-dd}.%i.json.gz\u003c/fileNamePattern\u003e\n          \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n          \u003ctimeBasedFileNamingAndTriggeringPolicy class=\"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP\"\u003e\n            \u003cmaxFileSize\u003e100MB\u003c/maxFileSize\u003e\n          \u003c/timeBasedFileNamingAndTriggeringPolicy\u003e\n        \u003c/rollingPolicy\u003e\n\n        \u003cencoder class=\"net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder\"\u003e\n          \u003cproviders\u003e\n            \u003cpattern\u003e\u003cpattern\u003e{\"timestamp\": \"%date{ISO8601}\"}\u003c/pattern\u003e\u003c/pattern\u003e\n            \u003carguments /\u003e\n          \u003c/providers\u003e\n        \u003c/encoder\u003e\n      \u003c/appender\u003e\n\n    \u003c/then\u003e\n  \u003c/if\u003e\n\n  \u003clogger name=\"com.dremio\"\u003e\n    \u003clevel value=\"${dremio.log.level:-info}\"/\u003e\n  \u003c/logger\u003e\n\n  \u003clogger name=\"query.logger\"\u003e\n    \u003clevel value=\"${dremio.log.level:-info}\"/\u003e\n    \u003cif condition='isDefined(\"dremio.log.path\")'\u003e\n      \u003cthen\u003e\n        \u003cappender-ref ref=\"query\"/\u003e\n      \u003c/then\u003e\n    \u003c/if\u003e\n  \u003c/logger\u003e\n\n  \u003clogger name=\"audit.logger\"\u003e\n    \u003clevel value=\"${dremio.log.level:-info}\"/\u003e\n    \u003cif condition='isDefined(\"dremio.log.path\")'\u003e\n      \u003cthen\u003e\n        \u003cappender-ref ref=\"audit\"/\u003e\n      \u003c/then\u003e\n    \u003c/if\u003e\n  \u003c/logger\u003e\n\n  \u003clogger name=\"tracker.logger\"\u003e\n      \u003clevel value=\"{dremio.log.level: -info}\"/\u003e\n      \u003cif condition='isDefined(\"dremio.log.path\")'\u003e\n          \u003cthen\u003e\n              \u003cadditivity value =\"false\"/\u003e\n              \u003cappender-ref ref=\"tracker\"/\u003e\n          \u003c/then\u003e\n      \u003c/if\u003e\n  \u003c/logger\u003e\n\n  \u003clogger name=\"com.dremio.exec.catalog.SourceMetadataManager\" additivity=\"false\"\u003e\n    \u003clevel value=\"${dremio.log.level:-info}\"/\u003e\n    \u003cif condition='isDefined(\"dremio.log.path\")'\u003e\n      \u003cthen\u003e\n        \u003cappender-ref ref=\"metadata_refresh\"/\u003e\n      \u003c/then\u003e\n    \u003c/if\u003e\n  \u003c/logger\u003e\n\n  \u003clogger name=\"com.dremio.exec.store.hive.HiveClient\" additivity=\"false\"\u003e\n    \u003clevel value=\"${dremio.log.level:-info}\"/\u003e\n    \u003cif condition='isDefined(\"dremio.log.path\")'\u003e\n      \u003cthen\u003e\n        \u003cappender-ref ref=\"metadata_refresh\"/\u003e\n      \u003c/then\u003e\n    \u003c/if\u003e\n  \u003c/logger\u003e\n\n  \u003clogger name=\"VacuumLogger\" additivity=\"false\"\u003e\n    \u003clevel value=\"${dremio.log.level:-info}\"/\u003e\n    \u003cif condition='isDefined(\"dremio.log.path\")'\u003e\n      \u003cthen\u003e\n        \u003cappender-ref ref=\"vacuum\"/\u003e\n      \u003c/then\u003e\n    \u003c/if\u003e\n  \u003c/logger\u003e\n\n  \u003clogger name=\"hive.deprecated.function.warning.logger\" level=\"warn\"\u003e\n    \u003cif condition='isDefined(\"dremio.log.path\")'\u003e\n      \u003cthen\u003e\n        \u003cadditivity value =\"false\"/\u003e\n        \u003cappender name=\"text\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\"\u003e\n          \u003cfile\u003e${dremio.log.path}/hive.deprecated.function.warning.log\u003c/file\u003e\n          \u003crollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\"\u003e\n            \u003cfileNamePattern\u003e${dremio.log.path}/archive/hive.deprecated.function.warning.%d{yyyy-MM-dd}.%i.log.gz\u003c/fileNamePattern\u003e\n            \u003cmaxHistory\u003e30\u003c/maxHistory\u003e\n            \u003ctimeBasedFileNamingAndTriggeringPolicy class=\"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP\"\u003e\n              \u003cmaxFileSize\u003e100MB\u003c/maxFileSize\u003e\n            \u003c/timeBasedFileNamingAndTriggeringPolicy\u003e\n          \u003c/rollingPolicy\u003e\n\n          \u003cencoder\u003e\n            \u003cpattern\u003e%date{ISO8601} [%thread] %-5level %logger{36} - %msg%n\u003c/pattern\u003e\n          \u003c/encoder\u003e\n        \u003c/appender\u003e\n      \u003c/then\u003e\n    \u003c/if\u003e\n  \u003c/logger\u003e\n\n  \u003clogger name=\"org.apache.hadoop.hdfs.DFSClient\"\u003e\n    \u003clevel value=\"warn\"/\u003e\n  \u003c/logger\u003e\n\n  \u003croot\u003e\n    \u003clevel value=\"${dremio.log.root.level:-error}\"/\u003e\n    \u003cif condition='isDefined(\"dremio.log.path\")'\u003e\n      \u003cthen\u003e\n        \u003cappender-ref ref=\"text\"/\u003e\n        \u003cappender-ref ref=\"json\"/\u003e\n        \u003cappender-ref ref=\"console\"/\u003e\n      \u003c/then\u003e\n      \u003celse\u003e\n        \u003cappender-ref ref=\"console\"/\u003e\n      \u003c/else\u003e\n    \u003c/if\u003e\n  \u003c/root\u003e\n\n\u003c/configuration\u003e\n"
+        },
+        "metadata": {
+          "name": "dremio-config"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a8054945-9a3a-4f75-b048-d4e2d5358329",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "zk-pdb",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 997.24609375,
+          "y": 419.2548828125
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "concave-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "zk-pdb"
+        },
+        "spec": {
+          "maxUnavailable": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "zk"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "schema": ""
+      }
+    },
+    {
+      "id": "828b5037-459a-413c-9284-5d71bcbce7bf",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "dremio-client",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "position": {
+          "x": 789.24609375,
+          "y": 427.2548828125
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app": "dremio-client"
+          },
+          "name": "dremio-client"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "client",
+              "port": 31010,
+              "targetPort": "client"
+            },
+            {
+              "name": "web",
+              "port": 9047,
+              "targetPort": "web"
+            },
+            {
+              "name": "flight",
+              "port": 32010,
+              "targetPort": "flight"
+            }
+          ],
+          "selector": {
+            "app": "dremio-coordinator"
+          },
+          "type": "LoadBalancer"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "3651ecb1-ad2b-4dc7-a877-af46a4c6b83f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "zk-cs",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "position": {
+          "x": 897.24609375,
+          "y": 535.2548828125
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app": "zk"
+          },
+          "name": "zk-cs"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "client",
+              "port": 2181
+            }
+          ],
+          "selector": {
+            "app": "zk"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "be89b1a8-cb26-4b4a-aaea-f0ff236f1969",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "zk-hs",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "position": {
+          "x": 789.24609375,
+          "y": 535.2548828125
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app": "zk"
+          },
+          "name": "zk-hs"
+        },
+        "spec": {
+          "clusterIP": "None",
+          "ports": [
+            {
+              "name": "client",
+              "port": 2181
+            },
+            {
+              "name": "server",
+              "port": 2888
+            },
+            {
+              "name": "leader-election",
+              "port": 3888
+            }
+          ],
+          "selector": {
+            "app": "zk"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "10660c7d-2063-470a-840c-a6704504678b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "dremio-cluster-pod",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "position": {
+          "x": 897.24609375,
+          "y": 427.2548828125
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "dremio-cluster-pod"
+        },
+        "spec": {
+          "clusterIP": "None",
+          "ports": [
+            {
+              "port": 9999
+            }
+          ],
+          "selector": {
+            "role": "dremio-cluster-pod"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "553a5477-9d8c-4a53-a955-ce242bd9ab3f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "dremio-coordinator",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "position": {
+          "x": 958.24609375,
+          "y": 628.2548828125
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "dremio-coordinator"
+        },
+        "spec": {
+          "podManagementPolicy": "Parallel",
+          "replicas": 0,
+          "revisionHistoryLimit": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "dremio-coordinator"
+            }
+          },
+          "serviceName": "dremio-cluster-pod",
+          "template": {
+            "metadata": {
+              "annotations": {
+                "dremio-configmap/checksum": "a58b53d2d09545ff4e9fa95b9e1262fb43dc18d70e2b50bf37f4270b9f8fe2a9"
+              },
+              "labels": {
+                "app": "dremio-coordinator",
+                "diagnostics-collector-role": "dremio-coordinator",
+                "role": "dremio-cluster-pod"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "args": [
+                    "start-fg"
+                  ],
+                  "command": [
+                    "/opt/dremio/bin/dremio"
+                  ],
+                  "env": [
+                    {
+                      "name": "DREMIO_MAX_HEAP_MEMORY_SIZE_MB",
+                      "value": "16384"
+                    },
+                    {
+                      "name": "DREMIO_MAX_DIRECT_MEMORY_SIZE_MB",
+                      "value": "100416"
+                    },
+                    {
+                      "name": "DREMIO_JAVA_SERVER_EXTRA_OPTS",
+                      "value": "-Dzookeeper=zk-hs:2181 -Dservices.coordinator.enabled=true -Dservices.coordinator.master.enabled=false -Dservices.coordinator.master.embedded-zookeeper.enabled=false -Dservices.executor.enabled=false -Dservices.conduit.port=45679 -XX:ActiveProcessorCount=15"
+                    },
+                    {
+                      "name": "AWS_CREDENTIAL_PROFILES_FILE",
+                      "value": "/opt/dremio/aws/credentials"
+                    },
+                    {
+                      "name": "AWS_SHARED_CREDENTIALS_FILE",
+                      "value": "/opt/dremio/aws/credentials"
+                    },
+                    {
+                      "name": "DREMIO_LOG_TO_CONSOLE",
+                      "value": "1"
+                    }
+                  ],
+                  "image": "dremio/dremio-oss:latest",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "dremio-coordinator",
+                  "ports": [
+                    {
+                      "containerPort": 31010,
+                      "name": "client"
+                    },
+                    {
+                      "containerPort": 32010,
+                      "name": "flight"
+                    },
+                    {
+                      "containerPort": 45678,
+                      "name": "server-fabric"
+                    },
+                    {
+                      "containerPort": 45679,
+                      "name": "server-conduit"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 120,
+                    "httpGet": {
+                      "path": "/",
+                      "port": 9047
+                    },
+                    "periodSeconds": 1
+                  },
+                  "resources": {
+                    "requests": {
+                      "cpu": 15,
+                      "memory": "122800Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": false,
+                    "runAsGroup": 999,
+                    "runAsNonRoot": true,
+                    "runAsUser": 999,
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "startupProbe": {
+                    "failureThreshold": 300,
+                    "httpGet": {
+                      "path": "/",
+                      "port": 9047
+                    },
+                    "periodSeconds": 1
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/opt/dremio/conf",
+                      "name": "dremio-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/plugins/connectors/hive2.d",
+                      "name": "dremio-hive2-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/plugins/connectors/hive2-ee.d",
+                      "name": "dremio-hive2-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/plugins/connectors/hive3.d",
+                      "name": "dremio-hive3-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/plugins/connectors/hive3-ee.d",
+                      "name": "dremio-hive3-config"
+                    }
+                  ]
+                }
+              ],
+              "initContainers": [
+                {
+                  "command": [
+                    "sh",
+                    "-c",
+                    "until nc -z dremio-client 9047 \u003e /dev/null; do echo Waiting for Dremio master.; sleep 2; done;"
+                  ],
+                  "image": "busybox",
+                  "name": "wait-for-dremio-master",
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": false,
+                    "runAsGroup": 999,
+                    "runAsNonRoot": true,
+                    "runAsUser": 999,
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  }
+                }
+              ],
+              "securityContext": {
+                "fsGroup": 999,
+                "fsGroupChangePolicy": "OnRootMismatch"
+              },
+              "terminationGracePeriodSeconds": 120,
+              "volumes": [
+                {
+                  "configMap": {
+                    "name": "dremio-config"
+                  },
+                  "name": "dremio-config"
+                },
+                {
+                  "configMap": {
+                    "name": "dremio-hive2-config"
+                  },
+                  "name": "dremio-hive2-config"
+                },
+                {
+                  "configMap": {
+                    "name": "dremio-hive3-config"
+                  },
+                  "name": "dremio-hive3-config"
+                }
+              ]
+            }
+          },
+          "volumeClaimTemplates": null
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    },
+    {
+      "id": "e279e1dd-d5af-4ff7-bb26-a2bf0ee42fee",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "dremio-executor",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "position": {
+          "x": 1036.24609375,
+          "y": 628.2548828125
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "dremio-executor"
+        },
+        "spec": {
+          "podManagementPolicy": "Parallel",
+          "replicas": 3,
+          "revisionHistoryLimit": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "dremio-executor"
+            }
+          },
+          "serviceName": "dremio-cluster-pod",
+          "template": {
+            "metadata": {
+              "annotations": {
+                "dremio-configmap/checksum": "a58b53d2d09545ff4e9fa95b9e1262fb43dc18d70e2b50bf37f4270b9f8fe2a9"
+              },
+              "labels": {
+                "app": "dremio-executor",
+                "diagnostics-collector-role": "dremio-executor",
+                "role": "dremio-cluster-pod"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "args": [
+                    "start-fg"
+                  ],
+                  "command": [
+                    "/opt/dremio/bin/dremio"
+                  ],
+                  "env": [
+                    {
+                      "name": "DREMIO_MAX_HEAP_MEMORY_SIZE_MB",
+                      "value": "8192"
+                    },
+                    {
+                      "name": "DREMIO_MAX_DIRECT_MEMORY_SIZE_MB",
+                      "value": "108608"
+                    },
+                    {
+                      "name": "DREMIO_JAVA_SERVER_EXTRA_OPTS",
+                      "value": "\n\n-Dzookeeper=zk-hs:2181 -Dservices.coordinator.enabled=false -Dservices.coordinator.master.enabled=false -Dservices.coordinator.master.embedded-zookeeper.enabled=false -Dservices.executor.enabled=true -Dservices.conduit.port=45679 -Dservices.node-tag=default -XX:ActiveProcessorCount=15"
+                    },
+                    {
+                      "name": "AWS_CREDENTIAL_PROFILES_FILE",
+                      "value": "/opt/dremio/aws/credentials"
+                    },
+                    {
+                      "name": "AWS_SHARED_CREDENTIALS_FILE",
+                      "value": "/opt/dremio/aws/credentials"
+                    },
+                    {
+                      "name": "DREMIO_LOG_TO_CONSOLE",
+                      "value": "1"
+                    }
+                  ],
+                  "image": "dremio/dremio-oss:latest",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "dremio-executor",
+                  "ports": [
+                    {
+                      "containerPort": 45678,
+                      "name": "server-fabric"
+                    },
+                    {
+                      "containerPort": 45679,
+                      "name": "server-conduit"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": 15,
+                      "memory": "122800Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": false,
+                    "runAsGroup": 999,
+                    "runAsNonRoot": true,
+                    "runAsUser": 999,
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/opt/dremio/data",
+                      "name": "dremio-default-executor-volume"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/conf",
+                      "name": "dremio-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/plugins/connectors/hive2.d",
+                      "name": "dremio-hive2-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/plugins/connectors/hive2-ee.d",
+                      "name": "dremio-hive2-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/plugins/connectors/hive3.d",
+                      "name": "dremio-hive3-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/plugins/connectors/hive3-ee.d",
+                      "name": "dremio-hive3-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/cloudcache/c0",
+                      "name": "dremio-default-executor-c3-0"
+                    }
+                  ]
+                }
+              ],
+              "initContainers": [
+                {
+                  "command": [
+                    "sh",
+                    "-c",
+                    "until nc zk-hs 2181 -w1 \u003e /dev/null; do echo Waiting for Zookeeper to be ready.; sleep 2; done;"
+                  ],
+                  "image": "busybox",
+                  "name": "wait-for-zookeeper",
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": false,
+                    "runAsGroup": 999,
+                    "runAsNonRoot": true,
+                    "runAsUser": 999,
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  }
+                }
+              ],
+              "securityContext": {
+                "fsGroup": 999,
+                "fsGroupChangePolicy": "OnRootMismatch"
+              },
+              "terminationGracePeriodSeconds": 720,
+              "volumes": [
+                {
+                  "configMap": {
+                    "name": "dremio-config"
+                  },
+                  "name": "dremio-config"
+                },
+                {
+                  "configMap": {
+                    "name": "dremio-hive2-config"
+                  },
+                  "name": "dremio-hive2-config"
+                },
+                {
+                  "configMap": {
+                    "name": "dremio-hive3-config"
+                  },
+                  "name": "dremio-hive3-config"
+                }
+              ]
+            }
+          },
+          "volumeClaimTemplates": [
+            {
+              "metadata": {
+                "name": "dremio-default-executor-volume"
+              },
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "128Gi"
+                  }
+                }
+              }
+            },
+            {
+              "metadata": {
+                "name": "dremio-default-executor-c3-0"
+              },
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "100Gi"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    },
+    {
+      "id": "5f5d2cff-5f51-4bdd-aaee-205ce378964a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "dremio-master",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "position": {
+          "x": 1082.24609375,
+          "y": 412.2548828125
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "dremio-master"
+        },
+        "spec": {
+          "podManagementPolicy": "Parallel",
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "dremio-coordinator"
+            }
+          },
+          "serviceName": "dremio-cluster-pod",
+          "template": {
+            "metadata": {
+              "annotations": {
+                "dremio-configmap/checksum": "a58b53d2d09545ff4e9fa95b9e1262fb43dc18d70e2b50bf37f4270b9f8fe2a9"
+              },
+              "labels": {
+                "app": "dremio-coordinator",
+                "diagnostics-collector-role": "dremio-coordinator",
+                "role": "dremio-cluster-pod"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "podAntiAffinity": {
+                  "requiredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "labelSelector": {
+                        "matchExpressions": [
+                          {
+                            "key": "app",
+                            "operator": "In",
+                            "values": [
+                              "dremio-coordinator"
+                            ]
+                          }
+                        ]
+                      },
+                      "topologyKey": "kubernetes.io/hostname"
+                    }
+                  ]
+                }
+              },
+              "containers": [
+                {
+                  "args": [
+                    "start-fg"
+                  ],
+                  "command": [
+                    "/opt/dremio/bin/dremio"
+                  ],
+                  "env": [
+                    {
+                      "name": "DREMIO_MAX_HEAP_MEMORY_SIZE_MB",
+                      "value": "16384"
+                    },
+                    {
+                      "name": "DREMIO_MAX_DIRECT_MEMORY_SIZE_MB",
+                      "value": "100416"
+                    },
+                    {
+                      "name": "DREMIO_JAVA_SERVER_EXTRA_OPTS",
+                      "value": "-Dzookeeper=zk-hs:2181 -Dservices.coordinator.enabled=true -Dservices.coordinator.master.enabled=true -Dservices.coordinator.master.embedded-zookeeper.enabled=false -Dservices.executor.enabled=false -Dservices.conduit.port=45679 -XX:ActiveProcessorCount=15"
+                    },
+                    {
+                      "name": "AWS_CREDENTIAL_PROFILES_FILE",
+                      "value": "/opt/dremio/aws/credentials"
+                    },
+                    {
+                      "name": "AWS_SHARED_CREDENTIALS_FILE",
+                      "value": "/opt/dremio/aws/credentials"
+                    },
+                    {
+                      "name": "DREMIO_LOG_TO_CONSOLE",
+                      "value": "1"
+                    }
+                  ],
+                  "image": "dremio/dremio-oss:latest",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "dremio-master-coordinator",
+                  "ports": [
+                    {
+                      "containerPort": 9047,
+                      "name": "web"
+                    },
+                    {
+                      "containerPort": 31010,
+                      "name": "client"
+                    },
+                    {
+                      "containerPort": 32010,
+                      "name": "flight"
+                    },
+                    {
+                      "containerPort": 45678,
+                      "name": "server-fabric"
+                    },
+                    {
+                      "containerPort": 45679,
+                      "name": "server-conduit"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 120,
+                    "httpGet": {
+                      "path": "/",
+                      "port": "web"
+                    },
+                    "periodSeconds": 1
+                  },
+                  "resources": {
+                    "requests": {
+                      "cpu": 15,
+                      "memory": "122800Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": false,
+                    "runAsGroup": 999,
+                    "runAsNonRoot": true,
+                    "runAsUser": 999,
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "startupProbe": {
+                    "failureThreshold": 300,
+                    "httpGet": {
+                      "path": "/",
+                      "port": "web"
+                    },
+                    "periodSeconds": 1
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/opt/dremio/data",
+                      "name": "dremio-master-volume"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/conf",
+                      "name": "dremio-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/plugins/connectors/hive2.d",
+                      "name": "dremio-hive2-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/plugins/connectors/hive2-ee.d",
+                      "name": "dremio-hive2-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/plugins/connectors/hive3.d",
+                      "name": "dremio-hive3-config"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/plugins/connectors/hive3-ee.d",
+                      "name": "dremio-hive3-config"
+                    }
+                  ]
+                }
+              ],
+              "initContainers": [
+                {
+                  "command": [
+                    "sh",
+                    "-c",
+                    "INDEX=${HOSTNAME##*-}; if [ $INDEX -ne 0 ]; then echo Only one master should be running.; exit 1; fi; "
+                  ],
+                  "image": "busybox",
+                  "name": "start-only-one-dremio-master",
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": false,
+                    "runAsGroup": 999,
+                    "runAsNonRoot": true,
+                    "runAsUser": 999,
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  }
+                },
+                {
+                  "command": [
+                    "sh",
+                    "-c",
+                    "until nc zk-hs 2181 -w1 \u003e /dev/null; do echo Waiting for Zookeeper to be ready.; sleep 2; done;"
+                  ],
+                  "image": "busybox",
+                  "name": "wait-for-zookeeper",
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": false,
+                    "runAsGroup": 999,
+                    "runAsNonRoot": true,
+                    "runAsUser": 999,
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  }
+                },
+                {
+                  "args": [
+                    "upgrade"
+                  ],
+                  "command": [
+                    "/opt/dremio/bin/dremio-admin"
+                  ],
+                  "image": "dremio/dremio-oss:latest",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "upgrade-task",
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": false,
+                    "runAsGroup": 999,
+                    "runAsNonRoot": true,
+                    "runAsUser": 999,
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/opt/dremio/data",
+                      "name": "dremio-master-volume"
+                    },
+                    {
+                      "mountPath": "/opt/dremio/conf",
+                      "name": "dremio-config"
+                    }
+                  ]
+                }
+              ],
+              "securityContext": {
+                "fsGroup": 999,
+                "fsGroupChangePolicy": "OnRootMismatch"
+              },
+              "terminationGracePeriodSeconds": 120,
+              "volumes": [
+                {
+                  "configMap": {
+                    "name": "dremio-config"
+                  },
+                  "name": "dremio-config"
+                },
+                {
+                  "configMap": {
+                    "name": "dremio-hive2-config"
+                  },
+                  "name": "dremio-hive2-config"
+                },
+                {
+                  "configMap": {
+                    "name": "dremio-hive3-config"
+                  },
+                  "name": "dremio-hive3-config"
+                }
+              ]
+            }
+          },
+          "volumeClaimTemplates": [
+            {
+              "metadata": {
+                "name": "dremio-master-volume"
+              },
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "512Gi"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    },
+    {
+      "id": "7597e56c-e2fe-4cef-aaaa-6a7d6f71046f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "zk",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-12T14:26:03.160654794Z",
+          "updated_at": "2025-10-12T14:26:03.160654794Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "position": {
+          "x": 1082.24609375,
+          "y": 520.2548828125
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "zk"
+        },
+        "spec": {
+          "podManagementPolicy": "Parallel",
+          "replicas": 3,
+          "selector": {
+            "matchLabels": {
+              "app": "zk"
+            }
+          },
+          "serviceName": "zk-hs",
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "zk"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "podAntiAffinity": {
+                  "requiredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "labelSelector": {
+                        "matchExpressions": [
+                          {
+                            "key": "app",
+                            "operator": "In",
+                            "values": [
+                              "zk"
+                            ]
+                          }
+                        ]
+                      },
+                      "topologyKey": "kubernetes.io/hostname"
+                    }
+                  ]
+                }
+              },
+              "containers": [
+                {
+                  "command": [
+                    "bash",
+                    "-ec",
+                    "# obtain ZOO_MY_ID based on POD hostname\nexport HOST_NUMBER=\"${HOSTNAME##*-}\"\nexport ZOO_MY_ID=\"$((HOST_NUMBER + 1))\"\n[ -z \"${ZOO_MY_ID}\" ] \u0026\u0026 echo \"Failed to get index from hostname $HOSTNAME\" \u0026\u0026 exit 1\necho \"ZOO_MY_ID=${ZOO_MY_ID}\"\n\n# construct ZOO_SERVERS based on ensemble count\nDOMAIN=\"$(hostname -d)\"\nSERVERS=3\nfor (( i=${SERVERS},j=i-1; i\u003e=1; i--,j-- )); do ZOO_SERVERS=\"server.${i}=zk-${j}.${DOMAIN}:2888:3888;2181 ${ZOO_SERVERS}\"; done\necho \"ZOO_SERVERS=${ZOO_SERVERS}\"\nexport ZOO_SERVERS\n\n/docker-entrypoint.sh\nzkServer.sh start-foreground\n"
+                  ],
+                  "env": [
+                    {
+                      "name": "JVMFLAGS",
+                      "value": "-Xmx924m"
+                    },
+                    {
+                      "name": "ZOO_STANDALONE_ENABLED",
+                      "value": "false"
+                    },
+                    {
+                      "name": "ZOO_4LW_COMMANDS_WHITELIST",
+                      "value": "ruok"
+                    },
+                    {
+                      "name": "ZOO_ADMINSERVER_ENABLED",
+                      "value": "false"
+                    },
+                    {
+                      "name": "ZOO_AUTOPURGE_PURGEINTERVAL",
+                      "value": "12"
+                    }
+                  ],
+                  "image": "zookeeper:3.8.4-jre-17",
+                  "imagePullPolicy": "Always",
+                  "livenessProbe": {
+                    "exec": {
+                      "command": [
+                        "/bin/bash",
+                        "-c",
+                        "[ \"$(echo ruok | (exec 3\u003c\u003e/dev/tcp/127.0.0.1/2181; cat \u003e\u00263; cat \u003c\u00263; exec 3\u003c\u0026-))\" == \"imok\" ]"
+                      ]
+                    },
+                    "initialDelaySeconds": 10,
+                    "timeoutSeconds": 5
+                  },
+                  "name": "kubernetes-zookeeper",
+                  "ports": [
+                    {
+                      "containerPort": 2181,
+                      "name": "client"
+                    },
+                    {
+                      "containerPort": 2888,
+                      "name": "server"
+                    },
+                    {
+                      "containerPort": 3888,
+                      "name": "leader-election"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "exec": {
+                      "command": [
+                        "/bin/bash",
+                        "-c",
+                        "[ \"$(echo ruok | (exec 3\u003c\u003e/dev/tcp/127.0.0.1/2181; cat \u003e\u00263; cat \u003c\u00263; exec 3\u003c\u0026-))\" == \"imok\" ]"
+                      ]
+                    },
+                    "initialDelaySeconds": 10,
+                    "timeoutSeconds": 5
+                  },
+                  "resources": {
+                    "requests": {
+                      "cpu": 0.5,
+                      "memory": "1024Mi"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/data",
+                      "name": "datadir"
+                    }
+                  ]
+                }
+              ],
+              "securityContext": {
+                "fsGroup": 1000,
+                "runAsUser": 1000
+              }
+            }
+          },
+          "updateStrategy": {
+            "type": "RollingUpdate"
+          },
+          "volumeClaimTemplates": [
+            {
+              "metadata": {
+                "name": "datadir"
+              },
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "10Gi"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    },
+    {
+      "id": "02cfcf17-8a29-4426-a31c-c3ccb62a1464",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-10-12T14:26:00.149008876Z",
+          "updated_at": "2025-10-12T14:26:00.149008876Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Eclipse Ditto Operator (Helm chart v0.3.0) packaged as a Meshery Design.\nThis design deploys the controller resources (CRDs, Deployment, RBAC, ServiceAccount)\nrequired to manage Eclipse Ditto custom resources in a Kubernetes cluster.\nSource: ctron/ditto-operator (Chart 0.3.0, App 0.4.0).\n",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 80,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": 605.9680634469696,
+          "y": 470.8973070549242
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 80,
+        "z-index": 0
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    }
+  ],
+  "preferences": {
+    "layers": {
+      "relationships": {
+        "hierarchical-sibling-matchlabels": false
+      }
+    }
+  },
+  "relationships": []
+}

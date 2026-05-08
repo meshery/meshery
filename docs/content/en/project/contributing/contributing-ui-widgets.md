@@ -20,7 +20,7 @@ Widgets are React components located [here](https://github.com/meshery/meshery/t
 /ui/components/Dashboard/widgets/
 ```
 
-Each widget is rendered inside a card component (`<PlainCard />`, `<DesignCard />`, etc.), which is sourced from the [Sistent design system](https://github.com/layer5io/sistent).
+Each widget is rendered inside a card component (`<PlainCard />`, `<DesignCard />`, etc.), which is sourced from the Sistent design system.
 
 Widgets can:
 
