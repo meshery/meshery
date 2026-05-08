@@ -526,6 +526,7 @@ func setIfEmpty(field *string, defaultValue string) {
 	}
 }
 
+
 func isGitHubSourceURL(sourceURL string) bool {
 	parsedURL, err := url.Parse(sourceURL)
 	if err != nil {
@@ -599,10 +600,17 @@ func normalizeSemVerToken(version string) (string, bool) {
 	}
 	// Always return with a lowercase "v" prefix, normalised.
 	normalized := v.Original()
-	if !strings.HasPrefix(strings.ToLower(normalized), "v") {
-		normalized = "v" + normalized
+	if strings.HasPrefix(strings.ToLower(normalized), "v") {
+		return "v" + normalized[1:], true
 	}
-	return "v" + normalized[1:], true
+	return "v" + normalized, true
+}
+
+var registrantURLParsers = map[string]func(string) string{
+	"github.com":                deriveGitHubPackageNameFromURL,
+	"raw.githubusercontent.com": deriveGitHubPackageNameFromURL,
+	"artifacthub.io":            deriveArtifactHubPackageNameFromURL,
+	"www.artifacthub.io":        deriveArtifactHubPackageNameFromURL,
 }
 
 // deriveModelNameFromURL attempts to extract a meaningful model name from a supported source URL.
@@ -611,12 +619,14 @@ func deriveModelNameFromURL(sourceURL string) string {
 		return ""
 	}
 
-	if isArtifactHubSourceURL(sourceURL) {
-		return deriveArtifactHubPackageNameFromURL(sourceURL)
+	parsedURL, err := url.Parse(sourceURL)
+	if err != nil {
+		return ""
 	}
 
-	if isGitHubSourceURL(sourceURL) {
-		return deriveGitHubPackageNameFromURL(sourceURL)
+	host := strings.ToLower(parsedURL.Hostname())
+	if parserFunc, exists := registrantURLParsers[host]; exists {
+		return parserFunc(sourceURL)
 	}
 
 	return ""
