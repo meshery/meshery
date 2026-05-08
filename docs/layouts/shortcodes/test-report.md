@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 7th 2026, 11:54:01 pm
+- Testing started at: May 8th 2026, 3:01:45 pm
 
 **📦 Test Result Summary**
 
-- ✅ 135 passed
+- ✅ 133 passed
 - ❌ 2 failed
 - ⚠️ 0 flaked
-- ⏩ 7 skipped
+- ⏩ 9 skipped
 
-⌛ _Duration: 6 minutes and 58 seconds_
+⌛ _Duration: 6 minutes and 53 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -45,7 +45,7 @@
 | 22 | Meshery | chromium-meshery-provider | config patching correctness | relationship | ✅ |
 | 23 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 24 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
-| 25 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
+| 25 | Meshery | chromium-meshery-provider | Create a Model |  | ❌ |
 | 26 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 27 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 28 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
@@ -58,11 +58,11 @@
 | 35 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 36 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
 | 37 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 38 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
+| 38 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
 | 39 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
 | 40 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 41 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
-| 42 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
+| 42 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ➖ |
 | 43 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ✅ |
 | 44 | Meshery | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 45 | Meshery | chromium-meshery-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
@@ -182,16 +182,35 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
-<summary>❌ Import a Model via File Import (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ Create a Model (Meshery - chromium-meshery-provider)</summary>
 
-**File Location:** `Not Found`
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/models.spec.ts`
 
 **Error Message:**
 ```
-[31mTest timeout of 60000ms exceeded.[39m
+Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+Locator: getByTestId('ModelImportedSection-ModelHeader-test-model-1778252570948')
+Expected: visible
+Timeout: 180000ms
+Error: element(s) not found
+
+Call log:
+[2m  - Expect "toBeVisible" with timeout 180000ms[22m
+[2m  - waiting for getByTestId('ModelImportedSection-ModelHeader-test-model-1778252570948')[22m
+
 ```
 
-
+**Code Snippet:**
+```
+[0m [90m 85 |[39m     [36mawait[39m expect(
+ [90m 86 |[39m       page[33m.[39mgetByTestId([32m`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`[39m)[33m,[39m
+[31m[1m>[22m[39m[90m 87 |[39m     )[33m.[39mtoBeVisible({ timeout[33m:[39m [35m180[39m_000 })[33m;[39m
+ [90m    |[39m       [31m[1m^[22m[39m
+ [90m 88 |[39m     [36mawait[39m expect(page[33m.[39mgetByTestId([32m'ModelImportMessages-Wrapper'[39m))[33m.[39mtoBeVisible()[33m;[39m
+ [90m 89 |[39m
+ [90m 90 |[39m     [36mawait[39m page[33m.[39mgetByTestId([32m'UrlStepper-Button-Finish'[39m)[33m.[39mclick()[33m;[39m[0m
+```
 
 </details>
 
