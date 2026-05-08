@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { NoSsr } from '@sistent/sistent';
 import { ErrorBoundary, AppBar } from '@sistent/sistent';
 import Modal from '../General/Modals/Modal';
@@ -66,45 +66,52 @@ function ConnectionManagementPage(props) {
 }
 function Connections() {
   const router = useRouter();
-  const [_operatorState] = useState([]);
-  const _operatorStateRef = useRef(_operatorState);
-  _operatorStateRef.current = _operatorState;
-
   const { query, pathname, push, isReady } = router;
-  const tabParam = query.tab?.toLowerCase();
-  const connectionId = query.connectionId;
+  const tabParam = typeof query.tab === 'string' ? query.tab.toLowerCase() : undefined;
+  const connectionId = typeof query.connectionId === 'string' ? query.connectionId : undefined;
 
-  const tab = tabParam === 'meshsync' ? 1 : 0;
+  const tab = useMemo(() => (tabParam === 'meshsync' ? 1 : 0), [tabParam]);
 
-  const updateUrlParams = (params) => {
-    const newQuery = { ...query, ...params };
+  const updateUrlParams = useCallback(
+    (params) => {
+      const newQuery = { ...query, ...params };
 
-    Object.keys(newQuery).forEach((key) => {
-      if (newQuery[key] === undefined || newQuery[key] === '') {
-        delete newQuery[key];
-      }
-    });
+      Object.keys(newQuery).forEach((key) => {
+        if (newQuery[key] === undefined || newQuery[key] === '') {
+          delete newQuery[key];
+        }
+      });
 
-    push({ pathname, query: newQuery }, undefined, { shallow: true });
-  };
+      push({ pathname, query: newQuery }, undefined, { shallow: true });
+    },
+    [pathname, push, query],
+  );
 
   // Handle tab change and update URL
-  const handleTabChange = (e, newTab) => {
-    e.stopPropagation();
+  const handleTabChange = useCallback(
+    (event, newTab) => {
+      event.stopPropagation();
 
-    if (newTab !== tab) {
-      updateUrlParams({
-        tab: newTab === 0 ? 'connections' : 'meshsync',
-        connectionId: undefined, // Clear the connection ID when switching tabs
-      });
-    }
-  };
+      if (newTab !== tab) {
+        updateUrlParams({
+          tab: newTab === 0 ? 'connections' : 'meshsync',
+          connectionId: undefined,
+        });
+      }
+    },
+    [tab, updateUrlParams],
+  );
   // Update URL with connection ID
-  const updateUrlWithConnectionId = (id) => {
-    if (id && id === connectionId) return;
+  const updateUrlWithConnectionId = useCallback(
+    (id) => {
+      if (id && id === connectionId) {
+        return;
+      }
 
-    updateUrlParams({ connectionId: id || undefined });
-  };
+      updateUrlParams({ connectionId: id || undefined });
+    },
+    [connectionId, updateUrlParams],
+  );
 
   if (!isReady) return null;
   return (
