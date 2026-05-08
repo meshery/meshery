@@ -47,6 +47,49 @@ describe('normalizePaginatedCollectionResponse', () => {
       }),
     );
   });
+
+  it('can normalize collection items alongside pagination metadata', () => {
+    expect(
+      normalizePaginatedCollectionResponse(
+        {
+          total_count: 1,
+          designs: [
+            {
+              id: 'design-1',
+              user_id: 'user-1',
+              catalog_data: { type: 'pattern' },
+              pattern_file: 'apiVersion: v1',
+              created_at: '2026-05-08T00:00:00Z',
+              updated_at: '2026-05-08T01:00:00Z',
+            },
+          ],
+        },
+        'designs',
+        (design) => ({
+          ...design,
+          userId: design.userId ?? design.user_id,
+          catalogData: design.catalogData ?? design.catalog_data,
+          patternFile: design.patternFile ?? design.pattern_file,
+          createdAt: design.createdAt ?? design.created_at,
+          updatedAt: design.updatedAt ?? design.updated_at,
+        }),
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        totalCount: 1,
+        designs: [
+          expect.objectContaining({
+            id: 'design-1',
+            userId: 'user-1',
+            catalogData: { type: 'pattern' },
+            patternFile: 'apiVersion: v1',
+            createdAt: '2026-05-08T00:00:00Z',
+            updatedAt: '2026-05-08T01:00:00Z',
+          }),
+        ],
+      }),
+    );
+  });
 });
 
 describe('normalizeKubernetesContextsResponse', () => {

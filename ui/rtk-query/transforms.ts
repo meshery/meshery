@@ -51,19 +51,23 @@ type KubernetesContextResponse = {
 export const normalizePaginatedCollectionResponse = <
   TCollectionKey extends string,
   TItem = unknown,
+  TNormalizedItem = TItem,
 >(
   response: PaginatedCollectionResponse<TCollectionKey, TItem> | undefined,
   collectionKey: TCollectionKey,
+  itemMapper?: (item: TItem) => TNormalizedItem,
 ) => {
   if (!response || typeof response !== 'object') {
     return response;
   }
 
+  const items = Array.isArray(response[collectionKey]) ? response[collectionKey] : [];
+
   return {
     ...response,
     pageSize: response.pageSize ?? response.page_size,
     totalCount: response.totalCount ?? response.total_count,
-    [collectionKey]: Array.isArray(response[collectionKey]) ? response[collectionKey] : [],
+    [collectionKey]: itemMapper ? items.map(itemMapper) : items,
   };
 };
 

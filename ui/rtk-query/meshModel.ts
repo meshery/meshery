@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { api, mesheryApiPath } from './index';
 import _ from 'lodash';
 import { initiateQuery } from './utils';
+import { normalizePaginatedCollectionResponse } from './transforms';
 
 const TAGS = {
   MESH_MODELS: 'mesh-models',
@@ -26,6 +27,7 @@ const meshModelApi = api
           url: mesheryApiPath(`meshmodels/models`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
+        transformResponse: (response) => normalizePaginatedCollectionResponse(response, 'models'),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getComponents: builder.query({
@@ -33,6 +35,8 @@ const meshModelApi = api
           url: mesheryApiPath(`meshmodels/components`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
+        transformResponse: (response) =>
+          normalizePaginatedCollectionResponse(response, 'components'),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getRelationships: builder.query({
@@ -40,6 +44,8 @@ const meshModelApi = api
           url: mesheryApiPath(`meshmodels/relationships`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
+        transformResponse: (response) =>
+          normalizePaginatedCollectionResponse(response, 'relationships'),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getRegistrants: builder.query({
@@ -47,6 +53,8 @@ const meshModelApi = api
           url: mesheryApiPath(`meshmodels/registrants`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
+        transformResponse: (response) =>
+          normalizePaginatedCollectionResponse(response, 'registrants'),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getComponentsFromModal: builder.query({
@@ -54,6 +62,8 @@ const meshModelApi = api
           url: mesheryApiPath(`meshmodels/models/${queryArgs.model}/components`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
+        transformResponse: (response) =>
+          normalizePaginatedCollectionResponse(response, 'components'),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getRelationshipsFromModal: builder.query({
@@ -61,6 +71,8 @@ const meshModelApi = api
           url: mesheryApiPath(`meshmodels/models/${queryArgs.model}/relationships`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
+        transformResponse: (response) =>
+          normalizePaginatedCollectionResponse(response, 'relationships'),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       updateEntityStatus: builder.mutation({
@@ -83,6 +95,7 @@ const meshModelApi = api
           url: mesheryApiPath(`meshmodels/categories/${queryArgs.category}/models`),
           params: _.merge({}, defaultOptions, queryArgs.params),
         }),
+        transformResponse: (response) => normalizePaginatedCollectionResponse(response, 'models'),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
       getModelByName: builder.query({
@@ -166,7 +179,7 @@ export const useGetCategoriesSummary = () => {
         { category: category.name, params: { page: 1, pagesize: 1 } },
         true,
       );
-      categoryMap[category.name] = data?.totalCount ?? data?.total_count ?? 0;
+      categoryMap[category.name] = data?.totalCount ?? 0;
     });
     await Promise.allSettled(requests);
     return categoryMap;
