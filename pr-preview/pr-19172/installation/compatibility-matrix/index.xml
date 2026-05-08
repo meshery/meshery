@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Compatibility Matrix on Documentation</title><link>/installation/compatibility-matrix/</link><description>Recent content in Compatibility Matrix on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/installation/compatibility-matrix/index.xml" rel="self" type="application/rss+xml"/><item><title>Meshery-Cilium Past Results</title><link>/installation/compatibility-matrix/meshery-cilium-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-cilium-past-results/</guid><description/></item><item><title>Meshery-Consul Past Results</title><link>/installation/compatibility-matrix/meshery-consul-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-consul-past-results/</guid><description/></item><item><title>Meshery-Istio Past Results</title><link>/installation/compatibility-matrix/meshery-istio-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-istio-past-results/</guid><description/></item><item><title>Meshery-Kuma Past Results</title><link>/installation/compatibility-matrix/meshery-kuma-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-kuma-past-results/</guid><description/></item><item><title>Meshery-Linkerd Past Results</title><link>/installation/compatibility-matrix/meshery-linkerd-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-linkerd-past-results/</guid><description/></item><item><title>Meshery-Nginx-SM Past Results</title><link>/installation/compatibility-matrix/meshery-nginx-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-nginx-past-results/</guid><description/></item><item><title>Meshery-OSM Past Results</title><link>/installation/compatibility-matrix/meshery-osm-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-osm-past-results/</guid><description/></item><item><title>Meshery-Traefik-Mesh Past Results</title><link>/installation/compatibility-matrix/meshery-traefik-mesh-past-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/meshery-traefik-mesh-past-results/</guid><description/></item><item><title>Old Compatibility Matrix</title><link>/installation/compatibility-matrix/old-compatibility-matrix/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/compatibility-matrix/old-compatibility-matrix/</guid><description>&lt;p&gt;Meshery Server and Meshery Adapters are tested daily for their compatibility with the infrastructure they manage and the platforms Meshery deploys on (Kubernetes and Docker). End-to-end test results are automatically posted to the following compatibility matrix.&lt;/p&gt;
-&lt;p&gt;See also &lt;a href="../../project/contributing/test-status/"&gt;test status&lt;/a&gt;, which needs to be combined with the Compatibility Matrix test results to come together under a unified page (set of drillable pages).&lt;/p&gt;
+&lt;p&gt;See also &lt;a href="/project/contributing/test-status/"&gt;test status&lt;/a&gt;, which needs to be combined with the Compatibility Matrix test results to come together under a unified page (set of drillable pages).&lt;/p&gt;
 &lt;style&gt;
  td:hover,tr:hover {
  background-color: var(--color-primary-dark);
@@ -58,49 +58,49 @@
  &lt;th style="text-align: left; padding: 10px; border-bottom: 2px solid #ccc;"&gt;Kubernetes Version&lt;/th&gt;
  &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
  &lt;a href="https://github.com/meshery/meshery-istio" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
- &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/istio.svg" /&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/istio.svg" /&gt;
  meshery-istio
  &lt;/a&gt;
  &lt;/th&gt;
  &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
  &lt;a href="https://github.com/meshery/meshery-linkerd" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
- &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/linkerd.svg" /&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/linkerd.svg" /&gt;
  meshery-linkerd
  &lt;/a&gt;
  &lt;/th&gt;
  &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
  &lt;a href="https://github.com/meshery/meshery-kuma" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
- &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/kuma.svg" /&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/kuma.svg" /&gt;
  meshery-kuma
  &lt;/a&gt;
  &lt;/th&gt;
  &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
  &lt;a href="https://github.com/meshery/meshery-nighthawk" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
- &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/nighthawk.svg" /&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/nighthawk.svg" /&gt;
  meshery-nighthawk
  &lt;/a&gt;
  &lt;/th&gt;
  &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
  &lt;a href="https://github.com/meshery/meshery-nginx-sm" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
- &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/nginx-sm.svg" /&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/nginx-sm.svg" /&gt;
  meshery-nginx-sm
  &lt;/a&gt;
  &lt;/th&gt;
  &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
  &lt;a href="https://github.com/meshery/meshery-traefik-mesh" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
- &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/traefik-mesh.svg" /&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/traefik-mesh.svg" /&gt;
  meshery-traefik-mesh
  &lt;/a&gt;
  &lt;/th&gt;
  &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
  &lt;a href="https://github.com/meshery/meshery-cilium" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
- &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/cilium.svg" /&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/cilium.svg" /&gt;
  meshery-cilium
  &lt;/a&gt;
  &lt;/th&gt;
  &lt;th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;"&gt;
  &lt;a href="https://github.com/meshery/meshery-consul" style="text-decoration: none; color: #1dd1a1; cursor: pointer;"&gt;
- &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="../../installation/compatibility-matrix/images/service-meshes/consul.svg" /&gt;
+ &lt;img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/consul.svg" /&gt;
  meshery-consul
  &lt;/a&gt;
  &lt;/th&gt;
@@ -168,25 +168,25 @@
  if (status === "✓") {
  statusCells[i].innerHTML = `
  &lt;div class="tooltipss" style="text-align:center; cursor: pointer;"&gt;
- &lt;img src="../../installation/compatibility-matrix/images/service-meshes/passing.svg" class="yellowCheckbox" alt="Passing" /&gt;
+ &lt;img src="/installation/compatibility-matrix/images/service-meshes/passing.svg" class="yellowCheckbox" alt="Passing" /&gt;
  &lt;span class="tooltiptext"&gt;Passing&lt;/span&gt;
  &lt;/div&gt;`;
  } else if (status === "✗") {
  statusCells[i].innerHTML = `
  &lt;div class="tooltipss" style="text-align:center; cursor: pointer;"&gt;
- &lt;img src="../../installation/compatibility-matrix/images/service-meshes/failing.svg" class="yellowCheckbox" alt="Failing" /&gt;
+ &lt;img src="/installation/compatibility-matrix/images/service-meshes/failing.svg" class="yellowCheckbox" alt="Failing" /&gt;
  &lt;span class="tooltiptext"&gt;Failing&lt;/span&gt;
  &lt;/div&gt;`;
  } else if (status === "—") {
  statusCells[i].innerHTML = `
  &lt;div class="tooltipss" style="text-align:center; cursor: pointer;"&gt;
- &lt;img src="../../installation/compatibility-matrix/images/service-meshes/passing.svg" class="yellowCheckbox" alt="Partial" /&gt;
+ &lt;img src="/installation/compatibility-matrix/images/service-meshes/passing.svg" class="yellowCheckbox" alt="Partial" /&gt;
  &lt;span class="tooltiptext"&gt;Partial&lt;/span&gt;
  &lt;/div&gt;`;
  } else if (status === "N/A") {
  statusCells[i].innerHTML = `
  &lt;div class="tooltipss" style="text-align:center; cursor: pointer;"&gt;
- &lt;img src="../../installation/compatibility-matrix/images/service-meshes/na-icon.svg" class="yellowCheckbox" alt="Not Applicable" /&gt;
+ &lt;img src="/installation/compatibility-matrix/images/service-meshes/na-icon.svg" class="yellowCheckbox" alt="Not Applicable" /&gt;
  &lt;span class="tooltiptext"&gt;Not Applicable&lt;/span&gt;
  &lt;/div&gt;`;
  }
