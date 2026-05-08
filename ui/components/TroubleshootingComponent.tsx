@@ -1,5 +1,5 @@
 import * as React from 'react';
-import TroubleshootingModal from './TroubleshootingModalComponent';
+import TroubleshootingModal from './shared/Modal/TroubleshootingModalComponent';
 import { RJSFModalWrapper } from './shared/Modal/Modal';
 import {
   Modal,
