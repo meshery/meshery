@@ -1,7 +1,6 @@
 import React from 'react';
-import { Avatar, useTheme } from '@sistent/sistent';
+import { Avatar, AssignmentTurnedInIcon, useTheme } from '@sistent/sistent';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
