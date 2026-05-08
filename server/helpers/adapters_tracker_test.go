@@ -26,6 +26,13 @@ func TestNewAdaptersTracker(t *testing.T) {
 				{Location: "meshery-linkerd:10001"},
 			},
 		},
+		{
+			name:        "Handle Duplicate Adapter URLs",
+			adapterURLs: []string{"meshery-istio:10000", "meshery-istio:10000"},
+			want: []models.Adapter{
+				{Location: "meshery-istio:10000"},
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -89,6 +96,9 @@ func TestAdaptersTrackerLifecycle(t *testing.T) {
 
 	tracker.RemoveAdapter(ctx, models.Adapter{Location: "meshery-linkerd:10001"})
 	assertAdaptersEqual(t, tracker.GetAdapters(ctx), []models.Adapter{})
+
+	tracker.RemoveAdapter(ctx, models.Adapter{Location: "non-existent:9999"})
+	assertAdaptersEqual(t, tracker.GetAdapters(ctx), []models.Adapter{})
 }
 
 func TestAdaptersTrackerGetAdaptersReturnsSnapshot(t *testing.T) {
@@ -122,16 +132,17 @@ func assertAdaptersEqual(t *testing.T, got, want []models.Adapter) {
 	for _, wantAdapter := range want {
 		gotAdapter, ok := gotByLocation[wantAdapter.Location]
 		if !ok {
-			t.Fatalf("expected adapter at location %q, got %#v", wantAdapter.Location, got)
+			t.Errorf("expected adapter at location %q, got %#v", wantAdapter.Location, got)
+			continue
 		}
 		if gotAdapter.Name != wantAdapter.Name {
-			t.Fatalf("expected adapter %q name %q, got %q", wantAdapter.Location, wantAdapter.Name, gotAdapter.Name)
+			t.Errorf("expected adapter %q name %q, got %q", wantAdapter.Location, wantAdapter.Name, gotAdapter.Name)
 		}
 		if gotAdapter.Version != wantAdapter.Version {
-			t.Fatalf("expected adapter %q version %q, got %q", wantAdapter.Location, wantAdapter.Version, gotAdapter.Version)
+			t.Errorf("expected adapter %q version %q, got %q", wantAdapter.Location, wantAdapter.Version, gotAdapter.Version)
 		}
 		if gotAdapter.GitCommitSHA != wantAdapter.GitCommitSHA {
-			t.Fatalf("expected adapter %q git SHA %q, got %q", wantAdapter.Location, wantAdapter.GitCommitSHA, gotAdapter.GitCommitSHA)
+			t.Errorf("expected adapter %q git SHA %q, got %q", wantAdapter.Location, wantAdapter.GitCommitSHA, gotAdapter.GitCommitSHA)
 		}
 	}
 }
