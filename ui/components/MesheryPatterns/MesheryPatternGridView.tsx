@@ -11,7 +11,7 @@ import {
   GridPaginationStyles,
 } from './Grid.styles';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
-import ExportModal from '../ExportModal';
+import ExportModal from '../shared/Modal/ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { Modal as SistentModal } from '@sistent/sistent';

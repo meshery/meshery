@@ -25,7 +25,7 @@ import useInfiniteScroll, {
 } from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
-import ExportModal from '../ExportModal';
+import ExportModal from '../shared/Modal/ExportModal';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import ShareModal from './ShareModal';
 import InfoModal from '../shared/Modal/Information/InfoModal';
