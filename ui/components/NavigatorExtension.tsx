@@ -12,7 +12,7 @@ import _PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import { useNotification } from '../utils/hooks/useNotification';
 import Modal from './shared/Modal/Modal';
-import ExportModal from './ExportModal';
+import ExportModal from './shared/Modal/ExportModal';
 import { FormatStructuredData } from './DataFormatter';
 import { useFilterK8sContexts } from '@/utils/hooks/useKubernetesHook';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
