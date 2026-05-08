@@ -168,6 +168,10 @@ const importModelUiSchema = {
       ? [...(canonicalUploadType.enumNames as string[])]
       : undefined,
   },
+  // The canonical schema declares `modelFile` as `type: string` without a
+  // `format: data-url`, so RJSF falls back to TextWidget and the form never
+  // renders an `<input type="file">`. Force the file widget here, matching
+  // the importDesign/importFilter fix shipped in @sistent/sistent v0.21.7.
   modelFile: { 'ui:widget': 'file' },
   fileName: { 'ui:widget': 'hidden' },
   modelCsv: { 'ui:widget': 'hidden' },
