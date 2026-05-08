@@ -143,7 +143,9 @@ const decodeDataUrlToBytes = (dataUrl: string | undefined): number[] | null => {
 const findSelectedModelFile = (container: HTMLElement | null): File | undefined => {
   if (!container) return undefined;
 
-  const inputs = container.querySelectorAll<HTMLInputElement>('input[type="file"][id$="_modelFile"]');
+  const inputs = container.querySelectorAll<HTMLInputElement>(
+    'input[type="file"][id$="_modelFile"]',
+  );
   for (const input of Array.from(inputs)) {
     const file = input.files?.[0];
     if (file) return file;
