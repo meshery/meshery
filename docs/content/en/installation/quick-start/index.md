@@ -70,7 +70,7 @@ From inside the Meshery container, `localhost` resolves to the container itself,
 
 * **Docker Desktop:** Change `127.0.0.1` in your `kubeconfig` to `host.docker.internal`.
 * **kind:** Use the IP address of the `kind-control-plane` container instead of localhost.
-* **Linux:** Use your host machine's LAN IP address or deploy the Meshery container using the `--network host` flag.
+* Linux: Use your host machine's LAN IP address or deploy the Meshery container using the --network host flag (no kubeconfig changes required in this case).
 {{% /alert %}}
 
 
