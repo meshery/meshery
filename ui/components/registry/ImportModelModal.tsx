@@ -18,13 +18,13 @@ import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { capitalize } from 'lodash';
-import { Loading } from '@/components/designs/lifecycle/common';
-import { NotificationCenterContext } from '@/components/NotificationCenter';
+import { Loading } from '@/components/DesignLifeCycle/common';
+import { NotificationCenterContext } from '@/components/layout/NotificationCenter';
 import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
 import {
   ModelImportedSection,
   ModelImportMessages,
-} from '@/components/NotificationCenter/formatters/model_registration';
+} from '@/components/layout/NotificationCenter/formatters/model_registration';
 import { StyledDocsRedirectLink } from './Stepper/style';
 import { updateProgress } from '@/store/slices/mesheryUi';
 

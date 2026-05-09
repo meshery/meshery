@@ -1,16 +1,16 @@
 import React from 'react';
 import { useContext } from 'react';
 import { capitalize } from 'lodash';
-import { Loading } from '@/components/designs/lifecycle/common';
-import { NotificationCenterContext } from '@/components/NotificationCenter';
+import { Loading } from '@/components/DesignLifeCycle/common';
+import { NotificationCenterContext } from '@/components/layout/NotificationCenter';
 import { useEffect } from 'react';
 import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
 import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
 import {
   ModelImportedSection,
   ModelImportMessages,
-} from '@/components/NotificationCenter/formatters/model_registration';
-import { ErrorMetadataFormatter } from '@/components/NotificationCenter/formatters/error';
+} from '@/components/layout/NotificationCenter/formatters/model_registration';
+import { ErrorMetadataFormatter } from '@/components/layout/NotificationCenter/formatters/error';
 
 const FinishModelGenerateStep = ({
   requestBody,

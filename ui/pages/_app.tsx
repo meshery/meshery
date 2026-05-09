@@ -65,7 +65,7 @@ import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 import uiConfig from '../ui.config';
-import { NotificationCenterProvider } from '../components/NotificationCenter';
+import { NotificationCenterProvider } from '../components/layout/NotificationCenter';
 import { getMeshModelComponentByName } from '../api/meshmodel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
 import { ability } from '../utils/can';

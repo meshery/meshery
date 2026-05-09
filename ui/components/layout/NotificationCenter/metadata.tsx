@@ -1,8 +1,8 @@
 import React from 'react';
-import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../DataFormatter';
-import { isEmptyAtAllDepths } from '../../utils/objects';
+import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../../DataFormatter';
+import { isEmptyAtAllDepths } from '../../../utils/objects';
 import { canTruncateDescription } from './notification';
-import { DeploymentSummaryFormatter } from '../designs/lifecycle/DeploymentSummary';
+import { DeploymentSummaryFormatter } from '../../DesignLifeCycle/DeploymentSummary';
 import { EVENT_TYPE, eventDetailFormatterKey } from './constants';
 import { TitleLink, DataToFileLink, EmptyState } from './formatters/common';
 import { ErrorMetadataFormatter } from './formatters/error';
@@ -12,7 +12,7 @@ import { RelationshipEvaluationEventFormatter } from './formatters/relationship_
 import { MeshSyncPropertyFormatters } from './formatters/meshsync_events';
 import { useTheme, DownloadIcon, InfoIcon } from '@sistent/sistent';
 import _ from 'lodash';
-import { ChipWrapper } from '../connections/styles';
+import { ChipWrapper } from '../../connections/styles';
 import { AcademyEventsFormatter } from './formatters/academy_events';
 
 const DesignFormatter = ({ value }) => {
