@@ -16,7 +16,7 @@ import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { capitalize } from 'lodash';
 import { Loading } from '@/components/DesignLifeCycle/common';
 import { NotificationCenterContext } from '@/components/NotificationCenter';
@@ -93,19 +93,143 @@ const FinishDeploymentStep = ({
 
 // Canonical RJSF form schemas authored in `meshery/schemas` and validated
 // by its `validation/forms_test.go` to be a strict subset of the OpenAPI
-// `MesheryModelImportFormPayload` construct. Importing them directly
-// keeps the modal locked to the canonical field shape (uploadType enum
-// tokens, modelFile/fileName/url naming, allOf required branches) — any
-// drift surfaces as a build/test failure here rather than as silent
-// runtime divergence.
-const importModelSchema = ModelImportRjsfSchemaV1Beta2;
-const importModelUiSchema = ModelImportRjsfUiSchemaV1Beta2;
+// `MesheryModelImportFormPayload` construct. The canonical is the source
+// of truth for property shapes, types, descriptions, enum tokens, and
+// upload-type labels — pull them through directly.
+//
+// The canonical describes the full form-data shape (file + url + csv
+// branches), but this modal only renders the file-and-url subset; the
+// CSV branch is handled by a separate `CsvStepper` modal opened on the
+// `csv` upload-type. Keeping the unused fields in the rendered form
+// caused two real problems:
+//   (a) RJSF v6's @rjsf/validator-ajv8 rejected the form on `Next` —
+//       even though `modelCsv` / `componentCsv` / `relationshipCsv` were
+//       hidden via `ui:widget: 'hidden'`, their `format: "binary"` and
+//       the canonical's csv-branch `allOf` required-list still blocked
+//       `validateForm()`, so the import POST never fired and the test
+//       hung waiting for the registration event.
+//   (b) the canonical's schema-level `enumNames` is silently ignored
+//       by @rjsf/utils' `optionsList()` — RJSF v6 reads the radio
+//       labels from `ui:enumNames` on the uiSchema instead.
+//
+// v1.2.16 of @meshery/schemas adds `ModelImportRjsfUiSchemaV1Beta2` and
+// changes `modelFile.format` from `"binary"` to `"data-url"` (the format
+// RJSF's FileWidget actually produces). We base `importModelUiSchema` on
+// the canonical and overlay our consumer overrides on top.
+const canonicalProps = ModelImportRjsfSchemaV1Beta2?.properties || {};
+const canonicalUploadType = canonicalProps.uploadType || {};
+const UPLOAD_TYPE_FILE = 'file';
+const UPLOAD_TYPE_URL = 'urlImport';
+const UPLOAD_TYPE_CSV = 'csv';
 
-// Token vocabulary the canonical schema uses. Pull these from the schema
-// (rather than hard-code) so adding/renaming an upload method upstream
-// flows through this consumer with one constant change.
-const [UPLOAD_TYPE_FILE, UPLOAD_TYPE_URL, UPLOAD_TYPE_CSV] = importModelSchema.properties.uploadType
-  .enum as string[];
+// `allOf` intentionally does NOT mark `modelFile` or `fileName` required
+// for the file branch even though the canonical does. CustomFileWidget
+// reads the file asynchronously (FileReader → `Promise.then(props.onChange)`)
+// and only then lifts the data URL into RJSF's form state, while validation
+// runs synchronously on Next-click. Gating submit on `required: ['modelFile']`
+// loses the race on every test run and the form sits silently. We trust
+// the user-flow guard in `handleImportModelSubmit` instead — it reads
+// the file off the DOM input as the synchronous source-of-truth and
+// short-circuits if no file is selected. `fileName` is hidden and derived
+// from the data URL / DOM fallback at submit time.
+const importModelSchema = {
+  $schema: 'https://json-schema.org/draft-07/schema#',
+  title: ModelImportRjsfSchemaV1Beta2.title,
+  type: 'object',
+  properties: {
+    uploadType: canonicalUploadType,
+    modelFile: canonicalProps.modelFile,
+    url: canonicalProps.url,
+    fileName: canonicalProps.fileName,
+  },
+  allOf: [
+    {
+      if: {
+        properties: { uploadType: { const: UPLOAD_TYPE_URL } },
+        required: ['uploadType'],
+      },
+      then: { required: ['url'] },
+    },
+  ],
+  required: ['uploadType'],
+};
+
+// Extend the canonical uiSchema (added in @meshery/schemas v1.2.16) with
+// consumer-specific overrides:
+//   - uploadType: add ui:enumNames so RJSF v6 renders friendly radio labels
+//     (optionsList() reads labels from uiSchema, not schema-level enumNames).
+//   - fileName: hidden — derived from the uploaded file at submit time.
+//   - CSV fields: not rendered in this modal (handled by CsvStepper).
+const importModelUiSchema = {
+  ...ModelImportRjsfUiSchemaV1Beta2,
+  uploadType: {
+    'ui:widget': 'radio',
+    'ui:enumNames': Array.isArray(canonicalUploadType?.enumNames)
+      ? [...(canonicalUploadType.enumNames as string[])]
+      : undefined,
+  },
+  // The canonical schema declares `modelFile` as `type: string` without a
+  // `format: data-url`, so RJSF falls back to TextWidget and the form never
+  // renders an `<input type="file">`. Force the file widget here, matching
+  // the importDesign/importFilter fix shipped in @sistent/sistent v0.21.7.
+  modelFile: { 'ui:widget': 'file' },
+  fileName: { 'ui:widget': 'hidden' },
+  modelCsv: { 'ui:widget': 'hidden' },
+  componentCsv: { 'ui:widget': 'hidden' },
+  relationshipCsv: { 'ui:widget': 'hidden' },
+  'ui:order': ['uploadType', 'modelFile', 'url'],
+};
+
+// RJSF's file widget encodes the original filename inside the data URL
+// (`data:<mime>;name=<file>;base64,<payload>`). Pull it back out so the
+// server-side ImportBody.FileName is populated even though the form
+// doesn't surface a separate `fileName` input.
+const filenameFromDataUrl = (dataUrl: string | undefined): string | undefined => {
+  if (!dataUrl) return undefined;
+  const match = dataUrl.match(/;name=([^;]+);/);
+  return match ? decodeURIComponent(match[1]) : undefined;
+};
+
+// Decode an RJSF data URL into the byte array the server expects.
+// `getUnit8ArrayDecodedFile` is synchronous, so this wrapper is too;
+// returns `null` when no data URL is present so callers can fall back
+// to the DOM input.
+const decodeDataUrlToBytes = (dataUrl: string | undefined): number[] | null => {
+  if (!dataUrl) return null;
+  return getUnit8ArrayDecodedFile(dataUrl);
+};
+
+// Locate the `<input type="file">` rendered for the modelFile field. RJSF
+// uses the schema title as the id prefix (`<title>_modelFile`), so we
+// can't hard-code `root_modelFile`. Scope the query to the active modal
+// dialog to avoid false matches from other file inputs on the page.
+const findSelectedModelFile = (): File | undefined => {
+  if (typeof document === 'undefined') return undefined;
+  const dialog = document.querySelector<HTMLElement>('[role="dialog"]');
+  const root = dialog ?? document;
+  const inputs = root.querySelectorAll<HTMLInputElement>('input[type="file"][id$="_modelFile"]');
+  for (const input of Array.from(inputs)) {
+    const file = input.files?.[0];
+    if (file) return file;
+  }
+  return undefined;
+};
+
+// Read a `File` synchronously-from-the-DOM-but-asynchronously-into-bytes,
+// matching the wire shape `getUnit8ArrayDecodedFile` produces from a
+// data URL. Used as the synchronous fallback when RJSF's form data
+// hasn't received the data URL yet (the FileReader chain inside
+// CustomFileWidget can lose the race against a quick Next-click).
+const readFileAsBytes = (file: File): Promise<number[]> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const buffer = reader.result as ArrayBuffer;
+      resolve(Array.from(new Uint8Array(buffer)));
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsArrayBuffer(file);
+  });
 
 type ImportModelModalProps = {
   isImportModalOpen: boolean;
@@ -118,8 +242,15 @@ const ImportModelModal = React.memo(
     const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
     const [importModelReq] = useImportMeshModelMutation();
     const [activeStep, setActiveStep] = useState(0);
+    // Prevents RJSFModalWrapper from advancing the step when the submit
+    // handler short-circuits (CSV branch, no-file guard, empty-URL guard).
+    const skipNextRef = useRef(false);
 
     const handleNext = () => {
+      if (skipNextRef.current) {
+        skipNextRef.current = false;
+        return;
+      }
       if (activeStep === 0) {
         setActiveStep(1);
       }
@@ -138,14 +269,36 @@ const ImportModelModal = React.memo(
       const { uploadType, url, modelFile, fileName: formFileName } = data;
       let requestBody = null;
 
-      // RJSF doesn't surface the original filename through form data, so
-      // read it off the input element. The id matches the schema field name.
-      const fileElement = document.getElementById('root_modelFile') as HTMLInputElement | null;
-
       switch (uploadType) {
         case UPLOAD_TYPE_FILE: {
-          const fileName = formFileName || fileElement?.files?.[0]?.name;
-          const fileData = modelFile ? getUnit8ArrayDecodedFile(modelFile) : null;
+          // Two source-of-truth paths for the file:
+          //   1. RJSF form data (`data.modelFile` data URL) — this is the
+          //      happy path when the user clicked Next after the upload
+          //      finished round-tripping through CustomFileWidget's async
+          //      FileReader → onChange chain.
+          //   2. DOM input fallback — Playwright e2e (and any quick
+          //      keystroke after upload) can race the FileReader, so the
+          //      data URL hasn't landed in form state yet on submit. The
+          //      `<input type="file">` rendered by the widget already
+          //      carries the selected `File` synchronously (the browser
+          //      sets `.files` on the input the instant the user picks a
+          //      file), so re-read it here via readFileAsBytes.
+          const formData = decodeDataUrlToBytes(modelFile);
+          let fileName = formFileName || filenameFromDataUrl(modelFile);
+          let fileData: number[] | null = formData;
+          if (!fileData) {
+            const inputFile = findSelectedModelFile();
+            if (inputFile) {
+              try {
+                fileData = await readFileAsBytes(inputFile);
+                fileName = fileName || inputFile.name;
+              } catch (err) {
+                console.error('Error reading file from DOM:', err);
+                skipNextRef.current = true;
+                return;
+              }
+            }
+          }
           if (fileData && fileName) {
             // Server's ImportBody.FileName / .ModelFile are tagged
             // `file_name` / `model_file` (snake_case wire format).
@@ -160,6 +313,7 @@ const ImportModelModal = React.memo(
             };
           } else {
             console.error('Error: File data or file name is empty or invalid');
+            skipNextRef.current = true;
             return;
           }
           break;
@@ -175,17 +329,20 @@ const ImportModelModal = React.memo(
             };
           } else {
             console.error('Error: URL is empty');
+            skipNextRef.current = true;
             return;
           }
           break;
         }
         case UPLOAD_TYPE_CSV: {
+          skipNextRef.current = true;
           handleClose();
           setIsCsvModalOpen(true);
           return;
         }
         default: {
           console.error('Error: Invalid upload type');
+          skipNextRef.current = true;
           return;
         }
       }

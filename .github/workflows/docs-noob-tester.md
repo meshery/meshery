@@ -18,7 +18,6 @@ safe-outputs:
   create-issue:
     labels: ["docs", "automated-testing"]
     close-older-issues: true
-    fallback-to-issue: false
     max: 10
   noop: false
   missing-tool: false

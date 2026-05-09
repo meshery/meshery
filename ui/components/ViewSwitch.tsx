@@ -1,6 +1,4 @@
-import { CustomTooltip, IconButton, useTheme } from '@sistent/sistent';
-import GridOnIcon from '@mui/icons-material/GridOn';
-import TableChartIcon from '@mui/icons-material/TableChart';
+import { CustomTooltip, GridOnIcon, IconButton, TableChartIcon, useTheme } from '@sistent/sistent';
 
 type ViewMode = 'grid' | 'table';
 
