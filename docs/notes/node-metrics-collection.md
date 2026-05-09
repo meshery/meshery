@@ -2,9 +2,9 @@ Node Metrics Collection
 Performance Management
 
 Purpose
-Collection, summarization and persistence of node metrics for inclusion in performance analysis. Metrics are persisted for anonymous analysis and sharing with the Cloud Native community at-large. Publicly-shared and project-agnostic analysis serves to increase confidence in infrastructure configuration.
+Collection, summarization and persistence of node metrics for inclusion in a performance analysis. Metrics are persisted for anonymous analysis and sharing with the Cloud Native community at-large. Publicly-shared and project-agnostic analysis serves to increase confidence in infrastructure configuration.
 Guiding Principles
-Meshery may require local storage for temporary use w/o guarantee of data resiliency. 
+Meshery may require local storage for temporary use without a guarantee of data resiliency. 
 Meshery can require and install certain temporary infrastructure on the cluster (e.g. InfluxDB).
 Goals
 Users will want to compare infrastructure configuration overhead against application resource consumption.
@@ -13,7 +13,7 @@ Design
 Node metrics should not overlap, but complement request metrics gleaned from Meshery’s load generators, if possible. Tail latencies are readily available from the load-generator Fortio. 
 Trends, not static interval sampling may prove both easier to store (less data) and potentially more insightful benchmarks.
 Reports / Node Metrics
-While many metrics may be viewed in Meshery in real-time, only a certain set will be considered for long-term persistence. The following list of per node metrics to collect and store by both control plane and by namespace (application).
+While many metrics may be viewed in Meshery in real-time, only a certain set will be considered for long-term persistence. The following is a list of per node metrics to collect and store by both control plane and by namespace (application).
 
 There are a few ways we can go about this:
 Cluster wide metrics
@@ -33,9 +33,9 @@ Memory usage without cache by namespace - time series per namespace
 
 Consumption breakdown by control plane vs data plane vs application would be interesting.
 
-The advantage with cluster wide metrics is that Meshery doesn’t have to include logic to account for individual nodes.
+The advantage of cluster wide metrics is that Meshery doesn’t have to include logic to account for individual nodes.
 Per Node Metrics:
-Here is a list of node level metrics we can collect from Prometheus node exporter:
+Here is a list of node-level metrics we can collect from Prometheus node exporter:
 
 CPU utilization - total
 CPU usage
@@ -61,16 +61,16 @@ Requirements
 Prometheus node exporter deployed (i.e. as a daemonset),
 Reachable URL to Prometheus endpoint for querying.
 Metrics Retrieval
-Use https://github.com/prometheus/client_golang and one for creating clients that talk to the Prometheus HTTP API.
+Use https://github.com/prometheus/client_golang and one to create clients that talk to the Prometheus HTTP API.
  Execution plan for persisting server-side metrics
 In the UI, performance page, a UUID is generated when the page loads.
 The UUID will be submitted to the server when the load test is initiated.
-when the static charts are created, the UUID will be associated with them. When the static charts make calls, they will include the UUID to indicate the calls are indeed from a static chart.
+When the static charts are created, the UUID will be associated with them. When the static charts make calls, they will include the UUID to indicate that the calls are indeed from a static chart.
 Whenever the prometheus query range handler sees UUID in query params, we will persist the queries (start, end and step can be computed based on the duration of the test) in a global map for easier retrieval.
-To support parallel test executions we should probably store the queries in a map[string]map[string]struct{}{} - to store UUID vs all queries that UUID
+To support parallel test executions, we should probably store the queries in a map[string]map[string]struct{}{} - to store UUID vs all queries that UUID
 For horizontal scaling, we can eventually store the map in a dedicated cache layer, like redis, later.
-When the load test completes, all the queries in the map will be used to query prometheus with the start and end time of the load test (which can be obtained from fortio response) with a computed step values and the results will now be associated with the query and persisted in SaaS.
-Also, do we want to call prometheus for percentile queries? Probably NOT, bcoz we are going to be persisting the time series… may be we should
+When the load test completes, all the queries in the map will be used to query prometheus with the start and end time of the load test (which can be obtained from the Fortio response) with a computed step values and the results will now be associated with the query and persisted in SaaS.
+Also, do we want to call prometheus for percentile queries? Probably NOT, because we are going to be persisting the time series… maybe we should
 What if there is a network error or any error during this background process?
 Meshery will retry like 10 times with exponential backoff
 If failure is permanent, we just persist the board json and let Meshery talk to Prometheus directly?
@@ -121,13 +121,13 @@ We can make this call, fetch the list of instances and inject it into a template
 Cluster metrics:
 http://10.199.75.64:30234/d/efa86fd1d0c121a26444b636a3f509a8/kubernetes-compute-resources-cluster?orgId=1
 
-The advantage with this board is that we are NOT tied to the node but rather it gets us information on the cluster wide cpu and memory usage based on the namespace.
+The advantage of this board is that we are NOT tied to the node but rather it gets us information on the cluster wide cpu and memory usage based on the namespace.
 
-One thing to note: if we want to go this route, support for panels of type “singlestat” will have to be added into Meshery.
+One thing to note: if we want to take this route, support for panels of type “singlestat” will have to be added to Meshery.
 
 Tasks
 Explore the value of reporting trends vs. sampling.
 Research generally accepted promql for summarizations.
-Identify specific cpu and mem metrics to use.
+Identify specific CPU and mem metrics to use.
 
 
