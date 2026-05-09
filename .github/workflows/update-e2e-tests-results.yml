@@ -31,18 +31,51 @@ jobs:
            github-token: ${{ secrets.GITHUB_TOKEN }}
            run-id: ${{ github.event.workflow_run.id }}
       
-      - name: Move test report to shortcodes folder
+      - name: Prepare test report
         run: |
-            if [ ! -f e2e-test-reporter/ui/test-report.md ]; then
-            echo "Error: Test report not found!" && exit 1
-            fi
-            mkdir -p docs/layouts/shortcodes 
-            mv e2e-test-reporter/ui/test-report.md docs/layouts/shortcodes/test-report.md
+          if [ ! -f e2e-test-reporter/ui/test-report.md ]; then
+            echo "Error: Test report not found!"
+            exit 1
+          fi
+          mkdir -p docs/layouts/shortcodes
+
+      - name: Check for meaningful report changes
+        id: diff-check
+        run: |
+          if [ -f docs/layouts/shortcodes/test-report.md ]; then
+            cp docs/layouts/shortcodes/test-report.md old-report.md
+          else
+            touch old-report.md
+          fi
+
+          cp e2e-test-reporter/ui/test-report.md new-report.md
+
+          normalize() {
+            sed -E '/^- Testing started at:/d' "$1" \
+            | sed -E '/^[[:space:]]*Duration:/d'
+          }
+
+          normalize old-report.md > old-clean.md
+          normalize new-report.md > new-clean.md
+
+          if diff -q old-clean.md new-clean.md > /dev/null; then
+            echo "No meaningful changes detected."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Meaningful changes detected."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update tracked report
+        if: steps.diff-check.outputs.changed == 'true'
+        run: |
+          cp e2e-test-reporter/ui/test-report.md docs/layouts/shortcodes/test-report.md
             
       - name: Pull changes from remote
         run: git pull origin master
 
       - name: Commit artifact
+        if: steps.diff-check.outputs.changed == 'true'
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: "docs/layouts/shortcodes/test-report.md"
