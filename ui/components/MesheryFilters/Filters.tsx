@@ -271,7 +271,7 @@ function MesheryFilters() {
   const [publishSchema, setPublishSchema] = useState<{ rjsfSchema?: any; uiSchema?: any }>({});
   const { width } = useWindowDimensions();
   const [meshModels, setMeshModels] = useState<any[]>([]);
-  const { user } = useSelector((state) => state.ui);
+  const { user, catalogVisibility } = useSelector((state) => state.ui);
   const [viewType, setViewType] = useState<TypeView>('grid');
 
   //hooks
@@ -300,7 +300,6 @@ function MesheryFilters() {
   const catalogContentRef = useRef<any[]>([]);
   const catalogVisibilityRef = useRef<boolean>(false);
   const disposeConfSubscriptionRef = useRef<{ dispose: () => void } | null>(null);
-  const { catalogVisibility } = useSelector((state) => state.ui);
   const [visibilityFilter, setVisibilityFilter] = useState<string | null>(null);
 
   const {

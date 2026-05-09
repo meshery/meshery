@@ -145,9 +145,10 @@ function K8sContextMenu({
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
   const [updateConnectionStatus] = useUpdateConnectionStatusMutation();
-  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
+  const { controllerState: meshsyncControllerState, connectionMetadataState } = useSelector(
+    (state) => state.ui,
+  );
   const dispatch = useDispatch();
-  const { connectionMetadataState } = useSelector((state) => state.ui);
 
   // ->using same data source as we use in conn.table
   const { data: connectionData } = useGetConnectionsQuery({

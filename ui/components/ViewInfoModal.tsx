@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   Avatar,
   Chip,
@@ -82,12 +81,12 @@ export const ActionBox = styled(Box)(() => ({
   gap: '1rem',
 }));
 
-export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata, refetch }) => {
+export const ViewInfoModal_ = ({ open, closeModal, viewId, viewName, metadata, refetch }) => {
   const [formState, setFormState] = useState(metadata);
   const viewRes = useGetViewQuery(
-    { viewId: view_id },
+    { viewId },
     {
-      skip: !view_id,
+      skip: !viewId,
     },
   );
   const userRes = useGetLoggedInUserQuery();
@@ -125,7 +124,7 @@ export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata,
     <Modal
       open={open}
       closeModal={closeModal}
-      title={view_name}
+      title={viewName}
       headerIcon={<ViewIcon {...iconLarge} fill={theme.palette.common.white} />}
       maxWidth="sm"
     >

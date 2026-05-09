@@ -1,11 +1,12 @@
-// @ts-nocheck
 import React, { useState, useRef, useEffect } from 'react';
 import {
+  AddIcon,
   Box,
   Card,
   CardActions,
   CardHeader,
   Chip,
+  DeleteIcon,
   Dialog,
   DialogActions,
   DialogContent,
@@ -18,6 +19,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  PlayArrowIcon as PlayIcon,
   Switch,
   Table,
   Tooltip,
@@ -29,9 +31,6 @@ import {
   NoSsr,
   TableHead,
 } from '@sistent/sistent';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PlayIcon from '@mui/icons-material/PlayArrow';
 import MUIDataTable from '@sistent/mui-datatables';
 import { useRouter } from 'next/router';
 import { Controlled as CodeMirror } from './CodeMirror';
@@ -155,8 +154,7 @@ const AdapterCard = styled(Card)(() => ({
 }));
 
 const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = (props) => {
-  const { k8sConfig } = useSelector((state) => state.ui);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig, selectedK8sContexts } = useSelector((state) => state.ui);
   const { adapter } = props;
   const { notify } = useNotification();
   const [triggerAdapterOp] = useAdapterOperationMutation();
@@ -927,7 +925,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
       },
     };
 
-    var data = [];
+    let data = [];
     if (smi_result && smi_result.results) {
       data = smi_result.results.map((val) => {
         return [

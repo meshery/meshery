@@ -1,16 +1,16 @@
 import {
+  DeleteIcon,
   Dialog,
   DialogActions,
   DialogContent,
   Divider,
+  FullScreenIconExit as FullscreenExitIcon,
+  FullScreenIcon as FullscreenIcon,
   IconButton,
+  SaveIcon,
   Tooltip,
 } from '@sistent/sistent';
 import { UnControlled as CodeMirror } from './CodeMirror';
-import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import SaveIcon from '@mui/icons-material/Save';
 import { YamlDialogTitleText, StyledDialog } from './MesheryPatterns/style';
 import { StyledCodeMirrorWrapper } from './MesheryPatterns/Cards.styles';
 

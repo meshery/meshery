@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useContext } from 'react';
 import {
   createUseRemoteComponent,
@@ -43,10 +42,12 @@ const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
 function NavigatorExtension({ url }) {
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const {
+    capabilitiesRegistry,
+    selectedK8sContexts,
+    organization: currentOrganization,
+  } = useSelector((state) => state.ui);
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
-  const { organization: currentOrganization } = useSelector((state) => state.ui);
   const { openModalWithDefault, onLoadResource } = useContext(WorkspaceModalContext);
   const registryModal = useRegistryModal();
   if (err != null) {
