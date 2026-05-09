@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/meshery/meshery/server/models/httputil"
+	"github.com/meshery/meshkit/logger"
 )
 
 // Response helpers
@@ -52,18 +54,27 @@ func writeJSONEmptyObject(w http.ResponseWriter, status int) {
 
 const (
 	defaultPageSize = 25
+	maxPageSize     = 100
 	queryParamTrue  = "true"
 )
 
-func getPaginationParams(req *http.Request) (page, offset, limit int, search, order, sortOnCol, status string) {
-
+func getPaginationParams(req *http.Request) (page, offset, limit int, search, order, sortOnCol, status string, err error) {
 	urlValues := req.URL.Query()
-	page, _ = strconv.Atoi(urlValues.Get("page"))
+	page, err = parsePaginationQueryValue(urlValues.Get("page"), "page")
+	if err != nil {
+		return
+	}
+
 	limitstr := urlValues.Get("pagesize")
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 {
-			limit = defaultPageSize
+	switch limitstr {
+	case "":
+		limit = defaultPageSize
+	case "all":
+		limit = maxPageSize
+	default:
+		limit, err = parsePageSize(limitstr)
+		if err != nil {
+			return
 		}
 	}
 
@@ -72,15 +83,49 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 	sortOnCol = urlValues.Get("sort")
 	status = urlValues.Get("status")
 
-	if page < 0 {
-		page = 0
-	}
 	offset = page * limit
 
 	if sortOnCol == "" {
 		sortOnCol = "updated_at"
 	}
 	return
+}
+
+func parsePaginationQueryValue(value, queryParam string) (int, error) {
+	if value == "" {
+		return 0, nil
+	}
+
+	parsedValue, err := strconv.Atoi(value)
+	if err != nil {
+		return 0, ErrPaginationQuery(queryParam, value, err.Error())
+	}
+
+	if parsedValue < 0 {
+		return 0, ErrPaginationQuery(queryParam, value, "must be greater than or equal to 0")
+	}
+
+	return parsedValue, nil
+}
+
+func parsePageSize(value string) (int, error) {
+	parsedValue, err := strconv.Atoi(value)
+	if err != nil {
+		return 0, ErrPaginationQuery("pagesize", value, err.Error())
+	}
+
+	if parsedValue <= 0 || parsedValue > maxPageSize {
+		return 0, ErrPaginationQuery("pagesize", value, fmt.Sprintf("must be between 1 and %d or 'all'", maxPageSize))
+	}
+
+	return parsedValue, nil
+}
+
+func writePaginationError(log logger.Handler, w http.ResponseWriter, err error) {
+	if log != nil {
+		log.Error(err)
+	}
+	writeMeshkitError(w, err, http.StatusBadRequest)
 }
 
 // Extracts specified boolean query parameters from the request and returns a map of params and their value.

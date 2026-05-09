@@ -903,7 +903,11 @@ func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context)
 func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 	var greedy bool
@@ -946,7 +950,11 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	typ := mux.Vars(r)["model"]
 
 	var greedy bool

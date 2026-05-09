@@ -210,6 +210,7 @@ const (
 	ErrExtensionProxyCode                  = "meshery-server-1427"
 	ErrInitializeMachineCode               = "meshery-server-1428"
 	ErrSendMachineEventCode                = "meshery-server-1429"
+	ErrPaginationQueryCode                 = "meshery-server-1430"
 )
 
 var (
@@ -355,6 +356,22 @@ func ErrParseForm(err error) error {
 
 func ErrQueryGet(obj string) error {
 	return errors.New(ErrQueryGetCode, errors.Alert, []string{"unable to get: ", obj}, []string{}, []string{"Query parameter is not a part of the request"}, []string{"Make sure to pass the query paramater in the request"})
+}
+
+func ErrPaginationQuery(obj, value, reason string) error {
+	remediation := []string{fmt.Sprintf("Provide a valid value for %s", obj)}
+	if obj == "pagesize" {
+		remediation = append(remediation, fmt.Sprintf("Use pagesize=all or a number between 1 and %d", maxPageSize))
+	}
+
+	return errors.New(
+		ErrPaginationQueryCode,
+		errors.Alert,
+		[]string{"invalid pagination query parameter", obj},
+		[]string{fmt.Sprintf("value: %s", value), reason},
+		[]string{"Pagination query parameter is malformed or outside the accepted range"},
+		remediation,
+	)
 }
 
 func ErrGetResult(err error) error {

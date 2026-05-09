@@ -242,7 +242,11 @@ func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
 func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, _, _ := getPaginationParams(r)
+	page, offset, limit, search, order, _, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, rw, err)
+		return
+	}
 	var resources []model.KubernetesResource
 	var totalCount int64
 
@@ -321,7 +325,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	order = models.SanitizeOrderInput(order, []string{"creation_timestamp", "name", "kind", "model", "api_version", "namespace"})
 	query.Order(order)
 
-	err := query.Find(&resources).Error
+	err = query.Find(&resources).Error
 	if err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
 		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)

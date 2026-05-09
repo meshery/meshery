@@ -21,7 +21,11 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	var tables []*models.SqliteSchema
 	var recordCount int
 	var totalTables int64
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sort, _, err := getPaginationParams(r)
+	if err != nil {
+		writePaginationError(h.log, w, err)
+		return
+	}
 
 	tableFinder := h.dbHandler.DB.Table("sqlite_schema").
 		Where("type = ?", "table")
