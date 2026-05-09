@@ -45,10 +45,10 @@ import {
   Public as PublicIcon,
   Publish as PublishIcon,
 } from '@/assets/icons';
-import _PromptComponent from '../../PromptComponent';
-import LoadingScreen from '../../LoadingComponents/LoadingComponent';
-import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../../../utils/Enum';
-import CloneIcon from '../../../public/static/img/CloneIcon';
+import _PromptComponent from '../PromptComponent';
+import LoadingScreen from '../shared/LoadingState/LoadingComponent';
+import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../../utils/Enum';
+import CloneIcon from '../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import downloadContent from '../../utils/fileDownloader';

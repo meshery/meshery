@@ -9,7 +9,7 @@ import React, { useEffect, useMemo } from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { useRouter } from 'next/router';
-import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import {
   updateBetaBadge,

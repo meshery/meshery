@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import uiConfig from '../../ui.config';
+import uiConfig from '../../../ui.config';
 
 type LoadingScreenProps = {
   message: string;
