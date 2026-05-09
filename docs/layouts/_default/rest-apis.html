@@ -4,7 +4,7 @@
 {{ define "main" }}
 {{ .Content }}
 {{ $data := .Params.data }}
-{{ $spec := index site.Data $data }}
+{{ $spec := index hugo.Data $data }}
 {{ if not $spec }}
   {{ $spec = .Params }}
 {{ end }}

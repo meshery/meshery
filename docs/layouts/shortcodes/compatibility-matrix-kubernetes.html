@@ -1,8 +1,10 @@
 {{- /* Load all compatibility test results from project/compatibility section and subdirectories */ -}}
 {{- $k8s_tests := slice -}}
-{{- range site.AllPages -}}
-  {{- if and (strings.Contains .Path "project/compatibility") (ne .Kind "section") -}}
-    {{- $k8s_tests = $k8s_tests | append . -}}
+{{- range hugo.Sites -}}
+  {{- range .Pages -}}
+    {{- if and (strings.Contains .Path "project/compatibility") (ne .Kind "section") -}}
+      {{- $k8s_tests = $k8s_tests | append . -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 

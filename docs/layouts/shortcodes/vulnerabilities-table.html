@@ -9,7 +9,7 @@
   <th> FIX DETAILS </th>
   <th> LINKS </th>
 </tr>
-{{ $vulns := sort site.Data.vulnerabilities.announce "DateAnnounced" "desc" }}
+{{ $vulns := sort hugo.Data.vulnerabilities.announce "DateAnnounced" "desc" }}
 {{ range $vulns }}
 <tr>
   <td> {{ .DateAnnounced }} </td>
