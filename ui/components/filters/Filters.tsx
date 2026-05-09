@@ -70,7 +70,7 @@ import {
   useUpdateFilterFileMutation,
   useUploadFilterFileMutation,
 } from '@/rtk-query/filter';
-import LoadingScreen from '../LoadingComponents/LoadingComponent';
+import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelector } from 'react-redux';

@@ -24,7 +24,7 @@ import CAN from '@/utils/can';
 import { mesheryEventBus } from '@/utils/eventBus';
 import { ThemeTogglerCore } from '@/themes/hooks';
 import RJSFForm from '../../MesheryMeshInterface/PatternService/RJSF';
-import { DynamicFullScreenLoader } from '../../LoadingComponents/DynamicFullscreenLoader';
+import { DynamicFullScreenLoader } from '../../shared/LoadingState/DynamicFullscreenLoader';
 import Troubleshoot from '../../TroubleshootingComponent';
 import TypingFilter from '../../TypingFilter';
 import CreateModelModal from '../../Settings/Registry/CreateModelModal';
