@@ -1,1 +1,0 @@
-Sudhanshu Dasgupta
