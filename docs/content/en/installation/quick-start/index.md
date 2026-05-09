@@ -69,7 +69,8 @@ When running Meshery Server out-of-cluster (e.g., via Docker) and attempting to 
 From inside the Meshery container, `localhost` resolves to the container itself, not the host machine running your cluster. **The cluster server URL must be network-accessible to the Meshery Server container.**
 
 * **Docker Desktop:** Change `127.0.0.1` in your `kubeconfig` to `host.docker.internal`.
-* **kind:** Use the IP address of the `kind-control-plane` container instead of localhost.
+* kind: Use host.docker.internal (on Docker Desktop) or the container's IP address and port 6443.
+* minikube: Use the IP address returned by minikube ip instead of localhost.
 * Linux: Use your host machine's LAN IP address or deploy the Meshery container using the --network host flag (no kubeconfig changes required in this case).
 {{% /alert %}}
 
