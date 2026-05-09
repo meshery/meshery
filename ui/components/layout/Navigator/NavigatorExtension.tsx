@@ -35,7 +35,7 @@ import { useSelector } from 'react-redux';
 import { store } from '../../../store';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import { RelationshipEvaluationTraceFormatter } from '../../NotificationCenter/formatters/relationship_evaluation';
+import { RelationshipEvaluationTraceFormatter } from '../NotificationCenter/formatters/relationship_evaluation';
 import { useRegistryModal } from '@/utils/hooks/useRegistryModal';
 
 const requires = createRequires(getDependencies);

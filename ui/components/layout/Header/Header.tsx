@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { NotificationDrawerButton } from '../../NotificationCenter';
+import { NotificationDrawerButton } from '../NotificationCenter/index';
 import User from '../../User';
 import { successHandlerGenerator, errorHandlerGenerator } from '../../../utils/helpers/common';
 import { ConnectionChip } from '../../connections/ConnectionChip';

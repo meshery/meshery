@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Grid2, Box, List, ListItem, RenderMarkdown } from '@sistent/sistent';
-import { FormatStructuredData } from '../../DataFormatter';
+import { FormatStructuredData } from '../../../DataFormatter';
 
 type ErrorMetadata = {
   LongDescription?: string[];

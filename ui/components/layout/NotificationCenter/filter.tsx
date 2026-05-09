@@ -1,5 +1,5 @@
-import { useGetEventFiltersQuery } from '../../rtk-query/notificationCenter';
-import TypingFilter from '../TypingFilter';
+import { useGetEventFiltersQuery } from '../../../rtk-query/notificationCenter';
+import TypingFilter from '../../TypingFilter';
 import { SEVERITY, STATUS } from './constants';
 
 const useFilterSchema = () => {

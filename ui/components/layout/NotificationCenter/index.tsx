@@ -14,8 +14,8 @@ import {
   IconButton,
 } from '@sistent/sistent';
 import Filter from './filter';
-import BellIcon from '../../assets/icons/BellIcon';
-import { iconMedium } from '../../css/icons.styles';
+import BellIcon from '../../../assets/icons/BellIcon';
+import { iconMedium } from '../../../css/icons.styles';
 import {
   NOTIFICATION_CENTER_TOGGLE_CLASS,
   SEVERITY,
@@ -47,24 +47,24 @@ import {
   selectSeverity,
   toggleNotificationCenter,
   updateCheckAllEvents,
-} from '../../store/slices/events';
+} from '../../../store/slices/events';
 import {
   useDeleteEventsMutation,
   useGetEventsSummaryQuery,
   useLazyGetEventsQuery,
   useUpdateEventsMutation,
-} from '../../rtk-query/notificationCenter';
-import DoneIcon from '../../assets/icons/DoneIcon';
-import { hasClass } from '../../utils/Elements';
-import ReadIcon from '../../assets/icons/ReadIcon';
-import UnreadIcon from '../../assets/icons/UnreadIcon';
-import DeleteIcon from '../../assets/icons/DeleteIcon';
-import { useNotification } from '../../utils/hooks/useNotification';
+} from '../../../rtk-query/notificationCenter';
+import DoneIcon from '../../../assets/icons/DoneIcon';
+import { hasClass } from '../../../utils/Elements';
+import ReadIcon from '../../../assets/icons/ReadIcon';
+import UnreadIcon from '../../../assets/icons/UnreadIcon';
+import DeleteIcon from '../../../assets/icons/DeleteIcon';
+import { useNotification } from '../../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorBoundary } from '@sistent/sistent';
-import CustomErrorFallback from '../General/ErrorBoundary';
+import CustomErrorFallback from '../../General/ErrorBoundary';
 
 export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
