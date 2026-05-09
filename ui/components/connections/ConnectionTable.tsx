@@ -384,19 +384,25 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   };
 
   const handleDeleteConnections = async (selected) => {
-    if (selected) {
-      let response = await modalRef.current.show({
-        title: `Delete Connections`,
-        subtitle: `Are you sure that you want to delete the connections?`,
-        primaryOption: 'DELETE',
-        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.DANGER,
-      });
-      if (response === 'DELETE') {
-        selected.data.map(({ index }) => {
-          UpdateConnectionStatus(filteredConnections[index].id, CONNECTION_STATES.DELETED);
-        });
-      }
+    if (!selected?.data?.length) return;
+
+    // Capture the connection IDs up front. The user has to acknowledge the
+    // confirmation modal before delete fires, and `filteredConnections` can
+    // be invalidated/reordered by an in-flight refetch in that window — using
+    // the index after-the-fact dereferenced stale rows and silently no-op'd
+    // (no PUT, no notification), which surfaced as a hung e2e snackbar wait.
+    const ids = selected.data.map(({ index }) => filteredConnections?.[index]?.id).filter(Boolean);
+    if (ids.length === 0) return;
+
+    const response = await modalRef.current.show({
+      title: `Delete Connections`,
+      subtitle: `Are you sure that you want to delete the connections?`,
+      primaryOption: 'DELETE',
+      showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
+      variant: PROMPT_VARIANTS.DANGER,
+    });
+    if (response === 'DELETE') {
+      ids.forEach((id) => UpdateConnectionStatus(id, CONNECTION_STATES.DELETED));
     }
   };
 

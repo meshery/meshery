@@ -1919,6 +1919,60 @@
         "short_description": "",
         "probable_cause": "Invalid system specified\nPublishing process encountered an error",
         "suggested_remediation": "Ensure a valid system is provided (meshery, remote-provider, website)\nCheck the publishing configuration and try again"
+      },
+      "1234": {
+        "name": "ErrSystemAzureAksGetCredentialsCode",
+        "code": "1234",
+        "severity": "Alert",
+        "long_description": "There was an error while fetching the AKS cluster credentials",
+        "short_description": "[System] Unable to get AKS cluster credentials",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that the AKS cluster name and resource group are correct, and that you have the necessary permissions to access the cluster"
+      },
+      "1235": {
+        "name": "ErrSystemAzureCliNotFoundCode",
+        "code": "1235",
+        "severity": "Alert",
+        "long_description": "The Azure CLI is required but was not found on your system",
+        "short_description": "[System] Azure CLI not found",
+        "probable_cause": "",
+        "suggested_remediation": "Please install the Azure CLI from https://learn.microsoft.com/en-us/cli/azure/install-azure-cli and ensure it is accessible in your system's PATH"
+      },
+      "1236": {
+        "name": "ErrSystemAwsCliNotFoundCode",
+        "code": "1236",
+        "severity": "Alert",
+        "long_description": "The AWS CLI is required to configure an EKS connection but was not found on your system",
+        "short_description": "[System] AWS CLI not found",
+        "probable_cause": "",
+        "suggested_remediation": "Please install the AWS CLI from https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html and ensure it is accessible in your system's PATH"
+      },
+      "1237": {
+        "name": "ErrSystemGkeGenerateConfigCode",
+        "code": "1237",
+        "severity": "Alert",
+        "long_description": "There was an error while generating the GKE cluster configuration",
+        "short_description": "[System] Failed to generate GKE config",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure you have the necessary Google Cloud permissions and that your gcloud CLI is authenticated properly"
+      },
+      "1238": {
+        "name": "ErrSystemEksGetCredentialsCode",
+        "code": "1238",
+        "severity": "Alert",
+        "long_description": "There was an error while fetching the EKS cluster credentials or reading inputs",
+        "short_description": "[System] Unable to get EKS cluster credentials",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that the EKS cluster name and region are correct, and that you have the necessary AWS permissions"
+      },
+      "1239": {
+        "name": "ErrSystemMinikubeKubeconfigCode",
+        "code": "1239",
+        "severity": "Alert",
+        "long_description": "There was an error reading or processing the default minikube kubeconfig",
+        "short_description": "[System] Minikube kubeconfig error",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure minikube is running and that your local kubeconfig file is accessible at the default location"
       }
     }
   }

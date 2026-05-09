@@ -202,9 +202,9 @@ const MainViewsContent = ({
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
-  const providerUrl = capabilitiesRegistry?.provider_url;
+  const providerUrl = capabilitiesRegistry?.providerUrl;
   const [activeUsers] = useRoomActivity({
-    provider_url: providerUrl,
+    providerUrl,
     getUserAccessToken: getUserAccessToken,
     getUserProfile: getUserProfile,
   });
@@ -297,8 +297,8 @@ const MainViewsContent = ({
         <ViewInfoModal
           open={infoModal}
           closeModal={handleCloseInfoModal}
-          view_id={selectedView?.id}
-          view_name={selectedView?.name}
+          viewId={selectedView?.id}
+          viewName={selectedView?.name}
           metadata={selectedView?.metadata}
         />
       )}
