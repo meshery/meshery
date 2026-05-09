@@ -32,7 +32,7 @@ import { K8sEmptyState } from '../EmptyState/K8sContextEmptyState';
 import { ACTIONS } from '../../../utils/Enum';
 import CAN from '../../../utils/can';
 import { keys } from '@/utils/permission_constants';
-import { K8sContextConnectionChip } from '../../Header';
+import { K8sContextConnectionChip } from '../../layout/Header/Header';
 import { useFilterK8sContexts } from '@/utils/hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from '../../connections/ConnectionChip';
 import { setK8sContexts, updateProgress } from '@/store/slices/mesheryUi';

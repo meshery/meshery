@@ -5,7 +5,7 @@ import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
-import { IconButtonAvatar } from './Header.styles';
+import { IconButtonAvatar } from './layout/Header/Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '@/store/slices/mesheryUi';
 /**

@@ -11,7 +11,7 @@ import {
   WorkspaceIcon,
 } from '@sistent/sistent';
 import React, { useState } from 'react';
-import { CMenuContainer } from '@/components/Header.styles';
+import { CMenuContainer } from '../layout/Header/Header.styles';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconXLarge } from 'css/icons.styles';

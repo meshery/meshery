@@ -15,7 +15,7 @@ import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useMemo, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { startSessionTimer } from '../lib/sessionTimer';
-import Header from '../components/Header';
+import Header from '../components/layout/Header/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
 import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';

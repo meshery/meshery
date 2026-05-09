@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { NotificationDrawerButton } from './NotificationCenter';
-import User from './User';
-import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
-import { ConnectionChip } from './connections/ConnectionChip';
-import { useLazyGetSystemSyncQuery } from '../rtk-query/system';
-import { useUpdateConnectionStatusMutation } from '../rtk-query/connection';
-import { CONNECTION_KINDS, CONNECTION_STATES } from '../utils/Enum';
-import _PromptComponent from './PromptComponent';
-import { iconMedium, iconSmall } from '../css/icons.styles';
-import { createPathForRemoteComponent } from './ExtensionSandbox';
-import RemoteComponent from './RemoteComponent';
-import { useNotification } from '../utils/hooks/useNotification';
+import { NotificationDrawerButton } from '../../NotificationCenter';
+import User from '../../User';
+import { successHandlerGenerator, errorHandlerGenerator } from '../../../utils/helpers/common';
+import { ConnectionChip } from '../../connections/ConnectionChip';
+import { useLazyGetSystemSyncQuery } from '../../../rtk-query/system';
+import { useUpdateConnectionStatusMutation } from '../../../rtk-query/connection';
+import { CONNECTION_KINDS, CONNECTION_STATES } from '../../../utils/Enum';
+import _PromptComponent from '../../PromptComponent';
+import { iconMedium, iconSmall } from '../../../css/icons.styles';
+import { createPathForRemoteComponent } from '../../ExtensionSandbox';
+import RemoteComponent from '../../RemoteComponent';
+import { useNotification } from '../../../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from '@/utils/hooks/useKubernetesHook';
-import { formatToTitleCase } from '../utils/utils';
-import RegistryModal from './registry/RegistryModal';
+import { formatToTitleCase } from '../../../utils/utils';
+import RegistryModal from '../../Registry/RegistryModal';
 
 import {
   Checkbox,
@@ -37,10 +37,10 @@ import {
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import OrganizationAndWorkSpaceSwitcher from './workspaces/SpacesSwitcher/SpaceSwitcher';
+import OrganizationAndWorkSpaceSwitcher from '../../workspaces/SpacesSwitcher/SpaceSwitcher';
 import HeaderMenu from './HeaderMenu';
-import ConnectionModal from './shared/Modal/ConnectionModal';
-import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
+import ConnectionModal from '../../shared/Modal/ConnectionModal';
+import MesherySettingsEnvButtons from '../../MesherySettingsEnvButtons';
 import {
   HeaderAppBar,
   UserContainer,
@@ -64,7 +64,7 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
 import { ErrorBoundary } from '@sistent/sistent';
-import { WorkspaceModalContext } from '../utils/context/WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '../../../utils/context/WorkspaceModalContextProvider';
 
 const K8sContextConnectionChip_ = ({
   ctx,
