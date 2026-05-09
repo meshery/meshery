@@ -1,4 +1,4 @@
-import NavigatorExtension from '../../components/NavigatorExtension';
+import NavigatorExtension from '../../components/layout/Navigator/NavigatorExtension';
 import ExtensionSandbox, {
   getComponentTitleFromPath,
   getComponentIsBetaFromPath,

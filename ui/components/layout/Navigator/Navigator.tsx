@@ -21,9 +21,9 @@ import {
   GithubIcon,
   DiscussForumIcon,
 } from '@sistent/sistent';
-import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
-import { CapabilitiesRegistry } from '../utils/disabledComponents';
+import ExtensionPointSchemaValidator from '../../../utils/ExtensionPointSchemaValidator';
+import { cursorNotAllowed, disabledStyle } from '../../../css/disableComponent.styles';
+import { CapabilitiesRegistry } from '../../../utils/disabledComponents';
 import {
   CONFIGURATION,
   DASHBOARD,
@@ -31,10 +31,10 @@ import {
   LIFECYCLE,
   SERVICE_MESH,
   TOGGLER,
-} from '../constants/navigator';
-import { iconSmall } from '../css/icons.styles';
+} from '../../../constants/navigator';
+import { iconSmall } from '../../../css/icons.styles';
 import CAN from '@/utils/can';
-import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '../../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import {
   HideScrollbar,
   LinkContainer,
@@ -61,7 +61,7 @@ import {
   FixedSidebarFooter,
   SidebarDrawer,
   ExpandMore,
-} from './General/style';
+} from '../../General/style';
 import { useMediaQuery } from '@sistent/sistent';
 import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
 import { useDispatch, useSelector } from 'react-redux';
