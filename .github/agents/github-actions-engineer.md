@@ -179,7 +179,7 @@ jobs:
           subject: "Workflow Failed: ${{ github.workflow }}"
           body: "The workflow failed. Please check logs."
           from: support@meshery.io
-          to: support@layer5.io
+          to: support@meshery.io
 ```
 
 ---
