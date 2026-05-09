@@ -63,6 +63,17 @@ Select from the list of [Providers](/extensibility/providers) in order to log in
 **Out-of-Cluster Deployments**
 If you have deployed Meshery out-of-cluster, Meshery Server will automatically attempt to connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`) and in kubeconfigs uploaded through Meshery UI. Meshery Server deploys [Meshery Operator](/concepts/architecture/operator), [MeshSync](/concepts/architecture/meshsync), and Broker into the `meshery` namespace (by default).
 
+{{% alert color="warning" title="Cluster Access and Connectivity Requirements" %}}
+When running Meshery Server out-of-cluster (e.g., via Docker) and attempting to connect to a local cluster like `kind` or `minikube`, connection failures can occur if your `kubeconfig` uses `127.0.0.1` or `localhost`. 
+
+From inside the Meshery container, `localhost` resolves to the container itself, not the host machine running your cluster. **The cluster server URL must be network-accessible to the Meshery Server container.**
+
+* **Docker Desktop:** Change `127.0.0.1` in your `kubeconfig` to `host.docker.internal`.
+* **kind:** Use the IP address of the `kind-control-plane` container instead of localhost.
+* **Linux:** Use your host machine's LAN IP address or deploy the Meshery container using the `--network host` flag.
+{{% /alert %}}
+
+
 **In-Cluster Deployments**
 If you have deployed Meshery in-cluster, Meshery Server will automatically connect to the Kubernetes API Server available in the control plane.
 
