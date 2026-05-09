@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { FavoriteIcon, Hidden, Typography, useTheme } from '@sistent/sistent';
-import Navigator from './Navigator';
-import subscribeK8sContext from '@/graphql/subscriptions/K8sContextSubscription';
+import Navigator from './layout/Navigator/Navigator';
+import subscribeK8sContext from './graphql/subscriptions/K8sContextSubscription';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useDispatch, useSelector } from 'react-redux';

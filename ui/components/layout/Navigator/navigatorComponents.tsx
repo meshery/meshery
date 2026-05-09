@@ -1,15 +1,15 @@
 import React from 'react';
 import { CatalogIcon, TachographDigitalIcon } from '@sistent/sistent';
-import ConfigurationIcon from '../assets/icons/ConfigurationIcon';
+import ConfigurationIcon from '../../../assets/icons/ConfigurationIcon';
 import DashboardIcon from '@/assets/icons/DashboardIcon';
-import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
-import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
-import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
-import ExtensionIcon from '../public/static/img/drawer-icons/extensions_svg';
-import PatternIcon from '../public/static/img/drawer-icons/pattern_svg';
-import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
-import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
-import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
+import ServiceMeshIcon from '../../../assets/icons/ServiceMeshIcon';
+import LifecycleIcon from '../../../public/static/img/drawer-icons/lifecycle_mgmt_svg';
+import PerformanceIcon from '../../../public/static/img/drawer-icons/performance_svg';
+import ExtensionIcon from '../../../public/static/img/drawer-icons/extensions_svg';
+import PatternIcon from '../../../public/static/img/drawer-icons/pattern_svg';
+import LifecycleHover from '../../../public/static/img/drawer-icons/lifecycle_hover_svg';
+import PerformanceHover from '../../../public/static/img/drawer-icons/performance_hover_svg';
+import ConfigurationHover from '../../../public/static/img/drawer-icons/configuration_hover_svg';
 import {
   CATALOG,
   CONFIGURATION,
@@ -23,8 +23,8 @@ import {
   PROFILES,
   SERVICE_MESH,
   WORKSPACE,
-} from '../constants/navigator';
-import { iconSmall } from '../css/icons.styles';
+} from '../../../constants/navigator';
+import { iconSmall } from '../../../css/icons.styles';
 import { keys } from '@/utils/permission_constants';
 
 export const drawerIconsStyle = {
