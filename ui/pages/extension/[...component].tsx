@@ -5,7 +5,7 @@ import ExtensionSandbox, {
 } from '../../components/ExtensionSandbox';
 import { CircularProgress, NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { useRouter } from 'next/router';
@@ -36,77 +36,71 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return { props: { component: params?.component || [] } };
 };
 
-/**
- * getPath returns the current pathname
- * @returns {string}
- */
-function getPath() {
+function getPath(): string {
   return window.location.pathname;
 }
 
-/**
- * matchComponent matches the extension URI with current
- * given path
- * @param {string} extensionURI
- * @param {string} currentURI
- * @returns {boolean}
- */
-function matchComponentURI(extensionURI, currentURI) {
+function matchComponentURI(extensionURI: string, currentURI: string): boolean {
   return currentURI.includes(extensionURI);
 }
 
 function RemoteExtension() {
-  const [componentTitle, setComponentTitle] = useState('');
   const router = useRouter();
   const dispatch = useDispatch();
   const { extensionType } = useSelector((state) => state.ui);
   const { data: capabilitiesRegistry, isLoading } = useGetProviderCapabilitiesQuery();
-  const renderExtension = useCallback(() => {
-    if (!capabilitiesRegistry?.extensions) return;
-    dispatch(updateCapabilities({ capabilitiesRegistry: capabilitiesRegistry }));
 
-    let extNames = [];
-    for (var key of Object.keys(capabilitiesRegistry.extensions)) {
-      if (Array.isArray(capabilitiesRegistry.extensions[key])) {
-        capabilitiesRegistry.extensions[key].forEach((comp) => {
-          if (comp?.type === 'full_page') {
-            let ext = {
-              name: key,
-              uri: comp?.href?.uri,
-            };
-            extNames.push(ext);
-          }
-        });
+  // Resolve the active extension that matches the current path. Derived from
+  // capabilitiesRegistry rather than mirrored into local state to avoid
+  // duplicating Redux state and stale-closure bugs. The `typeof window`
+  // guard prevents getPath() from crashing during static prerender
+  // (this page uses getStaticPaths/getStaticProps).
+  const matchedExtension = useMemo(() => {
+    if (typeof window === 'undefined') return null;
+    if (!capabilitiesRegistry?.extensions) return null;
+    const path = getPath();
+    for (const key of Object.keys(capabilitiesRegistry.extensions)) {
+      const value = capabilitiesRegistry.extensions[key];
+      if (!Array.isArray(value)) continue;
+      for (const comp of value) {
+        if (
+          comp?.type === 'full_page' &&
+          comp?.href?.uri &&
+          matchComponentURI(comp.href.uri, path)
+        ) {
+          const extensions = ExtensionPointSchemaValidator(key)(value);
+          return {
+            name: key,
+            title: getComponentTitleFromPath(extensions, path),
+            isBeta: getComponentIsBetaFromPath(extensions, path),
+          };
+        }
       }
     }
-
-    extNames.forEach((ext) => {
-      if (matchComponentURI(ext?.uri, getPath())) {
-        dispatch(updateExtensionType({ extensionType: ext.name }));
-        let extensions = ExtensionPointSchemaValidator(ext.name)(
-          capabilitiesRegistry.extensions[ext.name],
-        );
-        setComponentTitle(getComponentTitleFromPath(extensions, getPath()));
-        dispatch(updateTitle({ title: getComponentTitleFromPath(extensions, getPath()) }));
-        dispatch(updateBetaBadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) }));
-        dispatch(updatePagePath({ path: getPath() }));
-      }
-    });
-  }, [capabilitiesRegistry, dispatch]);
+    return null;
+  }, [capabilitiesRegistry, router.query.component]);
 
   useEffect(() => {
-    renderExtension();
+    if (!capabilitiesRegistry?.extensions) return;
+    dispatch(updateCapabilities({ capabilitiesRegistry }));
+  }, [dispatch, capabilitiesRegistry]);
+
+  useEffect(() => {
+    if (!matchedExtension) return;
+    dispatch(updateExtensionType({ extensionType: matchedExtension.name }));
+    dispatch(updateTitle({ title: matchedExtension.title }));
+    dispatch(updateBetaBadge({ isBeta: matchedExtension.isBeta }));
+    dispatch(updatePagePath({ path: getPath() }));
 
     return () => {
       dispatch(updateExtensionType({ extensionType: null }));
-      setComponentTitle('');
     };
-  }, [capabilitiesRegistry, extensionType, router.query.component, renderExtension, dispatch]);
+  }, [dispatch, matchedExtension]);
 
   return (
     <NoSsr>
       <Head>
-        <title>{`${componentTitle} | Meshery`}</title>
+        <title>{`${matchedExtension?.title ?? ''} | Meshery`}</title>
       </Head>
       <DynamicFullScreenLoader isLoading={isLoading}>
         {capabilitiesRegistry !== null && extensionType ? (

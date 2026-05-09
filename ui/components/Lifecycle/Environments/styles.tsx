@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Checkbox, Typography, Button, useTheme, Card, styled, Box } from '@sistent/sistent';
 
 /** Bulk action bar styles */

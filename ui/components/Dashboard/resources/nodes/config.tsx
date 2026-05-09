@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { getResourceStr, resourceParsers, timeAgo, getStatus } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';

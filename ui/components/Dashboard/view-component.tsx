@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useContext } from 'react';
 import { reactJsonTheme } from '../Settings/Registry/helper';
 import dynamic from 'next/dynamic';

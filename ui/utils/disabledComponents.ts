@@ -19,7 +19,7 @@ export class CapabilitiesRegistry {
 
   constructor(capabilitiesRegistry) {
     this.capabilitiesRegistry = capabilitiesRegistry;
-    this.isPlaygroundEnv = capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted || false;
+    this.isPlaygroundEnv = capabilitiesRegistry?.restrictedAccess?.isMesheryUIRestricted || false;
   }
 
   capabilities() {

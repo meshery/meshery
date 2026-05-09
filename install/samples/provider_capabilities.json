@@ -209,7 +209,7 @@
     "": "/extension/meshmap"
   },
   "restrictedAccess": {
-    "isMesheryUiRestricted": true,
+    "isMesheryUIRestricted": true,
     "allowedComponents": {
       "navigator": {
         "help": true,

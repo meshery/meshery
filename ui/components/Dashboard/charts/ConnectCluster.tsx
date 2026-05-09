@@ -1,9 +1,8 @@
-// @ts-nocheck
 import ConnectClustersBtn from '@/components/General/ConnectClustersBtn';
 import React from 'react';
 import { ConnectClusterWrapper, ConnectClusterText } from '../style';
 
-const ConnectCluster = ({ message }) => {
+const ConnectCluster = ({ message }: { message: React.ReactNode }) => {
   return (
     <ConnectClusterWrapper>
       <ConnectClusterText variant="h5" align="center">

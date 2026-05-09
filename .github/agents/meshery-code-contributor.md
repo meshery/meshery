@@ -78,7 +78,7 @@ You are an expert-level software engineering agent specialized in contributing t
 - **Design System**: Sistent (Meshery's design system built on Material UI)
 - **State Management**: Redux Toolkit
 - **API Clients**: Relay (GraphQL), REST
-- **Node Version**: 20 LTS
+- **Node Version**: 22 LTS
 - **Styling**: Material UI (MUI) patterns, schema-driven UI development
 
 ### DevOps & Tools
