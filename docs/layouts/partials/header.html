@@ -1,6 +1,6 @@
 {{ $linkUrlSelected := "/" }}
 {{ $current := .RelPermalink }}
-{{ range .Site.Data.versions }}
+{{ range hugo.Data.versions }}
   {{ $linkUrl := printf "/%s/" .url }}
   {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
     {{ $linkUrlSelected = $linkUrl }}
@@ -22,7 +22,7 @@
       <ul class="navbar-nav">
 
         <!-- Internal links -->
-        {{ range .Site.Data.navigation }}
+        {{ range hugo.Data.navigation }}
         <li class="nav-item">
           <a
             class="nav-link"
@@ -45,7 +45,7 @@
         >
 
           {{ $current := .RelPermalink }}
-          {{ range .Site.Data.versions }}
+          {{ range hugo.Data.versions }}
             {{ $linkUrl := printf "/%s/" .url }}
             {{ $selected := "" }}
 

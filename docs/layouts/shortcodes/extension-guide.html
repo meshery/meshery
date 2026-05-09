@@ -59,7 +59,7 @@
 {{ $guideAssetsFolder := .Get "guide_assests_folder" }}
 
 <div class="extension-guides-container">
-  {{ $data := index .Site.Data $dataFile }}
+  {{ $data := index hugo.Data $dataFile }}
   
   {{ range $data }}
     <div class="extension-guide-card">

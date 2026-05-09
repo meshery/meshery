@@ -1,5 +1,5 @@
 {{- $command_name := .Get "command" -}}
-{{- $commands := .Site.Data.mesheryctlcommands.cmds -}}
+{{- $commands := hugo.Data.mesheryctlcommands.cmds -}}
 {{- $command := index $commands $command_name -}}
 
 <table class="mesheryctl-reference-table">
