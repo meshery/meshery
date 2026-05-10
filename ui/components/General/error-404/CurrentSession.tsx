@@ -11,7 +11,7 @@ import {
 import { NoSsr } from '@sistent/sistent';
 import OrgIcon from 'assets/icons/OrgIcon';
 import { ErrorBoundary } from '@sistent/sistent';
-import CustomErrorFallback from '../ErrorBoundary';
+import CustomErrorFallback from '../../shared/ErrorBoundary/ErrorBoundary';
 import { useGetSelectedOrganization } from '@/rtk-query/user';
 
 const CurrentSessionInfo = () => {
