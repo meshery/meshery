@@ -98,6 +98,13 @@ func getUserPrompt(userPrompt userPrompt) (string, error) {
 }
 
 func createAKSConnection() error {
+	success := false
+	defer func() {
+		if !success {
+			_ = os.Remove(utils.ConfigPath)
+		}
+	}()
+
 	aksCheck := exec.Command("az", "version")
 	aksCheck.Stdout = os.Stdout
 	aksCheck.Stderr = os.Stderr
@@ -137,10 +144,18 @@ func createAKSConnection() error {
 	}
 
 	utils.Log.Infof("AKS connection on cluster %s created.", aksName)
+	success = true
 	return nil
 }
 
 func createEKSConnection() error {
+	success := false
+	defer func() {
+		if !success {
+			_ = os.Remove(utils.ConfigPath)
+		}
+	}()
+
 	eksCheck := exec.Command("aws", "--version")
 	eksCheck.Stdout = os.Stdout
 	eksCheck.Stderr = os.Stderr
@@ -181,10 +196,18 @@ func createEKSConnection() error {
 	}
 
 	utils.Log.Infof("EKS connection on cluster %s created.", clusterName)
+	success = true
 	return nil
 }
 
 func createGKEConnection() error {
+	success := false
+	defer func() {
+		if !success {
+			_ = os.Remove(utils.ConfigPath)
+		}
+	}()
+
 	// TODO: move the GenerateConfigGKE logic to meshkit/client-go
 	utils.Log.Info("Configuring Meshery to access GKE...")
 	SAName := "sa-meshery-" + utils.StringWithCharset(8)
@@ -200,10 +223,18 @@ func createGKEConnection() error {
 	}
 
 	utils.Log.Info("GKE connection created.")
+	success = true
 	return nil
 }
 
 func createMinikubeConnection() error {
+	success := false
+	defer func() {
+		if !success {
+			_ = os.Remove(utils.ConfigPath)
+		}
+	}()
+
 	utils.Log.Info("Configuring Meshery to access Minikube...")
 	// Get the config from the default config path
 	if _, err := os.Stat(utils.KubeConfig); err != nil {
@@ -232,6 +263,7 @@ func createMinikubeConnection() error {
 	}
 
 	utils.Log.Info("Minikube connection created.")
+	success = true
 	return nil
 }
 
