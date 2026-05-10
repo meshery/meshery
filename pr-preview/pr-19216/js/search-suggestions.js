@@ -22,10 +22,10 @@
     let fuse = null;
     let indexFetchPromise = null;
 
-    function fetchSearchIndex() {
+    function fetchSearchIndex(indexUrl) {
         if (indexFetchPromise) return indexFetchPromise;
 
-        const url = resolveSitePath("/offline-search-index.json");
+        const url = indexUrl || resolveSitePath("/offline-search-index.json");
         indexFetchPromise = $.ajax({ url: url, dataType: "json" }).then(function (data) {
             const options = {
                 includeMatches: true,
@@ -84,9 +84,19 @@
 
         let activeIndex = -1;
 
+        // Read the index URL from the data attribute set by Hugo
+        function getIndexUrl() {
+            const el = document.querySelector('[data-offline-search-index-json-src]');
+            if (el) {
+                const src = el.getAttribute('data-offline-search-index-json-src');
+                return resolveSitePath(src);
+            }
+            return resolveSitePath('/offline-search-index.json');
+        }
+
         $searchInputs.on('focus', function() {
             activeIndex = -1;
-            if (!fuse) fetchSearchIndex();
+            if (!fuse) fetchSearchIndex(getIndexUrl());
             const $this = $(this);
             const $suggestionsContainer = $this.siblings('.search-suggestions-dropdown');
             if ($this.val().trim().length >= 2) {
@@ -105,7 +115,7 @@
             }
 
             if (!fuse) {
-                fetchSearchIndex().then(ready => {
+                fetchSearchIndex(getIndexUrl()).then(ready => {
                     if (ready) renderSuggestions(query, $suggestionsContainer);
                 });
             } else {
