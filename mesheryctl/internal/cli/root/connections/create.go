@@ -98,9 +98,9 @@ func getUserPrompt(userPrompt userPrompt) (string, error) {
 }
 
 func createAKSConnection() error {
-	success := false
+	fileWritten := false
 	defer func() {
-		if !success {
+		if fileWritten {
 			_ = os.Remove(utils.ConfigPath)
 		}
 	}()
@@ -135,6 +135,7 @@ func createAKSConnection() error {
 	if err != nil {
 		return errAzureAksGetCredentials(err)
 	}
+	fileWritten = true
 	utils.Log.Debugf("AKS configuration is written to: %s", utils.ConfigPath)
 
 	// set the token in the chosen context
@@ -143,15 +144,15 @@ func createAKSConnection() error {
 		return err
 	}
 
+	fileWritten = false
 	utils.Log.Infof("AKS connection on cluster %s created.", aksName)
-	success = true
 	return nil
 }
 
 func createEKSConnection() error {
-	success := false
+	fileWritten := false
 	defer func() {
-		if !success {
+		if fileWritten {
 			_ = os.Remove(utils.ConfigPath)
 		}
 	}()
@@ -187,6 +188,7 @@ func createEKSConnection() error {
 	if err != nil {
 		return errAwsEksGetCredentials(err)
 	}
+	fileWritten = true
 	utils.Log.Debugf("EKS configuration is written to: %s", utils.ConfigPath)
 
 	// set the token in the chosen context
@@ -195,15 +197,15 @@ func createEKSConnection() error {
 		return err
 	}
 
+	fileWritten = false
 	utils.Log.Infof("EKS connection on cluster %s created.", clusterName)
-	success = true
 	return nil
 }
 
 func createGKEConnection() error {
-	success := false
+	fileWritten := false
 	defer func() {
-		if !success {
+		if fileWritten {
 			_ = os.Remove(utils.ConfigPath)
 		}
 	}()
@@ -214,6 +216,7 @@ func createGKEConnection() error {
 	if err := utils.GenerateConfigGKE(utils.ConfigPath, SAName, "default"); err != nil {
 		return errGcpGKEGetCredentials(err)
 	}
+	fileWritten = true
 	utils.Log.Debugf("GKE configuration is written to: %s", utils.ConfigPath)
 
 	// set the token in the chosen context
@@ -222,15 +225,15 @@ func createGKEConnection() error {
 		return err
 	}
 
+	fileWritten = false
 	utils.Log.Info("GKE connection created.")
-	success = true
 	return nil
 }
 
 func createMinikubeConnection() error {
-	success := false
+	fileWritten := false
 	defer func() {
-		if !success {
+		if fileWritten {
 			_ = os.Remove(utils.ConfigPath)
 		}
 	}()
@@ -254,6 +257,7 @@ func createMinikubeConnection() error {
 	if err != nil {
 		return errWriteKubeConfig(err)
 	}
+	fileWritten = true
 	utils.Log.Debugf("Minikube configuration is written to: %s", utils.ConfigPath)
 
 	// set the token in the chosen context
@@ -262,8 +266,8 @@ func createMinikubeConnection() error {
 		return err
 	}
 
+	fileWritten = false
 	utils.Log.Info("Minikube connection created.")
-	success = true
 	return nil
 }
 

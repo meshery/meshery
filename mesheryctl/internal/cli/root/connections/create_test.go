@@ -22,54 +22,113 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-func TestCreateConnectionDeferCleanupPattern(t *testing.T) {
+// TestCreateConnectionCleanupOnTokenFailure verifies that kubeconfig.yaml is
+// removed when the connection is written but subsequent token setup fails.
+func TestCreateConnectionCleanupOnTokenFailure(t *testing.T) {
 	tempDir := t.TempDir()
 	configPath := filepath.Join(tempDir, "kubeconfig.yaml")
 
 	originalConfigPath := utils.ConfigPath
-	originalLog := utils.Log
-	defer func() {
-		utils.ConfigPath = originalConfigPath
-		utils.Log = originalLog
-	}()
-
+	defer func() { utils.ConfigPath = originalConfigPath }()
 	utils.ConfigPath = configPath
 
-	simulateDefer := func(success bool) error {
-		succeed := success
+	// Simulate: file written, then token step fails → file must be cleaned up.
+	simulateWriteThenFail := func() {
+		fileWritten := false
 		defer func() {
-			if !succeed {
+			if fileWritten {
 				_ = os.Remove(utils.ConfigPath)
 			}
 		}()
 
-		testFile, err := os.Create(utils.ConfigPath)
+		f, err := os.Create(utils.ConfigPath)
 		if err != nil {
-			return err
+			t.Fatalf("failed to create config file: %v", err)
 		}
-		testFile.Close()
+		f.Close()
+		fileWritten = true
 
-		if succeed {
-			succeed = true
-		}
-		return nil
+		// token step fails — fileWritten stays true, defer removes the file
 	}
 
-	if err := simulateDefer(false); err != nil {
-		t.Fatalf("simulateDefer(false) should not error: %v", err)
-	}
+	simulateWriteThenFail()
 
 	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
-		t.Fatal("config file should be cleaned up when success=false")
+		t.Fatal("kubeconfig.yaml should be removed when token setup fails after write")
+	}
+}
+
+// TestCreateConnectionNoCleanupOnSuccess verifies that kubeconfig.yaml is
+// kept when the full connection flow succeeds.
+func TestCreateConnectionNoCleanupOnSuccess(t *testing.T) {
+	tempDir := t.TempDir()
+	configPath := filepath.Join(tempDir, "kubeconfig.yaml")
+
+	originalConfigPath := utils.ConfigPath
+	defer func() { utils.ConfigPath = originalConfigPath }()
+	utils.ConfigPath = configPath
+
+	// Simulate: file written, token step succeeds → file must be kept.
+	simulateWriteThenSucceed := func() {
+		fileWritten := false
+		defer func() {
+			if fileWritten {
+				_ = os.Remove(utils.ConfigPath)
+			}
+		}()
+
+		f, err := os.Create(utils.ConfigPath)
+		if err != nil {
+			t.Fatalf("failed to create config file: %v", err)
+		}
+		f.Close()
+		fileWritten = true
+
+		// token step succeeds
+		fileWritten = false
 	}
 
-	if err := simulateDefer(true); err != nil {
-		t.Fatalf("simulateDefer(true) should not error: %v", err)
-	}
+	simulateWriteThenSucceed()
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		t.Fatal("config file should exist when success=true")
+		t.Fatal("kubeconfig.yaml should be kept when connection is created successfully")
+	}
+}
+
+// TestCreateConnectionNoCleanupOnPrereqFailure verifies that a pre-existing
+// kubeconfig.yaml is not deleted when a prerequisite check fails before any
+// file write occurs.
+func TestCreateConnectionNoCleanupOnPrereqFailure(t *testing.T) {
+	tempDir := t.TempDir()
+	configPath := filepath.Join(tempDir, "kubeconfig.yaml")
+
+	originalConfigPath := utils.ConfigPath
+	defer func() { utils.ConfigPath = originalConfigPath }()
+	utils.ConfigPath = configPath
+
+	// Create a pre-existing config file.
+	f, err := os.Create(configPath)
+	if err != nil {
+		t.Fatalf("failed to create pre-existing config file: %v", err)
+	}
+	f.Close()
+
+	// Simulate: prerequisite check fails before any write → file must be untouched.
+	simulatePrereqFail := func() {
+		fileWritten := false
+		defer func() {
+			if fileWritten {
+				_ = os.Remove(utils.ConfigPath)
+			}
+		}()
+
+		// prerequisite fails here, fileWritten never set to true
+		return //nolint:staticcheck
 	}
 
-	os.Remove(configPath)
+	simulatePrereqFail()
+
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		t.Fatal("pre-existing kubeconfig.yaml must not be deleted when prereq check fails")
+	}
 }
