@@ -45,7 +45,9 @@ func TestCreateConnectionCleanupOnTokenFailure(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to create config file: %v", err)
 		}
-		f.Close()
+		if err := f.Close(); err != nil {
+			t.Fatalf("failed to close config file: %v", err)
+		}
 		fileWritten = true
 
 		// token step fails — fileWritten stays true, defer removes the file
@@ -81,7 +83,9 @@ func TestCreateConnectionNoCleanupOnSuccess(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to create config file: %v", err)
 		}
-		f.Close()
+		if err := f.Close(); err != nil {
+			t.Fatalf("failed to close config file: %v", err)
+		}
 		fileWritten = true
 
 		// token step succeeds
@@ -111,7 +115,9 @@ func TestCreateConnectionNoCleanupOnPrereqFailure(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create pre-existing config file: %v", err)
 	}
-	f.Close()
+	if err := f.Close(); err != nil {
+		t.Fatalf("failed to close pre-existing config file: %v", err)
+	}
 
 	// Simulate: prerequisite check fails before any write → file must be untouched.
 	simulatePrereqFail := func() {
