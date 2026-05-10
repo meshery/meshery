@@ -85,6 +85,7 @@
         let activeIndex = -1;
 
         $searchInputs.on('focus', function() {
+            activeIndex = -1;
             if (!fuse) fetchSearchIndex();
             const $this = $(this);
             const $suggestionsContainer = $this.siblings('.search-suggestions-dropdown');
@@ -124,11 +125,15 @@
                 return;
             }
 
-            const topResults = results.slice(0, 5);
-            
-            topResults.forEach((result, idx) => {
+            const filteredResults = results
+                .filter(result => {
+                    const doc = result.item;
+                    return doc.ref && doc.ref.startsWith("/") && !doc.ref.includes("/project/releases/");
+                })
+                .slice(0, 5);
+
+            filteredResults.forEach((result, idx) => {
                 const doc = result.item;
-                if (!doc.ref.startsWith("/") || doc.ref.includes("/project/releases/")) return;
 
                 const titleHtml = highlightMatches(doc.title, result.matches, 'title');
                 
