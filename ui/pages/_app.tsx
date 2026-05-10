@@ -76,7 +76,7 @@ import { useThemePreference } from '@/themes/hooks';
 import { CssBaseline, NoSsr, SistentThemeProvider } from '@/theme';
 import { ErrorBoundary } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
-import CustomErrorFallback from '@/components/General/ErrorBoundary';
+import CustomErrorFallback from '@/components/shared/ErrorBoundary/ErrorBoundary';
 import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
 import {
   StyledAppContent,

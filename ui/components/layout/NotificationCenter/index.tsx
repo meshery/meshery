@@ -64,7 +64,7 @@ import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorBoundary } from '@sistent/sistent';
-import CustomErrorFallback from '../../General/ErrorBoundary';
+import CustomErrorFallback from '../../shared/ErrorBoundary/ErrorBoundary';
 
 export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,

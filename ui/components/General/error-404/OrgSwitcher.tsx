@@ -14,7 +14,7 @@ import {
   CustomDownIcon,
 } from './styles';
 import { useGetCurrentAbilities } from 'rtk-query/ability';
-import CustomErrorFallback from '../ErrorBoundary';
+import CustomErrorFallback from '../../shared/ErrorBoundary/ErrorBoundary';
 import { useTheme } from '@sistent/sistent';
 import { useDispatch, useSelector } from 'react-redux';
 import { setKeys, setOrganization } from '@/store/slices/mesheryUi';

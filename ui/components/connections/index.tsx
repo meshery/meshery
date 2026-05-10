@@ -10,7 +10,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
-import CustomErrorFallback from '../General/ErrorBoundary';
+import CustomErrorFallback from '../shared/ErrorBoundary/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';
 import { useRouter } from 'next/router';
 
