@@ -201,7 +201,7 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 
 	// If not token is provided then make a simple GET request
 	if token == "" {
-		c := &http.Client{}
+		c := &http.Client{Timeout: 60 * time.Second}
 
 		const maxRetries = 10
 		for i := 0; i < maxRetries; i++ {
