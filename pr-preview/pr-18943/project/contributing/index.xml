@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Contributing on Documentation</title><link>/project/contributing/</link><description>Recent content in Contributing on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/project/contributing/index.xml" rel="self" type="application/rss+xml"/><item><title>Build &amp; Release (CI)</title><link>/project/contributing/build-and-release/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/build-and-release/</guid><description>&lt;p&gt;Meshery’s build and release system incorporates many tools, organized into different workflows each triggered by different events. Meshery’s build and release system does not run on a schedule, but is event-driven. GitHub Actions are used to define Meshery’s CI workflows. New builds of Meshery and its various components are automatically generated upon push, release, and other similar events, typically in relation to their respective master branches.&lt;/p&gt;
+&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Meshery Test Documents&lt;/div&gt;
+&lt;p&gt;The Meshery Test Strategy (&lt;a href='https://docs.google.com/document/d/11nAxYtz2SUusCYZ0JeNRrOLIxkgmmbUVWz63MBZV2oE/edit'&gt;1&lt;/a&gt;,&lt;a href='https://docs.google.com/document/d/14vbwnKafqxrr-cJOmLWEvvj75MFrxFKiUdfPwZRhg64/edit'&gt;2&lt;/a&gt;) is a comprehensive document that outlines the approach to testing, types of tests, frameworks used - test strategy - for each of Meshery&amp;rsquo;s architectural components. The &lt;a href='https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit'&gt;Meshery Test Plan&lt;/a&gt; is a tactical spreadsheet that &lt;em&gt;itemizes&lt;/em&gt; specific integration and end-to-end test cases and tracks their status. It includes a list of GitHub workflows and their purpose. Join the &lt;a href='https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#'&gt;Meshery CI meeting&lt;/a&gt; and/or the &lt;a href='https://meshery.io/subscribe'&gt;developers mailing list&lt;/a&gt; to get involved. &lt;/div&gt;&lt;/p&gt;</description></item><item><title>Contributing to Meshery Adapters</title><link>/project/contributing/contributing-adapters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-adapters/</guid><description>&lt;p&gt;Meshery Adapters are the Extension Points in Meshery&amp;rsquo;s architecture. Their design, the process of creating a new adapter is documented in &lt;a href="../../extensibility/adapters"&gt;Extensibility: Meshery Adapters&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;With the &lt;a href="https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#adapter"&gt;CONTRIBUTING.md&lt;/a&gt; in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’ in their name. The actions are parameterized using secrets (see Build &amp;amp; Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured.&lt;/p&gt;</description></item><item><title>Contributing to Meshery CLI</title><link>/project/contributing/contributing-cli/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-cli/</guid><description>&lt;p&gt;&lt;code&gt;mesheryctl&lt;/code&gt; is written in Golang or the Go Programming Language. For development use &lt;a href="https://go.dev/dl/"&gt;Go version 1.25+&lt;/a&gt;. &lt;code&gt;mesheryctl&lt;/code&gt; uses the &lt;a href="https://github.com/spf13/cobra"&gt;Cobra&lt;/a&gt; framework. A good first-step towards contributing to &lt;code&gt;mesheryctl&lt;/code&gt; would be to familiarize yourself with the &lt;a href="https://github.com/spf13/cobra#concepts"&gt;Cobra concepts&lt;/a&gt;. For manipulating config files, &lt;code&gt;mesheryctl&lt;/code&gt; uses &lt;a href="https://github.com/spf13/viper"&gt;Viper&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Meshery CLI Reference Documents&lt;/div&gt;
+&lt;ul&gt;&lt;li&gt;&lt;a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0"&gt;Meshery Command Tracker&lt;/a&gt;: Status of mesheryctl command implementation and platform compatibility.&lt;/li&gt;
+ &lt;li&gt;&lt;a href="https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#"&gt;Meshery CLI Commands and Documentation&lt;/a&gt;: Detailed documentation of the `mesheryctl` commands.&lt;/li&gt;
+ &lt;li&gt;&lt;a href="https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=1907616946#gid=1907616946"&gt;Meshery Test Plan&lt;/a&gt;: Test cases for end-to-end testing of Meshery functionality.&lt;/li&gt;
+	&lt;li&gt;&lt;a href="https://github.com/meshery/meshery/labels/component%2Fmesheryctl"&gt;mesheryctl open issues and pull requests&lt;/a&gt;: Matching the "component/mesheryctl" label.&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+&lt;h3 id="designing-commands"&gt;
+	Designing Commands
+&lt;/h3&gt;
+&lt;p&gt;The &lt;a href="../../project/contributing/contributing-cli-guide/"&gt;Meshery CLI Style Guide&lt;/a&gt; outlines the process by which new commands are designed and contains a collection of principles and conventions that need to be followed while designing &lt;code&gt;mesheryctl&lt;/code&gt; commands. &lt;code&gt;mesheryctl&lt;/code&gt; might be the interface that the users first have with Meshery. As such, &lt;code&gt;mesheryctl&lt;/code&gt; needs to provide a great UX.&lt;/p&gt;</description></item><item><title>Contributing to Meshery CLI End-to-End Tests</title><link>/project/contributing/contributing-cli-tests/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-cli-tests/</guid><description>&lt;p&gt;Meshery CLI is the command line interface for Meshery. Meshery CLI, otherwise known as &lt;code&gt;mesheryctl&lt;/code&gt;, is a client of Meshery Server&amp;rsquo;s &lt;a href="../../extensibility/api"&gt;REST API&lt;/a&gt;. It provides a way to interact with Meshery and perform various operations such as installing, configuring, and managing cloud native infrastructure.&lt;/p&gt;
+&lt;p&gt;This document is intended to help you contribute to the end-to-end tests for &lt;code&gt;mesheryctl&lt;/code&gt;, the Meshery CLI. It is designed to be a guide for developers who are new to the project and want to contribute to the testing of &lt;code&gt;mesheryctl&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Docker Extension</title><link>/project/contributing/contributing-docker-extension/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-docker-extension/</guid><description>&lt;h2 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h2&gt;
+&lt;p&gt;To start contributing to Meshery Docker Extension, make sure you have &lt;a href="https://docs.docker.com/get-docker/"&gt;Docker&lt;/a&gt; installed on your system.&lt;/p&gt;
+&lt;h3 id="docker-extension-for-meshery"&gt;
+	Docker Extension for Meshery
+&lt;/h3&gt;
+&lt;p&gt;The Docker Extension for Meshery extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure. The extension provides a seamless experience for developers to manage and monitor their Kubernetes applications and services.&lt;/p&gt;
+&lt;h4 id="using-docker-desktop"&gt;
+	Using Docker Desktop
+&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Navigate to the Extensions Marketplace of Docker Desktop.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Docs</title><link>/project/contributing/contributing-docs/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-docs/</guid><description>&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Important&lt;/div&gt;
+&lt;p&gt;Before contributing, please review the &lt;a href="https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow"&gt;Documentation Contribution Flow&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally. You can then make changes, test locally, sign-off and commit, and push the changes made for review.&lt;/p&gt;
+&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Meshery Documentation Design Specification&lt;/div&gt;
+&lt;p&gt;See the &lt;a href="https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit"&gt;Meshery Documentation Design Specification&lt;/a&gt; which serves to provide an overview of the tooling and approach used to create Meshery&amp;rsquo;s documentation and its information architecture.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Policies</title><link>/project/contributing/contributing-policies/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-policies/</guid><description>&lt;h2 id="background"&gt;
+	Background
+&lt;/h2&gt;
+&lt;p&gt;Meshery has a built-in policy engine, based on &lt;a href="https://www.openpolicyagent.org/docs/latest/"&gt;Open Policy Agent (OPA)&lt;/a&gt;. Meshery uses the &lt;a href="https://www.openpolicyagent.org/docs/latest/policy-language/"&gt;Rego&lt;/a&gt; query language to create these &lt;a href="https://docs.meshery.io/concepts/logical/policies"&gt;policies&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h2&gt;
+&lt;p&gt;To start contributing to Meshery Policy Engine, make sure you have &lt;a href="https://www.openpolicyagent.org/docs/latest/#running-opa"&gt;OPA CLI&lt;/a&gt; installed on your system. You will also need to clone the &lt;a href="https://github.com/meshery/meshery/"&gt;Meshery Server&lt;/a&gt; project from Github.&lt;/p&gt;
+&lt;h2 id="components-of-meshery-policy-engine"&gt;
+	Components of Meshery Policy Engine
+&lt;/h2&gt;
+&lt;p&gt;Rego policies are the declarative logic behind the policy engine. These policies define how the underlying engine understands relationships within Meshery Designs. Rego policies can be found &lt;a href="https://github.com/meshery/meshery/tree/master/server/meshmodel/meshery-core/0.7.2/v1.0.0/policies"&gt;here&lt;/a&gt; in the Meshery Github repository.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Schemas</title><link>/project/contributing/contributing-schemas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-schemas/</guid><description>&lt;p&gt;This comprehensive guide covers everything you need to know to contribute to the Meshery Schemas repository. Meshery follows &lt;strong&gt;Schema-Driven Development (SDD)&lt;/strong&gt;, where the structure of data is centrally defined using schemas that power consistency, validation, and code generation across the platform.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="table-of-contents"&gt;
+	Table of Contents
+&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#overview"&gt;Overview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#prerequisites"&gt;Prerequisites&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#quick-start"&gt;Quick Start&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#schema-directory-structure"&gt;Schema Directory Structure&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#understanding-apiyml---the-construct-index-file"&gt;Understanding &lt;code&gt;api.yml&lt;/code&gt; - The Construct Index File&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#schema-file-roles"&gt;Schema File Roles&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#naming-conventions"&gt;Naming Conventions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#adding-a-new-schema"&gt;Adding a New Schema&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#modifying-existing-schemas"&gt;Modifying Existing Schemas&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#code-generation"&gt;Code Generation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#vendor-extensions-x--annotations"&gt;Vendor Extensions (&lt;code&gt;x-*&lt;/code&gt; Annotations)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#go-helper-files"&gt;Go Helper Files&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#typescript-integration"&gt;TypeScript Integration&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#common-schema-patterns"&gt;Common Schema Patterns&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#template-files"&gt;Template Files&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#what-not-to-commit"&gt;What NOT to Commit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#testing-your-changes"&gt;Testing Your Changes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#common-mistakes-to-avoid"&gt;Common Mistakes to Avoid&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#checklist-for-schema-changes"&gt;Checklist for Schema Changes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-schemas/#getting-help"&gt;Getting Help&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="overview"&gt;
+	Overview
+&lt;/h2&gt;
+&lt;p&gt;Meshery schemas offer a powerful system designed for:&lt;/p&gt;</description></item><item><title>Contributing to Meshery Server</title><link>/project/contributing/contributing-server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-server/</guid><description>&lt;p&gt;As a new contributor, you’re going to want to familiarize with the project in order to resolve the issues in the best way. Installing and playing around with Meshery will give you context for any issues that you might work on.&lt;/p&gt;
+&lt;p&gt;Once an issue has been addressed, you’ll need to test it as well. Ideally, these tests are run from the user’s perspective (someone running Meshery in a container), not from a contributor’s perspective (someone running Meshery as a locally-compiled service).&lt;/p&gt;</description></item><item><title>Contributing to Meshery Server Events</title><link>/project/contributing/contributing-server-events/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-server-events/</guid><description>&lt;p&gt;Meshery incorporates an internal events publication mechanism that provides users with real-time updates on the processes occurring within the Meshery server when interacting with its endpoints. It ensures that users are kept in the loop regarding the ongoing activities within the API, and guides users towards future steps to resolve issues. This guide will provide step-by-step instructions on sending events from the server, including when to trigger events and what information to include.&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI</title><link>/project/contributing/contributing-ui/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui/</guid><description>&lt;h2 id="ui-contribution-flow"&gt;
+	&lt;a name="contributing-ui"&gt;UI Contribution Flow&lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;Meshery UI is built on React and Next.js. In nearly all cases, while contributing to Meshery UI, you will need to build and run Meshery Server as well. Meshery Server is written in &lt;code&gt;Go&lt;/code&gt; (Golang) and leverages Go Modules. To make building of each component easier a &lt;code&gt;Makefile&lt;/code&gt; is included in the main repository folder. Use &lt;code&gt;make&lt;/code&gt; to build any and all components.&lt;/p&gt;
+&lt;h2 id="architecture"&gt;
+	Architecture
+&lt;/h2&gt;
+&lt;p&gt;The following is a list of top-level frameworks, libraries, design system used in Meshery UI.&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI - Dashboard Widgets</title><link>/project/contributing/contributing-ui-widgets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-widgets/</guid><description>&lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisite Reading&lt;/strong&gt;&lt;/p&gt;
+ &lt;ol&gt;&lt;li&gt;&lt;a href="contributing-ui"&gt;Contributing to Meshery UI&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;
+&lt;/div&gt;
+&lt;p&gt;Meshery&amp;rsquo;s dashboard is a composable and extensible interface made up of individual widgets. These widgets allow contributors to surface specific Meshery data or capabilities within a modular layout system.&lt;/p&gt;
+&lt;p&gt;This guide walks through the process of creating and integrating a custom widget into the &lt;a href="https://playground.meshery.io/"&gt;Meshery dashboard&lt;/a&gt;. You’ll learn about layout configuration, design best practices, and how to register new widgets.&lt;/p&gt;
+&lt;h2 id="1-widget-architecture"&gt;
+	1. Widget Architecture
+&lt;/h2&gt;
+&lt;p&gt;Widgets are React components located &lt;a href="https://github.com/meshery/meshery/tree/master/ui/components/Dashboard/widgets"&gt;here&lt;/a&gt;:&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI - Notification Center</title><link>/project/contributing/contributing-ui-notification-center/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-notification-center/</guid><description>&lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisite Reading&lt;/strong&gt;&lt;/p&gt;
+ &lt;ol&gt;&lt;li&gt;&lt;a href="contributing-ui"&gt;Contributing to Meshery UI&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;
+&lt;/div&gt;
+&lt;h2 id="table-of-contents"&gt;
+	Table of Contents
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-ui-notification-center/#what-is-the-notification-center"&gt;What is the Notification Center?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-ui-notification-center/#metadata-formatter"&gt;Metadata Formatter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-ui-notification-center/#how-notification-metadata-is-rendered"&gt;How Notification Metadata is Rendered&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-ui-notification-center/#types-of-event-specific-notification-formatters"&gt;Types of Event Specific Notification Formatters&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-ui-notification-center/#common-formatter"&gt;Common Formatter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-ui-notification-center/#error-formatter"&gt;Error Formatter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-ui-notification-center/#model-registration-formatter"&gt;Model Registration Formatter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-ui-notification-center/#relationship-evaluation-formatter"&gt;Relationship Evaluation Formatter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-ui-notification-center/#dry-run-formatter"&gt;Dry Run Formatter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-ui-notification-center/#deployment-summary-formatter"&gt;Deployment Summary Formatter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="../../project/contributing/contributing-ui-notification-center/#propertyformatters-and-propertylinkformatters"&gt;PropertyFormatters and PropertyLinkFormatters&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;video style="width:min(100%,750px)" height="auto" autoplay muted loop&gt;
+ &lt;source src="https://github.com/meshery/meshery/assets/65964225/345672de-3f61-4be0-b3c8-0e7480cc496c" type="video/mp4"&gt;
+ Your browser does not support the video tag
+&lt;/video&gt;
+&lt;h2 id="what-is-the-notification-center"&gt;
+	What is the Notification Center?
+&lt;/h2&gt;
+&lt;p&gt;The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI - Sistent</title><link>/project/contributing/contributing-ui-sistent/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-sistent/</guid><description>&lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisite Reading&lt;/strong&gt;&lt;/p&gt;
+ &lt;ol&gt;&lt;li&gt;&lt;a href="contributing-ui"&gt;Contributing to Meshery UI&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;
+&lt;/div&gt;
+&lt;h2 id="contributing-to-meshery-ui---sistent"&gt;
+	&lt;a name="contributing-ui-sistent"&gt;Contributing to Meshery UI - Sistent&lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;Sistent&lt;/code&gt; is the design system used by Meshery UI. Sistent is an open source design system that offers building blocks to create consistent, accessible, and user-friendly interfaces. It&amp;rsquo;s aimed at developers who want to design applications aligned with the same brand and ensure a uniform user experience across different products.&lt;/p&gt;
+&lt;p&gt;Sistent leverages Material UI libraries and provides a custom theme on top of it for a consistent look and feel. It includes components, icons, and design tokens that developers can readily integrate into their applications. By using Sistent, developers can save time and effort while maintaining a high-quality user experience throughout Meshery.&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI End-to-End Tests</title><link>/project/contributing/contributing-ui-tests/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-tests/</guid><description>&lt;p&gt;To automate functional integration and end-to-end testing Meshery uses &lt;a href="https://playwright.dev/"&gt;Playwright&lt;/a&gt; as one of the tools to automate browser testing. End-to-end tests run with each pull request to ensure that the changes do not break the existing functionality.&lt;/p&gt;
+&lt;h2 id="prerequisites"&gt;
+	Prerequisites:
+&lt;/h2&gt;
+&lt;p&gt;Before diving into Meshery&amp;rsquo;s testing environment, certain prerequisites are necessary:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A verified account in your chosen provider which integrate with Meshery.&lt;/li&gt;
+&lt;li&gt;A compatible browser such as Chromium, Chrome, or Firefox.&lt;/li&gt;
+&lt;li&gt;Installations of Golang, NodeJS, and Makefiles for Native OS build (Optional for docker based build).&lt;/li&gt;
+&lt;li&gt;Kubernetes clusters (Required for connection to Kubernetes test cases)&lt;/li&gt;
+&lt;li&gt;Already have &lt;a href="https://docs.meshery.io/concepts/architecture/adapters"&gt;Meshery Adapters&lt;/a&gt; up and running (Required for adapters test cases)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="setting-up-environment-variable"&gt;
+	Setting up environment variable
+&lt;/h2&gt;
+&lt;p&gt;To run the tests successfully, three environment variables must be configured:&lt;br&gt;
+• &lt;code&gt;REMOTE_PROVIDER_USER_EMAIL&lt;/code&gt; (Required): The email associated with your account within your provider.&lt;br&gt;
+• &lt;code&gt;REMOTE_PROVIDER_USER_PASSWORD&lt;/code&gt; (Required): The password associated with your account within your provider.&lt;br&gt;
+• &lt;code&gt;PROVIDER_TOKEN&lt;/code&gt; (Optional): Your provider token, can be generated from an account registered within your provider&lt;/p&gt;</description></item><item><title>Contributing to Meshery using git</title><link>/project/contributing/contributing-gitflow/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-gitflow/</guid><description>&lt;h1 id="working-by-forking"&gt;
+	Working by Forking
+&lt;/h1&gt;
+&lt;p&gt;Just head over to the GitHub page and click the &amp;ldquo;Fork&amp;rdquo; button. It&amp;rsquo;s just that simple. Once you&amp;rsquo;ve done that, you can use your favorite git client to clone your repo or just head straight to the command line:&lt;/p&gt;
+&lt;h2 id="clone-your-fork-to-your-local-machine"&gt;
+	Clone your fork to your local machine
+&lt;/h2&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;git clone git@github.com:USERNAME/FORKED-PROJECT.git
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Keeping Your Fork Up to Date
+While this isn&amp;rsquo;t a necessary step, if you plan on doing anything more than just a tiny quick fix, you&amp;rsquo;ll want to make sure you keep your fork up to date by tracking the original &amp;ldquo;upstream&amp;rdquo; repo that you forked. To do this, you&amp;rsquo;ll need to add a remote:&lt;/p&gt;</description></item><item><title>Contributing to Model Components</title><link>/project/contributing/contributing-components/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-components/</guid><description>&lt;p&gt;&lt;strong&gt;Components are defined by schemas.&lt;/strong&gt; Each component&amp;rsquo;s structure, capabilities, and metadata follow the &lt;a href="https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/component"&gt;Component schema&lt;/a&gt; in &lt;code&gt;meshery/schemas&lt;/code&gt;. When creating or modifying components, ensure they conform to the schema specification. See &lt;a href="../../project/contributing/contributing-schemas/"&gt;Contributing to Schemas&lt;/a&gt; for details.&lt;/p&gt;
+&lt;p&gt;In Meshery, a &lt;a href="../../concepts/logical/components/"&gt;Components&lt;/a&gt; is a fundamental building block used to represent and define the infrastructure under management. Each component provides granular and specific support for your infrastructure and applications. Once registered with Meshery Server (in the &lt;a href="../../concepts/logical/registry/"&gt;Registry&lt;/a&gt;), components are available for inclusion in &lt;a href="../../concepts/logical/designs/"&gt;Designs&lt;/a&gt; that you create. Components can be created and published by anyone, allowing you to share you custom extensions with the community.&lt;/p&gt;</description></item><item><title>Contributing to Model Relationships</title><link>/project/contributing/contributing-relationships/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-relationships/</guid><description>&lt;p&gt;&lt;strong&gt;Relationships follow a schema-defined structure.&lt;/strong&gt; The &lt;a href="https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship"&gt;Relationship schema&lt;/a&gt; specifies how relationships between components are expressed. Refer to the schema when defining new relationship types or selectors. See &lt;a href="../../project/contributing/contributing-schemas/"&gt;Contributing to Schemas&lt;/a&gt; for details.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../concepts/logical/relationships/"&gt;Relationships&lt;/a&gt; within &lt;a href="../../concepts/logical/models/"&gt;Models&lt;/a&gt; play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected &lt;a href="../../concepts/logical/components/"&gt;Components&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="overview-of-steps-to-create-relationships"&gt;
+	Overview of Steps to Create Relationships
+&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Prework:&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>Contributing to Models</title><link>/project/contributing/contributing-models/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-models/</guid><description>&lt;p&gt;&lt;strong&gt;Meshery Models are schema-driven.&lt;/strong&gt; Model definitions, including their structure, metadata, and versioning, are defined by JSON Schemas in the &lt;a href="https://github.com/meshery/schemas"&gt;&lt;code&gt;meshery/schemas&lt;/code&gt;&lt;/a&gt; repository. Before contributing to models, familiarize yourself with the &lt;a href="https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model"&gt;Model schema&lt;/a&gt; and see &lt;a href="../../project/contributing/contributing-schemas/"&gt;Contributing to Schemas&lt;/a&gt; for the development workflow.&lt;/p&gt;
+&lt;h2 id="understanding-the-internals-of-mesherys-logical-object-model"&gt;
+	Understanding the internals of Meshery&amp;rsquo;s logical object model
+&lt;/h2&gt;
+&lt;p&gt;Meshery uses a logical object model to describe the infrastructure and capabilities it manages in a consistent and extensible way.&lt;/p&gt;
+&lt;h4 id="what-are-meshery-models"&gt;
+	What Are Meshery Models?
+&lt;/h4&gt;
+&lt;p&gt;At the core of this system are &lt;strong&gt;Meshery Models&lt;/strong&gt; — packages that define a specific type of infrastructure, application, or capability. These models include:&lt;/p&gt;</description></item><item><title>Contributing to Models Quick Start</title><link>/project/contributing/contributing-models-quick-start/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-models-quick-start/</guid><description>&lt;p&gt;&lt;strong&gt;Models follow Meshery&amp;rsquo;s schema-driven development approach.&lt;/strong&gt; Model, Component, and Relationship definitions are validated against schemas in &lt;a href="https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model"&gt;&lt;code&gt;Model schema&lt;/code&gt;&lt;/a&gt;. See &lt;a href="../../project/contributing/contributing-schemas/"&gt;Contributing to Schemas&lt;/a&gt; for details.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../concepts/logical/models/"&gt;Meshery Models&lt;/a&gt; are a way to represent the architecture of a system or application. Models are defined in JSON and can be used to visualize the components and relationships between them. This guide will walk you through the process of creating a new model.&lt;/p&gt;
+&lt;p&gt;&lt;a href="../../concepts/logical/components/"&gt;Meshery Components&lt;/a&gt; are the building blocks of a model. Each component represents a different part of the system or application. Components can be anything from a database to a microservice to a server. Relationships define how components interact with each other. For example, a database component might have a relationship with a microservice component that represents the microservice&amp;rsquo;s dependency on the database.&lt;/p&gt;</description></item><item><title>End-to-End Test Status</title><link>/project/contributing/test-status/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/test-status/</guid><description>&lt;p&gt;This page contains results of tests performed in the development of Meshery.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Resources:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;See &lt;a href="../../project/contributing/contributing-ui-tests/"&gt;Contributing to Meshery&amp;rsquo;s End-to-End Tests&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;See the &lt;a href="https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=0#gid=0"&gt;Meshery Test Plan&lt;/a&gt; for a list of test cases.&lt;/li&gt;
+&lt;li&gt;See the &lt;a href="../../installation/compatibility-matrix/"&gt;Compatibility Matrix&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;style&gt;
+/* General Table Styling */
+table {
+ width: 100%;
+ border-collapse: collapse;
+}
+
+th, td {
+ border: 1px solid #333;
+ padding: 8px;
+ text-align: left;
+}
+
+.accordion-header {
+ cursor: pointer;
+ background-color: #444;
+ color: white;
+ font-weight: normal;
+ text-align: center;
+ font-size: 1rem;
+}
+
+.accordion-header:hover {
+ background-color: #666;
+}
+
+.accordion-content {
+ display: none;
+ background-color: #222;
+}
+
+.accordion-content table {
+ margin: 0;
+ background-color: #333;
+}
+
+.accordion-content td {
+ color: white;
+ padding: 5px 10px;
+}
+&lt;/style&gt;
+&lt;h2 id="latest-e2e-test-report"&gt;
+	Latest E2E Test Report
+&lt;/h2&gt;
+&lt;p&gt;&lt;a href="https://github.com/meshery/meshery/actions/workflows/build-ui-and-server.yml?query=branch%3Amaster"&gt;🔗 View Build UI and Server Workflow&lt;/a&gt;&lt;/p&gt;</description></item><item><title>How to write MeshKit compatible errors</title><link>/project/contributing/contributing-error/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-error/</guid><description>&lt;p&gt;Meshery pervasively uses MeshKit as a golang and infrastructure management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes.&lt;/p&gt;
+&lt;p&gt;To help with creating error codes, MeshKit contains a tool that analyzes, verifies and updates error codes in Meshery source code trees. It extracts error details into a file that can be used for publishing all error code references on the Meshery &lt;a href="../../reference/error-codes/"&gt;error codes reference page&lt;/a&gt;. The objective to create this was to avoid centralized handling of error codes and automating everything&lt;/p&gt;</description></item><item><title>HTTP Error Response Contract</title><link>/project/contributing/error-contract/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/error-contract/</guid><description>&lt;h1 id="http-error-response-contract"&gt;
+	HTTP Error Response Contract
+&lt;/h1&gt;
+&lt;p&gt;Every non-2xx HTTP response from Meshery Server carries a JSON body with
+&lt;code&gt;Content-Type: application/json; charset=utf-8&lt;/code&gt;. Clients should parse the body
+as JSON before surfacing errors to users.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Migration status:&lt;/strong&gt; the JSON contract is enforced across the &lt;code&gt;./server&lt;/code&gt;
+Go module by a &lt;code&gt;forbidigo&lt;/code&gt; lint rule that blocks any new &lt;code&gt;http.Error&lt;/code&gt; call
+at CI time, configured in
+&lt;a href="https://github.com/meshery/meshery/blob/master/.github/.golangci.yml"&gt;&lt;code&gt;.github/.golangci.yml&lt;/code&gt;&lt;/a&gt;.
+The migration landed in PR
+&lt;a href="https://github.com/meshery/meshery/pull/18919"&gt;#18919&lt;/a&gt; and the lint guard
+was flipped from advisory to fully blocking in PR
+&lt;a href="https://github.com/meshery/meshery/pull/18927"&gt;#18927&lt;/a&gt;. Legitimate
+non-JSON responders are handled in one of three ways: a file-level allowlist
+in &lt;code&gt;.github/.golangci.yml&lt;/code&gt; for the Kubernetes healthz probe handler
+(&lt;code&gt;k8s_healthz_handler.go&lt;/code&gt;) and the static-asset UI handler
+(&lt;code&gt;ui_handler.go&lt;/code&gt;); SSE stream handlers (&lt;code&gt;events_streamer.go&lt;/code&gt;,
+&lt;code&gt;load_test_handler.go&lt;/code&gt;) that don&amp;rsquo;t call &lt;code&gt;http.Error&lt;/code&gt; at all (they emit
+error events through the active SSE writer instead); and binary/tar/YAML
+downloads and HTTP redirects, which use &lt;code&gt;w.Write&lt;/code&gt; or &lt;code&gt;http.Redirect&lt;/code&gt;
+rather than &lt;code&gt;http.Error&lt;/code&gt; and so are not governed by the lint rule.&lt;/p&gt;</description></item><item><title>Meshery CLI Style Guide</title><link>/project/contributing/contributing-cli-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-cli-guide/</guid><description>&lt;p&gt;These guidelines are a collection of principles and conventions that need to be followed while designing mesheryctl commands.&lt;/p&gt;
+&lt;h2 id="design-principles"&gt;
+	Design Principles
+&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;1. Consistency is quality.&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Consistency of interaction drives a quality user experience. Whether that experience is delightful or painful is a related, but separate consideration. Meshery&amp;rsquo;s behavior of user interactions should be consistent even when their user experience is poor.&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Consistency is key when designing intuitive interfaces. Although &lt;code&gt;mesheryctl perf run -f &amp;lt;performance profile name&amp;gt;&lt;/code&gt; may sound more intuitive, users who are experienced in using the CLI will prefer the consistent verb &lt;code&gt;apply&lt;/code&gt; over &lt;code&gt;run&lt;/code&gt;. This will also ensure a consistent command language making memorizing easier. Consistency should also be enforced when chaining commands and using flags.&lt;/p&gt;</description></item><item><title>Meshery Documentation Structure and Organization</title><link>/project/contributing/contributing-docs-structure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-docs-structure/</guid><description>&lt;p&gt;Providing well-structured, easy-to-navigate documentation tailored for a diverse audience—from beginners to experts.&lt;/p&gt;
+&lt;h2 id="target-audience"&gt;
+	Target Audience
+&lt;/h2&gt;
+&lt;p&gt;We first identify &lt;strong&gt;who&lt;/strong&gt; this documentation serves before diving into how it’s organized. By clarifying different user personas, we can better direct them to relevant sections:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Users&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;New Users&lt;/strong&gt;: Individuals just getting started with Meshery, needing a straightforward, guided setup.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Advanced Users&lt;/strong&gt;: Those who already have some experience and want deeper insights or specialized use cases.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Contributors &amp;amp; System Integrators&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>Schema-Driven UI Development in Meshery</title><link>/project/contributing/contributing-ui-schemas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-schemas/</guid><description>&lt;p&gt;Meshery aims to decouple the UI logic from hardcoded structures and become fully schema-driven. This allows the UI to dynamically adapt based on changes in the underlying schema without requiring constant manual updates. This document explains how to integrate schema definitions from the &lt;a href="https://github.com/meshery/schemas"&gt;&lt;code&gt;meshery/schemas&lt;/code&gt;&lt;/a&gt; repository into the Meshery UI using a code-generation approach.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="overview"&gt;
+	Overview
+&lt;/h2&gt;
+&lt;p&gt;Meshery’s schemas define the &lt;strong&gt;structure of data (constructs)&lt;/strong&gt; using JSON Schema and &lt;strong&gt;their behavior (API operations)&lt;/strong&gt; using OpenAPI specifications. From these definitions, Meshery auto-generates:&lt;/p&gt;</description></item><item><title>Setting up Meshery Development Environment on Windows</title><link>/project/contributing/meshery-windows/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/meshery-windows/</guid><description>&lt;p&gt;You can use one of the following three approaches to setup a Meshery development environment in Windows:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Using WSL or WSL2 (Recommended)&lt;/li&gt;
+&lt;li&gt;Natively (directly) on Windows&lt;/li&gt;
+&lt;li&gt;Using Hyper-V to create a Linux VM&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Setting up a Meshery development environment on WSL(2) or Hyper-V is not much different from setting up on a native Linux platform. The same instructions can be followed as already documented.&lt;/p&gt;
+&lt;p&gt;All three methods require the same prerequisites mentioned below in the &lt;a href="../../project/contributing/meshery-windows/#prerequisites"&gt;Prerequisites&lt;/a&gt; section but the Linux-based methods/platforms come with some of the prerequisites pre-installed and have no issues with Linux style commands making it easier to setup the environment.&lt;/p&gt;</description></item></channel></rss>
