@@ -12,23 +12,13 @@ import (
 )
 
 func TestGetLatestVersionForMesheryctl(t *testing.T) {
-	originalURL := latestVersionURL
-	originalClient := latestVersionHTTPClient
-	t.Cleanup(func() {
-		latestVersionURL = originalURL
-		latestVersionHTTPClient = originalClient
-	})
-
 	t.Run("returns latest version from server", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			_, _ = fmt.Fprint(w, "v1.2.3\n")
 		}))
 		defer server.Close()
 
-		latestVersionURL = server.URL
-		latestVersionHTTPClient = server.Client()
-
-		got, err := GetLatestVersionForMesheryctl()
+		got, err := getLatestVersionForMesheryctl(server.URL, server.Client())
 		require.NoError(t, err)
 		assert.Equal(t, "v1.2.3", got)
 	})
@@ -40,11 +30,19 @@ func TestGetLatestVersionForMesheryctl(t *testing.T) {
 		}))
 		defer server.Close()
 
-		latestVersionURL = server.URL
-		latestVersionHTTPClient = &http.Client{Timeout: 1 * time.Millisecond}
-
-		got, err := GetLatestVersionForMesheryctl()
+		got, err := getLatestVersionForMesheryctl(server.URL, &http.Client{Timeout: 1 * time.Millisecond})
 		require.NoError(t, err)
+		assert.Empty(t, got)
+	})
+
+	t.Run("returns error for non-200 status code", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusBadGateway)
+		}))
+		defer server.Close()
+
+		got, err := getLatestVersionForMesheryctl(server.URL, server.Client())
+		require.Error(t, err)
 		assert.Empty(t, got)
 	})
 }

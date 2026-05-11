@@ -11,25 +11,30 @@ import (
 	"time"
 )
 
-var latestVersionURL = "https://docs.meshery.io/project/releases/latest"
-
-var latestVersionHTTPClient = &http.Client{Timeout: 5 * time.Second}
+const latestVersionURL = "https://docs.meshery.io/project/releases/latest"
+const latestVersionHTTPTimeout = 5 * time.Second
 
 func GetLatestVersionForMesheryctl() (string, error) {
-	req, err := http.NewRequest(http.MethodGet, latestVersionURL, nil)
+	client := &http.Client{Timeout: latestVersionHTTPTimeout}
+
+	return getLatestVersionForMesheryctl(latestVersionURL, client)
+}
+
+func getLatestVersionForMesheryctl(url string, client *http.Client) (string, error) {
+	if client == nil {
+		client = &http.Client{Timeout: latestVersionHTTPTimeout}
+	}
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
 		return "", err
 	}
 
-	resp, err := latestVersionHTTPClient.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
-
 		var nerr net.Error
-		if errors.As(err, &nerr) && nerr.Timeout() {
-			return "", nil
-		}
-		if errors.Is(err, context.DeadlineExceeded) {
+		if (errors.As(err, &nerr) && nerr.Timeout()) || errors.Is(err, context.DeadlineExceeded) {
 			return "", nil
 		}
 		return "", err
@@ -37,13 +42,14 @@ func GetLatestVersionForMesheryctl() (string, error) {
 
 	defer func() { _ = resp.Body.Close() }()
 
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("unable to check for latest version of mesheryctl. unexpected status code: %d", resp.StatusCode)
+	}
+
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		var nerr net.Error
-		if errors.As(err, &nerr) && nerr.Timeout() {
-			return "", nil
-		}
-		if errors.Is(err, context.DeadlineExceeded) {
+		if (errors.As(err, &nerr) && nerr.Timeout()) || errors.Is(err, context.DeadlineExceeded) {
 			return "", nil
 		}
 		return "", err
