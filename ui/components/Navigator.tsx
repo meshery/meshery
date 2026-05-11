@@ -453,32 +453,38 @@ const Navigator_ = () => {
 
   const renderNavigatorExtensions = (children, depth) => {
     const { path } = state;
-    if (children && children.length > 0) {
-      return (
-        <NavigatorList disablePadding>
-          {children.map(({ id, icon, href, title, children, show: showc }) => {
-            if (typeof showc !== 'undefined' && !showc) {
-              return '';
-            }
-            const isActive = path === href;
-            return (
-              <React.Fragment key={id}>
-                <NavigatorListItem
-                  button
-                  depth={depth}
-                  key={id}
-                  isDrawerCollapsed={isDrawerCollapsed}
-                  isActive={isActive}
-                >
-                  {extensionPointContent(icon, href, title, isDrawerCollapsed)}
-                </NavigatorListItem>
-                {renderNavigatorExtensions(children, depth + 1)}
-              </React.Fragment>
-            );
-          })}
-        </NavigatorList>
-      );
+    if (!children || children.length === 0) {
+      return null;
     }
+
+    const extensionItems = children.map(({ id, icon, href, title, children, show: showc }) => {
+      if (typeof showc !== 'undefined' && !showc) {
+        return null;
+      }
+
+      const isActive = path === href;
+
+      return (
+        <React.Fragment key={id}>
+          <NavigatorListItem
+            button
+            depth={depth}
+            key={id}
+            isDrawerCollapsed={isDrawerCollapsed}
+            isActive={isActive}
+          >
+            {extensionPointContent(icon, href, title, isDrawerCollapsed)}
+          </NavigatorListItem>
+          {renderNavigatorExtensions(children, depth + 1)}
+        </React.Fragment>
+      );
+    });
+
+    if (depth === 1) {
+      return extensionItems;
+    }
+
+    return <NavigatorList disablePadding>{extensionItems}</NavigatorList>;
   };
 
   const extensionPointContent = (icon, href, name, drawerCollapsed) => {
