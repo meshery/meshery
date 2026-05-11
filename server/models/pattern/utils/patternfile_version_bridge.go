@@ -104,10 +104,10 @@ func ResolvedAliasesV1beta1ToV1beta2(src *map[string]legacycoremodel.ResolvedAli
 		dst[key] = coremodelv1beta2.ResolvedAlias{
 			AliasComponentId:      alias.AliasComponentId,
 			ImmediateParentId:     alias.ImmediateParentId,
-			ImmediateRefFieldPath: append([]string(nil), alias.ImmediateRefFieldPath...),
+			ImmediateRefFieldPath: alias.ImmediateRefFieldPath,
 			RelationshipId:        alias.RelationshipId,
 			ResolvedParentId:      alias.ResolvedParentId,
-			ResolvedRefFieldPath:  append([]string(nil), alias.ResolvedRefFieldPath...),
+			ResolvedRefFieldPath:  alias.ResolvedRefFieldPath,
 		}
 	}
 	return &dst
@@ -124,10 +124,10 @@ func ResolvedAliasesV1beta2ToV1beta1(src *map[string]coremodelv1beta2.ResolvedAl
 		dst[key] = legacycoremodel.ResolvedAlias{
 			AliasComponentId:      alias.AliasComponentId,
 			ImmediateParentId:     alias.ImmediateParentId,
-			ImmediateRefFieldPath: append([]string(nil), alias.ImmediateRefFieldPath...),
+			ImmediateRefFieldPath: alias.ImmediateRefFieldPath,
 			RelationshipId:        alias.RelationshipId,
 			ResolvedParentId:      alias.ResolvedParentId,
-			ResolvedRefFieldPath:  append([]string(nil), alias.ResolvedRefFieldPath...),
+			ResolvedRefFieldPath:  alias.ResolvedRefFieldPath,
 		}
 	}
 	return &dst

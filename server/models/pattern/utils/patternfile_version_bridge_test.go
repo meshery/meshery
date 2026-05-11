@@ -150,6 +150,10 @@ func TestPatternV1beta1ToV1beta3_ConvertsResolvedAliasesToCanonicalWireShape(t *
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("resolved alias = %#v, want %#v", got, want)
 	}
+	got.ImmediateRefFieldPath[0] = "configuration.spec.containers.0.image"
+	if srcGot := (*src.Metadata.ResolvedAliases)[aliasID.String()].ImmediateRefFieldPath[0]; srcGot != "configuration.spec.containers.0.image" {
+		t.Fatalf("forward conversion should preserve aliasing for resolved alias paths, got %q", srcGot)
+	}
 
 	raw, err := json.Marshal(dst.Metadata.ResolvedAliases)
 	if err != nil {
@@ -167,6 +171,10 @@ func TestPatternV1beta1ToV1beta3_ConvertsResolvedAliasesToCanonicalWireShape(t *
 	legacyGot := (*roundtripped.Metadata.ResolvedAliases)[aliasID.String()]
 	if !reflect.DeepEqual(legacyGot, legacyAliases[aliasID.String()]) {
 		t.Fatalf("round-tripped legacy alias = %#v, want %#v", legacyGot, legacyAliases[aliasID.String()])
+	}
+	legacyGot.ResolvedRefFieldPath[0] = "configuration.spec.containers.0.env"
+	if dstGot := (*dst.Metadata.ResolvedAliases)[aliasID.String()].ResolvedRefFieldPath[0]; dstGot != "configuration.spec.containers.0.env" {
+		t.Fatalf("reverse conversion should preserve aliasing for resolved alias paths, got %q", dstGot)
 	}
 }
 
