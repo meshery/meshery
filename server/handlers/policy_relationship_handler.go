@@ -16,10 +16,11 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
 	gopolicies "github.com/meshery/meshery/server/policies"
-	"github.com/meshery/schemas/models/core"
+	legacycore "github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	corev1beta2 "github.com/meshery/schemas/models/v1beta2/core"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 
@@ -43,9 +44,9 @@ const (
 const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
 
 // Aliasses Are not resolved
-func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (core.NonResolvedAlias, bool) {
+func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (corev1beta2.NonResolvedAlias, bool) {
 
-	alias := core.NonResolvedAlias{}
+	alias := corev1beta2.NonResolvedAlias{}
 
 	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS {
 		return alias, false
@@ -92,7 +93,7 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 }
 
-func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (core.NonResolvedAlias, bool) {
+func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (corev1beta2.NonResolvedAlias, bool) {
 
 	for _, relationship := range relationships {
 		alias, ok := parseRelationshipToAlias(*relationship)
@@ -105,11 +106,11 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 		}
 	}
 
-	return core.NonResolvedAlias{}, false
+	return corev1beta2.NonResolvedAlias{}, false
 }
 
 // getComponentById retrieves a component from the design by its ID
-func getComponentById(design pattern.PatternFile, id core.Uuid) *component.ComponentDefinition {
+func getComponentById(design pattern.PatternFile, id corev1beta2.Uuid) *component.ComponentDefinition {
 	for _, comp := range design.Components {
 		if comp.ID == id {
 			return comp
@@ -118,17 +119,17 @@ func getComponentById(design pattern.PatternFile, id core.Uuid) *component.Compo
 	return nil
 }
 
-func ResolveAlias(nonResolvedAlias core.NonResolvedAlias, currentNonResolved core.NonResolvedAlias, path []string, design pattern.PatternFile) core.ResolvedAlias {
+func ResolveAlias(nonResolvedAlias corev1beta2.NonResolvedAlias, currentNonResolved corev1beta2.NonResolvedAlias, path []string, design pattern.PatternFile) corev1beta2.ResolvedAlias {
 	parentComponent := getComponentById(design, currentNonResolved.ImmediateParentId)
 	if parentComponent == nil {
-		return core.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
+		return corev1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 	}
 
 	parentAlias, ok := ParseComponentToAlias(*parentComponent, design.Relationships)
 
 	if !ok {
 
-		return core.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
+		return corev1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 
 	}
 
@@ -138,9 +139,9 @@ func ResolveAlias(nonResolvedAlias core.NonResolvedAlias, currentNonResolved cor
 	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, path[1:]...), design)
 }
 
-func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.ResolvedAlias {
+func ResolveAliasesInDesign(design pattern.PatternFile) map[string]corev1beta2.ResolvedAlias {
 
-	resolvedAliases := make(map[string]core.ResolvedAlias)
+	resolvedAliases := make(map[string]corev1beta2.ResolvedAlias)
 
 	for _, relationship := range design.Relationships {
 		nonResolvedalias, ok := parseRelationshipToAlias(*relationship)
@@ -156,7 +157,7 @@ func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.Resolved
 
 // mergeTraceUnique appends trace entries from src into dst, skipping duplicates by ID.
 func mergeTraceUnique(dst, src *pattern.Trace) {
-	compSeen := make(map[core.Uuid]bool)
+	compSeen := make(map[corev1beta2.Uuid]bool)
 	for _, c := range dst.ComponentsAdded {
 		compSeen[c.ID] = true
 	}
@@ -166,7 +167,7 @@ func mergeTraceUnique(dst, src *pattern.Trace) {
 	for _, c := range dst.ComponentsRemoved {
 		compSeen[c.ID] = true
 	}
-	relSeen := make(map[core.Uuid]bool)
+	relSeen := make(map[corev1beta2.Uuid]bool)
 	for _, r := range dst.RelationshipsAdded {
 		relSeen[r.ID] = true
 	}
@@ -374,7 +375,7 @@ func (h *Handler) EvaluateDesign(
 		if evaluationResponse.Design.Metadata == nil {
 			evaluationResponse.Design.Metadata = &pattern.PatternFile_Metadata{}
 		}
-		evaluationResponse.Design.Metadata.ResolvedAliases = &evaluatedAliases
+		evaluationResponse.Design.Metadata.ResolvedAliases = utils.ResolvedAliasesV1beta2ToV1beta1(&evaluatedAliases)
 
 		lastEvaluationResponse.Design = evaluationResponse.Design
 		lastEvaluationResponse.Actions = append(lastEvaluationResponse.Actions, evaluationResponse.Actions...)
@@ -481,7 +482,7 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 		_component.Capabilities = &defaultCapabilities
 		if originalStyles != nil && originalStyles.Position != nil {
 			if _component.Styles == nil {
-				_component.Styles = &core.ComponentStyles{}
+				_component.Styles = &legacycore.ComponentStyles{}
 			}
 			_component.Styles.Position = originalStyles.Position
 		}
@@ -845,7 +846,27 @@ func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResul
 		return
 	}
 	ec := json.NewEncoder(rw)
-	if err := ec.Encode(result.resp); err != nil {
+	response := any(result.resp)
+	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&result.resp.Design); bridgeErr == nil && bridged != nil {
+		response = struct {
+			Design         any              `json:"design"`
+			EvaluationHash *string          `json:"evaluationHash,omitempty"`
+			SchemaVersion  any              `json:"schemaVersion"`
+			Timestamp      *time.Time       `json:"timestamp,omitempty"`
+			Trace          pattern.Trace    `json:"trace"`
+			Actions        []pattern.Action `json:"actions"`
+		}{
+			Design:         bridged,
+			EvaluationHash: result.resp.EvaluationHash,
+			SchemaVersion:  result.resp.SchemaVersion,
+			Timestamp:      result.resp.Timestamp,
+			Trace:          result.resp.Trace,
+			Actions:        result.resp.Actions,
+		}
+	} else if bridgeErr != nil {
+		h.log.Warnf("failed to bridge evaluation response design for canonical wire encoding: %v", bridgeErr)
+	}
+	if err := ec.Encode(response); err != nil {
 		// Response body has already started streaming via json.Encoder —
 		// a partial JSON envelope is on the wire and a fresh error
 		// response would corrupt it, so log only.
