@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/gofrs/uuid"
+	core "github.com/meshery/schemas/models/core"
 	componentv1beta1 "github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	patternv1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
@@ -33,6 +35,9 @@ func TestPatternV1beta1ToV1beta3_PreservesAliasedFields(t *testing.T) {
 	if got := dst.Metadata.AdditionalProperties["team"]; got != "meshery" {
 		t.Fatalf("metadata additionalProperties not preserved, got %#v", got)
 	}
+	if got := (*dst.Metadata.ResolvedAliases)["service"].ImmediateParentId.String(); got != "11111111-1111-1111-1111-111111111111" {
+		t.Fatalf("resolved alias metadata not preserved, got %q", got)
+	}
 	if got := dst.Components[0].Metadata.AdditionalProperties["componentKey"]; got != "componentValue" {
 		t.Fatalf("component metadata additionalProperties not preserved, got %#v", got)
 	}
@@ -45,6 +50,11 @@ func TestPatternV1beta1ToV1beta3_PreservesAliasedFields(t *testing.T) {
 	dst.Metadata.AdditionalProperties["owner"] = "catalog"
 	if got := src.Metadata.AdditionalProperties["owner"]; got != "catalog" {
 		t.Fatalf("metadata alias lost, got %#v", got)
+	}
+	resolvedAlias := (*dst.Metadata.ResolvedAliases)["service"]
+	resolvedAlias.ImmediateRefFieldPath[0] = "spec.template.metadata.labels.app"
+	if got := (*src.Metadata.ResolvedAliases)["service"].ImmediateRefFieldPath[0]; got != "spec.template.metadata.labels.app" {
+		t.Fatalf("resolved alias slice alias lost, got %#v", got)
 	}
 
 	dst.Components[0].Configuration["replicas"] = 3
@@ -114,6 +124,16 @@ func newPatternV1beta1Fixture() *patternv1beta1.PatternFile {
 		SchemaVersion: "designs.meshery.io/v1beta1",
 		Version:       "0.0.1",
 		Metadata: &patternv1beta1.PatternFile_Metadata{
+			ResolvedAliases: &map[string]core.ResolvedAlias{
+				"service": {
+					AliasComponentId:      uuid.Must(uuid.FromString("00000000-0000-0000-0000-000000000001")),
+					ImmediateParentId:     uuid.Must(uuid.FromString("11111111-1111-1111-1111-111111111111")),
+					ImmediateRefFieldPath: []string{"spec.template.spec.containers.0.image"},
+					RelationshipId:        uuid.Must(uuid.FromString("22222222-2222-2222-2222-222222222222")),
+					ResolvedParentId:      uuid.Must(uuid.FromString("33333333-3333-3333-3333-333333333333")),
+					ResolvedRefFieldPath:  []string{"spec.template.metadata.labels"},
+				},
+			},
 			AdditionalProperties: map[string]interface{}{
 				"team": "meshery",
 			},

@@ -14,9 +14,11 @@
 package utils
 
 import (
+	core "github.com/meshery/schemas/models/core"
 	componentv1beta1 "github.com/meshery/schemas/models/v1beta1/component"
 	patternv1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
 	componentv1beta2 "github.com/meshery/schemas/models/v1beta2/component"
+	corev1beta2 "github.com/meshery/schemas/models/v1beta2/core"
 	designv1beta3 "github.com/meshery/schemas/models/v1beta3/design"
 )
 
@@ -76,7 +78,7 @@ func patternMetadataV1beta1ToV1beta3(src *patternv1beta1.PatternFile_Metadata) *
 		return nil
 	}
 	return &designv1beta3.PatternFile_Metadata{
-		ResolvedAliases:      src.ResolvedAliases,
+		ResolvedAliases:      resolvedAliasesV1beta1ToV1beta3(src.ResolvedAliases),
 		AdditionalProperties: src.AdditionalProperties,
 	}
 }
@@ -86,9 +88,47 @@ func patternMetadataV1beta3ToV1beta1(src *designv1beta3.PatternFile_Metadata) *p
 		return nil
 	}
 	return &patternv1beta1.PatternFile_Metadata{
-		ResolvedAliases:      src.ResolvedAliases,
+		ResolvedAliases:      resolvedAliasesV1beta3ToV1beta1(src.ResolvedAliases),
 		AdditionalProperties: src.AdditionalProperties,
 	}
+}
+
+// ResolvedAliases cannot be shared directly because the generated schemas use
+// different map value types in v1beta1/pattern and v1beta3/design.
+func resolvedAliasesV1beta1ToV1beta3(src *map[string]core.ResolvedAlias) *map[string]corev1beta2.ResolvedAlias {
+	if src == nil {
+		return nil
+	}
+	dst := make(map[string]corev1beta2.ResolvedAlias, len(*src))
+	for key, alias := range *src {
+		dst[key] = corev1beta2.ResolvedAlias{
+			AliasComponentId:      alias.AliasComponentId,
+			ImmediateParentId:     alias.ImmediateParentId,
+			ImmediateRefFieldPath: alias.ImmediateRefFieldPath,
+			RelationshipId:        alias.RelationshipId,
+			ResolvedParentId:      alias.ResolvedParentId,
+			ResolvedRefFieldPath:  alias.ResolvedRefFieldPath,
+		}
+	}
+	return &dst
+}
+
+func resolvedAliasesV1beta3ToV1beta1(src *map[string]corev1beta2.ResolvedAlias) *map[string]core.ResolvedAlias {
+	if src == nil {
+		return nil
+	}
+	dst := make(map[string]core.ResolvedAlias, len(*src))
+	for key, alias := range *src {
+		dst[key] = core.ResolvedAlias{
+			AliasComponentId:      alias.AliasComponentId,
+			ImmediateParentId:     alias.ImmediateParentId,
+			ImmediateRefFieldPath: alias.ImmediateRefFieldPath,
+			RelationshipId:        alias.RelationshipId,
+			ResolvedParentId:      alias.ResolvedParentId,
+			ResolvedRefFieldPath:  alias.ResolvedRefFieldPath,
+		}
+	}
+	return &dst
 }
 
 func designPreferencesV1beta1ToV1beta3(src *patternv1beta1.DesignPreferences) *designv1beta3.DesignPreferences {
