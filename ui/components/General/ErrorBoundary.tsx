@@ -35,7 +35,7 @@ const CustomErrorFallback = (props) => {
   const [triggerWebhook] = useSupportWebHookMutation();
   const { data: userData } = useGetLoggedInUserQuery();
   const { data: providerData } = useGetProviderCapabilitiesQuery();
-  const showSupportBasedOnProvider = providerData?.provider_type === 'remote';
+  const showSupportBasedOnProvider = providerData?.providerType === 'remote';
 
   const handleOpenSupportModal = () => {
     setOpenSupportModal(true);
