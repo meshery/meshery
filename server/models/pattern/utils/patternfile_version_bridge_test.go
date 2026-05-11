@@ -5,11 +5,11 @@ import (
 	"strings"
 	"testing"
 
-	legacycore "github.com/meshery/schemas/models/core"
+	legacycoremodel "github.com/meshery/schemas/models/core"
 	componentv1beta1 "github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	patternv1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
-	corev1beta2 "github.com/meshery/schemas/models/v1beta2/core"
+	coremodelv1beta2 "github.com/meshery/schemas/models/v1beta2/core"
 	relationshipv1beta2 "github.com/meshery/schemas/models/v1beta2/relationship"
 	designv1beta3 "github.com/meshery/schemas/models/v1beta3/design"
 
@@ -117,7 +117,7 @@ func TestPatternV1beta1ToV1beta3_ConvertsResolvedAliasesToCanonicalWireShape(t *
 	aliasID := mustUUID(t, "27423b67-76bc-4126-a199-f6d1aa37fe58")
 	parentID := mustUUID(t, "b66ef7d1-7202-4ba1-bb8a-ef3f6c9a7b7b")
 	relationshipID := mustUUID(t, "618e58aa-7733-4185-a13b-799da087e614")
-	legacyAliases := map[string]legacycore.ResolvedAlias{
+	legacyAliases := map[string]legacycoremodel.ResolvedAlias{
 		aliasID.String(): {
 			AliasComponentId:      aliasID,
 			ImmediateParentId:     parentID,
@@ -138,7 +138,7 @@ func TestPatternV1beta1ToV1beta3_ConvertsResolvedAliasesToCanonicalWireShape(t *
 		t.Fatalf("PatternV1beta1ToV1beta3() unexpected error: %v", err)
 	}
 	got := (*dst.Metadata.ResolvedAliases)[aliasID.String()]
-	want := corev1beta2.ResolvedAlias{
+	want := coremodelv1beta2.ResolvedAlias{
 		AliasComponentId:      aliasID,
 		ImmediateParentId:     parentID,
 		ImmediateRefFieldPath: []string{"configuration", "spec", "containers", "1"},

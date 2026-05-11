@@ -14,11 +14,11 @@
 package utils
 
 import (
-	legacycore "github.com/meshery/schemas/models/core"
+	legacycoremodel "github.com/meshery/schemas/models/core"
 	componentv1beta1 "github.com/meshery/schemas/models/v1beta1/component"
 	patternv1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
 	componentv1beta2 "github.com/meshery/schemas/models/v1beta2/component"
-	corev1beta2 "github.com/meshery/schemas/models/v1beta2/core"
+	coremodelv1beta2 "github.com/meshery/schemas/models/v1beta2/core"
 	designv1beta3 "github.com/meshery/schemas/models/v1beta3/design"
 )
 
@@ -95,13 +95,13 @@ func patternMetadataV1beta3ToV1beta1(src *designv1beta3.PatternFile_Metadata) *p
 
 // ResolvedAliasesV1beta1ToV1beta2 converts legacy resolved aliases to the
 // canonical v1beta2 alias shape used by v1beta2/v1beta3 designs.
-func ResolvedAliasesV1beta1ToV1beta2(src *map[string]legacycore.ResolvedAlias) *map[string]corev1beta2.ResolvedAlias {
+func ResolvedAliasesV1beta1ToV1beta2(src *map[string]legacycoremodel.ResolvedAlias) *map[string]coremodelv1beta2.ResolvedAlias {
 	if src == nil {
 		return nil
 	}
-	dst := make(map[string]corev1beta2.ResolvedAlias, len(*src))
+	dst := make(map[string]coremodelv1beta2.ResolvedAlias, len(*src))
 	for key, alias := range *src {
-		dst[key] = corev1beta2.ResolvedAlias{
+		dst[key] = coremodelv1beta2.ResolvedAlias{
 			AliasComponentId:      alias.AliasComponentId,
 			ImmediateParentId:     alias.ImmediateParentId,
 			ImmediateRefFieldPath: append([]string(nil), alias.ImmediateRefFieldPath...),
@@ -115,13 +115,13 @@ func ResolvedAliasesV1beta1ToV1beta2(src *map[string]legacycore.ResolvedAlias) *
 
 // ResolvedAliasesV1beta2ToV1beta1 converts canonical resolved aliases back to
 // the legacy evaluator shape while it still uses v1beta1/pattern responses.
-func ResolvedAliasesV1beta2ToV1beta1(src *map[string]corev1beta2.ResolvedAlias) *map[string]legacycore.ResolvedAlias {
+func ResolvedAliasesV1beta2ToV1beta1(src *map[string]coremodelv1beta2.ResolvedAlias) *map[string]legacycoremodel.ResolvedAlias {
 	if src == nil {
 		return nil
 	}
-	dst := make(map[string]legacycore.ResolvedAlias, len(*src))
+	dst := make(map[string]legacycoremodel.ResolvedAlias, len(*src))
 	for key, alias := range *src {
-		dst[key] = legacycore.ResolvedAlias{
+		dst[key] = legacycoremodel.ResolvedAlias{
 			AliasComponentId:      alias.AliasComponentId,
 			ImmediateParentId:     alias.ImmediateParentId,
 			ImmediateRefFieldPath: append([]string(nil), alias.ImmediateRefFieldPath...),

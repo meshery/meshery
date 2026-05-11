@@ -16,11 +16,11 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
 	gopolicies "github.com/meshery/meshery/server/policies"
-	legacycore "github.com/meshery/schemas/models/core"
+	legacycoremodel "github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
-	corev1beta2 "github.com/meshery/schemas/models/v1beta2/core"
+	coremodelv1beta2 "github.com/meshery/schemas/models/v1beta2/core"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 
@@ -44,9 +44,9 @@ const (
 const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
 
 // Aliasses Are not resolved
-func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (corev1beta2.NonResolvedAlias, bool) {
+func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (coremodelv1beta2.NonResolvedAlias, bool) {
 
-	alias := corev1beta2.NonResolvedAlias{}
+	alias := coremodelv1beta2.NonResolvedAlias{}
 
 	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS {
 		return alias, false
@@ -93,7 +93,7 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 }
 
-func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (corev1beta2.NonResolvedAlias, bool) {
+func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (coremodelv1beta2.NonResolvedAlias, bool) {
 
 	for _, relationship := range relationships {
 		alias, ok := parseRelationshipToAlias(*relationship)
@@ -106,11 +106,11 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 		}
 	}
 
-	return corev1beta2.NonResolvedAlias{}, false
+	return coremodelv1beta2.NonResolvedAlias{}, false
 }
 
 // getComponentById retrieves a component from the design by its ID
-func getComponentById(design pattern.PatternFile, id corev1beta2.Uuid) *component.ComponentDefinition {
+func getComponentById(design pattern.PatternFile, id coremodelv1beta2.Uuid) *component.ComponentDefinition {
 	for _, comp := range design.Components {
 		if comp.ID == id {
 			return comp
@@ -119,17 +119,17 @@ func getComponentById(design pattern.PatternFile, id corev1beta2.Uuid) *componen
 	return nil
 }
 
-func ResolveAlias(nonResolvedAlias corev1beta2.NonResolvedAlias, currentNonResolved corev1beta2.NonResolvedAlias, path []string, design pattern.PatternFile) corev1beta2.ResolvedAlias {
+func ResolveAlias(nonResolvedAlias coremodelv1beta2.NonResolvedAlias, currentNonResolved coremodelv1beta2.NonResolvedAlias, path []string, design pattern.PatternFile) coremodelv1beta2.ResolvedAlias {
 	parentComponent := getComponentById(design, currentNonResolved.ImmediateParentId)
 	if parentComponent == nil {
-		return corev1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
+		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 	}
 
 	parentAlias, ok := ParseComponentToAlias(*parentComponent, design.Relationships)
 
 	if !ok {
 
-		return corev1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
+		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 
 	}
 
@@ -139,9 +139,9 @@ func ResolveAlias(nonResolvedAlias corev1beta2.NonResolvedAlias, currentNonResol
 	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, path[1:]...), design)
 }
 
-func ResolveAliasesInDesign(design pattern.PatternFile) map[string]corev1beta2.ResolvedAlias {
+func ResolveAliasesInDesign(design pattern.PatternFile) map[string]coremodelv1beta2.ResolvedAlias {
 
-	resolvedAliases := make(map[string]corev1beta2.ResolvedAlias)
+	resolvedAliases := make(map[string]coremodelv1beta2.ResolvedAlias)
 
 	for _, relationship := range design.Relationships {
 		nonResolvedalias, ok := parseRelationshipToAlias(*relationship)
@@ -157,7 +157,7 @@ func ResolveAliasesInDesign(design pattern.PatternFile) map[string]corev1beta2.R
 
 // mergeTraceUnique appends trace entries from src into dst, skipping duplicates by ID.
 func mergeTraceUnique(dst, src *pattern.Trace) {
-	compSeen := make(map[corev1beta2.Uuid]bool)
+	compSeen := make(map[coremodelv1beta2.Uuid]bool)
 	for _, c := range dst.ComponentsAdded {
 		compSeen[c.ID] = true
 	}
@@ -167,7 +167,7 @@ func mergeTraceUnique(dst, src *pattern.Trace) {
 	for _, c := range dst.ComponentsRemoved {
 		compSeen[c.ID] = true
 	}
-	relSeen := make(map[corev1beta2.Uuid]bool)
+	relSeen := make(map[coremodelv1beta2.Uuid]bool)
 	for _, r := range dst.RelationshipsAdded {
 		relSeen[r.ID] = true
 	}
@@ -482,7 +482,7 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 		_component.Capabilities = &defaultCapabilities
 		if originalStyles != nil && originalStyles.Position != nil {
 			if _component.Styles == nil {
-				_component.Styles = &legacycore.ComponentStyles{}
+				_component.Styles = &legacycoremodel.ComponentStyles{}
 			}
 			_component.Styles.Position = originalStyles.Position
 		}
