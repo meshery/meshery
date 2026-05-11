@@ -456,7 +456,11 @@ const Navigator_ = () => {
     if (!children || children.length === 0) {
       return null;
     }
-
+    
+    /*  EXTENSION POINT
+    /* See https://docs.meshery.io/reference/extensibility 
+    /* for how you can add your own extension. */
+        
     const extensionItems = children.map(({ id, icon, href, title, children, show: showc }) => {
       if (typeof showc !== 'undefined' && !showc) {
         return null;
