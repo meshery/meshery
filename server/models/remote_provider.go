@@ -45,9 +45,7 @@ const (
 	PROVIDER_CAPABILITIES_FILEPATH_ENV = "PROVIDER_CAPABILITIES_FILEPATH"
 	SKIP_DOWNLOAD_EXTENSIONS_ENV       = "SKIP_DOWNLOAD_EXTENSIONS"
 
-	remoteProviderCapabilitiesTimeout = 10 * time.Second
-	remoteProviderCapabilitiesRetries = 3
-	remoteProviderCapabilitiesBackoff = 2 * time.Second
+	remoteProviderCapabilitiesTimeout = 5 * time.Second
 )
 
 func shouldPropagateProviderVersion(version string) bool {
@@ -210,22 +208,9 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 	// If not token is provided then make a simple GET request
 	if token == "" {
 		c := &http.Client{Timeout: remoteProviderCapabilitiesTimeout}
-
-		for i := 0; i < remoteProviderCapabilitiesRetries; i++ {
-			resp, err = c.Do(req)
-			if err == nil && resp != nil {
-				break // Successfully fetched response
-			}
-			if i == 0 {
-				l.Log.Warnf("Failed to fetch capabilities from remote provider (URL: %s). Retrying (%d)... ", remoteProviderURL.String(), i)
-			}
-			if i < remoteProviderCapabilitiesRetries-1 {
-				l.Log.Debugf("Attempt %d/%d: Failed to fetch capabilities: %v. Retrying in %s...", i+1, remoteProviderCapabilitiesRetries, err, remoteProviderCapabilitiesBackoff)
-				time.Sleep(remoteProviderCapabilitiesBackoff)
-			}
-		}
+		resp, err = c.Do(req)
 		if err != nil || resp == nil {
-			l.Log.Warnf("Failed to fetch capabilities after %d attempts", remoteProviderCapabilitiesRetries)
+			l.Log.Warnf("Failed to fetch capabilities from remote provider (URL: %s): %v", remoteProviderURL.String(), err)
 		}
 
 	} else {
