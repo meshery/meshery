@@ -25,16 +25,29 @@ type PrometheusClient struct {
 	promURL string
 }
 
+const defaultPrometheusClientTimeout = 25 * time.Second
+
 // NewPrometheusClient returns a PrometheusClient
 func NewPrometheusClient(log *logger.Handler) *PrometheusClient {
-	return NewPrometheusClientWithHTTPClient(&http.Client{}, log)
+	return NewPrometheusClientWithHTTPClient(&http.Client{Timeout: defaultPrometheusClientTimeout}, log)
 }
 
 // NewPrometheusClientWithHTTPClient returns a PrometheusClient with a given http.Client
 func NewPrometheusClientWithHTTPClient(client *http.Client, log *logger.Handler) *PrometheusClient {
+	if client == nil {
+		client = &http.Client{Timeout: defaultPrometheusClientTimeout}
+	}
 	return &PrometheusClient{
 		grafanaClient: NewGrafanaClientForPrometheusWithHTTPClient(client, log),
 	}
+}
+
+func (p *PrometheusClient) newPromAPIClient(promURL string) (promAPI.Client, error) {
+	cfg := promAPI.Config{Address: promURL}
+	if p != nil && p.grafanaClient != nil && p.grafanaClient.httpClient != nil {
+		cfg.Client = p.grafanaClient.httpClient
+	}
+	return promAPI.NewClient(cfg)
 }
 
 // Validate - helps validate the connection
@@ -116,9 +129,10 @@ func (p *PrometheusClient) GetNodesStaticBoard(ctx context.Context, promURL stri
 
 func (p *PrometheusClient) getAllNodes(ctx context.Context, promURL string) ([]string, error) {
 	// api/datasources/proxy/1/api/v1/series?match[]=node_boot_time_seconds%7Bcluster%3D%22%22%2C%20job%3D%22node-exporter%22%7D&start=1568392571&end=1568396171
-	c, _ := promAPI.NewClient(promAPI.Config{
-		Address: promURL,
-	})
+	c, err := p.newPromAPIClient(promURL)
+	if err != nil {
+		return nil, ErrPrometheusLabelSeries(err)
+	}
 	qc := promQAPI.NewAPI(c)
 	labelSet, _, err := qc.Series(ctx, []string{`node_boot_time_seconds{cluster="", job="node-exporter"}`}, time.Now().Add(-5*time.Minute), time.Now())
 	if err != nil {
@@ -137,9 +151,10 @@ func (p *PrometheusClient) getAllNodes(ctx context.Context, promURL string) ([]s
 
 // QueryRangeUsingClient performs a range query within a window
 func (p *PrometheusClient) QueryRangeUsingClient(ctx context.Context, promURL, query string, startTime, endTime time.Time, step time.Duration) (promModel.Value, error) {
-	c, _ := promAPI.NewClient(promAPI.Config{
-		Address: promURL,
-	})
+	c, err := p.newPromAPIClient(promURL)
+	if err != nil {
+		return nil, ErrPrometheusQueryRange(err, query, startTime, endTime, step)
+	}
 	qc := promQAPI.NewAPI(c)
 	result, _, err := qc.QueryRange(ctx, query, promQAPI.Range{
 		Start: startTime,
