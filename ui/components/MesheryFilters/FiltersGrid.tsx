@@ -26,7 +26,7 @@ type FiltersGridProps = {
     id: string;
     type: string;
     name: string;
-    catalog_data: unknown;
+    catalogData: unknown;
   }) => void;
   setSelectedFilter: (_value: { filter: any; show: boolean }) => void;
   selectedFilter: { show: boolean; filter: any };
@@ -52,7 +52,7 @@ type FilterCardGridItemProps = {
     id: string;
     type: string;
     name: string;
-    catalog_data: unknown;
+    catalogData: unknown;
   }) => void;
   setSelectedFilters: (_value: { filter: any; show: boolean }) => void;
   handleClone: () => void;
@@ -98,7 +98,7 @@ function FilterCardGridItem({
             id: filter.id,
             type: FILE_OPS.DELETE,
             name: filter.name,
-            catalog_data: filter.catalog_data,
+            catalogData: filter.catalogData,
           })
         }
         updateHandler={() =>
@@ -107,7 +107,7 @@ function FilterCardGridItem({
             id: filter.id,
             type: FILE_OPS.UPDATE,
             name: filter.name,
-            catalog_data: filter.catalog_data,
+            catalogData: filter.catalogData,
           })
         }
         setSelectedFilters={() => setSelectedFilters({ filter: filter, show: true })}

@@ -240,7 +240,7 @@ const Navigation = ({ setHeaderInfo }) => {
   const closeList = useMediaQuery(theme.breakpoints.down('xl'));
   const [open, setOpen] = useState(!closeList);
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
-  const isLocalProvider = capabilitiesData?.provider_type === 'local';
+  const isLocalProvider = capabilitiesData?.providerType === 'local';
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
   const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recents (Global)');
