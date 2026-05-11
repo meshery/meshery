@@ -289,7 +289,7 @@
         "long_description": "",
         "short_description": "unable to get: ",
         "probable_cause": "Query parameter is not a part of the request",
-        "suggested_remediation": "Make sure to pass the query paramater in the request"
+        "suggested_remediation": "Make sure to pass the query parameter in the request"
       },
       "1033": {
         "name": "ErrGetResultCode",
