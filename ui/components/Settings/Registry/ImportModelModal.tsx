@@ -9,8 +9,9 @@ import {
   Box,
   Modal,
   useTheme,
+  importModelSchema as canonicalImportModelSchema,
+  importModelUiSchema as canonicalImportModelUiSchema,
 } from '@sistent/sistent';
-import { ModelImportRjsfSchemaV1Beta2, ModelImportRjsfUiSchemaV1Beta2 } from '@meshery/schemas';
 import { RJSFModalWrapper } from '@/components/General/Modals/Modal';
 import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
@@ -112,12 +113,32 @@ const FinishDeploymentStep = ({
 //       by @rjsf/utils' `optionsList()` — RJSF v6 reads the radio
 //       labels from `ui:enumNames` on the uiSchema instead.
 //
-// v1.2.16 of @meshery/schemas adds `ModelImportRjsfUiSchemaV1Beta2` and
-// changes `modelFile.format` from `"binary"` to `"data-url"` (the format
-// RJSF's FileWidget actually produces). We base `importModelUiSchema` on
-// the canonical and overlay our consumer overrides on top.
-const canonicalProps = ModelImportRjsfSchemaV1Beta2?.properties || {};
-const canonicalUploadType = canonicalProps.uploadType || {};
+// As of @sistent/sistent v0.21.10, the shared import-model schema/uiSchema
+// is the canonical consumer surface. The schema now keeps the branch-specific
+// inputs under conditional `allOf` entries while the uiSchema already carries
+// the canonical file-widget mapping for `modelFile`, so we flatten the schema
+// properties here and preserve the shared uiSchema defaults when we apply our
+// modal-specific overrides.
+const collectSchemaProperties = (schema) => {
+  const branchProperties =
+    schema?.allOf?.reduce(
+      (properties, branch) => ({
+        ...properties,
+        ...(branch?.properties || {}),
+        ...(branch?.then?.properties || {}),
+        ...(branch?.else?.properties || {}),
+      }),
+      {},
+    ) || {};
+
+  return {
+    ...(schema?.properties || {}),
+    ...branchProperties,
+  };
+};
+
+const canonicalProps = collectSchemaProperties(canonicalImportModelSchema);
+const canonicalUploadType = canonicalImportModelSchema?.properties?.uploadType || {};
 const UPLOAD_TYPE_FILE = 'file';
 const UPLOAD_TYPE_URL = 'urlImport';
 const UPLOAD_TYPE_CSV = 'csv';
@@ -134,7 +155,7 @@ const UPLOAD_TYPE_CSV = 'csv';
 // from the data URL / DOM fallback at submit time.
 const importModelSchema = {
   $schema: 'https://json-schema.org/draft-07/schema#',
-  title: ModelImportRjsfSchemaV1Beta2.title,
+  title: canonicalImportModelSchema.title,
   type: 'object',
   properties: {
     uploadType: canonicalUploadType,
@@ -154,25 +175,20 @@ const importModelSchema = {
   required: ['uploadType'],
 };
 
-// Extend the canonical uiSchema (added in @meshery/schemas v1.2.16) with
+// Extend the canonical shared uiSchema with
 // consumer-specific overrides:
 //   - uploadType: add ui:enumNames so RJSF v6 renders friendly radio labels
 //     (optionsList() reads labels from uiSchema, not schema-level enumNames).
 //   - fileName: hidden — derived from the uploaded file at submit time.
 //   - CSV fields: not rendered in this modal (handled by CsvStepper).
 const importModelUiSchema = {
-  ...ModelImportRjsfUiSchemaV1Beta2,
+  ...canonicalImportModelUiSchema,
   uploadType: {
     'ui:widget': 'radio',
     'ui:enumNames': Array.isArray(canonicalUploadType?.enumNames)
       ? [...(canonicalUploadType.enumNames as string[])]
       : undefined,
   },
-  // The canonical schema declares `modelFile` as `type: string` without a
-  // `format: data-url`, so RJSF falls back to TextWidget and the form never
-  // renders an `<input type="file">`. Force the file widget here, matching
-  // the importDesign/importFilter fix shipped in @sistent/sistent v0.21.7.
-  modelFile: { 'ui:widget': 'file' },
   fileName: { 'ui:widget': 'hidden' },
   modelCsv: { 'ui:widget': 'hidden' },
   componentCsv: { 'ui:widget': 'hidden' },
@@ -263,7 +279,7 @@ const ImportModelModal = React.memo(
     };
 
     const handleImportModelSubmit = async (data) => {
-      // Canonical field names from ModelImportRjsfSchemaV1Beta2:
+      // Canonical field names from the shared Sistent import-model form:
       // `uploadType` (enum: file/urlImport/csv), `modelFile`, `fileName`,
       // `url`, plus the CSV trio handled by CsvStepper.
       const { uploadType, url, modelFile, fileName: formFileName } = data;

@@ -21,6 +21,10 @@ type ImportModelModalProps = {
   setIsImportModalOpen: (_open: boolean) => void;
 };
 
+const UPLOAD_TYPE_FILE = 'file';
+const UPLOAD_TYPE_URL = 'urlImport';
+const UPLOAD_TYPE_CSV = 'csv';
+
 const ImportModelModal = React.memo(
   ({ isImportModalOpen, setIsImportModalOpen }: ImportModelModalProps) => {
     const [importModalDescription, setImportModalDescription] = useState('');
@@ -44,23 +48,23 @@ const ImportModelModal = React.memo(
     };
 
     const handleImportModelSubmit = async (data) => {
-      const { uploadType, url, file } = data;
+      const { uploadType, url, modelFile } = data;
       let requestBody = null;
 
-      const fileElement = document.getElementById('root_file');
+      const fileElement = document.getElementById('root_modelFile') as HTMLInputElement | null;
 
       switch (uploadType) {
-        case 'File Import': {
-          const fileName = fileElement.files[0].name;
-          const fileData = getUnit8ArrayDecodedFile(file);
-          if (fileData) {
+        case UPLOAD_TYPE_FILE: {
+          const fileName = fileElement?.files?.[0]?.name;
+          const fileData = getUnit8ArrayDecodedFile(modelFile);
+          if (fileData && fileName) {
             requestBody = {
               importBody: {
                 model_file: fileData,
                 url: '',
-                filename: fileName,
+                file_name: fileName,
               },
-              uploadType: 'file',
+              uploadType: UPLOAD_TYPE_FILE,
               register: true,
             };
           } else {
@@ -69,13 +73,13 @@ const ImportModelModal = React.memo(
           }
           break;
         }
-        case 'URL Import': {
+        case UPLOAD_TYPE_URL: {
           if (url) {
             requestBody = {
               importBody: {
                 url: url,
               },
-              uploadType: 'urlImport',
+              uploadType: UPLOAD_TYPE_URL,
               register: true,
             };
           } else {
@@ -84,7 +88,7 @@ const ImportModelModal = React.memo(
           }
           break;
         }
-        case 'CSV Import': {
+        case UPLOAD_TYPE_CSV: {
           setIsImportModalOpen(false);
           setIsCsvModalOpen(true);
           return;
@@ -131,7 +135,7 @@ const ImportModelModal = React.memo(
                   <div>
                     <Typography variant="subtitle1">{option.label}</Typography>
                     <Typography variant="body2" color="textSecondary" textTransform={'none'}>
-                      {schema.enumDescriptions[index]}
+                      {schema.enumDescriptions?.[index]}
                     </Typography>
                   </div>
                 }
