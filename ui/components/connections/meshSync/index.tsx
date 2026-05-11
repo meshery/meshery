@@ -32,15 +32,7 @@ import {
 import { ConnectionStateChip } from '../ConnectionChip';
 import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
 import { useSelector } from 'react-redux';
-import { updateProgress } from '@/store/slices/mesheryUi';
 import MeshSyncEmptyState from './MeshSyncEmptyState';
-
-const ACTION_TYPES = {
-  FETCH_MESHSYNC_RESOURCES: {
-    name: 'FETCH_MESHSYNC_RESOURCES',
-    error_msg: 'Failed to fetch meshsync resources',
-  },
-};
 
 export default function MeshSyncTable(props) {
   const { selectedResourceId, updateUrlWithResourceId } = props;
@@ -543,21 +535,6 @@ export default function MeshSyncTable(props) {
       );
     },
   };
-
-  const handleError = (action) => (error) => {
-    updateProgress({ showProgress: false });
-    notify({
-      message: `${action.error_msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
-  };
-
-  useEffect(() => {
-    if (meshSyncError) {
-      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES)(meshSyncError);
-    }
-  }, [meshSyncError]);
 
   // Consolidate multiple useRef hooks into a single object
   const expansionFlags = useRef({

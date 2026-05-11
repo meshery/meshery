@@ -144,6 +144,7 @@ describe('MeshSyncTable', () => {
 
     render(<MeshSyncTable />);
 
+    expect(notify).toHaveBeenCalledTimes(1);
     expect(notify).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({
