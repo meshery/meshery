@@ -15,7 +15,9 @@ const saveEnvironmentMutator = vi.fn();
 const refetchConnections = vi.fn();
 const getConnectionsQuery = vi.fn();
 const getEnvironmentsQuery = vi.fn();
+const updateVisibleColumns = vi.fn();
 let dataTableProps: any;
+let windowWidth = 1280;
 
 const router = {
   query: {} as Record<string, unknown>,
@@ -138,12 +140,11 @@ vi.mock('./metadata', () => ({
 }));
 
 vi.mock('../../utils/responsive-column', () => ({
-  updateVisibleColumns: (columns) =>
-    Object.fromEntries(columns.map(([columnName]) => [columnName, true])),
+  getResponsiveColumnVisibility: (...args) => updateVisibleColumns(...args),
 }));
 
 vi.mock('../../utils/dimension', () => ({
-  useWindowDimensions: () => ({ width: 1280 }),
+  useWindowDimensions: () => ({ width: windowWidth }),
 }));
 
 vi.mock('../multi-select-wrapper', () => ({
@@ -244,6 +245,8 @@ describe('ConnectionTable', () => {
     saveEnvironmentMutator.mockReset();
     getConnectionsQuery.mockReset();
     getEnvironmentsQuery.mockReset();
+    updateVisibleColumns.mockReset();
+    windowWidth = 1280;
 
     updateConnectionByIdMutator.mockImplementation(({ connectionId, body }) => ({
       unwrap: () => Promise.resolve({ connectionId, body }),
@@ -285,6 +288,11 @@ describe('ConnectionTable', () => {
       isError: false,
       error: undefined,
     });
+    updateVisibleColumns.mockImplementation((columnNames, _colViews, width) =>
+      Object.fromEntries(
+        columnNames.map((columnName) => [columnName, columnName === 'kind' ? width >= 1000 : true]),
+      ),
+    );
   });
 
   it('hydrates search from a string router query and passes it to the connections query', async () => {
@@ -355,6 +363,19 @@ describe('ConnectionTable', () => {
     expect(updateConnectionByIdMutator).toHaveBeenNthCalledWith(2, {
       connectionId: 'connection-2',
       body: { status: 'deleted' },
+    });
+  });
+
+  it('recomputes responsive column visibility when the window width changes', async () => {
+    const { rerender } = render(<ConnectionTable />);
+
+    expect(dataTableProps.columnVisibility.kind).toBe(true);
+
+    windowWidth = 800;
+    rerender(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(dataTableProps.columnVisibility.kind).toBe(false);
     });
   });
 });

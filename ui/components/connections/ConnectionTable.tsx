@@ -46,7 +46,7 @@ import useKubernetesHook from '../hooks/useKubernetesHook';
 import { ConnectionStateChip, TooltipWrappedConnectionChip } from './ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue } from '../../utils/utils';
-import { updateVisibleColumns } from '../../utils/responsive-column';
+import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import MultiSelectWrapper from '../multi-select-wrapper';
 import {
@@ -1275,6 +1275,7 @@ const ConnectionTable = ({
     ping,
     url,
   ]);
+  const columnNames = useMemo(() => columns.map((column) => column.name), [columns]);
 
   const options = useMemo(
     () => ({
@@ -1421,15 +1422,13 @@ const ConnectionTable = ({
     updateCols(columns);
   }, [columns]);
 
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    const showCols = updateVisibleColumns(colViews, width) as Record<string, boolean>;
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility: Record<string, boolean> = {};
-    columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
-    });
-    return initialVisibility;
-  });
+  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>(
+    () => getResponsiveColumnVisibility(columnNames, colViews, width),
+  );
+
+  useEffect(() => {
+    setColumnVisibility(getResponsiveColumnVisibility(columnNames, colViews, width));
+  }, [colViews, columnNames, width]);
 
   if (isConnectionLoading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Connections" />;

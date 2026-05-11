@@ -22,7 +22,7 @@ import {
 } from '../../../utils/utils';
 import RegisterConnectionModal from './RegisterConnectionModal';
 import { CONNECTION_STATES, MESHSYNC_STATES } from '../../../utils/Enum';
-import { updateVisibleColumns } from '../../../utils/responsive-column';
+import { getResponsiveColumnVisibility } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { FormatId } from '../../DataFormatter';
 import {
@@ -119,18 +119,22 @@ export default function MeshSyncTable(props) {
   const availableNamespaces = clusterSummary?.namespaces || [];
   const meshSyncResources = meshSyncData?.resources || [];
 
-  let colViews = [
-    ['metadata.name', 'xs'],
-    ['apiVersion', 'na'],
-    ['kind', 'm'],
-    ['model', 'm'],
-    ['metadata.namespace', 'xs'],
-    ['cluster_id', 'na'],
-    ['pattern_resources', 'na'],
-    ['metadata.creationTimestamp', 'l'],
-    ['status', 'xs'],
-    ['metadata', 'na'],
-  ];
+  const colViews = useMemo(
+    () => [
+      ['metadata.name', 'xs'],
+      ['apiVersion', 'na'],
+      ['kind', 'm'],
+      ['model', 'm'],
+      ['metadata.namespace', 'xs'],
+      ['cluster_id', 'na'],
+      ['pattern_resources', 'na'],
+      ['metadata.creationTimestamp', 'l'],
+      ['status', 'xs'],
+      ['metadata', 'na'],
+    ],
+    [],
+  );
+  const columnNames = useMemo(() => colViews.map(([columnName]) => columnName), [colViews]);
 
   const columns = [
     {
@@ -629,15 +633,13 @@ export default function MeshSyncTable(props) {
 
   const [tableCols, updateCols] = useState(columns);
 
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    let showCols = updateVisibleColumns(colViews, width);
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
-    columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
-    });
-    return initialVisibility;
-  });
+  const [columnVisibility, setColumnVisibility] = useState(() =>
+    getResponsiveColumnVisibility(columnNames, colViews, width),
+  );
+
+  useEffect(() => {
+    setColumnVisibility(getResponsiveColumnVisibility(columnNames, colViews, width));
+  }, [colViews, columnNames, width]);
 
   return (
     <>

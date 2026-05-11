@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import MeshSyncTable from './index';
 
@@ -7,6 +7,9 @@ const notify = vi.fn();
 const getK8sClusterIdsFromCtxId = vi.fn();
 const useGetMeshSyncResourcesQuery = vi.fn();
 const useGetMeshSyncResourceKindsQuery = vi.fn();
+const getResponsiveColumnVisibility = vi.fn();
+let dataTableProps: any;
+let windowWidth = 1200;
 
 vi.mock('@sistent/sistent', () => ({
   Tooltip: ({ children }) => <div>{children}</div>,
@@ -18,7 +21,10 @@ vi.mock('@sistent/sistent', () => ({
   Table: ({ children }) => <div>{children}</div>,
   FormattedTime: ({ date }) => <span>{String(date)}</span>,
   CustomColumnVisibilityControl: () => <div />,
-  ResponsiveDataTable: () => <div data-testid="mesh-sync-table" />,
+  ResponsiveDataTable: (props) => {
+    dataTableProps = props;
+    return <div data-testid="mesh-sync-table" />;
+  },
   SearchBar: () => <div />,
   UniversalFilter: () => <div />,
   TableCell: ({ children }) => <div>{children}</div>,
@@ -47,7 +53,7 @@ vi.mock('@/rtk-query/meshsync', () => ({
 }));
 
 vi.mock('../../../utils/dimension', () => ({
-  useWindowDimensions: () => ({ width: 1200 }),
+  useWindowDimensions: () => ({ width: windowWidth }),
 }));
 
 vi.mock('react-redux', () => ({
@@ -74,6 +80,10 @@ vi.mock('../../../utils/utils', () => ({
   camelcaseToSnakecase: (value) => value,
   getColumnValue: () => null,
   getVisibilityColums: () => [],
+}));
+
+vi.mock('../../../utils/responsive-column', () => ({
+  getResponsiveColumnVisibility: (...args) => getResponsiveColumnVisibility(...args),
 }));
 
 vi.mock('./RegisterConnectionModal', () => ({
@@ -104,20 +114,45 @@ vi.mock('./MeshSyncEmptyState', () => ({
 
 describe('MeshSyncTable', () => {
   beforeEach(() => {
+    dataTableProps = undefined;
     notify.mockReset();
     getK8sClusterIdsFromCtxId.mockReset();
     useGetMeshSyncResourcesQuery.mockReset();
     useGetMeshSyncResourceKindsQuery.mockReset();
+    getResponsiveColumnVisibility.mockReset();
+    windowWidth = 1200;
 
     getK8sClusterIdsFromCtxId.mockReturnValue(['cluster-a', 'cluster-b']);
     useGetMeshSyncResourcesQuery.mockReturnValue({
-      data: { resources: [], totalCount: 0 },
+      data: {
+        resources: [
+          {
+            id: 'resource-1',
+            metadata: { name: 'pod-a', namespace: 'default', creationTimestamp: '2026-05-08' },
+            apiVersion: 'v1',
+            kind: 'Pod',
+            model: 'core',
+            cluster_id: 'cluster-a',
+            pattern_resources: '',
+            status: 'discovered',
+          },
+        ],
+        totalCount: 1,
+      },
       isError: false,
       error: undefined,
     });
     useGetMeshSyncResourceKindsQuery.mockReturnValue({
       data: { kinds: [], namespaces: [] },
     });
+    getResponsiveColumnVisibility.mockImplementation((columnNames, _colViews, width) =>
+      Object.fromEntries(
+        columnNames.map((columnName) => [
+          columnName,
+          columnName === 'model' ? width >= 1000 : true,
+        ]),
+      ),
+    );
   });
 
   it('passes stable cluster ids to both queries', () => {
@@ -152,5 +187,18 @@ describe('MeshSyncTable', () => {
         details: 'MeshSync unavailable',
       }),
     );
+  });
+
+  it('recomputes responsive column visibility when the window width changes', async () => {
+    const { rerender } = render(<MeshSyncTable />);
+
+    expect(dataTableProps.columnVisibility.model).toBe(true);
+
+    windowWidth = 900;
+    rerender(<MeshSyncTable />);
+
+    await waitFor(() => {
+      expect(dataTableProps.columnVisibility.model).toBe(false);
+    });
   });
 });
