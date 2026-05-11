@@ -41,7 +41,7 @@ const (
 	ErrPerformanceResultSubscriptionCode    = "meshery-server-1212"
 	ErrGormDatabaseCode                     = "meshery-server-1213"
 	ErrResyncClusterCode                    = "meshery-server-1369"
-	ErrAdapterOperationCode                 = "meshery-server-1422"
+	ErrAdapterOperationCode                 = "meshery-server-1430"
 )
 
 var (
