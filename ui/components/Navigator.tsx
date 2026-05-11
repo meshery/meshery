@@ -461,7 +461,7 @@ const Navigator_ = () => {
     /* See https://docs.meshery.io/reference/extensibility 
     /* for how you can add your own extension. */
         
-    const extensionItems = children.map(({ id, icon, href, title, children, show: showc }) => {
+    const extensionItems = children.map(({ id, icon, href, title, children: subItems, show: showc }) => {
       if (typeof showc !== 'undefined' && !showc) {
         return null;
       }
