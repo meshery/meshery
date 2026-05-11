@@ -46,7 +46,7 @@ func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, t
 		r.Log.Info("Undeploying Adapter")
 	}
 
-	r.Log.Debug(fmt.Printf("changing adapter status for %s on port %s to %s \n", adapterName, targetPort, targetStatus))
+	r.Log.Debugf("changing adapter status for %s on port %s to %s", adapterName, targetPort, targetStatus)
 	var err error
 	adapter := models.Adapter{Name: adapterName, Location: fmt.Sprintf("%s:%s", adapterName, targetPort)}
 	var operation string
@@ -58,11 +58,10 @@ func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, t
 		err = r.Config.AdapterTracker.DeployAdapter(ctx, adapter)
 	}
 	if err != nil {
-		r.Log.Info("Failed to " + operation + " adapter")
-		r.Log.Error(err)
-	} else {
-		r.Log.Info(operation + "ed adapter")
+		r.Log.Error(fmt.Errorf("failed to %s adapter: %w", operation, err))
+		return model.StatusUnknown, err
 	}
+	r.Log.Info(fmt.Sprintf("%sed adapter", operation))
 
 	return model.StatusProcessing, nil
 }
