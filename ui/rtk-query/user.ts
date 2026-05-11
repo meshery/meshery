@@ -2,7 +2,7 @@ import { ctxUrl } from '../utils/multi-ctx';
 import {
   mesheryApi,
   useGetTeamsQuery as useSchemasGetTeamsQuery,
-  useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery,
+  useGetUsersQuery as useSchemasGetUsersQuery,
 } from '@meshery/schemas/mesheryApi';
 import { api, mesheryApiPath } from './index';
 import { initiateQuery } from './utils';
@@ -335,15 +335,13 @@ export const useGetUserByIdQuery = (id, options = {}) =>
   );
 
 export const useGetUsersForOrgQuery = (queryArg, options) =>
-  useSchemasGetUsersForOrgQuery(
+  useSchemasGetUsersQuery(
     {
-      orgId: queryArg?.orgId,
       page: queryArg?.page?.toString(),
-      pagesize: queryArg?.pagesize?.toString(),
+      pageSize: (queryArg?.pageSize ?? queryArg?.pagesize)?.toString(),
       search: queryArg?.search,
       order: queryArg?.order,
       filter: queryArg?.filter,
-      teamId: queryArg?.teamId,
     },
     options,
   );
