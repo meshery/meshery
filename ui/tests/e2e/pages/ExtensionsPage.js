@@ -4,6 +4,7 @@ import { DashboardPage } from './DashboardPage';
 export class ExtensionsPage {
   constructor(page) {
     this.page = page;
+    this.extensionNestedNavList = page.locator('#left-navigation-bar div div > ul > ul');
 
     this.kanvasSnapshotHeading = page.getByTestId('kanvas-snapshot-heading');
     this.kanvasSnapshotDescription = page.getByTestId('kanvas-snapshot-description');
@@ -60,6 +61,10 @@ export class ExtensionsPage {
 
   async toggleCatalog() {
     await this.catalogToggleSwitch.click();
+  }
+
+  async verifyExtensionNavItemsUseTopLevelLayout() {
+    await expect(this.extensionNestedNavList).toHaveCount(0);
   }
 
   normalizeUrl(url) {
