@@ -6,7 +6,7 @@
     <div>
         <section class="Compheading">
             {{ if and .Params.components (gt (len .Params.components) 0) }}
-            <h3>
+            <h3 id="components">
                 Components ({{ len .Params.components }})
             </h3>
             <p>The Meshery model for {{ .Title }} supports the following components.</p>
@@ -152,5 +152,53 @@
     if (relatedTutorials.length === 0) {
         document.getElementById("related-tutorials-header").style.display = "none";
     }
+
+    // Builds the "On this page" TOC from headings with `id` attributes.
+    // New headings in this template or its partials need an `id` to appear here.
+    document.addEventListener('DOMContentLoaded', () => {
+        const tocDiv = document.querySelector('.td-toc');
+        if (!tocDiv) return;
+
+        const headings = Array.from(document.querySelectorAll('article h2[id], article h3[id]'))
+            .filter(h => h.offsetParent !== null);
+        if (headings.length === 0) return;
+
+        tocDiv.innerHTML = '<div class="td-toc-title">' +
+            '<span class="td-toc-title__text">On this page</span>' +
+            '<a class="td-toc-title__link" title="Top of page" href="#"></a></div>';
+
+        const nav = document.createElement('nav');
+        nav.id = 'TableOfContents';
+        const rootUl = document.createElement('ul');
+        nav.appendChild(rootUl);
+
+        let currentH2Li = null;
+
+        headings.forEach(heading => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#' + heading.id;
+            a.textContent = heading.textContent.trim();
+            li.appendChild(a);
+
+            if (heading.tagName === 'H2') {
+                rootUl.appendChild(li);
+                currentH2Li = li;
+            } else if (heading.tagName === 'H3') {
+                if (currentH2Li) {
+                    let subUl = currentH2Li.querySelector('ul');
+                    if (!subUl) {
+                        subUl = document.createElement('ul');
+                        currentH2Li.appendChild(subUl);
+                    }
+                    subUl.appendChild(li);
+                } else {
+                    rootUl.appendChild(li);
+                }
+            }
+        });
+
+        tocDiv.appendChild(nav);
+    });
 </script>
 {{ end }}
