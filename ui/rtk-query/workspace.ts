@@ -2,6 +2,8 @@ import { urlEncodeParams } from '@/utils/utils';
 import { mesheryApi } from '@meshery/schemas/mesheryApi';
 import { api, mesheryApiPath } from './index';
 import _ from 'lodash';
+import { normalizePaginatedCollectionResponse } from './transforms';
+import { normalizeUserProfileSummary } from './userProfile';
 
 const TAGS = {
   WORKSPACES: 'workspaces',
@@ -10,6 +12,17 @@ const TAGS = {
   VIEWS: 'workspaces_views',
   TEAMS: 'workspaces_teams',
 };
+
+const normalizeWorkspaceResource = (resource) => ({
+  ...resource,
+  userId: resource?.userId ?? resource?.user_id,
+  catalogData: resource?.catalogData ?? resource?.catalog_data,
+  patternFile: resource?.patternFile ?? resource?.pattern_file,
+  designFile: resource?.designFile ?? resource?.design_file,
+  createdAt: resource?.createdAt ?? resource?.created_at,
+  updatedAt: resource?.updatedAt ?? resource?.updated_at,
+});
+
 const workspacesApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.WORKSPACES, TAGS.DESIGNS, TAGS.ENVIRONMENTS, TAGS.VIEWS, TAGS.TEAMS],
@@ -64,10 +77,11 @@ const workspacesApi = api
 
                 return {
                   ...workspace,
-                  designCount: designs.data?.total_count || 0,
-                  environmentCount: environments.data?.total_count || 0,
-                  viewCount: views.data?.total_count || 0,
-                  teamCount: teams.data?.total_count || 0,
+                  designCount: designs.data?.totalCount ?? designs.data?.total_count ?? 0,
+                  environmentCount:
+                    environments.data?.totalCount ?? environments.data?.total_count ?? 0,
+                  viewCount: views.data?.totalCount ?? views.data?.total_count ?? 0,
+                  teamCount: teams.data?.totalCount ?? teams.data?.total_count ?? 0,
                 };
               }),
             );
@@ -124,26 +138,40 @@ const workspacesApi = api
             url: mesheryApiPath(`workspaces/${queryArgs.workspaceId}/designs?${params}`),
             method: 'GET',
           });
-          if (expandUser && designs.data && !designs.error) {
-            const withUsersPromises = designs.data.designs.map(async (design) => {
+          const normalizedDesigns =
+            designs.data && !designs.error
+              ? {
+                  ...designs,
+                  data: normalizePaginatedCollectionResponse(
+                    designs.data,
+                    'designs',
+                    normalizeWorkspaceResource,
+                  ),
+                }
+              : designs;
+          if (expandUser && normalizedDesigns.data && !normalizedDesigns.error) {
+            const withUsersPromises = normalizedDesigns.data.designs.map(async (design) => {
               const user = await dispatch(
-                mesheryApi.endpoints.getUserProfileById.initiate({ id: design.user_id }),
+                mesheryApi.endpoints.getUserProfileById.initiate({
+                  id: design.userId,
+                }),
               );
+              const normalizedUser = normalizeUserProfileSummary(user.data);
               return {
                 ...design,
-                first_name: user.data?.first_name || '[deleted]',
-                last_name: user.data?.last_name || '',
-                avatar_url: user.data?.avatar_url || '',
-                user_id: user.data?.id || '',
-                email: user.data?.email || '',
+                firstName: normalizedUser?.firstName || '[deleted]',
+                lastName: normalizedUser?.lastName || '',
+                avatarUrl: normalizedUser?.avatarUrl || '',
+                userId: normalizedUser?.id || design.userId || '',
+                email: normalizedUser?.email || '',
               };
             });
 
             const modifiedDesigns = await Promise.all(withUsersPromises);
-            return _.merge({}, designs, { data: { designs: modifiedDesigns } });
+            return _.merge({}, normalizedDesigns, { data: { designs: modifiedDesigns } });
           }
 
-          return designs;
+          return normalizedDesigns;
         },
         serializeQueryArgs: ({ endpointName, queryArgs }) => {
           if (queryArgs?.infiniteScroll) {
@@ -198,25 +226,39 @@ const workspacesApi = api
             ),
             method: 'GET',
           });
-          if (expandUser && views.data && !views.error) {
-            const withUsersPromises = views.data.views.map(async (view) => {
+          const normalizedViews =
+            views.data && !views.error
+              ? {
+                  ...views,
+                  data: normalizePaginatedCollectionResponse(
+                    views.data,
+                    'views',
+                    normalizeWorkspaceResource,
+                  ),
+                }
+              : views;
+          if (expandUser && normalizedViews.data && !normalizedViews.error) {
+            const withUsersPromises = normalizedViews.data.views.map(async (view) => {
               const user = await dispatch(
-                mesheryApi.endpoints.getUserProfileById.initiate({ id: view.user_id }),
+                mesheryApi.endpoints.getUserProfileById.initiate({
+                  id: view.userId,
+                }),
               );
+              const normalizedUser = normalizeUserProfileSummary(user.data);
               return {
                 ...view,
-                first_name: user.data?.first_name || '[deleted]',
-                last_name: user.data?.last_name || '',
-                avatar_url: user.data?.avatar_url || '',
-                user_id: user.data?.id || '',
-                email: user.data?.email || '',
+                firstName: normalizedUser?.firstName || '[deleted]',
+                lastName: normalizedUser?.lastName || '',
+                avatarUrl: normalizedUser?.avatarUrl || '',
+                userId: normalizedUser?.id || view.userId || '',
+                email: normalizedUser?.email || '',
               };
             });
             const modifiedViews = await Promise.all(withUsersPromises);
-            return _.merge({}, views, { data: { views: modifiedViews } });
+            return _.merge({}, normalizedViews, { data: { views: modifiedViews } });
           }
 
-          return views;
+          return normalizedViews;
         },
         serializeQueryArgs: ({ endpointName, queryArgs }) => {
           if (queryArgs?.infiniteScroll) {

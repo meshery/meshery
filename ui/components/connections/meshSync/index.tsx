@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Tooltip, Grid2, FormControl, MenuItem, Table, FormattedTime } from '@sistent/sistent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
@@ -32,15 +32,7 @@ import {
 import { ConnectionStateChip } from '../ConnectionChip';
 import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
 import { useSelector } from 'react-redux';
-import { updateProgress } from '@/store/slices/mesheryUi';
 import MeshSyncEmptyState from './MeshSyncEmptyState';
-
-const ACTION_TYPES = {
-  FETCH_MESHSYNC_RESOURCES: {
-    name: 'FETCH_MESHSYNC_RESOURCES',
-    error_msg: 'Failed to fetch meshsync resources',
-  },
-};
 
 export default function MeshSyncTable(props) {
   const { selectedResourceId, updateUrlWithResourceId } = props;
@@ -68,6 +60,11 @@ export default function MeshSyncTable(props) {
   const { width } = useWindowDimensions();
 
   const { notify } = useNotification();
+  const clusterIds = useMemo(
+    () => getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig),
+    [k8sConfig, selectedK8sContexts],
+  );
+  const serializedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
 
   const handleRegistrationModalClose = () => {
     setRegistrationModal(false);
@@ -85,23 +82,27 @@ export default function MeshSyncTable(props) {
     kind: kindFilter,
     model: modelFilter,
     namespace: namespaceFilter,
-    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
+    clusterIds: serializedClusterIds,
   });
-  if (isError) {
-    if (isError) {
-      notify({
-        message: 'Error fetching MeshSync Resources',
-        event_type: EVENT_TYPES.ERROR,
-        details: meshSyncError?.data,
-      });
+
+  useEffect(() => {
+    if (!isError) {
+      return;
     }
-  }
+
+    notify({
+      message: 'Error fetching MeshSync Resources',
+      event_type: EVENT_TYPES.ERROR,
+      details: meshSyncError?.data,
+    });
+  }, [isError, meshSyncError?.data, notify]);
+
   const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery({
     page: page,
     pagesize: 'all',
     search: search,
     order: sortOrder,
-    clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig),
+    clusterIds: clusterIds,
   });
   const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
   const availableModels = [
@@ -426,7 +427,7 @@ export default function MeshSyncTable(props) {
     responsive: 'standard',
     serverSide: true,
     selectableRows: 'none',
-    count: meshSyncData?.total_count,
+    count: meshSyncData?.totalCount,
     rowsPerPage: pageSize,
     fixedHeader: true,
     page,
@@ -534,21 +535,6 @@ export default function MeshSyncTable(props) {
       );
     },
   };
-
-  const handleError = (action) => (error) => {
-    updateProgress({ showProgress: false });
-    notify({
-      message: `${action.error_msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
-  };
-
-  useEffect(() => {
-    if (meshSyncError) {
-      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES)(meshSyncError);
-    }
-  }, [meshSyncError]);
 
   // Consolidate multiple useRef hooks into a single object
   const expansionFlags = useRef({
