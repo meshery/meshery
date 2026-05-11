@@ -36,12 +36,12 @@ func TestRemoteProvider_OutboundOrgIdIsCanonical(t *testing.T) {
 	}
 
 	cases := []struct {
-		name       string
-		feature    Feature
-		endpoint   string
-		invoke     func(t *testing.T, l *RemoteProvider)
-		wantOrgID  string
-		wantPath   string
+		name      string
+		feature   Feature
+		endpoint  string
+		invoke    func(t *testing.T, l *RemoteProvider)
+		wantOrgID string
+		wantPath  string
 	}{
 		{
 			name:     "GetEnvironments uses orgId",
@@ -155,6 +155,53 @@ func TestRemoteProvider_OutboundOrgIdIsCanonical(t *testing.T) {
 				t.Errorf("expected path %q, got %q", tc.wantPath, got.path)
 			}
 		})
+	}
+}
+
+func TestRemoteProviderGetUsersReturnsSchemaBackedPage(t *testing.T) {
+	var observed atomic.Value // of string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		observed.Store(r.URL.RawQuery)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{
+			"page": 1,
+			"pageSize": 10,
+			"totalCount": 1,
+			"data": [
+				{
+					"userId": "00000000-0000-0000-0000-000000000001",
+					"username": "meshery-user",
+					"avatarUrl": "https://example.com/avatar.png"
+				}
+			]
+		}`))
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{{Feature: UsersIdentity, Endpoint: "/identity/users"}}
+
+	users, err := provider.GetUsers("test-token", "1", "10", "meshery", "", "")
+	if err != nil {
+		t.Fatalf("GetUsers returned error: %v", err)
+	}
+	if users == nil {
+		t.Fatal("expected schema-backed users page, got nil")
+	}
+	if users.Page != 1 || users.PageSize != 10 || users.TotalCount != 1 {
+		t.Fatalf("unexpected users page metadata: %+v", users)
+	}
+	if len(users.Data) != 1 || users.Data[0].Username != "meshery-user" {
+		t.Fatalf("unexpected users data: %+v", users.Data)
+	}
+
+	rawQuery, _ := observed.Load().(string)
+	if !strings.Contains(rawQuery, "pageSize=10") {
+		t.Fatalf("expected canonical pageSize query param, got %q", rawQuery)
+	}
+	if strings.Contains(rawQuery, "pagesize=") {
+		t.Fatalf("found legacy pagesize query param in %q", rawQuery)
 	}
 }
 

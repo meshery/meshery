@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/meshery/meshkit/database"
@@ -22,6 +23,55 @@ func newTestSessionPreferencePersister(t *testing.T) *SessionPreferencePersister
 
 	return &SessionPreferencePersister{
 		DB: &database.Handler{DB: db},
+	}
+}
+
+func TestPreferenceMarshalJSONEmitsCanonicalAndLegacySelectedOrganizationID(t *testing.T) {
+	pref := Preference{
+		SelectedOrganizationID: "00000000-0000-0000-0000-000000000001",
+		Grafana: &Grafana{
+			GrafanaURL:    "http://grafana.example",
+			GrafanaAPIKey: "grafana-secret",
+		},
+		Prometheus: &Prometheus{
+			PrometheusURL: "http://prometheus.example",
+		},
+	}
+
+	data, err := json.Marshal(pref)
+	if err != nil {
+		t.Fatalf("marshal preference: %v", err)
+	}
+
+	var got map[string]interface{}
+	if err := json.Unmarshal(data, &got); err != nil {
+		t.Fatalf("unmarshal preference: %v", err)
+	}
+
+	if got["selectedOrganizationId"] != pref.SelectedOrganizationID {
+		t.Fatalf("expected canonical selectedOrganizationId, got %q", got["selectedOrganizationId"])
+	}
+	if got["selectedOrganizationID"] != pref.SelectedOrganizationID {
+		t.Fatalf("expected legacy selectedOrganizationID, got %q", got["selectedOrganizationID"])
+	}
+
+	grafana, ok := got["grafana"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected grafana object, got %+v", got["grafana"])
+	}
+	if grafana["grafanaUrl"] != pref.Grafana.GrafanaURL {
+		t.Fatalf("expected canonical grafanaUrl, got %q", grafana["grafanaUrl"])
+	}
+	if grafana["grafanaApiKey"] != pref.Grafana.GrafanaAPIKey {
+		t.Fatalf("expected canonical grafanaApiKey, got %q", grafana["grafanaApiKey"])
+	}
+
+	prometheus, ok := got["prometheus"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected prometheus object, got %+v", got["prometheus"])
+	}
+	if prometheus["prometheusUrl"] != pref.Prometheus.PrometheusURL {
+		t.Fatalf("expected canonical prometheusUrl, got %q", prometheus["prometheusUrl"])
 	}
 }
 

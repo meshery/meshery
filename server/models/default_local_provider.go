@@ -182,8 +182,8 @@ func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, _ string) ([]byte, e
 	return nil, nil
 }
 
-func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) (*AllUsers, error) {
+	return nil, ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) GetEnvironments(_, page, pageSize, search, order, filter string, orgID string) ([]byte, error) {

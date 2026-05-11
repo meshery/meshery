@@ -379,7 +379,7 @@ type Provider interface {
 	GetSession(req *http.Request) error
 	GetUserDetails(*http.Request) (*User, error)
 	GetUserByID(req *http.Request, userID string) ([]byte, error)
-	GetUsers(token, page, pageSize, search, order, filter string) ([]byte, error)
+	GetUsers(token, page, pageSize, search, order, filter string) (*AllUsers, error)
 	GetUsersKeys(token, page, pageSize, search, order, filter string, orgID string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string

@@ -1,14 +1,18 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/core"
+	userSchema "github.com/meshery/schemas/models/v1beta2/user"
 )
 
 // userSpyProvider embeds DefaultLocalProvider so we pick up a full Provider
@@ -16,12 +20,17 @@ import (
 // The handler test uses this to drive each error path independently.
 type userSpyProvider struct {
 	*models.DefaultLocalProvider
-	resp []byte
-	err  error
+	resp  []byte
+	err   error
+	users *models.AllUsers
 }
 
 func (m *userSpyProvider) GetUserByID(_ *http.Request, _ string) ([]byte, error) {
 	return m.resp, m.err
+}
+
+func (m *userSpyProvider) GetUsers(_, _, _, _, _, _ string) (*models.AllUsers, error) {
+	return m.users, m.err
 }
 
 // TestGetUserByIDHandler_InvalidUUIDReturnsJSON pins the 400 response to a
@@ -110,6 +119,49 @@ func TestGetUserByIDHandler_SystemInstanceReturns204(t *testing.T) {
 	}
 	if body := rec.Body.Bytes(); len(body) != 0 {
 		t.Errorf("expected empty body for 204, got %q", string(body))
+	}
+}
+
+func TestGetUsersEncodesSchemaBackedPage(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	userID := core.Uuid(uuid.FromStringOrNil("00000000-0000-0000-0000-000000000001"))
+	avatarURL := "https://example.com/avatar.png"
+	provider := &userSpyProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		users: &models.AllUsers{
+			Page:       1,
+			PageSize:   10,
+			TotalCount: 1,
+			Data: []userSchema.PublicUserView{
+				{
+					UserId:    userID,
+					Username:  "meshery-user",
+					AvatarUrl: &avatarURL,
+				},
+			},
+		},
+	}
+	provider.Initialize()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/identity/users?page=1&pageSize=10", nil)
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+	rec := httptest.NewRecorder()
+
+	h.GetUsers(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+
+	var decoded models.AllUsers
+	if err := json.NewDecoder(rec.Body).Decode(&decoded); err != nil {
+		t.Fatalf("expected schema-backed users page JSON, got %v", err)
+	}
+	if decoded.TotalCount != 1 || len(decoded.Data) != 1 {
+		t.Fatalf("unexpected users page: %+v", decoded)
+	}
+	if decoded.Data[0].Username != "meshery-user" {
+		t.Fatalf("expected schema username, got %+v", decoded.Data[0])
 	}
 }
 

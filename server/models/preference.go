@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/gob"
+	"encoding/json"
 	"time"
 
 	"github.com/grafana-tools/sdk"
@@ -72,6 +73,50 @@ type Preference struct {
 	SelectedWorkspaceForOrganizations map[string]string      `json:"selectedWorkspaceForOrganizations,omitempty"` // map[orgID]workspaceID
 	UsersExtensionPreferences         map[string]interface{} `json:"usersExtensionPreferences,omitempty"`
 	RemoteProviderPreferences         map[string]interface{} `json:"remoteProviderPreferences,omitempty"`
+}
+
+func (p Preference) MarshalJSON() ([]byte, error) {
+	type preferenceAlias Preference
+	data, err := json.Marshal(preferenceAlias(p))
+	if err != nil {
+		return nil, err
+	}
+	var fields map[string]interface{}
+	if err := json.Unmarshal(data, &fields); err != nil {
+		return nil, err
+	}
+	if p.SelectedOrganizationID == "" {
+		return marshalPreferenceCanonicalFields(fields, p)
+	}
+	fields["selectedOrganizationId"] = p.SelectedOrganizationID
+	return marshalPreferenceCanonicalFields(fields, p)
+}
+
+func marshalPreferenceCanonicalFields(fields map[string]interface{}, p Preference) ([]byte, error) {
+	if p.Grafana != nil {
+		grafana, _ := fields["grafana"].(map[string]interface{})
+		if grafana == nil {
+			grafana = map[string]interface{}{}
+		}
+		if p.Grafana.GrafanaURL != "" {
+			grafana["grafanaUrl"] = p.Grafana.GrafanaURL
+		}
+		if p.Grafana.GrafanaAPIKey != "" {
+			grafana["grafanaApiKey"] = p.Grafana.GrafanaAPIKey
+		}
+		fields["grafana"] = grafana
+	}
+	if p.Prometheus != nil {
+		prometheus, _ := fields["prometheus"].(map[string]interface{})
+		if prometheus == nil {
+			prometheus = map[string]interface{}{}
+		}
+		if p.Prometheus.PrometheusURL != "" {
+			prometheus["prometheusUrl"] = p.Prometheus.PrometheusURL
+		}
+		fields["prometheus"] = prometheus
+	}
+	return json.Marshal(fields)
 }
 
 // NewDefaultPreference returns a preference initialized with Meshery's default opt-in values.

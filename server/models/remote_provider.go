@@ -672,11 +672,11 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 	return nil, err
 }
 
-func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter string) ([]byte, error) {
+func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter string) (*AllUsers, error) {
 	if !l.Capabilities.IsSupported(UsersIdentity) {
 		l.Log.Warn(ErrOperationNotAvailable)
 
-		return []byte{}, ErrInvalidCapability("UsersIdentity", l.ProviderName)
+		return nil, ErrInvalidCapability("UsersIdentity", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(UsersIdentity)
@@ -686,7 +686,7 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("pagesize", pageSize)
+		q.Set("pageSize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -719,8 +719,12 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 	}
 
 	if resp.StatusCode == http.StatusOK {
+		users := &AllUsers{}
+		if err := json.Unmarshal(bd, users); err != nil {
+			return nil, ErrUnmarshal(err, "Users Data")
+		}
 		l.Log.Info("user data retrieved from remote provider")
-		return bd, nil
+		return users, nil
 	}
 	err = ErrFetch(err, "Users Data", resp.StatusCode)
 	l.Log.Error(err)

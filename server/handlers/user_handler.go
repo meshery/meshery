@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	userSchema "github.com/meshery/schemas/models/v1beta2/user"
 	pkgerrors "github.com/pkg/errors"
 
 	"github.com/meshery/meshery/server/models"
@@ -66,8 +68,12 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 	}
 
 	q := req.URL.Query()
+	pageSize := q.Get("pageSize")
+	if pageSize == "" {
+		pageSize = q.Get("pagesize")
+	}
 
-	resp, err := provider.GetUsers(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetUsers(token, q.Get("page"), pageSize, q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
@@ -75,8 +81,11 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		obj := "users data"
+		h.log.Error(models.ErrEncoding(err, obj))
+		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -96,10 +105,24 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		_ = req.Body.Close()
 	}()
 
-	// read user preferences from JSON request body
-	if err := json.NewDecoder(req.Body).Decode(&prefObj); err != nil {
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
 		h.log.Error(ErrDecoding(err, "user preferences"))
 		writeMeshkitError(w, ErrDecoding(err, "user preferences"), http.StatusInternalServerError)
+		return
+	}
+
+	if req.URL.Path == "/api/identity/users/preferences" {
+		mergedPref, err := preferenceFromSchemaPayload(body, prefObj)
+		if err != nil {
+			h.log.Error(ErrDecoding(err, "user preferences"))
+			writeMeshkitError(w, ErrDecoding(err, "user preferences"), http.StatusBadRequest)
+			return
+		}
+		prefObj = mergedPref
+	} else if err := json.Unmarshal(body, &prefObj); err != nil {
+		h.log.Error(ErrDecoding(err, "user preferences"))
+		writeMeshkitError(w, ErrDecoding(err, "user preferences"), http.StatusBadRequest)
 		return
 	}
 
@@ -159,6 +182,165 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		return
 	}
+}
+
+func preferenceFromSchemaPayload(body []byte, existing *models.Preference) (*models.Preference, error) {
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(body, &raw); err != nil {
+		return nil, err
+	}
+
+	selectedOrganizationID := ""
+	for _, key := range []string{"selectedOrganizationId", "selectedOrganizationID"} {
+		if selectedOrg, ok := raw[key]; ok {
+			if err := json.Unmarshal(selectedOrg, &selectedOrganizationID); err != nil {
+				return nil, err
+			}
+			if selectedOrganizationID == "all" {
+				delete(raw, "selectedOrganizationId")
+				delete(raw, "selectedOrganizationID")
+			}
+			break
+		}
+	}
+
+	normalizedBody, err := json.Marshal(raw)
+	if err != nil {
+		return nil, err
+	}
+
+	prefUpdate := &userSchema.PreferencePayload{}
+	if err := json.Unmarshal(normalizedBody, prefUpdate); err != nil {
+		return nil, err
+	}
+
+	merged := *defaultPreferenceForPatch()
+	if existing != nil {
+		merged = *existing
+	}
+
+	if prefUpdate.MeshAdapters != nil {
+		if err := convertSchemaPreferenceValue(prefUpdate.MeshAdapters, &merged.MeshAdapters); err != nil {
+			return nil, err
+		}
+	}
+	if prefUpdate.Grafana != nil {
+		grafana, err := applyGrafanaPreferencePayload(merged.Grafana, prefUpdate.Grafana)
+		if err != nil {
+			return nil, err
+		}
+		merged.Grafana = grafana
+	}
+	if prefUpdate.Prometheus != nil {
+		prometheus, err := applyPrometheusPreferencePayload(merged.Prometheus, prefUpdate.Prometheus)
+		if err != nil {
+			return nil, err
+		}
+		merged.Prometheus = prometheus
+	}
+	if prefUpdate.LoadTestPrefs != nil {
+		merged.LoadTestPreferences = applyLoadTestPreferencesPayload(merged.LoadTestPreferences, prefUpdate.LoadTestPrefs)
+	}
+	if prefUpdate.AnonymousUsageStats != nil {
+		merged.AnonymousUsageStats = *prefUpdate.AnonymousUsageStats
+	}
+	if prefUpdate.AnonymousPerfResults != nil {
+		merged.AnonymousPerfResults = *prefUpdate.AnonymousPerfResults
+	}
+	if prefUpdate.DashboardPreferences != nil {
+		merged.DashboardPreferences = *prefUpdate.DashboardPreferences
+	}
+	if prefUpdate.SelectedOrganizationId != nil {
+		merged.SelectedOrganizationID = prefUpdate.SelectedOrganizationId.String()
+	}
+	if selectedOrganizationID != "" {
+		merged.SelectedOrganizationID = selectedOrganizationID
+	}
+	if prefUpdate.SelectedWorkspaceForOrganizations != nil {
+		merged.SelectedWorkspaceForOrganizations = *prefUpdate.SelectedWorkspaceForOrganizations
+	}
+	if prefUpdate.UsersExtensionPreferences != nil {
+		merged.UsersExtensionPreferences = *prefUpdate.UsersExtensionPreferences
+	}
+	if prefUpdate.RemoteProviderPreferences != nil {
+		merged.RemoteProviderPreferences = *prefUpdate.RemoteProviderPreferences
+	}
+
+	return &merged, nil
+}
+
+func defaultPreferenceForPatch() *models.Preference {
+	return &models.Preference{
+		AnonymousUsageStats:               true,
+		AnonymousPerfResults:              true,
+		DashboardPreferences:              map[string]interface{}{},
+		SelectedWorkspaceForOrganizations: map[string]string{},
+		UsersExtensionPreferences:         map[string]interface{}{},
+		RemoteProviderPreferences:         map[string]interface{}{},
+	}
+}
+
+func convertSchemaPreferenceValue(from interface{}, to interface{}) error {
+	data, err := json.Marshal(from)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(data, to)
+}
+
+func applyGrafanaPreferencePayload(existing *models.Grafana, payload *userSchema.Grafana) (*models.Grafana, error) {
+	merged := models.Grafana{}
+	if existing != nil {
+		merged = *existing
+	}
+	if payload.GrafanaUrl != nil {
+		merged.GrafanaURL = *payload.GrafanaUrl
+	}
+	if payload.GrafanaApiKey != nil {
+		merged.GrafanaAPIKey = *payload.GrafanaApiKey
+	}
+	if payload.SelectedBoardsConfigs != nil {
+		if err := convertSchemaPreferenceValue(payload.SelectedBoardsConfigs, &merged.GrafanaBoards); err != nil {
+			return nil, err
+		}
+	}
+	return &merged, nil
+}
+
+func applyPrometheusPreferencePayload(existing *models.Prometheus, payload *userSchema.Prometheus) (*models.Prometheus, error) {
+	merged := models.Prometheus{}
+	if existing != nil {
+		merged = *existing
+	}
+	if payload.PrometheusUrl != nil {
+		merged.PrometheusURL = *payload.PrometheusUrl
+	}
+	if payload.SelectedPrometheusBoardsConfigs != nil {
+		if err := convertSchemaPreferenceValue(payload.SelectedPrometheusBoardsConfigs, &merged.SelectedPrometheusBoardsConfigs); err != nil {
+			return nil, err
+		}
+	}
+	return &merged, nil
+}
+
+func applyLoadTestPreferencesPayload(existing *models.LoadTestPreferences, payload *userSchema.LoadTestPreferences) *models.LoadTestPreferences {
+	merged := models.LoadTestPreferences{}
+	if existing != nil {
+		merged = *existing
+	}
+	if payload.C != nil {
+		merged.ConcurrentRequests = *payload.C
+	}
+	if payload.Qps != nil {
+		merged.QueriesPerSecond = *payload.Qps
+	}
+	if payload.T != nil {
+		merged.Duration = *payload.T
+	}
+	if payload.Gen != nil {
+		merged.LoadGenerator = *payload.Gen
+	}
+	return &merged
 }
 
 func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {

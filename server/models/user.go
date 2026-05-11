@@ -18,12 +18,7 @@ var (
 // User - represents a user in Meshery
 type User = userV1beta2.User
 
-type AllUsers struct {
-	Page       int     `json:"page"`
-	PageSize   int     `json:"pageSize"`
-	Data       []*User `json:"data"`
-	TotalCount int     `json:"totalCount"`
-}
+type AllUsers = userV1beta2.PublicUsersPage
 
 type UserKeys struct {
 	ID          string `json:"id,omitempty"`

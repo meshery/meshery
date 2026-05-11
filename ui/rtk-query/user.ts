@@ -16,6 +16,52 @@ const Tags = {
   PROVIDER_CAP: 'provider_capabilities',
 };
 
+const normalizeUserPreference = (preference = {}) => ({
+  ...preference,
+  selectedOrganizationId: preference.selectedOrganizationId ?? preference.selectedOrganizationID,
+  grafana: preference.grafana
+    ? {
+        ...preference.grafana,
+        grafanaUrl: preference.grafana.grafanaUrl ?? preference.grafana.grafanaURL,
+        grafanaApiKey: preference.grafana.grafanaApiKey ?? preference.grafana.grafanaAPIKey,
+      }
+    : preference.grafana,
+  prometheus: preference.prometheus
+    ? {
+        ...preference.prometheus,
+        prometheusUrl: preference.prometheus.prometheusUrl ?? preference.prometheus.prometheusURL,
+      }
+    : preference.prometheus,
+});
+
+const canonicalizeUserPreferencePayload = (preference = {}) => {
+  const payload = { ...preference };
+  if (payload.selectedOrganizationID && !payload.selectedOrganizationId) {
+    payload.selectedOrganizationId = payload.selectedOrganizationID;
+  }
+  delete payload.selectedOrganizationID;
+
+  if (payload.grafana) {
+    payload.grafana = {
+      ...payload.grafana,
+      grafanaUrl: payload.grafana.grafanaUrl ?? payload.grafana.grafanaURL,
+      grafanaApiKey: payload.grafana.grafanaApiKey ?? payload.grafana.grafanaAPIKey,
+    };
+    delete payload.grafana.grafanaURL;
+    delete payload.grafana.grafanaAPIKey;
+  }
+
+  if (payload.prometheus) {
+    payload.prometheus = {
+      ...payload.prometheus,
+      prometheusUrl: payload.prometheus.prometheusUrl ?? payload.prometheus.prometheusURL,
+    };
+    delete payload.prometheus.prometheusURL;
+  }
+
+  return payload;
+};
+
 export const userApi = api
   .enhanceEndpoints({
     addTagTypes: [Tags.USER_PREF, Tags.LOAD_TEST_PREF, Tags.PROVIDER_CAP],
@@ -48,15 +94,16 @@ export const userApi = api
         method: 'GET',
       }),
       getUserPref: builder.query({
-        query: () => '/api/user/prefs',
+        query: () => '/api/identity/users/preferences',
         method: 'GET',
         providesTags: [Tags.USER_PREF],
+        transformResponse: normalizeUserPreference,
       }),
       updateUserPref: builder.mutation({
         query: (queryArg) => ({
-          url: '/api/user/prefs',
-          method: 'POST',
-          body: queryArg,
+          url: '/api/identity/users/preferences',
+          method: 'PUT',
+          body: canonicalizeUserPreferencePayload(queryArg),
           credentials: 'include',
         }),
         invalidatesTags: [Tags.USER_PREF],
@@ -84,7 +131,7 @@ export const userApi = api
           // Optimistically update the cache with the new preferences
           const patchResult = dispatch(
             api.util.updateQueryData('getUserPref', queryArg.selectedK8sContexts, (draft) => {
-              Object.assign(draft, queryArg.body);
+              Object.assign(draft, normalizeUserPreference(queryArg.body));
             }),
           );
           try {
@@ -215,7 +262,7 @@ export const userApi = api
           url: `/api/identity/users`,
           params: {
             page: queryArg.page,
-            pagesize: queryArg.pagesize,
+            pageSize: queryArg.pageSize ?? queryArg.pagesize,
             search: queryArg.search,
             order: queryArg.order,
             filter: queryArg.filter,
@@ -351,10 +398,10 @@ export const getSystemVersion = async () => {
   return res;
 };
 
-export const getAllUsers = async ({ page, pagesize, search }) => {
+export const getAllUsers = async ({ page, pageSize, pagesize, search }) => {
   const users = await initiateQuery(
     userApi.endpoints.getAllUsers,
-    { page, pagesize, search },
+    { page, pageSize: pageSize ?? pagesize, search },
     { skip: !search },
   );
   return users;
@@ -373,7 +420,7 @@ export const useGetSelectedOrganization = () => {
   } = useGetOrgsQuery();
 
   const existingSelectedOrganization = allOrgs?.organizations?.find(
-    (org) => org.id === userPrefs?.selectedOrganizationID,
+    (org) => org.id === userPrefs?.selectedOrganizationId,
   );
 
   const selectedOrganization = existingSelectedOrganization ?? allOrgs?.organizations?.[0];
@@ -437,7 +484,7 @@ export const useUpdateSelectedOrganizationMutation = () => {
   const [updateUserPref, response] = useUpdateUserPrefMutation();
 
   const updateSelectedOrganization = async (orgId) => {
-    await updateUserPref({ selectedOrganizationID: orgId });
+    await updateUserPref({ selectedOrganizationId: orgId });
   };
 
   return [updateSelectedOrganization, response];
