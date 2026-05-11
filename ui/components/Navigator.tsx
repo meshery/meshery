@@ -456,45 +456,51 @@ const Navigator_ = () => {
     if (!children || children.length === 0) {
       return null;
     }
-    
-    /*  EXTENSION POINT
-    /* See https://docs.meshery.io/reference/extensibility 
-    /* for how you can add your own extension. */
-        
-    const extensionItems = children.map(({ id, icon, href, title, children: subItems, show: showc }) => {
-      if (typeof showc !== 'undefined' && !showc) {
-        return null;
-      }
 
-      const isActive = path === href;
+    const extensionItems = children
+      .map(({ id, icon, href, title, children: subItems, show: showc }) => {
+        if (typeof showc !== 'undefined' && !showc) {
+          return null;
+        }
 
-      return (
-        <React.Fragment key={id}>
-          <NavigatorListItem
-            button
-            depth={depth}
-            key={id}
-            isDrawerCollapsed={isDrawerCollapsed}
-            isActive={isActive}
-          >
-            {extensionPointContent(icon, href, title, isDrawerCollapsed)}
-          </NavigatorListItem>
-          {renderNavigatorExtensions(children, depth + 1)}
-        </React.Fragment>
-      );
-    });
+        const isActive = path === href;
+        const childExtensions = renderNavigatorExtensions(subItems, depth + 1);
+
+        return (
+          <RootDiv key={id} data-testid={depth === 1 ? 'extension-nav-root-item' : undefined}>
+            <NavigatorListItem
+              button
+              depth={depth}
+              isDrawerCollapsed={isDrawerCollapsed}
+              isActive={isActive}
+            >
+              {extensionPointContent(icon, href, title, isDrawerCollapsed)}
+            </NavigatorListItem>
+            {childExtensions}
+          </RootDiv>
+        );
+      })
+      .filter(Boolean);
+
+    if (extensionItems.length === 0) {
+      return null;
+    }
 
     if (depth === 1) {
       return extensionItems;
     }
 
-    return <NavigatorList disablePadding>{extensionItems}</NavigatorList>;
+    return (
+      <NavigatorList disablePadding data-testid="extension-nav-submenu">
+        {extensionItems}
+      </NavigatorList>
+    );
   };
 
   const extensionPointContent = (icon, href, name, drawerCollapsed) => {
     let content = (
       <>
-        <LinkContainer data-testid={name}>
+        <NavigatorLink data-testid={name}>
           <CustomTooltip
             title={name}
             placement="right"
@@ -525,7 +531,7 @@ const Navigator_ = () => {
             </MainListIcon>
           </CustomTooltip>
           <SideBarText drawerCollapsed={drawerCollapsed}>{name}</SideBarText>
-        </LinkContainer>
+        </NavigatorLink>
       </>
     );
 
@@ -533,20 +539,9 @@ const Navigator_ = () => {
       content = (
         <Link
           href={href}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            height: '30px',
-          }}
+          onClick={() => dispatch(updateExtensionType({ extensionType: 'navigator' }))}
         >
-          <Box
-            width="100%"
-            onClick={() => dispatch(updateExtensionType({ extensionType: 'navigator' }))}
-          >
-            {content}
-          </Box>
+          <Box>{content}</Box>
         </Link>
       );
     }
@@ -815,10 +810,10 @@ const Navigator_ = () => {
           },
         )}
         {state.navigator && state.navigator.length ? (
-          <React.Fragment>
+          <Box component="div" data-testid="extension-navigation-region">
             <SecondaryDivider />
             {renderNavigatorExtensions(state.navigator, 1)}
-          </React.Fragment>
+          </Box>
         ) : null}
         <SecondaryDivider />
       </HideScrollbar>
