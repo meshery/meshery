@@ -110,7 +110,7 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 }
 
 // getComponentById retrieves a component from the design by its ID
-func getComponentById(design pattern.PatternFile, id coremodelv1beta2.Uuid) *component.ComponentDefinition {
+func getComponentById(design pattern.PatternFile, id legacycoremodel.Uuid) *component.ComponentDefinition {
 	for _, comp := range design.Components {
 		if comp.ID == id {
 			return comp
@@ -157,7 +157,7 @@ func ResolveAliasesInDesign(design pattern.PatternFile) map[string]coremodelv1be
 
 // mergeTraceUnique appends trace entries from src into dst, skipping duplicates by ID.
 func mergeTraceUnique(dst, src *pattern.Trace) {
-	compSeen := make(map[coremodelv1beta2.Uuid]bool)
+	compSeen := make(map[legacycoremodel.Uuid]bool)
 	for _, c := range dst.ComponentsAdded {
 		compSeen[c.ID] = true
 	}
@@ -167,7 +167,7 @@ func mergeTraceUnique(dst, src *pattern.Trace) {
 	for _, c := range dst.ComponentsRemoved {
 		compSeen[c.ID] = true
 	}
-	relSeen := make(map[coremodelv1beta2.Uuid]bool)
+	relSeen := make(map[legacycoremodel.Uuid]bool)
 	for _, r := range dst.RelationshipsAdded {
 		relSeen[r.ID] = true
 	}
@@ -846,25 +846,26 @@ func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResul
 		return
 	}
 	ec := json.NewEncoder(rw)
-	response := any(result.resp)
+	design := any(result.resp.Design)
 	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&result.resp.Design); bridgeErr == nil && bridged != nil {
-		response = struct {
-			Design         any              `json:"design"`
-			EvaluationHash *string          `json:"evaluationHash,omitempty"`
-			SchemaVersion  any              `json:"schemaVersion"`
-			Timestamp      *time.Time       `json:"timestamp,omitempty"`
-			Trace          pattern.Trace    `json:"trace"`
-			Actions        []pattern.Action `json:"actions"`
-		}{
-			Design:         bridged,
-			EvaluationHash: result.resp.EvaluationHash,
-			SchemaVersion:  result.resp.SchemaVersion,
-			Timestamp:      result.resp.Timestamp,
-			Trace:          result.resp.Trace,
-			Actions:        result.resp.Actions,
-		}
+		design = bridged
 	} else if bridgeErr != nil {
 		h.log.Warnf("failed to bridge evaluation response design for canonical wire encoding: %v", bridgeErr)
+	}
+	response := struct {
+		Design         any              `json:"design"`
+		EvaluationHash *string          `json:"evaluationHash,omitempty"`
+		SchemaVersion  any              `json:"schemaVersion"`
+		Timestamp      *time.Time       `json:"timestamp,omitempty"`
+		Trace          pattern.Trace    `json:"trace"`
+		Actions        []pattern.Action `json:"actions"`
+	}{
+		Design:         design,
+		EvaluationHash: result.resp.EvaluationHash,
+		SchemaVersion:  result.resp.SchemaVersion,
+		Timestamp:      result.resp.Timestamp,
+		Trace:          result.resp.Trace,
+		Actions:        result.resp.Actions,
 	}
 	if err := ec.Encode(response); err != nil {
 		// Response body has already started streaming via json.Encoder —

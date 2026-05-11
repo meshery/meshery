@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -146,7 +147,7 @@ func TestPatternV1beta1ToV1beta3_ConvertsResolvedAliasesToCanonicalWireShape(t *
 		ResolvedParentId:      parentID,
 		ResolvedRefFieldPath:  []string{"configuration", "spec", "containers", "1"},
 	}
-	if got.AliasComponentId != want.AliasComponentId || got.ResolvedParentId != want.ResolvedParentId {
+	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("resolved alias = %#v, want %#v", got, want)
 	}
 
@@ -164,8 +165,8 @@ func TestPatternV1beta1ToV1beta3_ConvertsResolvedAliasesToCanonicalWireShape(t *
 		t.Fatalf("PatternV1beta3ToV1beta1() unexpected error: %v", err)
 	}
 	legacyGot := (*roundtripped.Metadata.ResolvedAliases)[aliasID.String()]
-	if legacyGot.ResolvedParentId != parentID || legacyGot.RelationshipId != relationshipID {
-		t.Fatalf("round-tripped legacy alias = %#v", legacyGot)
+	if !reflect.DeepEqual(legacyGot, legacyAliases[aliasID.String()]) {
+		t.Fatalf("round-tripped legacy alias = %#v, want %#v", legacyGot, legacyAliases[aliasID.String()])
 	}
 }
 
