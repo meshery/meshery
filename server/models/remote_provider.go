@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -43,6 +44,10 @@ import (
 const (
 	PROVIDER_CAPABILITIES_FILEPATH_ENV = "PROVIDER_CAPABILITIES_FILEPATH"
 	SKIP_DOWNLOAD_EXTENSIONS_ENV       = "SKIP_DOWNLOAD_EXTENSIONS"
+
+	remoteProviderCapabilitiesTimeout = 10 * time.Second
+	remoteProviderCapabilitiesRetries = 3
+	remoteProviderCapabilitiesBackoff = 2 * time.Second
 )
 
 func shouldPropagateProviderVersion(version string) bool {
@@ -197,14 +202,16 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 		return providerProperties, err
 	}
 
-	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	ctx, cancel := context.WithTimeout(context.Background(), remoteProviderCapabilitiesTimeout)
+	defer cancel()
+
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, remoteProviderURL.String(), nil)
 
 	// If not token is provided then make a simple GET request
 	if token == "" {
-		c := &http.Client{Timeout: 60 * time.Second}
+		c := &http.Client{Timeout: remoteProviderCapabilitiesTimeout}
 
-		const maxRetries = 10
-		for i := 0; i < maxRetries; i++ {
+		for i := 0; i < remoteProviderCapabilitiesRetries; i++ {
 			resp, err = c.Do(req)
 			if err == nil && resp != nil {
 				break // Successfully fetched response
@@ -212,11 +219,13 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 			if i == 0 {
 				l.Log.Warnf("Failed to fetch capabilities from remote provider (URL: %s). Retrying (%d)... ", remoteProviderURL.String(), i)
 			}
-			l.Log.Debugf("Attempt %d/%d: Failed to fetch capabilities: %v. Retrying in 3 seconds...", i+1, maxRetries, err)
-			time.Sleep(3 * time.Second)
+			if i < remoteProviderCapabilitiesRetries-1 {
+				l.Log.Debugf("Attempt %d/%d: Failed to fetch capabilities: %v. Retrying in %s...", i+1, remoteProviderCapabilitiesRetries, err, remoteProviderCapabilitiesBackoff)
+				time.Sleep(remoteProviderCapabilitiesBackoff)
+			}
 		}
 		if err != nil || resp == nil {
-			l.Log.Warnf("Failed to fetch capabilities after %d attempts", maxRetries)
+			l.Log.Warnf("Failed to fetch capabilities after %d attempts", remoteProviderCapabilitiesRetries)
 		}
 
 	} else {
@@ -232,6 +241,11 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 			err = ErrStatusCode(resp.StatusCode)
 		}
 		l.Log.Error(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
+		if resp != nil && resp.Body != nil {
+			if closeErr := resp.Body.Close(); closeErr != nil {
+				l.Log.Error(ErrCloseIoReader(closeErr))
+			}
+		}
 		return providerProperties, ErrFetch(err, "Capabilities", http.StatusInternalServerError)
 	}
 	defer func() {
