@@ -35,23 +35,23 @@ The Notification Center is a dedicated panel in Meshery’s UI that helps you mo
 
 ---
 
-The `NotificationCenter` component of Meshery UI Switching to Graphql subscriptions and implementing robust filtering. Events are persisted in Meshery Server and state management on client is done using Redux Toolkit and RTK.
+The `NotificationCenter` component of Meshery UI uses GraphQL subscriptions and implements robust filtering. Events are persisted in Meshery Server, while client-side state management is handled using Redux Toolkit and RTK Query.
 
 ### User-facing Features
 
 - Robust filtering support inspired by GitHub's notification filtering style.
   - Search is also included.
-- Proper hierarchial presentation of error details, including probable cause and suggested remeditation.
+- Proper hierarchical presentation of error details, including probable cause and suggested remediation.
 - Support for notification status (notifications can be marked as read and unread)
   - _Future: Notifications can be acknowledged or resolved._
-- Event-based notification via Graphql subscription (provided by Meshery Server and any upstream components or externally managed systems, like Kubernetes)
+- Event-based notification via GraphQL subscription (provided by Meshery Server and any upstream components or externally managed systems, like Kubernetes)
 - Infinite scroll for pagination.
 
 ### State Management and Internal Details
 
-- The State on client is managed using `Redux Tooltik` and `Rtk-query`
+- The state on the client is managed using `Redux Toolkit` and `RTK Query`.
 - Update and Delete operations are optimistically handled.
-- Network Request are cached and are invalidated when new events come or events are deleted/updated.
+- Network requests are cached and invalidated when new events arrive or when events are deleted or updated.
 - Due to need for infinite scroll and optimistic update the events are stored globally in Redux.
 
 ### Bulk Operations
@@ -87,7 +87,7 @@ The BodySectionRenderer is responsible for formatting and rendering raw text str
 
 ### ArrayRenderer
 
-The ArrayRenderer is responsible for rendering an array of items in a recursive manner, presenting them as a bulletized list using the MetdataFormatter.
+The ArrayRenderer is responsible for rendering an array of items in a recursive manner, presenting them as a bulletized list using the MetadataFormatter.
 
 ### KeyValueRenderer
 
@@ -127,7 +127,7 @@ This section outlines the essential files and folders that you'll interact with 
   Contains the main context provider (`NotificationCenterProvider`), the drawer component (`NotificationCenterDrawer`), and orchestrates the overall structure.
 
 - **[metadata.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/metadata.tsx)**:  
-  Defines `PropertyFormatters`, `LinkFormatters`, `PropertyLinkFormatters`, and `EventTypeFormatters`. Contains the `FormattedMetadata` component.
+  Defines `PropertyFormatters`, `LinkFormatters`, `PropertyLinkFormatters`, and `EventTypeFormatters`. Contains the `FormattedMetadata` component which decides how to format metadata based on event type or specific properties.
 
 - **[notification.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/notification.tsx)**:  
   Defines how an individual notification is rendered.
