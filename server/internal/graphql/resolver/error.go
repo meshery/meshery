@@ -1,6 +1,8 @@
 package resolver
 
 import (
+	"strings"
+
 	"github.com/meshery/meshkit/errors"
 )
 
@@ -39,6 +41,7 @@ const (
 	ErrPerformanceResultSubscriptionCode    = "meshery-server-1212"
 	ErrGormDatabaseCode                     = "meshery-server-1213"
 	ErrResyncClusterCode                    = "meshery-server-1369"
+	ErrAdapterOperationCode                 = "meshery-server-1422"
 )
 
 var (
@@ -188,6 +191,18 @@ func ErrGettingTelemetryComponents(err error) error {
 
 func ErrAdapterInsufficientInformation(err error) error {
 	return errors.New(ErrAdapterInsufficientInformationCode, errors.Critical, []string{"Unable to process adapter request, incomplete request"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrAdapterOperation(operation string, err error) error {
+	operation = strings.ToLower(operation)
+	return errors.New(
+		ErrAdapterOperationCode,
+		errors.Alert,
+		[]string{"Unable to " + operation + " adapter"},
+		[]string{err.Error()},
+		[]string{"Meshery could not complete the adapter lifecycle operation."},
+		[]string{"Check adapter deployment status and Meshery Server logs for more details."},
+	)
 }
 
 func ErrResyncCluster(err error) error {

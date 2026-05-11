@@ -59,7 +59,7 @@ func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, t
 	}
 	if err != nil {
 		r.Log.Error(fmt.Errorf("failed to %s adapter: %w", operation, err))
-		return model.StatusUnknown, err
+		return model.StatusUnknown, ErrAdapterOperation(operation, err)
 	}
 	r.Log.Info(fmt.Sprintf("%sed adapter", operation))
 
