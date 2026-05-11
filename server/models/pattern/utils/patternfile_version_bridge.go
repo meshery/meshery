@@ -75,8 +75,13 @@ func patternMetadataV1beta1ToV1beta3(src *patternv1beta1.PatternFile_Metadata) *
 	if src == nil {
 		return nil
 	}
+	// ResolvedAliases cannot be directly assigned: v1beta1/pattern uses
+	// "models/core".ResolvedAlias (snake_case JSON tags) while v1beta3/design
+	// uses "models/v1beta2/core".ResolvedAlias (camelCase JSON tags). The
+	// evaluation engine — the only consumer of the v1beta1 side — does not
+	// read this field, so it is safe to omit in the bridge direction.
 	return &designv1beta3.PatternFile_Metadata{
-		ResolvedAliases:      src.ResolvedAliases,
+		ResolvedAliases:      nil,
 		AdditionalProperties: src.AdditionalProperties,
 	}
 }
@@ -85,8 +90,13 @@ func patternMetadataV1beta3ToV1beta1(src *designv1beta3.PatternFile_Metadata) *p
 	if src == nil {
 		return nil
 	}
+	// ResolvedAliases cannot be directly assigned: v1beta3/design uses
+	// "models/v1beta2/core".ResolvedAlias (camelCase JSON tags) while
+	// v1beta1/pattern uses "models/core".ResolvedAlias (snake_case JSON tags).
+	// The bridge is used only for the evaluation engine which does not consume
+	// this field, so it is safe to omit in this direction.
 	return &patternv1beta1.PatternFile_Metadata{
-		ResolvedAliases:      src.ResolvedAliases,
+		ResolvedAliases:      nil,
 		AdditionalProperties: src.AdditionalProperties,
 	}
 }

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -135,11 +136,18 @@ func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection
 	err := cp.DB.Transaction(func(tx *gorm.DB) error {
 		existingConnection := connections.Connection{}
 
-		// Check if there is already an entry for this context
-		if err := tx.First(&existingConnection, "id = ?", connection.ID).Error; err == nil {
-			return err
+		// Check if there is already an entry for this connection ID
+		lookupErr := tx.First(&existingConnection, "id = ?", connection.ID).Error
+		if lookupErr == nil {
+			// Record already exists — return a descriptive error instead of silently no-oping
+			return fmt.Errorf("connection with ID %s already exists", connection.ID)
+		}
+		if !errors.Is(lookupErr, gorm.ErrRecordNotFound) {
+			// Propagate unexpected DB errors
+			return lookupErr
 		}
 
+		// Record not found — safe to insert
 		return tx.Save(&connection).Error
 	})
 
