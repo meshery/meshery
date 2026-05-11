@@ -27,6 +27,10 @@ test.describe('Extensions Section Tests', () => {
     await extensionsPage.verifyKanvasSnapshotDetails();
   });
 
+  test('Verify extension nav items use top-level layout', async () => {
+    await extensionsPage.verifyExtensionNavItemsUseTopLevelLayout();
+  });
+
   test('Verify Performance Analysis Details', async () => {
     await extensionsPage.verifyPerformanceAnalysisDetails();
   });

@@ -2,15 +2,19 @@ package utils
 
 import (
 	"encoding/json"
+	"reflect"
+	"strings"
 	"testing"
 
-	"github.com/gofrs/uuid"
-	core "github.com/meshery/schemas/models/core"
+	legacycoremodel "github.com/meshery/schemas/models/core"
 	componentv1beta1 "github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	patternv1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
+	coremodelv1beta2 "github.com/meshery/schemas/models/v1beta2/core"
 	relationshipv1beta2 "github.com/meshery/schemas/models/v1beta2/relationship"
 	designv1beta3 "github.com/meshery/schemas/models/v1beta3/design"
+
+	"github.com/gofrs/uuid"
 )
 
 func TestPatternV1beta1ToV1beta3_PreservesAliasedFields(t *testing.T) {
@@ -35,9 +39,6 @@ func TestPatternV1beta1ToV1beta3_PreservesAliasedFields(t *testing.T) {
 	if got := dst.Metadata.AdditionalProperties["team"]; got != "meshery" {
 		t.Fatalf("metadata additionalProperties not preserved, got %#v", got)
 	}
-	if got := (*dst.Metadata.ResolvedAliases)["service"].ImmediateParentId.String(); got != "11111111-1111-1111-1111-111111111111" {
-		t.Fatalf("resolved alias metadata not preserved, got %q", got)
-	}
 	if got := dst.Components[0].Metadata.AdditionalProperties["componentKey"]; got != "componentValue" {
 		t.Fatalf("component metadata additionalProperties not preserved, got %#v", got)
 	}
@@ -50,11 +51,6 @@ func TestPatternV1beta1ToV1beta3_PreservesAliasedFields(t *testing.T) {
 	dst.Metadata.AdditionalProperties["owner"] = "catalog"
 	if got := src.Metadata.AdditionalProperties["owner"]; got != "catalog" {
 		t.Fatalf("metadata alias lost, got %#v", got)
-	}
-	resolvedAlias := (*dst.Metadata.ResolvedAliases)["service"]
-	resolvedAlias.ImmediateRefFieldPath[0] = "spec.template.metadata.labels.app"
-	if got := (*src.Metadata.ResolvedAliases)["service"].ImmediateRefFieldPath[0]; got != "spec.template.metadata.labels.app" {
-		t.Fatalf("resolved alias slice alias lost, got %#v", got)
 	}
 
 	dst.Components[0].Configuration["replicas"] = 3
@@ -118,22 +114,76 @@ func TestPatternV1beta1ToV1beta3_PreservesAliasContractLostByJSON(t *testing.T) 
 	}
 }
 
+func TestPatternV1beta1ToV1beta3_ConvertsResolvedAliasesToCanonicalWireShape(t *testing.T) {
+	aliasID := mustUUID(t, "27423b67-76bc-4126-a199-f6d1aa37fe58")
+	parentID := mustUUID(t, "b66ef7d1-7202-4ba1-bb8a-ef3f6c9a7b7b")
+	relationshipID := mustUUID(t, "618e58aa-7733-4185-a13b-799da087e614")
+	legacyAliases := map[string]legacycoremodel.ResolvedAlias{
+		aliasID.String(): {
+			AliasComponentId:      aliasID,
+			ImmediateParentId:     parentID,
+			ImmediateRefFieldPath: []string{"configuration", "spec", "containers", "1"},
+			RelationshipId:        relationshipID,
+			ResolvedParentId:      parentID,
+			ResolvedRefFieldPath:  []string{"configuration", "spec", "containers", "1"},
+		},
+	}
+	src := &patternv1beta1.PatternFile{
+		Metadata: &patternv1beta1.PatternFile_Metadata{
+			ResolvedAliases: &legacyAliases,
+		},
+	}
+
+	dst, err := PatternV1beta1ToV1beta3(src)
+	if err != nil {
+		t.Fatalf("PatternV1beta1ToV1beta3() unexpected error: %v", err)
+	}
+	got := (*dst.Metadata.ResolvedAliases)[aliasID.String()]
+	want := coremodelv1beta2.ResolvedAlias{
+		AliasComponentId:      aliasID,
+		ImmediateParentId:     parentID,
+		ImmediateRefFieldPath: []string{"configuration", "spec", "containers", "1"},
+		RelationshipId:        relationshipID,
+		ResolvedParentId:      parentID,
+		ResolvedRefFieldPath:  []string{"configuration", "spec", "containers", "1"},
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("resolved alias = %#v, want %#v", got, want)
+	}
+	got.ImmediateRefFieldPath[0] = "configuration.spec.containers.0.image"
+	if srcGot := (*src.Metadata.ResolvedAliases)[aliasID.String()].ImmediateRefFieldPath[0]; srcGot != "configuration.spec.containers.0.image" {
+		t.Fatalf("forward conversion should preserve aliasing for resolved alias paths, got %q", srcGot)
+	}
+
+	raw, err := json.Marshal(dst.Metadata.ResolvedAliases)
+	if err != nil {
+		t.Fatalf("json.Marshal() unexpected error: %v", err)
+	}
+	body := string(raw)
+	if !strings.Contains(body, "resolvedParentId") || strings.Contains(body, "resolved_parent_id") {
+		t.Fatalf("resolved aliases should marshal with canonical camelCase keys, got %s", body)
+	}
+
+	roundtripped, err := PatternV1beta3ToV1beta1(dst)
+	if err != nil {
+		t.Fatalf("PatternV1beta3ToV1beta1() unexpected error: %v", err)
+	}
+	legacyGot := (*roundtripped.Metadata.ResolvedAliases)[aliasID.String()]
+	if !reflect.DeepEqual(legacyGot, legacyAliases[aliasID.String()]) {
+		t.Fatalf("round-tripped legacy alias = %#v, want %#v", legacyGot, legacyAliases[aliasID.String()])
+	}
+	legacyGot.ResolvedRefFieldPath[0] = "configuration.spec.containers.0.env"
+	if dstGot := (*dst.Metadata.ResolvedAliases)[aliasID.String()].ResolvedRefFieldPath[0]; dstGot != "configuration.spec.containers.0.env" {
+		t.Fatalf("reverse conversion should preserve aliasing for resolved alias paths, got %q", dstGot)
+	}
+}
+
 func newPatternV1beta1Fixture() *patternv1beta1.PatternFile {
 	return &patternv1beta1.PatternFile{
 		Name:          "typed-bridge",
 		SchemaVersion: "designs.meshery.io/v1beta1",
 		Version:       "0.0.1",
 		Metadata: &patternv1beta1.PatternFile_Metadata{
-			ResolvedAliases: &map[string]core.ResolvedAlias{
-				"service": {
-					AliasComponentId:      uuid.Must(uuid.FromString("00000000-0000-0000-0000-000000000001")),
-					ImmediateParentId:     uuid.Must(uuid.FromString("11111111-1111-1111-1111-111111111111")),
-					ImmediateRefFieldPath: []string{"spec.template.spec.containers.0.image"},
-					RelationshipId:        uuid.Must(uuid.FromString("22222222-2222-2222-2222-222222222222")),
-					ResolvedParentId:      uuid.Must(uuid.FromString("33333333-3333-3333-3333-333333333333")),
-					ResolvedRefFieldPath:  []string{"spec.template.metadata.labels"},
-				},
-			},
 			AdditionalProperties: map[string]interface{}{
 				"team": "meshery",
 			},
@@ -172,4 +222,13 @@ func newPatternV1beta1Fixture() *patternv1beta1.PatternFile {
 			},
 		},
 	}
+}
+
+func mustUUID(t *testing.T, raw string) uuid.UUID {
+	t.Helper()
+	id, err := uuid.FromString(raw)
+	if err != nil {
+		t.Fatalf("uuid.FromString(%q): %v", raw, err)
+	}
+	return id
 }

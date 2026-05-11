@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
+    - name: Setup Node.js v22
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
     - name: Install dependencies in Meshery UI and Provider UI
       run: |
         cd ui && npm ci && cd ..

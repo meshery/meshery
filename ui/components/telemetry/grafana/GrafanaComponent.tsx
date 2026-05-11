@@ -189,7 +189,7 @@ const GrafanaComponent = (props) => {
     // Get the connection object from the event value and update configuration
     const grafanaConnectionObj = value;
     try {
-      const res = await fetchCredentialById(grafanaConnectionObj.credential_id).unwrap();
+      const res = await fetchCredentialById(grafanaConnectionObj.credentialId).unwrap();
       const grafanaCfg = {
         grafanaURL: grafanaConnectionObj?.value || '',
         grafanaAPIKey: res?.secret?.secret || '',
