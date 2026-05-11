@@ -265,17 +265,16 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
 };
 
 const MesheryMetadataFormatter = ({ connection }) => {
-  const metadata = connection.metadata || {};
   const uiSchema = useMemo(
     () =>
       createColumnUiSchema({
-        metadata,
+        metadata: connection.metadata || {},
         numCols: {
           xs: 2,
           md: 4,
         },
       }),
-    [metadata],
+    [connection.metadata],
   );
 
   return (

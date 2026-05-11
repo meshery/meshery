@@ -35,9 +35,12 @@ type ConnectionChipProps = {
   iconSrc?: string;
   status?: string;
   title?: React.ReactNode;
-  tooltip?: React.ReactNode;
   width?: string | number;
   disabled?: boolean;
+};
+
+type TooltipWrappedConnectionChipProps = ConnectionChipProps & {
+  tooltip?: React.ReactNode;
 };
 
 type ConnectionStateChipProps = {
@@ -173,10 +176,14 @@ const ConnectionChip_ = ({
 
 export const ConnectionChip = memo(ConnectionChip_);
 
-const TooltipWrappedConnectionChip_ = ({ tooltip, title, ...props }: ConnectionChipProps) => {
+const TooltipWrappedConnectionChip_ = ({
+  tooltip,
+  title,
+  ...props
+}: TooltipWrappedConnectionChipProps) => {
   const chip = (
     <span style={{ display: 'inline-block' }}>
-      <ConnectionChip title={title} tooltip={tooltip} {...props} />
+      <ConnectionChip title={title} {...props} />
     </span>
   );
 
