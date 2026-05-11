@@ -104,7 +104,7 @@ const SelectedOrganizationProvider = ({ children }) => {
   const prefUpdatedToFallback = useRef(false);
   const isLoading = isFetchingSelectedOrg || isLoadingAbilities;
   const loadingDiagnosticsRef = useRef({
-    providerType: providerCapabilities?.provider_type,
+    providerType: providerCapabilities?.providerType,
     hasSelectedOrganization,
     selectedOrganizationId,
     didFallback,
@@ -116,7 +116,7 @@ const SelectedOrganizationProvider = ({ children }) => {
 
   useEffect(() => {
     loadingDiagnosticsRef.current = {
-      providerType: providerCapabilities?.provider_type,
+      providerType: providerCapabilities?.providerType,
       hasSelectedOrganization,
       selectedOrganizationId,
       didFallback,
@@ -126,7 +126,7 @@ const SelectedOrganizationProvider = ({ children }) => {
       errorLoadingAbilities,
     };
   }, [
-    providerCapabilities?.provider_type,
+    providerCapabilities?.providerType,
     hasSelectedOrganization,
     selectedOrganizationId,
     didFallback,
@@ -210,7 +210,7 @@ const SelectedOrganizationProvider = ({ children }) => {
   }
 
   const loaderMessage = showSlowLoadingNotice
-    ? `Still initializing your ${providerCapabilities?.provider_type === 'local' ? 'local provider session' : 'session'}. Waiting for ${formatPendingSessionBootstrapStep(
+    ? `Still initializing your ${providerCapabilities?.providerType === 'local' ? 'local provider session' : 'session'}. Waiting for ${formatPendingSessionBootstrapStep(
         {
           isFetchingSelectedOrg,
           isLoadingAbilities,
