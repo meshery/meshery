@@ -35,11 +35,11 @@ const (
 	ErrGettingRegistryManagerCode           = "meshery-server-1208"
 	ErrGettingTelemetryComponentsCode       = "meshery-server-1209"
 	ErrAdapterInsufficientInformationCode   = "meshery-server-1210"
-	ErrAdapterOperationCode                 = "meshery-server-1214"
 	ErrPerformanceProfilesSubscriptionCode  = "meshery-server-1211"
 	ErrPerformanceResultSubscriptionCode    = "meshery-server-1212"
 	ErrGormDatabaseCode                     = "meshery-server-1213"
 	ErrResyncClusterCode                    = "meshery-server-1369"
+	ErrAdapterOperationCode                 = "meshery-server-1430"
 )
 
 var (
