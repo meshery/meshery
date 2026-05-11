@@ -1252,6 +1252,11 @@ func (h *Handler) CloneMesheryPatternHandler(
 ) {
 	patternID := mux.Vars(r)["id"]
 	patternUUID := uuid.FromStringOrNil(patternID)
+	if patternID == "" || patternID == "undefined" || patternUUID == uuid.Nil {
+		h.log.Error(ErrGetPattern(fmt.Errorf("invalid design ID: %s", patternID)))
+		writeMeshkitError(rw, ErrGetPattern(fmt.Errorf("invalid design ID: %s", patternID)), http.StatusBadRequest)
+		return
+	}
 
 	userID := user.ID
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("clone").ActedUpon(patternUUID).WithSeverity(events.Informational)
@@ -1567,6 +1572,12 @@ func (h *Handler) GetMesheryPatternHandler(
 ) {
 	patternID := mux.Vars(r)["id"]
 	patternUUID := uuid.FromStringOrNil(patternID)
+	if patternID == "" || patternID == "undefined" || patternUUID == uuid.Nil {
+		err := ErrGetPattern(fmt.Errorf("invalid design ID: %s", patternID))
+		h.log.Error(err)
+		writeMeshkitError(rw, err, http.StatusBadRequest)
+		return
+	}
 	userID := user.ID
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)
 
