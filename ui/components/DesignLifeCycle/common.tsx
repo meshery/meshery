@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Checkbox, CircularProgress, Stack, styled, Typography } from '@sistent/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import { normalizeStaticImagePath } from '@/utils/fallback';
+import { FALLBACK_COMPONENT_ICON_PATH } from '@/constants/common';
 import { processDesign } from '@/utils/utils';
 import { CustomTooltip } from '@sistent/sistent';
 import { InfoCircleIcon, useTheme } from '@sistent/sistent';
@@ -62,7 +63,7 @@ export const Loading = ({ message, 'data-testid': testId = 'loading' }) => {
 };
 
 export const getSvgWhiteForComponent = (component) => {
-  return normalizeStaticImagePath(component?.styles?.svgWhite);
+  return normalizeStaticImagePath(component?.styles?.svgWhite) || FALLBACK_COMPONENT_ICON_PATH;
 };
 
 export const CheckBoxField = ({
