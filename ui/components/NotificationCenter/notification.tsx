@@ -281,6 +281,7 @@ export const getErrorCodesFromEvent = (event) => {
   return [...errorCodes];
 };
 export const Notification = ({ event_id }) => {
+  const isAllAcrossPagesSelected = useSelector((state) => state.events.isAllAcrossPagesSelected);
   const event = useSelector((state) => selectEventById(state, event_id));
   const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
   const severityStyles = SEVERITY_STYLE[event.severity] || SEVERITY_STYLE[SEVERITY.INFO];
@@ -390,7 +391,7 @@ export const Notification = ({ event_id }) => {
           <GridItem item xs="auto">
             <Checkbox
               onClick={eventstopPropagation}
-              checked={Boolean(event.checked)}
+              checked={isAllAcrossPagesSelected ? true : Boolean(event.checked)}
               onChange={handleSelectEvent}
               sx={{
                 margin: '0rem',

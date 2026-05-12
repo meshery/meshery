@@ -25,6 +25,7 @@ const initialState = {
     empty_message: 'No notifications found',
   },
   isNotificationCenterOpen: false,
+  isAllAcrossPagesSelected: false,
 };
 
 const defaultEventProperties = {
@@ -47,6 +48,10 @@ export const eventsSlice = createSlice({
   name: 'events',
   initialState: eventsEntityAdapter.getInitialState(initialState),
   reducers: {
+    setIsAllAcrossPagesSelected: (state, action) => {
+      state.isAllAcrossPagesSelected = action.payload;
+    },
+
     clearEvents: (state) => {
       state.events = [];
     },
@@ -140,6 +145,7 @@ export const eventsSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
+  setIsAllAcrossPagesSelected,
   pushEvent,
   clearEvents,
   setEvents,
