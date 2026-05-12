@@ -204,6 +204,7 @@ jobs:
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
           docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}
 <<<<<<< HEAD
+<<<<<<< HEAD
   # Run Rego policy tests
   rego-tests:
     name: Rego Policy Tests
@@ -246,3 +247,5 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: ${{ secrets.IMAGE_NAME }}
 >>>>>>> 3510c62e495 (chore: remove redudant Rego policy tests from CI workflow)
+=======
+>>>>>>> 27513e867146926b70bee5762950d56ddfe6c7cf
