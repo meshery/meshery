@@ -33,6 +33,7 @@ ui/out/
 ui/.eslintcache
 ui/node_modules/
 ui/tests/e2e/.env
+ui/next-env.d.ts
 
 provider-ui/out/
 provider-ui/.next/
