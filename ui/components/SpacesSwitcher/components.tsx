@@ -124,11 +124,11 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
           label="Author"
           slotProps={{
             input: {
-              ...params.slotProps.input,
+              ...(params?.slotProps?.input || {}),
               endAdornment: (
                 <>
                   {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                  {params.slotProps.input.endAdornment}
+                  {params?.slotProps?.input?.endAdornment}
                 </>
               ),
             },
