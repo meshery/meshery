@@ -1,4 +1,86 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 08 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.20</title><link>/project/releases/v1.0.20/</link><pubDate>Fri, 08 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.20/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Tue, 12 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.21</title><link>/project/releases/v1.0.21/</link><pubDate>Tue, 12 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.21/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Chore]: Bump meshery/schemas to v1.2.19 @l5io (#19255)&lt;/li&gt;
+&lt;li&gt;[CI] Pin Node.js to v22 in eslint-gh workflow @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#19244)&lt;/li&gt;
+&lt;li&gt;[Chore]: Bump meshery/schemas to v1.2.18 @l5io (#19232)&lt;/li&gt;
+&lt;li&gt;chore(deps): bump fast-uri from 3.1.0 to 3.1.2 in /install/docker-extension/ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19199)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(server): split comma-separated PROVIDER_BASE_URLS and ADAPTER_URLS @leecalcote (#19260)&lt;/li&gt;
+&lt;li&gt;fix: refactor system start command with meshkit errors and flag valid… @Omkar-Ugal (#19184)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(ui): halt connections page render loop by stabilizing hook return values @leecalcote (#19268)&lt;/li&gt;
+&lt;li&gt;[UI] use stable readiness selector in connections e2e @jamieplu (#19270)&lt;/li&gt;
+&lt;li&gt;fix(import-model): read modelFile/url/fileName from canonical allOf branches @leecalcote (#19257)&lt;/li&gt;
+&lt;li&gt;fix: Workflow decompose image build @ianrwhitney (#18506)&lt;/li&gt;
+&lt;li&gt;chore: bump @meshery/schemas to v1.2.19 @leecalcote (#19256)&lt;/li&gt;
+&lt;li&gt;[UI] Fix extension nav item indentation @yi-nuo426 (#19248)&lt;/li&gt;
+&lt;li&gt;Chore: Provider UI upgrade to Sistent v0.21.10 @arjunmehta-git (#19247)&lt;/li&gt;
+&lt;li&gt;[Server][UI] Migrate resolved aliases to camelCase @PragalvaXFREZ (#19238)&lt;/li&gt;
+&lt;li&gt;[UI] Improve connections components and add tests @arjunmehta-git (#19201)&lt;/li&gt;
+&lt;li&gt;refactor: Add TypeScript types and improve ConnectionTable component @leecalcote (#19235)&lt;/li&gt;
+&lt;li&gt;chore(deps): bump next from 16.2.4 to 16.2.6 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19231)&lt;/li&gt;
+&lt;li&gt;fix(notification-center): guard against undefined params.InputProps in TypingFilter @leecalcote (#19196)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] use stable readiness selector in connections e2e @jamieplu (#19270)&lt;/li&gt;
+&lt;li&gt;[CI] Recompile docs-noob-tester lock file to fix AWF firewall 404 @rishiraj38 (#19209)&lt;/li&gt;
+&lt;li&gt;Upgrade Node.js setup action to version 6 @jamieplu (#19245)&lt;/li&gt;
+&lt;li&gt;chore: remove redudant Rego policy tests from CI workflow @ianrwhitney (#19102)&lt;/li&gt;
+&lt;li&gt;fix: Workflow decompose image build @ianrwhitney (#18506)&lt;/li&gt;
+&lt;li&gt;[UI] Fix extension nav item indentation @yi-nuo426 (#19248)&lt;/li&gt;
+&lt;li&gt;[Server][UI] Migrate resolved aliases to camelCase @PragalvaXFREZ (#19238)&lt;/li&gt;
+&lt;li&gt;chore(deps): bump github.com/go-git/go-git/v5 from 5.18.0 to 5.19.0 @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19230)&lt;/li&gt;
+&lt;li&gt;chore(deps): bump next from 16.2.4 to 16.2.6 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19231)&lt;/li&gt;
+&lt;li&gt;[CI] Hardening: first-time contributor bot filter and firewall fix @Junnygram (#19236)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] Prevent indexing of previous documentation versions @hamza-mohd (#19252)&lt;/li&gt;
+&lt;li&gt;Update tutorial for deploying Azure resources with Meshery @alexquincy (#19237)&lt;/li&gt;
+&lt;li&gt;[Docs] Update packages @hortison (#19198)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Copilot, @Junnygram, @Omkar-Ugal, @PragalvaXFREZ, @alexquincy, @arjunmehta-git, @claude, @dependabot[bot], @fitzergerald, @guan404ming, @hamza-mohd, @hortison, @ianrwhitney, @jamieplu, @l5io, @leecalcote, @lekaf974, @marblom007, @meshery-ci, @pontusringblom, @rishiraj38, @ritzorama, @simihablo, @yi-nuo426, [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.22</title><link>/project/releases/v1.0.22/</link><pubDate>Tue, 12 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.22/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;update remote provider urls @aabidsofi19 (#19277)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix workspace crash due to wrong prop @aabidsofi19 (#19278)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@aabidsofi19 and @leecalcote&lt;/p&gt;</description></item><item><title>v1.0.20</title><link>/project/releases/v1.0.20/</link><pubDate>Fri, 08 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.20/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -32569,7 +32651,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.20&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.22&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
