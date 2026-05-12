@@ -389,15 +389,10 @@ const ImportModelModal = React.memo(
 
       return (
         <FormControl component="fieldset">
-          <Typography
-            fontWeight={'bold'}
-            fontSize={'1rem'}
-            style={{ marginBottom: '0.5rem' }}
-          >
+          <Typography fontWeight={'bold'} fontSize={'1rem'} style={{ marginBottom: '0.5rem' }}>
             {label}
           </Typography>
           <RadioGroup value={value} onChange={(e) => onChange(e.target.value)}>
-
             {enumOptions.map((option, index) => (
               <FormControlLabel
                 key={option.value}
