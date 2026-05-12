@@ -371,7 +371,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 
 	// meshkit's patterns.DehydratePattern operates on v1beta3/design.PatternFile;
 	// this handler still produces a v1beta1/pattern.PatternFile (the
-	// evaluation engine carve-out). Bridge via JSON round-trip just for
+	// evaluation engine carve-out). Bridge via a typed shallow copy just for
 	// the dehydrate call, then fold the dehydrated fields back onto the
 	// v1beta1 value so the response envelope keeps its existing wire shape.
 	// Log bridge/round-trip errors instead of silently swallowing them —

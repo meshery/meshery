@@ -143,7 +143,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			}
 
 			if testURL == "" {
-				testURL = testClient.EndpointUrls[0]
+				testURL = firstString(testClient.EndpointUrls)
 			}
 
 			if testMesh == "" {
@@ -235,7 +235,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			// what if user passed profile-name but didn't passed the url
 			// we use url from performance profile
 			if testURL == "" {
-				testURL = profiles[index].Endpoints[0]
+				testURL = firstString(profiles[index].Endpoints)
 			}
 
 			// reset profile name without %20
@@ -244,7 +244,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				profileName = profiles[index].Name
 
 				if loadGenerator == "" {
-					loadGenerator = profiles[index].LoadGenerators[0]
+					loadGenerator = firstString(profiles[index].LoadGenerators)
 				}
 
 				if concurrentRequests == "" {

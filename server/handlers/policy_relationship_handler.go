@@ -16,10 +16,11 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
 	gopolicies "github.com/meshery/meshery/server/policies"
-	"github.com/meshery/schemas/models/core"
+	legacycoremodel "github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	coremodelv1beta2 "github.com/meshery/schemas/models/v1beta2/core"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 
@@ -43,9 +44,9 @@ const (
 const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
 
 // Aliasses Are not resolved
-func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (core.NonResolvedAlias, bool) {
+func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (coremodelv1beta2.NonResolvedAlias, bool) {
 
-	alias := core.NonResolvedAlias{}
+	alias := coremodelv1beta2.NonResolvedAlias{}
 
 	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS {
 		return alias, false
@@ -92,7 +93,7 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 }
 
-func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (core.NonResolvedAlias, bool) {
+func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (coremodelv1beta2.NonResolvedAlias, bool) {
 
 	for _, relationship := range relationships {
 		alias, ok := parseRelationshipToAlias(*relationship)
@@ -105,11 +106,11 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 		}
 	}
 
-	return core.NonResolvedAlias{}, false
+	return coremodelv1beta2.NonResolvedAlias{}, false
 }
 
 // getComponentById retrieves a component from the design by its ID
-func getComponentById(design pattern.PatternFile, id core.Uuid) *component.ComponentDefinition {
+func getComponentById(design pattern.PatternFile, id legacycoremodel.Uuid) *component.ComponentDefinition {
 	for _, comp := range design.Components {
 		if comp.ID == id {
 			return comp
@@ -118,17 +119,17 @@ func getComponentById(design pattern.PatternFile, id core.Uuid) *component.Compo
 	return nil
 }
 
-func ResolveAlias(nonResolvedAlias core.NonResolvedAlias, currentNonResolved core.NonResolvedAlias, path []string, design pattern.PatternFile) core.ResolvedAlias {
+func ResolveAlias(nonResolvedAlias coremodelv1beta2.NonResolvedAlias, currentNonResolved coremodelv1beta2.NonResolvedAlias, path []string, design pattern.PatternFile) coremodelv1beta2.ResolvedAlias {
 	parentComponent := getComponentById(design, currentNonResolved.ImmediateParentId)
 	if parentComponent == nil {
-		return core.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
+		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 	}
 
 	parentAlias, ok := ParseComponentToAlias(*parentComponent, design.Relationships)
 
 	if !ok {
 
-		return core.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
+		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 
 	}
 
@@ -138,9 +139,9 @@ func ResolveAlias(nonResolvedAlias core.NonResolvedAlias, currentNonResolved cor
 	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, path[1:]...), design)
 }
 
-func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.ResolvedAlias {
+func ResolveAliasesInDesign(design pattern.PatternFile) map[string]coremodelv1beta2.ResolvedAlias {
 
-	resolvedAliases := make(map[string]core.ResolvedAlias)
+	resolvedAliases := make(map[string]coremodelv1beta2.ResolvedAlias)
 
 	for _, relationship := range design.Relationships {
 		nonResolvedalias, ok := parseRelationshipToAlias(*relationship)
@@ -156,7 +157,7 @@ func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.Resolved
 
 // mergeTraceUnique appends trace entries from src into dst, skipping duplicates by ID.
 func mergeTraceUnique(dst, src *pattern.Trace) {
-	compSeen := make(map[core.Uuid]bool)
+	compSeen := make(map[legacycoremodel.Uuid]bool)
 	for _, c := range dst.ComponentsAdded {
 		compSeen[c.ID] = true
 	}
@@ -166,7 +167,7 @@ func mergeTraceUnique(dst, src *pattern.Trace) {
 	for _, c := range dst.ComponentsRemoved {
 		compSeen[c.ID] = true
 	}
-	relSeen := make(map[core.Uuid]bool)
+	relSeen := make(map[legacycoremodel.Uuid]bool)
 	for _, r := range dst.RelationshipsAdded {
 		relSeen[r.ID] = true
 	}
@@ -270,6 +271,22 @@ const defaultPolicyEvalTimeout = 3 * time.Minute
 
 var errEvalTimeout = errors.New("relationship policy evaluation timed out")
 
+// buildPolicyEvaluationEventMetadata builds the metadata map emitted on
+// the relationship-evaluation success event. Extracted into a named
+// function so the canonical camelCase keys (`historyTitle`, `trace`,
+// `evaluationResponse`, `evaluatedAt`) are pinned by a focused unit test
+// — see TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys.
+// Drift here would silently re-introduce the snake_case keys that
+// production carried for 125,840 rows pre-flip.
+func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse) map[string]interface{} {
+	return map[string]interface{}{
+		"historyTitle":       fmt.Sprintf("%d changes made at version %s", len(resp.Actions), resp.Design.Version),
+		"trace":              resp.Trace,
+		"evaluationResponse": resp,
+		"evaluatedAt":        *resp.Timestamp,
+	}
+}
+
 func policyEvalTimeout() time.Duration {
 	if d := viper.GetDuration("POLICY_EVAL_TIMEOUT"); d > 0 {
 		return d
@@ -288,7 +305,7 @@ func (h *Handler) EvaluateDesign(
 	// meshkit's patternHelpers.HydratePattern is typed against
 	// v1beta3/design.PatternFile but this evaluation-engine carve-out
 	// still holds the design as v1beta1/pattern.PatternFile, so bridge
-	// via JSON round-trip and fold the hydrated fields back onto the
+	// via a typed shallow copy and fold the hydrated fields back onto the
 	// v1beta1 design before the policy passes run.
 	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&relationshipPolicyEvalPayload.Design); bridgeErr == nil && bridged != nil {
 		if hydrateErrs := patternHelpers.HydratePattern(bridged, h.registryManager); len(hydrateErrs) > 0 {
@@ -358,7 +375,7 @@ func (h *Handler) EvaluateDesign(
 		if evaluationResponse.Design.Metadata == nil {
 			evaluationResponse.Design.Metadata = &pattern.PatternFile_Metadata{}
 		}
-		evaluationResponse.Design.Metadata.ResolvedAliases = &evaluatedAliases
+		evaluationResponse.Design.Metadata.ResolvedAliases = utils.ResolvedAliasesV1beta2ToV1beta1(&evaluatedAliases)
 
 		lastEvaluationResponse.Design = evaluationResponse.Design
 		lastEvaluationResponse.Actions = append(lastEvaluationResponse.Actions, evaluationResponse.Actions...)
@@ -465,7 +482,7 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 		_component.Capabilities = &defaultCapabilities
 		if originalStyles != nil && originalStyles.Position != nil {
 			if _component.Styles == nil {
-				_component.Styles = &core.ComponentStyles{}
+				_component.Styles = &legacycoremodel.ComponentStyles{}
 			}
 			_component.Styles.Position = originalStyles.Position
 		}
@@ -807,12 +824,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		// include trace instead of design file in the event
 		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
 		event := eventBuilder.WithDescription(description).
-			WithMetadata(map[string]interface{}{
-				"history_title":       fmt.Sprintf("%d changes made at version %s", len(evaluationResponse.Actions), evaluationResponse.Design.Version),
-				"trace":               evaluationResponse.Trace,
-				"evaluation_response": evaluationResponse,
-				"evaluated_at":        *evaluationResponse.Timestamp,
-			}).WithSeverity(events.Informational).Build()
+			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse)).
+			WithSeverity(events.Informational).Build()
 		go func() {
 			_ = provider.PersistEvent(*event, token)
 		}()
@@ -833,7 +846,28 @@ func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResul
 		return
 	}
 	ec := json.NewEncoder(rw)
-	if err := ec.Encode(result.resp); err != nil {
+	design := any(result.resp.Design)
+	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&result.resp.Design); bridgeErr == nil && bridged != nil {
+		design = bridged
+	} else if bridgeErr != nil {
+		h.log.Warnf("failed to bridge evaluation response design for canonical wire encoding: %v", bridgeErr)
+	}
+	response := struct {
+		Design         any              `json:"design"`
+		EvaluationHash *string          `json:"evaluationHash,omitempty"`
+		SchemaVersion  any              `json:"schemaVersion"`
+		Timestamp      *time.Time       `json:"timestamp,omitempty"`
+		Trace          pattern.Trace    `json:"trace"`
+		Actions        []pattern.Action `json:"actions"`
+	}{
+		Design:         design,
+		EvaluationHash: result.resp.EvaluationHash,
+		SchemaVersion:  result.resp.SchemaVersion,
+		Timestamp:      result.resp.Timestamp,
+		Trace:          result.resp.Trace,
+		Actions:        result.resp.Actions,
+	}
+	if err := ec.Encode(response); err != nil {
 		// Response body has already started streaming via json.Encoder —
 		// a partial JSON envelope is on the wire and a fresh error
 		// response would corrupt it, so log only.
