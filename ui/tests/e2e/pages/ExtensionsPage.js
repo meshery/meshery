@@ -65,7 +65,13 @@ export class ExtensionsPage {
     await this.catalogToggleSwitch.click();
   }
 
-  async verifyExtensionNavItemsUseTopLevelLayout() {
+  async verifyExtensionNavItemsUseTopLevelLayout(provider) {
+    if (provider === 'None') {
+      await expect(this.extensionNavRegion).toHaveCount(0);
+      await expect(this.extensionRootNavItems).toHaveCount(0);
+      return;
+    }
+
     await expect(this.extensionNavRegion).toBeVisible();
     await expect(this.extensionRootNavItems.first()).toBeVisible();
     await expect(this.extensionRegionTopLevelLists).toHaveCount(0);

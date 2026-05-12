@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures/project';
 import { ExtensionsPage } from './pages/ExtensionsPage';
 
 const URLS = {
@@ -27,8 +27,8 @@ test.describe('Extensions Section Tests', () => {
     await extensionsPage.verifyKanvasSnapshotDetails();
   });
 
-  test('Verify extension nav items use top-level layout', async () => {
-    await extensionsPage.verifyExtensionNavItemsUseTopLevelLayout();
+  test('Verify extension nav items use top-level layout', async ({ provider }) => {
+    await extensionsPage.verifyExtensionNavItemsUseTopLevelLayout(provider);
   });
 
   test('Verify Performance Analysis Details', async () => {
