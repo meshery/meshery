@@ -172,8 +172,8 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 	description := fmt.Sprintf("Workspace %s created.", workspace.Name)
 
 	h.log.Info(description)
-	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	if _, err := w.Write(bf); err != nil {
 		h.log.Error(err)
 	}
