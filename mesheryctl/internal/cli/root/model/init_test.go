@@ -351,7 +351,7 @@ func TestInitModelInjectModelName(t *testing.T) {
 		expectError     bool
 	}{
 		{
-			name:            "inject name into JSON template",
+			name:            "given a kebab-case model name when injecting into JSON template then name and displayName are set",
 			inputJSON:       `{"name":"untitled-model","displayName":"Untitled Model","version":"v0.0.1"}`,
 			outputFormat:    "json",
 			modelName:       "my-awesome-model",
@@ -359,7 +359,7 @@ func TestInitModelInjectModelName(t *testing.T) {
 			expectedDisplay: "My Awesome Model",
 		},
 		{
-			name:            "single word model name in JSON",
+			name:            "given a single-word model name when injecting into JSON template then displayName is capitalized",
 			inputJSON:       `{"name":"untitled-model","displayName":"Untitled Model","version":"v0.0.1"}`,
 			outputFormat:    "json",
 			modelName:       "nginx",
@@ -367,14 +367,53 @@ func TestInitModelInjectModelName(t *testing.T) {
 			expectedDisplay: "Nginx",
 		},
 		{
-			name:            "inject name into YAML template",
+			name:            "given a kebab-case model name when injecting into YAML template then name and displayName are set",
 			inputJSON:       "name: untitled-model\ndisplayName: Untitled Model\nversion: v0.0.1\n",
 			outputFormat:    "yaml",
 			modelName:       "aws-ec2-controller",
 			expectedName:    "aws-ec2-controller",
 			expectedDisplay: "Aws Ec2 Controller",
 		},
-
+		{
+			name:            "given a model name with consecutive hyphens when injecting then extra spaces are not produced in displayName",
+			inputJSON:       `{"name":"untitled-model","displayName":"Untitled Model","version":"v0.0.1"}`,
+			outputFormat:    "json",
+			modelName:       "my--model",
+			expectedName:    "my--model",
+			expectedDisplay: "My Model",
+		},
+		{
+			name:            "given a model name with trailing hyphen when injecting then displayName has no trailing space",
+			inputJSON:       `{"name":"untitled-model","displayName":"Untitled Model","version":"v0.0.1"}`,
+			outputFormat:    "json",
+			modelName:       "my-model-",
+			expectedName:    "my-model-",
+			expectedDisplay: "My Model",
+		},
+		{
+			name:            "given a model name with numeric segments when injecting then digits are preserved in displayName",
+			inputJSON:       `{"name":"untitled-model","displayName":"Untitled Model","version":"v0.0.1"}`,
+			outputFormat:    "json",
+			modelName:       "aws-s3-v2",
+			expectedName:    "aws-s3-v2",
+			expectedDisplay: "Aws S3 V2",
+		},
+		{
+			name:            "given an empty model name when injecting then placeholders are replaced with empty strings",
+			inputJSON:       `{"name":"untitled-model","displayName":"Untitled Model","version":"v0.0.1"}`,
+			outputFormat:    "json",
+			modelName:       "",
+			expectedName:    "",
+			expectedDisplay: "",
+		},
+		{
+			name:            "given an unsupported output format when injecting then replacement still occurs",
+			inputJSON:       `{"name":"untitled-model","displayName":"Untitled Model","version":"v0.0.1"}`,
+			outputFormat:    "xml",
+			modelName:       "my-model",
+			expectedName:    "my-model",
+			expectedDisplay: "My Model",
+		},
 	}
 
 	for _, tc := range tests {
@@ -386,14 +425,20 @@ func TestInitModelInjectModelName(t *testing.T) {
 			}
 			assert.NoError(t, err)
 
-			switch tc.outputFormat {
+			// For edge cases where content should remain unchanged (empty name, unsupported format),
+			// always parse as JSON since input is JSON
+			parseFormat := tc.outputFormat
+			if parseFormat != "json" && parseFormat != "yaml" {
+				parseFormat = "json"
+			}
+
+			switch parseFormat {
 			case "json":
 				var data map[string]interface{}
 				assert.NoError(t, json.Unmarshal(result, &data))
 				assert.Equal(t, tc.expectedName, data["name"])
 				assert.Equal(t, tc.expectedDisplay, data["displayName"])
 			case "yaml":
-				// verify substrings since YAML marshal order may vary
 				assert.Contains(t, string(result), "name: "+tc.expectedName)
 				assert.Contains(t, string(result), "displayName: "+tc.expectedDisplay)
 			}
