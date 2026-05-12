@@ -2,9 +2,9 @@ import { expect, test } from '@playwright/test';
 import { ExtensionsPage } from './pages/ExtensionsPage';
 
 const URLS = {
-  KANVAS: {
-    DOCS: 'https://docs.layer5.io/kanvas/',
-    DESIGNER_EMBED: 'https://docs.layer5.io/kanvas/designer/embedding-designs/',
+  DESIGNS: {
+    DOCS: 'https://docs.meshery.io/',
+    DESIGNER_EMBED: 'https://meshery.io/extensions/meshery-design-embed',
   },
   DOCKER: {
     EXTENSION: 'https://hub.docker.com/extensions/meshery/docker-extension-meshery',
@@ -47,7 +47,7 @@ test.describe('Extensions Section Tests', () => {
     await expect(extensionsPage.designEmbedLearnMoreBtn).toBeVisible();
     await extensionsPage.verifyNewTab(
       extensionsPage.designEmbedLearnMoreBtn,
-      URLS.KANVAS.DESIGNER_EMBED,
+      URLS.DESIGNS.DESIGNER_EMBED,
     );
   });
 
