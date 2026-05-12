@@ -9,6 +9,8 @@ checkout: false
 if: |
   github.repository == 'meshery/meshery' &&
   github.event.pull_request.user.type != 'Bot' &&
+  !contains(github.actor, '[bot]') &&
+  !contains(github.event.pull_request.user.login, 'copilot') &&
   (github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' || github.event.pull_request.author_association == 'NONE')
 
 permissions:
