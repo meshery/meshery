@@ -20,19 +20,19 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: check out code for meshery
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       with:
         repository: meshery/meshery
         token: ${{ secrets.GH_ACCESS_TOKEN }}
         path: meshery
     - name: Check out code for meshery-extensions
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       with:
         repository: layer5labs/meshery-extensions
         token: ${{ secrets.GH_ACCESS_TOKEN }}
         path: meshery-extensions
     - name: Setup Go
-      uses: actions/setup-go@master
+      uses: actions/setup-go@78961f6f84d799cd858575bb931c3e51d3b13290 # master
       with:
         go-version: "1.25"
     - name: Go mod sync utility
@@ -43,7 +43,7 @@ jobs:
       run: git pull origin master
 
     - name: Commit
-      uses: stefanzweifel/git-auto-commit-action@v7
+      uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
       with:
         repository: meshery-extensions
         commit_user_name: l5io
@@ -59,7 +59,7 @@ jobs:
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
       - name: Send email notification on failure
-        uses: dawidd6/action-send-mail@v7
+        uses: dawidd6/action-send-mail@v7 # Skipped
         with:
           server_address: smtp.gmail.com
           server_port: 465
