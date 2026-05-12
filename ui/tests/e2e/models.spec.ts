@@ -115,7 +115,8 @@ test.describe.serial('Model Workflow Tests', () => {
     await page.setInputFiles('input[type="file"]', model_import.MODEL_FILE_IMPORT);
 
     const registerModelReq = page.waitForRequest(
-      (request) => request.url().includes('/api/meshmodels/register') && request.method() === 'POST',
+      (request) =>
+        request.url().includes('/api/meshmodels/register') && request.method() === 'POST',
     );
     const registerModelRes = page.waitForResponse(
       (response) => response.url().includes('/api/meshmodels/register') && response.ok(),
