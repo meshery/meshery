@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers"
+	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
@@ -16,7 +17,7 @@ import (
 )
 
 var (
-	adapterURLs    = viper.GetStringSlice("ADAPTER_URLS")
+	adapterURLs    = utils.SplitAndTrim(viper.GetString("ADAPTER_URLS"), ",")
 	adapterTracker = helpers.NewAdaptersTracker(adapterURLs)
 )
 
