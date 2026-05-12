@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 6th 2026, 1:34:08 pm
+- Testing started at: May 12th 2026, 2:29:16 am
 
 **📦 Test Result Summary**
 
-- ✅ 137 passed
-- ❌ 3 failed
+- ✅ 133 passed
+- ❌ 5 failed
 - ⚠️ 0 flaked
-- ⏩ 4 skipped
+- ⏩ 8 skipped
 
-⌛ _Duration: 7 minutes and 25 seconds_
+⌛ _Duration: 6 minutes and 49 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -57,9 +57,9 @@
 | 34 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 35 | Meshery | chromium-meshery-provider | evaluation idempotency | relationship | ✅ |
 | 36 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 37 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
-| 38 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
-| 39 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
+| 37 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
+| 38 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ❌ |
+| 39 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
 | 40 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
 | 41 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 42 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
@@ -86,17 +86,17 @@
 | 63 | Meshery | chromium-meshery-provider | Test if Profile button is displayed |  | ✅ |
 | 64 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Performance Results&quot; |  | ✅ |
 | 65 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ✅ |
-| 66 | Meshery | chromium-meshery-provider | Verify Kanvas Details |  | ✅ |
-| 67 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
-| 68 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
-| 69 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ✅ |
-| 70 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ✅ |
-| 71 | Meshery | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ✅ |
-| 72 | Meshery | chromium-meshery-provider | Verify Performance Analysis Details |  | ✅ |
-| 73 | Meshery | chromium-meshery-provider | Verify that UI components are displayed |  | ❌ |
-| 74 | None | chromium-local-provider | Action buttons on adapters tab |  | ✅ |
-| 75 | None | chromium-local-provider | Aggregation Charts are displayed |  | ✅ |
-| 76 | None | chromium-local-provider | alias resolution | relationship | ✅ |
+| 66 | Meshery | chromium-meshery-provider | Verify extension nav items use top-level layout |  | ✅ |
+| 67 | Meshery | chromium-meshery-provider | Verify Kanvas Details |  | ✅ |
+| 68 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
+| 69 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
+| 70 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ✅ |
+| 71 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ✅ |
+| 72 | Meshery | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ✅ |
+| 73 | Meshery | chromium-meshery-provider | Verify Performance Analysis Details |  | ✅ |
+| 74 | Meshery | chromium-meshery-provider | Verify that UI components are displayed |  | ❌ |
+| 75 | None | chromium-local-provider | Action buttons on adapters tab |  | ✅ |
+| 76 | None | chromium-local-provider | Aggregation Charts are displayed |  | ✅ |
 | 77 | None | chromium-local-provider | alias resolution | relationship | ✅ |
 | 78 | None | chromium-local-provider | alias resolution | relationship | ✅ |
 | 79 | None | chromium-local-provider | alias resolution | relationship | ✅ |
@@ -105,9 +105,9 @@
 | 82 | None | chromium-local-provider | alias resolution | relationship | ✅ |
 | 83 | None | chromium-local-provider | alias resolution | relationship | ✅ |
 | 84 | None | chromium-local-provider | alias resolution | relationship | ✅ |
-| 85 | None | chromium-local-provider | All settings tabs |  | ❌ |
-| 86 | None | chromium-local-provider | Common UI elements |  | ✅ |
-| 87 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
+| 85 | None | chromium-local-provider | alias resolution | relationship | ✅ |
+| 86 | None | chromium-local-provider | All settings tabs |  | ✅ |
+| 87 | None | chromium-local-provider | Common UI elements |  | ✅ |
 | 88 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 89 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 90 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
@@ -116,11 +116,11 @@
 | 93 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 94 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
 | 95 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
-| 96 | None | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
-| 97 | None | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
-| 98 | None | chromium-local-provider | Create a Model |  | ✅ |
-| 99 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 100 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
+| 96 | None | chromium-local-provider | config patching correctness | relationship | ✅ |
+| 97 | None | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
+| 98 | None | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
+| 99 | None | chromium-local-provider | Create a Model |  | ✅ |
+| 100 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 101 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 102 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 103 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
@@ -129,23 +129,23 @@
 | 106 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 107 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
 | 108 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
-| 109 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 110 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
-| 111 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
-| 112 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
-| 113 | None | chromium-local-provider | Logout from current user session |  | ✅ |
-| 114 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
-| 115 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
-| 116 | None | chromium-local-provider | should edit design in Design Configurator |  | ✅ |
-| 117 | None | chromium-local-provider | should identify relationships for All Relationships | relationship | ✅ |
-| 118 | None | chromium-local-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
-| 119 | None | chromium-local-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
-| 120 | None | chromium-local-provider | should identify relationships for Hierarchical-Parent-Namespace-Relationship | relationship | ✅ |
-| 121 | None | chromium-local-provider | should identify relationships for meshery-design | relationship | ✅ |
-| 122 | None | chromium-local-provider | should identify relationships for pv-pvc-edge-non-binding-reference-relationship | relationship | ✅ |
-| 123 | None | chromium-local-provider | should identify relationships for Service-To-Deployment-Network | relationship | ✅ |
-| 124 | None | chromium-local-provider | should verify Design Configurator page elements |  | ✅ |
-| 125 | None | chromium-local-provider | structural integrity | relationship | ✅ |
+| 109 | None | chromium-local-provider | evaluation idempotency | relationship | ✅ |
+| 110 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
+| 111 | None | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 112 | None | chromium-local-provider | Import a Model via File Import |  | ❌ |
+| 113 | None | chromium-local-provider | Import a Model via Url Import |  | ➖ |
+| 114 | None | chromium-local-provider | Logout from current user session |  | ✅ |
+| 115 | None | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 116 | None | chromium-local-provider | Search a Model and Export it |  | ✅ |
+| 117 | None | chromium-local-provider | should edit design in Design Configurator |  | ✅ |
+| 118 | None | chromium-local-provider | should identify relationships for All Relationships | relationship | ✅ |
+| 119 | None | chromium-local-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
+| 120 | None | chromium-local-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
+| 121 | None | chromium-local-provider | should identify relationships for Hierarchical-Parent-Namespace-Relationship | relationship | ✅ |
+| 122 | None | chromium-local-provider | should identify relationships for meshery-design | relationship | ✅ |
+| 123 | None | chromium-local-provider | should identify relationships for pv-pvc-edge-non-binding-reference-relationship | relationship | ✅ |
+| 124 | None | chromium-local-provider | should identify relationships for Service-To-Deployment-Network | relationship | ✅ |
+| 125 | None | chromium-local-provider | should verify Design Configurator page elements |  | ✅ |
 | 126 | None | chromium-local-provider | structural integrity | relationship | ✅ |
 | 127 | None | chromium-local-provider | structural integrity | relationship | ✅ |
 | 128 | None | chromium-local-provider | structural integrity | relationship | ✅ |
@@ -154,21 +154,23 @@
 | 131 | None | chromium-local-provider | structural integrity | relationship | ✅ |
 | 132 | None | chromium-local-provider | structural integrity | relationship | ✅ |
 | 133 | None | chromium-local-provider | structural integrity | relationship | ✅ |
-| 134 | None | chromium-local-provider | Test if Left Navigation Panel is displayed |  | ✅ |
-| 135 | None | chromium-local-provider | Test if Notification button is displayed |  | ✅ |
-| 136 | None | chromium-local-provider | Test if Profile button is displayed |  | ✅ |
-| 137 | None | chromium-local-provider | Toggle &quot;Send Anonymous Performance Results&quot; |  | ✅ |
-| 138 | None | chromium-local-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ✅ |
-| 139 | None | chromium-local-provider | Verify Kanvas Details |  | ✅ |
-| 140 | None | chromium-local-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
-| 141 | None | chromium-local-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
-| 142 | None | chromium-local-provider | Verify Meshery Catalog Section Details |  | ✅ |
-| 143 | None | chromium-local-provider | Verify Meshery Design Embed Details |  | ✅ |
-| 144 | None | chromium-local-provider | Verify Meshery Docker Extension Details |  | ✅ |
-| 145 | None | chromium-local-provider | Verify Performance Analysis Details |  | ✅ |
-| 146 | None | chromium-local-provider | Verify that UI components are displayed |  | ❌ |
-| 147 | None | local-setup | authenticate as None provider |  | ✅ |
-| 148 | None | remote-setup | authenticate with Remote Provider |  | ✅ |
+| 134 | None | chromium-local-provider | structural integrity | relationship | ✅ |
+| 135 | None | chromium-local-provider | Test if Left Navigation Panel is displayed |  | ✅ |
+| 136 | None | chromium-local-provider | Test if Notification button is displayed |  | ✅ |
+| 137 | None | chromium-local-provider | Test if Profile button is displayed |  | ✅ |
+| 138 | None | chromium-local-provider | Toggle &quot;Send Anonymous Performance Results&quot; |  | ✅ |
+| 139 | None | chromium-local-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ✅ |
+| 140 | None | chromium-local-provider | Verify extension nav items use top-level layout |  | ❌ |
+| 141 | None | chromium-local-provider | Verify Kanvas Details |  | ✅ |
+| 142 | None | chromium-local-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
+| 143 | None | chromium-local-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
+| 144 | None | chromium-local-provider | Verify Meshery Catalog Section Details |  | ✅ |
+| 145 | None | chromium-local-provider | Verify Meshery Design Embed Details |  | ✅ |
+| 146 | None | chromium-local-provider | Verify Meshery Docker Extension Details |  | ✅ |
+| 147 | None | chromium-local-provider | Verify Performance Analysis Details |  | ✅ |
+| 148 | None | chromium-local-provider | Verify that UI components are displayed |  | ❌ |
+| 149 | None | local-setup | authenticate as None provider |  | ✅ |
+| 150 | None | remote-setup | authenticate with Remote Provider |  | ✅ |
 
 </div>
 </details>
@@ -205,6 +207,20 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
+<summary>❌ Import a Model via File Import (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
 <summary>❌ Verify that UI components are displayed (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/connections.spec.ts`
@@ -228,25 +244,30 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ All settings tabs (None - chromium-local-provider)</summary>
+<summary>❌ Verify extension nav items use top-level layout (None - chromium-local-provider)</summary>
 
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/performance.spec.js`
+**File Location:** `Not Found`
 
 **Error Message:**
 ```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+[31mTest timeout of 60000ms exceeded.[39m
 ```
 
-**Code Snippet:**
+
+
+</details>
+
+<details>
+<summary>❌ Import a Model via File Import (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
 ```
-[0m [90m 36 |[39m
- [90m 37 |[39m   test[33m.[39mdescribe([32m'Configure Metrics Navigation and Settings'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 38 |[39m     test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m          [31m[1m^[22m[39m
- [90m 39 |[39m       [36mawait[39m page[33m.[39mgetByTestId([32m'configure-metrics-button'[39m)[33m.[39mclick()[33m;[39m
- [90m 40 |[39m       [36mawait[39m expect(page)[33m.[39mtoHaveURL([35m/metrics/i[39m)[33m;[39m
- [90m 41 |[39m     })[33m;[39m[0m
+[31mTest timeout of 60000ms exceeded.[39m
 ```
+
+
 
 </details>
 
