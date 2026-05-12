@@ -178,7 +178,7 @@ server-stg: dep-check
 server: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD),$(LAYER5_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=$(PORT) \
 	DEBUG=true \
 	USE_GO_POLICY_ENGINE=$(USE_GO_POLICY_ENGINE) \
