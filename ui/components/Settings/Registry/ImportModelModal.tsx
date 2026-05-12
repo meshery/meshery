@@ -112,45 +112,59 @@ const FinishDeploymentStep = ({
 //       by @rjsf/utils' `optionsList()` — RJSF v6 reads the radio
 //       labels from `ui:enumNames` on the uiSchema instead.
 //
-// v1.2.16 of @meshery/schemas adds `ModelImportRjsfUiSchemaV1Beta2` and
-// changes `modelFile.format` from `"binary"` to `"data-url"` (the format
-// RJSF's FileWidget actually produces). We base `importModelUiSchema` on
-// the canonical and overlay our consumer overrides on top.
-const canonicalProps = ModelImportRjsfSchemaV1Beta2?.properties || {};
-const canonicalUploadType = canonicalProps.uploadType || {};
+// Since @meshery/schemas v1.2.16, the canonical
+// ModelImportRjsfSchemaV1Beta2 routes its `modelFile`, `fileName`,
+// `url`, and CSV-trio fields through conditional `allOf[].then`
+// branches keyed by the `uploadType` discriminator — they are NO
+// LONGER at the schema root.
+//
+// We reuse the canonical's conditional shape directly so each upload
+// branch only renders ITS OWN fields:
+//   - File Import: `modelFile` (file widget) + hidden `fileName`
+//   - URL Import:  `url` (text widget)
+//   - CSV Import:  no fields rendered (CSV opens a separate stepper modal)
+//
+// Flattening the canonical branches back into a single root-level
+// property map — the pre-v1.2.16 shape — was a tempting shortcut, but
+// it makes the `url` field always render, and its `format: "uri"`
+// constraint then rejects the empty default on every Next-click for
+// the File Import branch, leaving validateForm() returning false and
+// the submit button silently dead.
+type RJSFNode = {
+  properties?: Record<string, unknown>;
+  required?: string[];
+
+  allOf?: any[];
+};
+const canonicalUploadType =
+  ((ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).properties?.uploadType as
+    | { enumNames?: string[] }
+    | undefined) ?? {};
 const UPLOAD_TYPE_FILE = 'file';
 const UPLOAD_TYPE_URL = 'urlImport';
 const UPLOAD_TYPE_CSV = 'csv';
 
-// `allOf` intentionally does NOT mark `modelFile` or `fileName` required
-// for the file branch even though the canonical does. CustomFileWidget
-// reads the file asynchronously (FileReader → `Promise.then(props.onChange)`)
-// and only then lifts the data URL into RJSF's form state, while validation
-// runs synchronously on Next-click. Gating submit on `required: ['modelFile']`
-// loses the race on every test run and the form sits silently. We trust
-// the user-flow guard in `handleImportModelSubmit` instead — it reads
-// the file off the DOM input as the synchronous source-of-truth and
-// short-circuits if no file is selected. `fileName` is hidden and derived
-// from the data URL / DOM fallback at submit time.
+// Reuse the canonical's discriminator-conditional shape, but drop the
+// `required:` clauses on each branch. Two reasons:
+//   - File branch: `modelFile` is filled asynchronously by RJSF's
+//     FileWidget (FileReader → Promise.then(onChange)). Synchronous
+//     Next-click validation loses the race; we trust the user-flow
+//     guard in `handleImportModelSubmit` instead, which reads the
+//     selected file off the DOM input as a synchronous fallback.
+//   - CSV branch: this modal doesn't render the CSV fields (those
+//     live in `CsvStepper`), so requiring them would block the submit
+//     handler from short-circuiting into the CSV-modal-open flow.
+const stripRequired = (branch: RJSFNode): RJSFNode => {
+  if (!branch?.then) return branch;
+
+  const { required: _unused, ...thenRest } = branch.then as RJSFNode;
+  return { ...branch, then: thenRest };
+};
 const importModelSchema = {
-  $schema: 'https://json-schema.org/draft-07/schema#',
   title: ModelImportRjsfSchemaV1Beta2.title,
   type: 'object',
-  properties: {
-    uploadType: canonicalUploadType,
-    modelFile: canonicalProps.modelFile,
-    url: canonicalProps.url,
-    fileName: canonicalProps.fileName,
-  },
-  allOf: [
-    {
-      if: {
-        properties: { uploadType: { const: UPLOAD_TYPE_URL } },
-        required: ['uploadType'],
-      },
-      then: { required: ['url'] },
-    },
-  ],
+  properties: (ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).properties,
+  allOf: ((ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).allOf ?? []).map(stripRequired),
   required: ['uploadType'],
 };
 
@@ -168,10 +182,10 @@ const importModelUiSchema = {
       ? [...(canonicalUploadType.enumNames as string[])]
       : undefined,
   },
-  // The canonical schema declares `modelFile` as `type: string` without a
-  // `format: data-url`, so RJSF falls back to TextWidget and the form never
-  // renders an `<input type="file">`. Force the file widget here, matching
-  // the importDesign/importFilter fix shipped in @sistent/sistent v0.21.7.
+  // The canonical schema's `modelFile` already declares
+  // `format: "data-url"` (since v1.2.16), so RJSF auto-routes to the
+  // FileWidget. The explicit override here is belt-and-braces in case
+  // the canonical or a downstream override regresses.
   modelFile: { 'ui:widget': 'file' },
   fileName: { 'ui:widget': 'hidden' },
   modelCsv: { 'ui:widget': 'hidden' },
@@ -271,27 +285,37 @@ const ImportModelModal = React.memo(
 
       switch (uploadType) {
         case UPLOAD_TYPE_FILE: {
-          // Two source-of-truth paths for the file:
-          //   1. RJSF form data (`data.modelFile` data URL) — this is the
-          //      happy path when the user clicked Next after the upload
-          //      finished round-tripping through CustomFileWidget's async
-          //      FileReader → onChange chain.
-          //   2. DOM input fallback — Playwright e2e (and any quick
-          //      keystroke after upload) can race the FileReader, so the
-          //      data URL hasn't landed in form state yet on submit. The
-          //      `<input type="file">` rendered by the widget already
-          //      carries the selected `File` synchronously (the browser
-          //      sets `.files` on the input the instant the user picks a
-          //      file), so re-read it here via readFileAsBytes.
-          const formData = decodeDataUrlToBytes(modelFile);
-          let fileName = formFileName || filenameFromDataUrl(modelFile);
-          let fileData: number[] | null = formData;
-          if (!fileData) {
+          // Three source-of-truth paths for the file:
+          //   1. `data.modelFile` (RJSF form data) — populated by
+          //      `CustomFileWidget.processFile`'s async FileReader chain.
+          //   2. `data.fileName` (RJSF form data) — NOT populated by the
+          //      widget; the canonical schema declares it as a separate
+          //      field but the widget only emits `modelFile`. Always
+          //      `undefined` in practice.
+          //   3. DOM input (synchronous) — the browser sets
+          //      `<input type=file>.files[0]` the instant the user picks
+          //      a file, so it's always readable on submit. The browser-
+          //      provided `File.name` is also our only synchronous source
+          //      for the filename (the data URL produced by
+          //      `readAsDataURL` does NOT embed `;name=` like the
+          //      reference RJSF FileWidget would).
+          //
+          // So: try the form-state bytes (path 1) first, fall back to DOM
+          // bytes if the FileReader race lost (paths 1 ↘ 3 for bytes), and
+          // ALWAYS prefer the DOM filename for `fileName` (path 3 for
+          // name) — paths 1 and 2 just don't carry it.
+          let fileData: number[] | null = decodeDataUrlToBytes(modelFile);
+          let fileName: string | undefined = formFileName || filenameFromDataUrl(modelFile);
+          if (!fileData || !fileName) {
             const inputFile = findSelectedModelFile();
             if (inputFile) {
               try {
-                fileData = await readFileAsBytes(inputFile);
-                fileName = fileName || inputFile.name;
+                if (!fileData) {
+                  fileData = await readFileAsBytes(inputFile);
+                }
+                if (!fileName) {
+                  fileName = inputFile.name;
+                }
               } catch (err) {
                 console.error('Error reading file from DOM:', err);
                 skipNextRef.current = true;
