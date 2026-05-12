@@ -542,7 +542,6 @@ export const openDesignInKanvas = (designId, designName, router) => {
 };
 
 export const openViewInKanvas = (viewId, viewName, router) => {
-  console.log('openViewInKanvas', viewId, viewName, router);
   if (isExtensionOpen()) {
     mesheryEventBus.publish({
       type: 'OPEN_VIEW_IN_KANVAS',

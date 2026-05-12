@@ -530,9 +530,7 @@ const Extensions = () => {
           event_type: EVENT_TYPES.SUCCESS,
         });
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch(() => {});
   };
 
   return (
