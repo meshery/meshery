@@ -75,6 +75,7 @@ const WorkspaceModalContextProvider = ({ children }) => {
       }
       setCurrentLoadedResource(resource);
     } catch {
+      return;
     }
   };
 
