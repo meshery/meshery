@@ -33,6 +33,25 @@ const (
 	DefVersion            = "1.0.0"
 )
 
+// SplitAndTrim splits s by sep, trims whitespace from each part, and discards
+// empty entries. Use this when reading delimited values from an environment
+// variable via viper.GetString: viper.GetStringSlice does not split a single
+// comma-separated env-var value into multiple slice entries when AutomaticEnv
+// is enabled, so the whole string flows through as one element.
+func SplitAndTrim(s, sep string) []string {
+	if s == "" {
+		return nil
+	}
+	parts := strings.Split(s, sep)
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		if p = strings.TrimSpace(p); p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
 // map[string]interface{} recursively => map[string]interface{}
 func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface{}) map[string]interface{} {
