@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useGetSelectedOrganization } from '@/rtk-query/user';
 import { useLazyGetWorkspacesQuery } from '@/rtk-query/workspace';
+import { EVENT_TYPES } from '@/lib/event-types';
+import { useNotification } from '@/utils/hooks';
 
 export const WorkspaceModalContext = React.createContext({
   open: false,
@@ -30,6 +32,7 @@ export const WorkspaceModalContext = React.createContext({
 const WorkspaceModalContextProvider = ({ children }) => {
   const { allOrganizations } = useGetSelectedOrganization();
   const [getWorkspaces] = useLazyGetWorkspacesQuery();
+  const { notify } = useNotification();
   const [workspaceModal, setWorkspaceModal] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState({ id: '', name: '' });
   const [multiSelectedContent, setMultiSelectedContent] = useState([]);
@@ -74,8 +77,12 @@ const WorkspaceModalContextProvider = ({ children }) => {
         }
       }
       setCurrentLoadedResource(resource);
-    } catch {
-      return;
+    } catch (error) {
+      notify({
+        message: 'Unable to load workspace details for this resource',
+        details: error?.data?.error || error?.message,
+        event_type: EVENT_TYPES.ERROR,
+      });
     }
   };
 

@@ -515,6 +515,7 @@ const Extensions = () => {
 
   const handleToggle = () => {
     const next = !catalogContent;
+    const previous = catalogContent;
     setCatalogContentOverride(next);
     dispatch(toggleCatalogContent({ catalogVisibility: next }));
     updateUserPref({
@@ -530,7 +531,15 @@ const Extensions = () => {
           event_type: EVENT_TYPES.SUCCESS,
         });
       })
-      .catch(() => undefined);
+      .catch((error) => {
+        setCatalogContentOverride(previous);
+        dispatch(toggleCatalogContent({ catalogVisibility: previous }));
+        notify({
+          message: 'Unable to update catalog content preference',
+          details: error?.data?.error || error?.message,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      });
   };
 
   return (
