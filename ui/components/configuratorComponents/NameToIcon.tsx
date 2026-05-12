@@ -1,53 +1,44 @@
-import {
-  AddCircle,
-  BuildRounded,
-  DirectionsCar,
-  Filter,
-  SimCard,
-  SupervisedUserCircle,
-  TouchApp,
-} from '@mui/icons-material';
-import ExploreIcon from '@mui/icons-material/Explore';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import LockIcon from '@mui/icons-material/Lock';
 import React from 'react';
 
-/**
- * nameToIcon returns icons for the rjsf form titles
- *
- * @param {string} name Tooltip name
- * @param {string} color default value is primary
- * @returns CustomIconButton
- */
-export default function NameToIcon({ name, color = '#607D8B', ...other }) {
-  const CustomIcon = ({ Icon }) => <Icon style={{ color }} {...other} />;
+import AddIcon from '../../assets/icons/AddIcon';
+import ConfigurationIcon from '../../assets/icons/ConfigurationIcon';
+import { DeploymentSelectorIcon } from '../../assets/icons/DeploymentSelectorIcon';
+import FilterIcon from '../../assets/icons/filter';
+import ComponentIcon from '../../assets/icons/Component';
+import OrgIcon from '../../assets/icons/OrgIcon';
+import TipsIcon from '../../assets/icons/Tipsicon';
+import SearchIcon from '../../assets/icons/search';
+import CopyIcon from '../../assets/icons/CopyIcon';
+import DocumentIcon from '../../assets/icons/DocumentIcon';
+import CredentialIcon from '../../assets/icons/CredentialIcon';
+
+export default function NameToIcon({ name, ...other }) {
+  const CustomIcon = ({ Icon }) => <Icon {...other} />;
 
   switch (name) {
-    //core
     case 'Application':
-      return <CustomIcon Icon={TouchApp} />;
+      return <CustomIcon Icon={TipsIcon} />;
     case 'Kubernetes Service':
-      return <CustomIcon Icon={BuildRounded} />;
-    // Istio
+      return <CustomIcon Icon={ConfigurationIcon} />;
+
     case 'AuthorizationPolicy':
-      return <CustomIcon Icon={LockIcon} />;
+      return <CustomIcon Icon={CredentialIcon} />;
     case 'DestinationRule':
-      return <CustomIcon Icon={ExploreIcon} />;
+      return <CustomIcon Icon={SearchIcon} />;
     case 'EnvoyFilter':
-      return <CustomIcon Icon={Filter} />;
+      return <CustomIcon Icon={FilterIcon} />;
     case 'Gateway':
-      return <CustomIcon Icon={ListAltIcon} />;
+      return <CustomIcon Icon={DocumentIcon} />;
     case 'PeerAuthentication':
-      return <CustomIcon Icon={FileCopyIcon} />;
+      return <CustomIcon Icon={CopyIcon} />;
     case 'Sidecar':
-      return <CustomIcon Icon={DirectionsCar} />;
+      return <CustomIcon Icon={DeploymentSelectorIcon} />;
     case 'VirtualService':
-      return <CustomIcon Icon={SupervisedUserCircle} />;
+      return <CustomIcon Icon={OrgIcon} />;
     case 'WorkloadEntry':
-      return <CustomIcon Icon={SimCard} />;
-    // default
+      return <CustomIcon Icon={ComponentIcon} />;
+
     default:
-      return <CustomIcon Icon={AddCircle} />;
+      return <CustomIcon Icon={AddIcon} />;
   }
 }
