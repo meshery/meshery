@@ -116,66 +116,55 @@ const FinishDeploymentStep = ({
 // ModelImportRjsfSchemaV1Beta2 routes its `modelFile`, `fileName`,
 // `url`, and CSV-trio fields through conditional `allOf[].then`
 // branches keyed by the `uploadType` discriminator — they are NO
-// LONGER at the schema root. Reading them via
-// `ModelImportRjsfSchemaV1Beta2.properties.<name>` (the pre-v1.2.16
-// path) returns `undefined`, leaving the form with only an upload-type
-// radio and no file input — exactly what the
-// "Import a Model via File Import" e2e test caught.
+// LONGER at the schema root.
 //
-// `flatten` peels the canonical's discriminator-conditional branches
-// back into a flat property map. The shape we hand to RJSF is the
-// same as before, sans the CSV trio (handled by `CsvStepper`).
+// We reuse the canonical's conditional shape directly so each upload
+// branch only renders ITS OWN fields:
+//   - File Import: `modelFile` (file widget) + hidden `fileName`
+//   - URL Import:  `url` (text widget)
+//   - CSV Import:  no fields rendered (CSV opens a separate stepper modal)
+//
+// Flattening the canonical branches back into a single root-level
+// property map — the pre-v1.2.16 shape — was a tempting shortcut, but
+// it makes the `url` field always render, and its `format: "uri"`
+// constraint then rejects the empty default on every Next-click for
+// the File Import branch, leaving validateForm() returning false and
+// the submit button silently dead.
 type RJSFNode = {
   properties?: Record<string, unknown>;
   required?: string[];
 
   allOf?: any[];
 };
-const flattenCanonicalBranches = (schema: RJSFNode): Record<string, unknown> => {
-  const out: Record<string, unknown> = { ...(schema.properties ?? {}) };
-  for (const branch of schema.allOf ?? []) {
-    const branchProps = branch?.then?.properties as Record<string, unknown> | undefined;
-    if (branchProps) Object.assign(out, branchProps);
-  }
-  return out;
-};
-const canonicalFlatProps = flattenCanonicalBranches(
-  ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode,
-);
 const canonicalUploadType =
-  (canonicalFlatProps.uploadType as { enumNames?: string[] } | undefined) ?? {};
+  ((ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).properties?.uploadType as
+    | { enumNames?: string[] }
+    | undefined) ?? {};
 const UPLOAD_TYPE_FILE = 'file';
 const UPLOAD_TYPE_URL = 'urlImport';
 const UPLOAD_TYPE_CSV = 'csv';
 
-// `allOf` intentionally does NOT mark `modelFile` or `fileName` required
-// for the file branch even though the canonical does. CustomFileWidget
-// reads the file asynchronously (FileReader → `Promise.then(props.onChange)`)
-// and only then lifts the data URL into RJSF's form state, while validation
-// runs synchronously on Next-click. Gating submit on `required: ['modelFile']`
-// loses the race on every test run and the form sits silently. We trust
-// the user-flow guard in `handleImportModelSubmit` instead — it reads
-// the file off the DOM input as the synchronous source-of-truth and
-// short-circuits if no file is selected. `fileName` is hidden and derived
-// from the data URL / DOM fallback at submit time.
+// Reuse the canonical's discriminator-conditional shape, but drop the
+// `required:` clauses on each branch. Two reasons:
+//   - File branch: `modelFile` is filled asynchronously by RJSF's
+//     FileWidget (FileReader → Promise.then(onChange)). Synchronous
+//     Next-click validation loses the race; we trust the user-flow
+//     guard in `handleImportModelSubmit` instead, which reads the
+//     selected file off the DOM input as a synchronous fallback.
+//   - CSV branch: this modal doesn't render the CSV fields (those
+//     live in `CsvStepper`), so requiring them would block the submit
+//     handler from short-circuiting into the CSV-modal-open flow.
+const stripRequired = (branch: RJSFNode): RJSFNode => {
+  if (!branch?.then) return branch;
+
+  const { required: _unused, ...thenRest } = branch.then as RJSFNode;
+  return { ...branch, then: thenRest };
+};
 const importModelSchema = {
   title: ModelImportRjsfSchemaV1Beta2.title,
   type: 'object',
-  properties: {
-    uploadType: canonicalUploadType,
-    modelFile: canonicalFlatProps.modelFile,
-    url: canonicalFlatProps.url,
-    fileName: canonicalFlatProps.fileName,
-  },
-  allOf: [
-    {
-      if: {
-        properties: { uploadType: { const: UPLOAD_TYPE_URL } },
-        required: ['uploadType'],
-      },
-      then: { required: ['url'] },
-    },
-  ],
+  properties: (ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).properties,
+  allOf: ((ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).allOf ?? []).map(stripRequired),
   required: ['uploadType'],
 };
 
