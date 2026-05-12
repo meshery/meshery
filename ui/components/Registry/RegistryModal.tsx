@@ -235,9 +235,9 @@ export const Navigation = ({ setHeaderInfo }) => {
   });
   const counts = {
     models: modelsData ? removeDuplicateVersions(modelsData.models || []).length : 0,
-    components: componentsData?.total_count || 0,
-    relationships: relationshipsData?.total_count || 0,
-    registrants: registrantsData?.total_count || 0,
+    components: componentsData?.totalCount ?? componentsData?.total_count ?? 0,
+    relationships: relationshipsData?.totalCount ?? relationshipsData?.total_count ?? 0,
+    registrants: registrantsData?.totalCount ?? registrantsData?.total_count ?? 0,
   };
   const navConfig = getNavItems(theme, counts);
 
