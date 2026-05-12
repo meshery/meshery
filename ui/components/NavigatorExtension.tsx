@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import {
   createUseRemoteComponent,
   getDependencies,
@@ -41,7 +41,49 @@ import { useRegistryModal } from '@/utils/hooks/useRegistryModal';
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
-function NavigatorExtension({ url }) {
+type NavigatorExtensionProps = {
+  url: string;
+};
+
+const extensionExposedMesheryStore = {
+  selectedK8sClusters: {
+    get: () => selectSelectedK8sClusters(store.getState()),
+  },
+  k8sConfig: {
+    get: () => selectK8sConfig(store.getState()),
+  },
+};
+
+function PerformanceTestComponent(props: React.ComponentProps<typeof MesheryPerformanceComponent>) {
+  return (
+    <ProviderStoreWrapper>
+      <MesheryPerformanceComponent {...props} />
+    </ProviderStoreWrapper>
+  );
+}
+
+function NavigatorExtensionError({ error }: { error: unknown }) {
+  return (
+    <div role="alert">
+      <h2>Uh-oh!😔 Please pardon our mesh.</h2>
+      <div
+        style={{
+          backgroundColor: '#1E2117',
+          color: '#FFFFFF',
+          padding: '.85rem',
+          borderRadius: '.2rem',
+        }}
+      >
+        <code>{String(error)}</code>
+      </div>
+      <div style={{ marginTop: '1rem' }}>
+        <Troubleshoot showDesignerButton={false} />
+      </div>
+    </div>
+  );
+}
+
+function NavigatorExtension({ url }: NavigatorExtensionProps) {
   const {
     capabilitiesRegistry,
     selectedK8sContexts,
@@ -50,88 +92,68 @@ function NavigatorExtension({ url }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { openModalWithDefault, onLoadResource } = useContext(WorkspaceModalContext);
   const registryModal = useRegistryModal();
-  if (err != null) {
-    return (
-      <div role="alert">
-        <h2>Uh-oh!😔 Please pardon our mesh.</h2>
-        <div
-          style={{
-            backgroundColor: '#1E2117',
-            color: '#FFFFFF',
-            padding: '.85rem',
-            borderRadius: '.2rem',
-          }}
-        >
-          <code>{err.toString()}</code>
-        </div>
-        <div style={{ marginTop: '1rem' }}>
-          <Troubleshoot showDesignerButton={false} />
-        </div>
-      </div>
-    );
-  }
-  const extensionExposedMesheryStore = {
-    selectedK8sClusters: {
-      get: () => selectSelectedK8sClusters(store.getState()),
-    },
-    k8sConfig: {
-      get: () => selectK8sConfig(store.getState()),
-    },
-  };
 
-  const PerformanceTestComponent = (props) => (
-    <ProviderStoreWrapper>
-      <MesheryPerformanceComponent {...props} />
-    </ProviderStoreWrapper>
+  if (err != null) {
+    return <NavigatorExtensionError error={err} />;
+  }
+
+  const injectProps = useMemo(
+    () => ({
+      PatternServiceFormCore,
+      RelationshipEvaluationResponseFormatter: RelationshipEvaluationTraceFormatter,
+      MesheryPerformanceComponent: PerformanceTestComponent,
+      selectedK8sContexts,
+      resolver: {
+        query: {},
+        mutation: {},
+        subscription: {
+          ConfigurationSubscription,
+        },
+      },
+      InfoModal,
+      ViewInfoModal,
+      ExportModal,
+      GenericRJSFModal: Modal,
+      _PromptComponent,
+      capabilitiesRegistry,
+      CapabilitiesRegistryClass: CapabilitiesRegistry,
+      TypingFilter,
+      useNotificationHook: useNotification,
+      StructuredDataFormatter: FormatStructuredData,
+      CreateModelModal,
+      ImportModelModal,
+      ValidateDesign,
+      DryRunDesign,
+      DeployStepper,
+      UnDeployStepper,
+      designValidationMachine,
+      mesheryEventBus,
+      ThemeTogglerCore,
+      RJSForm: RJSFForm,
+      hooks: {
+        CAN,
+        useFilterK8sContexts,
+        useDynamicComponent,
+      },
+      mesheryStore: extensionExposedMesheryStore,
+      currentOrganization,
+      openWorkspaceModal: openModalWithDefault,
+      openRegistryModal: registryModal,
+      SetCurrentLoadedResourceInOrgWorkspaceSession: onLoadResource,
+    }),
+    [
+      capabilitiesRegistry,
+      currentOrganization,
+      onLoadResource,
+      openModalWithDefault,
+      registryModal,
+      selectedK8sContexts,
+    ],
   );
 
   return (
     <DynamicFullScreenLoader isLoading={loading}>
-      <RemoteComponent
-        injectProps={{
-          PatternServiceFormCore,
-          RelationshipEvaluationResponseFormatter: RelationshipEvaluationTraceFormatter,
-          MesheryPerformanceComponent: PerformanceTestComponent,
-          selectedK8sContexts,
-          resolver: {
-            query: {},
-            mutation: {},
-            subscription: {
-              ConfigurationSubscription,
-            },
-          },
-          InfoModal,
-          ViewInfoModal,
-          ExportModal,
-          GenericRJSFModal: Modal,
-          _PromptComponent,
-          capabilitiesRegistry,
-          CapabilitiesRegistryClass: CapabilitiesRegistry,
-          TypingFilter: TypingFilter,
-          useNotificationHook: useNotification,
-          StructuredDataFormatter: FormatStructuredData,
-          CreateModelModal: CreateModelModal,
-          ImportModelModal: ImportModelModal,
-          ValidateDesign,
-          DryRunDesign,
-          DeployStepper,
-          UnDeployStepper,
-          designValidationMachine,
-          mesheryEventBus: mesheryEventBus,
-          ThemeTogglerCore,
-          RJSForm: RJSFForm,
-          hooks: {
-            CAN: CAN,
-            useFilterK8sContexts,
-            useDynamicComponent,
-          },
-          mesheryStore: extensionExposedMesheryStore,
-          currentOrganization,
-          openWorkspaceModal: openModalWithDefault,
-          openRegistryModal: registryModal,
-          SetCurrentLoadedResourceInOrgWorkspaceSession: onLoadResource,
-        }}
-      />
+      <RemoteComponent injectProps={injectProps} />
     </DynamicFullScreenLoader>
   );
 }
