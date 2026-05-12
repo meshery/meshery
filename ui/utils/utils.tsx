@@ -541,7 +541,7 @@ export const openDesignInKanvas = (designId, designName, router) => {
   router.push(`/extension/meshmap?mode=design&type=design&id=${designId}`);
 };
 
-export const openViewInKanvas = (viewId, viewName, router) => {
+export const openViewInExtension = (viewId, viewName, router) => {
   if (isExtensionOpen()) {
     mesheryEventBus.publish({
       type: 'OPEN_VIEW_IN_KANVAS',

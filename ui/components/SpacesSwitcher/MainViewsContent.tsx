@@ -25,7 +25,7 @@ import { DesignList, LoadingContainer, GhostContainer, GhostImage, GhostText } f
 import { useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import ShareModal from './ShareModal';
 import { ViewInfoModal } from '../ViewInfoModal';
-import { openViewInKanvas, useIsOperatorEnabled } from '@/utils/utils';
+import { openViewInExtension, useIsOperatorEnabled } from '@/utils/utils';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { Router, useRouter } from 'next/router';
@@ -195,7 +195,7 @@ const MainViewsContent = ({
       workspaceSwitcherContext.closeModal();
     }
 
-    openViewInKanvas(viewId, viewName, Router);
+    openViewInExtension(viewId, viewName, Router);
   };
   const isInitialFetch = isFetching && page === 0;
   const isEmpty = totalCount === 0;
