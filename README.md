@@ -87,7 +87,7 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 
 ## Infrastructure Lifecycle Management
 
-Meshery manages the configuration, deployment, and operation of your Cloud services and Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery supports [300+ integrations](https://meshery.io/integrations).
+Meshery manages the configuration, deployment, and operation of your Cloud services and Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery supports [380+ integrations](https://meshery.io/integrations).
 
 <!--
 <a href="https://www.youtube.com/watch?v=034nVaQUyME"><img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshmap.gif"  style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" /></a>
@@ -309,7 +309,7 @@ Learn more about the <a href="https://meshery.io/community#meshmates">MeshMates<
 
 Please do! We're a warm and welcoming community of open source contributors. Please join. All types of contributions are welcome. Be sure to read the [Contributor Guides](https://docs.meshery.io/project/contributing) for a tour of resources available to you and how to get started.
 
-**Naming conventions.** This repository adheres to the canonical camelCase-wire identifier-naming contract shared across the Meshery / Layer5 ecosystem. See the [identifier-naming contributor guide](https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md) in `meshery/schemas` for the full reader-friendly directory (26-row naming table with before/after and do/don't examples). Repo-specific mandates live in [`AGENTS.md § Identifier Naming Conventions`](./AGENTS.md).
+**Naming conventions.** This repository adheres to the canonical camelCase-wire identifier-naming contract shared across the Meshery ecosystem. See the [identifier-naming contributor guide](https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md) in `meshery/schemas` for the full reader-friendly directory (26-row naming table with before/after and do/don't examples). Repo-specific mandates live in [`AGENTS.md § Identifier Naming Conventions`](./AGENTS.md).
 
 <!-- <a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="https://docs.meshery.io/assets/img/readme/deploying-linkerd-with-meshery.png" width="100%" align="center" /></a> -->
 

@@ -68,7 +68,7 @@ The use of a Remote Provider, puts Meshery into multi-user mode and requires use
 
 A specific provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`. This applies to both remote and local providers.
 
-Name: **"Layer5"** (default)
+Name: **"Meshery"** (default)
 
 - Enforces user authentication.
 - Long-term term persistence.
@@ -290,7 +290,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
 {{< code code=`{
   "providerType": "remote",
   "packageVersion": "v0.1.0",
-  "packageURL": "https://layer5labs.github.io/meshery-extensions-packages/provider.tar.gz",
+  "packageURL": "https://<hostname>>/meshery-extensions-packages/provider.tar.gz",
   "providerName": "Meshery",
   "providerDescription": [
     "Persistent sessions",

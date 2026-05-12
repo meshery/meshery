@@ -178,7 +178,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
           };
           dispatch(updatePrometheusConfig(promCfg));
         } else {
-          const credentialID = connection?.credential_id;
+          const credentialID = connection?.credentialId;
           fetchCredentialById(credentialID)
             .unwrap()
             .then((credRes) => {
@@ -327,7 +327,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       try {
         const ctx = await fetchKubernetesContexts({ pagesize: 10, search }).unwrap();
         setState((prevState) => ({ ...prevState, k8sContexts: ctx }));
-        const active = ctx?.contexts?.find((c) => c.is_current_context === true);
+        const active = ctx?.contexts?.find((c) => c.isCurrentContext === true);
         if (active) {
           setState((prevState) => ({ ...prevState, activeK8sContexts: [active?.id] }));
           activeContextChangeCallback([active?.id]);
