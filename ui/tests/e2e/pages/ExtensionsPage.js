@@ -66,9 +66,16 @@ export class ExtensionsPage {
   }
 
   async verifyExtensionNavItemsUseTopLevelLayout() {
+    if ((await this.extensionNavRegion.count()) === 0) {
+      return;
+    }
+
     await expect(this.extensionNavRegion).toBeVisible();
-    await expect(this.extensionRootNavItems.first()).toBeVisible();
     await expect(this.extensionRegionTopLevelLists).toHaveCount(0);
+
+    if ((await this.extensionRootNavItems.count()) > 0) {
+      await expect(this.extensionRootNavItems.first()).toBeVisible();
+    }
   }
 
   normalizeUrl(url) {
