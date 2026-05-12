@@ -82,10 +82,10 @@ interface ProviderExtension {
 }
 
 interface _ProviderInfo {
-  provider_name?: string;
-  provider_type?: string;
-  provider_url?: string;
-  provider_description?: string[];
+  providerName?: string;
+  providerType?: string;
+  providerUrl?: string;
+  providerDescription?: string[];
   capabilities?: ProviderCapability[];
   extensions?: Record<string, ProviderExtension[]>;
   [key: string]: unknown;
@@ -134,7 +134,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
   const { width } = useWindowDimensions();
   const [value, setValue] = useState(0);
-  const [providerInfo, setProviderInfo] = useState({});
+  const [providerInfo, setProviderInfo] = useState<_ProviderInfo>({});
   const theme = useTheme();
   const dispatch = useDispatch();
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
@@ -386,8 +386,8 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
               <CardContent>
                 <Typography>
                   <ul>
-                    {providerInfo.provider_description &&
-                      providerInfo.provider_description.map((desc, index) => (
+                    {providerInfo.providerDescription &&
+                      providerInfo.providerDescription.map((desc, index) => (
                         <li key={index}>
                           <Typography>{desc}</Typography>
                         </li>
