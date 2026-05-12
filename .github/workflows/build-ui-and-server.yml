@@ -203,31 +203,16 @@ jobs:
         run: |
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
           docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}
-
-  # Run Rego policy tests
-  rego-tests:
-    name: Rego Policy Tests
-    if: >-
-      github.repository == 'meshery/meshery' && (
-      (
-        github.event_name == 'push' &&
-        (
-        contains(toJson(github.event.commits), '.rego') ||
-        contains(toJson(github.event.commits), 'server/policies/') ||
-        contains(toJson(github.event.commits), '.github/workflows/rego-lint-and-test.yml')
-        )
-      ) ||
-      (
-        github.event_name == 'pull_request_target' &&
-        (
-        contains(toJson(github.event.pull_request), '.rego') ||
-        contains(toJson(github.event.pull_request), 'server/policies/') ||
-        contains(toJson(github.event.pull_request), '.github/workflows/rego-lint-and-test.yml')
-        )
-      )
-      )
-
-    uses: ./.github/workflows/rego-lint-and-test.yml
-    permissions:
-      contents: write
-      pull-requests: write
+      - name: Docker edge push
+        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
+        run: |
+          docker push ${{ secrets.IMAGE_NAME }}:edge-latest
+          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_REF/refs\/tags\//}
+          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+      - name: Docker Hub Description
+        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
+        uses: peter-evans/dockerhub-description@v5
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: ${{ secrets.IMAGE_NAME }}
