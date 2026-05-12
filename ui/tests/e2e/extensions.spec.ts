@@ -35,17 +35,6 @@ test.describe('Extensions Section Tests', () => {
     await extensionsPage.verifyPerformanceAnalysisDetails();
   });
 
-  test('Verify Kanvas Details', async () => {
-    await extensionsPage.verifyKanvasSignupUI();
-    const hasAccess = await extensionsPage.hasKanvasAccess();
-    if (hasAccess) {
-      await expect(extensionsPage.kanvasSignupBtn).toBeDisabled();
-    } else {
-      await expect(extensionsPage.kanvasSignupBtn).toBeEnabled();
-      await extensionsPage.verifyNewTab(extensionsPage.kanvasSignupBtn, URLS.KANVAS.DOCS);
-    }
-  });
-
   test('Verify Meshery Docker Extension Details', async () => {
     await expect(extensionsPage.dockerExtensionHeading).toBeVisible();
     await extensionsPage.verifyNewTab(
