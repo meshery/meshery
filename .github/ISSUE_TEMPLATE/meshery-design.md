@@ -17,11 +17,10 @@ assignees: ''
 
 ### Implementation
 <!-- Add your design instructions -->
-- Open [Kanvas](https://kanvas.new/extension/meshmap) in your browser.
+- Open [Meshery Playground](https://playground.meshery.io) in your browser.
 - Navigate to components in the panel, where you can browse for components and define your design.
 
-
-### Save and Publish 
+### Save and Publish
 <!-- Instructions to save and publish the design -->
 - Once your design is completed, click on "Save as" button and name your design.
 - Now head to [playground](https://playground.meshery.io/), in the side panel go to Configuration > Designs.
@@ -30,14 +29,16 @@ assignees: ''
 - Download the .yaml file for your design.
 
 ### Raise a Pull Request
+
 - Fork the meshery/meshery repository.
 - Create a new branch in your fork of the Meshery repository.
 - Now head to [hacktoberfest-contributions](https://github.com/meshery/meshery/tree/master/hacktoberfest_contributions) directory
 - Add your design.yaml file under the path structure:
-meshery/hacktoberfest_contributions/<design-name>/<design.yaml>
+meshery/hacktoberfest_contributionss/<design-name>/<design.yaml>
 - Create a pull request (PR) with your design to the Meshery repository.
 
 ---
+
 - 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)
 
 ### Additonal resources
