@@ -53,15 +53,19 @@ mesheryctl model generate -f [URL] -t [path-to-template.json]
 mesheryctl model generate --file [URL] --template [path-to-template.json] --skip-registration
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return mesheryctlflags.ValidateCmdFlags(cmd, &modelGenerateFlags)
+		err := mesheryctlflags.ValidateCmdFlags(cmd, &modelGenerateFlags)
+		if err != nil {
+			return fmt.Errorf("%s\nRun '%s --help' to see detailed help message", err.Error(), cmd.CommandPath())
+		}
+		return nil
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		if modelGenerateFlags.File == "" && len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf(errGenerateMissingArgsMsg, errGenerateUsageMsg))
+			return fmt.Errorf(errGenerateMissingArgsMsg, errGenerateUsageMsg)
 		}
 
 		if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%s", errGenerateUsageMsg))
+			return fmt.Errorf("too many arguments\n\n%s", errGenerateUsageMsg)
 		}
 
 		return nil
@@ -112,6 +116,10 @@ mesheryctl model generate --file [URL] --template [path-to-template.json] --skip
 }
 
 func init() {
+	generateModelCmd.SetFlagErrorFunc(func(cmd *cobra.Command, err error) error {
+		return fmt.Errorf("%s\nRun '%s --help' to see detailed help message", err.Error(), cmd.CommandPath())
+	})
+
 	generateModelCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})

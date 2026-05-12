@@ -41,11 +41,11 @@ func (fv *FlagValidator) Validate(s interface{}) error {
 	if err != nil {
 		switch vErr := err.(type) {
 		case *validator.InvalidValidationError:
-			return utils.ErrFlagsInvalid(err)
+			return err
 		case validator.ValidationErrors:
-			return utils.ErrFlagsInvalid(fv.ReadValidationErrorMessages(vErr))
+			return fv.ReadValidationErrorMessages(vErr)
 		default:
-			return utils.ErrFlagsInvalid(err)
+			return err
 		}
 	}
 	return nil

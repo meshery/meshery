@@ -11,6 +11,7 @@ import (
 	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -50,7 +51,7 @@ func TestModelGenerate(t *testing.T) {
 			ExpectedResponse: "generate.no-args.output.golden",
 			ExpectHelp:       true,
 			ExpectErr:        true,
-			RaisedError:      utils.ErrInvalidArgument(fmt.Errorf(errGenerateMissingArgsMsg, errGenerateUsageMsg)),
+			RaisedError:      fmt.Errorf(errGenerateMissingArgsMsg, errGenerateUsageMsg),
 		},
 		{
 			Name:             "model generate: from CSV directory",
@@ -111,7 +112,11 @@ func TestModelGenerate(t *testing.T) {
 					t.Fatal("expected an error, but got nil")
 				}
 				t.Logf("[%s] stderr (error):\n%s", tt.Name, err.Error())
-				utils.AssertMeshkitErrorsEqual(t, tt.RaisedError, err)
+				if meshkiterrors.GetCode(tt.RaisedError) != "None" {
+					utils.AssertMeshkitErrorsEqual(t, tt.RaisedError, err)
+				} else if tt.RaisedError.Error() != err.Error() {
+					t.Fatalf("unexpected error message\nexpected: %q\ngot:      %q", tt.RaisedError.Error(), err.Error())
+				}
 				return
 			}
 
@@ -128,4 +133,21 @@ func TestModelGenerate(t *testing.T) {
 	}
 
 	utils.StopMockery(t)
+}
+
+func TestModelGenerate_InvalidDirectoryErrorFormat(t *testing.T) {
+	utils.SetupContextEnv(t)
+	defer utils.ResetCommandFlags(ModelCmd, t)
+	mesheryctlflags.InitValidators(ModelCmd)
+
+	ModelCmd.SetArgs([]string{"generate", "--file", "yash"})
+	err := ModelCmd.Execute()
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+
+	expected := "open yash: no such file or directory\nVerify that directory exist at the provided location.Verify sufficient directory read permission."
+	if err.Error() != expected {
+		t.Fatalf("unexpected error message\nexpected: %q\ngot:      %q", expected, err.Error())
+	}
 }
