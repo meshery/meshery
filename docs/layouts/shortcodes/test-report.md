@@ -1,6 +1,10 @@
 ### END-TO-END TESTS
 
+<<<<<<< HEAD
 - Testing started at: May 12th 2026, 9:41:06 pm
+=======
+- Testing started at: May 12th 2026, 9:49:16 pm
+>>>>>>> 27513e867146926b70bee5762950d56ddfe6c7cf
 
 **📦 Test Result Summary**
 
@@ -9,7 +13,11 @@
 - ⚠️ 0 flaked
 - ⏩ 4 skipped
 
+<<<<<<< HEAD
 ⌛ _Duration: 7 minutes and 12 seconds_
+=======
+⌛ _Duration: 7 minutes and 21 seconds_
+>>>>>>> 27513e867146926b70bee5762950d56ddfe6c7cf
 
 **Overall Result**: 👎 Some tests failed.
 
