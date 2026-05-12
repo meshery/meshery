@@ -52,7 +52,7 @@ test.describe.serial('Connection Management Tests', () => {
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToConnections();
     await page.waitForURL(/\/management\/connections/);
-    await page.getByTestId('ConnectionTable-search').waitFor();
+    await expect(page.getByTestId('ConnectionTable-search')).toBeVisible();
   });
 
   test('Verify that UI components are displayed', async ({ page }) => {
