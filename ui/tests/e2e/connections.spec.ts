@@ -51,7 +51,8 @@ test.describe.serial('Connection Management Tests', () => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToConnections();
-    await page.getByTestId('connection-addCluster').waitFor();
+    await page.waitForURL(/\/management\/connections/);
+    await page.getByTestId('ConnectionTable-search').waitFor();
   });
 
   test('Verify that UI components are displayed', async ({ page }) => {
