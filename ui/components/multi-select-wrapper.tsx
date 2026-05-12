@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { Colors } from '../themes/app';
-import { Checkbox, MenuItem, Paper, FormControlLabel } from '@sistent/sistent';
+import { Checkbox, ListItemButton, Paper, FormControlLabel } from '@sistent/sistent';
 import { useTheme } from '@sistent/sistent';
 
 const MultiSelectWrapper = (props) => {
@@ -25,8 +25,8 @@ const MultiSelectWrapper = (props) => {
 
   const Option = (props) => {
     return (
-      <MenuItem
-        buttonRef={props.innerRef}
+      <ListItemButton
+        ref={props.innerRef}
         selected={props.isFocused}
         {...props.innerProps}
         component="div"
@@ -64,7 +64,7 @@ const MultiSelectWrapper = (props) => {
           }
           label={<span style={{ marginLeft: '0.5rem' }}>{props.label}</span>}
         />
-      </MenuItem>
+      </ListItemButton>
     );
   };
 
