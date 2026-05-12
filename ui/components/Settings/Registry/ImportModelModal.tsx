@@ -285,27 +285,37 @@ const ImportModelModal = React.memo(
 
       switch (uploadType) {
         case UPLOAD_TYPE_FILE: {
-          // Two source-of-truth paths for the file:
-          //   1. RJSF form data (`data.modelFile` data URL) — this is the
-          //      happy path when the user clicked Next after the upload
-          //      finished round-tripping through CustomFileWidget's async
-          //      FileReader → onChange chain.
-          //   2. DOM input fallback — Playwright e2e (and any quick
-          //      keystroke after upload) can race the FileReader, so the
-          //      data URL hasn't landed in form state yet on submit. The
-          //      `<input type="file">` rendered by the widget already
-          //      carries the selected `File` synchronously (the browser
-          //      sets `.files` on the input the instant the user picks a
-          //      file), so re-read it here via readFileAsBytes.
-          const formData = decodeDataUrlToBytes(modelFile);
-          let fileName = formFileName || filenameFromDataUrl(modelFile);
-          let fileData: number[] | null = formData;
-          if (!fileData) {
+          // Three source-of-truth paths for the file:
+          //   1. `data.modelFile` (RJSF form data) — populated by
+          //      `CustomFileWidget.processFile`'s async FileReader chain.
+          //   2. `data.fileName` (RJSF form data) — NOT populated by the
+          //      widget; the canonical schema declares it as a separate
+          //      field but the widget only emits `modelFile`. Always
+          //      `undefined` in practice.
+          //   3. DOM input (synchronous) — the browser sets
+          //      `<input type=file>.files[0]` the instant the user picks
+          //      a file, so it's always readable on submit. The browser-
+          //      provided `File.name` is also our only synchronous source
+          //      for the filename (the data URL produced by
+          //      `readAsDataURL` does NOT embed `;name=` like the
+          //      reference RJSF FileWidget would).
+          //
+          // So: try the form-state bytes (path 1) first, fall back to DOM
+          // bytes if the FileReader race lost (paths 1 ↘ 3 for bytes), and
+          // ALWAYS prefer the DOM filename for `fileName` (path 3 for
+          // name) — paths 1 and 2 just don't carry it.
+          let fileData: number[] | null = decodeDataUrlToBytes(modelFile);
+          let fileName: string | undefined = formFileName || filenameFromDataUrl(modelFile);
+          if (!fileData || !fileName) {
             const inputFile = findSelectedModelFile();
             if (inputFile) {
               try {
-                fileData = await readFileAsBytes(inputFile);
-                fileName = fileName || inputFile.name;
+                if (!fileData) {
+                  fileData = await readFileAsBytes(inputFile);
+                }
+                if (!fileName) {
+                  fileName = inputFile.name;
+                }
               } catch (err) {
                 console.error('Error reading file from DOM:', err);
                 skipNextRef.current = true;
