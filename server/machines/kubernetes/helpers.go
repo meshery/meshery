@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -16,10 +17,22 @@ import (
 	"github.com/spf13/viper"
 )
 
+// adapterTracker is initialized lazily on first access so that the ADAPTER_URLS
+// env-var read happens AFTER main() has called viper.AutomaticEnv(). A package-
+// level eager init would run at import time, before viper sees env vars, and
+// silently produce an empty tracker for env-only configurations.
 var (
-	adapterURLs    = utils.SplitAndTrim(viper.GetString("ADAPTER_URLS"), ",")
-	adapterTracker = helpers.NewAdaptersTracker(adapterURLs)
+	adapterTrackerOnce sync.Once
+	adapterTrackerInst *helpers.AdaptersTracker
 )
+
+func getAdapterTracker() *helpers.AdaptersTracker {
+	adapterTrackerOnce.Do(func() {
+		adapterURLs := utils.SplitAndTrim(viper.GetString("ADAPTER_URLS"), ", \t\n\r")
+		adapterTrackerInst = helpers.NewAdaptersTracker(adapterURLs)
+	})
+	return adapterTrackerInst
+}
 
 func GenerateClientSetAction(k8sContext *models.K8sContext, eventBuilder *events.EventBuilder, log logger.Handler) (*kubernetes.Client, error) {
 	eventBuilder.ActedUpon(uuid.FromStringOrNil(k8sContext.ConnectionID))
@@ -68,7 +81,7 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
 func AssignControllerHandlers(machinectx *MachineCtx, systemID *core.Uuid, provider models.Provider) {
 	machinectx.MesheryCtrlsHelper = models.NewMesheryControllersHelper(
 		machinectx.log,
-		models.NewOperatorDeploymentConfig(adapterTracker),
+		models.NewOperatorDeploymentConfig(getAdapterTracker()),
 		models.GetDBInstance(),
 		machinectx.EventBroadcaster,
 		provider,
