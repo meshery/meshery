@@ -93,10 +93,6 @@ function NavigatorExtension({ url }: NavigatorExtensionProps) {
   const { openModalWithDefault, onLoadResource } = useContext(WorkspaceModalContext);
   const registryModal = useRegistryModal();
 
-  if (err != null) {
-    return <NavigatorExtensionError error={err} />;
-  }
-
   const injectProps = useMemo(
     () => ({
       PatternServiceFormCore,
@@ -150,6 +146,10 @@ function NavigatorExtension({ url }: NavigatorExtensionProps) {
       selectedK8sContexts,
     ],
   );
+
+  if (err != null) {
+    return <NavigatorExtensionError error={err} />;
+  }
 
   return (
     <DynamicFullScreenLoader isLoading={loading}>
