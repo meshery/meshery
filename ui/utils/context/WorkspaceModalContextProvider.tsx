@@ -61,7 +61,6 @@ const WorkspaceModalContextProvider = ({ children }) => {
         org: { id: orgId, name: 'Private Org' },
       };
       const org = allOrganizations.find((o) => o.id == orgId);
-      console.log('onload resource invoked', workspaceId, orgId, org, allOrganizations);
       if (org) {
         resource.org = org;
         const workspaces = await getWorkspaces({
@@ -74,10 +73,8 @@ const WorkspaceModalContextProvider = ({ children }) => {
           resource.workspace = workspace;
         }
       }
-      console.log('onloadResource', workspaceId, orgId, resource);
       setCurrentLoadedResource(resource);
-    } catch (e) {
-      console.log('[onLoadResource] failed set orgWorkspace context', e);
+    } catch {
     }
   };
 
