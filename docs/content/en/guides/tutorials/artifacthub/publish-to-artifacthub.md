@@ -19,8 +19,8 @@ In this tutorial, we'll see how to export a design from Meshery, which we will u
 ## Steps
 
 1. Navigate to Designs
-- Locally: http://localhost:9081/configuration/designs?view=grid
-- Playground: https://playground.meshery.io/configuration/designs?view=grid
+   - Locally: http://localhost:9081/configuration/designs?view=grid
+   - Playground: https://playground.meshery.io/configuration/designs?view=grid
 
 ![](/guides/tutorials/images/publish-to-artifacthub/designs.png)
 
@@ -29,7 +29,7 @@ In this tutorial, we'll see how to export a design from Meshery, which we will u
 
 3. Prepare your Artifact Hub repository
 
-You will need to have an Artifact hub repository already created with `Kind` as `Meshery Designs`. See [Artifact Hub documentation](https://artifacthub.io/docs/topics/repositories/meshery-designs/) for more information on managing repositories.
+You will need to have an Artifact Hub repository already created with Kind as Meshery Designs. See [Artifact Hub documentation](https://artifacthub.io/docs/topics/repositories/meshery-designs/) for more information on managing repositories.
 
 ### Push Design to Artifact Hub repository
 
