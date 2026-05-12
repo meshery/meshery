@@ -19,9 +19,9 @@ spec:
       containers:
         - env:
             - name: PROVIDER_BASE_URLS
-              value: https://cloud.meshery.io
+              value: https://cloud.layer5.io
             - name: PROVIDER
-              value: Meshery
+              value: Layer5
             - name: PLAYGROUND
               value: "true"
             - name: DISABLE_OPERATOR
