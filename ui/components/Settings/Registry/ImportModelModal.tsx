@@ -112,12 +112,38 @@ const FinishDeploymentStep = ({
 //       by @rjsf/utils' `optionsList()` — RJSF v6 reads the radio
 //       labels from `ui:enumNames` on the uiSchema instead.
 //
-// v1.2.16 of @meshery/schemas adds `ModelImportRjsfUiSchemaV1Beta2` and
-// changes `modelFile.format` from `"binary"` to `"data-url"` (the format
-// RJSF's FileWidget actually produces). We base `importModelUiSchema` on
-// the canonical and overlay our consumer overrides on top.
-const canonicalProps = ModelImportRjsfSchemaV1Beta2?.properties || {};
-const canonicalUploadType = canonicalProps.uploadType || {};
+// Since @meshery/schemas v1.2.16, the canonical
+// ModelImportRjsfSchemaV1Beta2 routes its `modelFile`, `fileName`,
+// `url`, and CSV-trio fields through conditional `allOf[].then`
+// branches keyed by the `uploadType` discriminator — they are NO
+// LONGER at the schema root. Reading them via
+// `ModelImportRjsfSchemaV1Beta2.properties.<name>` (the pre-v1.2.16
+// path) returns `undefined`, leaving the form with only an upload-type
+// radio and no file input — exactly what the
+// "Import a Model via File Import" e2e test caught.
+//
+// `flatten` peels the canonical's discriminator-conditional branches
+// back into a flat property map. The shape we hand to RJSF is the
+// same as before, sans the CSV trio (handled by `CsvStepper`).
+type RJSFNode = {
+  properties?: Record<string, unknown>;
+  required?: string[];
+
+  allOf?: any[];
+};
+const flattenCanonicalBranches = (schema: RJSFNode): Record<string, unknown> => {
+  const out: Record<string, unknown> = { ...(schema.properties ?? {}) };
+  for (const branch of schema.allOf ?? []) {
+    const branchProps = branch?.then?.properties as Record<string, unknown> | undefined;
+    if (branchProps) Object.assign(out, branchProps);
+  }
+  return out;
+};
+const canonicalFlatProps = flattenCanonicalBranches(
+  ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode,
+);
+const canonicalUploadType =
+  (canonicalFlatProps.uploadType as { enumNames?: string[] } | undefined) ?? {};
 const UPLOAD_TYPE_FILE = 'file';
 const UPLOAD_TYPE_URL = 'urlImport';
 const UPLOAD_TYPE_CSV = 'csv';
@@ -133,14 +159,13 @@ const UPLOAD_TYPE_CSV = 'csv';
 // short-circuits if no file is selected. `fileName` is hidden and derived
 // from the data URL / DOM fallback at submit time.
 const importModelSchema = {
-  $schema: 'https://json-schema.org/draft-07/schema#',
   title: ModelImportRjsfSchemaV1Beta2.title,
   type: 'object',
   properties: {
     uploadType: canonicalUploadType,
-    modelFile: canonicalProps.modelFile,
-    url: canonicalProps.url,
-    fileName: canonicalProps.fileName,
+    modelFile: canonicalFlatProps.modelFile,
+    url: canonicalFlatProps.url,
+    fileName: canonicalFlatProps.fileName,
   },
   allOf: [
     {
@@ -168,10 +193,10 @@ const importModelUiSchema = {
       ? [...(canonicalUploadType.enumNames as string[])]
       : undefined,
   },
-  // The canonical schema declares `modelFile` as `type: string` without a
-  // `format: data-url`, so RJSF falls back to TextWidget and the form never
-  // renders an `<input type="file">`. Force the file widget here, matching
-  // the importDesign/importFilter fix shipped in @sistent/sistent v0.21.7.
+  // The canonical schema's `modelFile` already declares
+  // `format: "data-url"` (since v1.2.16), so RJSF auto-routes to the
+  // FileWidget. The explicit override here is belt-and-braces in case
+  // the canonical or a downstream override regresses.
   modelFile: { 'ui:widget': 'file' },
   fileName: { 'ui:widget': 'hidden' },
   modelCsv: { 'ui:widget': 'hidden' },
