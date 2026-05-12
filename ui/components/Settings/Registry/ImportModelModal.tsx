@@ -389,12 +389,12 @@ const ImportModelModal = React.memo(
 
       return (
         <FormControl component="fieldset">
-          <RadioGroup
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            style={{ marginTop: '-1.7rem', marginLeft: '-1rem' }}
-          >
-            <Typography fontWeight={'bold'} fontSize={'1rem'}>
+          <RadioGroup value={value} onChange={(e) => onChange(e.target.value)}>
+            <Typography
+              fontWeight={'bold'}
+              fontSize={'1rem'}
+              style={{ position: 'relative', top: '-0.5rem' }}
+            >
               {label}
             </Typography>
 
