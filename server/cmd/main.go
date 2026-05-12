@@ -205,7 +205,7 @@ func main() {
 	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
 	log.Info("Log level: ", log.GetLevel())
 
-	adapterURLs := utils.SplitAndTrim(viper.GetString("ADAPTER_URLS"), ",")
+	adapterURLs := utils.SplitAndTrim(viper.GetString("ADAPTER_URLS"), ", \t\n\r")
 
 	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
 	queryTracker := helpers.NewUUIDQueryTracker()
@@ -353,7 +353,7 @@ func main() {
 	provs[lProv.Name()] = lProv
 
 	providerEnvVar := viper.GetString(constants.ProviderENV)
-	RemoteProviderURLs := utils.SplitAndTrim(viper.GetString("PROVIDER_BASE_URLS"), ",")
+	RemoteProviderURLs := utils.SplitAndTrim(viper.GetString("PROVIDER_BASE_URLS"), ", \t\n\r")
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
 		if err != nil {
