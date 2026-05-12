@@ -33,20 +33,26 @@ const (
 	DefVersion            = "1.0.0"
 )
 
-// SplitAndTrim splits s by sep, trims whitespace from each part, and discards
-// empty entries. Use this when reading delimited values from an environment
-// variable via viper.GetString: viper.GetStringSlice does not split a single
-// comma-separated env-var value into multiple slice entries when AutomaticEnv
-// is enabled, so the whole string flows through as one element.
-func SplitAndTrim(s, sep string) []string {
+// SplitAndTrim splits s on any rune that appears in delims, trims whitespace
+// from each resulting field, and discards empty entries. Use this when reading
+// delimited values from an environment variable via viper.GetString:
+// viper.GetStringSlice does not split a single delimited env-var value into
+// multiple slice entries when AutomaticEnv is enabled, so the whole string
+// flows through as one element. Pass the full set of expected separator
+// characters — e.g. ", \t\n\r" — to accept either comma-separated or
+// whitespace-separated configurations, which both forms appear across the
+// Meshery manifests in install/.
+func SplitAndTrim(s, delims string) []string {
 	if s == "" {
 		return nil
 	}
-	parts := strings.Split(s, sep)
-	out := make([]string, 0, len(parts))
-	for _, p := range parts {
-		if p = strings.TrimSpace(p); p != "" {
-			out = append(out, p)
+	fields := strings.FieldsFunc(s, func(r rune) bool {
+		return strings.ContainsRune(delims, r)
+	})
+	out := make([]string, 0, len(fields))
+	for _, f := range fields {
+		if f = strings.TrimSpace(f); f != "" {
+			out = append(out, f)
 		}
 	}
 	return out

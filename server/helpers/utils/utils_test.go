@@ -48,6 +48,24 @@ func TestSplitAndTrim(t *testing.T) {
 			sep:  ",",
 			want: []string{"https://a.example", "https://b.example"},
 		},
+		{
+			name: "space-delimited ADAPTER_URLS form",
+			in:   "meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002",
+			sep:  ", \t\n\r",
+			want: []string{"meshery-istio:10000", "meshery-linkerd:10001", "meshery-consul:10002"},
+		},
+		{
+			name: "mixed comma and whitespace delimiters",
+			in:   "a,b c\td\ne",
+			sep:  ", \t\n\r",
+			want: []string{"a", "b", "c", "d", "e"},
+		},
+		{
+			name: "runs of mixed delimiters collapse",
+			in:   "a , ,\tb",
+			sep:  ", \t",
+			want: []string{"a", "b"},
+		},
 	}
 
 	for _, tc := range tests {
