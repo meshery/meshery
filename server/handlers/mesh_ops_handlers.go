@@ -185,8 +185,11 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		// Caller decides how loudly to surface this. SessionSyncHandler probes
 		// tracked adapters on every page load and these probes routinely fail
 		// for stale or never-deployed adapters (e.g., the Layer5 Playground),
-		// which otherwise floods server logs with ERROR entries.
-		h.log.Debugf("adapter unreachable at %s: %v", meshLocationURL, ErrMeshClient)
+		// which otherwise floods server logs with ERROR entries. Log the raw
+		// `err` (not the wrapped ErrMeshClient constant) so operators can
+		// distinguish DNS-resolution failures from TLS handshake failures
+		// from genuine outages.
+		h.log.Debugf("adapter unreachable at %s: %v", meshLocationURL, err)
 		return meshAdapters, ErrMeshClient
 	}
 	h.log.Debug("created client for adapter: ", meshLocationURL)

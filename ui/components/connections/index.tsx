@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { NoSsr } from '@sistent/sistent';
 import { ErrorBoundary, AppBar } from '@sistent/sistent';
 import Modal from '../General/Modals/Modal';
@@ -79,10 +79,16 @@ function Connections() {
   // unstable reference forced both to invalidate every render, contributing
   // to the connections-page update-depth loop (React error #185). Mirror the
   // router state into refs so the callbacks below stay referentially stable.
+  //
+  // Assigning ref.current during render (rather than in a useEffect) is the
+  // documented "latest value" pattern. Effects run child-first in the commit
+  // phase, so deferring the sync to a parent useEffect would leave child
+  // effects reading a stale `query`/`push` on the same commit they fire — and
+  // ConnectionTable's expansion-sync effect does call `updateUrlParams`
+  // through this ref. Writing in render keeps the ref in lockstep with the
+  // values React just rendered with, before any child effect can read it.
   const routerStateRef = useRef({ query, pathname, push });
-  useEffect(() => {
-    routerStateRef.current = { query, pathname, push };
-  }, [pathname, push, query]);
+  routerStateRef.current = { query, pathname, push };
 
   const updateUrlParams = useCallback((params) => {
     const {
@@ -118,10 +124,10 @@ function Connections() {
 
   // Read latest selected connection id without re-creating the callback when
   // the URL changes — the dedupe guard would otherwise destabilize the prop.
+  // Synced in render for the same reason as `routerStateRef`: child effects
+  // run before parent effects in the commit phase.
   const connectionIdRef = useRef(connectionId);
-  useEffect(() => {
-    connectionIdRef.current = connectionId;
-  }, [connectionId]);
+  connectionIdRef.current = connectionId;
 
   // Update URL with connection ID
   const updateUrlWithConnectionId = useCallback(
