@@ -125,6 +125,7 @@ func main() {
 	viper.SetDefault("SKIP_DOWNLOAD_EXTENSIONS", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
+	viper.SetDefault("EXPECTED_PROVIDER_ISSUER", "")
 	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", connections.MeshsyncDeploymentModeDefault)
 	store.Initialize()
 
@@ -354,14 +355,22 @@ func main() {
 
 	providerEnvVar := viper.GetString(constants.ProviderENV)
 	RemoteProviderURLs := utils.SplitAndTrim(viper.GetString("PROVIDER_BASE_URLS"), ", \t\n\r")
+	expectedProviderIssuer := viper.GetString("EXPECTED_PROVIDER_ISSUER")
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
 		if err != nil {
 			log.Error(ErrInvalidURLSkippingProvider(providerurl))
 			continue
 		}
+		
+		expectedIss := expectedProviderIssuer
+		if expectedIss == "" {
+			expectedIss = parsedURL.String()
+		}
+
 		cp := &models.RemoteProvider{
 			RemoteProviderURL:             parsedURL.String(),
+			ExpectedIssuer:                expectedIss,
 			RefCookieName:                 parsedURL.Host + "_ref",
 			SessionName:                   parsedURL.Host,
 			TokenStore:                    make(map[string]string),

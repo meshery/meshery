@@ -338,7 +338,15 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 
 	// Verifies the signature
 	claims := jwt.MapClaims{}
-	tokenParser := jwt.NewParser()
+	
+	var parserOpts []jwt.ParserOption
+	if l.ExpectedIssuer != "" {
+		parserOpts = append(parserOpts, jwt.WithIssuer(l.ExpectedIssuer))
+	} else if l.RemoteProviderURL != "" {
+		parserOpts = append(parserOpts, jwt.WithIssuer(l.RemoteProviderURL))
+	}
+
+	tokenParser := jwt.NewParser(parserOpts...)
 	token, err := tokenParser.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
