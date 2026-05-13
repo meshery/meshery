@@ -19,7 +19,7 @@ import {
 } from './constants';
 import StepperContent from './StepperContentWrapper';
 import RJSFWrapper from '../../../meshery-mesh-interface/PatternService/RJSF_wrapper';
-import { selectCompSchema } from '../../../rjsf-utils/common';
+import { selectCompSchema } from '@/components/shared/FormFields/rjsf-utils/common';
 import { JsonParse, randomPatternNameGenerator } from '../../../../utils/utils';
 import Notification from './Notification';
 import {
