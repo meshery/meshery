@@ -32,7 +32,7 @@ import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaul
 import { applyMinSizeConstraints } from './layoutConstraints';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
-import { tabsClasses } from '@mui/material';
+import { TABS_SCROLL_BUTTONS_CLASS } from './constants';
 import { useSelector } from 'react-redux';
 import useUnsavedChanges from './useUnsavedChanges';
 import UnsavedChangesModal from './UnsavedChangesModal';
@@ -344,7 +344,7 @@ const Dashboard = () => {
         <WrapperPaper>
           <Tabs
             sx={{
-              [`& .${tabsClasses.scrollButtons}`]: {
+              [`& .${TABS_SCROLL_BUTTONS_CLASS}`]: {
                 '&.Mui-disabled': { display: 'none' },
               },
             }}
