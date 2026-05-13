@@ -10,7 +10,7 @@ import {
   FileCopy as FileCopyIcon,
   ListAlt as ListAltIcon,
   Lock as LockIcon,
-} from '@/components/icons';
+} from '@/assets/icons';
 import React from 'react';
 
 /**

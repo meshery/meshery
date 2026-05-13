@@ -13,7 +13,7 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-import { ArrowDropDown } from '@/components/icons';
+import { ArrowDropDown } from '@/assets/icons';
 import { getSchema } from '../../MesheryMeshInterface/PatternService/helper';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';

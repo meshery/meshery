@@ -24,7 +24,7 @@ import { ModalButtonSecondary } from '@sistent/sistent';
 import { handleUpdateViewVisibility, viewPath } from './workspaces/SpacesSwitcher/hooks';
 import { ModalButtonPrimary } from '@sistent/sistent';
 import rehypeSanitize from 'rehype-sanitize';
-import { Lock, Public } from '@/components/icons';
+import { Lock, Public } from '@/assets/icons';
 import { VIEW_VISIBILITY } from '@/utils/Enum';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
