@@ -2,23 +2,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NoSsr } from '@sistent/sistent';
 import { UnControlled as CodeMirror } from '../CodeMirror';
-import DeleteIcon from '@mui/icons-material/Delete';
+import {
+  Delete as DeleteIcon,
+  Close as CloseIcon,
+  Edit as EditIcon,
+  Fullscreen as FullscreenIcon,
+  FullscreenExit as FullscreenExitIcon,
+  GetApp as GetAppIcon,
+  Public as PublicIcon,
+  Publish as PublishIcon,
+  Save as SaveIcon,
+} from '@/components/icons';
 import Moment from 'react-moment';
-import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
 import _PromptComponent from '../PromptComponent';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../../utils/Enum';
 import ViewSwitch from '../ViewSwitch';
 import FiltersGrid from './FiltersGrid';
 import { trueRandom } from '../../lib/trueRandom';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import PublicIcon from '@mui/icons-material/Public';
-import PublishIcon from '@mui/icons-material/Publish';
 import downloadContent from '../../utils/fileDownloader';
 import CloneIcon from '../../public/static/img/CloneIcon';
-import SaveIcon from '@mui/icons-material/Save';
 import ConfigurationSubscription from '../graphql/subscriptions/ConfigurationSubscription';
 import fetchCatalogFilter from '../graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
@@ -53,7 +55,7 @@ import {
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../General/Modals/Information/InfoModal';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { InfoOutlined as InfoOutlinedIcon } from '@/components/icons';
 import { DefaultTableCell, SortableTableCell } from '../connections/common/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';

@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { Avatar, Divider, Grid2, IconButton, Typography, Link, useTheme } from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Save from '@mui/icons-material/Save';
-import Fullscreen from '@mui/icons-material/Fullscreen';
+import {
+  Delete as DeleteIcon,
+  Save,
+  Fullscreen,
+  GetApp as GetAppIcon,
+  FullscreenExit,
+  DoneAll as DoneAllIcon,
+} from '@/components/icons';
 import Moment from 'react-moment';
-import GetAppIcon from '@mui/icons-material/GetApp';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from '../CodeMirror';
-import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import UndeployIcon from '../../public/static/img/UndeployIcon';
-import DoneAllIcon from '@mui/icons-material/DoneAll';
 import {
   BottomContainer,
   CatalogCardButtons,
@@ -23,12 +25,16 @@ import {
   StyledCodeMirrorWrapper,
 } from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
-import PublicIcon from '@mui/icons-material/Public';
+import {
+  Public as PublicIcon,
+  Edit,
+  Lock,
+  Public,
+  InfoOutlined as InfoOutlinedIcon,
+} from '@/components/icons';
 import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import { Edit, Lock, Public } from '@mui/icons-material';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import CAN from '@/utils/can';
