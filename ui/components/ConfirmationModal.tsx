@@ -21,7 +21,7 @@ import {
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { useLazyPingKubernetesQuery } from '@/rtk-query/connection';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
-import { useEffect, useState, FC } from 'react';
+import React, { useEffect, useState, FC } from 'react';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { RoundedTriangleShape } from './shapes/RoundedTriangle';
 import RedOctagonSvg from './shapes/Octagon';
@@ -238,7 +238,9 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
     <Modal
       open={open}
       aria-labelledby="alert-dialog-title"
-      headerIcon={<PatternIcon style={{ ...iconMedium }} fill={'#FFFFFF'}></PatternIcon>}
+      headerIcon={
+        <PatternIcon style={{ ...iconMedium }} fill={theme.palette.common.white}></PatternIcon>
+      }
       closeModal={handleClose}
       title={title ? title : 'Confirmation'}
       aria-describedby="alert-dialog-description"
@@ -462,7 +464,10 @@ interface SelectDeploymentTargetProps {
   selectedK8sContexts: string[];
 }
 
-export const SelectDeploymentTarget_: FC<SelectDeploymentTargetProps> = ({ k8scontext, selectedK8sContexts }) => {
+export const SelectDeploymentTarget_: FC<SelectDeploymentTargetProps> = ({
+  k8scontext,
+  selectedK8sContexts,
+}) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const deployableK8scontexts = useFilterK8sContexts(k8scontext, ({ operatorState }) => {
