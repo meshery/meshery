@@ -26,7 +26,7 @@ import {
   VisibilityChipMenu,
   useTheme,
 } from '@sistent/sistent';
-import { Close, Lock, Public } from '@/components/icons';
+import { Close, Lock, Public } from '@/assets/icons';
 import yaml from 'js-yaml';
 import _ from 'lodash';
 import { useSnackbar } from 'notistack';

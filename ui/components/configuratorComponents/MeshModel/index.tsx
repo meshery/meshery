@@ -18,7 +18,7 @@ import {
   Save as SaveIcon,
   ArrowBack,
   SaveAs as SaveAsIcon,
-} from '@/components/icons';
+} from '@/assets/icons';
 import { NoSsr } from '@sistent/sistent';
 import { iconMedium } from '../../../css/icons.styles';
 import { useMeshModelComponents } from '../../../utils/hooks/useMeshModelComponents';

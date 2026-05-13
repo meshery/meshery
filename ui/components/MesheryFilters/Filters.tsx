@@ -12,7 +12,7 @@ import {
   Public as PublicIcon,
   Publish as PublishIcon,
   Save as SaveIcon,
-} from '@/components/icons';
+} from '@/assets/icons';
 import Moment from 'react-moment';
 import _PromptComponent from '../PromptComponent';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../../utils/Enum';
@@ -55,7 +55,7 @@ import {
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../General/Modals/Information/InfoModal';
-import { InfoOutlined as InfoOutlinedIcon } from '@/components/icons';
+import { InfoOutlined as InfoOutlinedIcon } from '@/assets/icons';
 import { DefaultTableCell, SortableTableCell } from '../connections/common/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';

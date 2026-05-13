@@ -8,7 +8,7 @@ import {
   GetApp as GetAppIcon,
   FullscreenExit,
   DoneAll as DoneAllIcon,
-} from '@/components/icons';
+} from '@/assets/icons';
 import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from '../CodeMirror';
@@ -31,7 +31,7 @@ import {
   Lock,
   Public,
   InfoOutlined as InfoOutlinedIcon,
-} from '@/components/icons';
+} from '@/assets/icons';
 import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
