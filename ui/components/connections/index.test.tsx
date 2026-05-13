@@ -68,7 +68,7 @@ vi.mock('./meshSync', () => ({
   ),
 }));
 
-vi.mock('../General/Modals/Modal', () => ({
+vi.mock('../shared/Modal/Modal', () => ({
   default: () => <div data-testid="create-connection-modal" />,
 }));
 
@@ -84,7 +84,7 @@ vi.mock('../General/error-404/index', () => ({
   default: () => <div data-testid="default-error" />,
 }));
 
-vi.mock('../General/ErrorBoundary', () => ({
+vi.mock('../shared/ErrorBoundary/ErrorBoundary', () => ({
   default: () => <div data-testid="error-fallback" />,
 }));
 

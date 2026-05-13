@@ -9,7 +9,7 @@ import {
   importModelSchema,
   Typography,
 } from '@sistent/sistent';
-import { RJSFModalWrapper } from '../General/Modals/Modal';
+import { RJSFModalWrapper } from '../../shared/Modal/Modal';
 import CsvStepper, { StyledDocsRedirectLink } from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
