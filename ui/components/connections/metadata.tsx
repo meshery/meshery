@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Grid2, List, ListItem, ListItemText, Box, styled, useTheme } from '@sistent/sistent';
 
 import {
@@ -8,13 +8,13 @@ import {
   KeyValue,
   Link,
   createColumnUiSchema,
-} from '../DataFormatter';
+} from '../data-formatter';
 import useKubernetesHook, {
   useControllerStatus,
   useMesheryOperator,
   useMeshsSyncController,
   useNatsController,
-} from '../hooks/useKubernetesHook';
+} from '@/utils/hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from './ConnectionChip';
 import { CONTROLLER_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 import { formatToTitleCase } from '../../utils/utils';
@@ -82,7 +82,9 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
   const { operatorState, meshSyncState, natsState, operatorVersion, meshSyncVersion, natsVersion } =
     getControllerStatesByConnectionID(connection.id);
 
-  const isEmbeddedMode = metadata?.meshsync_deployment_mode === MESHSYNC_DEPLOYMENT_TYPE.EMBEDDED;
+  const meshsyncDeploymentMode =
+    metadata?.meshsyncDeploymentMode ?? metadata?.meshsync_deployment_mode;
+  const isEmbeddedMode = meshsyncDeploymentMode === MESHSYNC_DEPLOYMENT_TYPE.EMBEDDED;
 
   return (
     <Grid2 container spacing={1} sx={{ textTransform: 'none' }} size="grow">
@@ -97,7 +99,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     title={metadata.name}
                     status={connection.status}
                     iconSrc={'/static/img/kubernetes.svg'}
-                    handlePing={() => handleKubernetesClick(connection.id)}
+                    handlePing={handleKubernetesClick}
                   />
                 </ListItem>
               </List>
@@ -190,7 +192,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                           tooltip={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
                           title={'BROKER'}
                           status={natsState}
-                          handlePing={() => handleNATSClick()}
+                          handlePing={handleNATSClick}
                           iconSrc="/static/img/nats-icon-color.svg"
                           width="9rem"
                         />
@@ -250,7 +252,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                 <ListItem>
                   <StyledListItemText
                     primary="Deployment Mode"
-                    secondary={formatToTitleCase(metadata.meshsync_deployment_mode || 'N/A')}
+                    secondary={formatToTitleCase(meshsyncDeploymentMode || 'N/A')}
                   />
                 </ListItem>
               </List>
@@ -263,14 +265,17 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
 };
 
 const MesheryMetadataFormatter = ({ connection }) => {
-  const metadata = connection.metadata || {};
-  const uiSchema = createColumnUiSchema({
-    metadata,
-    numCols: {
-      xs: 2,
-      md: 4,
-    },
-  });
+  const uiSchema = useMemo(
+    () =>
+      createColumnUiSchema({
+        metadata: connection.metadata || {},
+        numCols: {
+          xs: 2,
+          md: 4,
+        },
+      }),
+    [connection.metadata],
+  );
 
   return (
     <FormatStructuredData
@@ -283,13 +288,17 @@ const MesheryMetadataFormatter = ({ connection }) => {
 
 export const MeshSyncDataFormatter = ({ metadata }) => {
   const theme = useTheme();
-  const uiSchema = createColumnUiSchema({
-    metadata,
-    numCols: {
-      xs: 3,
-      md: 5,
-    },
-  });
+  const uiSchema = useMemo(
+    () =>
+      createColumnUiSchema({
+        metadata,
+        numCols: {
+          xs: 3,
+          md: 5,
+        },
+      }),
+    [metadata],
+  );
 
   return (
     <Box backgroundColor={theme.palette.background.card} width="100%" padding={'1rem'}>
@@ -305,26 +314,33 @@ export const MeshSyncDataFormatter = ({ metadata }) => {
 const FormatConnectionMetadata = (props) => {
   const theme = useTheme();
   const { connection, meshsyncControllerState } = props;
-  const formatterByKind = {
-    [KUBERNETES]: () => (
-      <KubernetesMetadataFormatter
-        meshsyncControllerState={meshsyncControllerState}
-        connection={connection}
-        metadata={connection.metadata}
-      />
-    ),
-    [MESHERY]: () => <MesheryMetadataFormatter connection={connection} />,
-    default: () => (
-      <FormatStructuredData
-        data={connection.metadata}
-        propertyFormatters={DefaultPropertyFormatters}
-      />
-    ),
-  };
-  const formatter = formatterByKind[connection.kind] || formatterByKind.default;
+  let formatter;
+
+  switch (connection.kind) {
+    case KUBERNETES:
+      formatter = (
+        <KubernetesMetadataFormatter
+          meshsyncControllerState={meshsyncControllerState}
+          connection={connection}
+          metadata={connection.metadata}
+        />
+      );
+      break;
+    case MESHERY:
+      formatter = <MesheryMetadataFormatter connection={connection} />;
+      break;
+    default:
+      formatter = (
+        <FormatStructuredData
+          data={connection.metadata}
+          propertyFormatters={DefaultPropertyFormatters}
+        />
+      );
+  }
+
   return (
     <Box backgroundColor={theme.palette.background.card} padding={'1rem'}>
-      {formatter()}
+      {formatter}
     </Box>
   );
 };
