@@ -2,10 +2,10 @@ import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { CircularProgress, KEPPEL, Typography, Stack } from '@sistent/sistent';
+import { useTheme } from '@/theme';
 import { getLegendTemplate } from './utils';
 import ConnectCluster from './ConnectCluster';
 import { LoadingContainer, ChartSectionWithColumn, LegendSection } from '../style';
-import { ERROR_COLOR } from '@/constants/colors';
 
 type NodeStatus = { status: string; count: number };
 
@@ -15,6 +15,7 @@ type NodeStatusChartProps = {
 };
 
 export const NodeStatusChart = ({ nodeData, isClusterLoading }: NodeStatusChartProps) => {
+  const theme = useTheme();
   const totalNodes = nodeData?.reduce((acc, node) => acc + node.count, 0);
   const columns = useMemo(() => nodeData?.map((node) => [node.status, node.count]), [nodeData]);
   const chartOptions = useMemo(
@@ -24,7 +25,7 @@ export const NodeStatusChart = ({ nodeData, isClusterLoading }: NodeStatusChartP
         type: donut(),
         colors: {
           Ready: KEPPEL,
-          'Not Ready': ERROR_COLOR,
+          'Not Ready': theme.palette.error.main,
         },
       },
       arc: {
@@ -54,7 +55,7 @@ export const NodeStatusChart = ({ nodeData, isClusterLoading }: NodeStatusChartP
         },
       },
     }),
-    [columns, totalNodes],
+    [columns, totalNodes, theme.palette.error.main],
   );
 
   return (
