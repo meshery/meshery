@@ -117,7 +117,7 @@ const RenderContents = ({
             }}
           >
             <ReactJson
-              theme={reactJsonTheme(theme.palette.mode)}
+              theme={reactJsonTheme(theme)}
               name={false}
               displayDataTypes={false}
               iconStyle="circle"
