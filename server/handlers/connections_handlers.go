@@ -542,6 +542,127 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 	return *eventBuilder.Build(), nil
 }
 
+// resolveMetricsCredential extracts the endpoint URL and API key for Grafana /
+// Prometheus connections. It writes an error response and returns ok=false on
+// any failure so the caller can return immediately.
+func (h *Handler) resolveMetricsCredential(
+	w http.ResponseWriter,
+	_ *http.Request,
+	connection *connections.Connection,
+	token string,
+	provider models.Provider,
+) (url string, apiKey string, ok bool) {
+	if connection.CredentialID == nil {
+		writeMeshkitError(w, ErrInvalidRequestObject(connection.Name+": no credential configured"), http.StatusBadRequest)
+		return "", "", false
+	}
+	url, urlOK := connection.Metadata["url"].(string)
+	if !urlOK || url == "" {
+		writeMeshkitError(w, ErrInvalidRequestObject(connection.Name+": metadata missing required 'url' field"), http.StatusBadRequest)
+		return "", "", false
+	}
+	cred, statusCode, err := provider.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
+	if err != nil {
+		writeMeshkitError(w, err, statusCode)
+		return "", "", false
+	}
+	apiKey, _ = cred.Secret["secret"].(string)
+	return url, apiKey, true
+}
+
+// ConnectionPingHandler performs an ad hoc connectivity check for any connection
+// identified by {connectionId} in the URL path. The check strategy depends on
+// the connection kind:
+//
+//   - kubernetes  — fetches the remote API-server version (same probe as
+//     /api/system/kubernetes/ping).
+//   - grafana     — validates the Grafana URL and API key stored in the
+//     connection credential.
+//   - prometheus  — validates the Prometheus URL and API key stored in the
+//     connection credential.
+//   - all others  — returns the current connection status recorded in the
+//     database without making an outbound call; the status field is the
+//     authoritative source of connectivity state for connection kinds that do
+//     not yet have a dedicated active-probe handler.
+//
+// GET /api/integrations/connections/{connectionId}/ping
+func (h *Handler) ConnectionPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	if connectionID == uuid.Nil {
+		err := ErrInvalidUUID(fmt.Errorf("invalid connection ID in path"))
+		h.log.Error(err)
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
+	}
+
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
+	if err != nil {
+		h.log.Error(ErrQueryGet("connection"))
+		writeMeshkitError(w, ErrQueryGet("connection"), statusCode)
+		return
+	}
+
+	switch connection.Kind {
+	case "kubernetes":
+		k8sContext, err := provider.GetK8sContext(token, connectionID.String())
+		if err != nil {
+			writeMeshkitError(w, ErrInvalidKubeContext(err, connectionID.String()), http.StatusNotFound)
+			return
+		}
+		kubeclient, err := k8sContext.GenerateKubeHandler()
+		if err != nil {
+			writeMeshkitError(w, ErrInvalidKubeConfig(err, k8sContext.Name), http.StatusBadRequest)
+			return
+		}
+		version, err := kubeclient.KubeClient.ServerVersion()
+		if err != nil {
+			h.log.Error(ErrKubeVersion(err))
+			writeMeshkitError(w, ErrKubeVersion(err), http.StatusInternalServerError)
+			return
+		}
+		if err := json.NewEncoder(w).Encode(map[string]string{
+			"server_version": version.String(),
+		}); err != nil {
+			h.log.Error(models.ErrMarshal(err, "kube-server-version"))
+		}
+
+	case "grafana":
+		url, apiKey, ok := h.resolveMetricsCredential(w, req, connection, token, provider)
+		if !ok {
+			return
+		}
+		if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKey); err != nil {
+			h.log.Error(models.ErrGrafanaScan(err))
+			writeMeshkitError(w, models.ErrGrafanaScan(err), http.StatusInternalServerError)
+			return
+		}
+		writeJSONEmptyObject(w, http.StatusOK)
+
+	case "prometheus":
+		url, apiKey, ok := h.resolveMetricsCredential(w, req, connection, token, provider)
+		if !ok {
+			return
+		}
+		if err := h.config.PrometheusClient.Validate(req.Context(), url, apiKey); err != nil {
+			h.log.Error(models.ErrPrometheusScan(err))
+			writeMeshkitError(w, models.ErrPrometheusScan(err), http.StatusInternalServerError)
+			return
+		}
+		writeJSONEmptyObject(w, http.StatusOK)
+
+	default:
+		if err := json.NewEncoder(w).Encode(map[string]string{
+			"name":   connection.Name,
+			"kind":   connection.Kind,
+			"status": string(connection.Status),
+		}); err != nil {
+			h.log.Error(models.ErrMarshal(err, "connection-ping"))
+			writeMeshkitError(w, models.ErrMarshal(err, "connection-ping"), http.StatusInternalServerError)
+		}
+	}
+}
+
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	userID := user.ID
