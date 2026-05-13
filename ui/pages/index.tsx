@@ -1,7 +1,7 @@
 import { NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
 import React from 'react';
-import Dashboard from '../components/Dashboard';
+import Dashboard from '../components/dashboard';
 import { usePageTitle } from '@/utils/hooks';
 
 function Index() {

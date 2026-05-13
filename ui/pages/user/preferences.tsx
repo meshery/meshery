@@ -1,4 +1,4 @@
-import UserPreferences from '../../components/UserPreferences';
+import UserPreferences from '../../components/user-preferences';
 import Head from 'next/head';
 import React from 'react';
 import { NoSsr } from '@sistent/sistent';

@@ -7,7 +7,7 @@ import moment from 'moment';
 import { v4 } from 'uuid';
 import { store as rtkStore } from '../../store/index';
 import { toggleNotificationCenter } from '../../store/slices/events';
-import { NOTIFICATION_CENTER_TOGGLE_CLASS } from '../../components/NotificationCenter/constants';
+import { NOTIFICATION_CENTER_TOGGLE_CLASS } from '../../components/layout/NotificationCenter/constants';
 import React from 'react';
 import BellIcon from '../../assets/icons/BellIcon';
 import { AddClassRecursively } from '../Elements';

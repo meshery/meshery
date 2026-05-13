@@ -60,7 +60,7 @@ vi.mock('../../utils/utils', () => ({
   formatToTitleCase: (value) => value,
 }));
 
-vi.mock('../DataFormatter', () => ({
+vi.mock('../data-formatter', () => ({
   FormatId: ({ id }) => <span>{id}</span>,
   FormatStructuredData: ({ data }) => (
     <div data-testid="structured-data">{JSON.stringify(data || {})}</div>
@@ -76,7 +76,7 @@ vi.mock('../DataFormatter', () => ({
   createColumnUiSchema: ({ metadata }) => ({ fields: Object.keys(metadata || {}) }),
 }));
 
-vi.mock('../hooks/useKubernetesHook', () => ({
+vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   default: () => pingKubernetes,
   useControllerStatus: () => ({ getControllerStatesByConnectionID }),
   useMesheryOperator: () => ({ ping: pingMesheryOperator }),

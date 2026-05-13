@@ -4,7 +4,7 @@ import { TextField, Grid2, Button, Chip, MenuItem, styled, NoSsr, Alert } from '
 import { Controlled as CodeMirror } from '../../CodeMirror';
 import { trueRandom } from '../../../lib/trueRandom';
 import { usePostBoardImportMutation, useLazyQueryTemplateVarsQuery } from '@/rtk-query/telemetry';
-import { Code as CodeIcon } from '../../icons';
+import { Code as CodeIcon } from '@/assets/icons';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { isValidJSON } from '@/utils/validators';
 
