@@ -10,7 +10,6 @@ import {
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
-import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import { safeDisplayValue } from '../helper';
 
@@ -110,7 +109,7 @@ const BaseInput = (props) => {
               <InputAdornment position="start">
                 {props.rawErrors?.length > 0 && (
                   <CustomTextTooltip
-                    bgColor={ERROR_COLOR}
+                    bgColor={theme.palette.error.main}
                     flag={overrideFlag}
                     title={errorTitle}
                     interactive={true}

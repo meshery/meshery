@@ -9,11 +9,11 @@ import {
   TEAL_BLUE,
   Stack,
 } from '@sistent/sistent';
+import { useTheme } from '@/theme';
 import BBChart from '@/components/BBChart';
 import { getLegendTemplate } from './utils';
 import ConnectCluster from './ConnectCluster';
 import { LoadingContainer, ChartSectionWithColumn, LegendSection } from '../style';
-import { ERROR_COLOR } from '@/constants/colors';
 
 type PodStatus = { status: string; count: number };
 
@@ -23,6 +23,7 @@ type PodStatusChartProps = {
 };
 
 export const PodStatusChart = ({ podData, isClusterLoading }: PodStatusChartProps) => {
+  const theme = useTheme();
   const totalPods = podData?.reduce((acc, pod) => acc + pod.count, 0);
   const columns = useMemo(() => podData?.map((pod) => [pod.status, pod.count]), [podData]);
   const chartOptions = useMemo(
@@ -33,7 +34,7 @@ export const PodStatusChart = ({ podData, isClusterLoading }: PodStatusChartProp
         colors: {
           Running: KEPPEL,
           Pending: SAFFRON,
-          Failed: ERROR_COLOR,
+          Failed: theme.palette.error.main,
           Succeeded: TEAL_BLUE,
           Unknown: DARK_SLATE_GRAY,
         },
@@ -65,7 +66,7 @@ export const PodStatusChart = ({ podData, isClusterLoading }: PodStatusChartProp
         },
       },
     }),
-    [columns, totalPods],
+    [columns, totalPods, theme.palette.error.main],
   );
   return (
     <ChartSectionWithColumn>

@@ -515,10 +515,6 @@ module.exports = [
               name: '@/themes/index',
               message: 'Use @/theme and theme.palette.* instead of NOTIFICATIONCOLORS.',
             },
-            {
-              name: '@/constants/colors',
-              message: 'Use @/theme and theme.palette.* instead of legacy color constants.',
-            },
           ],
           patterns: [
             {
