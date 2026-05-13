@@ -6,8 +6,10 @@ import { usePageTitle } from '@/utils/hooks';
 interface MesheryPageProps {
   /** Short title used for the sidebar/nav (dispatched to Redux). */
   title: string;
-  /** Full browser-tab title. Defaults to `{title} | Meshery`. */
+  /** Override the base browser-tab text. Defaults to `title`. `| Meshery` is appended automatically unless `noSuffix` is set. */
   headTitle?: string;
+  /** Skip appending `| Meshery` to the browser-tab title (e.g. for the 404 page). */
+  noSuffix?: boolean;
   children: React.ReactNode;
 }
 
@@ -15,9 +17,10 @@ interface MesheryPageProps {
  * Standard page shell: registers the page title in Redux, sets the browser
  * tab title, and wraps children in NoSsr.
  */
-export const MesheryPage = ({ title, headTitle, children }: MesheryPageProps) => {
+export const MesheryPage = ({ title, headTitle, noSuffix, children }: MesheryPageProps) => {
   usePageTitle(title);
-  const browserTitle = headTitle ?? `${title} | Meshery`;
+  const base = headTitle ?? title;
+  const browserTitle = noSuffix ? base : `${base} | Meshery`;
 
   return (
     <NoSsr>
