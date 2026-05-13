@@ -1,6 +1,5 @@
 import React from 'react';
-import { Typography } from '@sistent/sistent';
-import { Launch as LaunchIcon } from '@mui/icons-material';
+import { LaunchIcon, Typography } from '@sistent/sistent';
 import { TextWithLinks } from '../../DataFormatter';
 
 type TitleLinkProps = {
