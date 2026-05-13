@@ -26,6 +26,8 @@ jobs:
     name: Build Preview
     if: github.event.action != 'closed'
     runs-on: ubuntu-24.04
+    outputs:
+      artifact-hash: ${{ steps.calc-hash.outputs.hash }}
     env:
       HUGO_VERSION: 0.157.0
     steps:
@@ -70,6 +72,13 @@ jobs:
           Disallow: /
           EOF
 
+      - name: Calculate artifact hash
+        id: calc-hash
+        run: |
+          # Create a stable hash of the entire build output directory
+          hash=$(find docs/public -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | awk '{print $1}')
+          echo "hash=$hash" >> "$GITHUB_OUTPUT"
+
       - name: Upload Build Artifact
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
@@ -94,6 +103,18 @@ jobs:
         with:
           name: docs-preview-${{ github.event.pull_request.number }}
           path: ./docs-preview
+
+      - name: Verify artifact integrity
+        if: github.event.action != 'closed'
+        run: |
+          # Recalculate hash of downloaded files and compare with the build job's output
+          actual_hash=$(find ./docs-preview -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | awk '{print $1}')
+          expected_hash="${{ needs.build-preview.outputs.artifact-hash }}"
+          if [ "$actual_hash" != "$expected_hash" ]; then
+            echo "::error::Artifact integrity verification failed! Expected $expected_hash but got $actual_hash"
+            exit 1
+          fi
+          echo "Artifact integrity verified successfully."
 
       - name: Deploy PR preview
         if: github.event.action != 'closed'
