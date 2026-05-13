@@ -87,7 +87,10 @@ const legacyLiteralColorOffenders = [
   'components/meshery-mesh-interface/PatternServiceForm.tsx',
   'components/designs/patterns/MesheryPatternCard.tsx',
   'components/designs/patterns/MesheryPatternGridView.tsx',
+  'components/designs/patterns/MesheryPatterns.columns.tsx',
   'components/designs/patterns/MesheryPatterns.tsx',
+  'components/designs/patterns/MesheryPatternsModals.tsx',
+  'components/designs/patterns/design-lifecycle-handlers.tsx',
   'components/designs/patterns/style.tsx',
   'components/layout/Navigator/NavigatorExtension.tsx',
   'components/layout/NotificationCenter/constants.tsx',
@@ -127,7 +130,6 @@ const legacyLiteralColorOffenders = [
 ];
 
 const legacyMaxLineOffenders = [
-  'components/designs/patterns/MesheryPatterns.tsx',
   'components/performance/index.tsx',
   'components/connections/ConnectionTable.tsx',
   'components/filters/Filters.tsx',
@@ -232,6 +234,7 @@ const legacyInlineStyleOffenders = [
   'components/designs/patterns/MesheryPatternCard.tsx',
   'components/designs/patterns/MesheryPatternGridView.tsx',
   'components/designs/patterns/MesheryPatterns.tsx',
+  'components/designs/patterns/MesheryPatternsToolbar.tsx',
   'components/MesheryPlayComponent.tsx',
   'components/MesheryProgressBar.tsx',
   'components/MesherySettingsEnvButtons.tsx',
