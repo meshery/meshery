@@ -42,6 +42,9 @@ Bridged from MUI (until Sistent re-exports them) so callers can still go
 through the project-local front door:
 
 - **Color helpers** — `darken`
+- **Global primitives** — `GlobalStyles` (used for one-off escape hatches
+  like cross-portal z-index overrides; routed through `@/theme` so app code
+  stays off `@mui/material` directly)
 
 ### What it adds locally
 
@@ -278,15 +281,15 @@ In practice, 90%+ of components in this codebase should be `styled()`.
 A migration table for the legacy modules that the lint rules and the
 restructure plan call out for deletion:
 
-| Legacy import                                                          | Replace with                                                  |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `import { Colors } from '@/themes/app'`                                | `theme.palette.*` (e.g. `theme.palette.error.main`)           |
-| `import { notificationColors, darkNotificationColors } from '@/themes/app'` | `theme.palette.*` (the theme handles the dark variant)   |
-| `import { NOTIFICATIONCOLORS } from '@/themes'`                        | `theme.palette.*`                                             |
-| `import { PRIMARY_COLOR } from '@/constants/colors'`                   | `theme.palette.primary.main`                                  |
-| `import { lightenOrDarkenColor } from '@/utils/lightenOrDarkenColor'`  | `import { lighten, darken } from '@/theme'`. The legacy helper accepts percent (`-100..100`); the MUI utilities take a coefficient (`0..1`). Convert by dividing by 100 and using `darken` for negative percents, `lighten` for positive. |
-| `import { styled } from '@/theme/index'`                               | `import { styled } from '@/theme'`                            |
-| `import { ... } from '@mui/material'`                                  | `import { ... } from '@sistent/sistent'`                      |
+| Legacy import                                                               | Replace with                                                                                                                                                                                                                              |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `import { Colors } from '@/themes/app'`                                     | `theme.palette.*` (e.g. `theme.palette.error.main`)                                                                                                                                                                                       |
+| `import { notificationColors, darkNotificationColors } from '@/themes/app'` | `theme.palette.*` (the theme handles the dark variant)                                                                                                                                                                                    |
+| `import { NOTIFICATIONCOLORS } from '@/themes'`                             | `theme.palette.*`                                                                                                                                                                                                                         |
+| `import { PRIMARY_COLOR } from '@/constants/colors'`                        | `theme.palette.primary.main`                                                                                                                                                                                                              |
+| `import { lightenOrDarkenColor } from '@/utils/lightenOrDarkenColor'`       | `import { lighten, darken } from '@/theme'`. The legacy helper accepts percent (`-100..100`); the MUI utilities take a coefficient (`0..1`). Convert by dividing by 100 and using `darken` for negative percents, `lighten` for positive. |
+| `import { styled } from '@/theme/index'`                                    | `import { styled } from '@/theme'`                                                                                                                                                                                                        |
+| `import { ... } from '@mui/material'`                                       | `import { ... } from '@sistent/sistent'`                                                                                                                                                                                                  |
 
 For the underlying ESLint configuration that enforces these mappings, see
 the `no-restricted-imports` block in

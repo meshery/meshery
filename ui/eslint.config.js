@@ -34,11 +34,20 @@ const patchedNextConfig = nextConfig.map((cfg) => {
 // The remaining boundaries are:
 //   - `assets/icons/index.ts` — the canonical icon barrel itself, which
 //     centrally re-exports `@mui/icons-material` glyphs (#18736, #18744).
+//   - `theme/index.ts` — the project-local theme entry point, which bridges
+//     a handful of primitives (`darken`, `GlobalStyles`) from `@mui/material`
+//     until Sistent re-exports them. Each bridged import opts in via a
+//     line-scoped `eslint-disable-next-line no-restricted-imports` comment
+//     rather than relying on this allowlist.
 //   - Shared wrappers under `components/shared/{DatePicker,TreeView,FormFields}/`
 //     opt in via a local `eslint-disable no-restricted-imports` comment
 //     (line-scoped `-next-line` for single-import files, file-scoped block
 //     comment for the TreeView wrapper that re-exports several names)
 //     rather than relying on this allowlist.
+//
+// The audit script (`scripts/audit-mui.js`) keeps a matching list of
+// approved wrappers (`APPROVED_WRAPPERS`) so the trend line reports only
+// *unmigrated* MUI usage. Keep the two lists in sync when adding entries.
 const legacyRestrictedImportOffenders = ['assets/icons/index.ts'];
 
 const legacyLiteralColorOffenders = [
@@ -121,8 +130,6 @@ const legacyLiteralColorOffenders = [
 ];
 
 const legacyMaxLineOffenders = [
-  'components/dashboard/resources/configuration/config.tsx',
-  'components/dashboard/resources/workloads/config.tsx',
   'components/MesheryAdapterPlayComponent.tsx',
   'components/designs/patterns/MesheryPatterns.tsx',
   'components/performance/index.tsx',
@@ -134,7 +141,6 @@ const legacyMaxLineOffenders = [
 // proactive warning threshold (§8.4) but stay under the hard 1000-line ceiling.
 // Allowlisted so CI stays green; entries leave the list as files get split up.
 const legacyMaxLineSoftOffenders = [
-  'components/dashboard/resources/network/config.tsx',
   'components/environments/index.tsx',
   'components/layout/Navigator/Navigator.tsx',
   'components/performance/PerformanceResults.tsx',
@@ -169,7 +175,7 @@ const legacyInlineStyleOffenders = [
   'components/dashboard/images/meshery-icon.tsx',
   'components/dashboard/index.tsx',
   'components/dashboard/overview.tsx',
-  'components/dashboard/resources/network/config.tsx',
+  'components/dashboard/resources/network/service-columns.tsx',
   'components/dashboard/resources/nodes/config.tsx',
   'components/dashboard/resources/resources-table.tsx',
   'components/dashboard/resources/security/config.tsx',
