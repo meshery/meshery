@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Typography, useTheme } from '@sistent/sistent';
 import TipsIcon from '../../assets/icons/Tipsicon'; // add this icon
+import { useInterval } from '@/utils/hooks';
 
 const TipsCarousel = ({ tips }) => {
   const theme = useTheme();
@@ -11,15 +12,9 @@ const TipsCarousel = ({ tips }) => {
     setActiveStep(index);
   };
 
-  // auto increment after 3 seconds
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveStep((prevActiveStep) =>
-        prevActiveStep === tips.length - 1 ? 0 : prevActiveStep + 1,
-      );
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+  useInterval(() => {
+    setActiveStep((prevActiveStep) => (prevActiveStep === tips.length - 1 ? 0 : prevActiveStep + 1));
+  }, 3000);
 
   return (
     <Box
