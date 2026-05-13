@@ -6,154 +6,84 @@
   "metadata": {
     "resolvedAliases": {
       "03f52159-3585-46b7-8567-43a7e6d5de4f": {
-        "alias_component_id": "03f52159-3585-46b7-8567-43a7e6d5de4f",
-        "immediate_parent_id": "d32a58cf-ad00-43b9-81af-d34215f5a2fc",
-        "immediate_ref_field_path": [
-          "configuration",
-          "spec",
-          "template",
-          "spec",
-          "containers",
-          "0"
-        ],
-        "relationship_id": "1c5a4eac-dc81-40b0-ae04-e5aedac58419",
-        "resolved_parent_id": "d32a58cf-ad00-43b9-81af-d34215f5a2fc",
-        "resolved_ref_field_path": ["configuration", "spec", "template", "spec", "containers", "0"]
+        "aliasComponentId": "03f52159-3585-46b7-8567-43a7e6d5de4f",
+        "immediateParentId": "d32a58cf-ad00-43b9-81af-d34215f5a2fc",
+        "immediateRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"],
+        "relationshipId": "1c5a4eac-dc81-40b0-ae04-e5aedac58419",
+        "resolvedParentId": "d32a58cf-ad00-43b9-81af-d34215f5a2fc",
+        "resolvedRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"]
       },
       "269a1c25-3ecd-40ac-8f6e-1f92fe786eda": {
-        "alias_component_id": "269a1c25-3ecd-40ac-8f6e-1f92fe786eda",
-        "immediate_parent_id": "f903e509-554b-4794-8fac-e311759e35aa",
-        "immediate_ref_field_path": [
-          "configuration",
-          "spec",
-          "template",
-          "spec",
-          "containers",
-          "0"
-        ],
-        "relationship_id": "7ad7c1fb-8c47-4c95-a5f1-deae3b5c9e6a",
-        "resolved_parent_id": "f903e509-554b-4794-8fac-e311759e35aa",
-        "resolved_ref_field_path": ["configuration", "spec", "template", "spec", "containers", "0"]
+        "aliasComponentId": "269a1c25-3ecd-40ac-8f6e-1f92fe786eda",
+        "immediateParentId": "f903e509-554b-4794-8fac-e311759e35aa",
+        "immediateRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"],
+        "relationshipId": "7ad7c1fb-8c47-4c95-a5f1-deae3b5c9e6a",
+        "resolvedParentId": "f903e509-554b-4794-8fac-e311759e35aa",
+        "resolvedRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"]
       },
       "4de76a7c-186b-48d4-9f58-51fa967f3578": {
-        "alias_component_id": "4de76a7c-186b-48d4-9f58-51fa967f3578",
-        "immediate_parent_id": "01bdf6fe-8432-4a2a-8157-0041fa253b64",
-        "immediate_ref_field_path": [
-          "configuration",
-          "spec",
-          "template",
-          "spec",
-          "containers",
-          "0"
-        ],
-        "relationship_id": "7253a324-6428-4d60-8276-5ca9a660dc54",
-        "resolved_parent_id": "01bdf6fe-8432-4a2a-8157-0041fa253b64",
-        "resolved_ref_field_path": ["configuration", "spec", "template", "spec", "containers", "0"]
+        "aliasComponentId": "4de76a7c-186b-48d4-9f58-51fa967f3578",
+        "immediateParentId": "01bdf6fe-8432-4a2a-8157-0041fa253b64",
+        "immediateRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"],
+        "relationshipId": "7253a324-6428-4d60-8276-5ca9a660dc54",
+        "resolvedParentId": "01bdf6fe-8432-4a2a-8157-0041fa253b64",
+        "resolvedRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"]
       },
       "7cb52762-dff1-463c-814e-1b052a8e2cf8": {
-        "alias_component_id": "7cb52762-dff1-463c-814e-1b052a8e2cf8",
-        "immediate_parent_id": "c02afebf-64cd-421f-9edf-59b24e441048",
-        "immediate_ref_field_path": [
-          "configuration",
-          "spec",
-          "template",
-          "spec",
-          "containers",
-          "0"
-        ],
-        "relationship_id": "abc6dbbf-270b-4b44-b13d-9b1f9c6f6be5",
-        "resolved_parent_id": "c02afebf-64cd-421f-9edf-59b24e441048",
-        "resolved_ref_field_path": ["configuration", "spec", "template", "spec", "containers", "0"]
+        "aliasComponentId": "7cb52762-dff1-463c-814e-1b052a8e2cf8",
+        "immediateParentId": "c02afebf-64cd-421f-9edf-59b24e441048",
+        "immediateRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"],
+        "relationshipId": "abc6dbbf-270b-4b44-b13d-9b1f9c6f6be5",
+        "resolvedParentId": "c02afebf-64cd-421f-9edf-59b24e441048",
+        "resolvedRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"]
       },
       "938adc71-bff1-4868-86a2-ab20eea30626": {
-        "alias_component_id": "938adc71-bff1-4868-86a2-ab20eea30626",
-        "immediate_parent_id": "a5e74df7-2d06-4f76-8ce5-de799ead9151",
-        "immediate_ref_field_path": [
-          "configuration",
-          "spec",
-          "template",
-          "spec",
-          "containers",
-          "0"
-        ],
-        "relationship_id": "c2a166ab-4ffa-4bf5-8530-147f5f6b9385",
-        "resolved_parent_id": "a5e74df7-2d06-4f76-8ce5-de799ead9151",
-        "resolved_ref_field_path": ["configuration", "spec", "template", "spec", "containers", "0"]
+        "aliasComponentId": "938adc71-bff1-4868-86a2-ab20eea30626",
+        "immediateParentId": "a5e74df7-2d06-4f76-8ce5-de799ead9151",
+        "immediateRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"],
+        "relationshipId": "c2a166ab-4ffa-4bf5-8530-147f5f6b9385",
+        "resolvedParentId": "a5e74df7-2d06-4f76-8ce5-de799ead9151",
+        "resolvedRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"]
       },
       "ca608ee6-a523-4688-8793-67c3812234ab": {
-        "alias_component_id": "ca608ee6-a523-4688-8793-67c3812234ab",
-        "immediate_parent_id": "bb1ef198-42b6-4828-a6a8-788ee985c58e",
-        "immediate_ref_field_path": [
-          "configuration",
-          "spec",
-          "template",
-          "spec",
-          "containers",
-          "0"
-        ],
-        "relationship_id": "caa03622-9a2b-4ab7-b4aa-2ceaac976b63",
-        "resolved_parent_id": "bb1ef198-42b6-4828-a6a8-788ee985c58e",
-        "resolved_ref_field_path": ["configuration", "spec", "template", "spec", "containers", "0"]
+        "aliasComponentId": "ca608ee6-a523-4688-8793-67c3812234ab",
+        "immediateParentId": "bb1ef198-42b6-4828-a6a8-788ee985c58e",
+        "immediateRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"],
+        "relationshipId": "caa03622-9a2b-4ab7-b4aa-2ceaac976b63",
+        "resolvedParentId": "bb1ef198-42b6-4828-a6a8-788ee985c58e",
+        "resolvedRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"]
       },
       "f7532533-8e4c-4e2f-a9d9-016eac5841c9": {
-        "alias_component_id": "f7532533-8e4c-4e2f-a9d9-016eac5841c9",
-        "immediate_parent_id": "32aea193-7636-4360-9993-35f18ea15d9b",
-        "immediate_ref_field_path": [
-          "configuration",
-          "spec",
-          "template",
-          "spec",
-          "containers",
-          "0"
-        ],
-        "relationship_id": "1c9783c6-e9c4-46d8-a4ce-08011d9c1264",
-        "resolved_parent_id": "32aea193-7636-4360-9993-35f18ea15d9b",
-        "resolved_ref_field_path": ["configuration", "spec", "template", "spec", "containers", "0"]
+        "aliasComponentId": "f7532533-8e4c-4e2f-a9d9-016eac5841c9",
+        "immediateParentId": "32aea193-7636-4360-9993-35f18ea15d9b",
+        "immediateRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"],
+        "relationshipId": "1c9783c6-e9c4-46d8-a4ce-08011d9c1264",
+        "resolvedParentId": "32aea193-7636-4360-9993-35f18ea15d9b",
+        "resolvedRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"]
       },
       "f799e3dc-7bc4-450a-b735-29eca60763e5": {
-        "alias_component_id": "f799e3dc-7bc4-450a-b735-29eca60763e5",
-        "immediate_parent_id": "54b280d4-6fd9-4cba-8181-5910792fb980",
-        "immediate_ref_field_path": [
-          "configuration",
-          "spec",
-          "template",
-          "spec",
-          "containers",
-          "0"
-        ],
-        "relationship_id": "37ad04c8-3b72-44ed-8fe0-2865c7bb0770",
-        "resolved_parent_id": "54b280d4-6fd9-4cba-8181-5910792fb980",
-        "resolved_ref_field_path": ["configuration", "spec", "template", "spec", "containers", "0"]
+        "aliasComponentId": "f799e3dc-7bc4-450a-b735-29eca60763e5",
+        "immediateParentId": "54b280d4-6fd9-4cba-8181-5910792fb980",
+        "immediateRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"],
+        "relationshipId": "37ad04c8-3b72-44ed-8fe0-2865c7bb0770",
+        "resolvedParentId": "54b280d4-6fd9-4cba-8181-5910792fb980",
+        "resolvedRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"]
       },
       "f9713629-610b-4ae1-8872-e23502a8ff0a": {
-        "alias_component_id": "f9713629-610b-4ae1-8872-e23502a8ff0a",
-        "immediate_parent_id": "e9469cc7-811b-4fbf-8438-dc4d604adbbc",
-        "immediate_ref_field_path": [
-          "configuration",
-          "spec",
-          "template",
-          "spec",
-          "containers",
-          "0"
-        ],
-        "relationship_id": "785ed5e7-2d7c-4d14-87a6-d4a0f3ad786e",
-        "resolved_parent_id": "e9469cc7-811b-4fbf-8438-dc4d604adbbc",
-        "resolved_ref_field_path": ["configuration", "spec", "template", "spec", "containers", "0"]
+        "aliasComponentId": "f9713629-610b-4ae1-8872-e23502a8ff0a",
+        "immediateParentId": "e9469cc7-811b-4fbf-8438-dc4d604adbbc",
+        "immediateRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"],
+        "relationshipId": "785ed5e7-2d7c-4d14-87a6-d4a0f3ad786e",
+        "resolvedParentId": "e9469cc7-811b-4fbf-8438-dc4d604adbbc",
+        "resolvedRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"]
       },
       "fe8ee7f5-44fd-4633-b437-c3c28f4f4a12": {
-        "alias_component_id": "fe8ee7f5-44fd-4633-b437-c3c28f4f4a12",
-        "immediate_parent_id": "f97d11bc-4bbb-4296-ac31-e598a1f8c669",
-        "immediate_ref_field_path": [
-          "configuration",
-          "spec",
-          "template",
-          "spec",
-          "containers",
-          "0"
-        ],
-        "relationship_id": "76be9123-a3b3-4f69-bd7f-d28c2d55fdd8",
-        "resolved_parent_id": "f97d11bc-4bbb-4296-ac31-e598a1f8c669",
-        "resolved_ref_field_path": ["configuration", "spec", "template", "spec", "containers", "0"]
+        "aliasComponentId": "fe8ee7f5-44fd-4633-b437-c3c28f4f4a12",
+        "immediateParentId": "f97d11bc-4bbb-4296-ac31-e598a1f8c669",
+        "immediateRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"],
+        "relationshipId": "76be9123-a3b3-4f69-bd7f-d28c2d55fdd8",
+        "resolvedParentId": "f97d11bc-4bbb-4296-ac31-e598a1f8c669",
+        "resolvedRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"]
       }
     }
   },

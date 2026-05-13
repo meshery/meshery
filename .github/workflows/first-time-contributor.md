@@ -5,7 +5,11 @@ on:
   pull_request_target:
     types: [opened]
   roles: all
-if: github.repository == 'meshery/meshery' && (github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' || github.event.pull_request.author_association == 'NONE')
+checkout: false
+if: |
+  github.repository == 'meshery/meshery' &&
+  github.event.pull_request.user.type != 'Bot' &&
+  (github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' || github.event.pull_request.author_association == 'NONE')
 
 permissions:
   contents: read

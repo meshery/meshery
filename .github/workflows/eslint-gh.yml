@@ -9,15 +9,19 @@ jobs:
     name: runner / eslint
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v6
-    - name: Install dependencies in Meshery UI and Provider UI
-      run: |
-        cd ui && npm ci && cd ..
-        cd provider-ui && npm ci && cd ..
-    - name: Run ESLint Meshery-UI
-      run: cd ui && npm run lint
-    - name: Run ESLint Provider-UI
-      run: cd provider-ui && npm run lint
+      - uses: actions/checkout@v6
+      - name: Setup Node.js v22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Install dependencies in Meshery UI and Provider UI
+        run: |
+          cd ui && npm ci && cd ..
+          cd provider-ui && npm ci && cd ..
+      - name: Run ESLint Meshery-UI
+        run: cd ui && npm run lint
+      - name: Run ESLint Provider-UI
+        run: cd provider-ui && npm run lint
 
     # Replace the steps above with the following make targets and autocommit when ready.
     # - name: Run eslint Meshery UI
