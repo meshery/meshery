@@ -1,6 +1,7 @@
 import { MODELS, REGISTRANTS, COMPONENTS, RELATIONSHIPS } from '@/constants/navigator';
 import _ from 'lodash';
 import { findNestedObject } from '@/utils/objects';
+import { alpha, type Theme } from '@/theme';
 
 /**
  * Retrieves filtered data for the details component based on the selected item ID.
@@ -116,7 +117,11 @@ export const removeDuplicateVersions = (data: Array<any>) => {
  * To style JSON viewing in react-json-tree.
  * Refer to base-16 theme styling guidelines for more info.
  * https://github.com/chriskempson/base16/blob/main/styling.md
- * @type {Object}
+ *
+ * Accepts a Sistent {@link Theme} so the base16 ramp can be derived from
+ * `theme.palette.*` tokens (no inline hex literals). Callers in components
+ * pass the result of `useTheme()` directly.
+ *
  * @property {string} base00 - BACKGROUND_COLOR
  * @property {string} base02 - OBJECT_OUTLINE_COLOR
  * @property {string} base04 - OBJECT_DETAILS_COLOR
@@ -126,21 +131,30 @@ export const removeDuplicateVersions = (data: Array<any>) => {
  * @property {string} base0D - ITEM_STRING_EXPANDED_COLOR, ARROW_COLOR
  * @property {string} base0E - BOOLEAN_COLOR, NUMBER_COLOR
  */
-export const reactJsonTheme = (themeType: string) => ({
-  base00: themeType === 'dark' ? '#303030' : '#ffffff',
-  base01: '#444c56',
-  base02: themeType === 'dark' ? '#586069' : '#abb2bf',
-  base03: '#6a737d',
-  base04: '#477E96',
-  base05: '#9ea7a6',
-  base06: '#d8dee9',
-  base07: themeType === 'dark' ? '#FFF3C5' : '#002B36',
-  base08: '#2a5491',
-  base09: '#d19a66',
-  base0A: '#EBC017',
-  base0B: '#237986',
-  base0C: '#56b6c2',
-  base0D: '#B1B6B8',
-  base0E: '#e1e6cf',
-  base0F: '#647881',
-});
+export const reactJsonTheme = (theme: Theme) => {
+  const isDark = theme.palette.mode === 'dark';
+  // Object-outline contrast needs more punch in dark mode where the
+  // background is already dim; in light mode a softer divider tone reads
+  // better against the white canvas.
+  const outline = isDark
+    ? alpha(theme.palette.text.primary, 0.32)
+    : alpha(theme.palette.text.primary, 0.16);
+  return {
+    base00: theme.palette.background.default,
+    base01: theme.palette.divider,
+    base02: outline,
+    base03: theme.palette.text.secondary,
+    base04: theme.palette.info.main,
+    base05: theme.palette.text.secondary,
+    base06: alpha(theme.palette.text.primary, 0.24),
+    base07: theme.palette.text.primary,
+    base08: theme.palette.error.main,
+    base09: theme.palette.warning.main,
+    base0A: theme.palette.warning.light,
+    base0B: theme.palette.success.main,
+    base0C: theme.palette.info.light,
+    base0D: theme.palette.info.main,
+    base0E: theme.palette.primary.main,
+    base0F: theme.palette.text.secondary,
+  };
+};

@@ -30,7 +30,7 @@ export const ColourContainer = styled('div')(({ theme }) => ({
 
 export const JSONViewFormatter = ({ data }: ResourceFormatterProps) => {
   const theme = useTheme();
-  const rjvTheme = reactJsonTheme(theme.palette.mode);
+  const rjvTheme = reactJsonTheme(theme);
 
   return (
     <ReactJson
