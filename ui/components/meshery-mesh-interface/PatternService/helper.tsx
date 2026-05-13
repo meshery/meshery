@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { Colors } from '@/themes/app';
+import { useTheme } from '@/theme';
 
 /**
  * Returns a value safe to use as React child or tooltip/label text.
@@ -183,28 +183,38 @@ const sortProperties = (properties) => {
  * @returns
  */
 
-const getHyperLinkWithDescription = (description) => {
+const getHyperLinkWithDescription = (description, linkColor) => {
   const markdownLinkRegex = /\[([^\]]+)]\((https?:\/\/[^\s]+)\)/g;
   const urlRegex = /(https?:\/\/[^\s]+)/g;
 
   let processedDescription = description?.replace(markdownLinkRegex, (match, text, url) => {
-    return `<a href="${url}" style="color: ${Colors.keppelGreen};" target="_blank" rel="noreferrer">${text}</a>`;
+    return `<a href="${url}" style="color: ${linkColor};" target="_blank" rel="noreferrer">${text}</a>`;
   });
 
   if (!markdownLinkRegex.test(description)) {
     processedDescription = processedDescription?.replace(
       urlRegex,
       (url) =>
-        `<a href="${url}" style="color: ${Colors.keppelGreen};" target="_blank" rel="noreferrer">${url}</a>`,
+        `<a href="${url}" style="color: ${linkColor};" target="_blank" rel="noreferrer">${url}</a>`,
     );
   }
 
   return processedDescription;
 };
 
-export const getHyperLinkDiv = (text) => (
-  <div dangerouslySetInnerHTML={{ __html: getHyperLinkWithDescription(text) }} />
-);
+export const HyperLinkDiv = ({ text }) => {
+  const theme = useTheme();
+  return (
+    <div
+      dangerouslySetInnerHTML={{
+        __html: getHyperLinkWithDescription(text, theme.palette.primary.main),
+      }}
+    />
+  );
+};
+
+// Backward-compatible alias for legacy callers that imported `getHyperLinkDiv`.
+export const getHyperLinkDiv = (text) => <HyperLinkDiv text={text} />;
 /**
  * Returns the schema for the credentials.
  * @param {String} type
