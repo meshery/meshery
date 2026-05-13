@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
   CustomTooltip,
@@ -78,84 +78,178 @@ import { getNavigatorComponents } from './navigatorComponents';
 
 const externalLinkIconStyle = { width: '17.76px', fontSize: '1.11rem' };
 
+const activeIconFilter = 'invert(50%) sepia(30%) saturate(1000%) hue-rotate(120deg)';
+
+const defaultVersionDetail = {
+  build: '',
+  latest: '',
+  outdated: false,
+  commitsha: '',
+  release_channel: 'NA',
+};
+
+const findNavigatorItemByPath = (items, path) => {
+  for (const item of items) {
+    if (item.href === path) {
+      return item;
+    }
+
+    if (item.children?.length) {
+      const nestedItem = findNavigatorItemByPath(item.children, path);
+      if (nestedItem) {
+        return nestedItem;
+      }
+    }
+  }
+
+  return null;
+};
+
+const buildAdapterChildren = (meshAdapters, category) => {
+  const normalizedCategory = category.toLowerCase();
+
+  return meshAdapters.reduce((children, adapter) => {
+    if (adapter.name.toLowerCase() !== normalizedCategory) {
+      return children;
+    }
+
+    children.push({
+      id: adapter.adapter_location,
+      icon: <RemoveIcon />,
+      href: `/management?adapter=${adapter.adapter_location}`,
+      title: `Management - ${adapter.adapter_location}`,
+      link: true,
+      show: true,
+    });
+
+    return children;
+  }, []);
+};
+
+const buildLifecycleIcon = (adapterName, href, currentPath) => {
+  const normalizedName = adapterName?.toLowerCase();
+  const image = normalizedName
+    ? `/static/img/${normalizedName}-light.svg`
+    : '/static/img/meshery-logo.png';
+
+  return (
+    <img
+      src={image}
+      style={{
+        filter: currentPath === href ? activeIconFilter : '',
+        width: '20px',
+      }}
+    />
+  );
+};
+
+const resolveNavigatorComponents = ({
+  capabilityRegistryObj,
+  theme,
+  meshAdapters,
+  catalogVisibility,
+  currentPath,
+}) => {
+  const designPersistenceEnabled = Boolean(
+    capabilityRegistryObj?.capabilities?.some(
+      (capability) => capability.feature === 'persist-meshery-patterns',
+    ),
+  );
+
+  return getNavigatorComponents(capabilityRegistryObj, theme).map((category) => {
+    if (category.id === LIFECYCLE) {
+      return {
+        ...category,
+        children: category.children?.map((child) => {
+          if (child.id === SERVICE_MESH) {
+            return child;
+          }
+
+          return {
+            ...child,
+            icon: buildLifecycleIcon(child.id, child.href, currentPath),
+            children: buildAdapterChildren(meshAdapters, child.id),
+          };
+        }),
+      };
+    }
+
+    if (category.id === CONFIGURATION) {
+      let show = false;
+
+      const children = category.children?.map((child) => {
+        if (child.id === 'Designs') {
+          show = designPersistenceEnabled;
+          return {
+            ...child,
+            show: designPersistenceEnabled,
+          };
+        }
+
+        if (child.id === CATALOG) {
+          return {
+            ...child,
+            show: catalogVisibility,
+          };
+        }
+
+        return child;
+      });
+
+      return {
+        ...category,
+        show,
+        children,
+      };
+    }
+
+    return category;
+  });
+};
+
 const NavigatorWrapper = () => {
   const isMobile = useMediaQuery('(max-width:599px)');
   const dispatch = useDispatch();
   const { isDrawerCollapsed } = useSelector((state) => state.ui);
+
   useEffect(() => {
     if (isMobile && !isDrawerCollapsed) {
       dispatch(toggleDrawer({ isDrawerCollapsed: true }));
     }
-  }, [isMobile]);
+  }, [dispatch, isDrawerCollapsed, isMobile]);
 
-  return <Navigator_ />;
+  return <NavigatorContent />;
 };
 
-const Navigator_ = () => {
-  const { meshAdapters, meshAdaptersts } = useSelector((state) => state.adapter);
+const NavigatorContent = () => {
+  const { meshAdapters } = useSelector((state) => state.adapter);
   const dispatch = useDispatch();
-  const { capabilitiesRegistry, catalogVisibility } = useSelector((state) => state.ui);
+  const { catalogVisibility } = useSelector((state) => state.ui);
   const theme = useTheme();
   const router = useRouter();
-  const [state, setState] = useState({
-    path: '',
-    meshAdapters,
-    mts: new Date(),
-    navigator: ExtensionPointSchemaValidator('navigator')(),
-    showHelperButton: false,
-    openItems: [],
-    hoveredId: null,
-    capabilitiesRegistryObj: null,
-    versionDetail: {
-      build: '',
-      latest: '',
-      outdated: false,
-      commitsha: '',
-      release_channel: 'NA',
-    },
-    navigatorComponents: [],
-  });
-
-  const updateState = (updates) => {
-    setState((prevState) => ({
-      ...prevState,
-      ...updates,
-    }));
-  };
-
-  useEffect(() => {
-    fetchCapabilities();
-    fetchVersionDetails();
-  }, []);
-
-  useEffect(() => {
-    const path = window.location.pathname;
-    if (meshAdaptersts > state.mts) {
-      updateState({
-        meshAdapters,
-        mts: meshAdaptersts,
-      });
+  const currentPath = useMemo(() => (router.asPath || '').split('?')[0], [router.asPath]);
+  const [navigatorExtensions, setNavigatorExtensions] = useState(() =>
+    ExtensionPointSchemaValidator('navigator')(),
+  );
+  const [showHelperButton, setShowHelperButton] = useState(false);
+  const [openItems, setOpenItems] = useState<string[]>([]);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [capabilitiesRegistryObj, setCapabilitiesRegistryObj] =
+    useState<CapabilitiesRegistry | null>(null);
+  const [versionDetail, setVersionDetail] = useState(defaultVersionDetail);
+  const navigatorComponents = useMemo(() => {
+    if (!capabilitiesRegistryObj) {
+      return [];
     }
 
-    const fetchNestedPathAndTitle = (path, title, href, children, isBeta) => {
-      if (href === path) {
-        dispatch(updateTitle({ title }));
-        dispatch(updateBetaBadge({ isBeta }));
-
-        return;
-      }
-      if (children && children.length > 0) {
-        children.forEach(({ title, href, children, isBeta }) => {
-          fetchNestedPathAndTitle(path, title, href, children, isBeta);
-        });
-      }
-    };
-
-    state.navigatorComponents.forEach(({ title, href, children, isBeta }) => {
-      fetchNestedPathAndTitle(path, title, href, children, isBeta);
+    return resolveNavigatorComponents({
+      capabilityRegistryObj: capabilitiesRegistryObj,
+      theme,
+      meshAdapters,
+      catalogVisibility,
+      currentPath,
     });
-    updateState({ path });
-  }, [meshAdapters, meshAdaptersts, window.location.pathname, dispatch]);
+  }, [capabilitiesRegistryObj, catalogVisibility, currentPath, meshAdapters, theme]);
 
   const ExternalLinkIcon = (
     <IconExternalLink
@@ -211,44 +305,53 @@ const Navigator_ = () => {
     },
   ];
 
-  const fetchCapabilities = async () => {
+  async function fetchCapabilities() {
     const { data: result, isSuccess, isError, error } = await getProviderCapabilities();
 
     if (isSuccess) {
-      const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
-      const navigatorComponents = createNavigatorComponents(capabilitiesRegistryObj);
-      updateState({
-        navigator: ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
-        capabilitiesRegistryObj,
-        navigatorComponents,
-      });
+      setNavigatorExtensions(
+        ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
+      );
+      setCapabilitiesRegistryObj(new CapabilitiesRegistry(result));
       dispatch(updateCapabilities({ capabilitiesRegistry: result }));
     }
     if (isError) {
       console.error('Error fetching capabilities', error);
     }
-  };
+  }
 
-  const fetchVersionDetails = async () => {
+  async function fetchVersionDetails() {
     const { data: result, isSuccess, isError, error } = await getSystemVersion();
+
     if (isSuccess) {
-      updateState({
-        versionDetail: result || {
+      setVersionDetail(
+        result || {
+          ...defaultVersionDetail,
           build: 'Unknown',
           latest: 'Unknown',
-          outdated: false,
           commitsha: 'Unknown',
         },
-      });
+      );
     }
     if (isError) {
       console.error('Error fetching version details', error);
     }
-  };
+  }
 
-  const createNavigatorComponents = (capabilityRegistryObj) => {
-    return getNavigatorComponents(capabilityRegistryObj, theme);
-  };
+  useEffect(() => {
+    void Promise.all([fetchCapabilities(), fetchVersionDetails()]);
+  }, []);
+
+  useEffect(() => {
+    const activeNavigatorItem = findNavigatorItemByPath(navigatorComponents, currentPath);
+
+    if (!activeNavigatorItem) {
+      return;
+    }
+
+    dispatch(updateTitle({ title: activeNavigatorItem.title }));
+    dispatch(updateBetaBadge({ isBeta: activeNavigatorItem.isBeta }));
+  }, [currentPath, dispatch, navigatorComponents]);
 
   const handleTitleClick = () => {
     router.push('/');
@@ -266,121 +369,19 @@ const Navigator_ = () => {
   };
 
   const toggleSpacing = () => {
-    updateState({ showHelperButton: !state.showHelperButton });
+    setShowHelperButton((previousValue) => !previousValue);
   };
 
   const toggleItemCollapse = (itemId) => {
-    const isItemOpen = state.openItems.includes(itemId);
-    const activeItems = [...state.openItems];
-    if (isItemOpen) {
-      updateState({ openItems: activeItems.filter((item) => item !== itemId) });
-    } else {
-      activeItems.push(itemId);
-      updateState({ openItems: [itemId] });
-    }
-  };
-
-  const updatenavigatorComponentsMenus = () => {
-    const { navigatorComponents } = state;
-    navigatorComponents.forEach((cat, ind) => {
-      if (cat.id === LIFECYCLE) {
-        cat.children.forEach((catc, ind1) => {
-          if (catc.id == SERVICE_MESH) {
-            return;
-          }
-          const icon = pickIcon(catc.id, catc.href);
-          navigatorComponents[ind].children[ind1].icon = icon;
-
-          const cr = fetchChildren(catc.id);
-          navigatorComponents[ind].children[ind1].children = cr;
-        });
-      }
-
-      if (cat.id === 'Configuration') {
-        let show = false;
-        cat.children?.forEach((ch) => {
-          if (ch.id === 'Designs') {
-            const idx = capabilitiesRegistry?.capabilities?.findIndex(
-              (cap) => cap.feature === 'persist-meshery-patterns',
-            );
-            if (idx != -1) {
-              ch.show = true;
-              show = true;
-            }
-          }
-        });
-
-        cat.show = show;
-      }
-
-      //To Toggle Catalog Extension
-      if (cat.id === CONFIGURATION) {
-        cat.children?.forEach((ch) => {
-          if (ch.id === CATALOG) {
-            ch.show = catalogVisibility;
-          }
-        });
-      }
-    });
-  };
-
-  const updateAdaptersLink = () => {
-    const { navigatorComponents } = state;
-    navigatorComponents.forEach((cat, ind) => {
-      if (cat.id === LIFECYCLE) {
-        cat.children.forEach((catc, ind1) => {
-          if (
-            typeof navigatorComponents[ind].children[ind1].children[0] !== 'undefined' &&
-            typeof navigatorComponents[ind].children[ind1].children[0].href !== 'undefined'
-          ) {
-            const val = true;
-            const newhref = `${navigatorComponents[ind].children[ind1].children[0].href}`;
-            navigatorComponents[ind].children[ind1].link = val;
-            navigatorComponents[ind].children[ind1].href = newhref;
-          }
-        });
-      }
-    });
-  };
-
-  const fetchChildren = (category) => {
-    const { meshAdapters } = state;
-    const children = [];
-    category = category.toLowerCase();
-    meshAdapters.forEach((adapter) => {
-      let aName = adapter.name.toLowerCase();
-      if (category !== aName) {
-        return;
-      }
-      children.push({
-        id: adapter.adapter_location,
-        icon: <RemoveIcon />,
-        href: `/management?adapter=${adapter.adapter_location}`,
-        title: `Management - ${adapter.adapter_location}`,
-        link: true,
-        show: true,
-      });
-    });
-    return children;
-  };
-
-  const pickIcon = (aName, href) => {
-    aName = aName.toLowerCase();
-    let image = '/static/img/meshery-logo.png';
-    let filter =
-      window.location.pathname === href
-        ? 'invert(50%) sepia(30%) saturate(1000%) hue-rotate(120deg)'
-        : '';
-    let logoIcon = <img src={image} style={{ width: '20px' }} />;
-    if (aName) {
-      image = '/static/img/' + aName + '-light.svg';
-      logoIcon = <img src={image} style={{ filter: filter, width: '20px' }} />;
-    }
-    return logoIcon;
+    setOpenItems((activeItems) =>
+      activeItems.includes(itemId)
+        ? activeItems.filter((activeItem) => activeItem !== itemId)
+        : [itemId],
+    );
   };
 
   const getMesheryVersionText = () => {
-    const { build, outdated, release_channel } = state.versionDetail;
+    const { build, outdated, release_channel } = versionDetail;
 
     if (release_channel === 'edge' && outdated) return `${build}`;
     if (release_channel === 'edge' && !outdated) return `${release_channel}-latest`;
@@ -390,7 +391,7 @@ const Navigator_ = () => {
   };
 
   const versionUpdateMsg = () => {
-    const { outdated, latest } = state.versionDetail;
+    const { outdated, latest } = versionDetail;
 
     if (outdated)
       return (
@@ -419,7 +420,7 @@ const Navigator_ = () => {
   };
 
   const openReleaseNotesInNew = () => {
-    const { release_channel, build } = state.versionDetail;
+    const { release_channel, build } = versionDetail;
 
     if (release_channel === 'edge')
       return (
@@ -451,8 +452,23 @@ const Navigator_ = () => {
     );
   };
 
+  const handleExtensionIconMouseEnter = (event: React.MouseEvent<HTMLImageElement>) => {
+    const image = event.currentTarget;
+
+    image.style.transform = 'translate(-20%, -25%)';
+    image.style.top = '0';
+    image.style.right = '0';
+  };
+
+  const handleExtensionIconMouseLeave = (event: React.MouseEvent<HTMLImageElement>) => {
+    const image = event.currentTarget;
+
+    image.style.transform = 'translate(0, 0)';
+    image.style.top = 'auto';
+    image.style.right = 'auto';
+  };
+
   const renderNavigatorExtensions = (children, depth) => {
-    const { path } = state;
     if (!children || children.length === 0) {
       return null;
     }
@@ -465,7 +481,7 @@ const Navigator_ = () => {
           return null;
         }
 
-        const isActive = path === href;
+        const isActive = currentPath === href;
         const childExtensions = renderNavigatorExtensions(subItems, depth + 1);
 
         return (
@@ -514,21 +530,10 @@ const Navigator_ = () => {
                 src={icon}
                 style={{
                   width: '20px',
-                  filter:
-                    window.location.pathname === href
-                      ? 'invert(50%) sepia(30%) saturate(1000%) hue-rotate(120deg)'
-                      : '',
+                  filter: currentPath === href ? activeIconFilter : '',
                 }}
-                onMouseOver={(e) => {
-                  e.target.style.transform = 'translate(-20%, -25%)';
-                  e.target.style.top = '0';
-                  e.target.style.right = '0';
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.transform = 'translate(0, 0)';
-                  e.target.style.top = 'auto';
-                  e.target.style.right = 'auto';
-                }}
+                onMouseOver={handleExtensionIconMouseEnter}
+                onMouseOut={handleExtensionIconMouseLeave}
               />
             </MainListIcon>
           </CustomTooltip>
@@ -552,118 +557,75 @@ const Navigator_ = () => {
   };
 
   const renderChildren = (idname, children, depth) => {
-    const { path } = state;
-    updatenavigatorComponentsMenus();
-    if (idname != LIFECYCLE && children && children.length > 0) {
-      return (
-        <>
-          <List disablePadding>
-            {children.map(
-              ({
-                id: idc,
-                title: titlec,
-                icon: iconc,
-                href: hrefc,
-                show: showc,
-                link: linkc,
-                children: childrenc,
-                permission: permissionc,
-              }) => {
-                if (typeof showc !== 'undefined' && !showc) {
-                  return '';
-                }
-                const isActive = path === hrefc;
-                return (
-                  <div key={idc}>
-                    <NavigatorListItemII
-                      button
-                      data-testid={idc}
-                      key={idc}
-                      depth={depth}
-                      isDrawerCollapsed={isDrawerCollapsed}
-                      isActive={isActive}
-                      onClick={() => {
-                        if (linkc && hrefc) {
-                          router.push(hrefc);
-                        }
-                      }}
-                      disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
-                    >
-                      {linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}
-                    </NavigatorListItemII>
-                    {renderChildren(idname, childrenc, depth + 1)}
-                  </div>
-                );
-              },
-            )}
-          </List>
-        </>
-      );
+    if (!children?.length) {
+      return null;
     }
 
-    if (idname == LIFECYCLE) {
-      if (children && children.length > 0) {
-        return (
-          <>
-            <List disablePadding>
-              {children.map(
-                ({
-                  id: idc,
-                  title: titlec,
-                  icon: iconc,
-                  href: hrefc,
-                  show: showc,
-                  link: linkc,
-                  children: childrenc,
-                  permission: permissionc,
-                }) => {
-                  if (typeof showc !== 'undefined' && !showc) {
-                    return '';
-                  }
-                  const isActive = path === hrefc;
-                  return (
-                    <div key={idc} style={!showc ? cursorNotAllowed : null}>
-                      <NavigatorListItemIII
-                        component="a"
-                        data-testid={idc}
-                        button
-                        key={idc}
-                        depth={depth}
-                        isDrawerCollapsed={isDrawerCollapsed}
-                        isActive={isActive}
-                        isShow={!showc}
-                        onClick={() => {
-                          handleAdapterClick(idc, linkc);
-                          if (linkc && hrefc) {
-                            router.push(hrefc);
-                          }
-                        }}
-                        disabled={
-                          permissionc ? !CAN(permissionc.action, permissionc.subject) : false
-                        }
-                      >
-                        {linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}{' '}
-                      </NavigatorListItemIII>
-                      {renderChildren(idname, childrenc, depth + 1)}
-                    </div>
-                  );
-                },
-              )}
-            </List>
-          </>
-        );
-      }
-      if (children && children.length === 1) {
-        updateAdaptersLink();
-      }
-    }
-    return '';
+    const isLifecycleGroup = idname === LIFECYCLE;
+    const ListItemComponent = isLifecycleGroup ? NavigatorListItemIII : NavigatorListItemII;
+
+    return (
+      <List disablePadding>
+        {children.map(
+          ({
+            id: idc,
+            title: titlec,
+            icon: iconc,
+            href: hrefc,
+            show: showc,
+            link: linkc,
+            children: childrenc,
+            permission: permissionc,
+          }) => {
+            if (typeof showc !== 'undefined' && !showc) {
+              return null;
+            }
+
+            const isActive = currentPath === hrefc;
+
+            return (
+              <div key={idc}>
+                <ListItemComponent
+                  {...(isLifecycleGroup
+                    ? {
+                        component: 'a',
+                        isShow: !showc,
+                      }
+                    : {})}
+                  button
+                  data-testid={idc}
+                  depth={depth}
+                  isDrawerCollapsed={isDrawerCollapsed}
+                  isActive={isActive}
+                  onClick={() => {
+                    if (isLifecycleGroup) {
+                      handleAdapterClick(idc, linkc);
+                    }
+
+                    if (linkc && hrefc) {
+                      router.push(hrefc);
+                    }
+                  }}
+                  disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
+                >
+                  {linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}
+                </ListItemComponent>
+                {renderChildren(idname, childrenc, depth + 1)}
+              </div>
+            );
+          },
+        )}
+      </List>
+    );
   };
 
   const linkContent = (iconc, titlec, hrefc, linkc, drawerCollapsed) => {
-    const updatedIcon = React.cloneElement(iconc, {
-      fill: state.path === hrefc ? theme.palette.icon.brand : theme.palette.common.white,
-    });
+    const updatedIcon =
+      React.isValidElement(iconc) && typeof iconc.type !== 'string'
+        ? React.cloneElement(iconc, {
+            fill: currentPath === hrefc ? theme.palette.icon.brand : theme.palette.common.white,
+          })
+        : iconc;
     let linkContent = (
       <>
         <LinkContainer>
@@ -690,16 +652,14 @@ const Navigator_ = () => {
   const Title = (
     <div
       style={
-        !state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD])
-          ? cursorNotAllowed
-          : {}
+        !capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) ? cursorNotAllowed : {}
       }
     >
       <>
         <StyledListItem
           component="a"
           onClick={handleTitleClick}
-          disableLogo={!state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD])}
+          disableLogo={!capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD])}
         >
           {isDrawerCollapsed ? (
             <>
@@ -723,7 +683,7 @@ const Navigator_ = () => {
   const Menu = (
     <>
       <HideScrollbar disablePadding>
-        {state.navigatorComponents.map(
+        {navigatorComponents.map(
           ({
             id: childId,
             title,
@@ -743,16 +703,12 @@ const Navigator_ = () => {
                   dense
                   key={childId}
                   link={!!link}
-                  isActive={state.path === href}
+                  isActive={currentPath === href}
                   isShow={!show}
                   onClick={() => toggleItemCollapse(childId)}
-                  onMouseOver={() =>
-                    isDrawerCollapsed ? updateState({ hoveredId: childId }) : null
-                  }
+                  onMouseOver={() => (isDrawerCollapsed ? setHoveredId(childId) : null)}
                   onMouseLeave={() =>
-                    !submenu || !state.openItems.includes(childId)
-                      ? updateState({ hoveredId: false })
-                      : null
+                    !submenu || !openItems.includes(childId) ? setHoveredId(null) : null
                   }
                   disabled={permission ? !CAN(permission.action, permission.subject) : false}
                 >
@@ -767,8 +723,7 @@ const Navigator_ = () => {
                         TransitionComponent={Zoom}
                       >
                         {isDrawerCollapsed &&
-                        (state.hoveredId === childId ||
-                          (state.openItems.includes(childId) && submenu)) ? (
+                        (hoveredId === childId || (openItems.includes(childId) && submenu)) ? (
                           <div>
                             <CustomTooltip
                               title={title}
@@ -792,14 +747,14 @@ const Navigator_ = () => {
                   </Link>
                   <ExpandMore
                     onClick={() => toggleItemCollapse(childId)}
-                    isCollapsed={state.openItems.includes(childId)}
+                    isCollapsed={openItems.includes(childId)}
                     isDrawerCollapsed={isDrawerCollapsed}
                     theme={theme}
                     hasChildren={!!children}
                   />
                 </SideBarListItem>
                 <Collapse
-                  in={state.openItems.includes(childId)}
+                  in={openItems.includes(childId)}
                   style={{
                     backgroundColor: theme.palette.background.tabs,
                     opacity: '100%',
@@ -811,10 +766,10 @@ const Navigator_ = () => {
             );
           },
         )}
-        {state.navigator && state.navigator.length ? (
+        {navigatorExtensions.length ? (
           <Box component="div" data-testid="extension-navigation-region">
             <SecondaryDivider />
-            {renderNavigatorExtensions(state.navigator, 1)}
+            {renderNavigatorExtensions(navigatorExtensions, 1)}
           </Box>
         ) : null}
         <SecondaryDivider />
@@ -822,7 +777,7 @@ const Navigator_ = () => {
     </>
   );
 
-  const [hoveredHelpIcon, setHoveredHelpIcon] = React.useState(null);
+  const [hoveredHelpIcon, setHoveredHelpIcon] = React.useState<string | null>(null);
 
   const HelpIcons = (
     <>
@@ -836,12 +791,12 @@ const Navigator_ = () => {
           return (
             <HelpListItem
               key={id}
-              style={isDrawerCollapsed && !state.showHelperButton ? { display: 'none' } : {}}
+              style={isDrawerCollapsed && !showHelperButton ? { display: 'none' } : {}}
               onMouseEnter={() => setHoveredHelpIcon(id)}
               onMouseLeave={() => setHoveredHelpIcon(null)}
             >
               <Grow
-                in={state.showHelperButton || !isDrawerCollapsed}
+                in={showHelperButton || !isDrawerCollapsed}
                 timeout={{ enter: 600 - index * 200, exit: 100 * index }}
               >
                 <a
@@ -900,7 +855,7 @@ const Navigator_ = () => {
       }}
     >
       {isDrawerCollapsed ? (
-        <div style={{ textAlign: 'center', width: '100%' }}>{state.versionDetail.build}</div>
+        <div style={{ textAlign: 'center', width: '100%' }}>{versionDetail.build}</div>
       ) : (
         <Grow
           in={!isDrawerCollapsed}
@@ -921,16 +876,12 @@ const Navigator_ = () => {
     <ChevronButtonWrapper
       isCollapsed={isDrawerCollapsed}
       style={
-        state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER])
-          ? {}
-          : cursorNotAllowed
+        capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed
       }
     >
       <div
         style={
-          state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER])
-            ? {}
-            : disabledStyle
+          capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle
         }
         onClick={toggleMiniDrawer}
       >

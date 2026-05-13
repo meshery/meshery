@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
@@ -25,43 +25,49 @@ export default function WorkloadChart({
   selectedNamespace = '',
   handleSetNamespace,
 }: WorkloadChartProps) {
-  resourses = resourses || [];
-  namespaces = namespaces || [];
-  const chartData = resourses
-    .filter((resource) => isValidColumnName(resource?.kind))
-    .map((resource) => [resource?.kind, resource?.count]);
+  const chartData = useMemo(
+    () =>
+      (resourses || [])
+        .filter((resource) => isValidColumnName(resource?.kind))
+        .map((resource) => [resource?.kind, resource?.count]),
+    [resourses],
+  );
 
-  const chartOptions = {
-    data: {
-      columns: chartData,
-      type: donut(),
-      colors: dataToColors(chartData),
-    },
-    arc: {
-      cornerRadius: {
-        ratio: 0.05,
+  const chartOptions = useMemo(
+    () => ({
+      data: {
+        columns: chartData,
+        type: donut(),
+        colors: dataToColors(chartData),
       },
-    },
-    donut: {
-      title: 'Workloads',
-      padAngle: 0.03,
-      label: {
-        format: function (value) {
-          return value;
+      arc: {
+        cornerRadius: {
+          ratio: 0.05,
         },
       },
-    },
-    tooltip: {
-      format: {
-        value: function (v) {
-          return v;
+      donut: {
+        title: 'Workloads',
+        padAngle: 0.03,
+        label: {
+          format: function (value) {
+            return value;
+          },
         },
       },
-    },
-    legend: {
-      show: false,
-    },
-  };
+      tooltip: {
+        format: {
+          value: function (v) {
+            return v;
+          },
+        },
+      },
+      legend: {
+        show: false,
+      },
+    }),
+    [chartData],
+  );
+  const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);
 
   return (
     <div
@@ -81,9 +87,7 @@ export default function WorkloadChart({
         <Link
           href="/management/connections"
           style={{
-            pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
-              ? 'none'
-              : 'auto',
+            pointerEvents: !canViewConnections ? 'none' : 'auto',
           }}
         >
           <Typography variant="h6" gutterBottom className={classes.link}>
@@ -91,8 +95,11 @@ export default function WorkloadChart({
           </Typography>
         </Link>
         {namespaces.length > 0 && (
-          <Select value={selectedNamespace} onChange={(e) => handleSetNamespace(e.target.value)}>
-            {namespaces.map((ns) => (
+          <Select
+            value={selectedNamespace}
+            onChange={(event) => handleSetNamespace(event.target.value)}
+          >
+            {(namespaces || []).map((ns) => (
               <MenuItem key={ns} value={ns}>
                 {ns}
               </MenuItem>

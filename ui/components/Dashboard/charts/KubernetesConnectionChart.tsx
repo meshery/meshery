@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
@@ -22,54 +22,61 @@ export default function KubernetesConnectionStatsChart() {
   const router = useRouter();
   const theme = useTheme();
 
-  const chartData = connectionData?.connections
-    ? Object.entries(
-        connectionData.connections.reduce(
-          (acc: Record<string, number>, connection: { status: string }) => {
-            if (isValidColumnName(connection.status)) {
-              acc[connection.status] = (acc[connection.status] || 0) + 1;
-            }
-            return acc;
-          },
-          {} as Record<string, number>,
-        ),
-      )
-    : [];
+  const chartData = useMemo(
+    () =>
+      connectionData?.connections
+        ? Object.entries(
+            connectionData.connections.reduce(
+              (acc: Record<string, number>, connection: { status: string }) => {
+                if (isValidColumnName(connection.status)) {
+                  acc[connection.status] = (acc[connection.status] || 0) + 1;
+                }
+                return acc;
+              },
+              {} as Record<string, number>,
+            ),
+          )
+        : [],
+    [connectionData?.connections],
+  );
 
-  const chartOptions = {
-    size: {
-      height: 250,
-    },
-    data: {
-      columns: chartData,
-      type: donut(),
-      colors: dataToColors(chartData),
-      onclick: function () {
-        router.push('/management/connections');
+  const chartOptions = useMemo(
+    () => ({
+      size: {
+        height: 250,
       },
-    },
-    arc: {
-      cornerRadius: {
-        ratio: 0.05,
-      },
-    },
-    donut: {
-      title: 'Clusters\n  Status',
-      padAngle: 0.03,
-      label: {
-        format: function (value) {
-          return value;
+      data: {
+        columns: chartData,
+        type: donut(),
+        colors: dataToColors(chartData),
+        onclick: function () {
+          router.push('/management/connections');
         },
       },
-    },
-    tooltip: {
-      format: {
-        value: function (v) {
-          return v;
+      arc: {
+        cornerRadius: {
+          ratio: 0.05,
         },
       },
-    },
-  };
+      donut: {
+        title: 'Clusters\n  Status',
+        padAngle: 0.03,
+        label: {
+          format: function (value) {
+            return value;
+          },
+        },
+      },
+      tooltip: {
+        format: {
+          value: function (v) {
+            return v;
+          },
+        },
+      },
+    }),
+    [chartData, router],
+  );
 
   const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);
   const header = (
@@ -77,7 +84,9 @@ export default function KubernetesConnectionStatsChart() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <KubernetesIcon
           fill={
-            theme.palette.mode == 'light' ? theme.palette.icon.default : theme.palette.icon.disabled
+            theme.palette.mode === 'light'
+              ? theme.palette.icon.default
+              : theme.palette.icon.disabled
           }
         />
 

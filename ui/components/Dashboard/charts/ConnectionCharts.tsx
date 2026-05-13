@@ -34,46 +34,49 @@ export default function ConnectionStatsChart() {
       .map(([status, count]) => [status, count]);
   }, [connectionsData]);
 
-  const chartOptions = {
-    data: {
-      columns: chartData,
-      type: donut(),
-      colors: dataToColors(chartData),
-      onclick: function () {
-        router.push('/management/connections');
-      },
-    },
-    arc: {
-      cornerRadius: {
-        ratio: 0.05,
-      },
-    },
-    donut: {
-      title: 'Connections\n by Status',
-      padAngle: 0.03,
-      label: {
-        format: function (value) {
-          return value;
+  const chartOptions = useMemo(
+    () => ({
+      data: {
+        columns: chartData,
+        type: donut(),
+        colors: dataToColors(chartData),
+        onclick: function () {
+          router.push('/management/connections');
         },
       },
-    },
-    tooltip: {
-      format: {
-        value: function (v) {
-          return v;
+      arc: {
+        cornerRadius: {
+          ratio: 0.05,
         },
       },
-    },
-  };
+      donut: {
+        title: 'Connections\n by Status',
+        padAngle: 0.03,
+        label: {
+          format: function (value) {
+            return value;
+          },
+        },
+      },
+      tooltip: {
+        format: {
+          value: function (v) {
+            return v;
+          },
+        },
+      },
+    }),
+    [chartData, router],
+  );
+
+  const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);
 
   return (
     <Link
       href="/management/connections"
       style={{
         textDecoration: 'none',
-        pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
-          ? 'none'
-          : 'auto',
+        pointerEvents: !canViewConnections ? 'none' : 'auto',
       }}
     >
       <DashboardSection>

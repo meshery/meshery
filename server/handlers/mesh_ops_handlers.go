@@ -182,7 +182,18 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	}
 	mClient, err := meshes.CreateClient(ctx, meshLocationURL)
 	if err != nil {
-		h.log.Error(ErrMeshClient)
+		// Caller decides how loudly to surface this. SessionSyncHandler probes
+		// tracked adapters on every page load and these probes routinely fail
+		// for stale or never-deployed adapters (e.g., the Layer5 Playground),
+		// which otherwise floods server logs with ERROR entries.
+		//
+		// Log both the raw transport `err` and the MeshKit error code so
+		// operators can distinguish DNS resolution from TLS handshake from
+		// dial timeout when troubleshooting, while still being able to grep
+		// the stable error code for cross-referencing with docs or support
+		// tickets. The wrapped ErrMeshClient is still what we return — the
+		// public error shape stays unchanged.
+		h.log.Debugf("adapter unreachable at %s (%s): %v", meshLocationURL, ErrMeshClientCode, err)
 		return meshAdapters, ErrMeshClient
 	}
 	h.log.Debug("created client for adapter: ", meshLocationURL)
@@ -191,13 +202,13 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	}()
 	respOps, err := mClient.MClient.SupportedOperations(ctx, &meshes.SupportedOperationsRequest{})
 	if err != nil {
-		h.log.Error(ErrRetrieveMeshData(err))
+		h.log.Debugf("adapter %s did not return supported operations: %v", meshLocationURL, err)
 		return meshAdapters, err
 	}
 	h.log.Debug("retrieved supported ops for adapter: ", meshLocationURL)
 	meshInfo, err := mClient.MClient.ComponentInfo(ctx, &meshes.ComponentInfoRequest{})
 	if err != nil {
-		h.log.Error(ErrRetrieveMeshData(err))
+		h.log.Debugf("adapter %s did not return component info: %v", meshLocationURL, err)
 		return meshAdapters, err
 	}
 	h.log.Debug("retrieved name for adapter: ", meshLocationURL)
