@@ -55,11 +55,6 @@ const legacyRestrictedImportOffenders = [
   'components/NotificationCenter/formatters/common.tsx',
   'components/NotificationCenter/index.tsx',
   'components/NotificationCenter/notificationCenter.style.tsx',
-  'components/Performance/MesheryResults.tsx',
-  'components/Performance/PerformanceCard.tsx',
-  'components/Performance/PerformanceResults.tsx',
-  'components/Performance/index.tsx',
-  'components/Performance/style.tsx',
   'components/ReactSelectWrapper.tsx',
   'components/Registry/RegistryModal.tsx',
   'components/RelationshipBuilder/RelationshipFormStepper.tsx',
@@ -80,9 +75,6 @@ const legacyRestrictedImportOffenders = [
   'components/connections/ConnectionChip.tsx',
   'components/connections/ConnectionTable.tsx',
   'components/icons/index.ts',
-  'components/telemetry/grafana/GrafanaCustomChart.tsx',
-  'components/telemetry/grafana/GrafanaDateRangePicker.tsx',
-  'components/telemetry/prometheus/PrometheusSelectionComponent.tsx',
 ];
 
 const legacyLiteralColorOffenders = [
