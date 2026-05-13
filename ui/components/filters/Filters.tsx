@@ -404,8 +404,8 @@ function MesheryFilters() {
     };
 
     if (capabilitiesData) {
-      const capabilitiesRegistry = capabilitiesData;
-      const filtersCatalogCapability = capabilitiesRegistry?.capabilities.filter(
+      // `capabilitiesData.capabilities` is the provider-declared feature list.
+      const filtersCatalogCapability = capabilitiesData?.capabilities?.filter(
         (val) => val.feature === MesheryFiltersCatalog,
       );
       if (filtersCatalogCapability?.length > 0) setCanPublishFilter(true);

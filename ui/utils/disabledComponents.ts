@@ -13,18 +13,31 @@ function recursivelySearchObjKey(obj, arr, index) {
   return false;
 }
 
-export class CapabilitiesRegistry {
-  capabilitiesRegistry;
+/**
+ * Wraps the raw /api/provider/capabilities payload and answers provider-driven
+ * UI access questions.
+ *
+ * "Registry" in Meshery UI refers to the Model/Relationship Registry under
+ * ui/components/registry, so this helper deliberately avoids that name.
+ */
+export class ProviderUiAccessControl {
+  /** Raw payload from /api/provider/capabilities. */
+  providerPayload;
   isPlaygroundEnv = false;
 
-  constructor(capabilitiesRegistry) {
-    this.capabilitiesRegistry = capabilitiesRegistry;
-    this.isPlaygroundEnv = capabilitiesRegistry?.restrictedAccess?.isMesheryUIRestricted || false;
+  constructor(providerPayload) {
+    this.providerPayload = providerPayload;
+    this.isPlaygroundEnv = providerPayload?.restrictedAccess?.isMesheryUIRestricted || false;
   }
 
-  get capabilities() {
-    return Array.isArray(this.capabilitiesRegistry?.capabilities)
-      ? this.capabilitiesRegistry.capabilities
+  /**
+   * The list of features the current provider declares it supports.
+   * Each entry is a `{ feature: string, endpoint: string }` object.
+   * Returns an empty array when the payload is absent or malformed.
+   */
+  get providerCapabilities() {
+    return Array.isArray(this.providerPayload?.capabilities)
+      ? this.providerPayload.capabilities
       : [];
   }
 
@@ -35,7 +48,7 @@ export class CapabilitiesRegistry {
 
     let walkerArray = ['restrictedAccess', 'allowedComponents', 'navigator', ...navigatorWalker];
 
-    const searchResult = recursivelySearchObjKey(this.capabilitiesRegistry, walkerArray, 0);
+    const searchResult = recursivelySearchObjKey(this.providerPayload, walkerArray, 0);
     if (_.isObject(searchResult) && _.isEmpty(searchResult)) {
       return false;
     }
@@ -49,7 +62,7 @@ export class CapabilitiesRegistry {
 
     let walkerArray = ['restrictedAccess', 'allowedComponents', 'header', ...headerWalker];
 
-    const searchResult = recursivelySearchObjKey(this.capabilitiesRegistry, walkerArray, 0);
+    const searchResult = recursivelySearchObjKey(this.providerPayload, walkerArray, 0);
     if (_.isObject(searchResult) && _.isEmpty(searchResult)) {
       return false;
     }
@@ -61,11 +74,11 @@ export class CapabilitiesRegistry {
       return true;
     }
 
-    if (!this.capabilitiesRegistry.extensions?.navigator) {
+    if (!this.providerPayload.extensions?.navigator) {
       return false;
     }
 
-    const navigatorObj = this.capabilitiesRegistry.extensions.navigator[0]?.allowedTo;
+    const navigatorObj = this.providerPayload.extensions.navigator[0]?.allowedTo;
 
     const searchResult = recursivelySearchObjKey(navigatorObj, walkerArray, 0);
     if (_.isObject(searchResult) && _.isEmpty(searchResult)) {
