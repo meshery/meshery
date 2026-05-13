@@ -12,7 +12,7 @@ import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import SupportIcon from '@/assets/icons/support';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useSupportWebHookMutation } from '@/rtk-query/webhook';
-import { StickyFeedbackButton } from './General/feedback';
+import { StickyFeedbackButton } from './general/feedback';
 
 const Troubleshoot = ({ errorMessage, ...props }) => {
   const [open, setOpen] = React.useState(true);

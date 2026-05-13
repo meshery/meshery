@@ -87,7 +87,7 @@ vi.mock('./styles', () => ({
   ConnectionStyledSelect: ({ children }) => <div>{children}</div>,
 }));
 
-vi.mock('../DataFormatter', () => ({
+vi.mock('../data-formatter', () => ({
   FormatId: ({ id }) => <span>{id}</span>,
   formatDate: (value) => value,
 }));

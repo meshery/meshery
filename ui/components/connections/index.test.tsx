@@ -80,7 +80,7 @@ vi.mock('@/rtk-query/schema', () => ({
   useGetSchemaQuery: () => ({ data: undefined }),
 }));
 
-vi.mock('../General/error-404/index', () => ({
+vi.mock('../general/error-404/index', () => ({
   default: () => <div data-testid="default-error" />,
 }));
 

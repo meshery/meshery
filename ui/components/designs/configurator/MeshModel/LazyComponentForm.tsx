@@ -11,7 +11,7 @@ import { isEmpty } from 'lodash';
 import React from 'react';
 import { getMeshModelComponent } from '../../../../api/meshmodel';
 import { iconMedium } from '../../../../css/icons.styles';
-import PatternServiceForm from '../../../MesheryMeshInterface/PatternServiceForm';
+import PatternServiceForm from '../../../meshery-mesh-interface/PatternServiceForm';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
 

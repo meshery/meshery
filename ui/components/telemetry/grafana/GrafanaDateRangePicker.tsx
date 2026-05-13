@@ -16,7 +16,7 @@ import {
   styled,
 } from '@sistent/sistent';
 import Moment from 'react-moment';
-import { AccessTime as AccessTimeIcon, Close } from '../../icons';
+import { AccessTime as AccessTimeIcon, Close } from '@/assets/icons';
 import PropTypes from 'prop-types';
 import { MesheryDateTimePicker } from '../../shared/DatePicker';
 
