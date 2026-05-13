@@ -79,7 +79,7 @@ const legacyLiteralColorOffenders = [
   'components/shared/LoadingState/Animations/AnimatedMesheryCSS.tsx',
   'components/shared/LoadingState/LoadingComponentServer.tsx',
   'components/MeshAdapterConfigComponent.tsx',
-  'components/MesheryAdapterPlayComponent.tsx',
+  'components/adapter-play-styled.tsx',
   'components/MesheryChart.tsx',
   'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/ArrayFieldTemlate.tsx',
   'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/CustomBaseInput.tsx',
@@ -129,7 +129,6 @@ const legacyLiteralColorOffenders = [
 ];
 
 const legacyMaxLineOffenders = [
-  'components/MesheryAdapterPlayComponent.tsx',
   'components/designs/patterns/MesheryPatterns.tsx',
   'components/performance/index.tsx',
   'components/connections/ConnectionTable.tsx',
@@ -216,6 +215,8 @@ const legacyInlineStyleOffenders = [
   'components/shared/LoadingState/LoadingComponentServer.tsx',
   'components/MeshAdapterConfigComponent.tsx',
   'components/MesheryAdapterPlayComponent.tsx',
+  'components/adapter-play-addon-switches.tsx',
+  'components/adapter-play-category-card.tsx',
   'components/MesheryChart.tsx',
   'components/MesheryCredentialComponent.tsx',
   'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/Accordion.tsx',
