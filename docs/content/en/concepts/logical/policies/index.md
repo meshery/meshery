@@ -32,7 +32,7 @@ Each evaluation cycle visits every registered policy and applies it to the curre
 - **Edge non-binding** is a logical reference between two components, with no configuration mutation.
 - **Edge binding** is a 3-party relationship (from, binding, to) that patches both endpoints through the binding component.
 
-The same engine compiles to a WebAssembly module so that relationship evaluation can run client-side in addition to the server.
+The same Go codebase is built for two targets: the native server binary that ships with Meshery Server, and a `js/wasm` WebAssembly module that runs the identical evaluation logic in the browser, enabling client-side relationship evaluation in the Meshery UI without a server round trip.
 
 
 In any given Meshery deployment, you can reference and search the full set of registered policies (in Meshery's internal registry) in using either of Meshery's client interfaces.
