@@ -31,7 +31,7 @@ import {
   FullscreenExit as FullscreenExitIcon,
   Save as SaveIcon,
   AddCircleOutlined as AddIcon,
-} from '@/components/icons';
+} from '@/assets/icons';
 import CustomToolbarSelect from './CustomToolbarSelect';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from '../CodeMirror';
@@ -44,7 +44,7 @@ import {
   DoneAll as DoneAllIcon,
   Public as PublicIcon,
   Publish as PublishIcon,
-} from '@/components/icons';
+} from '@/assets/icons';
 import _PromptComponent from '../PromptComponent';
 import LoadingScreen from '../LoadingComponents/LoadingComponent';
 import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../../utils/Enum';
@@ -59,11 +59,11 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';
 import { modifyRJSFSchema } from '../../utils/utils';
-import { Edit as EditIcon } from '@/components/icons';
+import { Edit as EditIcon } from '@/assets/icons';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../General/Modals/Information/InfoModal';
-import { InfoOutlined as InfoOutlinedIcon } from '@/components/icons';
+import { InfoOutlined as InfoOutlinedIcon } from '@/assets/icons';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import DefaultError from '../General/error-404/index';
 import CAN from '@/utils/can';

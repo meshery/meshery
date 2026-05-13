@@ -1,26 +1,31 @@
 /**
- * Barrel of typed SVG icons for Meshery UI.
+ * Canonical icon barrel for Meshery UI.
  *
- * This file exposes the canonical, typed SVG replacements for repeated
- * `@mui/icons-material` imports, as part of Phase 2 of the UI restructure
- * (parent #18657, sub-issue #18730).
+ * Single home for typed SVG icons and the centralized re-export of
+ * `@mui/icons-material` glyphs that have no in-house typed equivalent yet.
+ * Phase 4 (#18744) consolidated three previously competing locations
+ * (`ui/assets/icons/`, `ui/assets/new-icons/`, and `ui/components/icons/`)
+ * into this directory; the MUI re-exports below preserve the centralization
+ * established by Phase 2 #18736 so only one file changes when Sistent ships
+ * a typed icon set.
  *
  * Conventions:
- *  - Each icon is a typed React functional component accepting `IconProps`
- *    (standard SVG props plus optional `width`/`height`/`fill` overrides).
- *  - `fill` defaults to `currentColor` so icons inherit color from CSS.
- *  - Each module also provides a `default` export for ergonomic
+ *  - Each typed SVG icon is a React functional component accepting
+ *    `IconProps` (standard SVG props plus optional `width`/`height`/`fill`
+ *    overrides). `fill` defaults to `currentColor` so icons inherit color
+ *    from CSS.
+ *  - Each typed icon module also provides a `default` export for ergonomic
  *    `import EditIcon from '...'` consumption.
- *
- * Downstream sub-issues (#18733-#18740) will swap the corresponding
- * `@mui/icons-material/<Name>` imports across the codebase to use these
- * barrel exports (or Sistent equivalents where Sistent ships the glyph).
- * This issue is purely additive — no call sites are modified here.
+ *  - MUI glyphs are re-exported under their original `@mui/icons-material`
+ *    names; prefer the typed SVG variants (`*Icon`) when both exist.
  */
 
 export type { IconProps } from './types';
 
-// Typed SVG replacements added in #18730 for icons used >=3 times in `ui/`.
+// ---------------------------------------------------------------------------
+// Typed SVG icons (Phase 2 #18730).
+// ---------------------------------------------------------------------------
+
 export { ArrowDropDownIcon } from './ArrowDropDownIcon';
 export { ChevronLeftIcon } from './ChevronLeftIcon';
 export { ChevronRightIcon } from './ChevronRightIcon';
@@ -42,3 +47,64 @@ export { SettingsIcon } from './SettingsIcon';
 export { default as DeleteIcon } from './DeleteIcon';
 export { default as ExpandMoreIcon } from './ExpandMoreIcon';
 export { default as InfoOutlinedIcon } from './InfoOutlined';
+
+// ---------------------------------------------------------------------------
+// Centralized MUI icon re-exports (Phase 2 #18736, relocated here in
+// Phase 4 #18744 from the now-deleted `ui/components/icons/` barrel).
+//
+// All `@mui/icons-material` imports should go through this barrel. When
+// Sistent provides a typed equivalent, only this file needs to change.
+// ---------------------------------------------------------------------------
+
+export {
+  AccessTime,
+  AddCircle,
+  AddCircleOutlined,
+  ArrowBack,
+  ArrowDropDown,
+  BarChart,
+  BuildRounded,
+  Cached,
+  CheckCircle,
+  Close,
+  Code,
+  Delete,
+  DirectionsCar,
+  DoneAll,
+  Edit,
+  Error,
+  ExpandLess,
+  ExpandMore,
+  Explore,
+  FileCopy,
+  FileUpload,
+  Filter,
+  Fullscreen,
+  FullscreenExit,
+  GetApp,
+  GroupAdd,
+  HelpOutline,
+  HelpOutlineOutlined,
+  HelpOutlined,
+  Info,
+  InfoOutlined,
+  Launch,
+  ListAlt,
+  Lock,
+  MergeOutlined,
+  MoreHoriz,
+  MoreVert,
+  OpenInNewOutlined,
+  Public,
+  Publish,
+  Reply,
+  Save,
+  SaveAs,
+  SaveOutlined,
+  Search,
+  Settings,
+  SimCard,
+  SupervisedUserCircle,
+  TouchApp,
+  Warning,
+} from '@mui/icons-material';

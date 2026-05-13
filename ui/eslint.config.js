@@ -29,6 +29,7 @@ const patchedNextConfig = nextConfig.map((cfg) => {
 // Keep the rules active for new/clean files while letting incremental refactors
 // remove entries from these lists over time.
 const legacyRestrictedImportOffenders = [
+  'assets/icons/index.ts',
   'components/Dashboard/charts/NodeStatusChart.tsx',
   'components/Dashboard/charts/PodStatusChart.tsx',
   'components/Dashboard/index.tsx',
@@ -64,7 +65,6 @@ const legacyRestrictedImportOffenders = [
   'components/UserPreferences/index.tsx',
   'components/connections/ConnectionChip.tsx',
   'components/connections/ConnectionTable.tsx',
-  'components/icons/index.ts',
 ];
 
 const legacyLiteralColorOffenders = [
@@ -180,6 +180,7 @@ const legacyMaxLineSoftOffenders = [
 // nudges new code toward styled() from @sistent/sistent; existing offenders
 // stay allowlisted until they are migrated.
 const legacyInlineStyleOffenders = [
+  'assets/icons/shapes/Octagon.tsx',
   'components/AppComponents.tsx',
   'components/BBChart.tsx',
   'components/ConfirmationModal.tsx',
@@ -339,7 +340,6 @@ const legacyInlineStyleOffenders = [
   'components/layout.tsx',
   'components/multi-select-wrapper.tsx',
   'components/navigatorComponents.tsx',
-  'components/shapes/Octagon.tsx',
   'components/telemetry/grafana/GrafanaComponent.tsx',
   'components/telemetry/prometheus/PrometheusSelectionComponent.tsx',
   'pages/_app.tsx',

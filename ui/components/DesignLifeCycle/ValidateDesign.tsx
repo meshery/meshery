@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useSelector } from '@xstate/react';
 import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
-import { ExpandLess, ExpandMore } from '@/components/icons';
+import { ExpandLess, ExpandMore } from '@/assets/icons';
 import { ComponentIcon, Loading, getSvgWhiteForComponent, processDesign } from './common';
 import {
   designValidatorCommands,

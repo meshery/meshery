@@ -12,7 +12,7 @@ import {
   Modal,
   keyframes,
 } from '@sistent/sistent';
-import { ExpandMore, Close } from '@/components/icons';
+import { ExpandMore, Close } from '@/assets/icons';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   top: '50%',
