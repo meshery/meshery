@@ -9,7 +9,7 @@ import Document, {
 } from 'next/document';
 import createEmotionServer from '@emotion/server/create-instance';
 import createCache from '@emotion/cache';
-import { PureHtmlLoadingScreen } from '@/components/LoadingComponents/LoadingComponentServer';
+import { PureHtmlLoadingScreen } from '@/components/shared/LoadingState/LoadingComponentServer';
 
 // Create emotion cache for SSR
 const createEmotionCache = () => {

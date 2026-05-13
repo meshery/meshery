@@ -1,6 +1,6 @@
 import * as React from 'react';
-import TroubleshootingModal from './TroubleshootingModalComponent';
-import { RJSFModalWrapper } from './General/Modals/Modal';
+import TroubleshootingModal from './shared/Modal/TroubleshootingModalComponent';
+import { RJSFModalWrapper } from './shared/Modal/Modal';
 import {
   Modal,
   helpAndSupportModalSchema,
@@ -12,7 +12,7 @@ import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import SupportIcon from '@/assets/icons/support';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useSupportWebHookMutation } from '@/rtk-query/webhook';
-import { StickyFeedbackButton } from './General/feedback';
+import { StickyFeedbackButton } from './general/feedback';
 
 const Troubleshoot = ({ errorMessage, ...props }) => {
   const [open, setOpen] = React.useState(true);

@@ -25,6 +25,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
 	pkgconstants "github.com/meshery/meshery/mesheryctl/pkg/constants"
@@ -32,10 +33,20 @@ import (
 
 	meshkitutils "github.com/meshery/meshkit/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+// flags
+type cmdSystemStart struct {
+	SkipUpdate  bool   `json:"skipUpdate" validate:"boolean"`
+	SkipBrowser bool   `json:"skipBrowser" validate:"boolean"`
+	Reset       bool   `json:"reset" validate:"boolean"`
+	Platform    string `json:"platform" validate:"omitempty"`
+	Provider    string `json:"provider" validate:"omitempty"`
+}
+
+var systemStart cmdSystemStart
 
 var (
 	skipUpdateFlag  bool
@@ -68,6 +79,9 @@ mesheryctl system start -p docker
 mesheryctl system start --provider Meshery
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := mesheryctlflags.ValidateCmdFlags(cmd, &systemStart); err != nil {
+			return err
+		}
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
@@ -86,18 +100,15 @@ mesheryctl system start --provider Meshery
 		}
 		cfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		ctx, err := cfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrValidateVersion(err)
 		}
 		return nil
 	},
@@ -108,6 +119,7 @@ mesheryctl system start --provider Meshery
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		mesheryctlflags.InitValidators(cmd)
 		utils.CheckMesheryctlClientVersion(constants.GetMesheryctlVersion())
 	},
 }
@@ -231,9 +243,9 @@ func startDockerDeployment(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 	}
 
 	if skipUpdateFlag {
-		log.Info("Skipping Meshery update...")
+		utils.Log.Info("Skipping Meshery update...")
 	} else if err := utils.UpdateMesheryContainers(); err != nil {
-		return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
+		return ErrUpdateContainers(err)
 	}
 
 	endpoint, err := resolveDockerEndpoint(mctlCfg, currCtx, userPort)
@@ -243,7 +255,7 @@ func startDockerDeployment(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 
 	composeClient, err := utils.NewComposeClient()
 	if err != nil {
-		return errors.Wrap(err, utils.SystemError("failed to create compose client"))
+		return ErrCreatingDockerClient(err)
 	}
 
 	if err := startDockerCompose(composeClient); err != nil {
@@ -272,7 +284,7 @@ func configureDockerServices(currCtx *config.Context, mesheryImageVersion, callb
 	for name, service := range allowedServices {
 		utils.ViperCompose.Set(fmt.Sprintf("services.%s", name), service)
 		if err := utils.ViperCompose.WriteConfig(); err != nil {
-			log.Errorf("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", name)
+			return nil, ErrWriteConfig(err)
 		}
 	}
 
@@ -285,7 +297,7 @@ func buildAllowedDockerServices(currCtx *config.Context, mesheryImageVersion, ca
 
 	for _, component := range currCtx.GetComponents() {
 		if utils.Services[component].Image == "" {
-			log.Fatalf("Invalid component specified %s", component)
+			return nil, ErrInvalidComponent(component)
 		}
 
 		service, ok := utils.Services[component]
@@ -416,25 +428,25 @@ func waitForMesheryContainer(composeClient *utils.ComposeClient) error {
 
 		if i > 0 && i%6 == 0 {
 			spinner.Stop()
-			log.Infof("Still waiting for Meshery to start... (%d seconds elapsed)", i*5)
+			utils.Log.Infof("Still waiting for Meshery to start... (%d seconds elapsed)", i*5)
 			spinner = utils.CreateDefaultSpinner("Waiting for Meshery containers to be ready...", "\nMeshery containers are ready.")
 			spinner.Start()
 		}
 	}
 
 	spinner.Stop()
-	log.Info("Timeout waiting for Meshery container to start. Checking container status...")
+	utils.Log.Info("Timeout waiting for Meshery container to start. Checking container status...")
 	containers, err := composeClient.Ps(context.Background(), utils.DockerComposeFile)
 	if err != nil {
-		return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
+		return ErrFetchContainers(err)
 	}
 
-	log.Info("Container status:")
+	utils.Log.Info("Container status:")
 	for _, container := range containers {
-		log.Infof("  %s: %s", container.Service, container.State)
+		utils.Log.Infof("  %s: %s", container.Service, container.State)
 	}
 
-	log.Info("\nShowing Meshery logs:")
+	utils.Log.Info("\nShowing Meshery logs:")
 	if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, false, os.Stdout); err != nil {
 		return errors.Wrap(err, utils.SystemError("failed to get logs"))
 	}
@@ -451,13 +463,13 @@ func waitForMesheryEndpoint(endpoint meshkitutils.HostPort) {
 	for i := 0; i < maxEndpointRetries; i++ {
 		time.Sleep(2 * time.Second)
 		if meshkitutils.TcpCheck(&endpoint, nil) {
-			log.Info("Meshery is now running!")
+			utils.Log.Info("Meshery is now running!")
 			return
 		}
 	}
 
-	log.Warn("Warning: Meshery endpoint is not yet accessible. The server may still be initializing.")
-	log.Info("You can check the status later with: mesheryctl system status")
+	utils.Log.Warn(ErrMesheryEndpointNotAccessible())
+	utils.Log.Info("You can check the status later with: mesheryctl system status")
 }
 
 func startKubernetesDeployment(currCtx *config.Context, mesheryImageVersion, callbackURL, providerURL string) error {
@@ -482,14 +494,14 @@ func startKubernetesDeployment(currCtx *config.Context, mesheryImageVersion, cal
 	time.Sleep(20 * time.Second)
 	ready, err := mesheryReadinessHealthCheck()
 	if err != nil {
-		log.Info(err)
+		return err
 	}
 
 	if !ready {
-		log.Info("\nTimeout. Meshery pod(s) is not running, yet.\nCheck status of Meshery pod(s) by executing “mesheryctl system status`. Expose Meshery UI with `mesheryctl system dashboard` as needed.")
+		utils.Log.Info("\nTimeout. Meshery pod(s) is not running, yet.\nCheck status of Meshery pod(s) by executing “mesheryctl system status`. Expose Meshery UI with `mesheryctl system dashboard` as needed.")
 		return nil
 	}
-	log.Info("Meshery is starting...")
+	utils.Log.Info("Meshery is starting...")
 
 	return nil
 }

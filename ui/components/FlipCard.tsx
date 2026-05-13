@@ -1,77 +1,67 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FlipCardWrapper, InnerCard } from './MesheryPatterns/style';
+import React, { useState, useEffect, type ReactNode } from 'react';
+import { FlipCardWrapper, InnerCard } from './designs/patterns/style';
 
-function GetChild(children, key) {
-  if (children.length != 2) throw Error('FlipCard requires exactly two child components');
-
-  return children[key];
+interface FlipCardProps {
+  duration?: number;
+  onClick?: () => void;
+  onShow?: () => void;
+  children: ReactNode;
 }
 
-function FlipCard({ duration = 500, onClick, onShow, children }) {
+function FlipCard({ duration = 500, onClick, onShow, children }: FlipCardProps) {
   const [flipped, setFlipped] = useState(false);
   const [activeBack, setActiveBack] = useState(false);
 
-  const timeout = useRef(null);
-
-  const Front = GetChild(children, 0);
-  const Back = GetChild(children, 1);
+  const childArray = React.Children.toArray(children);
+  if (childArray.length !== 2) {
+    throw new Error('FlipCard requires exactly two child components');
+  }
+  const [Front, Back] = childArray;
 
   useEffect(() => {
-    // This function makes sure that the inner content of the card disappears roughly
-    // after 30 deg rotation has already occured. It will ensure that the user doesn't gets
-    // a "blank" card while the card is rotating
-    //
-    // This guarantee can be offered because of two main reasons:
-    // 1. In sufficiently modern browsers JS and CSS are handled in different threads
-    // hence ones execution doesn't blocks another.
-    // 2. setTimeout will put its callback at the end of current context's end hence ensuring
-    // this callback doesn't gets blocked by another JS process.
-    if (timeout.current) clearTimeout(timeout.current);
-
-    timeout.current = setTimeout(() => {
+    // Delay the back-face swap until ~30° of rotation has passed so the user
+    // never sees a blank card mid-flip. JS and CSS run on separate threads in
+    // modern browsers, and setTimeout defers past the current call stack.
+    const timer = setTimeout(() => {
       setActiveBack(flipped);
     }, duration / 6);
-  }, [flipped]);
+
+    return () => clearTimeout(timer);
+  }, [flipped, duration]);
 
   return (
-    <>
-      <FlipCardWrapper
-        onClick={() => {
-          setFlipped((flipped) => !flipped);
-          onClick && onClick();
-          onShow && onShow();
+    <FlipCardWrapper
+      onClick={() => {
+        setFlipped((f) => !f);
+        onClick?.();
+        onShow?.();
+      }}
+    >
+      <InnerCard
+        style={{
+          transform: flipped ? 'scale(-1,1)' : undefined,
+          transition: `transform ${duration}ms`,
+          transformOrigin: '50% 50% 10%',
         }}
       >
-        <InnerCard
-          style={{
-            transform: flipped ? 'scale(-1,1)' : undefined,
-            transition: `transform ${duration}ms`,
-            transformOrigin: '50% 50% 10%',
-          }}
-        >
-          {!activeBack ? (
-            <div
-              style={{
-                backfaceVisibility: 'hidden',
-              }}
-            >
-              {React.isValidElement(Front) ? Front : null}
-            </div>
-          ) : (
-            <div
-              style={{
-                backfaceVisibility: 'hidden',
-                transform: 'scale(-1, 1)',
-                maxWidth: '50vw',
-                wordBreak: 'break-word',
-              }}
-            >
-              {React.isValidElement(Back) ? Back : null}
-            </div>
-          )}
-        </InnerCard>
-      </FlipCardWrapper>
-    </>
+        {!activeBack ? (
+          <div style={{ backfaceVisibility: 'hidden' }}>
+            {React.isValidElement(Front) ? Front : null}
+          </div>
+        ) : (
+          <div
+            style={{
+              backfaceVisibility: 'hidden',
+              transform: 'scale(-1, 1)',
+              maxWidth: '50vw',
+              wordBreak: 'break-word',
+            }}
+          >
+            {React.isValidElement(Back) ? Back : null}
+          </div>
+        )}
+      </InnerCard>
+    </FlipCardWrapper>
   );
 }
 
