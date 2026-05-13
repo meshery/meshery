@@ -1,5 +1,10 @@
 import { Typography, Paper, styled, Tab, Tabs, gray, charcoal, Card } from '@sistent/sistent';
 
+const getHoneycombBackgroundColor = (theme) =>
+  theme.palette.mode === 'dark'
+    ? theme.palette.background.honeycomb
+    : theme.palette.background.honeycombLight;
+
 export const DashboardSection = styled(Card)(({ theme }) => ({
   backgroundColor:
     theme.palette.mode === 'dark' ? theme.palette.background.card : theme.palette.common.white,
@@ -71,7 +76,7 @@ export const HoneycombContainer = styled('ul')(({ columnSize, columns, rowSize }
 }));
 
 export const HexagonWrapper = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#363636' : '#e9eff1', // TODO: this is the honeycomb color add this token in sistent
+  backgroundColor: getHoneycombBackgroundColor(theme),
   position: 'absolute',
   inset: '3.5px',
   display: 'flex',
@@ -105,7 +110,7 @@ export const SelectedHexagon = styled('div')({
 export const SkeletonHexagon = styled('div')(({ theme }) => ({
   display: 'flex',
   height: '95%',
-  backgroundColor: theme.palette.mode === 'dark' ? '#363636' : '#e9eff1', // TODO: this is the honeycomb color add this token in sistent
+  backgroundColor: getHoneycombBackgroundColor(theme),
   justifyContent: 'center',
   alignItems: 'center',
   opacity: 0.5,
