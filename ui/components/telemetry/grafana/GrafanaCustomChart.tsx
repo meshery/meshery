@@ -6,7 +6,7 @@ import {
   Cached as CachedIcon,
   OpenInNewOutlined as OpenInNewIcon,
   Warning as WarningIcon,
-} from '../../icons';
+} from '@/assets/icons';
 import { useLazyQueryRangeQuery } from '@/rtk-query/telemetry';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 import bb, { area, line } from 'billboard.js';

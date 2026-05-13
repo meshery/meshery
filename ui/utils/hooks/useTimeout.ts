@@ -19,7 +19,6 @@ const useTimeout = (
     }
     const id = setTimeout(() => savedCallback.current(), delay);
     return () => clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delay, ...deps]);
 };
 
