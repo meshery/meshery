@@ -1,12 +1,13 @@
 import React from 'react';
 import BaseInput from './CustomBaseInput';
 import { useRef } from 'react';
-import { Colors } from '@/themes/app';
+import { useTheme } from '@/theme';
 import { safeDisplayValue } from '../helper';
 
 const CustomFileWidget = (props) => {
   const inputType = 'file';
   const fileInputUpdated = useRef(false);
+  const theme = useTheme();
 
   /**
    * @param {React.ChangeEvent<HTMLInputElement>} event
@@ -41,7 +42,7 @@ const CustomFileWidget = (props) => {
             position: 'absolute',
             bottom: '10px',
             left: '6rem',
-            backgroundColor: Colors.keppelGreen,
+            backgroundColor: theme.palette.primary.main,
           }}
         >
           {safeDisplayValue(props.options.default)}
