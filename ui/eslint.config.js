@@ -103,7 +103,6 @@ const legacyLiteralColorOffenders = [
   'components/performance/style.tsx',
   'components/settings/MesherySettings.tsx',
   'components/registry/MeshModelDetails.tsx',
-  'components/registry/helper.ts',
   'components/workspaces/SpacesSwitcher/WorkspaceSwitcher.tsx',
   'components/workspaces/SpacesSwitcher/styles.tsx',
   'components/shared/FormFields/typing-filter/style.tsx',
