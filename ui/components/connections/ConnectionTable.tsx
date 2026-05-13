@@ -27,7 +27,7 @@ import {
   ActionListItem,
   ConnectionStyledSelect,
 } from './styles';
-import { FormatId } from '../DataFormatter';
+import { FormatId } from '../data-formatter';
 import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
@@ -58,11 +58,11 @@ import {
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useGetConnectionsQuery, useUpdateConnectionByIdMutation } from '@/rtk-query/connection';
-import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@sistent/sistent';
 
-import { formatDate } from '../DataFormatter';
+import { formatDate } from '../data-formatter';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';

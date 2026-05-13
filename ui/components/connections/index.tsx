@@ -8,7 +8,7 @@ import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import DefaultError from '../General/error-404/index';
+import DefaultError from '../general/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import CustomErrorFallback from '../shared/ErrorBoundary/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';

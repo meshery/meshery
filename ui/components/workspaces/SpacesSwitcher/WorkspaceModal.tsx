@@ -21,7 +21,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@sistent/sistent';
-import { WorkspacesComponent } from '@/components/Lifecycle';
+import { WorkspacesComponent } from '@/components/lifecycle';
 import { iconMedium, iconSmall } from 'css/icons.styles';
 import MyViewsContent from './MyViewsContent';
 import MyDesignsContent from './MyDesignsContent';

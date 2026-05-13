@@ -4,8 +4,8 @@ import {
   getDependencies,
   createRequires,
 } from '@paciolan/remote-component';
-import MesheryPerformanceComponent from '../../Performance';
-import PatternServiceFormCore from '../../MesheryMeshInterface/PatternServiceFormCore';
+import MesheryPerformanceComponent from '../../performance';
+import PatternServiceFormCore from '../../meshery-mesh-interface/PatternServiceFormCore';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
 import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import _PromptComponent from '../../PromptComponent';
@@ -13,7 +13,7 @@ import { CapabilitiesRegistry } from '../../../utils/disabledComponents';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import Modal from '../../shared/Modal/Modal';
 import ExportModal from '../../shared/Modal/ExportModal';
-import { FormatStructuredData } from '../../DataFormatter';
+import { FormatStructuredData } from '../../data-formatter';
 import { useFilterK8sContexts } from '@/utils/hooks/useKubernetesHook';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import { ValidateDesign } from '../../designs/lifecycle/ValidateDesign';
@@ -23,10 +23,10 @@ import { designValidationMachine } from 'machines/validator/designValidator';
 import CAN from '@/utils/can';
 import { mesheryEventBus } from '@/utils/eventBus';
 import { ThemeTogglerCore } from '@/themes/hooks';
-import RJSFForm from '../../MesheryMeshInterface/PatternService/RJSF';
+import RJSFForm from '../../meshery-mesh-interface/PatternService/RJSF';
 import { DynamicFullScreenLoader } from '../../shared/LoadingState/DynamicFullscreenLoader';
 import Troubleshoot from '../../TroubleshootingComponent';
-import TypingFilter from '../../TypingFilter';
+import TypingFilter from '../../typing-filter';
 import CreateModelModal from '../../registry/CreateModelModal';
 import ImportModelModal from '../../registry/ImportModelModal';
 import { ViewInfoModal } from '../../shared/Modal/ViewInfoModal';

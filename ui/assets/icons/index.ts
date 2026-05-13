@@ -83,7 +83,6 @@ export {
   FullscreenExit,
   GetApp,
   GroupAdd,
-  HelpOutline,
   HelpOutlineOutlined,
   HelpOutlined,
   Info,

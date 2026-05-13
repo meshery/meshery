@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../../DataFormatter';
+import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../../data-formatter';
 import { isEmptyAtAllDepths } from '../../../utils/objects';
 import { canTruncateDescription } from './notification';
 import { DeploymentSummaryFormatter } from '../../designs/lifecycle/DeploymentSummary';

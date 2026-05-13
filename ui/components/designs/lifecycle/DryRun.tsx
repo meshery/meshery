@@ -11,7 +11,7 @@ import {
 } from '../../../machines/validator/designValidator';
 import { ErrorIcon } from '@sistent/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
-import { FormatStructuredData } from '../../DataFormatter';
+import { FormatStructuredData } from '../../data-formatter';
 import {
   DryRunComponentLabel,
   DryRunComponentStyled,

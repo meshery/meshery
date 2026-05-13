@@ -1,6 +1,6 @@
 import React from 'react';
 import { LaunchIcon, Typography } from '@sistent/sistent';
-import { TextWithLinks } from '../../../DataFormatter';
+import { TextWithLinks } from '../../../data-formatter';
 
 type TitleLinkProps = {
   href: string;
