@@ -21,7 +21,7 @@ import { MDEditor } from './Markdown';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { ModalButtonSecondary } from '@sistent/sistent';
-import { handleUpdateViewVisibility, viewPath } from './SpacesSwitcher/hooks';
+import { handleUpdateViewVisibility, viewPath } from './workspaces/SpacesSwitcher/hooks';
 import { ModalButtonPrimary } from '@sistent/sistent';
 import rehypeSanitize from 'rehype-sanitize';
 import { Lock, Public } from '@/components/icons';

@@ -14,7 +14,7 @@ import {
   useTheme,
   ErrorBoundary,
 } from '@sistent/sistent';
-import { useDeleteWorkspaceMutation } from '../../../rtk-query/workspace';
+import { useDeleteWorkspaceMutation } from '@/rtk-query/workspace';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';

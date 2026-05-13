@@ -1,5 +1,5 @@
 import { ErrorBoundary } from '@sistent/sistent';
-import WorkspaceContent from '@/components/SpacesSwitcher/WorkspaceContent';
+import WorkspaceContent from '@/components/workspaces/SpacesSwitcher/WorkspaceContent';
 
 const WorkSpaceContentDataTable = ({ workspace }: { workspace: unknown }) => {
   return (
