@@ -1,11 +1,11 @@
 package policies
 
 import (
-	"encoding/json"
-
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/meshkit/logger"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
+	relationshipv1alpha3 "github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // GoEngine is the native Go policy evaluation engine.
@@ -38,16 +38,16 @@ func ConvertRelationships(registeredRelationships []interface{}) []*relationship
 			rels = append(rels, v)
 		case relationship.RelationshipDefinition:
 			rels = append(rels, &v)
+		case *relationshipv1alpha3.RelationshipDefinition:
+			if bridged := patternutils.RelationshipV1alpha3ToV1beta2(v); bridged != nil {
+				rels = append(rels, bridged)
+			}
+		case relationshipv1alpha3.RelationshipDefinition:
+			if bridged := patternutils.RelationshipV1alpha3ToV1beta2(&v); bridged != nil {
+				rels = append(rels, bridged)
+			}
 		default:
-			data, err := json.Marshal(r)
-			if err != nil {
-				continue
-			}
-			var rel relationship.RelationshipDefinition
-			if err := json.Unmarshal(data, &rel); err != nil {
-				continue
-			}
-			rels = append(rels, &rel)
+			continue
 		}
 	}
 	return rels
@@ -108,6 +108,16 @@ func (e *GoEngine) evaluate(design *pattern.PatternFile, relsInScope []*relation
 	combinedActions := append(allActions, identifyActions...)
 	designWithIdentified := applyActionsToDesign(design, combinedActions)
 
+	// Phase 2.5: Identify inventory parents the design is missing. Mirrors
+	// identify_additions.rego — without this the Go engine silently skips
+	// auto-creating Namespaces for namespaced resources, diverging from the
+	// Rego engine's behavior.
+	inventoryActions := identifyInventoryAdditions(designWithIdentified, relsInScope)
+	if len(inventoryActions) > 0 {
+		combinedActions = append(combinedActions, inventoryActions...)
+		designWithIdentified = applyActionsToDesign(design, combinedActions)
+	}
+
 	// Phase 3: Generate and apply actions.
 	var phaseActions []PolicyAction
 	for _, policy := range e.policies {
@@ -116,6 +126,7 @@ func (e *GoEngine) evaluate(design *pattern.PatternFile, relsInScope []*relation
 	}
 
 	allActions = append(allActions, identifyActions...)
+	allActions = append(allActions, inventoryActions...)
 	allActions = append(allActions, phaseActions...)
 
 	finalDesign := applyActionsToDesign(designWithIdentified, phaseActions)
@@ -183,4 +194,3 @@ func buildTrace(actions []PolicyAction, originalDesign, finalDesign *pattern.Pat
 	}
 	return trace
 }
-

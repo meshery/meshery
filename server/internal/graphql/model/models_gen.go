@@ -188,14 +188,14 @@ type K8sContext struct {
 	Name               string `json:"name"`
 	Server             string `json:"server"`
 	Owner              string `json:"owner"`
-	CreatedBy          string `json:"created_by"`
-	MesheryInstanceID  string `json:"meshery_instance_id"`
-	KubernetesServerID string `json:"kubernetes_server_id"`
-	DeploymentType     string `json:"deployment_type"`
+	CreatedBy          string `json:"createdBy"`
+	MesheryInstanceID  string `json:"mesheryInstanceId"`
+	KubernetesServerID string `json:"kubernetesServerId"`
+	DeploymentType     string `json:"deploymentType"`
 	Version            string `json:"version"`
-	UpdatedAt          string `json:"updated_at"`
-	CreatedAt          string `json:"created_at"`
-	ConnectionID       string `json:"connection_id"`
+	UpdatedAt          string `json:"updatedAt"`
+	CreatedAt          string `json:"createdAt"`
+	ConnectionID       string `json:"connectionId"`
 }
 
 type K8sContextsPage struct {

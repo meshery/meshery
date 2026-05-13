@@ -164,9 +164,9 @@ type DesignPostPayload struct {
 	DesignFile design.PatternFile `json:"designFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID      *string              `json:"user_id"`
+	UserID      *string              `json:"userId"`
 	Visibility  string               `json:"visibility"`
-	CatalogData v1alpha1.CatalogData `json:"catalog_data,omitempty"`
+	CatalogData v1alpha1.CatalogData `json:"catalogData,omitempty"`
 }
 
 // MarshalJSON emits both the canonical (`designFile`) and legacy
@@ -250,6 +250,24 @@ func (h *Handler) PatternFileRequestHandler(
 	if r.Method == http.MethodPost {
 		h.handlePatternPOST(rw, r, prefObj, user, provider)
 		return
+	}
+}
+
+// buildDesignSavedEventMetadata builds the metadata map emitted on the
+// design-saved event. Extracted into a named function so the canonical
+// camelCase keys (`historyTitle`, `design`, `doclink`) are pinned by a
+// focused unit test — see TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys.
+// Drift here would silently re-introduce the snake_case `history_title`
+// key that production carried for 263,378 rows pre-flip.
+func buildDesignSavedEventMetadata(designFile design.PatternFile) map[string]interface{} {
+	return map[string]interface{}{
+		"historyTitle": fmt.Sprintf("Version %s - %d components and %d relationships",
+			designFile.Version, len(designFile.Components), len(designFile.Relationships)),
+		"design": map[string]interface{}{
+			"name": designFile.Name,
+			"id":   designFile.ID.String(),
+		},
+		"doclink": "https://docs.meshery.io/concepts/logical/designs",
 	}
 }
 
@@ -386,19 +404,9 @@ func (h *Handler) handlePatternPOST(
 		eventBuilder = eventBuilder.WithAction(models.Create)
 	}
 	description := fmt.Sprintf("Design %s saved at version %s", requestPayload.DesignFile.Name, requestPayload.DesignFile.Version)
-	metadata := map[string]interface{}{
-		"history_title": fmt.Sprintf("Version %s - %d components and %d relationships",
-			requestPayload.DesignFile.Version, len(requestPayload.DesignFile.Components), len(requestPayload.DesignFile.Relationships)),
-
-		"design": map[string]interface{}{
-			"name": requestPayload.DesignFile.Name,
-			"id":   requestPayload.DesignFile.ID.String(),
-		},
-		"doclink": "https://docs.meshery.io/concepts/logical/designs",
-	}
 	event := eventBuilder.
 		WithDescription(description).
-		WithMetadata(metadata).
+		WithMetadata(buildDesignSavedEventMetadata(requestPayload.DesignFile)).
 		Build()
 	_ = provider.PersistEvent(*event, token)
 
@@ -499,7 +507,7 @@ func (h *Handler) VerifyAndConvertToDesign(
 
 // 	files, err := walker.WalkLocalDirectory(tmpOutputDesignFile)
 // 	if err != nil {
-// 		return nil, ErrWaklingLocalDirectory(err)
+// 		return nil, ErrWalkingLocalDirectory(err, tmpOutputDesignFile)
 // 	}
 
 // 	// TODO: Add support to merge multiple designs into one

@@ -14,18 +14,18 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
   const { kind, model, version } = rowData;
 
   const getDuplicatedModels = async (model, version) => {
-    const { total_count, models } = await getDuplicateModels(model, version);
-    setCount(total_count);
+    const { totalCount, models } = await getDuplicateModels(model, version);
+    setCount(totalCount);
     setResourcesDetail(models);
   };
 
   const getDuplicatedComponents = async (componentKind, apiVersion, modelName) => {
-    const { total_count, components } = await getDuplicateComponents(
+    const { totalCount, components } = await getDuplicateComponents(
       componentKind,
       modelName,
       apiVersion,
     );
-    setCount(total_count);
+    setCount(totalCount);
     setResourcesDetail(components);
   };
 
