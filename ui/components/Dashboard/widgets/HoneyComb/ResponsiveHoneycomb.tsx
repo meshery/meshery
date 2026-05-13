@@ -1,48 +1,57 @@
 import * as React from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
 
-import Honeycomb from './Honeycomb';
+import Honeycomb, { type HoneycombProps } from './Honeycomb';
 import { getGridColumnsCount } from './helpers';
 
-type ResponsiveHoneycombProps = {
-  size: number;
+type ResponsiveHoneycombProps<T> = Omit<HoneycombProps<T>, 'columns' | 'containerRef'> & {
   defaultWidth: number;
-  [key: string]: unknown;
 };
 
-const ResponsiveHoneycomb = ({ size, defaultWidth, ...restProps }: ResponsiveHoneycombProps) => {
+const ResponsiveHoneycomb = <T,>({
+  size,
+  defaultWidth,
+  ...restProps
+}: ResponsiveHoneycombProps<T>) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const [columns, setColumns] = React.useState(() => {
-    const calculatedColumns = getGridColumnsCount(size, defaultWidth);
-    return Math.max(1, calculatedColumns); // Ensure at least 1 column
-  });
+  const [columns, setColumns] = React.useState(() =>
+    Math.max(1, getGridColumnsCount(size, defaultWidth)),
+  );
+
+  const updateColumns = React.useCallback(
+    (width: number) => {
+      if (width <= 0) {
+        return;
+      }
+
+      const nextColumns = Math.max(1, getGridColumnsCount(size, width));
+      setColumns((previousColumns) =>
+        previousColumns === nextColumns ? previousColumns : nextColumns,
+      );
+    },
+    [size],
+  );
 
   React.useEffect(() => {
-    if (!containerRef.current) return;
-
     const target = containerRef.current;
+
+    if (!target) {
+      return;
+    }
+
     const observer = new ResizeObserver((entries) => {
       entries.forEach((entry) => {
-        const width = entry.contentRect.width;
-        if (width > 0) {
-          const calculatedColumns = getGridColumnsCount(size, width);
-          setColumns(Math.max(1, calculatedColumns));
-        }
+        updateColumns(entry.contentRect.width);
       });
     });
 
-    // Initial calculation
-    const initialWidth = target.clientWidth;
-    if (initialWidth > 0) {
-      const calculatedColumns = getGridColumnsCount(size, initialWidth);
-      setColumns(Math.max(1, calculatedColumns));
-    }
-
+    updateColumns(target.clientWidth);
     observer.observe(target);
-    return () => observer.disconnect();
-  }, [size]);
 
-  return <Honeycomb ref={containerRef} size={size} {...restProps} columns={columns} />;
+    return () => observer.disconnect();
+  }, [updateColumns]);
+
+  return <Honeycomb containerRef={containerRef} size={size} {...restProps} columns={columns} />;
 };
 
 export default ResponsiveHoneycomb;

@@ -67,7 +67,13 @@ export const AddWidgetsToLayoutPanel = ({
         </Box>
       )}
 
-      <Box display="flex" flexWrap="wrap" gap="1rem">
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '1rem',
+        }}
+      >
         {widgetsToAdd.map(({ key, ...widget }) => (
           <StyledCard
             key={key}
@@ -110,40 +116,38 @@ type StyledCardProps = {
 export const StyledCard = ({ title, icon, children, sx = {}, button }: StyledCardProps) => {
   const theme = useTheme();
   return (
-    <>
-      <Card
-        sx={{
-          minWidth: 275,
-          height: '100%',
-          ...sx,
-          backgroundColor: theme.palette.background.elevatedComponents,
-        }}
-      >
-        <CardContent>
-          <div
-            style={{
+    <Card
+      sx={{
+        minWidth: 275,
+        height: '100%',
+        ...sx,
+        backgroundColor: theme.palette.background.elevatedComponents,
+      }}
+    >
+      <CardContent>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box
+            sx={{
               display: 'flex',
-              justifyContent: 'space-between',
+              mb: 1.5,
             }}
           >
-            <Box
-              sx={{
-                display: 'flex',
-                mb: 1.5,
-              }}
-            >
-              {icon} {/* Card Icon */}
-              <Typography variant="h6" fontWeight="700" component="div" sx={{ mx: 1 }}>
-                {title}
-              </Typography>
-            </Box>
-            {button}
-          </div>
+            {icon}
+            <Typography variant="h6" fontWeight="700" component="div" sx={{ mx: 1 }}>
+              {title}
+            </Typography>
+          </Box>
+          {button}
+        </div>
 
-          {children}
-        </CardContent>
-      </Card>
-    </>
+        {children}
+      </CardContent>
+    </Card>
   );
 };
 
@@ -175,18 +179,16 @@ export const LayoutActionButton = ({
   }
 
   return (
-    <>
-      <Button
-        variant="text"
-        style={{ color: iconsProps.fill }}
-        onClick={action}
-        endIcon={<Icon {...iconsProps} />}
-      >
-        <CustomTooltip title={description} fontSize="1rem" variant="standard">
-          <div>{label}</div>
-        </CustomTooltip>
-      </Button>
-    </>
+    <Button
+      variant="text"
+      style={{ color: iconsProps.fill }}
+      onClick={action}
+      endIcon={<Icon {...iconsProps} />}
+    >
+      <CustomTooltip title={description} fontSize="1rem" variant="standard">
+        <div>{label}</div>
+      </CustomTooltip>
+    </Button>
   );
 };
 

@@ -3,13 +3,29 @@ import { getColumnSize, getRowSize } from './helpers';
 import HoneycombCell from './HoneycombCell';
 import { HoneycombContainer } from '../../style';
 
-const Honeycomb = ({ items, renderItem, size, columns, className, ref }) => {
+export type HoneycombProps<T> = {
+  items: T[];
+  renderItem: (item: T, index: number) => React.ReactNode;
+  size: number;
+  columns: number;
+  className?: string;
+  containerRef?: React.Ref<HTMLDivElement>;
+};
+
+const Honeycomb = <T,>({
+  items,
+  renderItem,
+  size,
+  columns,
+  className,
+  containerRef,
+}: HoneycombProps<T>) => {
   const rowSize = getRowSize(size);
   const columnSize = getColumnSize(size);
 
   return (
     <HoneycombContainer
-      ref={ref}
+      ref={containerRef}
       className={className}
       columnSize={columnSize}
       columns={columns}
