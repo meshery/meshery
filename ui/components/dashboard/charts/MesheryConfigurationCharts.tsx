@@ -57,7 +57,7 @@ export default function MesheryConfigurationChart() {
       data: {
         columns: chartData,
         type: donut(),
-        colors: dataToColors(chartData),
+        colors: dataToColors(chartData, theme),
         onclick: (dataPoint: { name: string }) => {
           const routeName = dataPoint.name.charAt(0).toLowerCase() + dataPoint.name.slice(1);
           router.push(`/configuration/${routeName}`);
@@ -81,7 +81,7 @@ export default function MesheryConfigurationChart() {
         },
       },
     }),
-    [chartData, router],
+    [chartData, router, theme],
   );
 
   return (
