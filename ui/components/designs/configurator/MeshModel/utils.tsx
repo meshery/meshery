@@ -1,4 +1,4 @@
-import { JsonParse } from '../../../utils/utils';
+import { JsonParse } from '../../../../utils/utils';
 
 export function getComponentMetadata(metadata) {
   const cleanedMeta = { ...metadata };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useContext } from 'react';
 import { capitalize } from 'lodash';
-import { Loading } from '@/components/DesignLifeCycle/common';
+import { Loading } from '@/components/designs/lifecycle/common';
 import { NotificationCenterContext } from '@/components/NotificationCenter';
 import { useEffect } from 'react';
 import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';

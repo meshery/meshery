@@ -8,7 +8,7 @@ import {
   GridNoPapperStyles,
   GridNoTextStyles,
   GridPaginationStyles,
-} from '../MesheryPatterns/Grid.styles';
+} from '../designs/patterns/Grid.styles';
 import { RJSFModalWrapper } from '../General/Modals/Modal';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';

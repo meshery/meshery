@@ -34,49 +34,49 @@ import {
 } from '@/assets/icons';
 import CustomToolbarSelect from './CustomToolbarSelect';
 import React, { useEffect, useRef, useState } from 'react';
-import { UnControlled as CodeMirror } from '../CodeMirror';
+import { UnControlled as CodeMirror } from '../../CodeMirror';
 import Moment from 'react-moment';
-import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../../utils/utils';
-import ViewSwitch from '../ViewSwitch';
+import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../../../utils/utils';
+import ViewSwitch from '../../ViewSwitch';
 import MesheryPatternGrid from './MesheryPatternGridView';
-import UndeployIcon from '../../public/static/img/UndeployIcon';
+import UndeployIcon from '../../../public/static/img/UndeployIcon';
 import {
   DoneAll as DoneAllIcon,
   Public as PublicIcon,
   Publish as PublishIcon,
 } from '@/assets/icons';
-import _PromptComponent from '../PromptComponent';
-import LoadingScreen from '../LoadingComponents/LoadingComponent';
-import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../../utils/Enum';
-import CloneIcon from '../../public/static/img/CloneIcon';
+import _PromptComponent from '../../PromptComponent';
+import LoadingScreen from '../../LoadingComponents/LoadingComponent';
+import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../../../utils/Enum';
+import CloneIcon from '../../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import { RJSFModalWrapper } from '../General/Modals/Modal';
-import downloadContent from '../../utils/fileDownloader';
+import { RJSFModalWrapper } from '../../General/Modals/Modal';
+import downloadContent from '../../../utils/fileDownloader';
 import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
-import Pattern from '../../public/static/img/drawer-icons/pattern_svg';
-import { useNotification } from '../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
+import Pattern from '../../../public/static/img/drawer-icons/pattern_svg';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../lib/event-types';
 import _ from 'lodash';
-import { getMeshModels } from '../../api/meshmodel';
-import { modifyRJSFSchema } from '../../utils/utils';
+import { getMeshModels } from '../../../api/meshmodel';
+import { modifyRJSFSchema } from '../../../utils/utils';
 import { Edit as EditIcon } from '@/assets/icons';
-import { updateVisibleColumns } from '../../utils/responsive-column';
-import { useWindowDimensions } from '../../utils/dimension';
-import InfoModal from '../General/Modals/Information/InfoModal';
+import { updateVisibleColumns } from '../../../utils/responsive-column';
+import { useWindowDimensions } from '../../../utils/dimension';
+import InfoModal from '../../General/Modals/Information/InfoModal';
 import { InfoOutlined as InfoOutlinedIcon } from '@/assets/icons';
-import { DefaultTableCell, SortableTableCell } from '../connections/common';
-import DefaultError from '../General/error-404/index';
+import { DefaultTableCell, SortableTableCell } from '../../connections/common';
+import DefaultError from '../../General/error-404/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import ExportModal from '../ExportModal';
+import ExportModal from '../../ExportModal';
 import { useModal, Modal as SistentModal, ModalBody } from '@sistent/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { useActorRef } from '@xstate/react';
 import { designValidationMachine } from 'machines/validator/designValidator';
-import { UnDeployStepper, DeployStepper } from '../DesignLifeCycle/DeployStepper';
-import { DryRunDesign } from '../DesignLifeCycle/DryRun';
-import { DEPLOYMENT_TYPE } from '../DesignLifeCycle/common';
+import { UnDeployStepper, DeployStepper } from '../lifecycle/DeployStepper';
+import { DryRunDesign } from '../lifecycle/DryRun';
+import { DEPLOYMENT_TYPE } from '../lifecycle/common';
 import {
   useClonePatternMutation,
   useDeletePatternFileMutation,
@@ -91,7 +91,7 @@ import {
   useUploadPatternFileMutation,
 } from '@/rtk-query/design';
 import CheckIcon from '@/assets/icons/CheckIcon';
-import { ValidateDesign } from '../DesignLifeCycle/ValidateDesign';
+import { ValidateDesign } from '../lifecycle/ValidateDesign';
 import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
 // import { useGetUserPrefQuery } from '@/rtk-query/user';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
