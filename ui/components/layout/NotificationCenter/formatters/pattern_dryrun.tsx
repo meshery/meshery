@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormatDryRunResponse } from '../../../DesignLifeCycle/DryRun';
+import { FormatDryRunResponse } from '../../../designs/lifecycle/DryRun';
 import { formatDryRunResponse } from 'machines/validator/designValidator';
 import { ValidationResults } from '@/components/designs/lifecycle/ValidateDesign';
 
