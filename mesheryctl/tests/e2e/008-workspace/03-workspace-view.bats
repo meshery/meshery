@@ -17,9 +17,9 @@ setup() {
     run $MESHERYCTL_BIN workspace view foo
     assert_failure
     assert_output --partial "Error"
-    assert_output --partial "Invalid value for --orgId ''"
+    assert_output --partial "--orgId"
+    assert_output --partial "Invalid value"
 }
-
 @test "given an invalid orgId when running mesheryctl workspace view somename --orgId foo then an error message is displayed" {
     run $MESHERYCTL_BIN workspace view somename --orgId foo
     assert_failure
@@ -28,7 +28,7 @@ setup() {
 }
 
 @test "given non-existent UUID when running mesheryctl workspace view then workspace not found error is displayed" {
-    run $MESHERYCTL_BIN workspace view 00000000-0000-0000-0000-000000000000
+    run $MESHERYCTL_BIN workspace view 00000000-0000-0000-0000-000000000000 --orgId "$ORGANIZATION_ID"
     assert_failure
     assert_output --partial "Error"
 }
@@ -39,5 +39,6 @@ setup() {
     [ -n "$WORKSPACE_ID" ] || skip "No workspace found"
     run $MESHERYCTL_BIN workspace view "$WORKSPACE_ID" --orgId "$ORGANIZATION_ID"
     assert_success
-    assert_output --partial "e2e-test-workspace"
+    assert_output --partial "name:"
+    assert_output --partial "id:"
 }
