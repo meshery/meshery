@@ -1,11 +1,9 @@
 import React from 'react';
-import SyncAltIcon from '@mui/icons-material/SyncAlt';
-import { Delete, Edit } from '@mui/icons-material';
 import { FlipCard } from '../General';
 import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environments';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Grid2, useTheme } from '@sistent/sistent';
+import { DeleteIcon, EditIcon, Grid2, SyncAltIcon, useTheme } from '@sistent/sistent';
 
 import {
   Name,
@@ -38,12 +36,12 @@ export const TransferButton = ({ title, count, onAssign, disabled }) => {
         <TabCount>{count}</TabCount>
         <TabTitle>{title}</TabTitle>
         <SyncAltIcon
-          sx={{
+          style={{
             position: 'absolute',
             top: '10px',
             right: '10px',
-            color: theme.palette.background?.neutral?.default,
           }}
+          fill={theme.palette.background?.neutral?.default}
         />
       </Grid2>
     </PopupButton>
@@ -230,7 +228,7 @@ const EnvironmentCard = ({
                       : !CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)
                   }
                 >
-                  <Edit sx={{ color: 'white', margin: '0 2px' }} />
+                  <EditIcon fill="white" style={{ margin: '0 2px' }} />
                 </IconButton>
                 <IconButton
                   onClick={onDelete}
@@ -240,7 +238,7 @@ const EnvironmentCard = ({
                       : !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
                   }
                 >
-                  <Delete sx={{ color: 'white', margin: '0 2px' }} />
+                  <DeleteIcon fill="white" style={{ margin: '0 2px' }} />
                 </IconButton>
               </Grid2>
             </Grid2>
