@@ -1,27 +1,28 @@
 import React, { useContext, useState, useEffect } from 'react';
 import {
-  ModalBody,
-  useTheme,
-  WorkspaceIcon,
-  List,
+  AccessTimeFilledIcon,
+  Box,
+  ChevronLeft,
+  ChevronRight,
+  CustomTooltip,
+  DesignIcon,
+  Divider,
+  ErrorBoundary,
   IconButton,
+  List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Box,
-  DesignIcon,
+  ModalBody,
+  PeopleIcon,
   ViewIcon,
+  WorkspaceIcon,
   useMediaQuery,
-  Divider,
-  ErrorBoundary,
-  CustomTooltip,
+  useTheme,
 } from '@sistent/sistent';
 import { WorkspacesComponent } from '@/components/Lifecycle';
 import { iconMedium, iconSmall } from 'css/icons.styles';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import MyViewsContent from './MyViewsContent';
 import MyDesignsContent from './MyDesignsContent';
 import RecentContent from './RecentContent';
@@ -29,7 +30,6 @@ import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { DrawerHeader, StyledDrawer, StyledMainContent, StyledModal } from './styles';
 import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery, useGetSelectedOrganization } from '@/rtk-query/user';
-import PeopleIcon from '@mui/icons-material/People';
 import SharedContent from './SharedContent';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -348,7 +348,7 @@ const Navigation = ({ setHeaderInfo }) => {
 
           <DrawerHeader open={open}>
             <IconButton onClick={handleDrawerToggle}>
-              {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+              {open ? <ChevronLeft /> : <ChevronRight />}
             </IconButton>
           </DrawerHeader>
         </StyledDrawer>

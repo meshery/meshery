@@ -18,18 +18,23 @@ In this tutorial, we'll see how to export a design from Meshery, which we will u
 
 ## Steps
 
-1. Navigate to Designs
-   - Locally: http://localhost:9081/configuration/designs?view=grid
-   - Playground: https://playground.meshery.io/configuration/designs?view=grid
+1. Navigate to the Designs page. You can access it from the left-hand menu in Meshery. The URL will be:
+   - Locally: [http://localhost:9081/configuration/designs?view=grid](http://localhost:9081/configuration/designs?view=grid)
+   - Playground: [https://playground.meshery.io/configuration/designs?view=grid](https://playground.meshery.io/configuration/designs?view=grid)
 
-![](/guides/tutorials/images/publish-to-artifacthub/designs.png)
+![](/guides/tutorials/artifacthub/images/designs.png)
+  
+{{% alert color="info" title="Can't find your design?" %}}
+If you don't see your design, check your Organization and Workspace selections. 
 
-2. Click to download your design
-![](/guides/tutorials/images/publish-to-artifacthub/design-download.png)
+If you don't have any designs, you can create one by following the [Create a Design tutorial](/guides/tutorials/create-design).
+{{% /alert %}}
 
-3. Prepare your Artifact Hub repository
+2. Click to download your design. You can find the download button in the design's card in the grid view, or in the design's details page. This will download a `tar` archive containing your design and the metadata files to publish it to Artifact Hub.
 
-You will need to have an Artifact Hub repository already created with Kind as Meshery Designs. See [Artifact Hub documentation](https://artifacthub.io/docs/topics/repositories/meshery-designs/) for more information on managing repositories.
+![](/guides/tutorials/artifacthub/images/design-download.png)
+
+3. Prepare your Artifact Hub repository. You will need to have an Artifact Hub repository already created with Kind as Meshery Designs. See [Artifact Hub documentation](https://artifacthub.io/docs/topics/repositories/meshery-designs/) for more information on managing repositories.
 
 ### Push Design to Artifact Hub repository
 
@@ -38,3 +43,4 @@ At this point, you should have downloaded your design as a `tar` archive. This a
 ### Verify repository in Artifact Hub
 
 Once the files are pushed to the Artifact Hub repo you will need to wait until Artifact Hub indexes it. You can verify the status of the repository in the Artifact Hub control panel.
+ 

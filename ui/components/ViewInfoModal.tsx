@@ -24,7 +24,7 @@ import { ModalButtonSecondary } from '@sistent/sistent';
 import { handleUpdateViewVisibility, viewPath } from './workspaces/SpacesSwitcher/hooks';
 import { ModalButtonPrimary } from '@sistent/sistent';
 import rehypeSanitize from 'rehype-sanitize';
-import { Lock, Public } from '@mui/icons-material';
+import { Lock, Public } from '@/components/icons';
 import { VIEW_VISIBILITY } from '@/utils/Enum';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
@@ -293,7 +293,7 @@ const SaveButton = ({ onClick, isSaving, ...props }) => (
   <ModalButtonPrimary onClick={onClick} {...props} disabled={props?.disabled || isSaving}>
     {isSaving ? (
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <CircularProgress size={20} style={{ marginRight: '0.5rem', color: '#fff' }} />
+        <CircularProgress size={20} sx={{ mr: '0.5rem', color: 'common.white' }} />
         <Typography variant="body1"> Saving...</Typography>
       </div>
     ) : (

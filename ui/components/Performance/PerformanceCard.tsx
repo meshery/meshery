@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import { Delete as DeleteIcon, Edit as EditIcon } from '../icons';
 import {
   CustomTooltip,
   Typography,

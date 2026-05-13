@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';
+import { TABS_SCROLL_BUTTONS_CLASS } from '../constants';
 
 import { SecondaryTab, SecondaryTabs, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
 import { iconMedium } from 'css/icons.styles';
 import { styled } from '@sistent/sistent';
-import { tabsClasses } from '@mui/material';
 
 const DashboardIconText = styled('div')({
   display: 'flex',
@@ -20,47 +20,67 @@ const DashboardIconText = styled('div')({
   },
 });
 
-const ResourcesSubMenu = (props) => {
-  const {
-    k8sConfig,
-    resource,
-    selectedK8sContexts,
-    selectedResource,
-    handleChangeSelectedResource,
-    CRDsKeys,
-    isCRDS,
-  } = props;
+type ResourcesSubMenuProps = {
+  k8sConfig: unknown;
+  resource: {
+    tableConfig: (...args: any[]) => Record<string, { name: string }>;
+    submenu: boolean;
+  };
+  selectedK8sContexts: unknown;
+  selectedResource?: string;
+  handleChangeSelectedResource: (resource: string) => void;
+  CRDsKeys?: Array<{ name: string; model?: string }>;
+  isCRDS?: boolean;
+};
 
-  const CRDsModelName = isCRDS && CRDsKeys.map((key) => key.model);
-  const CRDsKind = isCRDS && CRDsKeys.map((key) => key.name);
+const ResourcesSubMenu = ({
+  k8sConfig,
+  resource,
+  selectedK8sContexts,
+  selectedResource,
+  handleChangeSelectedResource,
+  CRDsKeys = [],
+  isCRDS = false,
+}: ResourcesSubMenuProps) => {
+  const crdsModelName = useMemo(
+    () => (isCRDS ? CRDsKeys.map((key) => key.model) : []),
+    [CRDsKeys, isCRDS],
+  );
+  const crdsKind = useMemo(
+    () => (isCRDS ? CRDsKeys.map((key) => key.name) : []),
+    [CRDsKeys, isCRDS],
+  );
 
   // Call tableConfig() unconditionally to keep hook count stable across renders.
   // Config functions (e.g. WorkloadTableConfig) contain React hooks internally,
   // so they must always be called regardless of whether the result is used.
-  const tableConfigResult = resource.tableConfig();
-  const TABS = isCRDS ? CRDsKind : Object.keys(tableConfigResult);
+  const tableConfigResult = useMemo(() => resource.tableConfig(), [resource]);
+  const tabs = useMemo(
+    () => (isCRDS ? crdsKind : Object.keys(tableConfigResult)),
+    [crdsKind, isCRDS, tableConfigResult],
+  );
 
-  if (!selectedResource && TABS.length > 0) {
-    handleChangeSelectedResource(TABS[0]);
-  }
+  useEffect(() => {
+    if (!tabs.length) {
+      return;
+    }
 
-  if (TABS.length > 0 && selectedResource && !TABS.includes(selectedResource)) {
-    handleChangeSelectedResource(TABS[0]);
-  }
+    if (!selectedResource || !tabs.includes(selectedResource)) {
+      handleChangeSelectedResource(tabs[0]);
+    }
+  }, [handleChangeSelectedResource, selectedResource, tabs]);
 
-  const getResourceCategoryIndex = (resourceCategory) => {
-    return TABS.findIndex((resource) => resource === resourceCategory);
-  };
+  const selectedTabIndex = useMemo(
+    () => tabs.findIndex((resourceName) => resourceName === selectedResource),
+    [selectedResource, tabs],
+  );
 
-  const getResourceCategory = (index) => {
-    return TABS[index];
-  };
   return (
     <>
       <WrapperPaper>
         <SecondaryTabs
           sx={{
-            [`& .${tabsClasses.scrollButtons}`]: {
+            [`& .${TABS_SCROLL_BUTTONS_CLASS}`]: {
               '&.Mui-disabled': { display: 'none' },
             },
             '& .MuiTabs-scroller': {
@@ -68,14 +88,14 @@ const ResourcesSubMenu = (props) => {
             },
             justifyContent: 'center',
           }}
-          value={getResourceCategoryIndex(selectedResource)}
-          onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
+          value={selectedTabIndex}
+          onChange={(_e, value) => handleChangeSelectedResource(tabs[value])}
           variant={'scrollable'}
           allowScrollButtonsMobile
           scrollButtons="auto"
           centered
         >
-          {TABS.map((key, index) => {
+          {tabs.map((key, index) => {
             const title = isCRDS ? key : tableConfigResult[key].name;
             return (
               <SecondaryTab
@@ -85,7 +105,7 @@ const ResourcesSubMenu = (props) => {
                   <DashboardIconText>
                     <GetKubernetesNodeIcon
                       kind={key}
-                      model={CRDsModelName[index]}
+                      model={crdsModelName[index]}
                       size={iconMedium}
                     />
                     {title}
@@ -96,7 +116,7 @@ const ResourcesSubMenu = (props) => {
           })}
         </SecondaryTabs>
       </WrapperPaper>
-      {TABS.map((key, index) => (
+      {tabs.map((key, index) => (
         <TabPanel value={selectedResource} index={key} key={`${key}-${index}`}>
           <ResourcesTable
             key={index}

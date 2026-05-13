@@ -1,20 +1,21 @@
 import { getDesign, useUpdatePatternFileMutation } from '@/rtk-query/design';
 import { getUserAccessToken, getUserProfile, useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
+  DeleteIcon,
+  Divider,
+  ExportIcon,
+  InfoIcon,
   ListItem,
   ListItemText,
-  Divider,
-  PromptComponent,
-  OutlinedPatternIcon,
-  useModal,
+  MergeOutlinedIcon,
   Modal,
+  OutlinedPatternIcon,
+  PromptComponent,
   ShareIcon,
-  useTheme,
-  useRoomActivity,
-  ExportIcon,
-  DeleteIcon,
-  InfoIcon,
   WorkspaceContentMoveModal,
+  useModal,
+  useRoomActivity,
+  useTheme,
 } from '@sistent/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -48,7 +49,6 @@ import {
   useGetWorkspacesQuery,
 } from '@/rtk-query/workspace';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { MergeOutlined } from '@mui/icons-material';
 
 const MainDesignsContent = ({
   page,
@@ -173,7 +173,7 @@ const MainDesignsContent = ({
     MERGE_DESIGN: {
       id: 'merge_design',
       title: 'Merge Into Current Design',
-      icon: <MergeOutlined fill={theme.palette.icon.default} />,
+      icon: <MergeOutlinedIcon fill={theme.palette.icon.default} />,
       enabled: () =>
         isDesignOpenInKanvas() && CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
     },

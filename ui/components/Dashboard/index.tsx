@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
@@ -9,7 +9,6 @@ import MesheryIcon from './images/meshery-icon';
 import { TabPanel } from './tabpanel';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
-import { useState } from 'react';
 import {
   Tab,
   Tabs,
@@ -33,7 +32,7 @@ import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaul
 import { applyMinSizeConstraints } from './layoutConstraints';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
-import { tabsClasses } from '@mui/material';
+import { TABS_SCROLL_BUTTONS_CLASS } from './constants';
 import { useSelector } from 'react-redux';
 import useUnsavedChanges from './useUnsavedChanges';
 import UnsavedChangesModal from './UnsavedChangesModal';
@@ -42,13 +41,23 @@ const ResponsiveReactGridLayout = debounceWidthProvider(Responsive);
 
 const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 
+const getQueryParamValue = (value: string | string[] | undefined, fallback?: string) => {
+  if (Array.isArray(value)) {
+    return value[0] ?? fallback;
+  }
+
+  return value ?? fallback;
+};
+
 const useDashboardRouter = () => {
   const router = useRouter();
   const { query, push: pushRoute, route, isReady } = router;
 
   // Use 'Overview' until router is hydrated with query params
-  const resourceCategory = isReady ? query.resourceCategory || 'Overview' : 'Overview';
-  const selectedResource = isReady ? query.resource : undefined;
+  const resourceCategory = isReady
+    ? getQueryParamValue(query.resourceCategory, 'Overview')
+    : 'Overview';
+  const selectedResource = isReady ? getQueryParamValue(query.resource) : undefined;
 
   const changeResourceTab = (resourceCategory) => {
     if (query.resourceCategory === resourceCategory) {
@@ -78,11 +87,15 @@ const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 const Dashboard = () => {
   const { data: userData, isLoading } = useGetUserPrefQuery();
   const [updateUserPref] = useUpdateUserPrefMutation();
-  const defaultLayout = isLoading
-    ? OVERVIEW_LAYOUT
-    : userData?.remoteProviderPreferences
-      ? DEFAULT_LAYOUT
-      : LOCAL_PROVIDER_LAYOUT; //TODO: Use capability to determine default layout
+  const defaultLayout = useMemo(
+    () =>
+      isLoading
+        ? OVERVIEW_LAYOUT
+        : userData?.remoteProviderPreferences
+          ? DEFAULT_LAYOUT
+          : LOCAL_PROVIDER_LAYOUT,
+    [isLoading, userData?.remoteProviderPreferences],
+  ); //TODO: Use capability to determine default layout
   const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
     useDashboardRouter();
 
@@ -97,9 +110,6 @@ const Dashboard = () => {
   const { width } = useWindowDimensions();
   const theme = useTheme();
 
-  if (!ResourceCategoryTabs.includes(resourceCategory)) {
-    changeResourceTab('Overview');
-  }
   const getCurrentDashboardLayoutFromOrgPrefs = (prefs) => {
     if (!prefs) {
       return defaultLayout;
@@ -111,6 +121,12 @@ const Dashboard = () => {
   const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
   const [isEditMode, setIsEditMode] = useState(false);
 
+  useEffect(() => {
+    if (!ResourceCategoryTabs.includes(resourceCategory)) {
+      changeResourceTab('Overview');
+    }
+  }, [changeResourceTab, resourceCategory]);
+
   const iconsProps = useMemo(
     () => ({
       fill: theme.palette.icon.default,
@@ -121,13 +137,13 @@ const Dashboard = () => {
     [theme.palette.icon.default, theme.palette.icon.secondary],
   );
 
-  const WIDGETS = useMemo(() => getWidgets({ iconsProps, isEditMode }), [iconsProps, isEditMode]);
+  const widgets = useMemo(() => getWidgets({ iconsProps, isEditMode }), [iconsProps, isEditMode]);
   const widgetSizing = useMemo(
     () =>
       Object.fromEntries(
-        Object.entries(WIDGETS).map(([key, widget]) => [key, widget.defaultSizing]),
+        Object.entries(widgets).map(([key, widget]) => [key, widget.defaultSizing]),
       ),
-    [WIDGETS],
+    [widgets],
   );
   const availableHandles = ['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne'];
 
@@ -136,7 +152,7 @@ const Dashboard = () => {
   };
 
   const getWidgetsAvailableToBeAdded = (layout, breakpoint) => {
-    return Object.entries(WIDGETS)
+    return Object.entries(widgets)
       .map(([key, value]) => ({ key, ...value }))
       .filter(
         (widget) => widget?.isEnabled?.() && !isWidgetAlreadyAdded(widget.key, layout, breakpoint),
@@ -169,7 +185,10 @@ const Dashboard = () => {
     confirmNavigation();
   };
 
-  const widgetsToAdd = getWidgetsAvailableToBeAdded(dashboardLayout, currentBreakPoint);
+  const widgetsToAdd = useMemo(
+    () => getWidgetsAvailableToBeAdded(dashboardLayout, currentBreakPoint),
+    [dashboardLayout, currentBreakPoint, widgets],
+  );
 
   const editModeStyles = {
     padding: '0.87rem',
@@ -301,7 +320,7 @@ const Dashboard = () => {
     return layout[breakpoint]
       .map((layoutItem) => ({
         key: layoutItem.i,
-        ...(WIDGETS[layoutItem.i] || {}), // old widgets might still be in the layout and now no longer available
+        ...(widgets[layoutItem.i] || {}), // old widgets might still be in the layout and now no longer available
       }))
       .filter((widget) => widget?.isEnabled?.());
   };
@@ -325,7 +344,7 @@ const Dashboard = () => {
         <WrapperPaper>
           <Tabs
             sx={{
-              [`& .${tabsClasses.scrollButtons}`]: {
+              [`& .${TABS_SCROLL_BUTTONS_CLASS}`]: {
                 '&.Mui-disabled': { display: 'none' },
               },
             }}

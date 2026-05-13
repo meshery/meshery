@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
-import { Search } from '@mui/icons-material';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
 import { useLazyGetSystemSyncQuery } from '../rtk-query/system';
@@ -15,7 +14,6 @@ import RemoteComponent from './RemoteComponent';
 import { useNotification } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
-import SettingsIcon from '@mui/icons-material/Settings';
 import RegistryModal from './Registry/RegistryModal';
 
 import {
@@ -34,6 +32,8 @@ import {
   NoSsr,
   useTheme,
   useMediaQuery,
+  SearchIcon,
+  SettingsIcon,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -349,7 +349,7 @@ function K8sContextMenu({
                         margin: '1px 0px',
                       }}
                       InputProps={{
-                        endAdornment: <Search style={iconMedium} width={24} />,
+                        endAdornment: <SearchIcon style={iconMedium} width={24} />,
                       }}
                     />
                   </div>

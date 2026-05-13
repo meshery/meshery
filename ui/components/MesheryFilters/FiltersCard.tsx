@@ -10,13 +10,10 @@ import {
   Avatar,
   useTheme,
 } from '@sistent/sistent';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Fullscreen from '@mui/icons-material/Fullscreen';
-import Save from '@mui/icons-material/Save';
+import { Delete as DeleteIcon, Fullscreen, Save, FullscreenExit } from '@/components/icons';
 import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from '../CodeMirror';
-import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import {
   BottomContainer,
   CardBackGrid,
@@ -30,18 +27,21 @@ import {
 } from '../MesheryPatterns/Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import CloneIcon from '../../public/static/img/CloneIcon';
-import PublicIcon from '@mui/icons-material/Public';
+import {
+  Public as PublicIcon,
+  GetApp as GetAppIcon,
+  InfoOutlined as InfoOutlinedIcon,
+  Public,
+  Lock,
+} from '@/components/icons';
 import TooltipButton from '../../utils/TooltipButton';
 import { VISIBILITY } from '../../utils/Enum';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { VisibilityChipMenu } from '@sistent/sistent';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
-import { Public, Lock } from '@mui/icons-material';
 import { iconMedium } from 'css/icons.styles';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };

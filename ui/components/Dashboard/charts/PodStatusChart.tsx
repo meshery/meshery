@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
 import {
   Typography,
@@ -23,48 +23,50 @@ type PodStatusChartProps = {
 };
 
 export const PodStatusChart = ({ podData, isClusterLoading }: PodStatusChartProps) => {
-  const columns = podData?.map((pod) => [pod.status, pod.count]);
-
   const totalPods = podData?.reduce((acc, pod) => acc + pod.count, 0);
-  const chartOptions = {
-    data: {
-      columns: columns,
-      type: donut(),
-      colors: {
-        Running: KEPPEL,
-        Pending: SAFFRON,
-        Failed: ERROR_COLOR,
-        Succeeded: TEAL_BLUE,
-        Unknown: DARK_SLATE_GRAY,
-      },
-    },
-    arc: {
-      cornerRadius: {
-        ratio: 0.05,
-      },
-    },
-    donut: {
-      title: `${totalPods}\nPods`,
-      padAngle: 0.03,
-      label: {
-        format: (value) => `${((value / totalPods) * 100).toFixed(1)}%`,
-      },
-    },
-    tooltip: {
-      format: {
-        value: function (v) {
-          return v;
+  const columns = useMemo(() => podData?.map((pod) => [pod.status, pod.count]), [podData]);
+  const chartOptions = useMemo(
+    () => ({
+      data: {
+        columns,
+        type: donut(),
+        colors: {
+          Running: KEPPEL,
+          Pending: SAFFRON,
+          Failed: ERROR_COLOR,
+          Succeeded: TEAL_BLUE,
+          Unknown: DARK_SLATE_GRAY,
         },
       },
-    },
-    legend: {
-      show: true,
-      contents: {
-        bindto: '#podLegend',
-        template: getLegendTemplate,
+      arc: {
+        cornerRadius: {
+          ratio: 0.05,
+        },
       },
-    },
-  };
+      donut: {
+        title: `${totalPods}\nPods`,
+        padAngle: 0.03,
+        label: {
+          format: (value) => `${((value / totalPods) * 100).toFixed(1)}%`,
+        },
+      },
+      tooltip: {
+        format: {
+          value: function (v) {
+            return v;
+          },
+        },
+      },
+      legend: {
+        show: true,
+        contents: {
+          bindto: '#podLegend',
+          template: getLegendTemplate,
+        },
+      },
+    }),
+    [columns, totalPods],
+  );
   return (
     <ChartSectionWithColumn>
       <Stack direction="row" mb={2}>
@@ -84,7 +86,7 @@ export const PodStatusChart = ({ podData, isClusterLoading }: PodStatusChartProp
         ) : (
           <>
             <BBChart options={chartOptions} />
-            <LegendSection id="podLegend"></LegendSection>
+            <LegendSection id="podLegend" />
           </>
         )}
       </>
