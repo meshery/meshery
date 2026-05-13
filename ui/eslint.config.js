@@ -129,8 +129,6 @@ const legacyLiteralColorOffenders = [
 ];
 
 const legacyMaxLineOffenders = [
-  'components/dashboard/resources/configuration/config.tsx',
-  'components/dashboard/resources/workloads/config.tsx',
   'components/MesheryAdapterPlayComponent.tsx',
   'components/designs/patterns/MesheryPatterns.tsx',
   'components/performance/index.tsx',
@@ -142,7 +140,6 @@ const legacyMaxLineOffenders = [
 // proactive warning threshold (§8.4) but stay under the hard 1000-line ceiling.
 // Allowlisted so CI stays green; entries leave the list as files get split up.
 const legacyMaxLineSoftOffenders = [
-  'components/dashboard/resources/network/config.tsx',
   'components/environments/index.tsx',
   'components/layout/Navigator/Navigator.tsx',
   'components/performance/PerformanceResults.tsx',
@@ -177,7 +174,7 @@ const legacyInlineStyleOffenders = [
   'components/dashboard/images/meshery-icon.tsx',
   'components/dashboard/index.tsx',
   'components/dashboard/overview.tsx',
-  'components/dashboard/resources/network/config.tsx',
+  'components/dashboard/resources/network/service-columns.tsx',
   'components/dashboard/resources/nodes/config.tsx',
   'components/dashboard/resources/resources-table.tsx',
   'components/dashboard/resources/security/config.tsx',
