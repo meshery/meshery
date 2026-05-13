@@ -23,17 +23,17 @@ import {
   ExportIcon,
   IconButton,
   CloseIcon,
+  FileUploadIcon,
+  SettingsIcon,
 } from '@sistent/sistent';
 import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';
-import { FileUpload } from '@mui/icons-material';
 import { ImportDesignModal } from '@/components/MesheryPatterns/MesheryPatterns';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useImportPatternMutation } from '@/rtk-query/design';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import { useAssignDesignToWorkspaceMutation } from '@/rtk-query/workspace';
@@ -395,7 +395,7 @@ export const ImportButton = ({ workspaceId, disabled = false, refetch }) => {
           padding: '0.85rem !important',
           width: '100%',
         }}
-        startIcon={<FileUpload color={theme.palette.common.white} />}
+        startIcon={<FileUploadIcon color={theme.palette.common.white} />}
       >
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Import</Box>
       </StyledResponsiveButton>

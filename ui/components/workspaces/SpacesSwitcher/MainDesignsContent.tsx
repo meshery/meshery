@@ -48,7 +48,7 @@ import {
   useGetWorkspacesQuery,
 } from '@/rtk-query/workspace';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { MergeOutlined } from '@mui/icons-material';
+import { MergeOutlined } from '@sisten/sisten';
 
 const MainDesignsContent = ({
   page,

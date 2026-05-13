@@ -126,7 +126,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                           style: {
                             display: 'flex',
                             flexDirection: 'row',
-                            fill: '#eee',
+                            fill: theme.palette.primary.light,
                             paddingBlock: '9px 8px',
                             paddingInline: '18px 34px',
                           },

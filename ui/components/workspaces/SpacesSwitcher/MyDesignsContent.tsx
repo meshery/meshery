@@ -1,9 +1,10 @@
+import ExportModal from '@/components/ExportModal';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import React, { useCallback, useRef, useState } from 'react';
-import MainDesignsContent from './MainDesignsContent';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
-import { Box, Grid2, useTheme } from '@sistent/sistent';
+import { Box, Grid2, StyledSearchBar, useTheme, PromptComponent } from '@sistent/sistent';
+import React, { useCallback, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   ImportButton,
   MultiContentSelectToolbar,
@@ -12,9 +13,8 @@ import {
   VisibilitySelect,
 } from './components';
 import { useContentDelete, useContentDownload } from './hooks';
-import ExportModal from '@/components/ExportModal';
+import MainDesignsContent from './MainDesignsContent';
 import ShareModal from './ShareModal';
-import { useSelector } from 'react-redux';
 
 const MyDesignsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});

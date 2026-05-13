@@ -37,7 +37,7 @@ import {
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import OrganizationAndWorkSpaceSwitcher from './workspaces/SpacesSwitcher/SpaceSwitcher'
+import OrganizationAndWorkSpaceSwitcher from './workspaces/SpacesSwitcher/SpaceSwitcher';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from './General/Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';

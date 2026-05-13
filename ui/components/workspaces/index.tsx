@@ -130,7 +130,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
   });
   const workspaceModalContext = useContext(WorkspaceModalContext);
 
-  const { organization } = useSelector((state) => state.ui);
+  const { organization } = useSelector((state: { ui: any }) => state.ui);
   const [page, setPage] = useState(0);
   const pageSize = 10;
   const sortOrder = 'updated_at desc';
@@ -373,6 +373,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
         Workspace Name:
         <i>
           <b>{workspace}</b>
+          closeWorkspaceModal{' '}
         </i>
       </p>
     </>
@@ -429,7 +430,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
                   handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE, selectedWorkspace)
                 }
                 sx={{
-                  backgroundColor: '#607d8b',
+                  backgroundColor: theme.palette.primary.light,
                   padding: '8px',
                   borderRadius: '5px',
                   marginRight: '2rem',
@@ -476,14 +477,18 @@ const Workspaces = ({ onSelectWorkspace }) => {
             </Box>
           </ToolWrapper>
         )}
-        <>
-          {workspaces.length === 0 ? (
+        {
+          // this is a very suspicious fold, must be refactored later
+          <>
+            workspaces.length === 0 ? ( (
             <EmptyState
-              icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
+              icon={
+                <WorkspaceIcon height="6rem" width="6rem" fill={theme.palette.primary.neutral} />
+              }
               message="No workspace available"
               pointerLabel="Click “Create” to establish your first workspace."
             />
-          ) : viewType === 'grid' ? (
+            ) : viewType === 'grid' ? ( (
             <WorkspaceGridView
               handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
               handleWorkspaceModalOpen={handleWorkspaceModalOpen}
@@ -493,7 +498,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
               workspacesData={workspaces}
               key={`grid-view-${viewType}`}
             />
-          ) : (
+            ) : (
             <WorkspaceDataTable
               handleWorkspaceModalOpen={handleWorkspaceModalOpen}
               handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
@@ -506,8 +511,9 @@ const Workspaces = ({ onSelectWorkspace }) => {
               search={search}
               viewType={viewType}
             />
-          )}
-        </>
+            )
+          </>
+        }
         {(actionType === WORKSPACE_ACTION_TYPES.CREATE
           ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
           : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&

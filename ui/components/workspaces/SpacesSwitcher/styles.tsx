@@ -175,13 +175,13 @@ export const StyledListIcon = styled(ListItemIcon)({
   paddingRight: '1rem',
 });
 
-export const StyledUpdatedText = styled('p')({
+export const StyledUpdatedText = styled('p')(({ theme }) => ({
   margin: '0',
   fontSize: '0.8rem',
   fontStyle: 'italic',
-  color: '#647881',
+  color: theme.palette.primary.dark,
   cursor: 'pointer',
-});
+}));
 
 export const StyledSmallAvatarContainer = styled('div')(({ transform, clipPath }) => ({
   position: 'absolute',
