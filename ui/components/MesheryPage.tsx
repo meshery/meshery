@@ -1,6 +1,7 @@
 import { Box, NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
 import React from 'react';
+import type { ComponentProps } from 'react';
 import { usePageTitle } from '@/utils/hooks';
 
 interface MesheryPageProps {
@@ -16,6 +17,9 @@ interface MesheryPageProps {
 /**
  * Standard page shell: registers the page title in Redux, sets the browser
  * tab title, and wraps children in NoSsr.
+ *
+ * Head is intentionally rendered outside NoSsr so the <title> tag is
+ * included in the server-side HTML response (better SEO, no hydration flicker).
  */
 export const MesheryPage = ({ title, headTitle, noSuffix, children }: MesheryPageProps) => {
   usePageTitle(title);
@@ -23,18 +27,23 @@ export const MesheryPage = ({ title, headTitle, noSuffix, children }: MesheryPag
   const browserTitle = noSuffix ? base : `${base} | Meshery`;
 
   return (
-    <NoSsr>
+    <>
       <Head>
         <title>{browserTitle}</title>
       </Head>
-      {children}
-    </NoSsr>
+      <NoSsr>{children}</NoSsr>
+    </>
   );
 };
 
 /**
  * Centered, overflow-hidden container used by several list/table pages.
+ * Pass sx to extend or override the default layout styles.
  */
-export const PageContainer = ({ children }: { children: React.ReactNode }) => (
-  <Box sx={{ margin: 'auto', overflow: 'hidden' }}>{children}</Box>
-);
+export const PageContainer = ({
+  children,
+  sx,
+}: {
+  children: React.ReactNode;
+  sx?: ComponentProps<typeof Box>['sx'];
+}) => <Box sx={{ margin: 'auto', overflow: 'hidden', ...sx }}>{children}</Box>;
