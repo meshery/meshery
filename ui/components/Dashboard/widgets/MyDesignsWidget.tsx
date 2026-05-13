@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
   CatalogIcon,
@@ -8,9 +8,22 @@ import {
   useTheme,
   DesignCard,
 } from '@sistent/sistent';
-import { useState } from 'react';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
+
+type DashboardIconProps = {
+  fill?: string;
+  primaryFill?: string;
+  secondaryFill?: string;
+  width?: number | string;
+  height?: number | string;
+};
+
+type MyDesignsWidgetProps = {
+  iconsProps?: DashboardIconProps;
+};
+
+const DEFAULT_SORT_ORDER = 'updated_at desc';
 
 const cardData = [
   {
@@ -33,8 +46,8 @@ const cardData = [
   },
 ];
 
-const MyDesignsWidget = (props: { iconsProps?: object }) => {
-  const [sortOrder, setSortOrder] = useState('updated_at desc');
+const MyDesignsWidget = ({ iconsProps }: MyDesignsWidgetProps) => {
+  const [sortOrder, setSortOrder] = useState(DEFAULT_SORT_ORDER);
   const { data: userData } = useGetLoggedInUserQuery();
   const { data: patternsData, isFetching: isPatternsFetching } = useGetUserDesignsQuery({
     expandUser: true,
@@ -46,44 +59,44 @@ const MyDesignsWidget = (props: { iconsProps?: object }) => {
   });
   const theme = useTheme();
 
-  return (
-    <>
-      <DesignCard
-        isPatternsFetching={isPatternsFetching}
-        cardData={cardData}
-        resources={
-          patternsData?.patterns?.map((pattern) => {
-            return {
-              name: pattern.name,
-              timestamp: pattern.updatedAt,
-              link: `/extension/meshmap?mode=design&design=${pattern.id}`,
-              icon: (
-                <DesignIcon
-                  width="15px"
-                  height="15px"
-                  primaryFill="currentColor"
-                  secondaryFill="currentColor"
-                />
-              ),
-            };
-          }) || []
-        }
-        icon={
+  const resources = useMemo(
+    () =>
+      patternsData?.patterns?.map((pattern) => ({
+        name: pattern.name,
+        timestamp: pattern.updatedAt,
+        link: `/extension/meshmap?mode=design&design=${pattern.id}`,
+        icon: (
           <DesignIcon
-            {...props.iconsProps}
-            fill={theme.palette.icon.default}
-            primaryFill={theme.palette.icon.default}
-            secondaryFill={theme.palette.icon.default}
+            width="15px"
+            height="15px"
+            primaryFill="currentColor"
+            secondaryFill="currentColor"
           />
-        }
-        title="MY RECENT DESIGNS"
-        actionButton={true}
-        href={`${MESHERY_CLOUD_PROD}/catalog/content/my-designs`}
-        btnTitle="See All Designs"
-        sortOrder={sortOrder}
-        setSortOrder={setSortOrder}
-      />
-    </>
+        ),
+      })) ?? [],
+    [patternsData?.patterns],
+  );
+
+  return (
+    <DesignCard
+      isPatternsFetching={isPatternsFetching}
+      cardData={cardData}
+      resources={resources}
+      icon={
+        <DesignIcon
+          {...iconsProps}
+          fill={theme.palette.icon.default}
+          primaryFill={theme.palette.icon.default}
+          secondaryFill={theme.palette.icon.default}
+        />
+      }
+      title="MY RECENT DESIGNS"
+      actionButton={true}
+      href={`${MESHERY_CLOUD_PROD}/catalog/content/my-designs`}
+      btnTitle="See All Designs"
+      sortOrder={sortOrder}
+      setSortOrder={setSortOrder}
+    />
   );
 };
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { CircularProgress, KEPPEL, Typography, Stack } from '@sistent/sistent';
@@ -15,44 +15,47 @@ type NodeStatusChartProps = {
 };
 
 export const NodeStatusChart = ({ nodeData, isClusterLoading }: NodeStatusChartProps) => {
-  const data = nodeData?.map((node) => [node.status, node.count]);
   const totalNodes = nodeData?.reduce((acc, node) => acc + node.count, 0);
-  const chartOptions = {
-    data: {
-      columns: data,
-      type: donut(),
-      colors: {
-        Ready: KEPPEL,
-        'Not Ready': ERROR_COLOR,
-      },
-    },
-    arc: {
-      cornerRadius: {
-        ratio: 0.05,
-      },
-    },
-    donut: {
-      title: `${totalNodes}\nNodes`,
-      padAngle: 0.03,
-      label: {
-        format: (value) => `${((value / totalNodes) * 100).toFixed(1)}%`,
-      },
-    },
-    tooltip: {
-      format: {
-        value: function (v) {
-          return v;
+  const columns = useMemo(() => nodeData?.map((node) => [node.status, node.count]), [nodeData]);
+  const chartOptions = useMemo(
+    () => ({
+      data: {
+        columns,
+        type: donut(),
+        colors: {
+          Ready: KEPPEL,
+          'Not Ready': ERROR_COLOR,
         },
       },
-    },
-    legend: {
-      show: true,
-      contents: {
-        bindto: '#nodeLegend',
-        template: getLegendTemplate,
+      arc: {
+        cornerRadius: {
+          ratio: 0.05,
+        },
       },
-    },
-  };
+      donut: {
+        title: `${totalNodes}\nNodes`,
+        padAngle: 0.03,
+        label: {
+          format: (value) => `${((value / totalNodes) * 100).toFixed(1)}%`,
+        },
+      },
+      tooltip: {
+        format: {
+          value: function (v) {
+            return v;
+          },
+        },
+      },
+      legend: {
+        show: true,
+        contents: {
+          bindto: '#nodeLegend',
+          template: getLegendTemplate,
+        },
+      },
+    }),
+    [columns, totalNodes],
+  );
 
   return (
     <ChartSectionWithColumn>
@@ -73,7 +76,7 @@ export const NodeStatusChart = ({ nodeData, isClusterLoading }: NodeStatusChartP
         ) : (
           <>
             <BBChart options={chartOptions} />
-            <LegendSection id="nodeLegend"></LegendSection>
+            <LegendSection id="nodeLegend" />
           </>
         )}
       </>

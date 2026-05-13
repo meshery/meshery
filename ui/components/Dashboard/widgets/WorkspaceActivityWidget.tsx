@@ -1,44 +1,57 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { WorkspaceActivityCard } from '@sistent/sistent';
 import { useGetEventsOfWorkspaceQuery, useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
+
+type WorkspaceChangeHandler = NonNullable<
+  React.ComponentProps<typeof WorkspaceActivityCard>['handleWorkspaceChange']
+>;
 
 const WorkspaceActivityWidget = () => {
-  const { organization: currentOrg } = useSelector((state) => state.ui);
+  const { organization: currentOrg } = useSelector((state: RootState) => state.ui);
   const { data: workspaces } = useGetWorkspacesQuery(
     { orgId: currentOrg?.id },
     { skip: !currentOrg?.id },
   );
 
+  const workspaceOptions = workspaces?.workspaces ?? [];
   const [selectedWorkspace, setSelectedWorkspace] = useState('');
+  const activeWorkspaceId = useMemo(() => {
+    if (
+      selectedWorkspace &&
+      workspaceOptions.some((workspace) => workspace.id === selectedWorkspace)
+    ) {
+      return selectedWorkspace;
+    }
+
+    return workspaceOptions[0]?.id ?? '';
+  }, [selectedWorkspace, workspaceOptions]);
+
   const {
     data: events,
     isLoading: isEventsLoading,
     isError: isEventsError,
   } = useGetEventsOfWorkspaceQuery(
     {
-      workspaceId: selectedWorkspace,
+      workspaceId: activeWorkspaceId,
       pagesize: 5,
     },
     {
-      skip: !selectedWorkspace,
+      skip: !activeWorkspaceId,
     },
   );
 
-  useEffect(() => {
-    setSelectedWorkspace(workspaces?.workspaces?.[0]?.id);
-  }, [workspaces]);
+  const handleWorkspaceChange = useCallback<WorkspaceChangeHandler>((event) => {
+    setSelectedWorkspace(String(event.target.value));
+  }, []);
 
-  const handleWorkspaceChange = (event: { target: { value: string } }) => {
-    const newWorkspaceId = event.target.value;
-    setSelectedWorkspace(newWorkspaceId);
-  };
   return (
     <WorkspaceActivityCard
-      selectedWorkspace={selectedWorkspace}
+      selectedWorkspace={activeWorkspaceId}
       handleWorkspaceChange={handleWorkspaceChange}
-      activities={isEventsError ? [] : events?.data}
-      workspaces={workspaces?.workspaces}
+      activities={isEventsError ? [] : (events?.data ?? [])}
+      workspaces={workspaceOptions}
       isEventsLoading={isEventsLoading}
       workspacePagePath="/management/workspaces"
     />

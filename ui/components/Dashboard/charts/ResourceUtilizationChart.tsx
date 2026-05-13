@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { gauge } from 'billboard.js';
 import { Box, Typography, Stack, KEPPEL, SAFFRON, CircularProgress } from '@sistent/sistent';
 import BBChart from '@/components/BBChart';
@@ -16,50 +16,62 @@ export const ResourceUtilizationChart = ({
   usageData,
   isClusterLoading,
 }: ResourceUtilizationChartProps) => {
-  const commonConfig = {
-    gauge: {
-      max: 100,
-      label: {
-        format: function (value) {
-          return value + '%';
+  const commonConfig = useMemo(
+    () => ({
+      gauge: {
+        max: 100,
+        label: {
+          format: function (value) {
+            return value + '%';
+          },
         },
       },
-    },
-    legend: {
-      show: false,
-    },
-    color: {
-      pattern: [KEPPEL, SAFFRON, '#D32F2F'],
-      threshold: {
-        values: [40, 70, 95],
+      legend: {
+        show: false,
       },
-    },
-    size: {
-      height: 150,
-    },
-  };
-  const cpuChartOptions = {
-    ...commonConfig,
-    data: {
-      columns: [[usageData?.[0]?.['resource'], usageData?.[0]?.['percentage']]],
-      type: gauge(),
-    },
-  };
-  const memoryChartOptions = {
-    ...commonConfig,
-    data: {
-      columns: [[usageData?.[1]?.['resource'], usageData?.[1]?.['percentage']]],
-      type: gauge(),
-    },
-  };
+      color: {
+        pattern: [KEPPEL, SAFFRON, '#D32F2F'],
+        threshold: {
+          values: [40, 70, 95],
+        },
+      },
+      size: {
+        height: 150,
+      },
+    }),
+    [],
+  );
+  const cpuChartOptions = useMemo(
+    () => ({
+      ...commonConfig,
+      data: {
+        columns: [[usageData?.[0]?.resource, usageData?.[0]?.percentage]],
+        type: gauge(),
+      },
+    }),
+    [commonConfig, usageData],
+  );
+  const memoryChartOptions = useMemo(
+    () => ({
+      ...commonConfig,
+      data: {
+        columns: [[usageData?.[1]?.resource, usageData?.[1]?.percentage]],
+        type: gauge(),
+      },
+    }),
+    [commonConfig, usageData],
+  );
 
-  const diskChartOptions = {
-    ...commonConfig,
-    data: {
-      columns: [[usageData?.[2]?.['resource'], usageData?.[2]?.['percentage']]],
-      type: gauge(),
-    },
-  };
+  const diskChartOptions = useMemo(
+    () => ({
+      ...commonConfig,
+      data: {
+        columns: [[usageData?.[2]?.resource, usageData?.[2]?.percentage]],
+        type: gauge(),
+      },
+    }),
+    [commonConfig, usageData],
+  );
 
   return (
     <ChartSectionWithColumn>
