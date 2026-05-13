@@ -13,9 +13,10 @@ import { MesheryPatternsCatalog, VISIBILITY } from '../../../utils/Enum';
 import { useRouter } from 'next/router';
 import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import { useNotification } from '../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../lib/event-types';
 import _ from 'lodash';
 import { getMeshModels } from '../../../api/meshmodel';
-import { modifyRJSFSchema } from '../../../utils/utils';
+import { modifyRJSFSchema, parseDesignFile } from '../../../utils/utils';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
@@ -32,6 +33,7 @@ import {
   useDeletePatternFileMutation,
   useDeletePatternMutation,
   useDeployPatternMutation,
+  useEvaluateDesignMutation,
   useGetPatternsQuery,
   useImportPatternMutation,
   usePublishPatternMutation,
@@ -55,6 +57,7 @@ import {
 } from './MesheryPatterns.columns';
 import { buildDesignLifecycleHandlers } from './design-lifecycle-handlers';
 import { createPatternsActions } from './patterns-actions';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 function MesheryPatterns({
   disableCreateImportDesignButton = false,
@@ -111,6 +114,7 @@ function MesheryPatterns({
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
+  const [evaluateDesign] = useEvaluateDesignMutation();
 
   useEffect(() => {
     if (patternsData) {
@@ -390,6 +394,43 @@ function MesheryPatterns({
       handleUndeploy,
     });
 
+  const handleEvaluateDesign = (e, patternFile, name) => {
+    e.stopPropagation();
+    const design = parseDesignFile(patternFile);
+
+    if (!design) {
+      notify({
+        message: `Failed to parse design "${name}"`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
+
+    updateProgress({ showProgress: true });
+    evaluateDesign({
+      evaluateBody: JSON.stringify({ design }),
+    })
+      .unwrap()
+      .then((response) => {
+        updateProgress({ showProgress: false });
+
+        const actionCount = response?.actions?.length || 0;
+        const version = response?.design?.version || 'unknown';
+
+        notify({
+          message: `Evaluation complete for "${name}": ${actionCount} change(s) at version ${version}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      })
+      .catch((error) => {
+        updateProgress({ showProgress: false });
+        notify({
+          message: `Evaluation failed for "${name}": ${error?.data?.message || error?.message || 'Unknown error'}`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      });
+  };
+
   const userCanEdit = (pattern) => {
     return (
       CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) && user?.userId == pattern?.userId
@@ -411,6 +452,7 @@ function MesheryPatterns({
       openDeployModal,
       handleDesignDownloadModal,
       handleInfoModal,
+      handleEvaluateDesign,
       handleUnpublishModal,
       userCanEdit,
     },
@@ -574,6 +616,7 @@ function MesheryPatterns({
                 openValidationModal={openValidateModal}
                 openDryRunModal={openDryRunModal}
                 openDeployModal={openDeployModal}
+                handleEvaluateDesign={handleEvaluateDesign}
                 hideVisibility={hideVisibility}
                 arePatternsReadOnly={arePatternsReadOnly}
               />

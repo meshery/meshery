@@ -13,6 +13,7 @@ vi.mock('react-moment', () => ({
 }));
 
 vi.mock('@/assets/icons', () => ({
+  AccountTree: () => <svg data-testid="account-tree" />,
   GetApp: () => <svg data-testid="get-app" />,
   DoneAll: () => <svg data-testid="done-all" />,
   Public: () => <svg data-testid="public" />,
@@ -108,6 +109,7 @@ const makeHandlers = () => ({
   openDeployModal: vi.fn(),
   handleDesignDownloadModal: vi.fn(),
   handleInfoModal: vi.fn(),
+  handleEvaluateDesign: vi.fn(),
   handleUnpublishModal: vi.fn(),
   userCanEdit: (_: any) => true,
 });
@@ -137,6 +139,7 @@ describe('buildPatternActions', () => {
     const labels = actions.map((a: any) => a.label);
     expect(labels).toContain('Edit');
     expect(labels).toContain('Validate Design');
+    expect(labels).toContain('Evaluate');
     expect(labels).toContain('Deploy');
     expect(labels).toContain('Download');
     expect(labels).not.toContain('Unpublish');

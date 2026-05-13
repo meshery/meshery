@@ -8,6 +8,7 @@ import {
   GetApp as GetAppIcon,
   FullscreenExit,
   DoneAll as DoneAllIcon,
+  AccountTree as AccountTreeIcon,
 } from '@/assets/icons';
 import Moment from 'react-moment';
 import FlipCard from '../../FlipCard';
@@ -70,6 +71,7 @@ function MesheryPatternCard_({
   user,
   pattern,
   handleInfoModal,
+  handleEvaluateDesign,
   hideVisibility = false,
   isReadOnly = false,
 }) {
@@ -239,6 +241,23 @@ function MesheryPatternCard_({
                 ]}
                 data-testid="pattern-btn-action-dropdown"
               />
+              <TooltipButton
+                title="Evaluate"
+                variant="contained"
+                color="primary"
+                onClick={(ev) => genericClickHandler(ev, handleEvaluateDesign)}
+                style={{
+                  padding: '6px 9px',
+                  borderRadius: '8px',
+                }}
+                disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
+                data-testid="pattern-btn-evaluate"
+              >
+                <AccountTreeIcon
+                  style={{ fill: theme.palette.background.constant.white, ...iconMedium }}
+                />
+                <GridBtnText> Evaluate </GridBtnText>
+              </TooltipButton>
               <TooltipButton
                 title="Download"
                 variant="contained"

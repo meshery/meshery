@@ -55,6 +55,7 @@ export { default as InfoOutlinedIcon } from './InfoOutlined';
 
 export {
   AccessTime,
+  AccountTreeIcon as AccountTree,
   AddCircleIcon as AddCircle,
   ArrowBackIcon as ArrowBack,
   BarchartIcon as BarChart,
