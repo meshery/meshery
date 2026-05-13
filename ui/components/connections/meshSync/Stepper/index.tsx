@@ -82,41 +82,62 @@ function StepperIcon({
   );
 }
 
+type SharedData = {
+  metadata?: Record<string, unknown>;
+  capabilities?: {
+    urls?: string[];
+    connection?: boolean;
+  };
+  kind?: string;
+  resourceID?: string;
+  onClose?: () => void;
+  [key: string]: unknown;
+};
+
+type CustomizedSteppersProps = {
+  sharedData: SharedData;
+  setSharedData: React.Dispatch<React.SetStateAction<SharedData>>;
+  connectionData: SharedData;
+  onClose: () => void;
+  handleRegistrationComplete: (resourceId?: string) => void;
+};
+
 export default function CustomizedSteppers({
   sharedData,
   setSharedData,
   connectionData,
   onClose,
   handleRegistrationComplete,
-}: {
-  sharedData: any;
-  setSharedData: (data: any) => void;
-  connectionData: any;
-  onClose: () => void;
-  handleRegistrationComplete: () => void;
-}) {
+}: CustomizedSteppersProps) {
   const [activeStep, setActiveStep] = React.useState(0);
-  const stepData = {
-    stepContent: registerConnectionContent,
-    stepIcons: registerConnectionIcons,
-    steps: registerConnectionSteps,
-  };
-  const { stepContent, stepIcons, steps } = stepData;
+  const { stepContent, stepIcons, steps } = React.useMemo(
+    () => ({
+      stepContent: registerConnectionContent,
+      stepIcons: registerConnectionIcons,
+      steps: registerConnectionSteps,
+    }),
+    [],
+  );
 
   React.useEffect(() => {
     setSharedData({
       metadata: connectionData.metadata,
       capabilities: connectionData.capabilities,
       kind: connectionData.kind,
+      resourceID: connectionData.resourceID,
     });
-  }, [connectionData]);
+  }, [connectionData, setSharedData]);
 
   React.useEffect(() => {
-    setSharedData((prevState) => ({
-      ...prevState,
-      onClose: onClose,
-    }));
-  }, [sharedData]);
+    setSharedData((prevState) =>
+      prevState.onClose === onClose
+        ? prevState
+        : {
+            ...prevState,
+            onClose,
+          },
+    );
+  }, [onClose, setSharedData]);
 
   const ActiveStepContent = stepContent[String(activeStep + 1)].component;
 
@@ -131,10 +152,17 @@ export default function CustomizedSteppers({
     handleRegistrationComplete,
   };
 
-  const stepProps = stepContent[String(activeStep + 1)]?.props?.reduce((props, propName) => {
-    props[propName] = propHandlerMap[propName];
-    return props;
-  }, {});
+  const stepProps = React.useMemo(
+    () =>
+      stepContent[String(activeStep + 1)]?.props?.reduce<Record<string, unknown>>(
+        (props, propName) => {
+          props[propName] = propHandlerMap[propName];
+          return props;
+        },
+        {},
+      ) ?? {},
+    [activeStep, handleRegistrationComplete, sharedData, stepContent],
+  );
 
   return (
     <StepperLayout>

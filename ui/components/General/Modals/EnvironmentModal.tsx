@@ -3,7 +3,12 @@ import { EnvironmentComponent } from '../../Lifecycle';
 
 import { EnvironmentIcon, Modal, ModalBody, useTheme, Box } from '@sistent/sistent';
 
-const EnvironmentModal = ({ isOpenModal, setIsOpenModal }) => {
+type EnvironmentModalProps = {
+  isOpenModal: boolean;
+  setIsOpenModal: (isOpenModal: boolean) => void;
+};
+
+const EnvironmentModal = ({ isOpenModal, setIsOpenModal }: EnvironmentModalProps) => {
   const theme = useTheme();
   if (!isOpenModal) {
     return null;

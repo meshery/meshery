@@ -1,14 +1,22 @@
-import React from 'react';
 import { Modal, ModalBody } from '@sistent/sistent';
 import ConnectionIcon from '@/assets/icons/Connection';
 import ConnectionTable from '../../connections/ConnectionTable';
+
+type ConnectionModalProps = {
+  isOpenModal: boolean;
+  setIsOpenModal: (isOpenModal: boolean) => void;
+  meshsyncControllerState?: unknown;
+  connectionMetadataState?: unknown;
+};
+
+const kubernetesFilter = 'kubernetes';
 
 const ConnectionModal = ({
   isOpenModal,
   setIsOpenModal,
   meshsyncControllerState,
   connectionMetadataState,
-}) => {
+}: ConnectionModalProps) => {
   if (!isOpenModal) {
     return null;
   }
@@ -32,7 +40,7 @@ const ConnectionModal = ({
           <ConnectionTable
             meshsyncControllerState={meshsyncControllerState}
             connectionMetadataState={connectionMetadataState}
-            selectedFilter={'kubernetes'}
+            selectedFilter={kubernetesFilter}
           />
         </div>
       </ModalBody>

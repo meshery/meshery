@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
 import {
   IconButton,
   Menu,
@@ -17,27 +17,86 @@ import { getSchema } from '../../MesheryMeshInterface/PatternService/helper';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 
-const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+type ModalFormData = Record<string, unknown>;
+
+type ModalFormRef = {
+  validateForm?: () => boolean;
+  state?: {
+    formData?: ModalFormData;
+  };
+};
+
+type WrapperComponentProps = Record<string, unknown> & {
+  children?: React.ReactNode;
+};
+
+type SchemaVersionProps = {
+  schemaArray?: string[];
+  type?: string;
+  schemaChangeHandler?: (version: string) => void;
+};
+
+type ModalProps = {
+  open: boolean;
+  title?: string;
+  handleClose: () => void;
+  schema?: Record<string, unknown>;
+  schema_array?: string[];
+  type?: string;
+  schemaChangeHandler?: (version: string) => void;
+  handleSubmit: (formData: ModalFormData) => void;
+  submitBtnText?: string;
+  leftHeaderIcon?: React.ReactNode;
+  uiSchema?: Record<string, unknown>;
+  helpText?: string;
+  RJSFWrapperComponent?: ComponentType<WrapperComponentProps> | null;
+  initialData?: ModalFormData;
+};
+
+type RJSFModalWrapperProps = {
+  handleClose: () => void;
+  schema?: Record<string, unknown>;
+  uiSchema?: Record<string, unknown>;
+  initialData?: ModalFormData;
+  handleSubmit: (formData: ModalFormData) => void;
+  handleNext?: () => void;
+  title?: string;
+  submitBtnText?: string;
+  helpText?: string;
+  widgets?: Record<string, unknown>;
+};
+
+const FORBIDDEN_DESIGN_NAME_TOKENS = ['untitled design', 'untitled', 'lfx'] as const;
+
+const containsForbiddenDesignName = (title?: string) => {
+  const normalizedTitle = title?.toLowerCase();
+
+  return FORBIDDEN_DESIGN_NAME_TOKENS.some((token) => normalizedTitle?.includes(token));
+};
+
+const SchemaVersion = ({ schemaArray = [], type, schemaChangeHandler }: SchemaVersionProps) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <div>
       <Tooltip title="Schema_Changer">
-        <IconButton component="span" onClick={(e) => setAnchorEl(e.currentTarget)}>
+        <IconButton component="span" onClick={(event) => setAnchorEl(event.currentTarget)}>
           <ArrowDropDown style={{ color: '#000' }} />
         </IconButton>
       </Tooltip>
       <Menu id="schema-menu" anchorEl={anchorEl} open={open} handleClose={handleClose}>
-        {schema_array.map((version, index) => (
+        {schemaArray.map((version) => (
           <MenuItem
             id="schema-menu-item"
-            key={index}
+            key={version}
             selected={version === type}
             onClick={() => {
-              schemaChangeHandler(version);
+              schemaChangeHandler?.(version);
               handleClose();
             }}
           >
@@ -49,133 +108,95 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   );
 };
 
-/**
- * Renders common dialog component.
- *
- * @param {Object} props - Component props.
- * @param {boolean} props.open - Determines whether the modal is open or not.
- * @param {string} props.title - The title of the modal.
- * @param {Function} props.handleClose - Function to handle the close event of the modal.
- * @param {Function} props.onChange - Function to handle the change event of the form fields in the modal.
- * @param {Object} props.schema - The JSON schema for the form fields.
- * @param {Object} props.formData - The form data object.
- * @param {Array} props.schema_array - An array of schema versions.
- * @param {string} props.type - The selected schema version.
- * @param {Function} props.schemaChangeHandler - Function to handle the change of the schema version.
- * @param {Function} props.handleSubmit - Function to handle the submit event of the modal.
- * @param {Object} props.payload - The payload for the submit event.
- * @param {Object} props.showInfoIcon - Determines whether to show the info icon adjacent to the modal button.
- * @param {string} props.submitBtnText - The text for the submit button.
- * @param {Object} props.uiSchema - The UI schema for the form fields.
- */
+const loadingFallbackSx = {
+  textAlign: 'center',
+  padding: '8rem 17rem',
+} as const;
 
 // Meshery extensions also uses this modal
-function Modal(props) {
-  const {
-    open,
-    title,
-    handleClose,
-    schema,
-    schema_array,
-    type,
-    schemaChangeHandler,
-    handleSubmit,
-    submitBtnText,
-    leftHeaderIcon,
-    uiSchema = {},
-    helpText,
-    RJSFWrapperComponent = null,
-    initialData = {},
-  } = props;
-
+function Modal({
+  open,
+  title,
+  handleClose,
+  schema,
+  schema_array = [],
+  type,
+  schemaChangeHandler,
+  handleSubmit,
+  submitBtnText,
+  leftHeaderIcon,
+  uiSchema = {},
+  helpText,
+  RJSFWrapperComponent = null,
+  initialData = {},
+}: ModalProps) {
   const [canNotSubmit, setCanNotSubmit] = useState(false);
-  const formStateRef = useRef({});
-  const formRef = React.createRef();
-  const [loadingSchema, setLoadingSchema] = useState(true);
+  const formRef = useRef<ModalFormRef | null>(null);
   const { notify } = useNotification();
+  const isLoadingSchema = useMemo(() => !schema, [schema]);
+
+  useEffect(() => {
+    const hasForbiddenDesignName = containsForbiddenDesignName(title);
+    setCanNotSubmit(hasForbiddenDesignName);
+
+    if (hasForbiddenDesignName) {
+      notify({
+        event_type: EVENT_TYPES.WARNING,
+        message: 'Design name should not contain Untitled Design, Untitled, LFX',
+      });
+    }
+  }, [notify, title]);
+
   const handleFormSubmit = () => {
-    if (formRef.current && formRef.current.validateForm()) {
+    if (formRef.current?.validateForm?.()) {
       handleClose();
-      handleSubmit(formRef.current.state.formData);
+      handleSubmit(formRef.current.state?.formData ?? {});
     }
   };
-
-  useEffect(() => {
-    setCanNotSubmit(false);
-    const handleDesignNameCheck = () => {
-      const designName = title?.toLowerCase();
-      const forbiddenWords = ['untitled design', 'Untitled', 'lfx'];
-
-      for (const word of forbiddenWords) {
-        if (designName?.includes(word)) {
-          notify({
-            event_type: EVENT_TYPES.WARNING,
-            message: `Design name should not contain Untitled Design, Untitled, LFX`,
-          });
-          setCanNotSubmit(true);
-          break;
-        }
-      }
-    };
-    handleDesignNameCheck();
-  }, [title]);
-
-  const handleFormChange = (data) => {
-    formStateRef.current = data;
-  };
-
-  useEffect(() => {
-    if (schema) {
-      setLoadingSchema(false);
-    }
-  }, [schema]);
 
   return (
-    <>
-      <SistentModal open={open} closeModal={handleClose} title={title} headerIcon={leftHeaderIcon}>
-        <Typography variant="h5">
-          {schema_array?.length < 1 && (
-            <SchemaVersion
-              schema_array={schema_array}
-              type={type}
-              schemaChangeHandler={schemaChangeHandler}
-            />
-          )}
-        </Typography>
-        <ModalBody>
-          {loadingSchema ? (
-            <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
-              <CircularProgress />
-            </div>
-          ) : (
-            <RJSFWrapper
-              key={type}
-              formData={initialData || formStateRef}
-              jsonSchema={schema || getSchema(type)}
-              uiSchema={uiSchema}
-              onChange={handleFormChange}
-              liveValidate={false}
-              formRef={formRef}
-              hideTitle={true}
-              {...(RJSFWrapperComponent && { RJSFWrapperComponent })}
-            />
-          )}
-        </ModalBody>
-        <ModalFooter variant="filled" helpText={helpText} hasHelpText={!!helpText}>
-          <PrimaryActionButtons
-            primaryText={submitBtnText || 'Submit'}
-            secondaryText="Cancel"
-            primaryButtonProps={{
-              onClick: handleFormSubmit,
-              disabled: canNotSubmit,
-            }}
-            secondaryButtonProps={{
-              onClick: handleClose,
-            }}
+    <SistentModal open={open} closeModal={handleClose} title={title} headerIcon={leftHeaderIcon}>
+      <Typography variant="h5">
+        {schema_array.length > 1 ? (
+          <SchemaVersion
+            schemaArray={schema_array}
+            type={type}
+            schemaChangeHandler={schemaChangeHandler}
           />
-        </ModalFooter>
-      </SistentModal>
-    </>
+        ) : null}
+      </Typography>
+      <ModalBody>
+        {isLoadingSchema ? (
+          <div style={loadingFallbackSx}>
+            <CircularProgress />
+          </div>
+        ) : (
+          <RJSFWrapper
+            key={type}
+            formData={initialData}
+            jsonSchema={schema || getSchema(type)}
+            uiSchema={uiSchema}
+            liveValidate={false}
+            formRef={formRef}
+            hideTitle={true}
+            {...(RJSFWrapperComponent ? { RJSFWrapperComponent } : {})}
+          />
+        )}
+      </ModalBody>
+      <ModalFooter variant="filled" helpText={helpText} hasHelpText={!!helpText}>
+        <PrimaryActionButtons
+          primaryText={submitBtnText || 'Submit'}
+          secondaryText="Cancel"
+          primaryButtonProps={{
+            onClick: handleFormSubmit,
+            disabled: canNotSubmit,
+          }}
+          secondaryButtonProps={{
+            onClick: handleClose,
+          }}
+        />
+      </ModalFooter>
+    </SistentModal>
   );
 }
 
@@ -192,43 +213,28 @@ function RJSFModalWrapper({
   submitBtnText,
   helpText,
   widgets = {},
-}) {
-  const formRef = useRef();
-  const formStateRef = useRef();
+}: RJSFModalWrapperProps) {
+  const formRef = useRef<ModalFormRef | null>(null);
   const [canNotSubmit, setCanNotSubmit] = useState(false);
-  const [loadingSchema, setLoadingSchema] = useState(true);
   const { notify } = useNotification();
-  useEffect(() => {
-    setCanNotSubmit(false);
-    const handleDesignNameCheck = () => {
-      const designName = title?.toLowerCase();
-      const forbiddenWords = ['untitled design', 'Untitled', 'lfx'];
-
-      for (const word of forbiddenWords) {
-        if (designName?.includes(word)) {
-          notify({
-            event_type: EVENT_TYPES.WARNING,
-            message: `Design name should not contain Untitled Design, Untitled, LFX`,
-          });
-          setCanNotSubmit(true);
-          break;
-        }
-      }
-    };
-    handleDesignNameCheck();
-  }, [title]);
-
-  const handleFormChange = (data) => {
-    formStateRef.current = data;
-  };
+  const isLoadingSchema = useMemo(() => !schema, [schema]);
 
   useEffect(() => {
-    setLoadingSchema(!schema);
-  }, [schema]);
+    const hasForbiddenDesignName = containsForbiddenDesignName(title);
+    setCanNotSubmit(hasForbiddenDesignName);
+
+    if (hasForbiddenDesignName) {
+      notify({
+        event_type: EVENT_TYPES.WARNING,
+        message: 'Design name should not contain Untitled Design, Untitled, LFX',
+      });
+    }
+  }, [notify, title]);
 
   const handleFormSubmit = () => {
-    if (formRef.current && formRef.current.validateForm()) {
-      handleSubmit(formRef.current.state.formData);
+    if (formRef.current?.validateForm?.()) {
+      handleSubmit(formRef.current.state?.formData ?? {});
+
       if (handleNext) {
         handleNext();
       }
@@ -238,8 +244,8 @@ function RJSFModalWrapper({
   return (
     <>
       <ModalBody>
-        {loadingSchema ? (
-          <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
+        {isLoadingSchema ? (
+          <div style={loadingFallbackSx}>
             <CircularProgress />
           </div>
         ) : (
@@ -247,7 +253,6 @@ function RJSFModalWrapper({
             formData={initialData}
             jsonSchema={schema}
             uiSchema={uiSchema}
-            onChange={handleFormChange}
             liveValidate={false}
             formRef={formRef}
             hideTitle={true}

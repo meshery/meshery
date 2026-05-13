@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Tooltip, Grid2, FormControl, MenuItem, Table, FormattedTime } from '@sistent/sistent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
@@ -42,7 +42,12 @@ const ACTION_TYPES = {
   },
 };
 
-export default function MeshSyncTable(props) {
+type MeshSyncTableProps = {
+  selectedResourceId?: string;
+  updateUrlWithResourceId: (resourceId: string) => void;
+};
+
+export default function MeshSyncTable(props: MeshSyncTableProps) {
   const { selectedResourceId, updateUrlWithResourceId } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
@@ -112,11 +117,18 @@ export default function MeshSyncTable(props) {
     order: sortOrder,
     clusterIds: clusterIds,
   });
-  const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
-  const availableModels = [
-    ...new Set((clusterSummary?.kinds || []).map((kind) => kind.Model).filter(Boolean)),
-  ];
-  const availableNamespaces = clusterSummary?.namespaces || [];
+  const availableKinds = useMemo(
+    () => (clusterSummary?.kinds || []).map((kind) => kind.Kind),
+    [clusterSummary?.kinds],
+  );
+  const availableModels = useMemo(
+    () => [...new Set((clusterSummary?.kinds || []).map((kind) => kind.Model).filter(Boolean))],
+    [clusterSummary?.kinds],
+  );
+  const availableNamespaces = useMemo(
+    () => clusterSummary?.namespaces || [],
+    [clusterSummary?.namespaces],
+  );
   const meshSyncResources = meshSyncData?.resources || [];
 
   const colViews = useMemo(
@@ -462,10 +474,10 @@ export default function MeshSyncTable(props) {
 
       switch (action) {
         case 'changePage':
-          setPage(tableState.page.toString());
+          setPage(tableState.page);
           break;
         case 'changeRowsPerPage':
-          setPageSize(tableState.rowsPerPage.toString());
+          setPageSize(tableState.rowsPerPage);
           break;
         case 'sort':
           if (sortInfo.length == 2) {
@@ -591,35 +603,32 @@ export default function MeshSyncTable(props) {
     }
   }, [selectedResourceId, meshSyncResources]);
 
-  const filters = {
-    kind: {
-      name: 'Kind',
-      options: [
-        ...availableKinds.map((kind) => ({
+  const filters = useMemo(
+    () => ({
+      kind: {
+        name: 'Kind',
+        options: availableKinds.map((kind) => ({
           value: kind,
           label: kind,
         })),
-      ],
-    },
-    model: {
-      name: 'Model',
-      options: [
-        ...availableModels.map((model) => ({
+      },
+      model: {
+        name: 'Model',
+        options: availableModels.map((model) => ({
           value: model,
           label: model,
         })),
-      ],
-    },
-    namespace: {
-      name: 'Namespace',
-      options: [
-        ...availableNamespaces.map((ns) => ({
+      },
+      namespace: {
+        name: 'Namespace',
+        options: availableNamespaces.map((ns) => ({
           value: ns,
           label: ns,
         })),
-      ],
-    },
-  };
+      },
+    }),
+    [availableKinds, availableModels, availableNamespaces],
+  );
 
   const handleApplyFilter = () => {
     const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
@@ -637,6 +646,10 @@ export default function MeshSyncTable(props) {
     getResponsiveColumnVisibility(columnNames, colViews, width),
   );
 
+  const handleSearch = useCallback((value) => {
+    setSearch(value);
+  }, []);
+
   useEffect(() => {
     setColumnVisibility(getResponsiveColumnVisibility(columnNames, colViews, width));
   }, [colViews, columnNames, width]);
@@ -653,9 +666,7 @@ export default function MeshSyncTable(props) {
           }}
         >
           <SearchBar
-            onSearch={(value) => {
-              setSearch(value);
-            }}
+            onSearch={handleSearch}
             expanded={isSearchExpanded}
             setExpanded={setIsSearchExpanded}
             placeholder="Search Connections..."

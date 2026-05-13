@@ -5,7 +5,7 @@ import {
   helpAndSupportModalUiSchema,
   useTheme,
 } from '@sistent/sistent';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { RJSFModalWrapper } from './Modals/Modal';
 import SupportIcon from '@/assets/icons/support';
 import { useNotification } from '@/utils/hooks/useNotification';
@@ -22,13 +22,17 @@ import {
 } from './style';
 import { StickyFeedbackButton } from './feedback';
 
+type CustomErrorFallbackProps = {
+  error?: Error | null;
+  resetErrorBoundary?: () => void;
+} & Record<string, unknown>;
+
 /**
  * CustomErrorFallback component can be use to show error message to users
  * This components can be passed to error boundary to have custom fallback component
  */
-const CustomErrorFallback = (props) => {
+const CustomErrorFallback = (props: CustomErrorFallbackProps) => {
   const [openSupportModal, setOpenSupportModal] = useState(false);
-
   const { error } = props;
   const theme = useTheme();
   const { notify } = useNotification();
@@ -37,64 +41,64 @@ const CustomErrorFallback = (props) => {
   const { data: providerData } = useGetProviderCapabilitiesQuery();
   const showSupportBasedOnProvider = providerData?.providerType === 'remote';
 
-  const handleOpenSupportModal = () => {
+  const handleOpenSupportModal = useCallback(() => {
     setOpenSupportModal(true);
-  };
+  }, []);
 
-  const handleCloseSupportModal = () => {
+  const handleCloseSupportModal = useCallback(() => {
     setOpenSupportModal(false);
-  };
+  }, []);
 
-  const pageUrl = window.location.href;
-  const timestamp = new Date().toLocaleString();
+  const errorMessage = useMemo(() => {
+    const pageUrl = typeof window === 'undefined' ? '' : window.location.href;
+    const timestamp = new Date().toLocaleString();
+    return `An error occurred on the page at ${pageUrl} on ${timestamp}.\nError Details: ${error?.message}.`;
+  }, [error?.message]);
 
-  const errorMessage = `An error occurred on the page at ${pageUrl} on ${timestamp}.
-  Error Details: ${error?.message}.`;
+  const handleSupportFormSubmission = useCallback(
+    async (data: Record<string, unknown>) => {
+      try {
+        await triggerWebhook({
+          body: {
+            memberFormOne: {
+              ...data,
+              firstname: userData?.firstName,
+              lastname: userData?.lastName,
+              email: userData?.email,
+            },
+          },
+          type: 'support',
+        }).unwrap();
 
-  const handleSupportFormSubmission = async (data) => {
-    triggerWebhook({
-      body: {
-        memberFormOne: {
-          ...data,
-          firstname: userData?.firstName,
-          lastname: userData?.lastName,
-          email: userData?.email,
-        },
-      },
-      type: 'support',
-    })
-      .unwrap()
-      .then(() => {
         notify({
           message:
             'Your response has been recorded. We will endeavor to promptly contact you with a suitable solution',
           event_type: EVENT_TYPES.SUCCESS,
         });
-      })
-      .catch(() => {
+      } catch {
         notify({
           message: 'Sorry we are unable to submit your request',
           event_type: EVENT_TYPES.ERROR,
         });
-      });
-  };
+      }
+    },
+    [notify, triggerWebhook, userData?.email, userData?.firstName, userData?.lastName],
+  );
 
   return (
     <FallbackWrapper>
       <Fallback showPackageInfo={true} {...props}>
-        <>
-          {showSupportBasedOnProvider ? (
-            <ToolBarButtonContainer style={{ marginTop: '0.7rem' }}>
-              <EditButton
-                variant="contained"
-                style={{ marginRight: '0.7rem' }}
-                onClick={handleOpenSupportModal}
-              >
-                <TextButton>Get Help</TextButton>
-              </EditButton>
-            </ToolBarButtonContainer>
-          ) : null}
-        </>
+        {showSupportBasedOnProvider ? (
+          <ToolBarButtonContainer style={{ marginTop: '0.7rem' }}>
+            <EditButton
+              variant="contained"
+              style={{ marginRight: '0.7rem' }}
+              onClick={handleOpenSupportModal}
+            >
+              <TextButton>Get Help</TextButton>
+            </EditButton>
+          </ToolBarButtonContainer>
+        ) : null}
 
         <TryAgainButton color="primary" onClick={props.resetErrorBoundary}>
           <TextButton

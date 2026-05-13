@@ -2,7 +2,14 @@
 import React from 'react';
 import { Grid2, Typography, Button } from '@sistent/sistent';
 
-const Notification = ({ type, message, retry, onRetry }) => {
+type NotificationProps = {
+  type: 'success' | 'error';
+  message: string;
+  retry?: boolean;
+  onRetry?: () => void;
+};
+
+const Notification = ({ type, message, retry = false, onRetry }: NotificationProps) => {
   return (
     <div
       style={{

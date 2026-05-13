@@ -3,9 +3,18 @@ import RJSFModal from './Modal';
 import { Button } from '@sistent/sistent';
 import { capitalize } from 'lodash';
 
+type ImportModalProps = {
+  importType: string;
+  handleSubmit: (data: unknown) => void;
+  handleClose: () => void;
+  rjsfSchema?: Record<string, unknown>;
+  uiSchema?: Record<string, unknown>;
+  [key: string]: unknown;
+};
+
 // might also expect RJSFWrapperComponent from extensions
 // NOTE: Use modal from sistent
-export default function ImportModal(props) {
+export default function ImportModal(props: ImportModalProps) {
   const { importType, handleSubmit, handleClose, rjsfSchema, uiSchema } = props;
   const data = useRef(null);
 

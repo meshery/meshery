@@ -12,7 +12,14 @@ const StyledFade = styled(Fade)({
   overflow: 'auto',
 });
 
-export default function GenericModal({ open, Content, handleClose, container }) {
+type GenericModalProps = {
+  open: boolean;
+  Content: React.ReactNode;
+  handleClose: () => void;
+  container?: HTMLElement | null;
+};
+
+export default function GenericModal({ open, Content, handleClose, container }: GenericModalProps) {
   return (
     <StyledModal
       open={open}

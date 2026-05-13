@@ -1,7 +1,23 @@
 import React from 'react';
 import { Box, Typography, Divider, Button, styled } from '@sistent/sistent';
 
-const ContentHeader = ({ title }) => (
+type ContentHeaderProps = {
+  title: React.ReactNode;
+};
+
+type StepperContentProps = {
+  title: React.ReactNode;
+  children?: React.ReactNode;
+  subtitle?: React.ReactNode;
+  tips?: React.ReactNode;
+  btnText?: string;
+  cancel?: boolean;
+  handleCallback?: () => void;
+  cancelCallback?: () => void;
+  disabled?: boolean;
+};
+
+const ContentHeader = ({ title }: ContentHeaderProps) => (
   <>
     <Typography variant="subtitle1" style={{ fontWeight: 'bold' }}>
       {title}
@@ -55,7 +71,7 @@ const StepperContent = ({
   handleCallback,
   cancelCallback,
   disabled,
-}) => {
+}: StepperContentProps) => {
   return (
     <ContentContainer>
       <div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Checkbox,
   MenuItem,
@@ -36,7 +36,69 @@ const schema = selectCompSchema(
   'Select type of Connection to register',
   'selectedConnectionType',
 );
-export const SelectConnection = ({ setSharedData, handleNext }) => {
+
+type SelectValueEvent = {
+  target: {
+    value: string;
+    checked?: boolean;
+  };
+};
+
+type SharedData = {
+  metadata?: Record<string, unknown>;
+  capabilities?: {
+    urls?: string[];
+    connection?: boolean;
+  };
+  kind?: string;
+  resourceID?: string;
+  onClose?: () => void;
+  componentForm?: Record<string, unknown>;
+  schemas?: {
+    connection?: Record<string, unknown>;
+    credential?: Record<string, unknown>;
+  };
+  connection?: {
+    id?: string;
+    connection?: {
+      model?: {
+        category?: {
+          name?: string;
+        };
+        subCategory?: string;
+      };
+    };
+  };
+};
+
+type SharedDataSetter = React.Dispatch<React.SetStateAction<SharedData>>;
+
+type StepActionProps = {
+  sharedData: SharedData;
+  setSharedData: SharedDataSetter;
+  handleNext: () => void;
+};
+
+type CredentialStepProps = StepActionProps & {
+  handleRegistrationComplete: (resourceId?: string) => void;
+};
+
+type FormRef = {
+  validateForm?: () => boolean;
+  state?: {
+    formData?: Record<string, unknown>;
+  };
+};
+
+type CredentialOption = {
+  id?: string;
+  name?: string;
+  secret?: {
+    secret?: unknown;
+  };
+};
+
+export const SelectConnection = ({ setSharedData, handleNext }: StepActionProps) => {
   const formRef = useRef();
   const [registerConnection] = useVerifyAndRegisterConnectionMutation();
 
@@ -73,7 +135,7 @@ export const SelectConnection = ({ setSharedData, handleNext }) => {
     handleNext();
   };
 
-  const handleChange = (data) => {
+  const handleChange = (data: Record<string, string>) => {
     if (data.selectedConnectionType) {
       const selectedConnectionType = data.selectedConnectionType;
       // The selectedConnectionType is the concatentaion of connectionType, ' ' and 'Connection' suffix.
@@ -97,25 +159,24 @@ export const SelectConnection = ({ setSharedData, handleNext }) => {
   );
 };
 
-export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => {
-  const formRef = React.createRef();
-  const [selectedEndpoint, setSelectedEndpoint] = useState(null);
+export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }: StepActionProps) => {
+  const formRef = useRef<FormRef | null>(null);
+  const [selectedEndpoint, setSelectedEndpoint] = useState<string | null>(null);
   // stores selected endpoint just before dropdown is closed
-  const [prevSelectedEndpoint, setPrevSelectedEndpoint] = useState(null);
-
-  useEffect(() => {
-    ConnectionDetailContent.title = `Connecting to ${sharedData?.kind}`;
-  }, [sharedData?.connection]);
+  const [prevSelectedEndpoint, setPrevSelectedEndpoint] = useState<string | null>(null);
+  const stepTitle = sharedData?.kind
+    ? `Connecting to ${sharedData.kind}`
+    : ConnectionDetailContent.title;
 
   const handleCallback = () => {
     handleNext();
   };
 
   const cancelCallback = () => {
-    sharedData.onClose();
+    sharedData.onClose?.();
   };
 
-  const handleSelectEndpoint = (e) => {
+  const handleSelectEndpoint = (e: SelectValueEvent) => {
     setSharedData((prevState) => ({
       ...prevState,
       componentForm: {
@@ -135,22 +196,19 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
     }
   };
 
-  const handleChange = (data) => {
+  const handleChange = (data: Record<string, unknown>) => {
     setSharedData((prevState) => ({
       ...prevState,
       componentForm: data,
     }));
   };
   const isDisabledNextButton =
-    sharedData?.componentForm &&
-    sharedData?.componentForm['name'] !== undefined &&
-    sharedData?.componentForm &&
-    sharedData?.componentForm['url'] !== undefined
-      ? false
-      : true;
+    sharedData?.componentForm?.name === undefined || sharedData?.componentForm?.url === undefined;
+
   return (
     <StepperContent
       {...ConnectionDetailContent}
+      title={stepTitle}
       handleCallback={handleCallback}
       disabled={isDisabledNextButton}
       cancelCallback={cancelCallback}
@@ -164,10 +222,10 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
             labelId="endpoint-checkbox-label"
             id="endpoint-checkbox"
             onChange={handleSelectEndpoint}
-            value={selectedEndpoint}
+            value={selectedEndpoint ?? ''}
             onClose={handleClose}
             input={<OutlinedInput label="Select discovered endpoint" />}
-            renderValue={() => <div>{selectedEndpoint !== null ? selectedEndpoint : ''}</div>}
+            renderValue={() => <div>{selectedEndpoint ?? ''}</div>}
             MenuProps={{
               anchorOrigin: {
                 vertical: 'bottom',
@@ -190,8 +248,8 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
               },
             }}
           >
-            {sharedData.capabilities?.urls?.map((endpoint, index) => (
-              <MenuItem key={index} value={endpoint} name={endpoint}>
+            {sharedData.capabilities?.urls?.map((endpoint) => (
+              <MenuItem key={endpoint} value={endpoint} name={endpoint}>
                 <Checkbox checked={endpoint === selectedEndpoint} />
                 <ListItemText primary={endpoint} />
               </MenuItem>
@@ -206,33 +264,38 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
         jsonSchema={sharedData?.schemas?.connection}
         liveValidate={true}
         formRef={formRef}
-        disabled={selectedEndpoint !== null ? true : false}
+        disabled={selectedEndpoint !== null}
         onChange={handleChange}
       />
     </StepperContent>
   );
 };
 
-export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationComplete }) => {
+export const CredentialDetails = ({
+  sharedData,
+  handleNext,
+  handleRegistrationComplete,
+}: CredentialStepProps) => {
   const { data: credentialsData } = useGetCredentialsQuery();
   const [verifyAndRegisterConnection] = useVerifyAndRegisterConnectionMutation();
   const [connectToConnection] = useConnectToConnectionMutation();
-  const [selectedCredential, setSelectedCredential] = useState(null);
-  const [prevSelectedCredential, setPrevSelectedCredential] = useState(null);
-  const [formState, setFormState] = useState(null);
+  const [selectedCredential, setSelectedCredential] = useState<CredentialOption | null>(null);
+  const [prevSelectedCredential, setPrevSelectedCredential] = useState<string | null>(null);
+  const [formState, setFormState] = useState<Record<string, unknown> | null>(null);
   const [skipCredentialVerification, setSkipCredentialVerification] = useState(false);
-  const [disableVerify, setDisableVerify] = useState(true);
-  const [isSuccess, setIsSuccess] = React.useState(null);
-  const formRef = React.createRef();
-
-  useEffect(() => {
-    CredentialDetailContent.title = `Credential for ${sharedData?.kind}`;
-  }, [sharedData.kind]);
+  const [isSuccess, setIsSuccess] = React.useState<boolean | null>(null);
+  const formRef = useRef<FormRef | null>(null);
+  const stepTitle = sharedData?.kind
+    ? `Credential for ${sharedData.kind}`
+    : CredentialDetailContent.title;
+  const existingCredentials = credentialsData?.credentials || [];
+  const disableVerify =
+    !skipCredentialVerification && selectedCredential === null && formState?.secret === undefined;
 
   const verifyConnection = async () => {
-    let credential = {};
+    let credential: Record<string, unknown> = {};
     if (selectedCredential === null) {
-      credential = formState;
+      credential = formState ?? {};
     } else {
       credential = {
         secret: selectedCredential?.secret?.secret,
@@ -271,9 +334,9 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
   };
 
   const handleConnectToConnection = async () => {
-    let credential = {};
+    let credential: Record<string, unknown> = {};
     if (selectedCredential === null) {
-      credential = formState;
+      credential = formState ?? {};
     } else {
       credential = {
         name: selectedCredential?.name,
@@ -314,22 +377,22 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
       verifyConnection();
     } else {
       handleNext();
-      handleRegistrationComplete();
+      handleRegistrationComplete(sharedData.resourceID);
     }
   };
 
   const cancelCallback = () => {
-    sharedData.onClose();
+    sharedData.onClose?.();
   };
 
-  const handleSelectCredential = (e) => {
+  const handleSelectCredential = (e: SelectValueEvent) => {
     const id = e.target.value;
     const credential = existingCredentials.find((credential) => credential.id === id);
     setSelectedCredential(credential);
     setPrevSelectedCredential(id);
   };
 
-  const handleChange = (data) => {
+  const handleChange = (data: Record<string, unknown>) => {
     setFormState(data);
   };
 
@@ -340,19 +403,10 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
     }
   };
 
-  useEffect(() => {
-    if (selectedCredential !== null || (formState !== null && formState['secret']) !== undefined) {
-      setDisableVerify(false);
-    } else {
-      setDisableVerify(true);
-    }
-  }, [selectedCredential, formState]);
-
-  const existingCredentials = credentialsData?.credentials || [];
-
   return (
     <StepperContent
       {...CredentialDetailContent}
+      title={stepTitle}
       handleCallback={handleCallback}
       cancelCallback={cancelCallback}
       disabled={disableVerify}
@@ -369,7 +423,7 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
           labelId="credential-checkbox-label"
           id="credential-checkbox"
           onChange={handleSelectCredential}
-          value={selectedCredential?.name}
+          value={selectedCredential?.id ?? ''}
           onClose={handleClose}
           input={<OutlinedInput label="Select existing credential" />}
           renderValue={() => (
@@ -413,7 +467,7 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
         jsonSchema={sharedData?.schemas?.credential}
         liveValidate={true}
         formRef={formRef}
-        disabled={selectedCredential !== null ? true : false}
+        disabled={selectedCredential !== null}
         onChange={handleChange}
       />
       <Box
@@ -427,9 +481,8 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
           <Checkbox
             id="bypass_verification"
             color="success"
-            onChange={(e) => {
-              setSkipCredentialVerification(e.target.checked);
-              setDisableVerify(!e.target.checked);
+            onChange={(event: SelectValueEvent) => {
+              setSkipCredentialVerification(Boolean(event.target.checked));
             }}
           />
           <label fontSize="inherit" for="bypass_verification">
