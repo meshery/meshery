@@ -13,18 +13,39 @@ function recursivelySearchObjKey(obj, arr, index) {
   return false;
 }
 
+/**
+ * CapabilitiesRegistry is a UI component-access guard that wraps the raw provider
+ * capabilities payload returned by /api/provider/capabilities.
+ *
+ * Distinguish between two related but separate concepts:
+ *
+ *   • Provider capabilities  – the `{ feature, endpoint }[]` list inside the
+ *     payload that describes which features the remote provider supports (e.g.
+ *     "persist-meshery-patterns").  Access them via `providerCapabilities`.
+ *
+ *   • Component-access registry – the methods on this class
+ *     (`isNavigatorComponentEnabled`, `isHeaderComponentEnabled`, …) that consult
+ *     the provider's `restrictedAccess` block to decide whether individual UI
+ *     components should be rendered (playground / restricted-mode guards).
+ */
 export class CapabilitiesRegistry {
-  capabilitiesRegistry;
+  /** Raw payload from /api/provider/capabilities. */
+  providerPayload;
   isPlaygroundEnv = false;
 
-  constructor(capabilitiesRegistry) {
-    this.capabilitiesRegistry = capabilitiesRegistry;
-    this.isPlaygroundEnv = capabilitiesRegistry?.restrictedAccess?.isMesheryUIRestricted || false;
+  constructor(providerPayload) {
+    this.providerPayload = providerPayload;
+    this.isPlaygroundEnv = providerPayload?.restrictedAccess?.isMesheryUIRestricted || false;
   }
 
-  get capabilities() {
-    return Array.isArray(this.capabilitiesRegistry?.capabilities)
-      ? this.capabilitiesRegistry.capabilities
+  /**
+   * The list of features the current provider declares it supports.
+   * Each entry is a `{ feature: string, endpoint: string }` object.
+   * Returns an empty array when the payload is absent or malformed.
+   */
+  get providerCapabilities() {
+    return Array.isArray(this.providerPayload?.capabilities)
+      ? this.providerPayload.capabilities
       : [];
   }
 
@@ -35,7 +56,7 @@ export class CapabilitiesRegistry {
 
     let walkerArray = ['restrictedAccess', 'allowedComponents', 'navigator', ...navigatorWalker];
 
-    const searchResult = recursivelySearchObjKey(this.capabilitiesRegistry, walkerArray, 0);
+    const searchResult = recursivelySearchObjKey(this.providerPayload, walkerArray, 0);
     if (_.isObject(searchResult) && _.isEmpty(searchResult)) {
       return false;
     }
@@ -49,7 +70,7 @@ export class CapabilitiesRegistry {
 
     let walkerArray = ['restrictedAccess', 'allowedComponents', 'header', ...headerWalker];
 
-    const searchResult = recursivelySearchObjKey(this.capabilitiesRegistry, walkerArray, 0);
+    const searchResult = recursivelySearchObjKey(this.providerPayload, walkerArray, 0);
     if (_.isObject(searchResult) && _.isEmpty(searchResult)) {
       return false;
     }
@@ -61,11 +82,11 @@ export class CapabilitiesRegistry {
       return true;
     }
 
-    if (!this.capabilitiesRegistry.extensions?.navigator) {
+    if (!this.providerPayload.extensions?.navigator) {
       return false;
     }
 
-    const navigatorObj = this.capabilitiesRegistry.extensions.navigator[0]?.allowedTo;
+    const navigatorObj = this.providerPayload.extensions.navigator[0]?.allowedTo;
 
     const searchResult = recursivelySearchObjKey(navigatorObj, walkerArray, 0);
     if (_.isObject(searchResult) && _.isEmpty(searchResult)) {

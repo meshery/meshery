@@ -151,7 +151,7 @@ const resolveNavigatorComponents = ({
   currentPath,
 }) => {
   const designPersistenceEnabled = Boolean(
-    capabilityRegistryObj?.capabilities?.some(
+    capabilityRegistryObj?.providerCapabilities?.some(
       (capability) => capability.feature === 'persist-meshery-patterns',
     ),
   );

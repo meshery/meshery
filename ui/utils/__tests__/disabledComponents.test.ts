@@ -7,7 +7,7 @@ describe('CapabilitiesRegistry', () => {
       capabilities: [{ feature: 'persist-meshery-patterns' }],
     });
 
-    expect(registry.capabilities).toEqual([{ feature: 'persist-meshery-patterns' }]);
+    expect(registry.providerCapabilities).toEqual([{ feature: 'persist-meshery-patterns' }]);
   });
 
   it('returns an empty capability list when the provider payload is malformed', () => {
@@ -15,6 +15,6 @@ describe('CapabilitiesRegistry', () => {
       capabilities: { feature: 'persist-meshery-patterns' },
     });
 
-    expect(registry.capabilities).toEqual([]);
+    expect(registry.providerCapabilities).toEqual([]);
   });
 });
