@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Pagination, PaginationItem } from '@sistent/sistent';
+import {
+  ChevronLeft,
+  ChevronRight,
+  DeleteIcon,
+  NoSsr,
+  Pagination,
+  PaginationItem,
+} from '@sistent/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
-import { Delete } from '@mui/icons-material';
-import { NoSsr } from '@sistent/sistent';
 import { CreateButtonWrapper, BulkActionWrapper } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
@@ -489,16 +492,15 @@ const Environments = () => {
                   ? `${selectedEnvironments.length} environments selected`
                   : `${selectedEnvironments.length} environment selected`}
               </Typography>
-              <Button>
-                <Delete
-                  sx={{ color: 'red', margin: '0 2px' }}
-                  onClick={handleBulkDeleteEnvironmentConfirm}
-                  disabled={
-                    selectedEnvironments.length > 0
-                      ? !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
-                      : true
-                  }
-                />
+              <Button
+                onClick={handleBulkDeleteEnvironmentConfirm}
+                disabled={
+                  selectedEnvironments.length > 0
+                    ? !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
+                    : true
+                }
+              >
+                <DeleteIcon fill="red" style={{ margin: '0 2px' }} />
               </Button>
             </BulkActionWrapper>
           )}
@@ -534,7 +536,7 @@ const Environments = () => {
                   boundaryCount={3}
                   renderItem={(item) => (
                     <PaginationItem
-                      slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+                      slots={{ previous: ChevronLeft, next: ChevronRight }}
                       {...item}
                     />
                   )}
