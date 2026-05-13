@@ -48,6 +48,13 @@ export {
   NoSsr,
 } from '@sistent/sistent';
 
+// `darken` is not currently re-exported by `@sistent/sistent` (only `lighten`
+// is). Until Sistent re-exports it, pull it from the same upstream module
+// `lighten` ultimately comes from so callers can still go through `@/theme`
+// as the project-local front door.
+// eslint-disable-next-line no-restricted-imports
+export { darken } from '@mui/material';
+
 export type { Theme };
 
 export const palette = {
