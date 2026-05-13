@@ -132,10 +132,7 @@ export const userApi = api
             }
           },
         }),
-        transformResponse: (response) => {
-          const { normalizeUserProfileSummary } = require('./userProfile');
-          return normalizeUserProfileSummary(response);
-        },
+        transformResponse: normalizeUserProfileSummary,
       }),
       getExtensionsByType: builder.query({
         query: () => ({
