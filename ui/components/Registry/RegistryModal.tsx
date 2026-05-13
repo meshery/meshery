@@ -3,6 +3,8 @@ import {
   ModalBody,
   useTheme,
   List,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   IconButton,
   ListItem,
   ListItemButton,
@@ -22,8 +24,6 @@ import ConnectionIcon from '@/assets/icons/Connection';
 import ComponentIcon from '@/assets/icons/Component';
 import MeshModelComponent from '../Settings/Registry/MeshModelComponent';
 import { iconMedium, iconSmall } from 'css/icons.styles';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { RegistryModalContext } from '@/utils/context/RegistryModalContextProvider';
 import {

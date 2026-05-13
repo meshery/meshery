@@ -1,7 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import UploadIcon from '@mui/icons-material/Upload';
-import AddIcon from '@mui/icons-material/AddCircleOutlined';
-import LinkIcon from '@mui/icons-material/Link';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constants/navigator';
 import {
   MeshModelToolbar,
@@ -23,7 +20,13 @@ import {
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
-import { Button, NoSsr } from '@sistent/sistent';
+import {
+  Button,
+  NoSsr,
+  AddCircleIcon as AddIcon,
+  ExternalLinkIcon as LinkIcon,
+  FileUploadIcon as UploadIcon,
+} from '@sistent/sistent';
 import { iconSmall } from 'css/icons.styles';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
 import ImportModelModal from './ImportModelModal';
