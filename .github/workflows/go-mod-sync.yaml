@@ -13,6 +13,11 @@ on:
       - "master"
     paths:
       - "go.mod"
+
+permissions:
+  contents: write      # Needs to commit changes
+  pull-requests: read  # May read PR data
+
 jobs:
   sync:
     if: github.repository == 'meshery/meshery'

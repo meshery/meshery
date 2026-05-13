@@ -24,6 +24,11 @@ on:
           description: 'Release Version'     
           required: false
           default: 'v'
+
+permissions:
+  contents: write      # Needs to create/push releases
+  packages: write      # Helm charts go to registry
+
 jobs:
   validate:
     runs-on: ubuntu-24.04
