@@ -26,7 +26,7 @@ import { ThemeTogglerCore } from '@/themes/hooks';
 import RJSFForm from '../../meshery-mesh-interface/PatternService/RJSF';
 import { DynamicFullScreenLoader } from '../../shared/LoadingState/DynamicFullscreenLoader';
 import Troubleshoot from '../../TroubleshootingComponent';
-import TypingFilter from '../../typing-filter';
+import TypingFilter from '@/components/shared/FormFields/typing-filter';
 import CreateModelModal from '../../registry/CreateModelModal';
 import ImportModelModal from '../../registry/ImportModelModal';
 import { ViewInfoModal } from '../../shared/Modal/ViewInfoModal';
