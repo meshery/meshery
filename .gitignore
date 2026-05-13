@@ -17,7 +17,10 @@
 .vscode/
 .cusorignore
 *.config
-.claude
+.claude/*
+!.claude/settings.json
+!.claude/hooks
+!.claude/hooks/*
 
 Chart.min.js
 
