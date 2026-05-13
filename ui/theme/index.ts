@@ -55,6 +55,12 @@ export {
 // eslint-disable-next-line no-restricted-imports
 export { darken } from '@mui/material';
 
+// Bridged from MUI: Sistent doesn't yet export GlobalStyles. Routed through
+// `@/theme` so the rest of the app can stay off `@mui/material` directly;
+// this is the project's approved single bridge.
+// eslint-disable-next-line no-restricted-imports
+export { GlobalStyles } from '@mui/material';
+
 export type { Theme };
 
 export const palette = {
