@@ -350,7 +350,11 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	// EXPECTED_PROVIDER_ISSUER to the exact iss string the provider emits.
 	effectiveIssuer := strings.TrimSpace(l.ExpectedIssuer)
 	if effectiveIssuer == "" {
-		effectiveIssuer = strings.TrimSpace(l.RemoteProviderURL)
+		if u, err := url.Parse(l.RemoteProviderURL); err == nil {
+			effectiveIssuer = u.Scheme + "://" + u.Host
+		} else {
+			effectiveIssuer = strings.TrimSpace(l.RemoteProviderURL)
+		}
 	}
 	var parserOpts []jwt.ParserOption
 	if effectiveIssuer != "" {

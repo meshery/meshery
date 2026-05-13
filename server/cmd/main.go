@@ -365,9 +365,9 @@ func main() {
 
 		expectedIss := expectedProviderIssuer
 		if expectedIss == "" {
-			// Fallback: same string we use as API base (parsedURL.String()).
+			// Fallback: origin of the API base.
 			// Token iss must match this exactly unless EXPECTED_PROVIDER_ISSUER is set.
-			expectedIss = parsedURL.String()
+			expectedIss = parsedURL.Scheme + "://" + parsedURL.Host
 		}
 
 		cp := &models.RemoteProvider{

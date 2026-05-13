@@ -500,10 +500,9 @@ func signedRS256JWT(t *testing.T, priv *rsa.PrivateKey, kid, iss string, exp tim
 	return s
 }
 
-// TestRemoteProviderVerifyToken_IssuerExactMatch documents the maintainer
-// question: jwt.WithIssuer compares iss to the configured string byte-for-byte
-// (including any path segment in PROVIDER_BASE_URLS). It is not "origin only".
-func TestRemoteProviderVerifyToken_IssuerExactMatch(t *testing.T) {
+// TestRemoteProviderVerifyToken_FallbackToOrigin verifies that when ExpectedIssuer
+// is unset and RemoteProviderURL includes a path, the fallback issuer is the origin.
+func TestRemoteProviderVerifyToken_FallbackToOrigin(t *testing.T) {
 	priv, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		t.Fatal(err)
@@ -514,15 +513,16 @@ func TestRemoteProviderVerifyToken_IssuerExactMatch(t *testing.T) {
 	p := newTestRemoteProvider(t, apiBase)
 	p.Keys = []map[string]string{rsaTestJWK(t, kid, priv)}
 
-	good := signedRS256JWT(t, priv, kid, apiBase, time.Now().Add(time.Hour))
+	// Should succeed when iss is the origin.
+	good := signedRS256JWT(t, priv, kid, "https://provider.example.com", time.Now().Add(time.Hour))
 	if _, err := p.VerifyToken(encodeTestToken(t, oauth2.Token{AccessToken: good, TokenType: "Bearer"})); err != nil {
-		t.Fatalf("expected success when iss equals RemoteProviderURL exactly, got %v", err)
+		t.Fatalf("expected success when iss is the origin, got %v", err)
 	}
 
-	// Origin-only iss must fail when the configured base URL includes a path.
-	bad := signedRS256JWT(t, priv, kid, "https://provider.example.com", time.Now().Add(time.Hour))
+	// Should fail when iss is the full path.
+	bad := signedRS256JWT(t, priv, kid, apiBase, time.Now().Add(time.Hour))
 	if _, err := p.VerifyToken(encodeTestToken(t, oauth2.Token{AccessToken: bad, TokenType: "Bearer"})); err == nil {
-		t.Fatal("expected failure when iss is only the origin but RemoteProviderURL includes /auth")
+		t.Fatal("expected failure when iss includes path but fallback is origin")
 	}
 }
 
