@@ -335,7 +335,7 @@ Until then:
   to import from `@rjsf/mui` directly — the lint rule
   (`no-restricted-imports`) blocks the import everywhere else.
 - App code should consume the shared RJSF wrapper, not `@rjsf/mui` and not
-  `themes/rjsf.ts` directly.
+  `ui/themes/rjsf.ts` directly.
 
 ---
 
