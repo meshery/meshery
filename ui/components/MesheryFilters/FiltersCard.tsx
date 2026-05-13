@@ -10,7 +10,7 @@ import {
   Avatar,
   useTheme,
 } from '@sistent/sistent';
-import { Delete as DeleteIcon, Fullscreen, Save, FullscreenExit } from '@/components/icons';
+import { Delete as DeleteIcon, Fullscreen, Save, FullscreenExit } from '@/assets/icons';
 import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from '../CodeMirror';
@@ -33,7 +33,7 @@ import {
   InfoOutlined as InfoOutlinedIcon,
   Public,
   Lock,
-} from '@/components/icons';
+} from '@/assets/icons';
 import TooltipButton from '../../utils/TooltipButton';
 import { VISIBILITY } from '../../utils/Enum';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
