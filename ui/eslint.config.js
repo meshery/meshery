@@ -35,8 +35,10 @@ const patchedNextConfig = nextConfig.map((cfg) => {
 //   - `assets/icons/index.ts` — the canonical icon barrel itself, which
 //     centrally re-exports `@mui/icons-material` glyphs (#18736, #18744).
 //   - Shared wrappers under `components/shared/{DatePicker,TreeView,FormFields}/`
-//     each use a local `eslint-disable-next-line no-restricted-imports`
-//     comment to opt in rather than relying on this allowlist.
+//     opt in via a local `eslint-disable no-restricted-imports` comment
+//     (line-scoped `-next-line` for single-import files, file-scoped block
+//     comment for the TreeView wrapper that re-exports several names)
+//     rather than relying on this allowlist.
 const legacyRestrictedImportOffenders = ['assets/icons/index.ts'];
 
 const legacyLiteralColorOffenders = [
