@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import { Colors } from '../themes/app';
-import { Checkbox, ListItemButton, Paper, FormControlLabel } from '@sistent/sistent';
-import { useTheme } from '@sistent/sistent';
+import { Checkbox, ListItemButton, Paper, FormControlLabel, useTheme } from '@sistent/sistent';
 
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');
@@ -152,11 +150,11 @@ const MultiSelectWrapper = (props) => {
   const customStyles = {
     multiValueLabel: (def) => ({
       ...def,
-      backgroundColor: 'lightgray',
+      backgroundColor: theme.palette.grey[300],
     }),
     multiValueRemove: (def) => ({
       ...def,
-      backgroundColor: 'lightgray',
+      backgroundColor: theme.palette.grey[300],
     }),
     valueContainer: (base) => ({
       ...base,
@@ -166,14 +164,14 @@ const MultiSelectWrapper = (props) => {
     control: (base) => ({
       ...base,
       backgroundColor: base.backgroundColor2,
-      borderColor: Colors.keppelGreen,
-      color: Colors.keppelGreen,
+      borderColor: theme.palette.primary.main,
+      color: theme.palette.primary.main,
       boxShadow: 'none',
       '&:hover': {
-        borderColor: Colors.keppelGreen,
+        borderColor: theme.palette.primary.main,
       },
       '&$focused': {
-        borderColor: '#00B39F',
+        borderColor: theme.palette.primary.main,
       },
     }),
     menu: (base) => ({
