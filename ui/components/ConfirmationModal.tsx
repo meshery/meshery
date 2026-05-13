@@ -21,10 +21,9 @@ import {
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { useLazyPingKubernetesQuery } from '@/rtk-query/connection';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, FC } from 'react';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { RoundedTriangleShape } from './shapes/RoundedTriangle';
-import { notificationColors } from '../themes/app';
 import RedOctagonSvg from './shapes/Octagon';
 import PatternIcon from '../assets/icons/Pattern';
 import { useNotification } from '../utils/hooks/useNotification';
@@ -54,18 +53,16 @@ const ActionButton = styled(Button, {
   minWidth: 100,
   ...(isUndeploy &&
     !isDisabled && {
-      backgroundColor: '#B32700',
+      backgroundColor: theme.palette.error.main,
       '&:hover': {
-        backgroundColor: '#8f1f00',
-        boxShadow:
-          '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)',
+        backgroundColor: theme.palette.error.dark,
+        boxShadow: theme.shadows[8],
       },
     }),
   ...(!isUndeploy && {
-    color: '#fff',
+    color: theme.palette.common.white,
     '&:hover': {
-      boxShadow:
-        '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)',
+      boxShadow: theme.shadows[8],
     },
   }),
   ...(isDisabled && {
@@ -100,13 +97,13 @@ export const TriangleContainer = styled('div')({
   marginLeft: 2,
 });
 
-export const TriangleNumber = styled('div')({
+export const TriangleNumber = styled('div')(({ theme }) => ({
   position: 'absolute',
   bottom: 12,
   left: '37%',
-  color: '#fff',
+  color: theme.palette.common.white,
   fontSize: '0.8rem',
-});
+}));
 
 export const OctagonContainer = styled('div')({
   overflow: 'hidden',
@@ -118,14 +115,26 @@ export const OctagonContainer = styled('div')({
   marginLeft: 2,
 });
 
-export const OctagonText = styled('div')({
+export const OctagonText = styled('div')(({ theme }) => ({
   position: 'absolute',
   bottom: 9.5,
-  color: '#fff',
+  color: theme.palette.common.white,
   fontSize: '0.8rem',
-});
+}));
 
-function ConfirmationMsg(props) {
+interface ConfirmationMsgProps {
+  open: boolean;
+  handleClose: () => void;
+  submit: { deploy: () => void; unDeploy: () => void };
+  title?: string;
+  validationBody?: string;
+  componentCount?: number;
+  tab: number;
+  errors?: { validationError?: number; deploymentError?: number };
+  dryRunComponent?: React.ReactNode;
+}
+
+const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
   const {
     open,
     handleClose,
@@ -262,7 +271,7 @@ function ConfirmationMsg(props) {
                   {errors?.validationError > 0 && (
                     <TriangleContainer>
                       <RoundedTriangleShape
-                        color={notificationColors.warning}
+                        color={theme.palette.warning.main}
                       ></RoundedTriangleShape>
                       <TriangleNumber style={errors.validationError > 10 ? { left: '25%' } : {}}>
                         {errors.validationError}
@@ -313,7 +322,7 @@ function ConfirmationMsg(props) {
                 <TabLabelWrapper>Deploy</TabLabelWrapper>
                 {errors?.deploymentError > 0 && (
                   <OctagonContainer>
-                    <RedOctagonSvg fill={notificationColors.darkRed}></RedOctagonSvg>
+                    <RedOctagonSvg fill={theme.palette.error.main}></RedOctagonSvg>
                     <OctagonText>{errors.deploymentError}</OctagonText>
                   </OctagonContainer>
                 )}
@@ -346,15 +355,14 @@ function ConfirmationMsg(props) {
                       size="small"
                       variant="outlined"
                       onChange={(event) => searchContexts(event.target.value)}
-                      style={{
+                      sx={{
                         width: '100%',
-                        backgroundColor: 'rgba(102, 102, 102, 0.12)',
+                        backgroundColor: theme.palette.action.disabledBackground,
                         margin: '1px 1px 8px ',
                       }}
                       InputProps={{
                         endAdornment: <Search style={iconMedium} />,
                       }}
-                      // margin="none"
                     />
                     {context.length > 0 ? (
                       <Box display={'table'}>
@@ -445,11 +453,17 @@ function ConfirmationMsg(props) {
       </ModalBody>
     </Modal>
   );
-}
+};
 
 export default ConfirmationMsg;
 
-export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => {
+interface SelectDeploymentTargetProps {
+  k8scontext: any[];
+  selectedK8sContexts: string[];
+}
+
+export const SelectDeploymentTarget_: FC<SelectDeploymentTargetProps> = ({ k8scontext, selectedK8sContexts }) => {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const deployableK8scontexts = useFilterK8sContexts(k8scontext, ({ operatorState }) => {
     return operatorState !== 'DISABLED';
@@ -504,15 +518,14 @@ export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => 
         size="small"
         variant="outlined"
         onChange={(event) => searchContexts(event.target.value)}
-        style={{
+        sx={{
           width: '100%',
-          backgroundColor: 'rgba(102, 102, 102, 0.12)',
+          backgroundColor: theme.palette.action.disabledBackground,
           margin: '1px 1px 8px ',
         }}
         InputProps={{
           endAdornment: <Search style={iconMedium} />,
         }}
-        // margin="none"
       />
       {searchedContexts.length > 0 ? (
         <Box display={'table'}>
