@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "npm run lint:fix && node ui_dev_server.js",
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx .",
+    "lint:ui-kit": "eslint --cache --quiet --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "eslint --cache --fix --ext .js,.jsx,.ts,.tsx .",
     "format": "npx prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
     "build": "npm run clean && cross-env next build",
