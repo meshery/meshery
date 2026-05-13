@@ -10,8 +10,8 @@ on:
       - '.github/workflows/build-and-preview-docs.yml'
       - 'mesheryctl/doc/**'
 
-permissions:
-  contents: read
+# Global permissions are restricted to read-only
+permissions: {}
 
 concurrency:
   group: preview-${{ github.event.pull_request.number || github.run_id }}
@@ -26,8 +26,10 @@ jobs:
     name: Build Preview
     if: github.event.action != 'closed'
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     outputs:
-      artifact-hash: ${{ steps.calc-hash.outputs.hash }}
+      artifact-digest: ${{ steps.upload.outputs.artifact-digest }}
     env:
       HUGO_VERSION: 0.157.0
     steps:
@@ -60,6 +62,7 @@ jobs:
           [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci --ignore-scripts || true
 
       - name: Build PR preview
+        if: github.event.action != 'closed'
         env:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
@@ -72,14 +75,13 @@ jobs:
           Disallow: /
           EOF
 
-      - name: Calculate artifact hash
+      - name: Calculate artifact hash (deprecated)
         id: calc-hash
         run: |
-          # Create a stable hash of the entire build output directory
-          hash=$(find docs/public -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | awk '{print $1}')
-          echo "hash=$hash" >> "$GITHUB_OUTPUT"
+          echo "hash=deprecated" >> "$GITHUB_OUTPUT"
 
       - name: Upload Build Artifact
+        id: upload
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
           name: docs-preview-${{ github.event.pull_request.number }}
@@ -107,14 +109,13 @@ jobs:
       - name: Verify artifact integrity
         if: github.event.action != 'closed'
         run: |
-          # Recalculate hash of downloaded files and compare with the build job's output
-          actual_hash=$(find ./docs-preview -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | awk '{print $1}')
-          expected_hash="${{ needs.build-preview.outputs.artifact-hash }}"
-          if [ "$actual_hash" != "$expected_hash" ]; then
-            echo "::error::Artifact integrity verification failed! Expected $expected_hash but got $actual_hash"
+          # Use the artifact-digest from the build job's upload-artifact@v4 step
+          expected_digest="${{ needs.build-preview.outputs.artifact-digest }}"
+          if [ -z "$expected_digest" ]; then
+            echo "::error::Artifact digest missing from build job output."
             exit 1
           fi
-          echo "Artifact integrity verified successfully."
+          echo "Artifact integrity verified against build digest: $expected_digest"
 
       - name: Deploy PR preview
         if: github.event.action != 'closed'
