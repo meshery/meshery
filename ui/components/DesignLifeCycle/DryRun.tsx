@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import { ExpandLess, ExpandMore } from '@/components/icons';
 import { useState } from 'react';
 import { ComponentIcon, DEPLOYMENT_TYPE, Loading, processDesign } from './common';
 import {
