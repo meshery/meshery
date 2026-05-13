@@ -1,6 +1,5 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import { durationOptions } from '../../lib/prePopulatedOptions';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -18,6 +17,7 @@ import {
   Autocomplete,
   NoSsr,
   Radio,
+  SaveOutlinedIcon,
 } from '@sistent/sistent';
 import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-query/user';
 import { useSelector, useDispatch } from 'react-redux';

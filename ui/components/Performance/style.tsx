@@ -1,5 +1,5 @@
 import { Accordion, FormControl, IconButton, styled, Radio } from '@sistent/sistent';
-import { HelpOutlineOutlined } from '@mui/icons-material';
+import { HelpOutlineOutlined } from '../icons';
 import { Calendar } from 'react-big-calendar';
 
 export const CardButton = styled('div')(() => ({
