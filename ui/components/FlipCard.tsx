@@ -1,29 +1,32 @@
-import React, { useState, useRef, useEffect, type ReactNode } from 'react';
+import React, { useState, useEffect, type ReactNode } from 'react';
 import { FlipCardWrapper, InnerCard } from './MesheryPatterns/style';
 
 interface FlipCardProps {
   duration?: number;
   onClick?: () => void;
   onShow?: () => void;
-  children: [ReactNode, ReactNode];
+  children: ReactNode;
 }
 
 function FlipCard({ duration = 500, onClick, onShow, children }: FlipCardProps) {
   const [flipped, setFlipped] = useState(false);
   const [activeBack, setActiveBack] = useState(false);
-  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const Front = children[0];
-  const Back = children[1];
+  const childArray = React.Children.toArray(children);
+  if (childArray.length !== 2) {
+    throw new Error('FlipCard requires exactly two child components');
+  }
+  const [Front, Back] = childArray;
 
   useEffect(() => {
     // Delay the back-face swap until ~30° of rotation has passed so the user
     // never sees a blank card mid-flip. JS and CSS run on separate threads in
     // modern browsers, and setTimeout defers past the current call stack.
-    if (timeout.current) clearTimeout(timeout.current);
-    timeout.current = setTimeout(() => {
+    const timer = setTimeout(() => {
       setActiveBack(flipped);
     }, duration / 6);
+
+    return () => clearTimeout(timer);
   }, [flipped, duration]);
 
   return (
