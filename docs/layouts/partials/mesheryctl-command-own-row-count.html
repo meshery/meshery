@@ -1,0 +1,5 @@
+{{- $count := 1 -}}
+{{- with .flags }}
+  {{- $count = add $count (len .) -}}
+{{- end }}
+{{- return $count -}}

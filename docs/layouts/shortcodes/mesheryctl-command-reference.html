@@ -1,0 +1,68 @@
+{{- $data := site.Data.mesheryctlcommands.cmds -}}
+{{- $order := $data.order -}}
+{{- $commands := $data.commands -}}
+{{- $labels := dict
+  "global" "Global Commands and Flags"
+  "system" "Meshery Lifecycle Management and Troubleshooting"
+  "perf" "Service Performance Management"
+  "adapter" "Infrastructure Lifecycle and Configuration Management"
+  "design" "Infrastructure Design Configuration and Management"
+  "filter" "Data Plane Intelligence"
+  "registry" "Meshery Registry Management"
+  "model" "Meshery Models"
+  "component" "Meshery Components"
+  "environment" "Meshery Environment"
+  "connection" "Meshery Connection"
+  "organization" "Meshery Organization"
+  "relationship" "Meshery Relationship"
+  "workspace" "Meshery Workspace"
+  "exp" "Experimental Features"
+-}}
+
+<ul>
+{{- range $order }}
+  {{- $key := . -}}
+  {{- $command := index $commands $key -}}
+  {{- if $command }}
+    {{- $label := index $labels $key | default (printf "Meshery %s" (title (humanize $key))) -}}
+  <li><a href="#{{ anchorize $label }}">{{ if eq $key "global" }}mesheryctl{{ else }}mesheryctl {{ $command.name }}{{ end }}</a> - {{ $command.description }}</li>
+  {{- end }}
+{{- end }}
+</ul>
+
+{{- range $order }}
+  {{- $key := . -}}
+  {{- $command := index $commands $key -}}
+  {{- if $command }}
+    {{- $label := index $labels $key | default (printf "Meshery %s" (title (humanize $key))) -}}
+<h2 id="{{ anchorize $label }}">{{ $label }}</h2>
+<p>{{ $command.description }}</p>
+<table class="mesheryctl-reference-table">
+<thead>
+  <tr>
+    <th>Command</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+</thead>
+<tbody>
+  {{- $rowspan := partial "mesheryctl-command-row-count.html" $command -}}
+  <tr>
+    <td rowspan="{{ $rowspan }}"><a href="{{ $command.url }}">{{ $command.name }}</a></td>
+    <td></td>
+    <td></td>
+    <td>{{ $command.description }}</td>
+  </tr>
+  {{- range $command.flags }}
+  <tr>
+    <td></td>
+    <td>{{ .name }}</td>
+    <td>{{ .description }}</td>
+  </tr>
+  {{- end }}
+  {{- partial "mesheryctl-command-rows.html" (dict "commands" $command.subcommands "parentPath" "") -}}
+</tbody>
+</table>
+  {{- end }}
+{{- end }}

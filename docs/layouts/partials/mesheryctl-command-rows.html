@@ -1,0 +1,22 @@
+{{- $parentPath := .parentPath -}}
+{{- range .commands }}
+  {{- $path := .name -}}
+  {{- if $parentPath }}
+    {{- $path = printf "%s %s" $parentPath .name -}}
+  {{- end }}
+  {{- $rowspan := partial "mesheryctl-command-own-row-count.html" . -}}
+  <tr>
+    <td rowspan="{{ $rowspan }}"><a href="{{ .url }}">{{ $path }}</a></td>
+    <td></td>
+    <td>{{ .description }}</td>
+  </tr>
+  {{- range .flags }}
+  <tr>
+    <td>{{ .name }}</td>
+    <td>{{ .description }}</td>
+  </tr>
+  {{- end }}
+  {{- if .subcommands }}
+    {{- partial "mesheryctl-command-rows.html" (dict "commands" .subcommands "parentPath" $path) -}}
+  {{- end }}
+{{- end }}
