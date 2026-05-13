@@ -578,8 +578,9 @@ module.exports = [
       // Size budget for component files. 600 lines is the proactive warning
       // threshold; current files above 600 are allowlisted (legacyMaxLineSoft
       // Offenders for 600–1000, legacyMaxLineOffenders for >1000) so CI stays
-      // green while the plan refactors them. 1000 is the hard ceiling enforced
-      // by a separate rule below.
+      // green while the plan refactors them. The 1000-line hard ceiling from
+      // the restructure plan is tracked separately by scripts/audit-size.js
+      // (run via `npm run audit:size`) rather than by ESLint.
       'max-lines': ['warn', { max: 600, skipComments: true, skipBlankLines: true }],
     },
   },
@@ -645,6 +646,7 @@ module.exports = [
       'theme/**',
       'themes/**',
       'assets/**',
+      'constants/**',
       'lib/**',
       'public/**',
       'tests/**',
