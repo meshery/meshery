@@ -97,7 +97,7 @@ vi.mock('../../css/icons.styles', () => ({
   iconSmall: {},
 }));
 
-vi.mock('../LoadingComponents/LoadingComponent', () => ({
+vi.mock('../shared/LoadingState/LoadingComponent', () => ({
   default: () => <div data-testid="loading-screen" />,
 }));
 

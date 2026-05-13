@@ -10,8 +10,8 @@ import {
   GridNoTextStyles,
   GridPaginationStyles,
 } from './Grid.styles';
-import { RJSFModalWrapper } from '../../General/Modals/Modal';
-import ExportModal from '../../ExportModal';
+import { RJSFModalWrapper } from '../../shared/Modal/Modal';
+import ExportModal from '../../shared/Modal/ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { Modal as SistentModal } from '@sistent/sistent';

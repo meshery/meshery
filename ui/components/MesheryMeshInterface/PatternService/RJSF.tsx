@@ -20,7 +20,7 @@ import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
 import CustomRadioWidget from './RJSFCustomComponents/CustomRadioWidget';
 import { ErrorBoundary } from '@sistent/sistent';
-import CustomErrorFallback from '@/components/General/ErrorBoundary';
+import CustomErrorFallback from '@/components/shared/ErrorBoundary/ErrorBoundary';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 /**
  * The Custom RJSF Form that accepts custom fields from the extension

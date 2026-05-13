@@ -6,7 +6,7 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import { useState } from 'react';
-import { RJSFModalWrapper } from './Modals/Modal';
+import { RJSFModalWrapper } from '../Modal/Modal';
 import SupportIcon from '@/assets/icons/support';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { useSupportWebHookMutation } from '@/rtk-query/webhook';
@@ -19,8 +19,8 @@ import {
   TextButton,
   ToolBarButtonContainer,
   TryAgainButton,
-} from './style';
-import { StickyFeedbackButton } from './feedback';
+} from '../../General/style';
+import { StickyFeedbackButton } from '../../General/feedback';
 
 /**
  * CustomErrorFallback component can be use to show error message to users

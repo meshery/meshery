@@ -1,6 +1,6 @@
 import React from 'react';
-import { ChipWrapper } from '../../connections/styles';
-import { KeyValue } from '../../DataFormatter';
+import { ChipWrapper } from '../../../connections/styles';
+import { KeyValue } from '../../../DataFormatter';
 
 /**
  * Helper function to convert camelCase to Title Case with spaces

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user';
-import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
+import ExtensionPointSchemaValidator from '../../../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';

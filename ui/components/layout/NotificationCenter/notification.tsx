@@ -30,27 +30,27 @@ import {
 } from './notificationCenter.style';
 
 import { SEVERITY, SEVERITY_STYLE, STATUS } from './constants';
-import { iconLarge, iconMedium } from '../../css/icons.styles';
-import FacebookIcon from '../../assets/icons/FacebookIcon';
-import LinkedInIcon from '../../assets/icons/LinkedInIcon';
-import TwitterIcon from '../../assets/icons/TwitterIcon';
-import ShareIcon from '../../assets/icons/ShareIcon';
-import DeleteIcon from '../../assets/icons/DeleteIcon';
+import { iconLarge, iconMedium } from '../../../css/icons.styles';
+import FacebookIcon from '../../../assets/icons/FacebookIcon';
+import LinkedInIcon from '../../../assets/icons/LinkedInIcon';
+import TwitterIcon from '../../../assets/icons/TwitterIcon';
+import ShareIcon from '../../../assets/icons/ShareIcon';
+import DeleteIcon from '../../../assets/icons/DeleteIcon';
 import ErrorIcon from '@/assets/icons/ErrorIcon';
 import {
   useUpdateStatusMutation,
   useDeleteEventMutation,
-} from '../../rtk-query/notificationCenter';
+} from '../../../rtk-query/notificationCenter';
 import { useSelector } from 'react-redux';
 import {
   selectEventById,
   selectIsEventVisible,
   updateIsEventChecked,
-} from '../../store/slices/events';
-import { useGetUserByIdQuery } from '../../rtk-query/user';
+} from '../../../store/slices/events';
+import { useGetUserByIdQuery } from '../../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
-import ReadIcon from '../../assets/icons/ReadIcon';
-import UnreadIcon from '../../assets/icons/UnreadIcon';
+import ReadIcon from '../../../assets/icons/ReadIcon';
+import UnreadIcon from '../../../assets/icons/UnreadIcon';
 import { FormattedLinkMetadata, FormattedMetadata, PropertyLinkFormatters } from './metadata';
 import { truncate } from 'lodash';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
