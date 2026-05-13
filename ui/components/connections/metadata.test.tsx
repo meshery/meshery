@@ -60,7 +60,7 @@ vi.mock('../../utils/utils', () => ({
   formatToTitleCase: (value) => value,
 }));
 
-vi.mock('../DataFormatter', () => ({
+vi.mock('../data-formatter', () => ({
   FormatId: ({ id }) => <span>{id}</span>,
   FormatStructuredData: ({ data }) => (
     <div data-testid="structured-data">{JSON.stringify(data || {})}</div>

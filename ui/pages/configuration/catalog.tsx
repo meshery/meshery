@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { VISIBILITY } from '../../utils/Enum';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import DefaultError from '@/components/General/error-404';
+import DefaultError from '@/components/general/error-404';
 import MesheryPatterns from '@/components/designs/patterns/MesheryPatterns';
 import { usePageTitle } from '@/utils/hooks';
 

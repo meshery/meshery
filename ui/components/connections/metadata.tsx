@@ -8,7 +8,7 @@ import {
   KeyValue,
   Link,
   createColumnUiSchema,
-} from '../DataFormatter';
+} from '../data-formatter';
 import useKubernetesHook, {
   useControllerStatus,
   useMesheryOperator,

@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme, Box } from '@sistent/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import { Adapters } from '../components/extensions';
-import DefaultError from '@/components/General/error-404';
+import DefaultError from '@/components/general/error-404';
 import { EVENT_TYPES } from '../lib/event-types';
 import { EXTENSION_NAMES } from '../utils/Enum';
 import { useNotification, usePageTitle } from '@/utils/hooks';

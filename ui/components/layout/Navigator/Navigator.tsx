@@ -34,7 +34,7 @@ import {
 } from '../../../constants/navigator';
 import { iconSmall } from '../../../css/icons.styles';
 import CAN from '@/utils/can';
-import { CustomTextTooltip } from '../../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '../../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import {
   HideScrollbar,
   LinkContainer,
@@ -61,7 +61,7 @@ import {
   FixedSidebarFooter,
   SidebarDrawer,
   ExpandMore,
-} from '../../General/style';
+} from '../../general/style';
 import { useMediaQuery } from '@sistent/sistent';
 import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
 import { useDispatch, useSelector } from 'react-redux';

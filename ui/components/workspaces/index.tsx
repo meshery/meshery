@@ -21,7 +21,7 @@ import {
   PROMPT_VARIANTS,
   ModalFooter,
 } from '@sistent/sistent';
-import { EmptyState } from '@/components/Lifecycle/General';
+import { EmptyState } from '@/components/lifecycle/general';
 import AddIconCircleBorder from '@/assets/icons/AddIconCircleBorder';
 import { useRef, useState } from 'react';
 import {

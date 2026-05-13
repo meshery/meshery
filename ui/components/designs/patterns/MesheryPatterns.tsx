@@ -65,7 +65,7 @@ import { useWindowDimensions } from '../../../utils/dimension';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
 import { InfoOutlined as InfoOutlinedIcon } from '@/assets/icons';
 import { DefaultTableCell, SortableTableCell } from '../../connections/common';
-import DefaultError from '../../General/error-404/index';
+import DefaultError from '../../general/error-404/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ExportModal from '../../shared/Modal/ExportModal';

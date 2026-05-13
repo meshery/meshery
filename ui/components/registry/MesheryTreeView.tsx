@@ -12,7 +12,7 @@ import SearchBar from '@/utils/custom-search';
 import debounce from '@/utils/debounce';
 import { useWindowDimensions } from '@/utils/dimension';
 import { getFilteredDataForDetailsComponent } from './helper';
-import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import _ from 'lodash';
 import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';
