@@ -63,7 +63,7 @@ import { Edit as EditIcon } from '@/assets/icons';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../shared/Modal/Information/InfoModal';
-import { InfoOutlined as InfoOutlinedIcon } from '@/components/icons';
+import { InfoOutlined as InfoOutlinedIcon } from '@/assets/icons';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import DefaultError from '../General/error-404/index';
 import CAN from '@/utils/can';
