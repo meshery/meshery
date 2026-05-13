@@ -11,14 +11,14 @@ import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
 import { CreateButtonWrapper, BulkActionWrapper } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
+import AddIconCircleBorder from '../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
-import EnvironmentIcon from '../../../assets/icons/Environment';
-import { EVENT_TYPES } from '../../../lib/event-types';
-import { useNotification } from '../../../utils/hooks/useNotification';
-import { RJSFModalWrapper } from '../../General/Modals/Modal';
-import _PromptComponent from '../../PromptComponent';
-import { EmptyState } from '../General';
+import EnvironmentIcon from '../../assets/icons/Environment';
+import { EVENT_TYPES } from '../../lib/event-types';
+import { useNotification } from '../../utils/hooks/useNotification';
+import { RJSFModalWrapper } from '../General/Modals/Modal';
+import _PromptComponent from '../PromptComponent';
+import { EmptyState } from '../Lifecycle/General';
 import {
   Modal as SisitentModal,
   ModalBody,
@@ -34,8 +34,8 @@ import {
   SearchBar,
   PROMPT_VARIANTS,
 } from '@sistent/sistent';
-import ConnectionIcon from '../../../assets/icons/Connection';
-import { TRANSFER_COMPONENT } from '../../../utils/Enum';
+import ConnectionIcon from '../../assets/icons/Connection';
+import { TRANSFER_COMPONENT } from '../../utils/Enum';
 import {
   useAddConnectionToEnvironmentMutation,
   useRemoveConnectionFromEnvironmentMutation,
@@ -44,10 +44,10 @@ import {
   useCreateEnvironmentMutation,
   useUpdateEnvironmentMutation,
   useDeleteEnvironmentMutation,
-} from '../../../rtk-query/environments';
+} from '../../rtk-query/environments';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
-import DefaultError from '../../General/error-404/index';
+import DefaultError from '../General/error-404/index';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
