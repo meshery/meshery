@@ -55,7 +55,7 @@ import {
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../shared/Modal/Information/InfoModal';
-import { InfoOutlined as InfoOutlinedIcon } from '@/components/icons';
+import { InfoOutlined as InfoOutlinedIcon } from '@/assets/icons';
 import { DefaultTableCell, SortableTableCell } from '../connections/common/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
