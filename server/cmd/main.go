@@ -355,16 +355,18 @@ func main() {
 
 	providerEnvVar := viper.GetString(constants.ProviderENV)
 	RemoteProviderURLs := utils.SplitAndTrim(viper.GetString("PROVIDER_BASE_URLS"), ", \t\n\r")
-	expectedProviderIssuer := viper.GetString("EXPECTED_PROVIDER_ISSUER")
+	expectedProviderIssuer := strings.TrimSpace(viper.GetString("EXPECTED_PROVIDER_ISSUER"))
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
 		if err != nil {
 			log.Error(ErrInvalidURLSkippingProvider(providerurl))
 			continue
 		}
-		
+
 		expectedIss := expectedProviderIssuer
 		if expectedIss == "" {
+			// Fallback: same string we use as API base (parsedURL.String()).
+			// Token iss must match this exactly unless EXPECTED_PROVIDER_ISSUER is set.
 			expectedIss = parsedURL.String()
 		}
 

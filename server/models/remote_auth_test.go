@@ -3,6 +3,8 @@ package models
 import (
 	"bytes"
 	"context"
+	"crypto/rand"
+	"crypto/rsa"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -15,6 +17,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/meshery/meshkit/logger"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
@@ -466,5 +469,107 @@ func TestRemoteProviderDoRequest_XAPIKeyAnonymousOnly(t *testing.T) {
 	}
 	if got := read("stale"); got != "" {
 		t.Fatalf("authenticated request with inbound X-API-Key must strip it, got %q", got)
+	}
+}
+
+func rsaTestJWK(t *testing.T, kid string, priv *rsa.PrivateKey) map[string]string {
+	t.Helper()
+	pub := priv.PublicKey
+	nb := pub.N.Bytes()
+	if len(nb) > 0 && nb[0]&0x80 != 0 {
+		nb = append([]byte{0x00}, nb...)
+	}
+	return map[string]string{
+		"kid": kid,
+		"n":   base64.RawURLEncoding.EncodeToString(nb),
+		"e":   "AQAB",
+	}
+}
+
+func signedRS256JWT(t *testing.T, priv *rsa.PrivateKey, kid, iss string, exp time.Time) string {
+	t.Helper()
+	tok := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.MapClaims{
+		"iss": iss,
+		"exp": float64(exp.Unix()),
+	})
+	tok.Header["kid"] = kid
+	s, err := tok.SignedString(priv)
+	if err != nil {
+		t.Fatalf("sign jwt: %v", err)
+	}
+	return s
+}
+
+// TestRemoteProviderVerifyToken_IssuerExactMatch documents the maintainer
+// question: jwt.WithIssuer compares iss to the configured string byte-for-byte
+// (including any path segment in PROVIDER_BASE_URLS). It is not "origin only".
+func TestRemoteProviderVerifyToken_IssuerExactMatch(t *testing.T) {
+	priv, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		t.Fatal(err)
+	}
+	const kid = "test-kid"
+	apiBase := "https://provider.example.com/auth"
+
+	p := newTestRemoteProvider(t, apiBase)
+	p.Keys = []map[string]string{rsaTestJWK(t, kid, priv)}
+
+	good := signedRS256JWT(t, priv, kid, apiBase, time.Now().Add(time.Hour))
+	if _, err := p.VerifyToken(encodeTestToken(t, oauth2.Token{AccessToken: good, TokenType: "Bearer"})); err != nil {
+		t.Fatalf("expected success when iss equals RemoteProviderURL exactly, got %v", err)
+	}
+
+	// Origin-only iss must fail when the configured base URL includes a path.
+	bad := signedRS256JWT(t, priv, kid, "https://provider.example.com", time.Now().Add(time.Hour))
+	if _, err := p.VerifyToken(encodeTestToken(t, oauth2.Token{AccessToken: bad, TokenType: "Bearer"})); err == nil {
+		t.Fatal("expected failure when iss is only the origin but RemoteProviderURL includes /auth")
+	}
+}
+
+func TestRemoteProviderVerifyToken_ExpectedIssuerOverridesAPIBase(t *testing.T) {
+	priv, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		t.Fatal(err)
+	}
+	const kid = "k2"
+	apiBase := "https://custom.example.com"
+	canonical := "https://canonical.example.io/"
+
+	p := newTestRemoteProvider(t, apiBase)
+	p.ExpectedIssuer = canonical
+	p.Keys = []map[string]string{rsaTestJWK(t, kid, priv)}
+
+	good := signedRS256JWT(t, priv, kid, canonical, time.Now().Add(time.Hour))
+	if _, err := p.VerifyToken(encodeTestToken(t, oauth2.Token{AccessToken: good, TokenType: "Bearer"})); err != nil {
+		t.Fatalf("expected success when iss matches ExpectedIssuer, got %v", err)
+	}
+
+	bad := signedRS256JWT(t, priv, kid, apiBase, time.Now().Add(time.Hour))
+	if _, err := p.VerifyToken(encodeTestToken(t, oauth2.Token{AccessToken: bad, TokenType: "Bearer"})); err == nil {
+		t.Fatal("expected failure when iss matches API base but ExpectedIssuer is canonical")
+	}
+}
+
+func TestRemoteProviderVerifyToken_MissingIssRejected(t *testing.T) {
+	priv, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		t.Fatal(err)
+	}
+	const kid = "k3"
+	base := "https://issuer.example/"
+
+	p := newTestRemoteProvider(t, base)
+	p.Keys = []map[string]string{rsaTestJWK(t, kid, priv)}
+
+	tok := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.MapClaims{
+		"exp": float64(time.Now().Add(time.Hour).Unix()),
+	})
+	tok.Header["kid"] = kid
+	signed, err := tok.SignedString(priv)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := p.VerifyToken(encodeTestToken(t, oauth2.Token{AccessToken: signed, TokenType: "Bearer"})); err == nil {
+		t.Fatal("expected failure when iss claim is absent but issuer validation is enabled")
 	}
 }
