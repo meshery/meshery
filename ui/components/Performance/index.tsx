@@ -21,10 +21,13 @@ import {
   AccordionSummary,
 } from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import {
+  ArrowBack,
+  ExpandMore as ExpandMoreIcon,
+  GetApp as GetAppIcon,
+  HelpOutlineOutlined as HelpOutlineOutlinedIcon,
+  SaveOutlined as SaveOutlinedIcon,
+} from '../icons';
 import MesheryChart from '../MesheryChart';
 import LoadTestTimerDialog from '../load-test-timer-dialog';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
@@ -42,7 +45,6 @@ import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/Custom
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useGetMeshQuery } from '@/rtk-query/mesh';
-import { ArrowBack } from '@mui/icons-material';
 import {
   CenterTimer,
   ExpansionPanelComponent,
