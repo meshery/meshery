@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import {
+  ChevronLeft,
+  ChevronRight,
   Grid2,
   L5DeleteIcon,
   Modal,
@@ -12,8 +14,6 @@ import {
   useTheme,
   ErrorBoundary,
 } from '@sistent/sistent';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useDeleteWorkspaceMutation } from '../../../rtk-query/workspace';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
@@ -128,10 +128,7 @@ const WorkspaceGridView = ({
           onChange={debounce((_, page) => setPage(page - 1), 150)}
           boundaryCount={3}
           renderItem={(item) => (
-            <PaginationItem
-              slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
-              {...item}
-            />
+            <PaginationItem slots={{ previous: ChevronLeft, next: ChevronRight }} {...item} />
           )}
         />
       </Grid2>
