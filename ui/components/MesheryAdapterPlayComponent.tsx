@@ -1,40 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  AddIcon,
-  Box,
-  Card,
-  CardActions,
-  CardHeader,
-  Chip,
-  DeleteIcon,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-  IconButton,
-  Menu,
-  MenuItem,
-  PlayArrowIcon as PlayIcon,
-  Switch,
-  Table,
-  Tooltip,
-  styled,
-  FormLabel,
-  TableBody,
-  TableCell,
-  TableRow,
-  NoSsr,
-  TableHead,
-} from '@sistent/sistent';
-import MUIDataTable from '@sistent/mui-datatables';
+import { Grid, NoSsr } from '@sistent/sistent';
 import { useRouter } from 'next/router';
-import { Controlled as CodeMirror } from './CodeMirror';
-import Moment from 'react-moment';
 import yaml from 'js-yaml';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import {
@@ -48,15 +14,27 @@ import MesheryMetrics from './performance/MesheryMetrics';
 import MesheryResultDialog from './MesheryResultDialog';
 import ReactSelectWrapper from './ReactSelectWrapper';
 import ConfirmationMsg from './shared/Modal/ConfirmationModal';
-import { iconMedium } from '../css/icons.styles';
 import { ACTIONS } from '../utils/Enum';
 import { getModelByName } from '../api/meshmodel';
 import { EVENT_TYPES } from '../lib/event-types';
 import { useNotification } from '../utils/hooks/useNotification';
-import { keys } from '@/utils/permission_constants';
-import CAN from '@/utils/can';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import {
+  AdapterChip,
+  AdapterSmWrapper,
+  ChipNamespaceContainer,
+  InputWrapper,
+  PaneSection,
+} from './adapter-play-styled';
+import AdapterYamlDialog from './adapter-play-yaml-dialog';
+import AdapterSmiResultsDialog from './adapter-play-smi-results';
+import AdapterCategoryCard from './adapter-play-category-card';
+import AdapterAddonSwitches from './adapter-play-addon-switches';
+
+// Re-export AdapterChip for backwards compatibility — the previous
+// public surface of this module included this styled component.
+export { AdapterChip } from './adapter-play-styled';
 
 interface AdapterOperation {
   key: string;
@@ -70,88 +48,12 @@ interface Adapter {
   ops?: AdapterOperation[];
 }
 
-interface _SelectOption {
-  value: string;
-  label: string;
-}
-
 interface MesheryAdapterPlayComponentProps {
   adapter: Adapter;
+  // Optional consumer-supplied props that the original component reads
+  // via destructuring without declaring; kept for parity.
+  user?: { userId?: string };
 }
-
-interface _MenuState {
-  [key: number]: {
-    add: boolean;
-    delete: boolean;
-  };
-}
-
-interface _SMIResult {
-  results?: Array<{
-    id: string;
-    date: string;
-    meshName: string;
-    meshVersion: string;
-    passingPercentage: string;
-    status: string;
-    moreDetails: Array<{
-      smiSpecification: string;
-      assertions: string;
-      time: string;
-      smiVersion: string;
-      capability: string;
-      status: string;
-      reason: string;
-    }>;
-  }>;
-  totalCount?: number;
-}
-
-export const AdapterChip = styled(Chip)(({ theme }) => ({
-  height: '50px',
-  fontSize: '15px',
-  position: 'relative',
-  top: theme.spacing(0.5),
-  [theme.breakpoints.down('md')]: {
-    fontSize: '12px',
-  },
-}));
-
-const AdapterTableHeader = styled(TableCell)({
-  fontWeight: 'bolder',
-  fontSize: 18,
-});
-
-const AdapterSmWrapper = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.background.card,
-}));
-
-const SecondaryTable = styled('div')({
-  borderRadius: 10,
-  backgroundColor: '#f7f7f7',
-});
-
-const PaneSection = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.background.tabs,
-  padding: theme.spacing(3),
-  borderRadius: 4,
-}));
-
-const ChipNamespaceContainer = styled(Grid)(() => ({
-  gap: '2rem',
-  margin: '0px',
-}));
-
-const InputWrapper = styled('div')(() => ({
-  flex: '1',
-  minWidth: '250px',
-}));
-
-const AdapterCard = styled(Card)(() => ({
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-}));
 
 const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = (props) => {
   const { k8sConfig, selectedK8sContexts } = useSelector((state) => state.ui);
@@ -339,6 +241,24 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
     setAddonSwitchGroup(localState);
   };
 
+  const handleNamespaceChange = (newValue) => {
+    if (typeof newValue !== 'undefined') {
+      setNamespace(newValue);
+      setNamespaceError(false);
+    } else {
+      setNamespaceError(true);
+    }
+  };
+
+  const handleVersionChange = (newValue) => {
+    if (typeof newValue !== 'undefined') {
+      setVersion(newValue);
+      setVersionError(false);
+    } else {
+      setVersionError(true);
+    }
+  };
+
   // const handleChange =
   //   (name, isDelete = false) =>
   //   (event) => {
@@ -365,24 +285,6 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
   //       setSelectedOp(event.target.value);
   //     }
   //   };
-
-  const handleNamespaceChange = (newValue) => {
-    if (typeof newValue !== 'undefined') {
-      setNamespace(newValue);
-      setNamespaceError(false);
-    } else {
-      setNamespaceError(true);
-    }
-  };
-
-  const handleVersionChange = (newValue) => {
-    if (typeof newValue !== 'undefined') {
-      setVersion(newValue);
-      setVersionError(false);
-    } else {
-      setVersionError(true);
-    }
-  };
 
   const handleModalClose = (isDelete) => () => {
     if (isDelete) {
@@ -584,7 +486,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
     };
   };
 
-  const addDelHandleClick = (cat, isDelete) => () => {
+  const addDelHandleClick = (cat, isDelete) => {
     const newMenuState = { ...menuState };
     newMenuState[cat][isDelete ? 'delete' : 'add'] =
       !newMenuState[cat][isDelete ? 'delete' : 'add'];
@@ -599,363 +501,41 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
     }
   };
 
-  const generateMenu = (cat, isDelete, selectedAdapterOps) => {
-    const ele = !isDelete ? addIconEles.current[cat] : delIconEles.current[cat];
+  const renderYamlDialog = (cat, isDelete) => {
+    const value = isDelete ? cmEditorValDel : cmEditorValAdd;
     return (
-      <Menu
-        id="long-menu"
-        anchorEl={ele}
-        keepMounted
-        open={menuState[cat][isDelete ? 'delete' : 'add']}
-        onClose={addDelHandleClick(cat, isDelete)}
-      >
-        {selectedAdapterOps
-          .sort((adap1, adap2) => adap1.value.localeCompare(adap2.value))
-          .map(({ key, value }) => (
-            <MenuItem
-              key={`${key}_${new Date().getTime()}`}
-              onClick={handleSubmit(cat, key, isDelete)}
-            >
-              {value}
-            </MenuItem>
-          ))}
-      </Menu>
-    );
-  };
-
-  const generateYAMLEditor = (cat, isDelete) => {
-    return (
-      <Dialog
-        onClose={handleModalClose(isDelete)}
-        aria-labelledby="adapter-dialog-title"
+      <AdapterYamlDialog
         open={isDelete ? customDialogDel : customDialogAdd}
-        fullWidth
-        maxWidth="md"
-      >
-        <DialogTitle id="adapter-dialog-title" onClose={handleModalClose(isDelete)}>
-          {adapter.name} Adapter - Custom YAML
-          {isDelete ? '(delete)' : ''}
-        </DialogTitle>
-        <Divider variant="fullWidth" light />
-        <DialogContent>
-          <Grid container spacing={5}>
-            <Grid item xs={6}>
-              <ReactSelectWrapper
-                label="Namespace"
-                value={namespace}
-                error={namespaceError}
-                options={namespaceList}
-                onChange={handleNamespaceChange}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <ReactSelectWrapper
-                label="Version"
-                value={version}
-                error={versionError}
-                options={versionList}
-                onChange={handleVersionChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <CodeMirror
-                value={isDelete ? cmEditorValDel : cmEditorValAdd}
-                options={{
-                  theme: 'material',
-                  lineNumbers: true,
-                  lineWrapping: true,
-                  gutters: ['CodeMirror-lint-markers'],
-                  lint: true,
-                  mode: 'text/x-yaml',
-                }}
-                onBeforeChange={(editor, data, value) => {
-                  const isValid = isYamlValid(value);
-                  if (isDelete) {
-                    setCmEditorValDel(value);
-                    if (isValid) {
-                      setSelectionError(false);
-                      setCmEditorValDelError(false);
-                    }
-                  } else {
-                    setCmEditorValAdd(value);
-                    if (isValid) {
-                      setSelectionError(false);
-                      setCmEditorValAddError(false);
-                    }
-                  }
-                }}
-              />
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <Divider variant="fullWidth" light />
-        <DialogActions>
-          <IconButton aria-label="Apply" onClick={handleSubmit(cat, 'custom', isDelete)}>
-            {!isDelete && <PlayIcon style={iconMedium} />}
-            {isDelete && <DeleteIcon style={iconMedium} />}
-          </IconButton>
-        </DialogActions>
-      </Dialog>
-    );
-  };
-
-  const generateSMIResult = () => {
-    const smi_columns = [
-      {
-        name: 'ID',
-        label: 'ID',
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-          customHeadRender: ({ index, ...column }) => {
-            return (
-              <TableCell key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-          },
-          customBodyRender: (value) => (
-            <Tooltip title={value} placement="top">
-              <div>{value.slice(0, 5) + '...'}</div>
-            </Tooltip>
-          ),
-        },
-      },
-      {
-        name: 'Date',
-        label: 'Date',
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-          customHeadRender: ({ index, ...column }) => {
-            return (
-              <TableCell key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-          },
-          customBodyRender: (value) => <Moment format="LLLL">{value}</Moment>,
-        },
-      },
-      {
-        name: 'Service Mesh',
-        label: 'Service Mesh',
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-          customHeadRender: ({ index, ...column }) => {
-            return (
-              <TableCell key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-          },
-        },
-      },
-      {
-        name: 'Service Mesh Version',
-        label: 'Service Mesh Version',
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-          customHeadRender: ({ index, ...column }) => {
-            return (
-              <TableCell key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-          },
-        },
-      },
-      {
-        name: '% Passed',
-        label: '% Passed',
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-          customHeadRender: ({ index, ...column }) => {
-            return (
-              <TableCell key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-          },
-        },
-      },
-      {
-        name: 'status',
-        label: 'Status',
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-          customHeadRender: ({ index, ...column }) => {
-            return (
-              <TableCell key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-          },
-        },
-      },
-    ];
-
-    const smi_options = {
-      sort: !(props.user && props.user.userId === 'meshery'),
-      search: !(props.user && props.user.userId === 'meshery'),
-      filterType: 'textField',
-      expandableRows: true,
-      selectableRows: 'none',
-      rowsPerPage: pageSize,
-      rowsPerPageOptions: [10, 20, 25],
-      fixedHeader: true,
-      print: false,
-      download: false,
-      renderExpandableRow: (rowData, rowMeta) => {
-        const column = [
-          'Specification',
-          'Assertions',
-          'Time',
-          'Version',
-          'Capability',
-          'Result',
-          'Reason',
-        ];
-        const data = smi_result.results[rowMeta.dataIndex].more_details.map((val) => {
-          return [
-            val.smi_specification,
-            val.assertions,
-            val.time,
-            val.smi_version,
-            val.capability,
-            val.status,
-            val.reason,
-          ];
-        });
-        const colSpan = rowData.length + 1;
-        return (
-          <TableRow>
-            <TableCell colSpan={colSpan}>
-              <SecondaryTable>
-                <Table aria-label="a dense table">
-                  <TableHead>
-                    <TableRow>
-                      {column.map((val) => (
-                        <TableCell colSpan={colSpan} key={val}>
-                          {val}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.map((row, idx) => (
-                      <TableRow key={idx}>
-                        {row.map((val, vIdx) => {
-                          if (val && val.match(/[0-9]+m[0-9]+.+[0-9]+s/i) != null) {
-                            const time = val.split(/m|s/);
-                            return (
-                              <TableCell colSpan={colSpan} key={`${idx}-${vIdx}`}>
-                                {time[0] + 'm ' + parseFloat(time[1]).toFixed(1) + 's'}
-                              </TableCell>
-                            );
-                          } else {
-                            return (
-                              <TableCell colSpan={colSpan} key={`${idx}-${vIdx}`}>
-                                {val}
-                              </TableCell>
-                            );
-                          }
-                        })}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </SecondaryTable>
-            </TableCell>
-          </TableRow>
-        );
-      },
-      onTableChange: (action, tableState) => {
-        const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
-        let order = '';
-        if (tableState.activeColumn) {
-          order = `${smi_columns[tableState.activeColumn].name} desc`;
-        }
-
-        switch (action) {
-          case 'changePage':
-            fetchSMIResults(adapter.name, tableState.page, pageSize, search, sortOrder);
-            setPage(tableState.page);
-            break;
-          case 'changeRowsPerPage':
-            fetchSMIResults(adapter.name, page, tableState.rowsPerPage, search, sortOrder);
-            setPageSize(tableState.rowsPerPage);
-            break;
-          case 'search':
-            if (search !== tableState.searchText) {
-              fetchSMIResults(
-                adapter.name,
-                page,
-                pageSize,
-                tableState.searchText !== null ? tableState.searchText : '',
-                sortOrder,
-              );
-              setSearch(tableState.searchText);
+        isDelete={isDelete}
+        adapterName={adapter.name}
+        namespace={namespace}
+        namespaceError={namespaceError}
+        namespaceList={namespaceList}
+        onNamespaceChange={handleNamespaceChange}
+        version={version}
+        versionError={versionError}
+        versionList={versionList}
+        onVersionChange={handleVersionChange}
+        value={value}
+        onBeforeChange={(_editor, _data, newValue) => {
+          const isValid = isYamlValid(newValue);
+          if (isDelete) {
+            setCmEditorValDel(newValue);
+            if (isValid) {
+              setSelectionError(false);
+              setCmEditorValDelError(false);
             }
-            break;
-          case 'sort':
-            if (sortInfo.length === 2) {
-              if (sortInfo[1] === 'ascending') {
-                order = `${smi_columns[tableState.activeColumn].name} asc`;
-              } else {
-                order = `${smi_columns[tableState.activeColumn].name} desc`;
-              }
+          } else {
+            setCmEditorValAdd(newValue);
+            if (isValid) {
+              setSelectionError(false);
+              setCmEditorValAddError(false);
             }
-            if (order !== sortOrder) {
-              fetchSMIResults(adapter.name, page, pageSize, search, order);
-              setSortOrder(order);
-            }
-            break;
-        }
-      },
-    };
-
-    let data = [];
-    if (smi_result && smi_result.results) {
-      data = smi_result.results.map((val) => {
-        return [
-          val.id,
-          val.date,
-          val.mesh_name,
-          val.mesh_version,
-          val.passing_percentage,
-          val.status,
-        ];
-      });
-    }
-
-    return (
-      <Dialog
-        onClose={handleSMIClose}
-        aria-labelledby="adapter-dialog-title"
-        open={customDialogSMI}
-        fullWidth
-        maxWidth="md"
-      >
-        <MUIDataTable
-          title={
-            <AdapterTableHeader>Service Mesh Interface Conformance Results</AdapterTableHeader>
           }
-          data={data}
-          columns={smi_columns}
-          options={smi_options}
-        />
-      </Dialog>
+        }}
+        onClose={handleModalClose(isDelete)}
+        onApply={handleSubmit(cat, 'custom', isDelete)}
+      />
     );
   };
 
@@ -965,136 +545,9 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
     );
   };
 
-  const generateAddonSwitches = (selectedAdapterOps) => {
-    if (!selectedAdapterOps.length) return null;
-
-    return (
-      <FormControl component="fieldset" style={{ padding: '1rem' }}>
-        <FormLabel component="legend">Customize Addons</FormLabel>
-        <FormGroup>
-          {selectedAdapterOps
-            .map((ops) => ({ ...ops, value: ops.value.replace('Add-on:', '') }))
-            .sort((ops1, ops2) => ops1.value.localeCompare(ops2.value))
-            .map((ops) => (
-              <FormControlLabel
-                control={
-                  <Switch
-                    color="primary"
-                    checked={!!addonSwitchGroup[ops.key]}
-                    onChange={(ev) => {
-                      setAddonSwitchGroup({
-                        ...addonSwitchGroup,
-                        [ev.target.name]: ev.target.checked,
-                      });
-                      submitOp(ops.category, ops.key, !addonSwitchGroup[ops.key]);
-                    }}
-                    name={ops.key}
-                  />
-                }
-                label={ops.value}
-                key={ops.key}
-              />
-            ))}
-        </FormGroup>
-      </FormControl>
-    );
-  };
-
-  const generateCardForCategory = (cat) => {
-    if (typeof cat === 'undefined') {
-      cat = 0;
-    }
-
-    let selectedAdapterOps =
-      adapter && adapter.ops
-        ? adapter.ops.filter(
-            ({ category }) => (typeof category === 'undefined' && cat === 0) || category === cat,
-          )
-        : [];
-    let content;
-    let description;
-    let permission;
-    switch (cat) {
-      case 0:
-        content = 'Manage Cloud Native Infrastructure Lifecycle';
-        description = 'Deploy cloud native infrastructure or SMI adapter on your cluster.';
-        permission = {
-          action: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.action,
-          subject: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.subject,
-        };
-        break;
-
-      case 1:
-        content = 'Manage Sample Application Lifecycle';
-        description = 'Deploy sample applications on/off the service mesh.';
-        permission = {
-          action: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.action,
-          subject: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.subject,
-        };
-        break;
-
-      case 2:
-        content = 'Apply Cloud Native Infrastructure Configuration';
-        description = 'Configure your cloud native infrastructure using some pre-defined options.';
-        selectedAdapterOps = selectedAdapterOps.filter((ops) => !ops.value.startsWith('Add-on:'));
-        permission = {
-          action: keys.APPLY_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.action,
-          subject: keys.APPLY_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.subject,
-        };
-        break;
-
-      case 3:
-        content = 'Validate Cloud Native Infrastructure Configuration';
-        description =
-          'Validate your cloud native infrastructure configuration against best practices.';
-        permission = {
-          action: keys.VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.action,
-          subject: keys.VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.subject,
-        };
-        break;
-
-      case 4:
-        content = 'Apply Custom Configuration';
-        description = 'Customize the configuration of your cloud native infrastructure.';
-        permission = {
-          action: keys.APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION.action,
-          subject: keys.APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION.subject,
-        };
-        break;
-    }
-
-    return (
-      <AdapterCard>
-        <CardHeader title={content} subheader={description} style={{ flexGrow: 1 }} />
-        <CardActions disableSpacing>
-          <IconButton
-            aria-label="install"
-            ref={(ch) => (addIconEles.current[cat] = ch)}
-            onClick={addDelHandleClick(cat, false)}
-            disabled={!CAN(permission.action, permission.subject)}
-          >
-            {cat !== 4 ? <AddIcon style={iconMedium} /> : <PlayIcon style={iconMedium} />}
-          </IconButton>
-          {cat !== 4 && generateMenu(cat, false, selectedAdapterOps)}
-          {cat === 4 && generateYAMLEditor(cat, false)}
-          {cat !== 3 && (
-            <Box width={'100%'}>
-              <IconButton
-                aria-label="delete"
-                ref={(ch) => (delIconEles.current[cat] = ch)}
-                style={{ float: 'right' }}
-                onClick={addDelHandleClick(cat, true)}
-                disabled={!CAN(permission.action, permission.subject)}
-              >
-                <DeleteIcon style={iconMedium} />
-              </IconButton>
-              {cat !== 4 && generateMenu(cat, true, selectedAdapterOps)}
-              {cat === 4 && generateYAMLEditor(cat, true)}
-            </Box>
-          )}
-        </CardActions>
-      </AdapterCard>
-    );
+  const handleAddonSwitchChange = (name, checked, ops) => {
+    setAddonSwitchGroup({ ...addonSwitchGroup, [name]: checked });
+    submitOp(ops.category, ops.key, !addonSwitchGroup[ops.key]);
   };
 
   const renderGrafanaCustomCharts = (boardConfigs, grafanaURL, grafanaAPIKey) => {
@@ -1183,13 +636,26 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
                     >
                       {filteredOps.map((val, i) => (
                         <Grid item lg={3} md={4} xs={12} key={`adapter-card-${i}`}>
-                          {generateCardForCategory(val)}
+                          <AdapterCategoryCard
+                            cat={typeof val === 'undefined' ? 0 : val}
+                            adapterOps={adapter?.ops ?? []}
+                            menuState={menuState}
+                            addIconEles={addIconEles}
+                            delIconEles={delIconEles}
+                            onMenuToggle={addDelHandleClick}
+                            onMenuItemClick={handleSubmit}
+                            renderYamlDialog={renderYamlDialog}
+                          />
                         </Grid>
                       ))}
                     </Grid>
                     <Grid container item lg={2} xs={12}>
                       <Grid item xs={12} md={4}>
-                        {generateAddonSwitches(extractAddonOperations(2))}
+                        <AdapterAddonSwitches
+                          selectedAdapterOps={extractAddonOperations(2)}
+                          addonSwitchGroup={addonSwitchGroup}
+                          onSwitchChange={handleAddonSwitchChange}
+                        />
                       </Grid>
                     </Grid>
                   </Grid>
@@ -1219,7 +685,24 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
           title={operationName}
           tab={isDeleteOp ? ACTIONS.UNDEPLOY : ACTIONS.DEPLOY}
         />
-        {customDialogSMI && generateSMIResult()}
+        {customDialogSMI && (
+          <AdapterSmiResultsDialog
+            open={customDialogSMI}
+            onClose={handleSMIClose}
+            adapterName={adapter.name}
+            smiResult={smi_result}
+            page={page}
+            pageSize={pageSize}
+            search={search}
+            sortOrder={sortOrder}
+            user={props.user}
+            fetchSMIResults={fetchSMIResults}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+            onSearchChange={setSearch}
+            onSortOrderChange={setSortOrder}
+          />
+        )}
       </React.Fragment>
     </NoSsr>
   );
