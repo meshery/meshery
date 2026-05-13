@@ -1,0 +1,303 @@
+import {
+  Avatar,
+  Chip,
+  CircularProgress,
+  FormLabel,
+  Typography,
+  ViewIcon,
+  getFullFormattedTime,
+  styled,
+  useTheme,
+} from '@sistent/sistent';
+import React, { useState } from 'react';
+import _ from 'lodash';
+import { Box, Modal, ModalBody, ModalFooter } from '@sistent/sistent';
+import { useGetViewQuery, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
+import { useGetLoggedInUserQuery, useGetUserProfileSummaryByIdQuery } from '@/rtk-query/user';
+import { iconLarge } from 'css/icons.styles';
+import { VisibilityChipMenu } from '@sistent/sistent';
+import RJSFWrapper from '../../meshery-mesh-interface/PatternService/RJSF_wrapper';
+import { MDEditor } from '../../Markdown';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
+import { ModalButtonSecondary } from '@sistent/sistent';
+import { handleUpdateViewVisibility, viewPath } from '../../workspaces/SpacesSwitcher/hooks';
+import { ModalButtonPrimary } from '@sistent/sistent';
+import rehypeSanitize from 'rehype-sanitize';
+import { Lock, Public } from '@/assets/icons';
+import { VIEW_VISIBILITY } from '@/utils/Enum';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
+
+const Row = styled('div')(({ justifyContent = 'space-between' }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: '0.5rem',
+  flexWrap: 'wrap',
+  justifyContent,
+  paddingInline: '1rem',
+  paddingBlock: '0.5rem',
+}));
+
+const Title = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.primary,
+  fontSize: '1.1rem',
+  fontWeight: '500',
+}));
+
+const InfoFormSchema = {
+  title: 'View Info',
+  description: 'View Info',
+  properties: {
+    notes: {
+      type: 'string',
+      title: 'Notes',
+      'x-rjsf-grid-area': 12,
+      default: '',
+    },
+  },
+};
+
+const UIFormSchema = {
+  notes: {
+    'ui:autofocus': true,
+    'ui:widget': 'markdown',
+  },
+};
+
+const StyledRJSFWrapper = styled('div')({
+  width: '100%',
+  '& .rjsf': {
+    width: '100%',
+    margin: '0',
+    padding: '0',
+  },
+});
+
+export const ActionBox = styled(Box)(() => ({
+  display: 'flex',
+  justifyContent: 'end',
+  width: '100%',
+  gap: '1rem',
+}));
+
+export const ViewInfoModal_ = ({ open, closeModal, viewId, viewName, metadata, refetch }) => {
+  const [formState, setFormState] = useState(metadata);
+  const viewRes = useGetViewQuery(
+    { viewId },
+    {
+      skip: !viewId,
+    },
+  );
+  const userRes = useGetLoggedInUserQuery();
+  const view = viewRes.data;
+  const user = userRes.data;
+
+  const isLoading =
+    viewRes.isLoading || userRes.isLoading || viewRes.isFetching || userRes.isFetching;
+  const formRef = React.useRef(null);
+  const [saving, setSaving] = useState(false);
+  const [updateView] = useUpdateViewVisibilityMutation();
+
+  const handleSave = () => {
+    setSaving(true);
+    updateView({
+      id: view.id,
+      body: {
+        metadata: formState,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        setSaving(false);
+        refetch && refetch();
+        closeModal();
+      });
+  };
+  const canEdit = view?.userId === user?.id;
+  const uiSchema = _.merge({}, UIFormSchema, {
+    'ui:readonly': !canEdit,
+  });
+  const viewExists = (v) => Boolean(v && v?.id);
+  const theme = useTheme();
+  return (
+    <Modal
+      open={open}
+      closeModal={closeModal}
+      title={viewName}
+      headerIcon={<ViewIcon {...iconLarge} fill={theme.palette.common.white} />}
+      maxWidth="sm"
+    >
+      <ModalBody>
+        {isLoading && (
+          <div>
+            <CircularProgress />
+          </div>
+        )}
+
+        {!isLoading && (
+          <div>
+            <Row style={{ paddingInline: '0rem' }}>
+              <Row justifyContent="start">
+                <Title>Owner: </Title>
+                <UserChip userId={view?.userId} />
+              </Row>
+              <Row justifyContent="start">
+                <Title>Visibility: </Title>
+                <ViewVisibilityMenu view={view} />
+              </Row>
+            </Row>
+            <RJSFWrapper
+              hideTitle
+              jsonSchema={InfoFormSchema}
+              formData={formState}
+              formRef={formRef}
+              uiSchema={uiSchema}
+              widgets={{
+                markdown: MarkdownInput,
+              }}
+              onChange={(formData) => {
+                setFormState(formData);
+              }}
+              RJSFWrapperComponent={StyledRJSFWrapper}
+            />
+
+            <Row justifyContent="start">
+              <Title>Created: </Title>
+              <Typography>{getFullFormattedTime(view?.createdAt)}</Typography>
+            </Row>
+            <Row justifyContent="start">
+              <Title>Updated: </Title>
+              <Typography>{getFullFormattedTime(view?.updatedAt)}</Typography>
+            </Row>
+          </div>
+        )}
+      </ModalBody>
+      <ModalFooter variant="filled">
+        <ActionBox>
+          <CopyLinkButton link={view?.id ? viewPath(view) : ''} disabled={!viewExists(view)} />
+          {canEdit && <SaveButton isSaving={saving} onClick={handleSave} />}
+        </ActionBox>
+      </ModalFooter>
+    </Modal>
+  );
+};
+
+export const ViewInfoModal = (props) => {
+  return (
+    <ProviderStoreWrapper>
+      <ViewInfoModal_ {...props} />
+    </ProviderStoreWrapper>
+  );
+};
+const StyledChip = styled(Chip)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+}));
+
+export const UserChip = ({ userId }) => {
+  const userProfileRes = useGetUserProfileSummaryByIdQuery(
+    { id: userId },
+    {
+      skip: !userId,
+    },
+  );
+
+  if (userProfileRes.isError || userProfileRes.isLoading) {
+    return null;
+  }
+  const { avatarUrl } = userProfileRes?.data || {};
+  const userName = formatUsername(userProfileRes?.data || {});
+
+  return (
+    <StyledChip avatar={<Avatar src={avatarUrl} />} label={userName || ''} variant="outlined" />
+  );
+};
+
+const formatUsername = ({ firstName, lastName }) => {
+  return `${firstName || ''} ${lastName || ''}`.trim();
+};
+
+const ViewVisibilityMenu = ({ view }) => {
+  const { data: userData } = useGetLoggedInUserQuery();
+  const [updateView] = useUpdateViewVisibilityMutation();
+  return (
+    <VisibilityChipMenu
+      value={view?.visibility || VIEW_VISIBILITY.PUBLIC}
+      onChange={(value) =>
+        handleUpdateViewVisibility({ value: value, updateView: updateView, selectedResource: view })
+      }
+      enabled={view?.userId === userData?.id}
+      options={[
+        [VIEW_VISIBILITY.PUBLIC, Public],
+        [VIEW_VISIBILITY.PRIVATE, Lock],
+      ]}
+    />
+  );
+};
+
+const MarkdownInput = (props) => {
+  const preview = props.readonly ? 'preview' : 'edit';
+  const hideToolbar = props.readonly ? true : false;
+  const theme = useTheme();
+
+  const handleChange = (value) => {
+    if (props.onChange && value !== props.value) {
+      props.onChange(value);
+    }
+  };
+
+  return (
+    <div
+      data-color-mode={theme.palette.mode}
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.5rem',
+      }}
+    >
+      <FormLabel>{props.label}</FormLabel>
+      <MDEditor
+        value={props.value || ''}
+        onChange={handleChange}
+        preview={preview}
+        hideToolbar={hideToolbar}
+        previewOptions={{
+          rehypePlugins: [[rehypeSanitize]],
+        }}
+      />
+    </div>
+  );
+};
+
+const CopyLinkButton = ({ onClick, link, ...props }) => {
+  const { notify } = useNotification();
+
+  const handleClick = () => {
+    navigator.clipboard.writeText(link);
+    notify({
+      message: 'Link copied to clipboard',
+      event_type: EVENT_TYPES.INFO,
+    });
+    if (onClick) onClick();
+  };
+  return (
+    <ModalButtonSecondary onClick={handleClick} {...props}>
+      Copy Link
+    </ModalButtonSecondary>
+  );
+};
+
+const SaveButton = ({ onClick, isSaving, ...props }) => (
+  <ModalButtonPrimary onClick={onClick} {...props} disabled={props?.disabled || isSaving}>
+    {isSaving ? (
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <CircularProgress size={20} sx={{ mr: '0.5rem', color: 'common.white' }} />
+        <Typography variant="body1"> Saving...</Typography>
+      </div>
+    ) : (
+      'Save'
+    )}
+  </ModalButtonPrimary>
+);

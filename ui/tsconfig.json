@@ -8,6 +8,10 @@
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["components/*"],
+      "@/graphql/*": ["graphql/*"],
+      "lib/*": ["lib/*"],
+      "machines/*": ["machines/*"],
+      "css/*": ["css/*"],
       "@/utils/*": ["utils/*"],
       "@/rtk-query/*": ["rtk-query/*"],
       "@/constants/*": ["constants/*"],

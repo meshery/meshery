@@ -42,12 +42,12 @@ import {
   useLazyPingAdapterQuery,
   useLazyGetSmiResultsQuery,
 } from '../rtk-query/system';
-import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
-import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
-import MesheryMetrics from './Performance/MesheryMetrics';
+import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
+import fetchAvailableNamespaces from '@/graphql/queries/NamespaceQuery';
+import MesheryMetrics from './performance/MesheryMetrics';
 import MesheryResultDialog from './MesheryResultDialog';
 import ReactSelectWrapper from './ReactSelectWrapper';
-import ConfirmationMsg from './ConfirmationModal';
+import ConfirmationMsg from './shared/Modal/ConfirmationModal';
 import { iconMedium } from '../css/icons.styles';
 import { ACTIONS } from '../utils/Enum';
 import { getModelByName } from '../api/meshmodel';

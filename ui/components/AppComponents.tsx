@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { FavoriteIcon, Hidden, Typography, useTheme } from '@sistent/sistent';
-import Navigator from './Navigator';
-import subscribeK8sContext from './graphql/subscriptions/K8sContextSubscription';
+import Navigator from './layout/Navigator/Navigator';
+import subscribeK8sContext from '@/graphql/subscriptions/K8sContextSubscription';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,11 +9,11 @@ import { updateK8SConfig } from '@/store/slices/mesheryUi';
 import { StyledDrawer, StyledFooterBody, StyledFooterText } from '../themes/App.styles';
 
 type FooterProps = {
-  capabilitiesRegistry?: { restrictedAccess?: { isMesheryUiRestricted?: boolean } } | null;
+  providerCapabilities?: { restrictedAccess?: { isMesheryUiRestricted?: boolean } } | null;
   handleMesheryCommunityClick: () => void;
 };
 
-export const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }: FooterProps) => {
+export const Footer = ({ providerCapabilities, handleMesheryCommunityClick }: FooterProps) => {
   const theme = useTheme();
   const isPlaygroundBuild = process.env.NEXT_PUBLIC_PLAYGROUND_BUILD === 'true';
   const { extensionType: extension } = useSelector((state) => state.ui);
@@ -36,7 +36,7 @@ export const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }: Fo
         }}
       >
         <StyledFooterText onClick={handleMesheryCommunityClick}>
-          {capabilitiesRegistry?.restrictedAccess?.isMesheryUIRestricted || isPlaygroundBuild ? (
+          {providerCapabilities?.restrictedAccess?.isMesheryUIRestricted || isPlaygroundBuild ? (
             'ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.'
           ) : (
             <>
