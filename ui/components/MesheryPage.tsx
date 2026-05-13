@@ -36,6 +36,8 @@ export const MesheryPage = ({ title, headTitle, noSuffix, children }: MesheryPag
   );
 };
 
+MesheryPage.displayName = 'MesheryPage';
+
 /**
  * Centered, overflow-hidden container used by several list/table pages.
  * Pass sx to extend or override the default layout styles.
@@ -47,3 +49,5 @@ export const PageContainer = ({
   children: React.ReactNode;
   sx?: ComponentProps<typeof Box>['sx'];
 }) => <Box sx={{ margin: 'auto', overflow: 'hidden', ...sx }}>{children}</Box>;
+
+PageContainer.displayName = 'PageContainer';
