@@ -7,7 +7,6 @@ import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
-import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
 import { calculateGrid, safeStringTitle } from '../helper';
 
@@ -133,7 +132,7 @@ const ObjectFieldTemplate = ({
             )}
             {rawErrors.length !== 0 && (
               <CustomTextTooltip
-                bgColor={ERROR_COLOR}
+                bgColor={theme.palette.error.main}
                 title={safeStringTitle(Array.isArray(rawErrors) ? rawErrors.join('  ') : rawErrors)}
               >
                 <IconButton
