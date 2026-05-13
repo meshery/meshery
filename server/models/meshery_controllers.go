@@ -12,6 +12,7 @@ import (
 	"maps"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/broker"
 	channelBroker "github.com/meshery/meshkit/broker/channel"
 	"github.com/meshery/meshkit/broker/nats"
@@ -22,7 +23,6 @@ import (
 	"github.com/meshery/meshkit/utils"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	libmeshsync "github.com/meshery/meshsync/pkg/lib/meshsync"
-	"github.com/meshery/meshery/server/models/connections"
 	"github.com/spf13/viper"
 )
 
@@ -508,15 +508,21 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 	// Inform user of the latest release version
 	versions, err := utils.GetLatestReleaseTagsSorted("meshery", "meshery")
-	latestVersion := versions[len(versions)-1]
-	isOutdated := false
+
 	if err != nil {
 		return nil, "", ErrCreateOperatorDeploymentConfig(err)
 	}
-	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
+
+	if len(versions) == 0 {
+		isOutdated := false
+		return &isOutdated, serverVersion, nil
+	}
+
+	latestVersion := versions[len(versions)-1]
+	isOutdated := false
+
 	if latestVersion != serverVersion {
 		isOutdated = true
-		return &isOutdated, latestVersion, nil
 	}
 
 	return &isOutdated, latestVersion, nil
