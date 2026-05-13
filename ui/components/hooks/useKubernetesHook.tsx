@@ -3,10 +3,10 @@ import { errorHandlerGenerator, successHandlerGenerator } from '../../utils/help
 import { pingMesheryOperator } from '../../utils/helpers/mesheryOperator';
 import { useLazyPingKubernetesQuery } from '@/rtk-query/connection';
 import { EVENT_TYPES } from '../../lib/event-types';
-import MeshsyncStatusQuery from '../graphql/queries/MeshsyncStatusQuery';
+import MeshsyncStatusQuery from '@/graphql/queries/MeshsyncStatusQuery';
 import { useCallback, useEffect, useState } from 'react';
-import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
-import NatsStatusQuery from '../graphql/queries/NatsStatusQuery';
+import fetchMesheryOperatorStatus from '@/graphql/queries/OperatorStatusQuery';
+import NatsStatusQuery from '@/graphql/queries/NatsStatusQuery';
 import { CONTROLLERS, CONTROLLER_STATES } from '../../utils/Enum';
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';

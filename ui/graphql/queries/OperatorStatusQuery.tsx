@@ -1,5 +1,5 @@
 import { fetchQuery, graphql } from 'react-relay';
-import { createRelayEnvironment } from '../../../lib/relayEnvironment';
+import { createRelayEnvironment } from 'lib/relayEnvironment';
 
 interface OperatorStatusVariables {
   connectionID: string;

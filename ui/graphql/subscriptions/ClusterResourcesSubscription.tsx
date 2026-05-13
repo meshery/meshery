@@ -1,5 +1,5 @@
 import { graphql } from 'react-relay';
-import { createSubscription } from '../../../lib/subscriptionHelper';
+import { createSubscription } from 'lib/subscriptionHelper';
 
 export const clusterResourcesSubscription = graphql`
   subscription ClusterResourcesSubscription($k8scontextIDs: [String!], $namespace: String!) {

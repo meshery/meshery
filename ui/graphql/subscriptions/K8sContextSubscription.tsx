@@ -1,5 +1,5 @@
 import { graphql } from 'relay-runtime';
-import { createSubscription } from '../../../lib/subscriptionHelper';
+import { createSubscription } from 'lib/subscriptionHelper';
 
 const k8sContextSubscription = graphql`
   subscription K8sContextSubscription($selector: PageFilter!) {

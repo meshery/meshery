@@ -15,6 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@/components': path.resolve(__dirname, './components'),
+      '@/graphql': path.resolve(__dirname, './graphql'),
       '@/utils': path.resolve(__dirname, './utils'),
       '@/rtk-query': path.resolve(__dirname, './rtk-query'),
       '@/constants': path.resolve(__dirname, './constants'),

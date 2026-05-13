@@ -42,8 +42,8 @@ import {
   useLazyPingAdapterQuery,
   useLazyGetSmiResultsQuery,
 } from '../rtk-query/system';
-import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
-import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
+import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
+import fetchAvailableNamespaces from '@/graphql/queries/NamespaceQuery';
 import MesheryMetrics from './Performance/MesheryMetrics';
 import MesheryResultDialog from './MesheryResultDialog';
 import ReactSelectWrapper from './ReactSelectWrapper';

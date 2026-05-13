@@ -1,6 +1,6 @@
 import React, { useState, FC } from 'react';
 import { Button, Typography, ResponsiveDataTable, useTheme } from '@sistent/sistent';
-import resetDatabase from './graphql/queries/ResetDatabaseQuery';
+import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
