@@ -14,7 +14,7 @@ import {
   Typography,
   VisibilityChipMenu,
 } from '@sistent/sistent';
-import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
+import { VIEW_VISIBILITY } from '@/components/General/Modals/Information/InfoModal';
 import {
   StyledAvatarContainer,
   StyledListIcon,

@@ -26,10 +26,10 @@ import useInfiniteScroll, {
 } from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
-import ExportModal from '../ExportModal';
+import ExportModal from '@/components/ExportModal';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import ShareModal from './ShareModal';
-import InfoModal from '../General/Modals/Information/InfoModal';
+import InfoModal from '@/components/General/Modals/Information/InfoModal';
 import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import {
   isDesignOpenInKanvas,

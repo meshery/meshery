@@ -29,7 +29,7 @@ import {
 import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';
-import { ImportDesignModal } from '../MesheryPatterns/MesheryPatterns';
+import { ImportDesignModal } from '@/components/MesheryPatterns/MesheryPatterns';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { EVENT_TYPES } from 'lib/event-types';
