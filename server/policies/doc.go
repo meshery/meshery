@@ -91,6 +91,10 @@
 //
 // # Adding a new policy
 //
+// policy_edge_network.go is the smallest concrete example and a good
+// starting template: it implements every [RelationshipPolicy] method with
+// minimal logic and no side effects.
+//
 //  1. Add a policy_<name>.go file with a struct that implements
 //     [RelationshipPolicy].
 //  2. Register the struct in [NewGoEngine]. Order does not affect
