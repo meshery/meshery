@@ -1,6 +1,5 @@
 import { graphql, commitMutation } from 'react-relay';
-import { createRelayEnvironment } from '../../../lib/relayEnvironment';
-
+import { createRelayEnvironment } from 'lib/relayEnvironment';
 interface OperatorStatusVariables {
   status: string;
   contextID: string;

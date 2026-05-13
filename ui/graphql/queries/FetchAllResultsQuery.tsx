@@ -1,5 +1,5 @@
 import { fetchQuery, graphql } from 'react-relay';
-import { createRelayEnvironment } from '../../../lib/relayEnvironment';
+import { createRelayEnvironment } from 'lib/relayEnvironment';
 
 export default function fetchAllResults(variables) {
   const environment = createRelayEnvironment({});
