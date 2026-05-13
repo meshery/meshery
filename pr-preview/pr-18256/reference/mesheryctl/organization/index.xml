@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mesheryctl-organization on Documentation</title><link>/reference/mesheryctl/organization/</link><description>Recent content in mesheryctl-organization on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/reference/mesheryctl/organization/index.xml" rel="self" type="application/rss+xml"/><item><title>mesheryctl-organization-list</title><link>/reference/mesheryctl/organization/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/organization/list/</guid><description>&lt;h1 id="mesheryctl-organization-list"&gt;
+	mesheryctl organization list
+&lt;/h1&gt;
+&lt;p&gt;List registered organizations&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;List all registered organizations with their id, name and date of creation. Organization will be returned based on provider you logged in.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl organization list [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;list all organizations&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl organization list
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;list organizations for a specified page&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl organization list --page [page-number]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Display number of available organizations&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl organization list --count
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --count total number of registered orgs
+ -h, --help help for list
+ -p, --page int (optional) Page number of paginated results (default 1)
+ -s, --pagesize int (optional) Number of organizations per page (default 10)
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item></channel></rss>
