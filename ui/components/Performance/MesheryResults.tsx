@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import MUIDataTable from '@sistent/mui-datatables';
 import Moment from 'react-moment';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { MoreHoriz as MoreHorizIcon } from '../icons';
 import CustomToolbarSelect from '../CustomToolbarSelect';
 import MesheryChart from '../MesheryChart';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
