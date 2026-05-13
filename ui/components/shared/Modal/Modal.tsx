@@ -12,9 +12,9 @@ import {
   Modal as SistentModal,
   useTheme,
 } from '@sistent/sistent';
-import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
+import RJSFWrapper from '../../meshery-mesh-interface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@/assets/icons';
-import { getSchema } from '../../MesheryMeshInterface/PatternService/helper';
+import { getSchema } from '../../meshery-mesh-interface/PatternService/helper';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 

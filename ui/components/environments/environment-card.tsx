@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlipCard } from '../Lifecycle/General';
+import { FlipCard } from '../lifecycle/general';
 import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';

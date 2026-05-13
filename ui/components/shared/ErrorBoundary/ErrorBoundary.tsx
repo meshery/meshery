@@ -19,8 +19,8 @@ import {
   TextButton,
   ToolBarButtonContainer,
   TryAgainButton,
-} from '../../General/style';
-import { StickyFeedbackButton } from '../../General/feedback';
+} from '../../general/style';
+import { StickyFeedbackButton } from '../../general/feedback';
 
 /**
  * CustomErrorFallback component can be use to show error message to users

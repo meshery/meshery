@@ -47,7 +47,7 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { getMeshModels } from '@/api/meshmodel';
 import { useSelector } from 'react-redux';
-import RJSFWrapper from '@/components/MesheryMeshInterface/PatternService/RJSF_wrapper';
+import RJSFWrapper from '@/components/meshery-mesh-interface/PatternService/RJSF_wrapper';
 
 export const VIEW_VISIBILITY = {
   PUBLIC: 'public',

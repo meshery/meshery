@@ -1,4 +1,4 @@
-import MesherySettings from '../../components/Settings/MesherySettings';
+import MesherySettings from '../../components/settings/MesherySettings';
 import { NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
 import React from 'react';

@@ -1,7 +1,7 @@
 import { NOTIFICATIONCOLORS } from '@/themes/index';
 import { Box, Stack, Typography, styled, useTheme } from '@sistent/sistent';
 
-import { FormatStructuredData, TextWithLinks } from '../../DataFormatter';
+import { FormatStructuredData, TextWithLinks } from '../../data-formatter';
 import { SEVERITY_STYLE } from '../../layout/NotificationCenter/constants';
 import { ComponentIcon } from './common';
 import { Button } from '@sistent/sistent';

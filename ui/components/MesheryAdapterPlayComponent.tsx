@@ -44,7 +44,7 @@ import {
 } from '../rtk-query/system';
 import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from '@/graphql/queries/NamespaceQuery';
-import MesheryMetrics from './Performance/MesheryMetrics';
+import MesheryMetrics from './performance/MesheryMetrics';
 import MesheryResultDialog from './MesheryResultDialog';
 import ReactSelectWrapper from './ReactSelectWrapper';
 import ConfirmationMsg from './shared/Modal/ConfirmationModal';
