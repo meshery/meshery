@@ -258,7 +258,7 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 }
 
 func deleteCR(resourceName, instanceName string, client *meshkitkube.Client) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
 	defer cancel()
 	return client.DynamicKubeClient.Resource(schema.GroupVersionResource{
 		Group:    v1alpha1.GroupVersion.Group,
@@ -308,13 +308,13 @@ func invokeDeleteCRDs() error {
 
 // deleteCRs delete the specified CRD in the clusters
 func deleteCRD(name string, client *apiextension.Clientset) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
 	defer cancel()
 	return client.ApiextensionsV1().CustomResourceDefinitions().Delete(ctx, name, metav1.DeleteOptions{})
 }
 
 func deleteNs(ns string, client *kubernetes.Clientset) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
 	defer cancel()
 	return client.CoreV1().Namespaces().Delete(ctx, ns, metav1.DeleteOptions{})
 }
