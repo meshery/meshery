@@ -180,7 +180,6 @@ const legacyMaxLineSoftOffenders = [
 // nudges new code toward styled() from @sistent/sistent; existing offenders
 // stay allowlisted until they are migrated.
 const legacyInlineStyleOffenders = [
-  'assets/icons/shapes/Octagon.tsx',
   'components/AppComponents.tsx',
   'components/BBChart.tsx',
   'components/ConfirmationModal.tsx',
