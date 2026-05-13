@@ -29,6 +29,6 @@ func Permanent(err error) error {
 // Useful in callers that need to distinguish permanent failures from
 // transient ones after Do returns.
 func IsPermanent(err error) bool {
-	_, ok := err.(*backoff.PermanentError)
-	return ok
+	var pErr *backoff.PermanentError
+	return errors.As(err, &pErr)
 }
