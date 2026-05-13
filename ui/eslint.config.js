@@ -91,7 +91,6 @@ const legacyRestrictedImportOffenders = [
   'components/telemetry/grafana/GrafanaCustomChart.tsx',
   'components/telemetry/grafana/GrafanaDateRangePicker.tsx',
   'components/telemetry/prometheus/PrometheusSelectionComponent.tsx',
-  'pages/_app.tsx',
 ];
 
 const legacyLiteralColorOffenders = [
