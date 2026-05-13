@@ -25,6 +25,38 @@ const DISABLED = 'DISABLED';
 const KUBERNETES = 'kubernetes';
 const MESHERY = 'meshery';
 
+type ConnectionRecord = {
+  id: string;
+  kind: string;
+  status?: string;
+  metadata?: Record<string, unknown>;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+type ControllerState = {
+  [key: string]: unknown;
+};
+
+type KubernetesMetadataFormatterProps = {
+  meshsyncControllerState: ControllerState;
+  connection: ConnectionRecord;
+  metadata: Record<string, unknown>;
+};
+
+type MesheryMetadataFormatterProps = {
+  connection: ConnectionRecord;
+};
+
+type MeshSyncDataFormatterProps = {
+  metadata: Record<string, unknown>;
+};
+
+type FormatConnectionMetadataProps = {
+  connection: ConnectionRecord;
+  meshsyncControllerState: ControllerState;
+};
+
 const customIdFormatter = (title, id) => (
   <FormatterWrapper>
     <KeyValue Key={title} Value={<FormatId id={id} />} />
@@ -56,7 +88,11 @@ const StyledListItemText = styled(ListItemText)(({ theme }) => ({
   },
 }));
 
-const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, metadata }) => {
+const KubernetesMetadataFormatter = ({
+  meshsyncControllerState,
+  connection,
+  metadata,
+}: KubernetesMetadataFormatterProps) => {
   const pingKubernetes = useKubernetesHook();
   const { ping: pingMesheryOperator } = useMesheryOperator();
   const { ping: pingMeshSync } = useMeshsSyncController();
@@ -264,7 +300,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
   );
 };
 
-const MesheryMetadataFormatter = ({ connection }) => {
+const MesheryMetadataFormatter = ({ connection }: MesheryMetadataFormatterProps) => {
   const uiSchema = useMemo(
     () =>
       createColumnUiSchema({
@@ -286,7 +322,7 @@ const MesheryMetadataFormatter = ({ connection }) => {
   );
 };
 
-export const MeshSyncDataFormatter = ({ metadata }) => {
+export const MeshSyncDataFormatter = ({ metadata }: MeshSyncDataFormatterProps) => {
   const theme = useTheme();
   const uiSchema = useMemo(
     () =>
@@ -311,7 +347,7 @@ export const MeshSyncDataFormatter = ({ metadata }) => {
   );
 };
 
-const FormatConnectionMetadata = (props) => {
+const FormatConnectionMetadata = (props: FormatConnectionMetadataProps) => {
   const theme = useTheme();
   const { connection, meshsyncControllerState } = props;
   let formatter;

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { ErrorTypes } from '@/constants/common';
 import {
   ErrorSection,
@@ -30,8 +31,17 @@ import CurrentSessionInfo from './CurrentSession';
 //   );
 // };
 
-const UnknownServerSideError = (props) => {
-  const { errorContent } = props;
+type DefaultErrorProps = {
+  errorTitle?: string;
+  errorContent?: ReactNode;
+  errorType?: string;
+};
+
+type UnknownServerSideErrorProps = {
+  errorContent?: ReactNode;
+};
+
+const UnknownServerSideError = ({ errorContent }: UnknownServerSideErrorProps) => {
   return (
     <div>
       <ErrorContentContainer>
@@ -43,9 +53,12 @@ const UnknownServerSideError = (props) => {
   );
 };
 
-const DefaultError = (props) => {
-  const { errorTitle, errorContent, errorType } = props;
+const DefaultError = ({ errorTitle, errorContent, errorType }: DefaultErrorProps) => {
   const theme = useTheme();
+  const logoTextSrc =
+    theme.palette.mode === 'dark'
+      ? '/static/img/meshery-logo/meshery-white.svg'
+      : '/static/img/meshery-logo/meshery-black.svg';
 
   return (
     <ErrorMain>
@@ -58,14 +71,7 @@ const DefaultError = (props) => {
       >
         <ImageContainer>
           <Logo src="/static/img/meshery-logo/meshery-logo.svg" alt="Meshery logo" />
-          <LogoText
-            src={
-              theme.palette.mode === 'dark'
-                ? '/static/img/meshery-logo/meshery-white.svg'
-                : '/static/img/meshery-logo/meshery-black.svg'
-            }
-            alt="Meshery logo text"
-          />
+          <LogoText src={logoTextSrc} alt="Meshery logo text" />
         </ImageContainer>
         <Typography
           variant="h4"

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState, type SyntheticEvent } from 'react';
 import { NoSsr } from '@sistent/sistent';
 import { ErrorBoundary, AppBar } from '@sistent/sistent';
 import Modal from '../General/Modals/Modal';
@@ -21,23 +21,28 @@ import { useRouter } from 'next/router';
  * - Keep the component's responsibilities focused on connection management. Avoid adding unrelated functionality and state.
  */
 
-function ConnectionManagementPage(props) {
-  const [createConnectionModal, setCreateConnectionModal] = useState({
-    open: false,
-  });
+type ConnectionManagementPageProps = Record<string, unknown>;
+
+type UrlParams = {
+  tab?: string;
+  connectionId?: string;
+};
+
+function ConnectionManagementPage(props: ConnectionManagementPageProps) {
+  const [isCreateConnectionModalOpen, setIsCreateConnectionModalOpen] = useState(false);
 
   const { data: schemaResponse } = useGetSchemaQuery({
     schemaName: 'helmRepo',
   });
 
-  const createConnection = schemaResponse ?? {};
+  const createConnection = useMemo(() => schemaResponse ?? {}, [schemaResponse]);
 
   const handleCreateConnectionModalOpen = () => {
-    setCreateConnectionModal({ open: true });
+    setIsCreateConnectionModalOpen(true);
   };
 
   const handleCreateConnectionModalClose = () => {
-    setCreateConnectionModal({ open: false });
+    setIsCreateConnectionModalOpen(false);
   };
 
   const handleCreateConnectionSubmit = () => {};
@@ -45,12 +50,11 @@ function ConnectionManagementPage(props) {
   return (
     <>
       <Connections
-        createConnectionModal={createConnectionModal}
         onOpenCreateConnectionModal={handleCreateConnectionModalOpen}
         onCloseCreateConnectionModal={handleCreateConnectionModalClose}
         {...props}
       />
-      {createConnectionModal.open && (
+      {isCreateConnectionModalOpen && (
         <Modal
           open={true}
           schema={createConnection.rjsfSchema}
@@ -90,7 +94,7 @@ function Connections() {
   const routerStateRef = useRef({ query, pathname, push });
   routerStateRef.current = { query, pathname, push };
 
-  const updateUrlParams = useCallback((params) => {
+  const updateUrlParams = useCallback((params: UrlParams) => {
     const {
       query: currentQuery,
       pathname: currentPathname,
@@ -109,7 +113,7 @@ function Connections() {
 
   // Handle tab change and update URL
   const handleTabChange = useCallback(
-    (event, newTab) => {
+    (event: SyntheticEvent, newTab: number) => {
       event.stopPropagation();
 
       if (newTab !== tab) {
@@ -131,7 +135,7 @@ function Connections() {
 
   // Update URL with connection ID
   const updateUrlWithConnectionId = useCallback(
-    (id) => {
+    (id?: string) => {
       if (id && id === connectionIdRef.current) {
         return;
       }
@@ -196,7 +200,7 @@ function Connections() {
   );
 }
 
-const ConnectionManagementPageWithErrorBoundary = (props) => {
+const ConnectionManagementPageWithErrorBoundary = (props: ConnectionManagementPageProps) => {
   return (
     <NoSsr>
       <ErrorBoundary customFallback={CustomErrorFallback}>

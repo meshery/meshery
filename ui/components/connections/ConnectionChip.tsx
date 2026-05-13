@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { Avatar, AssignmentTurnedInIcon, CustomTooltip, useTheme } from '@sistent/sistent';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -141,6 +141,13 @@ const ConnectionChip_ = ({
   const theme = useTheme();
   const normalizedIconSrc = normalizeStaticImagePath(iconSrc) || undefined;
   const isPingEnabled = Boolean(handlePing) && !disabled;
+  const handlePingClick = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      event.stopPropagation();
+      handlePing?.();
+    },
+    [handlePing],
+  );
 
   const avatar = status ? (
     <BadgeAvatars color={getStatusColor(theme, status)}>
@@ -157,14 +164,7 @@ const ConnectionChip_ = ({
   return (
     <ChipWrapper
       label={title}
-      onClick={
-        isPingEnabled
-          ? (event) => {
-              event.stopPropagation();
-              handlePing?.();
-            }
-          : undefined
-      }
+      onClick={isPingEnabled ? handlePingClick : undefined}
       onDelete={disabled ? undefined : onDelete}
       disabled={disabled}
       avatar={avatar}

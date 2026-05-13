@@ -1,25 +1,33 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Box, Typography, useTheme } from '@sistent/sistent';
 import TipsIcon from '../../assets/icons/Tipsicon'; // add this icon
 
-const TipsCarousel = ({ tips }) => {
-  const theme = useTheme();
-  const [activeStep, setActiveStep] = React.useState(0);
+interface TipsCarouselProps {
+  tips: string[];
+}
 
-  const handleClick = (index) => {
+const TipsCarousel = ({ tips }: TipsCarouselProps) => {
+  const theme = useTheme();
+  const [activeStep, setActiveStep] = useState(0);
+
+  const handleClick = useCallback((index: number) => {
     setActiveStep(index);
-  };
+  }, []);
 
   // auto increment after 3 seconds
-  React.useEffect(() => {
+  useEffect(() => {
+    if (tips.length === 0) {
+      return undefined;
+    }
+
     const interval = setInterval(() => {
       setActiveStep((prevActiveStep) =>
         prevActiveStep === tips.length - 1 ? 0 : prevActiveStep + 1,
       );
     }, 3000);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [tips.length]);
 
   return (
     <Box
@@ -41,7 +49,7 @@ const TipsCarousel = ({ tips }) => {
       }}
     >
       <TipsIcon />
-      <Typography style={{ marginTop: '1rem' }}>{tips[String(activeStep)]}</Typography>
+      <Typography style={{ marginTop: '1rem' }}>{tips[activeStep] ?? ''}</Typography>
       <div style={{ textAlign: 'center' }}>
         {tips.map((tip, index) => (
           <span
@@ -66,7 +74,3 @@ const TipsCarousel = ({ tips }) => {
 };
 
 export default TipsCarousel;
-
-TipsCarousel.propTypes = {
-  tips: PropTypes.array.isRequired,
-};

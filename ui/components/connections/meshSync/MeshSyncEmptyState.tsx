@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import AddKubeconfig from '@/assets/gifs/add-kubeconfig.gif';
 import SwitchClusters from '@/assets/gifs/switch-clusters.gif';
 
@@ -64,19 +64,24 @@ const MeshSyncEmptyState = () => {
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const theme = useTheme();
   const router = useRouter();
+  const headerIconSrc = useMemo(
+    () =>
+      theme.palette.mode === 'dark' ? '/static/img/meshsync-white.svg' : '/static/img/meshsync.svg',
+    [theme.palette.mode],
+  );
 
-  const handleOpenInfoModal = () => {
+  const handleOpenInfoModal = useCallback(() => {
     setInfoModalOpen(true);
-  };
+  }, []);
 
-  const handleCloseInfoModal = () => {
+  const handleCloseInfoModal = useCallback(() => {
     setInfoModalOpen(false);
-  };
+  }, []);
 
-  const handleGoToConnections = () => {
+  const handleGoToConnections = useCallback(() => {
     router.push('/management/connections');
     setInfoModalOpen(false);
-  };
+  }, [router]);
 
   return (
     <>
@@ -98,15 +103,7 @@ const MeshSyncEmptyState = () => {
         closeModal={handleCloseInfoModal}
         title="Getting Started with MeshSync"
         headerIcon={
-          <img
-            src={
-              theme.palette.mode === 'dark'
-                ? '/static/img/meshsync-white.svg'
-                : '/static/img/meshsync.svg'
-            }
-            alt="MeshSync"
-            style={{ width: '24px', height: '24px' }}
-          />
+          <img src={headerIconSrc} alt="MeshSync" style={{ width: '24px', height: '24px' }} />
         }
         maxWidth="md"
       >

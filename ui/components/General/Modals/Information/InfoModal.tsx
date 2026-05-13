@@ -30,7 +30,7 @@ import { Close, Lock, Public } from '@/components/icons';
 import yaml from 'js-yaml';
 import _ from 'lodash';
 import { useSnackbar } from 'notistack';
-import React, { useEffect, useRef, useState, FC } from 'react';
+import React, { useEffect, useMemo, useRef, useState, FC } from 'react';
 import PatternIcon from '../../../../assets/icons/Pattern';
 import { MESHERY_CLOUD_PROD } from '../../../../constants/endpoints';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
@@ -75,13 +75,12 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
   } = props;
 
   const { user: currentUser } = useSelector((state) => state.ui);
-  const formRef = React.createRef();
+  const formRef = useRef(null);
   const formStateRef = useRef();
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
   const [dataIsUpdated, setDataIsUpdated] = useState(false);
   const [visibility, setVisibility] = useState(selectedResource?.visibility);
   const [saveFormLoading, setSaveFormLoading] = useState(false);
-  const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
 
   const [updatePattern] = useUpdatePatternFileMutation();
@@ -94,6 +93,8 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
   const [publishSchema, setPublishSchema] = useState({});
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchModels = async () => {
       const { models } = await getMeshModels();
       const modelNames = _.uniqBy(
@@ -112,11 +113,27 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
         'properties.compatibility.items.enum',
         modelNames,
       );
-      setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
-      setMeshModels(models);
+      if (!cancelled) {
+        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+        setMeshModels(models);
+      }
     };
     fetchModels();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  const uiSchema = useMemo(() => {
+    const nextUiSchema = { ...publishSchema.uiSchema };
+
+    if (isReadOnly) {
+      nextUiSchema['ui:readonly'] = true;
+    }
+
+    return nextUiSchema;
+  }, [isReadOnly, publishSchema.uiSchema]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(getSharableCommonHostAndprotocolLink(selectedResource));
@@ -281,18 +298,6 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
     }
   }, [selectedResource?.catalogData, meshModels]);
 
-  useEffect(() => {
-    if (publishSchema) {
-      const newUiSchema = { ...publishSchema.uiSchema };
-
-      if (isReadOnly) {
-        newUiSchema['ui:readonly'] = true;
-      }
-
-      setUiSchema(newUiSchema);
-    }
-  }, [resourceOwnerID, publishSchema, currentUserID]);
-
   const shouldRenderSaveButton = () => {
     if (!isAdmin) {
       const isPrivate = selectedResource?.visibility === 'private';
@@ -304,11 +309,13 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
   };
 
   const handlePublishController = () => {
-    formRef.current.state.schema['required'] = publishSchema.rjsfSchema.required;
-    if (formRef.current && formRef.current.validateForm()) {
+    if (formRef.current?.state?.schema && publishSchema.rjsfSchema?.required) {
+      formRef.current.state.schema['required'] = publishSchema.rjsfSchema.required;
+    }
+    if (formRef.current?.validateForm()) {
       setSaveFormLoading(true);
       handleInfoModalClose();
-      handlePublish(formRef.current.state.formData);
+      handlePublish(formRef.current.state?.formData);
       setSaveFormLoading(false);
     }
   };
@@ -383,7 +390,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
               <Grid size={12}>
                 <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Updated</CreatAtContainer>
-                  <CreatAtContainer idBold={false}>
+                  <CreatAtContainer isBold={false}>
                     {getFormatDate(selectedResource?.updatedAt)}
                   </CreatAtContainer>
                 </Typography>

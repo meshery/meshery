@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from './Modal';
 import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';
@@ -6,14 +6,32 @@ import { modifyRJSFSchema } from '../../utils/utils';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { PublicIcon } from '@sistent/sistent';
 
+type PublishSchemaState = {
+  rjsfSchema?: Record<string, unknown>;
+  uiSchema?: Record<string, unknown>;
+};
+
+type PublishModalProps = {
+  open: boolean;
+  title?: string;
+  handleClose: () => void;
+  handleSubmit: (formData: Record<string, unknown>) => void;
+};
+
 // This modal is used in Meshery Extensions also
-export default function PublishModal(props) {
+export default function PublishModal(props: PublishModalProps) {
   const { open, title, handleClose, handleSubmit } = props;
-  const [publishSchema, setPublishSchema] = useState({});
+  const [publishSchema, setPublishSchema] = useState<PublishSchemaState>({});
   const { data: schemaData, isSuccess } = useGetSchemaQuery({ schemaName: 'publish' });
 
-  const processSchema = async () => {
-    if (isSuccess && schemaData) {
+  useEffect(() => {
+    let cancelled = false;
+
+    const processSchema = async () => {
+      if (!isSuccess || !schemaData) {
+        return;
+      }
+
       try {
         const { models } = await getMeshModels();
         const modelNames = _.uniq(models?.map((model) => model.displayName));
@@ -25,16 +43,22 @@ export default function PublishModal(props) {
           modelNames,
         );
 
-        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: schemaData.uiSchema });
-      } catch (err) {
-        console.error(err);
-        setPublishSchema(schemaData);
+        if (!cancelled) {
+          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: schemaData.uiSchema });
+        }
+      } catch (error) {
+        console.error(error);
+        if (!cancelled) {
+          setPublishSchema(schemaData);
+        }
       }
-    }
-  };
+    };
 
-  useEffect(() => {
     processSchema();
+
+    return () => {
+      cancelled = true;
+    };
   }, [isSuccess, schemaData]);
 
   return (

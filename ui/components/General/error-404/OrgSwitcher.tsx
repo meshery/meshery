@@ -1,5 +1,5 @@
 //@ts-check
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { NoSsr } from '@sistent/sistent';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
@@ -19,6 +19,12 @@ import { useTheme } from '@sistent/sistent';
 import { useDispatch, useSelector } from 'react-redux';
 import { setKeys, setOrganization } from '@/store/slices/mesheryUi';
 
+type OrganizationSelectEvent = {
+  target: {
+    value: string;
+  };
+};
+
 const OrgSwitcher = () => {
   const {
     data: orgsResponse,
@@ -30,7 +36,7 @@ const OrgSwitcher = () => {
   const dispatch = useDispatch();
   const dispatchSetOrganization = (org) => dispatch(setOrganization(org));
 
-  let orgs = orgsResponse?.organizations || [];
+  const orgs = useMemo(() => orgsResponse?.organizations || [], [orgsResponse?.organizations]);
 
   const { notify } = useNotification();
 
@@ -40,7 +46,7 @@ const OrgSwitcher = () => {
     if (abilitiesResult?.currentData?.keys) {
       dispatch(setKeys({ keys: abilitiesResult.currentData.keys }));
     }
-  }, [abilitiesResult?.currentData?.keys]);
+  }, [abilitiesResult?.currentData?.keys, dispatch]);
 
   useEffect(() => {
     if (isOrgsError) {
@@ -49,17 +55,20 @@ const OrgSwitcher = () => {
         event_type: EVENT_TYPES.ERROR,
       });
     }
-  }, [orgsError]);
+  }, [isOrgsError, notify, orgsError]);
 
-  const handleOrgSelect = (e) => {
-    const id = e.target.value;
-    const selected = orgs.find((org) => org.id === id);
-    dispatchSetOrganization({ organization: selected });
+  const handleOrgSelect = useCallback(
+    (e: OrganizationSelectEvent) => {
+      const id = e.target.value;
+      const selected = orgs.find((org) => org.id === id);
+      dispatchSetOrganization({ organization: selected });
 
-    setTimeout(() => {
-      location.reload();
-    }, 1000);
-  };
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    },
+    [dispatchSetOrganization, orgs],
+  );
   const theme = useTheme();
   return (
     <NoSsr>

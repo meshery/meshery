@@ -643,46 +643,43 @@ const ConnectionTable = ({
     ],
   );
 
-  const handleFlushMeshSync = useCallback(
-    () => async () => {
-      handleActionMenuClose();
+  const handleFlushMeshSync = useCallback(async () => {
+    handleActionMenuClose();
 
-      const connection = getConnectionAtRowIndex(rowData?.rowIndex);
-      const connectionName = connection?.metadata?.name;
+    const connection = getConnectionAtRowIndex(rowData?.rowIndex);
+    const connectionName = connection?.metadata?.name;
 
-      if (!connection || !modalRef.current) {
-        return;
-      }
+    if (!connection || !modalRef.current) {
+      return;
+    }
 
-      const response = await modalRef.current.show({
-        title: `Flush MeshSync data for ${connectionName} ?`,
-        subtitle: `Are you sure to Flush MeshSync data for “${connectionName}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
-        primaryOption: 'PROCEED',
-        variant: PROMPT_VARIANTS.WARNING,
+    const response = await modalRef.current.show({
+      title: `Flush MeshSync data for ${connectionName} ?`,
+      subtitle: `Are you sure to Flush MeshSync data for “${connectionName}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
+      primaryOption: 'PROCEED',
+      variant: PROMPT_VARIANTS.WARNING,
+    });
+
+    if (response === 'PROCEED') {
+      updateProgress({ showProgress: true });
+      resetDatabase({
+        selector: {
+          clearDB: 'true',
+          ReSync: 'true',
+          hardReset: 'false',
+        },
+        k8scontextID: connection.metadata?.id || '',
+      }).subscribe({
+        next: (result) => {
+          updateProgress({ showProgress: false });
+          if (result.resetStatus === 'PROCESSING') {
+            notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
+          }
+        },
+        error: handleError('Database is not reachable, try restarting server.'),
       });
-
-      if (response === 'PROCEED') {
-        updateProgress({ showProgress: true });
-        resetDatabase({
-          selector: {
-            clearDB: 'true',
-            ReSync: 'true',
-            hardReset: 'false',
-          },
-          k8scontextID: connection.metadata?.id || '',
-        }).subscribe({
-          next: (result) => {
-            updateProgress({ showProgress: false });
-            if (result.resetStatus === 'PROCESSING') {
-              notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
-            }
-          },
-          error: handleError('Database is not reachable, try restarting server.'),
-        });
-      }
-    },
-    [getConnectionAtRowIndex, handleActionMenuClose, handleError, notify, rowData?.rowIndex],
-  );
+    }
+  }, [getConnectionAtRowIndex, handleActionMenuClose, handleError, notify, rowData?.rowIndex]);
 
   const handleEnvironmentSelect = useCallback(
     async (
@@ -770,6 +767,14 @@ const ConnectionTable = ({
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
     setRowData(tableMeta);
+  }, []);
+  const handleSearch = useCallback((value: string) => {
+    setSearch(value);
+  }, []);
+
+  const handleDeploymentModeMenuOpen = useCallback((event) => {
+    event.stopPropagation();
+    setDeploymentModeAnchorEl(event.currentTarget);
   }, []);
   const theme = useTheme();
 
@@ -1453,9 +1458,7 @@ const ConnectionTable = ({
         >
           <div data-testid="ConnectionTable-search">
             <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-              }}
+              onSearch={handleSearch}
               placeholder="Search Connections..."
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
@@ -1501,7 +1504,7 @@ const ConnectionTable = ({
         <ActionListItem>
           <Button
             type="submit"
-            onClick={handleFlushMeshSync()}
+            onClick={handleFlushMeshSync}
             data-cy="btnResetDatabase"
             disabled={!CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)}
           >
@@ -1514,10 +1517,7 @@ const ConnectionTable = ({
         <ActionListItem>
           <Button
             type="submit"
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeploymentModeAnchorEl(e.currentTarget);
-            }}
+            onClick={handleDeploymentModeMenuOpen}
             data-cy="btnChangeDeploymentMode"
           >
             <Typography variant="body1">Modify Deployment Mode</Typography>

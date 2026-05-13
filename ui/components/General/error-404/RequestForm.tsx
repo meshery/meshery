@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
@@ -18,6 +18,12 @@ import CustomErrorFallback from '../ErrorBoundary';
 import { useDispatch, useSelector } from 'react-redux';
 import { setKeys, setOrganization } from '@/store/slices/mesheryUi';
 
+type OrganizationSelectEvent = {
+  target: {
+    value: string;
+  };
+};
+
 const RequestForm = () => {
   const {
     data: orgsResponse,
@@ -27,7 +33,7 @@ const RequestForm = () => {
   } = useGetOrgsQuery({});
 
   const theme = useTheme();
-  let orgs = orgsResponse?.organizations || [];
+  const orgs = useMemo(() => orgsResponse?.organizations || [], [orgsResponse?.organizations]);
   const { organization } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const abilitiesResult = useGetCurrentAbilities(organization);
@@ -36,7 +42,7 @@ const RequestForm = () => {
     if (abilitiesResult?.currentData?.keys) {
       dispatch(setKeys({ keys: abilitiesResult.currentData.keys }));
     }
-  }, [abilitiesResult?.currentData?.keys]);
+  }, [abilitiesResult?.currentData?.keys, dispatch]);
   const { notify } = useNotification();
 
   useEffect(() => {
@@ -46,13 +52,16 @@ const RequestForm = () => {
         event_type: EVENT_TYPES.ERROR,
       });
     }
-  }, [orgsError]);
+  }, [isOrgsError, notify, orgsError]);
 
-  const handleOrgSelect = (e) => {
-    const id = e.target.value;
-    const selected = orgs.find((org) => org.id === id);
-    dispatch(setOrganization({ organization: selected }));
-  };
+  const handleOrgSelect = useCallback(
+    (e: OrganizationSelectEvent) => {
+      const id = e.target.value;
+      const selected = orgs.find((org) => org.id === id);
+      dispatch(setOrganization({ organization: selected }));
+    },
+    [dispatch, orgs],
+  );
 
   return (
     <NoSsr>
