@@ -1,66 +1,33 @@
-/* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
 import { NoSsr } from '@sistent/sistent';
-import { UnControlled as CodeMirror } from '../CodeMirror';
-import {
-  Delete as DeleteIcon,
-  Close as CloseIcon,
-  Edit as EditIcon,
-  Fullscreen as FullscreenIcon,
-  FullscreenExit as FullscreenExitIcon,
-  GetApp as GetAppIcon,
-  Public as PublicIcon,
-  Publish as PublishIcon,
-  Save as SaveIcon,
-} from '@/assets/icons';
-import Moment from 'react-moment';
+import { Publish as PublishIcon } from '@/assets/icons';
 import _PromptComponent from '../PromptComponent';
-import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../../utils/Enum';
+import { MesheryFiltersCatalog, VISIBILITY } from '../../utils/Enum';
 import ViewSwitch from '../ViewSwitch';
 import FiltersGrid from './FiltersGrid';
-import { trueRandom } from '../../lib/trueRandom';
-import downloadContent from '../../utils/fileDownloader';
-import CloneIcon from '../../public/static/img/CloneIcon';
-import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import fetchCatalogFilter from '@/graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
-import { RJSFModalWrapper } from '../shared/Modal/Modal';
-import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../../utils/utils';
-import Filter from '../../public/static/img/drawer-icons/filter_svg';
+import { modifyRJSFSchema } from '../../utils/utils';
 import { getMeshModels } from '../../api/meshmodel';
 import _ from 'lodash';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import {
   CustomColumnVisibilityControl,
-  CustomTooltip,
   ResponsiveDataTable,
   SearchBar,
   UniversalFilter,
-  importFilterSchema,
-  importFilterUiSchema,
   publishCatalogItemSchema,
   publishCatalogItemUiSchema,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  Divider,
-  Typography,
   Button,
-  Box,
-  styled,
   PROMPT_VARIANTS,
 } from '@sistent/sistent';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../shared/Modal/Information/InfoModal';
-import { InfoOutlined as InfoOutlinedIcon } from '@/assets/icons';
-import { DefaultTableCell, SortableTableCell } from '../connections/common/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../general/error-404/index';
-import { Modal as SistentModal } from '@sistent/sistent';
 import {
   useGetFiltersQuery,
   useCloneFilterMutation,
@@ -75,185 +42,25 @@ import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
-
-const CreateButton = styled(Button)(() => ({
-  width: 'fit-content',
-  alignSelf: 'flex-start',
-  placeSelf: 'center',
-}));
-
-const ViewSwitchButton = styled('div')(() => ({
-  justifySelf: 'flex-end',
-  paddingLeft: '1rem',
-}));
-
-const YmlDialogTitle = styled(DialogTitle)(() => ({
-  display: 'flex',
-  alignItems: 'center',
-}));
-
-const YmlDialogTitleText = styled(Typography)(() => ({
-  flexGrow: 1,
-}));
-
-const BtnText = styled('span')(({ theme }) => ({
-  display: 'block',
-  [theme.breakpoints.down('700')]: {
-    display: 'none',
-  },
-}));
-
-const ActionsBox = styled(Box)(() => ({
-  display: 'flex',
-}));
-
-type TypeView = 'grid' | 'table';
-
-type TooltipIconProps = {
-  children: React.ReactNode;
-  onClick: (_event: React.MouseEvent) => void;
-  title: string;
-  disabled?: boolean;
-  placement?: string;
-};
-
-function TooltipIcon({ children, onClick, title }: TooltipIconProps) {
-  return (
-    <>
-      <CustomTooltip title={title} placement="top" interactive>
-        <div>
-          <IconButton onClick={onClick}>{children}</IconButton>
-        </div>
-      </CustomTooltip>
-    </>
-  );
-}
-
-type YAMLEditorProps = {
-  filter: any;
-  onClose: () => void;
-  onSubmit: (_payload: {
-    data: string;
-    id: string;
-    name: string;
-    type: string;
-    catalogData?: any;
-  }) => void;
-};
-
-function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
-  const [fullScreen, setFullScreen] = useState(false);
-
-  const toggleFullScreen = () => {
-    setFullScreen(!fullScreen);
-  };
-
-  const FullScreenCodeMirrorWrapper = styled('div')(() => ({
-    height: '100%',
-    '& .cm-editor': {
-      minHeight: '300px',
-      height: fullScreen ? '80vh' : '100%',
-    },
-  }));
-
-  let resourceData;
-  try {
-    resourceData = JSON.parse(filter.filter_resource);
-  } catch (error) {
-    // Handling the error or provide a default value
-    console.error('Error parsing JSON:', error);
-    resourceData = {}; // Setting a default value if parsing fails
-  }
-
-  const config = resourceData?.settings?.config || '';
-  const [yaml, setYaml] = useState(config);
-
-  return (
-    <Dialog
-      onClose={onClose}
-      aria-labelledby="filter-dialog-title"
-      open
-      maxWidth="md"
-      fullScreen={fullScreen}
-      fullWidth={!fullScreen}
-    >
-      <YmlDialogTitle>
-        <DialogTitle
-          disableTypography
-          id="filter-dialog-title"
-          style={{ width: '100%', display: 'flex' }}
-        >
-          <YmlDialogTitleText variant="h6">{filter.name}</YmlDialogTitleText>
-          <TooltipIcon
-            title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-            onClick={toggleFullScreen}
-          >
-            {fullScreen ? (
-              <FullscreenExitIcon style={iconMedium} />
-            ) : (
-              <FullscreenIcon style={iconMedium} />
-            )}
-          </TooltipIcon>
-          <TooltipIcon title="Exit" onClick={onClose}>
-            <CloseIcon style={iconMedium} />
-          </TooltipIcon>
-        </DialogTitle>
-      </YmlDialogTitle>
-      <Divider variant="fullWidth" light />
-      <FullScreenCodeMirrorWrapper>
-        <CodeMirror
-          value={config}
-          options={{
-            theme: 'material',
-            lineNumbers: true,
-            lineWrapping: true,
-            gutters: ['CodeMirror-lint-markers'],
-            lint: true,
-            mode: 'text/x-yaml',
-          }}
-          onChange={(_, data, val) => setYaml(val)}
-        />
-      </FullScreenCodeMirrorWrapper>
-      <Divider variant="fullWidth" light />
-      <DialogActions>
-        <CustomTooltip title="Update Filter">
-          <IconButton
-            aria-label="Update"
-            disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
-            onClick={() =>
-              onSubmit({
-                data: yaml,
-                id: filter.id,
-                name: filter.name,
-                type: FILE_OPS.UPDATE,
-                catalogData: filter.catalogData,
-              })
-            }
-          >
-            <SaveIcon style={iconMedium} />
-          </IconButton>
-        </CustomTooltip>
-        <CustomTooltip title="Delete Filter">
-          <IconButton
-            aria-label="Delete"
-            disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
-            onClick={() =>
-              onSubmit({
-                data: yaml,
-                id: filter.id,
-                name: filter.name,
-                type: FILE_OPS.DELETE,
-                catalogData: filter.catalogData,
-              })
-            }
-          >
-            <DeleteIcon style={iconMedium} />
-          </IconButton>
-        </CustomTooltip>
-      </DialogActions>
-    </Dialog>
-  );
-}
+import { CreateButton, ViewSwitchButton, BtnText } from './Filters.styled';
+import YAMLEditor from './YAMLEditor';
+import ImportModal from './ImportModal';
+import PublishModal from './PublishModal';
+import { ACTION_TYPES, COLUMN_VIEWS } from './Filters.constants';
+import { buildFiltersColumns } from './Filters.columns';
+import { buildFiltersTableOptions } from './Filters.tableOptions';
+import {
+  createDeleteFilter,
+  createHandleClone,
+  createHandleDownload,
+  createHandleImportFilter,
+  createHandlePublish,
+  createHandleSubmit,
+  createHandleUnpublishModal,
+  createInitFiltersSubscription,
+  createUploadHandler,
+} from './Filters.fileActions';
+import type { TypeView } from './Filters.types';
 
 function resetSelectedFilter() {
   return { show: false, filter: null };
@@ -304,6 +111,10 @@ function MesheryFilters() {
   const disposeConfSubscriptionRef = useRef<{ dispose: () => void } | null>(null);
   const [visibilityFilter, setVisibilityFilter] = useState<string | null>(null);
 
+  const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>({
+    visibility: 'All',
+  });
+
   const {
     data: filtersData,
     isLoading: isFiltersLoading,
@@ -325,6 +136,134 @@ function MesheryFilters() {
   const [updateFilterFile] = useUpdateFilterFileMutation();
   const [uploadFilterFile] = useUploadFilterFileMutation();
 
+  const handleError = (action: { error_msg: string }) => (error: Error | string) => {
+    updateProgress({ showProgress: false });
+    notify({
+      message: `${action.error_msg}: ${error}`,
+      event_type: EVENT_TYPES.ERROR,
+      details: error.toString(),
+    });
+  };
+
+  const handleSetFilters = (filters: any[] | undefined) => {
+    if (filters != undefined) {
+      if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
+        setFilters([
+          ...catalogContentRef.current,
+          ...filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED),
+        ]);
+        return;
+      }
+      setFilters(filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED));
+    }
+  };
+
+  const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleUploadImport = () => {
+    setImportModal({ open: true });
+  };
+
+  const handleUploadImportClose = () => {
+    setImportModal({ open: false });
+  };
+
+  const handlePublishModal = (ev: React.MouseEvent, filter: any) => {
+    if (canPublishFilter) {
+      ev.stopPropagation();
+      setPublishModal({
+        open: true,
+        filter: filter,
+      });
+    }
+  };
+
+  const handleInfoModalClose = () => {
+    setInfoModal({ open: false });
+  };
+
+  const handleInfoModal = (filter: any) => {
+    setInfoModal({
+      open: true,
+      ownerID: filter.userId,
+      selectedResource: filter,
+    });
+  };
+
+  const handlePublishModalClose = () => {
+    setPublishModal({
+      open: false,
+      filter: {},
+      name: '',
+    });
+  };
+
+  const handleApplyFilter = () => {
+    const visibilityFilter =
+      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
+    setVisibilityFilter(visibilityFilter);
+  };
+
+  function resetSelectedRowData() {
+    return () => {
+      setSelectedRowData(null);
+    };
+  }
+
+  async function showmodal(count: number) {
+    let response = await modalRef.current?.show({
+      title: `Delete ${count ? count : ''} Filter${count > 1 ? 's' : ''}?`,
+      subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
+        count ? count : ''
+      } filter${count > 1 ? 's' : ''}?`,
+      primaryOption: 'Delete',
+      variant: PROMPT_VARIANTS.DANGER,
+    });
+    return response;
+  }
+
+  const handleUnpublishModal = createHandleUnpublishModal({
+    canPublishFilter,
+    modalRef,
+    unpublishFilter,
+    notify,
+    handleError,
+  });
+  const handlePublish = createHandlePublish({
+    meshModels,
+    publishModal,
+    user,
+    publishFilter,
+    notify,
+    handleError,
+  });
+  const handleClone = createHandleClone({ cloneFilter, notify, handleError });
+  const handleDownload = createHandleDownload({ notify });
+  const deleteFilter = createDeleteFilter({ deleteFilterFile, notify, handleError });
+  const initFiltersSubscription = createInitFiltersSubscription({
+    page,
+    pageSize,
+    search,
+    sortOrder,
+    disposeConfSubscriptionRef,
+  });
+  const handleSubmit = createHandleSubmit({
+    notify,
+    handleError,
+    showmodal,
+    resetSelectedRowData,
+    deleteFilterFile,
+    uploadFilterFile,
+    updateFilterFile,
+  });
+  const uploadHandler = createUploadHandler({ handleSubmit });
+  const handleImportFilter = createHandleImportFilter({
+    notify,
+    handleError,
+    updateFilterFile,
+    getFilters,
+  });
+
   useEffect(() => {
     if (filtersData) {
       const filteredWasmFilters = filtersData.filters.filter((content) => {
@@ -339,45 +278,6 @@ function MesheryFilters() {
       setFilters(filtersData.filters || []);
     }
   }, [filtersData]);
-
-  const ACTION_TYPES = {
-    FETCH_FILTERS: {
-      name: 'FETCH_FILTERS',
-      error_msg: 'Failed to fetch filter',
-    },
-    DELETE_FILTERS: {
-      name: 'DELETE_FILTERS',
-      error_msg: 'Failed to delete filter file',
-    },
-    DEPLOY_FILTERS: {
-      name: 'DEPLOY_FILTERS',
-      error_msg: 'Failed to deploy filter file',
-    },
-    UNDEPLOY_FILTERS: {
-      name: 'UNDEPLOY_FILTERS',
-      error_msg: 'Failed to undeploy filter file',
-    },
-    UPLOAD_FILTERS: {
-      name: 'UPLOAD_FILTERS',
-      error_msg: 'Failed to upload filter file',
-    },
-    CLONE_FILTERS: {
-      name: 'CLONE_FILTER',
-      error_msg: 'Failed to clone filter file',
-    },
-    PUBLISH_CATALOG: {
-      name: 'PUBLISH_CATALOG',
-      error_msg: 'Failed to publish catalog',
-    },
-    UNPUBLISH_CATALOG: {
-      name: 'PUBLISH_CATALOG',
-      error_msg: 'Failed to publish catalog',
-    },
-    SCHEMA_FETCH: {
-      name: 'SCHEMA_FETCH',
-      error_msg: 'failed to fetch import schema',
-    },
-  };
 
   /**
    * Checking whether users are signed in under a provider that doesn't have
@@ -413,81 +313,6 @@ function MesheryFilters() {
     fetchSchemaData();
   }, [capabilitiesData]);
 
-  const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleUploadImport = () => {
-    setImportModal({
-      open: true,
-    });
-  };
-
-  const handleUploadImportClose = () => {
-    setImportModal({
-      open: false,
-    });
-  };
-
-  const handlePublishModal = (ev: React.MouseEvent, filter: any) => {
-    if (canPublishFilter) {
-      ev.stopPropagation();
-      setPublishModal({
-        open: true,
-        filter: filter,
-      });
-    }
-  };
-
-  const handleInfoModalClose = () => {
-    setInfoModal({
-      open: false,
-    });
-  };
-
-  const handleInfoModal = (filter: any) => {
-    setInfoModal({
-      open: true,
-      ownerID: filter.userId,
-      selectedResource: filter,
-    });
-  };
-
-  const handleUnpublishModal = (ev: React.MouseEvent, filter: any) => {
-    if (canPublishFilter) {
-      return async () => {
-        let response = await modalRef.current?.show({
-          title: `Unpublish Catalog item?`,
-          subtitle: `Are you sure that you want to unpublish "${filter?.name}"?`,
-          primaryOption: 'Yes',
-          showInfoIcon: `Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want.  Remember: unpublished catalog items can still be available to other users if that item is set to public visibility. For detailed information, please refer to the documentation https://docs.meshery.io/concepts/designs.`,
-        });
-        if (response === 'Yes') {
-          updateProgress({ showProgress: true });
-          unpublishFilter({ unpublishBody: JSON.stringify({ id: filter?.id }) })
-            .unwrap()
-            .then(() => {
-              updateProgress({ showProgress: false });
-              notify({
-                message: `"${filter?.name}" filter unpublished`,
-                event_type: EVENT_TYPES.SUCCESS,
-              });
-            })
-            .catch(() => {
-              updateProgress({ showProgress: false });
-              handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
-            });
-        }
-      };
-    }
-  };
-
-  const handlePublishModalClose = () => {
-    setPublishModal({
-      open: false,
-      filter: {},
-      name: '',
-    });
-  };
-
   useEffect(() => {
     if (viewType === 'grid') setSearch('');
   }, [viewType]);
@@ -515,613 +340,42 @@ function MesheryFilters() {
     };
   }, []);
 
-  const handlePublish = (formData: any) => {
-    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
-      ?.filter((model) =>
-        formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
-      )
-      ?.map((model) => model.name);
-
-    const payload = {
-      id: publishModal.filter?.id,
-      catalogData: {
-        ...formData,
-        compatibility: compatibilityStore,
-        type: _.toLower(formData?.type),
-      },
-    };
-    updateProgress({ showProgress: true });
-    publishFilter({ publishBody: JSON.stringify(payload) })
-      .unwrap()
-      .then(() => {
-        updateProgress({ showProgress: false });
-        if (user.roleNames.includes('admin')) {
-          notify({
-            message: `${publishModal.filter?.name} filter published to Meshery Catalog`,
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-        } else {
-          notify({
-            message:
-              'filters queued for publishing into Meshery Catalog. Maintainers notified for review',
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-        }
-      })
-      .catch(() => {
-        updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.PUBLISH_CATALOG);
-      });
-  };
-
-  function handleClone(filterID: string, name: string) {
-    updateProgress({ showProgress: true });
-    cloneFilter({
-      body: JSON.stringify({ name: name + ' (Copy)' }),
-      filterID: filterID,
-    })
-      .unwrap()
-      .then(() => {
-        updateProgress({ showProgress: false });
-        notify({ message: `"${name}" filter cloned`, event_type: EVENT_TYPES.SUCCESS });
-      })
-      .catch(() => {
-        updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.CLONE_FILTERS);
-      });
-  }
-
-  // function handleError(error) {
-  const handleError = (action: { error_msg: string }) => (error: Error | string) => {
-    updateProgress({ showProgress: false });
-    notify({
-      message: `${action.error_msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
-  };
-
-  const handleSetFilters = (filters: any[] | undefined) => {
-    if (filters != undefined) {
-      if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-        setFilters([
-          ...catalogContentRef.current,
-          ...filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED),
-        ]);
-        return;
-      }
-      setFilters(filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED));
-    }
-  };
-
-  const initFiltersSubscription = (
-    pageNo: string = page.toString(),
-    pagesize: string = pageSize.toString(),
-    searchText: string = search,
-    order: string = sortOrder,
-  ) => {
-    if (disposeConfSubscriptionRef.current) {
-      disposeConfSubscriptionRef.current.dispose();
-    }
-    const configurationSubscription = ConfigurationSubscription(
-      () => {
-        /**
-         * We are not using filter subscription and this code is commented to prevent
-         * unnecessary state updates
-         */
-        // setPage(result.configuration?.filters?.page || 0);
-        // setPageSize(result.configuration?.filters?.page_size || 10);
-        // setCount(result.configuration?.filters?.total_count || 0);
-        // handleSetFilters(result.configuration?.filters?.filters);
-      },
-      {
-        applicationSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        patternSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        filterSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-      },
-    );
-    disposeConfSubscriptionRef.current = configurationSubscription;
-  };
-
-  function resetSelectedRowData() {
-    return () => {
-      setSelectedRowData(null);
-    };
-  }
-
-  async function handleSubmit({
-    data,
-    name,
-    id,
-    type,
-    metadata,
-    catalogData,
-  }: {
-    data: string;
-    name: string;
-    id: string;
-    type: string;
-    metadata?: any;
-    catalogData?: any;
-  }) {
-    // TODO: use filter name
-    updateProgress({ showProgress: true });
-    if (type === FILE_OPS.DELETE) {
-      const response = await showmodal(1);
-      if (response !== 'Delete') {
-        updateProgress({ showProgress: false });
-        return;
-      }
-      deleteFilterFile({ id: id })
-        .unwrap()
-        .then(() => {
-          updateProgress({ showProgress: false });
-          notify({ message: `"${name}" filter deleted`, event_type: EVENT_TYPES.SUCCESS });
-          resetSelectedRowData()();
-        })
-        .catch(() => {
-          updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.DELETE_FILTERS);
-        });
-    }
-
-    if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
-      // todo: remove this
-      let body = { save: true };
-      if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({
-          ...body,
-          filterData: { filterFile: data, name: metadata.name },
-          config: metadata.config,
-        });
-      }
-      if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url: data, name: metadata.name, config: metadata.config });
-      }
-      uploadFilterFile({ uploadBody: body })
-        .unwrap()
-        .then(() => {
-          updateProgress({ showProgress: false });
-        })
-        .catch(() => {
-          updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.UPLOAD_FILTERS);
-        });
-    }
-
-    if (type === FILE_OPS.UPDATE) {
-      updateFilterFile({
-        updateBody: JSON.stringify({
-          filterData: { id, name: name, catalogData },
-          config: data,
-          save: true,
-        }),
-      })
-        .unwrap()
-        .then(() => {
-          updateProgress({ showProgress: false });
-        })
-        .catch(() => {
-          updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.UPLOAD_FILTERS);
-        });
-    }
-  }
-
-  const handleDownload = (e: React.MouseEvent, id: string, name: string) => {
-    e.stopPropagation();
-    updateProgress({ showProgress: true });
-    try {
-      downloadContent({ id, name, type: 'filter' });
-      updateProgress({ showProgress: false });
-      notify({ message: `"${name}" filter downloaded`, event_type: EVENT_TYPES.INFO });
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  function uploadHandler(ev: React.ChangeEvent<HTMLInputElement>, _: unknown, metadata: any) {
-    if (!ev.target.files?.length) return;
-
-    const file = ev.target.files[0];
-
-    // Create a reader
-    const reader = new FileReader();
-    reader.addEventListener('load', (event) => {
-      let uint8 = new Uint8Array(event.target.result);
-      handleSubmit({
-        data: Array.from(uint8),
-        name: file?.name || 'meshery_' + Math.floor(trueRandom() * 100),
-        type: FILE_OPS.FILE_UPLOAD,
-        metadata: metadata,
-      });
-    });
-    reader.readAsArrayBuffer(file);
-  }
-
-  let colViews = [
-    ['name', 'xs'],
-    ['created_at', 'm'],
-    ['updated_at', 'l'],
-    ['visibility', 's'],
-    ['Actions', 'xs'],
-  ];
-
-  const columns = [
-    {
-      name: 'name',
-      label: 'Filter Name',
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-      },
-    },
-    {
-      name: 'created_at',
-      label: 'Created At',
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-        customBodyRender: function CustomBody(value) {
-          return <Moment format="LLLL">{value}</Moment>;
-        },
-      },
-    },
-    {
-      name: 'updated_at',
-      label: 'Updated At',
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-        customBodyRender: function CustomBody(value) {
-          return <Moment format="LLLL">{value}</Moment>;
-        },
-      },
-    },
-    {
-      name: 'visibility',
-      label: 'Visibility',
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
-        },
-      },
-    },
-    {
-      name: 'Actions',
-      label: 'Actions',
-      options: {
-        filter: false,
-        sort: false,
-        searchable: false,
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
-        },
-        customBodyRender: function CustomBody(_, tableMeta) {
-          const rowData = filters[tableMeta.rowIndex];
-          const visibility = filters[tableMeta.rowIndex]?.visibility;
-          return (
-            <ActionsBox
-              sx={{
-                display: 'flex',
-              }}
-            >
-              {visibility === VISIBILITY.PUBLISHED ? (
-                <TooltipIcon
-                  placement="top"
-                  title={'Clone'}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleClone(rowData.id, rowData.name);
-                  }}
-                  disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
-                >
-                  <CloneIcon fill="currentColor" />
-                </TooltipIcon>
-              ) : (
-                <TooltipIcon
-                  title="Config"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedRowData(filters[tableMeta.rowIndex]);
-                  }}
-                  disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
-                >
-                  <EditIcon aria-label="config" color="inherit" style={iconMedium} />
-                </TooltipIcon>
-              )}
-              <TooltipIcon
-                title="Download"
-                onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
-                disabled={
-                  !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
-                }
-              >
-                <GetAppIcon data-cy="download-button" />
-              </TooltipIcon>
-              <TooltipIcon
-                title="Filter Information"
-                onClick={() => handleInfoModal(rowData)}
-                disabled={
-                  !CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject)
-                }
-              >
-                <InfoOutlinedIcon data-cy="information-button" />
-              </TooltipIcon>
-              {canPublishFilter && visibility !== VISIBILITY.PUBLISHED ? (
-                <TooltipIcon
-                  title="Publish"
-                  onClick={(ev) => handlePublishModal(ev, rowData)}
-                  disabled={!CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject)}
-                >
-                  <PublicIcon fill="#F91313" data-cy="publish-button" />
-                </TooltipIcon>
-              ) : (
-                <TooltipIcon
-                  title="Unpublish"
-                  onClick={(ev) => handleUnpublishModal(ev, rowData)()}
-                  disabled={
-                    !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
-                  }
-                >
-                  <PublicIcon fill="#F91313" data-cy="unpublish-button" />
-                </TooltipIcon>
-              )}
-            </ActionsBox>
-          );
-        },
-      },
-    },
-  ];
-
-  columns.forEach((column, idx) => {
-    if (column.name === sortOrder.split(' ')[0]) {
-      columns[idx].options.sortDirection = sortOrder.split(' ')[1];
-    }
+  const columns = buildFiltersColumns({
+    filters,
+    canPublishFilter,
+    handleClone,
+    handleDownload,
+    handleInfoModal,
+    handlePublishModal,
+    handleUnpublishModal,
+    setSelectedRowData,
+    sortOrder,
   });
 
-  async function showmodal(count: number) {
-    let response = await modalRef.current?.show({
-      title: `Delete ${count ? count : ''} Filter${count > 1 ? 's' : ''}?`,
-      subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
-        count ? count : ''
-      } filter${count > 1 ? 's' : ''}?`,
-      primaryOption: 'Delete',
-      variant: PROMPT_VARIANTS.DANGER,
-    });
-    return response;
-  }
-
-  function deleteFilter(id: string) {
-    deleteFilterFile({ id: id })
-      .unwrap()
-      .then(() => {
-        updateProgress({ showProgress: false });
-        notify({ message: `Filter deleted`, event_type: EVENT_TYPES.SUCCESS });
-      })
-      .catch(() => {
-        updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.DELETE_FILTERS);
-      });
-  }
-
-  const options = {
-    filter: false,
-    viewColumns: false,
-    sort: !(user && user.userId === 'meshery'),
-    search: false,
-    filterType: 'textField',
-    responsive: 'standard',
-    resizableColumns: true,
-    serverSide: true,
+  const options = buildFiltersTableOptions({
+    user,
     count,
-    rowsPerPage: pageSize,
-    fixedHeader: true,
     page,
-    print: false,
-    download: false,
-    sortOrder: {
-      name: 'updated_at',
-      direction: 'desc',
-    },
-    textLabels: {
-      selectedRows: {
-        text: 'filter(s) selected',
-      },
-    },
-
-    onCellClick: (_, meta) =>
-      meta.colIndex !== 3 && meta.colIndex !== 4 && setSelectedRowData(filters[meta.rowIndex]),
-
-    onRowsDelete: async function handleDelete(row) {
-      let response = await showmodal(Object.keys(row.lookup).length);
-
-      if (response === 'Delete') {
-        const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
-        fid.forEach((fid) => deleteFilter(fid));
-      }
-      // if (response === "No")
-      // fetchFilters(page, pageSize, search, sortOrder);
-    },
-
-    onTableChange: (action, tableState) => {
-      const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
-      let order = '';
-      if (tableState.activeColumn) {
-        order = `${columns[tableState.activeColumn].name} desc`;
-      }
-
-      switch (action) {
-        case 'changePage':
-          initFiltersSubscription(
-            tableState.page.toString(),
-            pageSize.toString(),
-            search,
-            sortOrder,
-          );
-          setPage(tableState.page);
-          break;
-        case 'changeRowsPerPage':
-          initFiltersSubscription(
-            page.toString(),
-            tableState.rowsPerPage.toString(),
-            search,
-            sortOrder,
-          );
-          setPageSize(tableState.rowsPerPage);
-          break;
-        case 'search':
-          if (searchTimeout.current) {
-            clearTimeout(searchTimeout.current);
-          }
-          searchTimeout.current = setTimeout(() => {
-            if (search !== tableState.searchText) {
-              setSearch(tableState.searchText);
-            }
-          }, 500);
-          break;
-        case 'sort':
-          if (sortInfo.length === 2) {
-            if (sortInfo[1] === 'ascending') {
-              order = `${columns[tableState.activeColumn].name} asc`;
-            } else {
-              order = `${columns[tableState.activeColumn].name} desc`;
-            }
-          }
-          if (order !== sortOrder) {
-            initFiltersSubscription(page.toString(), pageSize.toString(), search, order);
-            setSortOrder(order);
-          }
-          break;
-      }
-    },
-    setRowProps: (row, dataIndex, rowIndex) => {
-      return {
-        'data-cy': `config-row-${rowIndex}`,
-      };
-    },
-    setTableProps: () => {
-      return {
-        'data-cy': 'filters-grid',
-      };
-    },
-  };
-
-  /**
-   * Gets the data of Import Filter and handles submit operation
-   *
-   * @param {{
-   * uploadType: ("File Upload"| "URL Upload");
-   * config: string;
-   * name: string;
-   * url: string;
-   * file: string;
-   * }} data
-   */
-  function handleImportFilter(data: {
-    uploadType: string;
-    config: string;
-    name: string;
-    url: string;
-    file: ArrayBuffer | string;
-  }) {
-    updateProgress({ showProgress: true });
-    const { uploadType, name, config, url, file } = data;
-    let requestBody = null;
-    switch (uploadType) {
-      case 'File Upload':
-        requestBody = JSON.stringify({
-          config,
-          save: true,
-          filter_data: {
-            name,
-            filter_file: getUnit8ArrayDecodedFile(file),
-          },
-        });
-        break;
-      case 'URL Upload':
-        requestBody = JSON.stringify({
-          config,
-          save: true,
-          url,
-          filter_data: {
-            name,
-          },
-        });
-        break;
-    }
-
-    updateFilterFile({ updateBody: requestBody })
-      .unwrap()
-      .then(() => {
-        updateProgress({ showProgress: false });
-        notify({
-          message: `"${name}" filter uploaded`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-        getFilters();
-      })
-      .catch(() => {
-        updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.UPLOAD_FILTERS);
-      });
-  }
+    pageSize,
+    search,
+    sortOrder,
+    filters,
+    columns,
+    searchTimeout,
+    setPage,
+    setPageSize,
+    setSearch,
+    setSortOrder,
+    setSelectedRowData,
+    initFiltersSubscription,
+    showmodal,
+    deleteFilter,
+  });
 
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
-    let showCols = updateVisibleColumns(colViews, width);
+    let showCols = updateVisibleColumns(COLUMN_VIEWS, width);
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
@@ -1145,17 +399,6 @@ function MesheryFilters() {
             { label: 'Private', value: 'private' },
           ],
     },
-  };
-
-  const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>({
-    visibility: 'All',
-  });
-
-  const handleApplyFilter = () => {
-    const visibilityFilter =
-      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    // fetchFilters(page, pageSize, search, sortOrder, visibilityFilter);
-    setVisibilityFilter(visibilityFilter);
   };
 
   if (isFiltersLoading) {
@@ -1315,63 +558,5 @@ function MesheryFilters() {
     </>
   );
 }
-
-type ImportModalProps = { handleClose: () => void; handleImportFilter: (_data: any) => void };
-
-const ImportModal = React.memo(({ handleClose, handleImportFilter }: ImportModalProps) => {
-  return (
-    <>
-      <SistentModal
-        open={true}
-        closeModal={handleClose}
-        headerIcon={
-          <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
-        }
-        title="Import Design"
-        maxWidth="sm"
-      >
-        <RJSFModalWrapper
-          schema={importFilterSchema}
-          uiSchema={importFilterUiSchema}
-          handleSubmit={handleImportFilter}
-          submitBtnText="Import"
-          handleClose={handleClose}
-        />
-      </SistentModal>
-    </>
-  );
-});
-
-type PublishModalProps = {
-  handleClose: () => void;
-  handleSubmit: (_data: any) => void;
-  title: string;
-};
-
-const PublishModal = React.memo(({ handleClose, handleSubmit, title }: PublishModalProps) => {
-  return (
-    <>
-      <SistentModal
-        open={true}
-        headerIcon={
-          <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
-        }
-        closeModal={handleClose}
-        aria-label="catalog publish"
-        title={title}
-        maxWidth="sm"
-      >
-        <RJSFModalWrapper
-          schema={publishCatalogItemSchema}
-          uiSchema={publishCatalogItemUiSchema}
-          submitBtnText="Submit for Approval"
-          handleSubmit={handleSubmit}
-          helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
-          handleClose={handleClose}
-        />
-      </SistentModal>
-    </>
-  );
-});
 
 export default MesheryFilters;
