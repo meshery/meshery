@@ -32,13 +32,12 @@ import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { MoreVert as MoreVertIcon, Sync as SyncIcon } from '@/assets/icons';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { iconMedium } from '../../css/icons.styles';
 import _PromptComponent from '../PromptComponent';
 import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
-import SyncIcon from '@mui/icons-material/Sync';
 
 import { CONNECTION_KINDS, CONNECTION_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';

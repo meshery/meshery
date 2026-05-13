@@ -17,9 +17,11 @@ import {
   Chip,
 } from '@sistent/sistent';
 import ModelIcon from '@/assets/icons/ModelIcon';
-import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
+import {
+  LanOutlined as LanOutlinedIcon,
+  InsertDriveFile as InsertDriveFileIcon,
+} from '@/assets/icons';
 import { TooltipIconButton } from '@/utils/TooltipButton';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { StyledDocsRedirectLink } from './style';
 import {

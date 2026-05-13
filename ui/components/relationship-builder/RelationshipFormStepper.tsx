@@ -13,12 +13,15 @@ import {
   Grid2,
   MenuItem,
 } from '@sistent/sistent';
+// eslint-disable-next-line no-restricted-imports -- GlobalStyles has no @sistent/sistent equivalent yet; tracked as the final straggler for Phase 2.
 import { GlobalStyles } from '@mui/material';
 import { styled, DescriptionIcon, CodeIcon } from '@sistent/sistent';
 import { RelationshipDefinitionV1Beta2OpenApiSchema } from '@meshery/schemas';
-import LinkIcon from '@mui/icons-material/Link';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import {
+  Link as LinkIcon,
+  FilterAlt as FilterAltIcon,
+  SaveAlt as SaveAltIcon,
+} from '@/assets/icons';
 import { downloadFileFromContent } from '@/utils/fileDownloader';
 import RJSFWrapper from '../meshery-mesh-interface/PatternService/RJSF_wrapper';
 import omit from 'lodash/omit';
