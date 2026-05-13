@@ -189,6 +189,7 @@ export const designsApi = api
           method: 'POST',
           body: queryArg.evaluateBody,
         }),
+        invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
     }),
   });
