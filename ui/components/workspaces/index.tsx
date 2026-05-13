@@ -21,8 +21,8 @@ import {
   PROMPT_VARIANTS,
   ModalFooter,
 } from '@sistent/sistent';
-import { EmptyState } from '../General';
-import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
+import { EmptyState } from '@/components/Lifecycle/General';
+import AddIconCircleBorder from '@/assets/icons/AddIconCircleBorder';
 import { useRef, useState } from 'react';
 import {
   useAssignTeamToWorkspaceMutation,
@@ -33,11 +33,11 @@ import {
   useGetWorkspacesQuery,
   useUnassignTeamFromWorkspaceMutation,
   useUpdateWorkspaceMutation,
-} from '../../../rtk-query/workspace';
-import { useNotification, useNotificationHandlers } from '../../../utils/hooks/useNotification';
-import { RJSFModalWrapper } from '../../General/Modals/Modal';
-import _PromptComponent from '../../PromptComponent';
-import { EVENT_TYPES } from '../../../lib/event-types';
+} from '@/rtk-query/workspace';
+import { useNotification, useNotificationHandlers } from '@/utils/hooks/useNotification';
+import { RJSFModalWrapper } from '@/components/General/Modals/Modal';
+import _PromptComponent from '@/components/PromptComponent';
+import { EVENT_TYPES } from 'lib/event-types';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
